@@ -1,0 +1,41 @@
+{
+  "id": "7",
+  "name": "HSTU Karate Dojo",
+  "short_name": "HSTU Dojo",
+  "description": "Power up your skill with HSTU Karate Dojo. We offer junior to senior level karate trainings. Let us take you to your next level⚡",
+  "theme_color": "#000000",
+  "background_color": "#353535",
+  "icons": [
+    {
+      "src": "AppImages/android/android-launchericon-192-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "AppImages/android/android-launchericon-144-144.png",
+      "sizes": "144x144",
+      "type": "image/png"
+    },
+    {
+      "src": "AppImages/android/android-launchericon-512-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    },
+    {
+      "src": "AppImages/ios/1024.png",
+      "sizes": "1024x1024",
+      "type": "image/png"
+    }
+  ],
+  "start_url": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "screenshots": [
+    {
+      "src": "og-image.jpg",
+      "sizes": "1024x1024",
+      "type": "image/png"
+    }
+  ]
+}

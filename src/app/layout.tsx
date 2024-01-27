@@ -14,19 +14,30 @@ const roboto = Roboto({
 
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL!),
+  applicationName: siteConfig.name,
   title: {
     default: siteConfig.name,
     template: `%s - ${siteConfig.name}`,
   },
   description: siteConfig.description,
+  manifest: "/manifest.json",
   keywords: siteConfig.keywords,
   authors: [
     {
-      name: "deothemes",
-      url: "https://deothemes.com",
+      name: "Shahriar Hasan",
+      url: "https://shahriarhasan.vercel.app",
     },
   ],
-  creator: "deothemes",
+  creator: "Shahriar Hasan",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "default",
+    title: siteConfig.name,
+    // startUpImage: [],
+  },
+  formatDetection: {
+    telephone: false,
+  },
   openGraph: {
     type: "website",
     locale: "en_US",
@@ -40,7 +51,7 @@ export const metadata: Metadata = {
     title: siteConfig.name,
     description: siteConfig.description,
     images: [`${siteConfig.url}/og-image.jpg`],
-    creator: "deothemes",
+    creator: "shahriar hasan",
   },
   icons: {
     icon: "/favicon.ico",
