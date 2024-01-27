@@ -12,7 +12,7 @@ const SectionHero = () => {
               <h1 className="text-headings max-w-xs text-3xl lg:text-4xl">
                 Marketing That Generate Results.
               </h1>
-              <p className="mb-12 text-lg">
+              <p className="mb-12 text-lg text-slate-700 dark:text-slate-300">
                 Focus on engaging, reusable content that decrease the cost per
                 leads while helps you to increase profits margin.
               </p>

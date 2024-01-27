@@ -74,7 +74,7 @@ const NewsletterForm = () => {
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(onSubmit)}
-          className="block md:flex md:space-x-5"
+          className="z-10 block md:flex md:space-x-5"
         >
           <FormField
             control={form.control}

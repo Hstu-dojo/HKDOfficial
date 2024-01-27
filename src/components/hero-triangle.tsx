@@ -21,7 +21,7 @@ const HeroTriangle = (props: SVGProps<SVGSVGElement>) => {
       />
       <path
         fill={`url(#${gradientId})`}
-        fillOpacity={0.7}
+        fillOpacity={0.4}
         d="M232.16 108.54 76.5 357.6c-33.3 53.28 5 122.4 67.84 122.4h311.32c62.83 0 101.14-69.12 67.84-122.4L367.84 108.54c-31.33-50.13-104.35-50.13-135.68 0Z"
         className="st0"
       />
@@ -43,11 +43,11 @@ const HeroTriangle = (props: SVGProps<SVGSVGElement>) => {
           patternUnits="userSpaceOnUse"
         >
           <image
-            xlinkHref="/hero/hero.jpg"
-            width={500}
-            height={500}
+            xlinkHref="https://i.pinimg.com/originals/d5/82/f8/d582f8d46e6085e990b27c2b8b8be110.jpg"
+            width={350}
+            height={350}
             x={50}
-            y={70}
+            y={170}
           />
         </pattern>
       </defs>
