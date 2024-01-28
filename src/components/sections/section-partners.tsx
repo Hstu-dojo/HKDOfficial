@@ -3,7 +3,7 @@ import Image from "next/image";
 
 const SectionPartners = () => {
   return (
-    <section className="relative bg-white pb-56 pt-24 before:absolute before:inset-0 before:bg-gradient-to-t before:from-quaternary before:to-secondary before:opacity-70">
+    <section className="relative bg-white pb-56 pt-24 before:absolute before:inset-0 before:bg-gradient-to-t before:from-tertiary before:to-secondary before:opacity-70">
       <Image
         src="/partners/map.png"
         alt="Partners"
