@@ -20,7 +20,7 @@ const PromoTriangle = (props: SVGProps<SVGSVGElement>) => {
         xmlns="http://www.w3.org/2000/svg"
         xmlnsXlink="http://www.w3.org/1999/xlink"
         xmlSpace="preserve"
-        className="absolute -left-[1300px] -top-[880px] -z-[1] hidden w-[1920px] -rotate-[16deg] lg:block xl:-left-[1100px]"
+        className="absolute -left-[1300px] -top-[550px] -z-10 hidden w-[1920px] -rotate-[17deg]  lg:block xl:-left-[1180px]"
         viewBox="0 0 600 480"
         {...props}
       >
@@ -33,10 +33,16 @@ const PromoTriangle = (props: SVGProps<SVGSVGElement>) => {
           <pattern
             id={patternId}
             width={600}
-            height={600}
+            height={630}
             patternUnits="userSpaceOnUse"
           >
-            <image xlinkHref="/promo_img_1.jpg" width={600} height={600} />
+            <image
+              xlinkHref="https://images.unsplash.com/photo-1529630218527-7df22fc2d4ee?q=80&w=1472&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+              width={600}
+              height={630}
+              x={65}
+              y={35}
+            />
           </pattern>
         </defs>
       </svg>

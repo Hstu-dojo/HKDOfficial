@@ -64,18 +64,18 @@ module.exports = {
         background: "#ffffff",
         foreground: "#333b69",
         primary: {
-          DEFAULT: "#fa6262",
+          DEFAULT: "#0097B2",
           foreground: "#ffffff",
         },
         secondary: {
-          DEFAULT: "#4c86e7",
+          DEFAULT: "#5E17EB",
           foreground: "#ffffff",
         },
         tertiary: {
-          DEFAULT: "#F8875F",
+          DEFAULT: "#0CC0DF",
         },
         quaternary: {
-          DEFAULT: "#B939E5",
+          DEFAULT: "#fa6262",
         },
         destructive: {
           DEFAULT: "hsl(0 84.2% 60.2%)",
