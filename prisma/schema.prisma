@@ -5,14 +5,13 @@ generator client {
   provider = "prisma-client-js"
 }
 
-generator erd {
-  provider = "prisma-erd-generator"
-  output = "/ERD.png"
-}
-
 datasource db {
   provider = "cockroachdb"
   url      = env("DATABASE_URL")
+}
+generator erd {
+  provider = "prisma-erd-generator"
+  output = "../public/ERD.png"
 }
 
 model Account {
