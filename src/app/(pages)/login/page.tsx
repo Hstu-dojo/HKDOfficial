@@ -37,6 +37,8 @@ export default function AuthenticationPage() {
               style={{
                 mixBlendMode: "multiply",
                 filter: "grayscale(1) contrast(1.2) opacity(0.6)",
+                // stop open at other window
+                pointerEvents: "none",
               }}
             />
           </div>
