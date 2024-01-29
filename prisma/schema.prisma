@@ -9,6 +9,7 @@ datasource db {
   provider = "cockroachdb"
   url      = env("DATABASE_URL")
 }
+// uncomment following and run `npx prisma generate` to generate ERD diagram
 // generator erd {
 //   provider = "prisma-erd-generator"
 //   output = "../erd/ERD.png"
