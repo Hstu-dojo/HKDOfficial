@@ -11,7 +11,7 @@ datasource db {
 }
 generator erd {
   provider = "prisma-erd-generator"
-  output = "../public/ERD.png"
+  output = "../erd/ERD.png"
 }
 
 model Account {
