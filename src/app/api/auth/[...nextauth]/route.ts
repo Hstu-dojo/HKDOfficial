@@ -1,20 +1,46 @@
-import NextAuth from "next-auth";
-import GoogleProvider from "next-auth/providers/google";
-import { PrismaAdapter } from "@auth/prisma-adapter";
-import { PrismaClient } from "@prisma/client";
-const prisma = new PrismaClient();
-const authOptions = {
-    // Configure one or more authentication providers
-    adapter: PrismaAdapter(prisma),
-    providers: [
-        GoogleProvider({
-            clientId: process.env.GOOGLE_ID || "",
-            clientSecret: process.env.GOOGLE_SECRET || "",
-        }),
-        // ...add more providers here
-    ],
-    
+import NextAuth, { NextAuthOptions } from "next-auth";
+import CredentialsProvider from "next-auth/providers/credentials";
+
+import { compare } from "@/lib/hash";
+import { findUserByEmail } from "@/lib/db/user";
+
+const authOptions: NextAuthOptions = {
+  providers: [
+    CredentialsProvider({
+      name: "Credentials",
+      credentials: {
+        email: { label: "Email", type: "text", placeholder: "jsmith" },
+        password: { label: "Password", type: "password" },
+      },
+      async authorize(credentials, req) {
+        if (!credentials?.email || !credentials?.password) {
+          return null;
+        }
+        const existingUser = await findUserByEmail(credentials.email);
+
+        if (!existingUser) {
+          return null;
+        }
+
+        const mathPassword = await compare(
+          credentials.password,
+          existingUser.password as string,
+        );
+
+        if (!mathPassword) {
+          return null;
+        }
+
+        return {
+          id: existingUser.id,
+          name: existingUser.name,
+          email: existingUser.email,
+        };
+      },
+    }),
+  ],
 };
 
 const handler = NextAuth(authOptions);
+
 export { handler as GET, handler as POST };

@@ -31,8 +31,9 @@ CREATE TABLE "User" (
     "id" STRING NOT NULL,
     "name" STRING,
     "email" STRING,
-    "emailVerified" TIMESTAMP(3),
+    "emailVerified" BOOL,
     "image" STRING,
+    "password" STRING,
 
     CONSTRAINT "User_pkey" PRIMARY KEY ("id")
 );
