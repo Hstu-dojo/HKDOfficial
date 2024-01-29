@@ -104,8 +104,8 @@ export const mainNav = [
     ],
   },
   {
-    title: "Docs",
-    href: "/docs",
+    title: "Login",
+    href: "/login",
   },
 ] satisfies MainNavItem[];
 

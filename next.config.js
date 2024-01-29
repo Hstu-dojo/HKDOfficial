@@ -24,7 +24,11 @@ const nextConfig = {
       },
       {
         protocol: "https",
-        hostname: "secure.gravatar.com",
+        hostname: "i.ibb.co",
+      },
+      {
+        protocol: "https",
+        hostname: "karatebushido.com",
       },
     ],
   },
