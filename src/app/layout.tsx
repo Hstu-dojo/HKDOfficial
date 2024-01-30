@@ -29,6 +29,7 @@ export default function RootLayout({
           fontHeading.variable,
         )}
       >
+        {/* updated theme provider  */}
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
           {children}
         </ThemeProvider>

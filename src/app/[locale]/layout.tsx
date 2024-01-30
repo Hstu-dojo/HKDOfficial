@@ -69,8 +69,7 @@ export default async function RootLayout({
     <body
       className={`${roboto.className} dark:bg-slate-850 dark:text-slate-400`}
     >
-      
-        <SessionProvider session={session}>{children}</SessionProvider>
+      <SessionProvider session={session}>{children}</SessionProvider>
 
       <Toaster richColors />
       <BackToTop />
