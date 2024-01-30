@@ -8,7 +8,7 @@ export const fontSans = Inter({
   subsets: ["latin"],
   variable: "--font-sans",
 });
-
+// add localfont
 const fontHeading = localFont({
   src: "../assets/fonts/CalSans-SemiBold.woff2",
   variable: "--font-heading",
