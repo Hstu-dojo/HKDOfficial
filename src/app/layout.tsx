@@ -5,6 +5,8 @@ import { ThemeProvider } from "@/context/ThemeProvider";
 import { Toaster } from "sonner";
 import { siteConfig } from "@/config/site";
 import BackToTop from "@/components/back-to-top";
+import { getServerSession } from "next-auth";
+import SessionProvider from "@/utils/SessionProvider";
 
 const roboto = Roboto({
   subsets: ["latin"],
@@ -58,18 +60,19 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const session = await getServerSession();
   return (
     <html lang="en" suppressHydrationWarning>
       <body
         className={`${roboto.className} dark:bg-slate-850 dark:text-slate-400`}
       >
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-          {children}
+          <SessionProvider session={session}>{children}</SessionProvider>
         </ThemeProvider>
         <Toaster richColors />
         <BackToTop />

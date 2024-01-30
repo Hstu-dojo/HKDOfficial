@@ -1,6 +1,6 @@
 import NextAuth, { NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
-
+import GoogleProvider from "next-auth/providers/google";
 import { compare } from "@/lib/hash";
 import { findUserByEmail } from "@/lib/db/user";
 
@@ -38,7 +38,15 @@ const authOptions: NextAuthOptions = {
         };
       },
     }),
+    GoogleProvider({
+      clientId: process.env.GOOGLE_CLIENT_ID as string,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
+    }),
   ],
+  pages: {
+    signIn: "/login",
+  },
+  session: {},
 };
 
 const handler = NextAuth(authOptions);

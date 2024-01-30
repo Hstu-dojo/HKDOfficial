@@ -14,6 +14,14 @@ datasource db {
 //   provider = "prisma-erd-generator"
 //   output = "../erd/ERD.png"
 // }
+// create enumeration of roles
+enum Roletype {
+  ADMIN
+  HR
+  EMPLOYEE
+  GUEST
+}
+
 
 model Account {
   id                 String  @id @default(cuid())
@@ -46,12 +54,36 @@ model User {
   id            String    @id @default(cuid())
   name          String?
   email         String?   @unique
-  emailVerified Boolean?
-  image         String?
+  emailVerified Boolean?  @default(false)
+  image         String?   @default("https://api.dicebear.com/7.x/lorelei/svg")
   password      String?
   accounts      Account[]
   sessions      Session[]
+  role Role[]
+  @@map("user")
+  @@index([email], name: "email")
 }
+
+model Role{
+  id            String    @id @default(cuid())
+  role Roletype @default(GUEST)
+  levelId String
+
+  level Level?
+  user User @relation(fields: [id], references: [id])
+
+  @@map("role")
+}
+model Level{
+  id            String    @id @default(cuid())
+  levelName String
+
+  features String[]
+  role Role @relation(fields: [id], references: [id])
+
+  @@map("level")
+}
+
 
 model VerificationToken {
   identifier String

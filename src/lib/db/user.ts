@@ -4,24 +4,14 @@ type User = {
   email: string;
   password: string;
   name: string;
-  emailVerified: boolean;
-  image: string;
 };
 
-export const createUser = async ({
-  email,
-  name,
-  password,
-  emailVerified,
-  image,
-}: User) => {
+export const createUser = async ({ email, name, password }: User) => {
   return await prisma.user.create({
     data: {
       email,
       name,
       password,
-      emailVerified,
-      image,
     },
   });
 };
