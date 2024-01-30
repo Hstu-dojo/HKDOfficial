@@ -3,6 +3,7 @@ import Footer from "@/components/layout/footer";
 import type { Metadata } from "next";
 import SectionPageTitle from "@/components/sections/section-page-title";
 import PostList from "@/components/posts/post-list";
+import PostEditor from "@/components/posts/post-editor";
 
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL!),
@@ -21,6 +22,7 @@ export default function BlogPostsPage() {
             <PostList limit={6} showPagination={true} />
           </div>
         </section>
+        <PostEditor />
       </main>
       <Footer />
     </>

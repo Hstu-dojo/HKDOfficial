@@ -11,6 +11,8 @@ const withPWA = require("@ducanh2912/next-pwa").default({
     disableDevLogs: true,
   },
 });
+const removeImports = require("next-remove-imports")();
+
 const nextConfig = {
   images: {
     remotePatterns: [
@@ -30,8 +32,11 @@ const nextConfig = {
         protocol: "https",
         hostname: "karatebushido.com",
       },
+      {
+        protocol: "https",
+        hostname: "secure.gravatar.com",
+      },
     ],
   },
 };
-
-module.exports = withPWA(nextConfig);
+module.exports = removeImports(withPWA(nextConfig));
