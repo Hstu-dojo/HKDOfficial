@@ -18,8 +18,8 @@ export const siteConfig = {
     "SEO",
     "Digital Agency",
   ],
-  url: "https://margin-nextjs.vercel.app/",
-  ogImage: "https://margin-nextjs.vercel.app/og-image.jpg",
+  url: "https://hstu.study/",
+  ogImage: "https://hstu.study/og-image.jpg",
 };
 
 export const mainNav = [

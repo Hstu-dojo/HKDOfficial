@@ -1,7 +1,6 @@
 // @ts-nocheck
 "use client";
 import { useEffect, useState } from "react";
-import { buttonVariants } from "@/components/ui/button";
 import { Button } from "@/components/ui/button";
 const PwaInstall = () => {
   const [deferredPrompt, setDeferredPrompt] = useState(null);
