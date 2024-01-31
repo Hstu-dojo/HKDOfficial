@@ -1,6 +1,7 @@
 "use client";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
+import PwaInstall from "@/components/sections/pwa-install";
 
 const SectionCTA = () => {
   return (
@@ -17,6 +18,7 @@ const SectionCTA = () => {
           <div className="mx-auto max-w-6xl">
             <div className="rounded-md bg-muted px-6 py-24 text-center shadow-lg dark:bg-slate-800 dark:shadow-slate-850/20">
               <h2 className="mb-8">Take your business to the next level</h2>
+              <PwaInstall />
               <Button size="lg">Let’s Work Together</Button>
             </div>
           </div>
