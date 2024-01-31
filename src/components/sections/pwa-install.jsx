@@ -59,7 +59,7 @@ const PwaInstall = () => {
       style={{ display: deferredPrompt ? "block" : "none" }}
       onClick={handleInstallClick}
     >
-      <span className="font-medium">Get App</span>
+      <span className="mx-3 font-medium">Get App</span>
     </button>
   );
 };
