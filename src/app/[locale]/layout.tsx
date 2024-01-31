@@ -6,7 +6,7 @@ import { siteConfig } from "@/config/site";
 import BackToTop from "@/components/back-to-top";
 import { getServerSession } from "next-auth";
 import SessionProvider from "@/utils/SessionProvider";
-import { I18nProviderClient } from "@/locales/client";
+
 const roboto = Roboto({
   subsets: ["latin"],
   weight: ["400", "500", "700"],
@@ -59,27 +59,17 @@ export const metadata: Metadata = {
   },
 };
 
-export default async function SubLayout({
+export default async function RootLayout({
   children,
-  loginDialog,
-  params: { locale },
 }: {
   children: React.ReactNode;
-  loginDialog: React.ReactNode;
-  params: { locale: string };
 }) {
   const session = await getServerSession();
   return (
     <body
       className={`${roboto.className} dark:bg-slate-850 dark:text-slate-400`}
     >
-      <SessionProvider session={session}>
-        {children}
-        {loginDialog}
-      </SessionProvider>
-      <I18nProviderClient locale={locale}>
-        <div></div>
-      </I18nProviderClient>
+      <SessionProvider session={session}>{children}</SessionProvider>
 
       <Toaster richColors />
       <BackToTop />
