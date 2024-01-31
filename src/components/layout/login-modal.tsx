@@ -8,6 +8,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { UserAuthForm } from "@/components/auth/user-auth-form";
+import { cn } from "@/lib/utils";
 
 export default function LoginModal() {
   const router = useRouter();
@@ -16,7 +17,7 @@ export default function LoginModal() {
   const IsOpen = pathname.includes("/login");
 
   return (
-    <Dialog open={IsOpen} onOpenChange={() => router.push("/")}>
+    <Dialog open={IsOpen} onOpenChange={() => router.back()}>
       <DialogContent className="w-full max-w-[400px] rounded-md">
         <DialogHeader>
           <DialogTitle>
