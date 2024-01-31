@@ -18,8 +18,8 @@ export const siteConfig = {
     "SEO",
     "Digital Agency",
   ],
-  url: "https://hstu.study/",
-  ogImage: "https://hstu.study/og-image.jpg",
+  url: "https://karate.paradox-bd.com/",
+  ogImage: "https://karate.paradox-bd.com/og-image.jpg",
 };
 
 export const mainNav = [
