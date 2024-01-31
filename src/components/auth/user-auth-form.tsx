@@ -67,7 +67,7 @@ export function UserAuthForm(
         type="button"
         disabled={isLoading}
         onClick={() => {
-          signIn("google", { callbackUrl: searchParams?.callbackUrl || "/" });
+          signIn("github", { callbackUrl: searchParams?.callbackUrl || "/" });
         }}
       >
         {/* {isLoading ? (
@@ -75,7 +75,7 @@ export function UserAuthForm(
         ) : (
           <Icons.gitHub className="mr-2 h-4 w-4" />
         )}{" "} */}
-        Google
+        GitHub
       </Button>
     </div>
   );
