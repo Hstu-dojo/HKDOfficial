@@ -2,6 +2,7 @@
 "use client";
 import { useEffect, useState } from "react";
 import { buttonVariants } from "@/components/ui/button";
+import { Button } from "@/components/ui/button";
 const PwaInstall = () => {
   const [deferredPrompt, setDeferredPrompt] = useState(null);
 
@@ -54,13 +55,14 @@ const PwaInstall = () => {
   };
 
   return (
-    <button
-      className={buttonVariants({ variant: "outline" }) + "btn-lg gap-x-2"}
+    <Button
+      size="lg"
+      variant={"outline"}
       style={{ display: deferredPrompt ? "block" : "none" }}
       onClick={handleInstallClick}
     >
       <span className="mx-3 font-medium">Get App</span>
-    </button>
+    </Button>
   );
 };
 
