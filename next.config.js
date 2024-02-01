@@ -11,7 +11,7 @@ const withPWA = require("@ducanh2912/next-pwa").default({
     disableDevLogs: true,
   },
 });
-const removeImports = require("next-remove-imports")();
+// const removeImports = require("next-remove-imports")();
 
 const nextConfig = {
   images: {
@@ -39,4 +39,5 @@ const nextConfig = {
     ],
   },
 };
-module.exports = removeImports(withPWA(nextConfig));
+// module.exports = removeImports(withPWA(nextConfig));
+module.exports = withPWA(nextConfig);

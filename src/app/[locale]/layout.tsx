@@ -6,6 +6,7 @@ import { siteConfig } from "@/config/site";
 import BackToTop from "@/components/back-to-top";
 import { getServerSession } from "next-auth";
 import SessionProvider from "@/utils/SessionProvider";
+import React from "react";
 
 const roboto = Roboto({
   subsets: ["latin"],
@@ -61,15 +62,20 @@ export const metadata: Metadata = {
 
 export default async function RootLayout({
   children,
+  loginDialogue,
 }: {
   children: React.ReactNode;
+  loginDialogue?: React.ReactNode;
 }) {
   const session = await getServerSession();
   return (
     <body
       className={`${roboto.className} dark:bg-slate-850 dark:text-slate-400`}
     >
-      <SessionProvider session={session}>{children}</SessionProvider>
+      <SessionProvider session={session}>
+        {children}
+        {loginDialogue}
+      </SessionProvider>
 
       <Toaster richColors />
       <BackToTop />
