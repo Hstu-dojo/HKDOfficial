@@ -29,6 +29,8 @@ export default function PageContact() {
           allowFullScreen={true}
           loading="lazy"
           referrerPolicy="no-referrer-when-downgrade"
+          //black theme
+          className="filter dark:invert"
         ></iframe>
       </main>
       <Footer />

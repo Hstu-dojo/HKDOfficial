@@ -12,7 +12,7 @@ function PostEditor() {
   const [value, setValue] = useState("**Hello world!!!**");
   console.log(value);
   return (
-    <div data-color-mode="dart">
+    <div className="filter dark:invert">
       <div className="wmde-markdown-var"> </div>
 
       <MDEditor
