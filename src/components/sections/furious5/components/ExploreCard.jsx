@@ -19,22 +19,22 @@ const ExploreCard = ({ id, imgUrl, title, index, active, handleClick }) => (
       height={700}
       width={500}
       alt="planet-04"
-      style={
-        !(active === id)
-          ? {
-              mixBlendMode: "overlay",
-              // filter: "grayscale(1) contrast(1.2) opacity(0.6)",
-              // stop open at other window
-              pointerEvents: "none",
-            }
-          : {
-              mixBlendMode: "screen",
-              // filter: "grayscale(1) contrast(1.2) opacity(0.6)",
-              // stop open at other window
-              pointerEvents: "none",
-            }
-      }
-      className="absolute h-full w-full rounded-[24px] object-cover"
+      // style={
+      //   !(active === id)
+      //     ? {
+      //         mixBlendMode: "overlay",
+      //         // filter: "grayscale(1) contrast(1.2) opacity(0.6)",
+      //         // stop open at other window
+      //         pointerEvents: "none",
+      //       }
+      //     : {
+      //         mixBlendMode: "screen",
+      //         // filter: "grayscale(1) contrast(1.2) opacity(0.6)",
+      //         // stop open at other window
+      //         pointerEvents: "none",
+      //       }
+      // }
+      className={`absolute h-full w-full rounded-[24px] object-cover ${active===id?"":"blur-sm"}`}
     />
     {active !== id ? (
       <h3 className="absolute z-0 text-[18px] font-semibold text-white sm:text-[26px] lg:bottom-20 lg:origin-[0,0] lg:rotate-[-90deg]">

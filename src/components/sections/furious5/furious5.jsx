@@ -29,7 +29,7 @@ const Furious5 = () => {
           }
           textStyles="text-center"
         /> */}
-        <h1 className="text-center text-4xl font-bold text-white">
+        <h1 className="text-center text-4xl font-bold">
           Choose the world you want to explore
         </h1>
         <TypingText title="| Meet Furious Five" textStyles="text-center" />
