@@ -19,8 +19,8 @@ export default function Home() {
         <SectionPromo />
         <SectionTestimonialsSlider />
         <SectionLatestNews />
-        <SectionPartners />
         <Furious5 />
+        <SectionPartners />
         <SectionCTA />
       </main>
       <Footer />
