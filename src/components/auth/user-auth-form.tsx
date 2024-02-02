@@ -3,10 +3,11 @@
 import * as React from "react";
 import { signIn } from "next-auth/react";
 import { cn } from "@/lib/utils";
-// import { Icons } from "@/components/icons"
+import { FaGithub } from "react-icons/fa6";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import Link from "next/link";
 
 interface UserAuthFormProps extends React.HTMLAttributes<HTMLDivElement> {}
 
@@ -52,6 +53,19 @@ export function UserAuthForm(
           </Button>
         </div>
       </form>
+      <div className="flex-rol flex flex-wrap items-center justify-between relative bottom-4">
+        <small>
+          new user?{" "}
+          <Link className="hover:underline" href="/register">
+            Register
+          </Link>
+        </small>
+        <small>
+          <Link className="hover:underline" href="/forget">
+            forget password?
+          </Link>
+        </small>
+      </div>
       <div className="relative">
         <div className="absolute inset-0 flex items-center">
           <span className="w-full border-t" />
@@ -73,8 +87,8 @@ export function UserAuthForm(
         {/* {isLoading ? (
           <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
         ) : (
-          <Icons.gitHub className="mr-2 h-4 w-4" />
         )}{" "} */}
+        <FaGithub className="mr-2" />
         GitHub
       </Button>
     </div>

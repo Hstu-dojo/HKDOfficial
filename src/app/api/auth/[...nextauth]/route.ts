@@ -4,12 +4,16 @@ import GitHubProvider from "next-auth/providers/github";
 import { compare } from "@/lib/hash";
 import { findUserByEmail } from "@/lib/db/user";
 
-const authOptions: NextAuthOptions = {
+export const authOptions: NextAuthOptions = {
   providers: [
     CredentialsProvider({
       name: "Credentials",
       credentials: {
-        email: { label: "Email", type: "text", placeholder: "jsmith" },
+        email: {
+          label: "Email",
+          type: "email",
+          placeholder: "paradoxtechbd@outlook.com",
+        },
         password: { label: "Password", type: "password" },
       },
       async authorize(credentials, req) {
@@ -22,12 +26,12 @@ const authOptions: NextAuthOptions = {
           return null;
         }
 
-        const mathPassword = await compare(
+        const matchPassword = await compare(
           credentials.password,
           existingUser.password as string,
         );
 
-        if (!mathPassword) {
+        if (!matchPassword) {
           return null;
         }
 
