@@ -1,22 +1,22 @@
 export const exploreWorlds = [
   {
     id: "world-1",
-    imgUrl: "/furious5/img (1).JPG",
+    imgUrl: "/furious5/img (2).JPG",
     title: "The Hogwarts",
   },
   {
     id: "world-2",
-    imgUrl: "/furious5/img (2).JPG",
+    imgUrl: "/furious5/img (1).JPG",
     title: "The Upside Down",
   },
   {
     id: "world-3",
-    imgUrl: "/furious5/img (3).JPG",
+    imgUrl: "/furious5/img (4).JPG",
     title: "Kadirojo Permai",
   },
   {
     id: "world-4",
-    imgUrl: "/furious5/img (4).JPG",
+    imgUrl: "/furious5/img (3).JPG",
     title: "Paradise Island",
   },
   {

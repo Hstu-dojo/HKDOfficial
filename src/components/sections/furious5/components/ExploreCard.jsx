@@ -34,7 +34,7 @@ const ExploreCard = ({ id, imgUrl, title, index, active, handleClick }) => (
       //         pointerEvents: "none",
       //       }
       // }
-      className={`absolute h-full w-full rounded-[24px] object-cover ${active===id?"":"blur-sm"}`}
+      className={`absolute h-full w-full rounded-[24px] object-cover pointer-events-none ${active===id?"":"blur-sm"}`}
     />
     {active !== id ? (
       <h3 className="absolute z-0 text-[18px] font-semibold text-white sm:text-[26px] lg:bottom-20 lg:origin-[0,0] lg:rotate-[-90deg]">
