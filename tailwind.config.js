@@ -94,6 +94,9 @@ module.exports = {
           foreground: "hsl(222.2 84% 4.9%)",
         },
       },
+      transitionTimingFunction: {
+        "out-flex": "cubic-bezier(0.05, 0.6, 0.4, 0.9)",
+      },
       typography: ({ theme }) => ({
         DEFAULT: {
           css: {

@@ -7,6 +7,7 @@ import SectionLatestNews from "@/components/sections/section-latest-news";
 import SectionPartners from "@/components/sections/section-partners";
 import SectionPromo from "@/components/sections/section-promo";
 import SectionTestimonialsSlider from "@/components/sections/section-testimonials-slider";
+import Furious5 from "@/components/sections/furious5/furious5";
 
 export default function Home() {
   return (
@@ -19,6 +20,7 @@ export default function Home() {
         <SectionTestimonialsSlider />
         <SectionLatestNews />
         <SectionPartners />
+        <Furious5 />
         <SectionCTA />
       </main>
       <Footer />
