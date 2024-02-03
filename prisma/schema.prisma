@@ -9,11 +9,15 @@ datasource db {
   provider = "cockroachdb"
   url      = env("DATABASE_URL")
 }
-// uncomment following and run `npx prisma generate` to generate ERD diagram
-// generator erd {
-//   provider = "prisma-erd-generator"
-//   output = "../erd/ERD.png"
-// }
+
+// run `npx prisma generate` to generate ERD diagram
+generator markdown {
+  provider = "prisma-markdown"
+  output   = "../public/erd/ERD.md"
+  title    = "HSTU Karate Dojo"
+}
+
+
 // create enumeration of roles
 enum Roletype {
   ADMIN
@@ -25,21 +29,10 @@ enum Roletype {
 
 model Account {
   id                 String  @id @default(cuid())
-  userId             String
+  userId             String @unique
   type               String
-  provider           String
-  providerAccountId  String
-  refresh_token      String?  
-  access_token       String?  
-  expires_at         Int?
-  token_type         String?
-  scope              String?
-  id_token           String?  
-  session_state      String?
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@unique([provider, providerAccountId])
+  
+  user User @relation(fields: [userId], references: [id])
 }
 
 model Session {
@@ -55,13 +48,31 @@ model User {
   name          String?
   email         String?   @unique
   emailVerified Boolean?  @default(false)
-  image         String?   @default("https://api.dicebear.com/7.x/lorelei/svg")
   password      String?
-  accounts      Account[]
+  accounts      Account?
   sessions      Session[]
+  providers     Provider[]
   role Role[]
   @@map("user")
   @@index([email], name: "email")
+}
+
+model Provider {
+  id           String   @id @default(cuid())
+  userId       String
+  provider           String
+  providerAccountId  String
+  refresh_token      String?  
+  access_token       String?  
+  expires_at         Int?
+  token_type         String?
+  scope              String?
+  id_token           String?  
+  session_state      String?
+
+
+  @@unique([provider, providerAccountId])
+  user         User     @relation(fields: [userId], references: [id])
 }
 
 model Role{
