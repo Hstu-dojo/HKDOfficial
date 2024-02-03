@@ -5,6 +5,7 @@
   "scripts": {
     "dev": "prisma generate && next dev",
     "build": "prisma generate && prisma db push && next build",
+    "postbuild": "next-sitemap",
     "start": "next start",
     "lint": "next lint",
     "email:dev": "email dev --dir src/components/emails -p 3001"
@@ -47,8 +48,10 @@
     "next-auth": "^4.24.5",
     "next-international": "^1.2.3",
     "next-remove-imports": "^1.0.12",
+    "next-sitemap": "^4.2.3",
     "next-themes": "^0.2.1",
     "postcss": "^8.4.31",
+    "prisma-markdown": "^1.0.8",
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "react-email": "^1.9.5",
@@ -67,8 +70,7 @@
     "typescript": "^5.2.2",
     "validator": "^13.11.0",
     "vaul": "^0.8.9",
-    "zod": "^3.22.4",
-    "prisma-markdown": "^1.0.8"
+    "zod": "^3.22.4"
   },
   "devDependencies": {
     "@tailwindcss/typography": "^0.5.10",
