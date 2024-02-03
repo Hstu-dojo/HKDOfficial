@@ -19,23 +19,9 @@ const ExploreCard = ({ id, imgUrl, title, index, active, handleClick }) => (
       height={700}
       width={500}
       alt="planet-04"
-      // style={
-      //   !(active === id)
-      //     ? {
-      //         mixBlendMode: "overlay",
-      //         // filter: "grayscale(1) contrast(1.2) opacity(0.6)",
-      //         // stop open at other window
-      //         pointerEvents: "none",
-      //       }
-      //     : {
-      //         mixBlendMode: "screen",
-      //         // filter: "grayscale(1) contrast(1.2) opacity(0.6)",
-      //         // stop open at other window
-      //         pointerEvents: "none",
-      //       }
-      // }
-      className={`pointer-events-none absolute h-full w-full rounded-[24px] object-cover ${
-        active === id ? "" : "blur-sm"
+      objectPosition="top"
+      className={`pointer-events-none absolute h-full w-full rounded-[24px] object-cover object-top ${
+        active === id ? "" : " opacity-60 filter"
       }`}
     />
     {active !== id ? (
