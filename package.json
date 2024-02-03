@@ -3,9 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "prisma generate && next dev",
-    "build": "prisma generate && prisma db push && next build && next-sitemap",
-    "postinstall": "",
+    "dev": "prisma generate && next-sitemap && next dev",
+    "build": "prisma generate && prisma db push && next build",
+    "postinstall": "next-sitemap",
     "start": "next start",
     "lint": "next lint",
     "email:dev": "email dev --dir src/components/emails -p 3001"
