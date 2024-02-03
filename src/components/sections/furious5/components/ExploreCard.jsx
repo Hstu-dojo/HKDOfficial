@@ -11,7 +11,7 @@ const ExploreCard = ({ id, imgUrl, title, index, active, handleClick }) => (
     variants={fadeIn("right", "spring", index * 0.5, 0.75)}
     className={`relative ${
       active === id ? "flex-[10] lg:flex-[3.5]" : "flex-[2] lg:flex-[0.5]"
-    } duration-[0.7s] ease-out-flex flex h-[700px] min-w-[170px] cursor-pointer items-center justify-center transition-[flex]`}
+    } duration-&lsqb;0.7s&rsqb; flex h-[700px] min-w-[170px] cursor-pointer items-center justify-center transition-[flex] ease-out-flex`}
     onClick={() => handleClick(id)}
   >
     <Image
@@ -34,7 +34,9 @@ const ExploreCard = ({ id, imgUrl, title, index, active, handleClick }) => (
       //         pointerEvents: "none",
       //       }
       // }
-      className={`absolute h-full w-full rounded-[24px] object-cover pointer-events-none ${active===id?"":"blur-sm"}`}
+      className={`pointer-events-none absolute h-full w-full rounded-[24px] object-cover ${
+        active === id ? "" : "blur-sm"
+      }`}
     />
     {active !== id ? (
       <h3 className="absolute z-0 text-[18px] font-semibold text-white sm:text-[26px] lg:bottom-20 lg:origin-[0,0] lg:rotate-[-90deg]">
