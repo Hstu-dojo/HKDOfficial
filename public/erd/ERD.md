@@ -81,9 +81,12 @@ erDiagram
     String features
 }
 "VerificationToken" {
-    String identifier
-    String token UK
-    DateTime expires
+    String id PK
+    String email
+    String token
+    Int validity
+    DateTime created_at
+    DateTime updated_at
 }
 "account" |o--|| "user" : user
 "Session" }o--|| "user" : user
@@ -181,6 +184,9 @@ erDiagram
 ### `VerificationToken`
 
 **Properties**
-  - `identifier`: 
+  - `id`: 
+  - `email`: 
   - `token`: 
-  - `expires`: 
+  - `validity`: 
+  - `created_at`: 
+  - `updated_at`: 

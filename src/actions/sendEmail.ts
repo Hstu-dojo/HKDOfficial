@@ -53,3 +53,4 @@ export const sendEmail = async (formData: FormInputs) => {
     data,
   };
 };
+
