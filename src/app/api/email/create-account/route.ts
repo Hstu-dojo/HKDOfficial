@@ -4,6 +4,5 @@ import { NextResponse } from "next/server";
 
 export async function GET(request: Request) {
   const email = await accountVerify();
-  console.log(email);
-  return NextResponse.json(JSON.stringify(email));
+  return NextResponse.json(email);
 }

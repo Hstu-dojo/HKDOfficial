@@ -26,7 +26,9 @@ export default async function accountVerify() {
   try {
     const result = await transporter.sendMail(options);
     console.log(result);
+    return result;
   } catch (error) {
     console.log(error);
+    return error;
   }
 }

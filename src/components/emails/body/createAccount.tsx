@@ -42,7 +42,8 @@ export const CreateAccountMailEdit = ({
         </Text>
         <Section className="mb-[32px] mt-[32px] text-center">
           <CodeInline className="text-center text-lg">
-            {secretCode}
+            {/* {secretCode} */}
+            123-465-789
           </CodeInline>
         </Section>
         <Text className="text-[14px] leading-[24px] text-black">
