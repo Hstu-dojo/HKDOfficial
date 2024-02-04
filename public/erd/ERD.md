@@ -9,9 +9,35 @@ erDiagram
 "account" {
     String id PK
     String userId FK
-    String name "nullable"
-    String image "nullable"
+    String name
+    String name_bangla
+    String father_name
+    String image
     String avatar "nullable"
+    String bio "nullable"
+    String sex
+    DateTime dob
+    String phone
+    String address
+    String city
+    String state
+    String country
+    String postalCode
+    Int age
+    String bloodGroup
+    Float height
+    Float weight
+    String occupation
+    IdentityType identity_type
+    String identity_number
+    String identity_image "nullable"
+    String institute
+    String faculty "nullable"
+    String department "nullable"
+    String session "nullable"
+    String signature_image
+    DateTime created_at
+    DateTime updated_at
 }
 "Session" {
     String id PK
@@ -24,6 +50,8 @@ erDiagram
     String email UK
     Boolean emailVerified "nullable"
     String password
+    DateTime created_at
+    DateTime updated_at
 }
 "provider" {
     String id PK
@@ -37,11 +65,15 @@ erDiagram
     String scope "nullable"
     String id_token "nullable"
     String session_state "nullable"
+    DateTime created_at
+    DateTime updated_at
 }
 "role" {
     String id PK
     Roletype role
     String levelId
+    DateTime created_at
+    DateTime updated_at
 }
 "level" {
     String id PK
@@ -66,8 +98,34 @@ erDiagram
   - `id`: 
   - `userId`: 
   - `name`: 
+  - `name_bangla`: 
+  - `father_name`: 
   - `image`: 
   - `avatar`: 
+  - `bio`: 
+  - `sex`: 
+  - `dob`: 
+  - `phone`: 
+  - `address`: 
+  - `city`: 
+  - `state`: 
+  - `country`: 
+  - `postalCode`: 
+  - `age`: 
+  - `bloodGroup`: 
+  - `height`: 
+  - `weight`: 
+  - `occupation`: 
+  - `identity_type`: 
+  - `identity_number`: 
+  - `identity_image`: 
+  - `institute`: 
+  - `faculty`: 
+  - `department`: 
+  - `session`: 
+  - `signature_image`: 
+  - `created_at`: 
+  - `updated_at`: 
 
 ### `Session`
 
@@ -84,6 +142,8 @@ erDiagram
   - `email`: 
   - `emailVerified`: 
   - `password`: 
+  - `created_at`: 
+  - `updated_at`: 
 
 ### `provider`
 
@@ -99,6 +159,8 @@ erDiagram
   - `scope`: 
   - `id_token`: 
   - `session_state`: 
+  - `created_at`: 
+  - `updated_at`: 
 
 ### `role`
 
@@ -106,6 +168,8 @@ erDiagram
   - `id`: 
   - `role`: 
   - `levelId`: 
+  - `created_at`: 
+  - `updated_at`: 
 
 ### `level`
 

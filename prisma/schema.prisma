@@ -25,16 +25,50 @@ enum Roletype {
   EMPLOYEE
   GUEST
 }
+enum IdentityType {
+  NID
+  BIRTH_CERTIFICATE
+  PASSPORT
+  DRIVING_LICENSE
+}
 
 
 model Account {
-  id                 String  @id @default(cuid())
-  userId             String @unique
-  name               String?
-  image              String?
+  id                 String  @id @default(sequence())
+  userId             String  @unique
+  name               String
+  name_bangla        String
+  father_name        String
+  image              String
   avatar             String?
+  bio                String?
+  sex                String
+  dob                DateTime
+  phone              String
+  address            String
+  city               String
+  state              String
+  country            String
+  postalCode         String
+  age                Int
+  bloodGroup         String
+  height             Float
+  weight             Float
+  occupation         String
+  identity_type      IdentityType
+  identity_number    String
+  identity_image     String?
+  institute          String
+  faculty            String?
+  department         String?
+  session            String?
+  signature_image    String
+
+
   
   user User @relation(fields: [userId], references: [id])
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
   @@map("account")
 }
 
@@ -51,12 +85,15 @@ model User {
   email         String    @unique
   emailVerified Boolean?  @default(false)
   password      String
-  account      Account?
+  account       Account?
   sessions      Session[]
   providers     Provider[]
   role Role[]
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
   @@map("user")
   @@index([email], name: "email")
+  
 }
 
 model Provider {
@@ -75,6 +112,8 @@ model Provider {
 
   @@unique([provider, providerAccountId])
   @@map("provider")
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
   user         User     @relation(fields: [userId], references: [id])
 }
 
@@ -85,8 +124,11 @@ model Role{
 
   level Level?
   user User @relation(fields: [id], references: [id])
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
 
   @@map("role")
+
 }
 model Level{
   id            String    @id @default(cuid())
