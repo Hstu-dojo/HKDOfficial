@@ -30,9 +30,12 @@ enum Roletype {
 model Account {
   id                 String  @id @default(cuid())
   userId             String @unique
-  type               String
+  name               String?
+  image              String?
+  avatar             String?
   
   user User @relation(fields: [userId], references: [id])
+  @@map("account")
 }
 
 model Session {
@@ -45,11 +48,10 @@ model Session {
 
 model User {
   id            String    @id @default(cuid())
-  name          String?
-  email         String?   @unique
+  email         String    @unique
   emailVerified Boolean?  @default(false)
-  password      String?
-  accounts      Account?
+  password      String
+  account      Account?
   sessions      Session[]
   providers     Provider[]
   role Role[]
@@ -58,8 +60,8 @@ model User {
 }
 
 model Provider {
-  id           String   @id @default(cuid())
-  userId       String
+  id                 String   @id @default(cuid())
+  userId             String
   provider           String
   providerAccountId  String
   refresh_token      String?  
@@ -72,6 +74,7 @@ model Provider {
 
 
   @@unique([provider, providerAccountId])
+  @@map("provider")
   user         User     @relation(fields: [userId], references: [id])
 }
 

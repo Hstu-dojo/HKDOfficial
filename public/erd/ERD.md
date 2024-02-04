@@ -6,10 +6,12 @@
 ## default
 ```mermaid
 erDiagram
-"Account" {
+"account" {
     String id PK
     String userId FK
-    String type
+    String name "nullable"
+    String image "nullable"
+    String avatar "nullable"
 }
 "Session" {
     String id PK
@@ -19,12 +21,11 @@ erDiagram
 }
 "user" {
     String id PK
-    String name "nullable"
-    String email UK "nullable"
+    String email UK
     Boolean emailVerified "nullable"
-    String password "nullable"
+    String password
 }
-"Provider" {
+"provider" {
     String id PK
     String userId FK
     String provider
@@ -52,19 +53,21 @@ erDiagram
     String token UK
     DateTime expires
 }
-"Account" |o--|| "user" : user
+"account" |o--|| "user" : user
 "Session" }o--|| "user" : user
-"Provider" }o--|| "user" : user
+"provider" }o--|| "user" : user
 "role" |o--|| "user" : user
 "level" |o--|| "role" : role
 ```
 
-### `Account`
+### `account`
 
 **Properties**
   - `id`: 
   - `userId`: 
-  - `type`: 
+  - `name`: 
+  - `image`: 
+  - `avatar`: 
 
 ### `Session`
 
@@ -78,12 +81,11 @@ erDiagram
 
 **Properties**
   - `id`: 
-  - `name`: 
   - `email`: 
   - `emailVerified`: 
   - `password`: 
 
-### `Provider`
+### `provider`
 
 **Properties**
   - `id`: 
