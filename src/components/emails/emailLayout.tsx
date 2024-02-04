@@ -14,7 +14,7 @@ export const EmailLayout = ({ children }: { children: React.ReactNode }) => {
       <Tailwind>
         <Body className="mx-auto mt-auto bg-white px-2 font-sans">
           <div className="h-20 w-full bg-[#0097B2]" />
-          <Container className="shadow shadow-xl sticky top-14 mx-auto max-w-[465px] rounded border border-solid border-[#eaeaea] bg-white">
+          <Container className="shadow shadow-xl sticky top-14 mx-auto max-w-[465px] border border-solid border-[#eaeaea] bg-white">
             <EmailHeader />
             {children}
             <EmailFooter />

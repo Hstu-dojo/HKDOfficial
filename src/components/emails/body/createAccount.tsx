@@ -31,7 +31,7 @@ export const CreateAccountMailEdit = ({
   return (
     <Tailwind>
       {" "}
-      <Section className="max-w-[465px] rounded bg-white px-[20px] ">
+      <Section className="max-w-[465px] bg-white px-[20px] ">
         <Heading className="mx-0 my-[30px] p-0 text-center text-[24px] font-normal text-black">
           Verification for <strong>HKD</strong>
         </Heading>
