@@ -73,7 +73,7 @@ model Account {
 }
 
 model Session {
-  id           String   @id @default(cuid())
+  id           String   @id @default(uuid())
   sessionToken String   @unique
   userId       String @unique
   expires      DateTime
@@ -81,7 +81,7 @@ model Session {
 }
 
 model User {
-  id            String    @id @default(cuid())
+  id            String    @id @default(uuid())
   email         String    @unique
   emailVerified Boolean?  @default(false)
   password      String
@@ -98,7 +98,7 @@ model User {
 }
 
 model Provider {
-  id                 String   @id @default(cuid())
+  id                 String   @id @default(uuid())
   userId             String
   provider           String
   providerAccountId  String
@@ -119,7 +119,7 @@ model Provider {
 }
 
 model Role{
-  id            String    @id @default(cuid())
+  id            String    @id @default(uuid())
   role Roletype @default(GUEST)
   levelId String
 
@@ -132,7 +132,7 @@ model Role{
 
 }
 model Level{
-  id            String    @id @default(cuid())
+  id            String    @id @default(uuid())
   levelName String
 
   features String[]
@@ -143,7 +143,7 @@ model Level{
 
 
 model VerificationToken {
-  id         String   @id @default(cuid())
+  id         String   @id @default(uuid())
   uid        String   @unique
   token      String   @default(uuid())
   validity   Int      @default(1)
