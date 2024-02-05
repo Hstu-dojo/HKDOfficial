@@ -89,7 +89,7 @@ erDiagram
     DateTime updated_at
 }
 "account" |o--|| "user" : user
-"Session" }o--|| "user" : user
+"Session" |o--|| "user" : user
 "provider" }o--|| "user" : user
 "role" |o--|| "user" : user
 "level" |o--|| "role" : role

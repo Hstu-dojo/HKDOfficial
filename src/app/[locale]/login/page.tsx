@@ -14,6 +14,18 @@ export const metadata: Metadata = {
 export default function AuthenticationPage() {
   return (
     <>
+      <Link href="/">
+        <div className="absolute z-20 flex items-center px-10 pt-6 text-lg font-medium text-white md:pt-8">
+          <Image
+            src="/logo.png"
+            className="mr-3"
+            alt="Logo"
+            width={36}
+            height={36}
+          />
+          HSTU Dojo
+        </div>
+      </Link>
       <div className="container relative  grid h-[800px] flex-col items-center justify-center lg:max-w-none lg:grid-cols-2 lg:px-0">
         <Link
           href="/register"
@@ -24,6 +36,7 @@ export default function AuthenticationPage() {
         >
           Register
         </Link>
+
         <div className="relative hidden h-full flex-col bg-muted p-10 text-white dark:border-r lg:flex">
           <div className="absolute inset-0 bg-secondary">
             <Image
@@ -42,21 +55,7 @@ export default function AuthenticationPage() {
               }}
             />
           </div>
-          <div className="relative z-20 flex items-center text-lg font-medium">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              className="mr-2 h-6 w-6"
-            >
-              <path d="M15 6v12a3 3 0 1 0 3-3H6a3 3 0 1 0 3 3V6a3 3 0 1 0-3 3h12a3 3 0 1 0-3-3" />
-            </svg>
-            Acme Inc
-          </div>
+
           <div className="relative z-20 mt-auto">
             <blockquote className="space-y-2">
               <p className="text-lg">
@@ -64,7 +63,7 @@ export default function AuthenticationPage() {
                 helped me deliver stunning designs to my clients faster than
                 ever before.&rdquo;
               </p>
-              <footer className="text-sm">Sofia Davis</footer>
+              <footer className="text-sm">Hasan</footer>
             </blockquote>
           </div>
         </div>

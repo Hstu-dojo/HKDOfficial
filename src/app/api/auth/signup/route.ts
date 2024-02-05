@@ -5,7 +5,6 @@ import { hash } from "@/lib/hash";
 export const POST = async (req: NextRequest, res: NextResponse) => {
   const data = await req.json();
 
-  const name = data["name"];
   const email = data["email"];
   const password = data["password"];
 
@@ -16,13 +15,12 @@ export const POST = async (req: NextRequest, res: NextResponse) => {
       {
         message: "User already exists!",
       },
-      { status: 400 }
+      { status: 400 },
     );
   }
 
   const hashedPassword = await hash(password);
   const user = await createUser({
-    name,
     email,
     password: hashedPassword,
   });
