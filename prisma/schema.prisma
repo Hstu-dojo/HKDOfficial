@@ -93,7 +93,6 @@ model User {
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
   @@map("user")
-  @@index([email], name: "email")
   
 }
 

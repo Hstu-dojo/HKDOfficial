@@ -2,12 +2,12 @@
 import { NextResponse, NextRequest } from "next/server";
 import { createUser, findUserByEmail } from "@/lib/db/user";
 import { hash } from "@/lib/hash";
-const uid = require("uid2");
+// const uid = require("uid2");
 import { prisma } from "@/lib/connect-db";
 import accountVerify from "@/actions/emailSend/accountVerify";
 
 export const POST = async (req: NextRequest, res: NextResponse) => {
-  const id = uid(5);
+  // const id = uid(5);
   const data = await req.json();
 
   const email = data["email"];

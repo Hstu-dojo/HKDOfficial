@@ -127,9 +127,6 @@ CREATE UNIQUE INDEX "Session_userId_key" ON "Session"("userId");
 CREATE UNIQUE INDEX "user_email_key" ON "user"("email");
 
 -- CreateIndex
-CREATE INDEX "email" ON "user"("email");
-
--- CreateIndex
 CREATE UNIQUE INDEX "provider_provider_providerAccountId_key" ON "provider"("provider", "providerAccountId");
 
 -- CreateIndex
