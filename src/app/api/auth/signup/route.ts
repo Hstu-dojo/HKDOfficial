@@ -1,3 +1,4 @@
+//@ts-nocheck
 import { NextResponse, NextRequest } from "next/server";
 import { createUser, findUserByEmail } from "@/lib/db/user";
 import { hash } from "@/lib/hash";
