@@ -13,7 +13,12 @@ export const POST = async (req: NextRequest, res: NextResponse) => {
   const email = data["email"];
   const password = data["password"];
 
-  const existingUser = await findUserByEmail(email);
+  const existingUser = await prisma.user.findUnique({
+    where: {
+      email,
+    },
+  });
+  console.log(existingUser);
 
   if (existingUser) {
     return NextResponse.json(
