@@ -70,6 +70,7 @@
     "tailwindcss": "^3.3.5",
     "tailwindcss-animate": "^1.0.7",
     "typescript": "^5.2.2",
+    "uid2": "^1.0.0",
     "validator": "^13.11.0",
     "vaul": "^0.8.9",
     "zod": "^3.22.4"

@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { render } from "@react-email/render";
 import nodemailer from "nodemailer";
 import { CreateAccountMail } from "@/components/emails/body/createAccount";
@@ -14,11 +15,11 @@ const transporter = nodemailer.createTransport({
 
 // create a try - catch block
 
-export default async function accountVerify() {
-  const emailHtml = render(<CreateAccountMail />);
+export default async function accountVerify(email, token) {
+  const emailHtml = render(<CreateAccountMail token={token} />);
   const options = {
     from: "noreply@karate.paradox-bd.com",
-    to: "mr.hasan3032@gmail.com",
+    to: email,
     subject: "HKD: Account Verification",
     html: emailHtml,
   };

@@ -26,7 +26,7 @@ interface VercelInviteUserEmailProps {
 
 export const CreateAccountMailEdit = ({
   userEmail,
-  secretCode
+  secretCode,
 }: VercelInviteUserEmailProps) => {
   return (
     <Tailwind>
@@ -41,25 +41,23 @@ export const CreateAccountMailEdit = ({
           steps towards your new interest. Thanks for choosing this platform.
         </Text>
         <Section className="mb-[32px] mt-[32px] text-center">
-          <CodeInline className="text-center text-lg">
-            {/* {secretCode} */}
-            123-465-789
-          </CodeInline>
+          <CodeInline className="text-center text-lg">{secretCode}</CodeInline>
         </Section>
         <Text className="text-[14px] leading-[24px] text-black">
           copy and paste this CODE into your browser to verify your email.
         </Text>
         <Text className="text-[14px] leading-[24px] text-black">
-          This email was intended for account associated to <i>email: {userEmail}</i> .
-          If you did not request this, please ignore this email.
+          This email was intended for account associated to{" "}
+          <i>email: {userEmail}</i> . If you did not request this, please ignore
+          this email.
         </Text>
       </Section>
     </Tailwind>
   );
 };
 
-export const CreateAccountMail = () => (
+export const CreateAccountMail = ({ token }: any) => (
   <EmailLayout>
-    <CreateAccountMailEdit />
+    <CreateAccountMailEdit secretCode={token} />
   </EmailLayout>
 );

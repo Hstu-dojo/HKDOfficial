@@ -34,7 +34,7 @@ enum IdentityType {
 
 
 model Account {
-  id                 String  @id @default(sequence())
+  id                 Int  @id @default(sequence())
   userId             String  @unique
   name               String
   name_bangla        String
@@ -89,6 +89,7 @@ model User {
   sessions      Session?
   providers     Provider[]
   role          Role[]
+  verificationToken VerificationToken?
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
   @@map("user")
@@ -143,10 +144,11 @@ model Level{
 
 model VerificationToken {
   id         String   @id @default(cuid())
-  email      String
+  uid        String   @unique
   token      String   @default(uuid())
   validity   Int      @default(1)
  
+  user       User     @relation(fields: [uid], references: [id])
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
 }

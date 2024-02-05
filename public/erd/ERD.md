@@ -7,7 +7,7 @@
 ```mermaid
 erDiagram
 "account" {
-    String id PK
+    Int id PK
     String userId FK
     String name
     String name_bangla
@@ -82,7 +82,7 @@ erDiagram
 }
 "VerificationToken" {
     String id PK
-    String email
+    String uid FK
     String token
     Int validity
     DateTime created_at
@@ -93,6 +93,7 @@ erDiagram
 "provider" }o--|| "user" : user
 "role" |o--|| "user" : user
 "level" |o--|| "role" : role
+"VerificationToken" |o--|| "user" : user
 ```
 
 ### `account`
@@ -185,7 +186,7 @@ erDiagram
 
 **Properties**
   - `id`: 
-  - `email`: 
+  - `uid`: 
   - `token`: 
   - `validity`: 
   - `created_at`: 
