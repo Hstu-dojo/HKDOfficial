@@ -13,12 +13,11 @@ export const POST = async (req: NextRequest, res: NextResponse) => {
   const email = data["email"];
   const password = data["password"];
 
-  const existingUser = await prisma.user.findUnique({
+  const existingUser = await prisma.user.findMany({
     where: {
-      email,
+      email: email,
     },
   });
-  console.log(existingUser);
 
   if (existingUser) {
     return NextResponse.json(
