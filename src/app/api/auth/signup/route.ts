@@ -13,7 +13,7 @@ export const POST = async (req: NextRequest, res: NextResponse) => {
   const email = data["email"];
   const password = data["password"];
 
-  const existingUser = await prisma.user.findMany({
+  const existingUser = await prisma?.user?.findFirst({
     where: {
       email: email,
     },
