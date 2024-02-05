@@ -28,7 +28,7 @@ export const POST = async (req: NextRequest, res: NextResponse) => {
     email,
     password: hashedPassword,
   });
-
+  //@ts-ignore
   const verificationToken = await prisma.verificationToken.create({
     data: {
       uid: user.id,
