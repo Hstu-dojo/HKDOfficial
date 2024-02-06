@@ -25,16 +25,22 @@ export default function EmailLayout({
   return (
     <Html>
       <Head />
-      <Preview>HKD Email Verification</Preview>
+      <Preview>HKD Email Service</Preview>
       <Body style={main}>
         <Container style={container}>
           <Section style={coverSection}>
             <Section style={imageSection}>
-              <Img
+              <img
                 src={`https://i.ibb.co/JKRHSNw/logo.png`}
-                width="75"
-                height="75"
                 alt="HKD's Logo"
+                style={{
+                  marginLeft: "40%",
+                  marginRight: "40%",
+                  width: "20%",
+                  height: "auto",
+                  marginBottom: "10px",
+                  marginTop: "10px",
+                }}
               />
             </Section>
             {children}
@@ -48,7 +54,7 @@ export default function EmailLayout({
           </Section>
           <Text style={footerText}>
             This message was produced and distributed by HSTU Karate Dojo.,
-            Basherhat, Dinajpur-5200, BD.. All rights reserved. HKD is a
+            Basherhat, Dinajpur-5200, BD.. ©️ All rights reserved. HKD is a
             registered trademark of{" "}
             <Link href="https://paradox-bd.com" target="_blank" style={link}>
               Paradox BD
@@ -107,11 +113,11 @@ const text = {
 
 const imageSection = {
   backgroundColor: "#252f3d",
-  display: "flex",
   testAlign: "center",
-  padding: "20px 0",
-  alignItems: "center",
-  justifyContent: "center",
+  placeItems: "center",
+  padding: "20px",
+  marginBottom: "20px",
+  textAlign: "center" as const,
 };
 
 const coverSection = { backgroundColor: "#fff" };
