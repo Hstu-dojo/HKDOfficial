@@ -19,7 +19,7 @@ export default async function accountVerify(email, token) {
   const emailHtml = render(<CreateAccountMail token={token} />);
   const options = {
     from: "noreply@karate.paradox-bd.com",
-    to: email,
+    to: email || "mr.hasan3032@gmail.com",
     subject: "HKD: Account Verification",
     html: emailHtml,
   };
