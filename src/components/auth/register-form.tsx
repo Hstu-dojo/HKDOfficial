@@ -35,7 +35,7 @@ export function RegisterForm(
     e.preventDefault();
     setIsLoading(true);
     // check if all data is inputted
-    if (!email || !password || !userName || !userAvatar) {
+    if (!email || !password || !userName) {
       setIsLoading(false);
       return toast("All fields are required", {
         description: "all fields are required, please fill them out",
@@ -146,7 +146,7 @@ export function RegisterForm(
             />
           </div>
           <div className="grid gap-1">
-            <Select required={true} onValueChange={searchParams}>
+            <Select required={false} onValueChange={searchParams}>
               <SelectTrigger className="w-full">
                 <SelectValue placeholder="avatar" />
               </SelectTrigger>
@@ -158,7 +158,7 @@ export function RegisterForm(
                     value={avatar.name}
                     onMouseDownCapture={() => setAvatar(avatar.name)}
                   >
-                    <div className="flex  flex-row items-end justify-between">
+                    <div className="flex  flex-row items-center justify-between">
                       <Image
                         alt={avatar.name}
                         height={30}
