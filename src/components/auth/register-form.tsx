@@ -29,7 +29,7 @@ export function RegisterForm(
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [userName, setUsername] = useState("");
-  const [userAvatar, setAvatar] = useState("");
+  const [userAvatar, setAvatar] = useState("Milo");
   const router = useRouter();
   const onSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -51,16 +51,14 @@ export function RegisterForm(
         body: JSON.stringify({ email, password, userName, userAvatar }),
       });
       if (!response.ok) {
-        toast("something went wrong", {
+        toast(response?.statusText || "something went wrong", {
           description: "something went wrong, please try again later",
           action: {
-            label: "Home",
-            onClick: () => router.push("/"),
+            label: "Login",
+            onClick: () => router.push("/login"),
           },
         });
       }
-      console.log(response);
-
       //   return redirect("/auth/signin");
       setIsLoading(false);
       if (response.ok) {
@@ -74,7 +72,6 @@ export function RegisterForm(
         return router.push("/login");
       }
     } catch (error) {
-      console.error(error);
       setIsLoading(false);
       toast("something went wrong", {
         description: "something went wrong, please try again later",
@@ -146,7 +143,7 @@ export function RegisterForm(
             />
           </div>
           <div className="grid gap-1">
-            <Select required={false} onValueChange={searchParams}>
+            <Select required={false}>
               <SelectTrigger className="w-full">
                 <SelectValue placeholder="avatar" />
               </SelectTrigger>

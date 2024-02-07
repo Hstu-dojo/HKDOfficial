@@ -24,7 +24,7 @@ export const POST = async (req: NextRequest, res: NextResponse) => {
       {
         message: "User already exists!",
       },
-      { status: 400 },
+      { status: 400, statusText: "User already exists! try logging in" },
     );
   }
 
