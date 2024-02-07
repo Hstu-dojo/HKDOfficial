@@ -23,7 +23,7 @@ export default function AuthenticationPage() {
             width={36}
             height={36}
           />
-          HSTU Dojo
+          <span className="hidden lg:flex">HSTU Dojo</span>
         </div>
       </Link>
       <div className="container relative  grid h-[800px] flex-col items-center justify-center lg:max-w-none lg:grid-cols-2 lg:px-0">

@@ -50,6 +50,7 @@ export function RegisterForm(
         },
         body: JSON.stringify({ email, password, userName, userAvatar }),
       });
+      console.log(response);
       if (!response.ok) {
         toast(response?.statusText || "something went wrong", {
           description: "something went wrong, please try again later",
@@ -143,7 +144,7 @@ export function RegisterForm(
             />
           </div>
           <div className="grid gap-1">
-            <Select required={false}>
+            <Select required={false} onValueChange={(e) => console.log(e)}>
               <SelectTrigger className="w-full">
                 <SelectValue placeholder="avatar" />
               </SelectTrigger>
@@ -152,8 +153,7 @@ export function RegisterForm(
                   <SelectItem
                     key={avatar.name}
                     className=""
-                    value={avatar.name}
-                    onMouseDownCapture={() => setAvatar(avatar.icon)}
+                    value={avatar.icon}
                   >
                     <div className="flex  flex-row items-center justify-between">
                       <Image
