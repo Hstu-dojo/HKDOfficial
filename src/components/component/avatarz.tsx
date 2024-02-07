@@ -27,7 +27,7 @@ export function Avatarz() {
     setAvatars(avatarsData as any);
   }, []);
   return (
-    <div className="grid grid-cols-1 gap-4 p-4 md:grid-cols-2 md:p-6 lg:grid-cols-3">
+    <div className="mt-16 grid grid-cols-1 gap-4 p-4 md:grid-cols-2 md:p-6 lg:mt-28 lg:grid-cols-3">
       {avatars.map((avatar: any, index: any) => (
         <div key={index}>
           <div className="group relative overflow-hidden rounded-lg border border-solid">
@@ -41,7 +41,7 @@ export function Avatarz() {
               </Button>
             </Link>
             <Image
-              alt="Product 1"
+              alt={avatar.name}
               className="h-60 w-full object-cover"
               height={300}
               width={400}
