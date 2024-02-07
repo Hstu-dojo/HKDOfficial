@@ -8,6 +8,16 @@ import avatarsData from "@/db/avatars.json";
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import {
+  Drawer,
+  DrawerClose,
+  DrawerContent,
+  DrawerDescription,
+  DrawerFooter,
+  DrawerHeader,
+  DrawerTitle,
+  DrawerTrigger,
+} from "@/components/ui/drawer";
 
 export function Avatarz() {
   const [avatars, setAvatars] = useState([]);
@@ -21,24 +31,15 @@ export function Avatarz() {
       {avatars.map((avatar: any, index: any) => (
         <div key={index}>
           <div className="group relative overflow-hidden rounded-lg border border-solid">
-            <Link href={`/avatar/${avatar.name}/edit`}>
+            <Link href={`/avatar/edit/${avatar.name}`}>
               <Button
                 className="absolute right-2 top-2"
                 size="md"
-                variant="default"
+                variant="outline"
               >
                 Edit
               </Button>
             </Link>
-            <Button
-              className="absolute inset-0 z-10 flex items-center justify-center rounded-lg bg-gray-900/40 opacity-0 transition-opacity dark:bg-gray-50"
-              size="md"
-              variant="ghost"
-            >
-              <ZoomInIcon className="fill-accent h-6 w-6" />
-              View zoom
-              <span className="sr-only">View item</span>
-            </Button>
             <Image
               alt="Product 1"
               className="h-60 w-full object-cover"
@@ -53,9 +54,49 @@ export function Avatarz() {
               <h3 className="text-lg font-semibold md:text-xl">
                 {avatar.name}
               </h3>
-              <p className="text-sm font-bold text-secondary dark:text-secondary">
-                zoom
-              </p>
+
+              <Drawer>
+                <DrawerTrigger>
+                  <Button
+                    variant="link"
+                    className="text-sm font-bold text-secondary dark:text-secondary"
+                  >
+                    <ZoomInIcon />
+                    <span>ZOOM</span>
+                  </Button>
+                </DrawerTrigger>
+                <DrawerContent>
+                  <DrawerHeader>
+                    <DrawerTitle>{avatar.name}</DrawerTitle>
+                    <DrawerDescription>
+                      <Image
+                        alt={avatar.name}
+                        className="h-60 w-full object-cover"
+                        height={500}
+                        width={500}
+                        src={avatar.icon}
+                        style={{
+                          objectFit: "fill",
+                        }}
+                      />
+                    </DrawerDescription>
+                  </DrawerHeader>
+                  <DrawerFooter>
+                    <Link href={`/avatar/edit/${avatar.name}`}>
+                      <Button
+                        className="absolute right-2 top-2"
+                        size="md"
+                        variant="outline"
+                      >
+                        Edit
+                      </Button>
+                    </Link>
+                    <DrawerClose>
+                      <Button variant="destructive">Close</Button>
+                    </DrawerClose>
+                  </DrawerFooter>
+                </DrawerContent>
+              </Drawer>
             </div>
           </div>
         </div>
