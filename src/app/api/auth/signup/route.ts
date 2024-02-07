@@ -29,6 +29,20 @@ export const POST = async (req: NextRequest, res: NextResponse) => {
       { status: 400, statusText: "User already exists! try logging in" },
     );
   }
+  const existingUserName = await prisma?.user?.findFirst({
+    where: {
+      userName,
+    },
+  });
+
+  if (existingUserName) {
+    return NextResponse.json(
+      {
+        message: "Username already exists!",
+      },
+      { status: 400, statusText: "Username already exists! try diffreent username" },
+    );
+  }
 
   const hashedPassword = await hash(password);
   const user = await createUser({
