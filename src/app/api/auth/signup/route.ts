@@ -2,12 +2,13 @@
 import { NextResponse, NextRequest } from "next/server";
 import { createUser, findUserByEmail } from "@/lib/db/user";
 import { hash } from "@/lib/hash";
-// const uid = require("uid2");
+const uid = require("uid2");
 import { prisma } from "@/lib/connect-db";
 import accountVerify from "@/actions/emailSend/accountVerify";
 
 export const POST = async (req: NextRequest, res: NextResponse) => {
-  // const id = uid(5);
+  const id = uid(5);
+  console.log(id);
   const data = await req.json();
 
   const email = data["email"];
@@ -40,7 +41,10 @@ export const POST = async (req: NextRequest, res: NextResponse) => {
       {
         message: "Username already exists!",
       },
-      { status: 400, statusText: "Username already exists! try diffreent username" },
+      {
+        status: 400,
+        statusText: "Username already exists! try diffreent username",
+      },
     );
   }
 
@@ -49,12 +53,13 @@ export const POST = async (req: NextRequest, res: NextResponse) => {
     email,
     password: hashedPassword,
     userName,
-    userAvatar
+    userAvatar,
   });
   //@ts-ignore
   const verificationToken = await prisma.verificationToken.create({
     data: {
       uid: user.id,
+      token: id,
     },
   });
 

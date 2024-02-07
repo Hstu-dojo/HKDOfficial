@@ -146,7 +146,7 @@ model Level{
 model VerificationToken {
   id         String   @id @default(uuid())
   uid        String   @unique
-  token      String   @default(uuid())
+  token      String   
   validity   Int      @default(1)
  
   user       User     @relation(fields: [uid], references: [id])
