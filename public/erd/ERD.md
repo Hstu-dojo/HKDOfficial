@@ -50,6 +50,8 @@ erDiagram
     String email UK
     Boolean emailVerified "nullable"
     String password
+    String userName UK
+    String userAvatar
     DateTime created_at
     DateTime updated_at
 }
@@ -146,6 +148,8 @@ erDiagram
   - `email`: 
   - `emailVerified`: 
   - `password`: 
+  - `userName`: 
+  - `userAvatar`: 
   - `created_at`: 
   - `updated_at`: 
 

@@ -3,13 +3,17 @@ import { prisma } from "@/lib/connect-db";
 type User = {
   email: string;
   password: string;
+  userName: string;
+  userAvatar: string;
 };
 
-export const createUser = async ({ email, password }: User) => {
+export const createUser = async ({ email, password, userName, userAvatar }: User) => {
   return await prisma.user.create({
     data: {
       email,
       password,
+      userName,
+      userAvatar,
     },
   });
 };

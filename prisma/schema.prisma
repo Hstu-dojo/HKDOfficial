@@ -85,6 +85,8 @@ model User {
   email         String    @unique
   emailVerified Boolean?  @default(false)
   password      String
+  userName      String    @unique
+  userAvatar    String
   account       Account?
   sessions      Session?
   providers     Provider[]

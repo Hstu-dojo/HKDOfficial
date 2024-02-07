@@ -12,6 +12,8 @@ export const POST = async (req: NextRequest, res: NextResponse) => {
 
   const email = data["email"];
   const password = data["password"];
+  const userName = data["userName"];
+  const userAvatar = data["userAvatar"];
 
   const existingUser = await prisma?.user?.findFirst({
     where: {
@@ -32,6 +34,8 @@ export const POST = async (req: NextRequest, res: NextResponse) => {
   const user = await createUser({
     email,
     password: hashedPassword,
+    userName,
+    userAvatar
   });
   //@ts-ignore
   const verificationToken = await prisma.verificationToken.create({

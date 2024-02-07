@@ -29,13 +29,13 @@ export function RegisterForm(
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [userName, setUsername] = useState("");
-  const [userAvatar, setAvatar] = useState("Milo");
+  const [userAvatar, setAvatar] = useState("/image/avatar/Milo.svg");
   const router = useRouter();
   const onSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setIsLoading(true);
     // check if all data is inputted
-    if (!email || !password || !userName) {
+    if (!email || !password || !userName || !userAvatar) {
       setIsLoading(false);
       return toast("All fields are required", {
         description: "all fields are required, please fill them out",
@@ -153,7 +153,7 @@ export function RegisterForm(
                     key={avatar.name}
                     className=""
                     value={avatar.name}
-                    onMouseDownCapture={() => setAvatar(avatar.name)}
+                    onMouseDownCapture={() => setAvatar(avatar.icon)}
                   >
                     <div className="flex  flex-row items-center justify-between">
                       <Image
