@@ -91,7 +91,7 @@ model User {
   sessions      Session?
   providers     Provider[]
   role          Role[]
-  verificationToken VerificationToken?
+  verificationToken VerificationToken[]
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
   @@map("user")
