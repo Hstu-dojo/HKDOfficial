@@ -30,7 +30,7 @@ export default function EmailLayout({
         <Container style={container}>
           <Section style={coverSection}>
             <Section style={imageSection}>
-              <img
+              <Img
                 src={`https://i.ibb.co/JKRHSNw/logo.png`}
                 alt="HKD's Logo"
                 style={{
