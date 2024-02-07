@@ -144,7 +144,7 @@ export function RegisterForm(
             />
           </div>
           <div className="grid gap-1">
-            <Select required={false} onValueChange={(e) => console.log(e)}>
+            <Select required={false} onValueChange={(e) => setAvatar(e)}>
               <SelectTrigger className="w-full">
                 <SelectValue placeholder="avatar" />
               </SelectTrigger>
