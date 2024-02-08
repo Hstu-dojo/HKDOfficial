@@ -8,7 +8,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import Link from "next/link";
-
+import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 interface UserAuthFormProps extends React.HTMLAttributes<HTMLDivElement> {}
 
 export function UserAuthForm(
@@ -18,13 +19,36 @@ export function UserAuthForm(
   console.log(searchParams?.callbackUrl);
   const [isLoading, setIsLoading] = React.useState<boolean>(false);
 
+  const router = useRouter();
   async function onSubmit(event: React.SyntheticEvent) {
     event.preventDefault();
     setIsLoading(true);
+    // get the form data
+    const form = event.currentTarget as HTMLFormElement;
+    const formData = new FormData(form);
+    const email = formData.get("email") as string;
+    const password = formData.get("password") as string;
 
-    setTimeout(() => {
+    try {
+      const response = await signIn("credentials", {
+        email,
+        password,
+        redirect: false,
+      });
+      if (!response?.ok) {
+        toast.error("invalid credentials or user not found");
+      }
+      if (response?.ok) {
+        console.log(response)
+        toast.success("Welcome back!");
+        router.push(searchParams?.callbackUrl || "/");
+      }
       setIsLoading(false);
-    }, 3000);
+    } catch (error) {
+      console.error(error);
+      toast.error("Something went wrong");
+      setIsLoading(false);
+    }
   }
 
   return (
@@ -37,12 +61,30 @@ export function UserAuthForm(
             </Label>
             <Input
               id="email"
+              name="email"
               placeholder="name@example.com"
               type="email"
               autoCapitalize="none"
               autoComplete="email"
               autoCorrect="off"
               disabled={isLoading}
+              required={true}
+            />
+          </div>
+          <div className="grid gap-1">
+            <Label className="sr-only" htmlFor="password">
+              Email
+            </Label>
+            <Input
+              id="password"
+              name="password"
+              placeholder="XXXXXXXXXXXXXX"
+              type="password"
+              autoCapitalize="none"
+              autoComplete="password"
+              autoCorrect="off"
+              disabled={isLoading}
+              required={true}
             />
           </div>
           <Button disabled={isLoading}>
@@ -53,7 +95,7 @@ export function UserAuthForm(
           </Button>
         </div>
       </form>
-      <div className="flex-rol flex flex-wrap items-center justify-between relative bottom-4">
+      <div className="flex-rol relative bottom-4 flex flex-wrap items-center justify-between">
         <small>
           new user?{" "}
           <Link className="hover:underline" href="/register">

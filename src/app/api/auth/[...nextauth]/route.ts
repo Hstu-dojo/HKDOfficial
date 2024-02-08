@@ -3,6 +3,7 @@ import CredentialsProvider from "next-auth/providers/credentials";
 import GitHubProvider from "next-auth/providers/github";
 import { compare } from "@/lib/hash";
 import { findUserByEmail } from "@/lib/db/user";
+import { NextResponse } from "next/server";
 
 export const authOptions: NextAuthOptions = {
   providers: [
@@ -16,7 +17,7 @@ export const authOptions: NextAuthOptions = {
         },
         password: { label: "Password", type: "password" },
       },
-      async authorize(credentials, req) {
+      async authorize(credentials, req): Promise<any> {
         if (!credentials?.email || !credentials?.password) {
           return null;
         }
@@ -35,12 +36,12 @@ export const authOptions: NextAuthOptions = {
           return null;
         }
 
-        return {
+        return NextResponse.json({
           id: existingUser.id,
           email: existingUser.email,
           userName: existingUser.userName,
           userAvatar: existingUser.userAvatar,
-        };
+        });
       },
     }),
     GitHubProvider({
