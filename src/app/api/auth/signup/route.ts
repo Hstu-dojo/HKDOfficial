@@ -8,7 +8,7 @@ import accountVerify from "@/actions/emailSend/accountVerify";
 
 export const POST = async (req: NextRequest, res: NextResponse) => {
   const id = uid(5);
-  console.log(id);
+  // console.log(id);
   const data = await req.json();
 
   const email = data["email"];
@@ -43,7 +43,7 @@ export const POST = async (req: NextRequest, res: NextResponse) => {
       },
       {
         status: 400,
-        statusText: "Username already exists! try diffreent username",
+        statusText: "Username already taken! try different username",
       },
     );
   }
