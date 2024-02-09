@@ -44,12 +44,30 @@ export const authOptions: NextAuthOptions = {
           name: user.userName,
           image: user.userAvatar,
           profile: "hi there!",
+          role: "user",
         };
       },
     }),
     GitHubProvider({
       clientId: process.env.GITHUB_CLIENT_ID as string,
       clientSecret: process.env.GITHUB_CLIENT_SECRET as string,
+      async profile(profile) {
+        const user = await findUserByEmail(profile?.email);
+        let about = "";
+        if (user) {
+          about = "user exists!";
+        } else {
+          about = "user does not exist!";
+        }
+        return {
+          id: profile?.id,
+          name: profile?.name,
+          email: profile?.email,
+          image: profile?.avatar_url,
+          profile: profile?.bio,
+          role: about || "user",
+        };
+      },
     }),
   ],
   pages: {
@@ -68,6 +86,7 @@ export const authOptions: NextAuthOptions = {
           name: token.name,
           image: token.image as string | null | undefined,
           profile: token.profile,
+          role: token.role,
         },
       };
     },
@@ -82,6 +101,7 @@ export const authOptions: NextAuthOptions = {
           name: u.name,
           image: u.image,
           profile: u.profile,
+          role: u.role,
         };
       }
 

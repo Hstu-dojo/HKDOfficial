@@ -90,7 +90,7 @@ model User {
   account       Account?
   sessions      Session?
   providers     Provider[]
-  role          Role[]
+  role          Role?
   verificationToken VerificationToken[]
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
