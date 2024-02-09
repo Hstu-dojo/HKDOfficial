@@ -44,7 +44,7 @@ export const authOptions: NextAuthOptions = {
           name: user.userName,
           image: user.userAvatar,
           profile: "hi there!",
-          role: "user",
+          role: user.defaultRole as string,
         };
       },
     }),
@@ -55,9 +55,9 @@ export const authOptions: NextAuthOptions = {
         const user = await findUserByEmail(profile?.email);
         let about = "";
         if (user) {
-          about = "user exists!";
+          about = user.defaultRole;
         } else {
-          about = "user does not exist!";
+          about = "GUEST";
         }
         return {
           id: profile?.id,
@@ -65,7 +65,7 @@ export const authOptions: NextAuthOptions = {
           email: profile?.email,
           image: profile?.avatar_url,
           profile: profile?.bio,
-          role: about || "user",
+          role: about || "GUEST",
         };
       },
     }),
