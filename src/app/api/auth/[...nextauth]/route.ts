@@ -55,7 +55,7 @@ export const authOptions: NextAuthOptions = {
         const user = await findUserByEmail(profile?.email);
         let about = "";
         if (user) {
-          about = user.defaultRole;
+          about = user.defaultRole as string;
         } else {
           about = "GUEST";
         }
