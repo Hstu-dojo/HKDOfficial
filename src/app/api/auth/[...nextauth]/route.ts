@@ -3,12 +3,14 @@ import CredentialsProvider from "next-auth/providers/credentials";
 import GitHubProvider from "next-auth/providers/github";
 import { compare } from "@/lib/hash";
 import { findUserByEmail } from "@/lib/db/user";
-import { NextResponse } from "next/server";
 
 export const authOptions: NextAuthOptions = {
+  session: {
+    strategy: "jwt",
+  },
   providers: [
     CredentialsProvider({
-      name: "Credentials",
+      name: "Sign In",
       credentials: {
         email: {
           label: "Email",
@@ -21,27 +23,28 @@ export const authOptions: NextAuthOptions = {
         if (!credentials?.email || !credentials?.password) {
           return null;
         }
-        const existingUser = await findUserByEmail(credentials.email);
+        const user = await findUserByEmail(credentials.email);
 
-        if (!existingUser) {
+        if (!user) {
           return null;
         }
 
         const matchPassword = await compare(
           credentials.password,
-          existingUser.password as string,
+          user.password as string,
         );
 
         if (!matchPassword) {
           return null;
         }
 
-        return NextResponse.json({
-          id: existingUser.id,
-          email: existingUser.email,
-          userName: existingUser.userName,
-          userAvatar: existingUser.userAvatar,
-        });
+        return {
+          id: user.id + "",
+          email: user.email,
+          name: user.userName,
+          image: user.userAvatar,
+          profile: "hi there!",
+        };
       },
     }),
     GitHubProvider({
@@ -51,8 +54,40 @@ export const authOptions: NextAuthOptions = {
   ],
   pages: {
     signIn: "/login",
+    signOut: "/logout",
   },
-  session: {},
+  callbacks: {
+    session: ({ session, token }) => {
+      console.log("session callback", { session, token });
+      return {
+        ...session,
+        user: {
+          ...session.user,
+          id: token.id,
+          email: token.email,
+          name: token.name,
+          image: token.image as string | null | undefined,
+          profile: token.profile,
+        },
+      };
+    },
+    jwt: ({ token, user }) => {
+      console.log("jwt callback", { token, user });
+      if (user) {
+        const u = user as unknown as any;
+        return {
+          ...token,
+          id: u.id,
+          email: u.email,
+          name: u.name,
+          image: u.image,
+          profile: u.profile,
+        };
+      }
+
+      return token;
+    },
+  },
 };
 
 const handler = NextAuth(authOptions);

@@ -7,9 +7,11 @@ import { DarkModeSwitch } from "../dark-mode-switch";
 import { mainNav } from "@/config/site";
 import { cn } from "@/lib/utils";
 import { MobileNav } from "./mobile-nav";
+import { signIn, signOut, useSession } from "next-auth/react";
 
 const Header = () => {
   const [stickyClass, setStickyClass] = useState("");
+  const { data: session } = useSession();
 
   useEffect(() => {
     window.addEventListener("scroll", stickyHeader);

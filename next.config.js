@@ -15,7 +15,7 @@ const withPWA = require("@ducanh2912/next-pwa").default({
 
 const nextConfig = {
   experimental: {
-    ServerComponentsExternalPackages: ["@prisma/client", "bcrypt"],
+    serverComponentsExternalPackages: ["@prisma/client", "bcrypt"],
   },
   images: {
     remotePatterns: [
