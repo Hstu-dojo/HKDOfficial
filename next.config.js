@@ -1,4 +1,8 @@
 /** @type {import('next').NextConfig} */
+const withNextra = require("nextra")({
+  theme: "nextra-theme-docs",
+  themeConfig: "./theme.config.jsx",
+});
 const withPWA = require("@ducanh2912/next-pwa").default({
   dest: "public",
   cacheOnFrontEndNav: true,
@@ -43,4 +47,5 @@ const nextConfig = {
   },
 };
 // module.exports = removeImports(withPWA(nextConfig));
-module.exports = withPWA(nextConfig);
+
+module.exports = withPWA(withNextra(nextConfig));
