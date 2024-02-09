@@ -14,7 +14,7 @@ export default function LoginModal() {
   const router = useRouter();
   const pathname = usePathname();
 
-  const IsOpen = pathname.includes("/login");
+  const IsOpen = pathname?.includes("/login");
 
   return (
     <Dialog open={IsOpen} onOpenChange={() => router.back()}>
