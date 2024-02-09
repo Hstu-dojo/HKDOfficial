@@ -47,5 +47,6 @@ const nextConfig = {
   },
 };
 // module.exports = removeImports(withPWA(nextConfig));
+module.exports = withNextra();
 
-module.exports = withPWA(withNextra(nextConfig));
+module.exports = withPWA(nextConfig);
