@@ -21,9 +21,9 @@ generator markdown {
 // create enumeration of roles
 enum Roletype {
   ADMIN
-  HR
-  EMPLOYEE
-  GUEST
+  MODERATOR
+  INSTRUCTOR
+  MEMBER
 }
 enum IdentityType {
   NID
@@ -90,7 +90,7 @@ model User {
   account       Account?
   sessions      Session?
   providers     Provider[]
-  role          Role?
+  role          Roletype  @default(MEMBER)
   verificationToken VerificationToken[]
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
@@ -121,11 +121,11 @@ model Provider {
 
 model Role{
   id            String    @id @default(uuid())
-  role Roletype @default(GUEST)
-  levelId String
+  role Roletype @default(MEMBER)
+  levelId String? @unique
+  userId String @unique
 
   level Level?
-  user User @relation(fields: [id], references: [id])
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
 

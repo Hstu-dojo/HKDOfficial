@@ -1,5 +1,5 @@
 export default {
-  logo: <span>HKD Docs</span>,
+  logo: <span>HKD</span>,
   project: {
     link: "https://github.com/hasanshahriar32",
   },

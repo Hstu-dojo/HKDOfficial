@@ -52,6 +52,7 @@ erDiagram
     String password
     String userName UK
     String userAvatar
+    Roletype role
     DateTime created_at
     DateTime updated_at
 }
@@ -73,7 +74,8 @@ erDiagram
 "role" {
     String id PK
     Roletype role
-    String levelId
+    String levelId UK "nullable"
+    String userId UK
     DateTime created_at
     DateTime updated_at
 }
@@ -93,7 +95,6 @@ erDiagram
 "account" |o--|| "user" : user
 "Session" |o--|| "user" : user
 "provider" }o--|| "user" : user
-"role" |o--|| "user" : user
 "level" |o--|| "role" : role
 "VerificationToken" |o--|| "user" : user
 ```
@@ -150,6 +151,7 @@ erDiagram
   - `password`: 
   - `userName`: 
   - `userAvatar`: 
+  - `role`: 
   - `created_at`: 
   - `updated_at`: 
 
@@ -176,6 +178,7 @@ erDiagram
   - `id`: 
   - `role`: 
   - `levelId`: 
+  - `userId`: 
   - `created_at`: 
   - `updated_at`: 
 
