@@ -24,6 +24,7 @@ enum Roletype {
   MODERATOR
   INSTRUCTOR
   MEMBER
+  GUEST
 }
 enum IdentityType {
   NID
@@ -78,6 +79,7 @@ model Session {
   userId       String @unique
   expires      DateTime
   user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  @@map("session")
 }
 
 model User {
@@ -88,9 +90,10 @@ model User {
   userName      String    @unique
   userAvatar    String
   account       Account?
-  sessions      Session?
+  sessions      Session[]
   providers     Provider[]
-  role          Roletype  @default(MEMBER)
+  role          UserRole[]
+  defaultRole   Roletype  @default(GUEST)
   verificationToken VerificationToken[]
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
@@ -119,17 +122,19 @@ model Provider {
   user         User     @relation(fields: [userId], references: [id])
 }
 
-model Role{
+model UserRole{
   id            String    @id @default(uuid())
-  role Roletype @default(MEMBER)
+  role Roletype @default(GUEST)
   levelId String? @unique
   userId String @unique
 
-  level Level?
+
+  level Level? @relation(fields: [levelId], references: [id])
+  user User @relation(fields: [userId], references: [id])
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
 
-  @@map("role")
+  @@map("user-role")
 
 }
 model Level{
@@ -137,9 +142,9 @@ model Level{
   levelName String
 
   features String[]
-  role Role @relation(fields: [id], references: [id])
+  role UserRole[]
 
-  @@map("level")
+  @@map("permission-group")
 }
 
 
@@ -152,4 +157,5 @@ model VerificationToken {
   user       User     @relation(fields: [uid], references: [id])
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
+  @@map("verification-token")
 }

@@ -39,7 +39,7 @@ erDiagram
     DateTime created_at
     DateTime updated_at
 }
-"Session" {
+"session" {
     String id PK
     String sessionToken UK
     String userId FK
@@ -52,7 +52,7 @@ erDiagram
     String password
     String userName UK
     String userAvatar
-    Roletype role
+    Roletype defaultRole
     DateTime created_at
     DateTime updated_at
 }
@@ -71,20 +71,20 @@ erDiagram
     DateTime created_at
     DateTime updated_at
 }
-"role" {
+"user-role" {
     String id PK
     Roletype role
-    String levelId UK "nullable"
-    String userId UK
+    String levelId FK "nullable"
+    String userId FK
     DateTime created_at
     DateTime updated_at
 }
-"level" {
+"permission-group" {
     String id PK
     String levelName
     String features
 }
-"VerificationToken" {
+"verification-token" {
     String id PK
     String uid FK
     String token
@@ -93,10 +93,11 @@ erDiagram
     DateTime updated_at
 }
 "account" |o--|| "user" : user
-"Session" |o--|| "user" : user
+"session" |o--|| "user" : user
 "provider" }o--|| "user" : user
-"level" |o--|| "role" : role
-"VerificationToken" |o--|| "user" : user
+"user-role" |o--|| "permission-group" : level
+"user-role" |o--|| "user" : user
+"verification-token" |o--|| "user" : user
 ```
 
 ### `account`
@@ -134,7 +135,7 @@ erDiagram
   - `created_at`: 
   - `updated_at`: 
 
-### `Session`
+### `session`
 
 **Properties**
   - `id`: 
@@ -151,7 +152,7 @@ erDiagram
   - `password`: 
   - `userName`: 
   - `userAvatar`: 
-  - `role`: 
+  - `defaultRole`: 
   - `created_at`: 
   - `updated_at`: 
 
@@ -172,7 +173,7 @@ erDiagram
   - `created_at`: 
   - `updated_at`: 
 
-### `role`
+### `user-role`
 
 **Properties**
   - `id`: 
@@ -182,14 +183,14 @@ erDiagram
   - `created_at`: 
   - `updated_at`: 
 
-### `level`
+### `permission-group`
 
 **Properties**
   - `id`: 
   - `levelName`: 
   - `features`: 
 
-### `VerificationToken`
+### `verification-token`
 
 **Properties**
   - `id`: 
