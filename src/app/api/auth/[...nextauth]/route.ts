@@ -44,7 +44,7 @@ export const authOptions: NextAuthOptions = {
           name: user.userName,
           image: user.userAvatar,
           profile: "hi there!",
-          role: user.defaultRole as string,
+          role: (user.defaultRole as string) || "GUEST",
         };
       },
     }),
@@ -72,7 +72,6 @@ export const authOptions: NextAuthOptions = {
   ],
   pages: {
     signIn: "/login",
-    signOut: "/logout",
   },
   callbacks: {
     session: ({ session, token }) => {
