@@ -1,17 +1,32 @@
-import { createI18nMiddleware } from "next-international/middleware";
-import { type NextRequest } from "next/server";
+import { createMiddleware } from "next-easy-middlewares";
+import { withLocaleMiddleware } from "./middlewares/internationalization";
+import { withAuthMiddleware } from "./middlewares/authentication";
 
-const I18nMiddleware = createI18nMiddleware({
-  locales: ["en", "fr"],
-  defaultLocale: "en",
-});
+const middlewares = {
+  // define your middlewares here...
+  // first internationalization, then auth middleware!
+  "/": withLocaleMiddleware,
+  "/about": withLocaleMiddleware,
+  "/login": withLocaleMiddleware,
+  "/profile": withLocaleMiddleware,
+  "/[id]/profile": withAuthMiddleware,
+  "/docs": withAuthMiddleware,
+  "/docs/:path*": withAuthMiddleware,
+};
 
-export function middleware(request: NextRequest) {
-  return I18nMiddleware(request);
-}
+// Create middlewares helper
+export const middleware = createMiddleware(middlewares);
 
 export const config = {
+  /*
+   * Match all paths except for:
+   * 1. /api/ routes
+   * 2. /_next/ (Next.js internals)
+   * 3. /_static (inside /public)
+   * 4. /_vercel (Vercel internals)
+   * 5. Static files (e.g. /favicon.ico, /sitemap.xml, /robots.txt, etc.)
+   */
   matcher: [
-    "/((?!api|docs|static|.*\\..*|_next|favicon.ico|sitemap.xml|robots.txt).*)",
+    "/((?!api|static|.*\\..*|_next|favicon.ico|sitemap.xml|robots.txt).*)",
   ],
 };

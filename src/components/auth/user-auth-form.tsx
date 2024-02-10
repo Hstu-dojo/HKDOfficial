@@ -10,13 +10,18 @@ import { Label } from "@/components/ui/label";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-interface UserAuthFormProps extends React.HTMLAttributes<HTMLDivElement> {}
 
-export function UserAuthForm(
-  { className, ...props }: UserAuthFormProps,
-  { searchParams }: any,
-) {
-  console.log(searchParams?.callbackUrl);
+export interface UserAuthFormProps
+  extends React.HTMLAttributes<HTMLDivElement> {
+  callbackUrl?: string;
+}
+
+export function UserAuthForm({
+  className,
+  callbackUrl,
+  ...props
+}: UserAuthFormProps) {
+  console.log(callbackUrl);
   const [isLoading, setIsLoading] = React.useState<boolean>(false);
 
   const router = useRouter();
@@ -39,9 +44,9 @@ export function UserAuthForm(
         toast.error("invalid credentials or user not found");
       }
       if (response?.ok) {
-        console.log(response)
+        console.log(response);
         toast.success("Welcome back!");
-        router.push(searchParams?.callbackUrl || "/");
+        router.push(callbackUrl || "/");
       }
       setIsLoading(false);
     } catch (error) {
@@ -123,7 +128,7 @@ export function UserAuthForm(
         type="button"
         disabled={isLoading}
         onClick={() => {
-          signIn("github", { callbackUrl: searchParams?.callbackUrl || "/" });
+          signIn("github", { callbackUrl: callbackUrl || "/" });
         }}
       >
         {/* {isLoading ? (
