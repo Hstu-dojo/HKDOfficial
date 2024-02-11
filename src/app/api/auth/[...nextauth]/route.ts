@@ -78,7 +78,7 @@ const authOptions: UpdatedNextAuthOptions = {
   },
   callbacks: {
     session: ({ session, token }) => {
-      console.log("session callback", { session, token });
+      // console.log("session callback", { session, token });
       return {
         ...session,
         user: {
@@ -93,7 +93,7 @@ const authOptions: UpdatedNextAuthOptions = {
       };
     },
     jwt: ({ token, user }) => {
-      console.log("jwt callback", { token, user });
+      // console.log("jwt callback", { token, user });
       if (user) {
         const u = user as unknown as any;
         return {

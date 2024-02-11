@@ -18,6 +18,7 @@ export const metadata: Metadata = {
 };
 
 export default function AuthenticationPage({ searchParams }: any) {
+  console.log(searchParams);
   const callbackUrl = searchParams?.callbackUrl as ExtendedUserAuthFormProps;
   return (
     <>

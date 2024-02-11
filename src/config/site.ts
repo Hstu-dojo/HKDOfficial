@@ -122,9 +122,10 @@ export const mainNav = [
         items: [],
       },
     ],
-  },{
+  },
+  {
     title: "User",
-    href: "/login?callbackUrl=profile"
+    href: "/login?callbackUrl=%2Fprofile",
   },
 ] satisfies MainNavItem[];
 

@@ -8,6 +8,7 @@ const middlewares = {
   "/": withLocaleMiddleware,
   "/about": withLocaleMiddleware,
   "/login": withLocaleMiddleware,
+  "/register": withLocaleMiddleware,
   "/profile": withLocaleMiddleware,
   "/[id]/profile": withAuthMiddleware,
   "/docs": withAuthMiddleware,

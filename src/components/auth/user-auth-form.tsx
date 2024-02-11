@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { signIn } from "next-auth/react";
+import { useSession, signIn } from "next-auth/react";
 import { cn } from "@/lib/utils";
 import { FaGithub } from "react-icons/fa6";
 import { Button } from "@/components/ui/button";
@@ -10,7 +10,6 @@ import { Label } from "@/components/ui/label";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-
 export interface UserAuthFormProps
   extends React.HTMLAttributes<HTMLDivElement> {
   callbackUrl?: string;
@@ -23,8 +22,13 @@ export function UserAuthForm({
 }: UserAuthFormProps) {
   console.log(callbackUrl);
   const [isLoading, setIsLoading] = React.useState<boolean>(false);
-
+  const { data: session } = useSession();
   const router = useRouter();
+  React.useLayoutEffect(() => {
+    if (session?.user?.email) {
+      router.push(callbackUrl || "/");
+    }
+  }, [callbackUrl, router, session?.user?.email]);
   async function onSubmit(event: React.SyntheticEvent) {
     event.preventDefault();
     setIsLoading(true);
