@@ -3,8 +3,11 @@ import CredentialsProvider from "next-auth/providers/credentials";
 import GitHubProvider from "next-auth/providers/github";
 import { compare } from "@/lib/hash";
 import { findUserByEmail } from "@/lib/db/user";
+// fix Property 'authOptions' is incompatible with index signature.
+//fix Type error: Type 'OmitWithTag<typeof import("C:/Users/mrhas/Desktop/karate_dojo/src/app/api/auth/[...nextauth]/route"), "GET" | "POST" | "HEAD" | "OPTIONS" | "PUT" | "DELETE" | "PATCH" | "config" | "generateStaticParams" | ... 6 more ... | "maxDuration", "">' does not satisfy the constraint '{ [x: string]: never; }'.
+interface UpdatedNextAuthOptions extends NextAuthOptions {}
 
-export const authOptions: NextAuthOptions = {
+const authOptions: UpdatedNextAuthOptions = {
   session: {
     strategy: "jwt",
   },
