@@ -87,7 +87,7 @@ export default function AuthenticationPage({ searchParams }: any) {
             
 
 
-            <UserAuthForm callbackUrl={callbackUrl} />
+            <UserAuthForm callbackUrl={callbackUrl?.toString()} />
             <p className="px-8 text-center text-sm text-muted-foreground">
               By clicking continue, you agree to our{" "}
               <Link
