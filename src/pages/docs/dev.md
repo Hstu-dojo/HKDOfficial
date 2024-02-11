@@ -19,7 +19,7 @@
 </p>
 <br>
 
-<picture><img src="https://github.com/hasanshahriar32/hasanshahriar32/blob/main/general.svg" alt=" animation" align="right" /></picture>
+<picture><img src="https://raw.githubusercontent.com/hasanshahriar32/hasanshahriar32/d99eb7ce5c5e1b27bb2bdf0a1055a16cc12cbde2/general.svg" alt=" animation" align="right" /></picture>
 
 - 👀 I’m interested in Electronics, Robotics, Web development, Cybersecurity, and Basic graphics design.
 - 🌱 I’m currently learning full-stack web development.
@@ -122,6 +122,7 @@ Shahriar Hasan is not only a skilled professional but also a pleasure to work wi
 <picture> <a href="https://app.daily.dev/hasanshahriar32"><img  align="right"  src="https://raw.githubusercontent.com/hasanshahriar32/hasanshahriar32/devcard/devcard.svg" width="300" alt="Shahriar Hasan's Dev Card"/></a></picture>
 
 </p>
+<br>
 
 <!--   ![](https://raw.githubusercontent.com/hasanshahriar32/cf-stats/main/output/light_card.svg#gh-dark-mode-only)   -->
 
@@ -130,17 +131,17 @@ Shahriar Hasan is not only a skilled professional but also a pleasure to work wi
 <div>
 <details>
   <summary>Click to see Activity Skyline</summary>
-  <div>
+  <!-- <div>
     <a href="https://hasanshahriar32.github.io/GithubCity/?name=hasanshahriar32&year=2023">
       <img src="https://github.com/hasanshahriar32/hasanshahriar32/blob/main/metrics.plugin.skyline.city.svg" alt="skyline" width="100%" />
     </a>
-  </div>
+  </div> -->
   <p align="center">
   <a href="https://github.com/hasanshahriar32/">
 
   <source media="(prefers-color-scheme: dark)" srcset="github-snake-dark.svg" />
 <!--   <source media="(prefers-color-scheme: light)" srcset="github-snake.svg" /> -->
-  <img src="https://github.com/hasanshahriar32/hasanshahriar32/blob/output/snake.svg" alt="Snake animation" width="1400" />
+  <img src="https://raw.githubusercontent.com/hasanshahriar32/hasanshahriar32/d426d56398f6e43e82b3389cbbcfeb10b3f7dd35/snake.svg" alt="Snake animation" width="1400" />
 
   </a>
 </p>
@@ -156,13 +157,13 @@ Shahriar Hasan is not only a skilled professional but also a pleasure to work wi
 </p>
 
 <div>
-<details>
+<!-- <details>
   <summary>Miscellaneous</summary>
   <div>
      <p align="center"><img src="https://github.com/oxygen51/oxygen51/blob/main/2.gif" alt="Bt" width="100%">
      <p align="center"><img src="https://github.com/oxygen51/oxygen51/blob/main/4.gif" alt="Bt" width="100%">
   </div>
-</details>
+</details> -->
 
 ### ✍️ Random Dev Quote
 
