@@ -59,8 +59,9 @@ erDiagram
 "provider" {
     String id PK
     String userId FK
-    String provider
-    String providerAccountId
+    ProviderType provider
+    String providerAccountId "nullable"
+    String profile "nullable"
     String refresh_token "nullable"
     String access_token "nullable"
     Int expires_at "nullable"
@@ -163,6 +164,7 @@ erDiagram
   - `userId`: 
   - `provider`: 
   - `providerAccountId`: 
+  - `profile`: 
   - `refresh_token`: 
   - `access_token`: 
   - `expires_at`: 

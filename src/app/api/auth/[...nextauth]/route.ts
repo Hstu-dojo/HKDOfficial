@@ -56,14 +56,26 @@ const authOptions: UpdatedNextAuthOptions = {
       clientSecret: process.env.GITHUB_CLIENT_SECRET as string,
       async profile(profile) {
         const user = await findUserByEmail(profile?.email);
+        console.log(user)
         let about = "";
         if (user) {
-          about = user.defaultRole as string;
+          about = user?.defaultRole as string;
+          // if user is not verified, then verify the user
+          if (user?.emailVerified === false) {
+            await prisma?.user?.update({
+              where: {
+                id: user?.id,
+              },
+              data: {
+                emailVerified: true,
+              },
+            });
+          }
         } else {
           about = "GUEST";
         }
         return {
-          id: profile?.id,
+          id: user?.id || "0",
           name: profile?.name,
           email: profile?.email,
           image: profile?.avatar_url,

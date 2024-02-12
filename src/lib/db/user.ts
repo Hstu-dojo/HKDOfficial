@@ -7,7 +7,12 @@ type User = {
   userAvatar: string;
 };
 
-export const createUser = async ({ email, password, userName, userAvatar }: User) => {
+export const createUser = async ({
+  email,
+  password,
+  userName,
+  userAvatar,
+}: User) => {
   return await prisma.user.create({
     data: {
       email,
@@ -27,6 +32,9 @@ export const findUserByEmail = async (email: string) => {
   const user = await prisma.user.findUnique({
     where: {
       email,
+    },
+    include: {
+      providers: true,
     },
   });
   return user;
