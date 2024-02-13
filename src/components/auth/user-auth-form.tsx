@@ -56,7 +56,7 @@ export function UserAuthForm({
         //@ts-ignore
         if (updatedSession?.user?.emailVerified === false) {
           router.push(
-            `/onboarding/account-setup?callbackUrl=${callbackUrl || "/"}`,
+            `/onboarding/verify-email?callbackUrl=${callbackUrl || "/"}`,
           );
         }
         else router.push(callbackUrl || "/");
