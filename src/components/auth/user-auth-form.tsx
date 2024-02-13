@@ -141,7 +141,7 @@ export function UserAuthForm({
         type="button"
         disabled={isLoading}
         onClick={() => {
-          signIn("github", { callbackUrl: `/onboarding/account-setup?callbackUrl=${callbackUrl}` || callbackUrl || "/" });
+          signIn("github", { callbackUrl: `/en/onboarding/account-setup?callbackUrl=${callbackUrl}` || callbackUrl || "/" });
         }}
       >
         {/* {isLoading ? (
