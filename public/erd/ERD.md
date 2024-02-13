@@ -61,7 +61,7 @@ erDiagram
     String userId FK
     ProviderType provider
     String providerAccountId "nullable"
-    String profile "nullable"
+    Json profile "nullable"
     String refresh_token "nullable"
     String access_token "nullable"
     Int expires_at "nullable"

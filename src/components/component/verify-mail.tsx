@@ -7,20 +7,28 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
+import Image from "next/image";
 
 export function VerifyMail() {
   return (
     <div className="flex min-h-screen flex-col items-center justify-center bg-gray-100 dark:bg-gray-900">
       <Link href="/">
         <Button className="absolute right-4 top-4" variant="link">
-          skip for now
+          skip
         </Button>
       </Link>
       <div className="w-full max-w-md space-y-6 rounded-lg bg-white p-8 shadow-md dark:bg-gray-800">
         <h2 className="text-center text-3xl font-bold text-gray-900 dark:text-gray-100">
           Verify your email
         </h2>
-        <p className="text-center text-gray-600 dark:text-gray-400">
+        <Image
+          src="/image/lordicons/approved.gif"
+          alt=""
+          width={70}
+          height={70}
+          className="m-2 mx-auto border-spacing-2 rounded-full border border-double border-primary dark:opacity-100 dark:contrast-100 dark:invert dark:filter"
+        />
+        <p className="text-justify text-gray-600 dark:text-gray-400">
           We have sent a verification code to your email. Please enter the code
           below.
         </p>

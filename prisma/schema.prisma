@@ -110,7 +110,7 @@ model Provider {
   userId             String
   provider           ProviderType
   providerAccountId  String?
-  profile            String?
+  profile            Json?
   refresh_token      String?  
   access_token       String?  
   expires_at         Int?

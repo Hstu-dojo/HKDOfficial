@@ -48,6 +48,7 @@ const authOptions: UpdatedNextAuthOptions = {
           image: user.userAvatar,
           profile: "hi there!",
           role: (user.defaultRole as string) || "GUEST",
+          emailVerified: user.emailVerified,
         };
       },
     }),
@@ -56,7 +57,7 @@ const authOptions: UpdatedNextAuthOptions = {
       clientSecret: process.env.GITHUB_CLIENT_SECRET as string,
       async profile(profile) {
         const user = await findUserByEmail(profile?.email);
-        console.log(user)
+        // console.log(user);
         let about = "";
         if (user) {
           about = user?.defaultRole as string;
@@ -70,6 +71,21 @@ const authOptions: UpdatedNextAuthOptions = {
                 emailVerified: true,
               },
             });
+            user.emailVerified = true;
+          }
+
+          // if the provider of github is not set, then set the provider
+          if (
+            user?.providers?.find((p) => p.provider === "GitHub") === undefined
+          ) {
+            await prisma?.provider?.create({
+              data: {
+                provider: "GitHub",
+                providerAccountId: profile?.id.toString() as string,
+                userId: user?.id as string,
+                profile: profile as object | "not found" as object,
+              },
+            });
           }
         } else {
           about = "GUEST";
@@ -81,6 +97,7 @@ const authOptions: UpdatedNextAuthOptions = {
           image: profile?.avatar_url,
           profile: profile?.bio,
           role: about || "GUEST",
+          emailVerified: user?.emailVerified,
         };
       },
     }),
@@ -101,6 +118,7 @@ const authOptions: UpdatedNextAuthOptions = {
           image: token.image as string | null | undefined,
           profile: token.profile,
           role: token.role,
+          emailVerified: token.emailVerified,
         },
       };
     },
@@ -116,6 +134,7 @@ const authOptions: UpdatedNextAuthOptions = {
           image: u.image,
           profile: u.profile,
           role: u.role,
+          emailVerified: u.emailVerified,
         };
       }
 

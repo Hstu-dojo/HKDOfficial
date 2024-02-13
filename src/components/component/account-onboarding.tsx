@@ -14,14 +14,25 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
+import Image from "next/image";
 
 export function AccountOnboarding() {
   return (
     <Card className="w-full max-w-3xl">
       <CardHeader>
-        <CardTitle className="text-2xl">Account Setup Wizard</CardTitle>
+        <CardTitle className="text-center text-3xl">
+          Account Setup Wizard
+        </CardTitle>
+        <Image
+          src="/image/lordicons/face-id.gif"
+          alt=""
+          width={70}
+          height={70}
+          className="m-2 mx-auto border-spacing-2 rounded-lg border border-double border-primary dark:opacity-100 dark:contrast-100 dark:invert dark:filter"
+        />
         <CardDescription>
-          Choose an image to personalize your account
+          Let us setup your account quickly. You will also be able to sign in
+          using these credentials as well as the provider you choose.
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
@@ -51,7 +62,7 @@ export function AccountOnboarding() {
         </div>
       </CardContent>
       <CardFooter>
-        <Button className="ml-auto">Next</Button>
+        <Button className="ml-auto">Bingo!</Button>
       </CardFooter>
     </Card>
   );

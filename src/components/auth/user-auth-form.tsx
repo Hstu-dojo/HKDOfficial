@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { useSession, signIn } from "next-auth/react";
+import { useSession, signIn, getSession } from "next-auth/react";
 import { cn } from "@/lib/utils";
 import { FaGithub } from "react-icons/fa6";
 import { Button } from "@/components/ui/button";
@@ -48,9 +48,18 @@ export function UserAuthForm({
         toast.error("invalid credentials or user not found");
       }
       if (response?.ok) {
-        console.log(response);
+        // console.log(response);
         toast.success("Welcome back!");
-        router.push(callbackUrl || "/");
+        // console.log(session);
+        const updatedSession = await getSession();
+        // console.log(updatedSession);
+        //@ts-ignore
+        if (updatedSession?.user?.emailVerified === false) {
+          router.push(
+            `/onboarding/account-setup?callbackUrl=${callbackUrl || "/"}`,
+          );
+        }
+        else router.push(callbackUrl || "/");
       }
       setIsLoading(false);
     } catch (error) {
