@@ -58,8 +58,7 @@ export function UserAuthForm({
           router.push(
             `/onboarding/verify-email?callbackUrl=${callbackUrl || "/"}`,
           );
-        }
-        else router.push(callbackUrl || "/");
+        } else router.push(callbackUrl || "/");
       }
       setIsLoading(false);
     } catch (error) {
@@ -141,8 +140,13 @@ export function UserAuthForm({
         type="button"
         disabled={isLoading}
         onClick={() => {
-          // signIn("github", { callbackUrl: `/en/onboarding/account-setup?callbackUrl=${callbackUrl}` || callbackUrl || "/" });
-          signIn("github", { callbackUrl: callbackUrl || "/" });
+          signIn("github", {
+            callbackUrl:
+              `/en/onboarding/account-setup?callbackUrl=${callbackUrl}` ||
+              callbackUrl ||
+              "/",
+          });
+          // signIn("github", { callbackUrl: callbackUrl || "/" });
         }}
       >
         {/* {isLoading ? (
