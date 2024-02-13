@@ -18,7 +18,7 @@ const transporter = nodemailer.createTransport({
 export default async function accountVerify(email, token) {
   const emailHtml = render(<CreateAccountMail token={token} />);
   const options = {
-    from: "noreply@karate.paradox-bd.com",
+    from: "noreply@hkd.paradox-bd.com",
     to: email || "mr.hasan3032@gmail.com",
     subject: "HKD: Account Verification",
     html: emailHtml,

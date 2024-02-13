@@ -97,8 +97,8 @@ erDiagram
 "session" |o--|| "user" : user
 "provider" }o--|| "user" : user
 "user-role" |o--|| "permission-group" : level
-"user-role" |o--|| "user" : user
-"verification-token" |o--|| "user" : user
+"user-role" }o--|| "user" : user
+"verification-token" }o--|| "user" : user
 ```
 
 ### `account`

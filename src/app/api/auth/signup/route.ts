@@ -39,7 +39,7 @@ export const POST = async (req: NextRequest, res: NextResponse) => {
   if (existingUserName) {
     return NextResponse.json(
       {
-        message: "Username already exists!",
+        message: "Username already exists!, or wrong input.",
       },
       {
         status: 400,

@@ -8,7 +8,7 @@ export default function NotFound() {
     <>
       <Header />
       <main className="relative">
-        <section className="mt-[4.5rem] bg-muted py-32 dark:bg-slate-900 lg:mt-[161px]">
+        <section className="mt-[4.5rem] bg-muted py-32 text-muted-foreground dark:bg-slate-900 lg:mt-[161px]">
           <div className="container text-center">
             <Image
               src="/not_found.png"

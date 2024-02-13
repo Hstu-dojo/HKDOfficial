@@ -62,7 +62,7 @@ export function AccountOnboarding() {
         </div>
       </CardContent>
       <CardFooter>
-        <Button className="ml-auto">Bingo!</Button>
+        <Button className="ml-auto">Abrakadabra!</Button>
       </CardFooter>
     </Card>
   );
