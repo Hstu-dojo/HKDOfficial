@@ -20,7 +20,7 @@ export function UserAuthForm({
   callbackUrl,
   ...props
 }: UserAuthFormProps) {
-  console.log(callbackUrl);
+  // console.log(callbackUrl);
   const [isLoading, setIsLoading] = React.useState<boolean>(false);
   const { data: session } = useSession();
   const router = useRouter();

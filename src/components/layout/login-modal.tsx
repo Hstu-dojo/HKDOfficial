@@ -10,7 +10,7 @@ import {
 import { UserAuthForm } from "@/components/auth/user-auth-form";
 import { cn } from "@/lib/utils";
 
-export default function LoginModal() {
+export default function LoginModal({ callbackUrl }: any) {
   const router = useRouter();
   const pathname = usePathname();
 
@@ -26,7 +26,7 @@ export default function LoginModal() {
             </h2>
           </DialogTitle>
         </DialogHeader>
-        <UserAuthForm />
+        <UserAuthForm callbackUrl={callbackUrl?.toString()} />
       </DialogContent>
     </Dialog>
   );
