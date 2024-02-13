@@ -11,6 +11,8 @@ const middlewares = {
   "/register": withLocaleMiddleware,
   "/profile": withLocaleMiddleware,
   "/onboarding/:path*": withLocaleMiddleware,
+
+  "/[id]/onboarding/:path*": withAuthMiddleware,
   "/[id]/profile": withAuthMiddleware,
   "/docs": withAuthMiddleware,
   "/docs/:path*": withAuthMiddleware,
