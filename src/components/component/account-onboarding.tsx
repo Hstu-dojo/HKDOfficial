@@ -15,6 +15,8 @@ import { useRouter } from "next/navigation";
 interface UserAuthFormProps extends React.HTMLAttributes<HTMLDivElement> {}
 import { toast } from "sonner";
 import avatarsData from "@/db/avatars.json";
+import { Skeleton } from "@/components/ui/skeleton";
+
 import {
   Select,
   SelectContent,
@@ -45,9 +47,14 @@ export function AccountOnboarding({ callbackUrl }: any) {
 
   useLayoutEffect(() => {
     setLoadingVerify(true);
-    //@ts-ignore
-    if (session?.user?.emailVerified === true) {
-      router.push(callbackUrl || "/");
+    try {
+      //@ts-ignore
+      if (session?.user?.emailVerified === true) {
+        router.push(callbackUrl || "/");
+      }
+    } catch (error) {
+      console.log(error);
+    } finally {
       setLoadingVerify(false);
     }
     //@ts-ignore
@@ -131,7 +138,13 @@ export function AccountOnboarding({ callbackUrl }: any) {
           </CardDescription>
         </CardHeader>
         {loadingVerify === true ? (
-          "loading"
+          <div className="mx-[3%] mb-5 flex w-[94%] flex-col space-y-3">
+            <Skeleton className="h-[125px] w-full rounded-xl" />
+            <div className="space-y-2">
+              <Skeleton className="h-4 w-full" />
+              <Skeleton className="h-4 w-[80%]" />
+            </div>
+          </div>
         ) : (
           <>
             <CardContent className="space-y-4">
