@@ -45,7 +45,7 @@ export function AccountOnboarding({ callbackUrl }: any) {
   const [userAvatar, setAvatar] = useState("/image/avatar/Milo.svg");
   const router = useRouter();
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     setLoadingVerify(true);
     try {
       const updatedSession = getSession();
