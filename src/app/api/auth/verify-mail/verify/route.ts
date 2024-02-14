@@ -58,11 +58,23 @@ export const POST = async (req: NextRequest, res: NextResponse) => {
       {
         message: "Invalid verification code!",
       },
-      { status: 404, statusText: "Invalid verification code!" },
+      { status: 404, statusText: "Invalid verification code given!" },
     );
   }
 
   // Proceed with the verification process since the code is valid
+  // Update the user's emailVerified status
+  const updatedUser = await prisma?.user?.update({
+    where: {
+      id: existingUser.id,
+    },
+    data: {
+      emailVerified: true,
+    },
+  });
 
-  return NextResponse.json({ message: "Verification successful!" });
+  return NextResponse.json(
+    { message: "Verification successful!" },
+    { status: 200, statusText: "Verification successful!" },
+  );
 };

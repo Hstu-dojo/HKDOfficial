@@ -41,7 +41,7 @@ export function RegisterForm(
         description: "all fields are required, please fill them out",
       });
     }
-    console.log(email, password, userName, userAvatar);
+    // console.log(email, password, userName, userAvatar);
     try {
       const response = await fetch("/api/auth/signup", {
         method: "POST",

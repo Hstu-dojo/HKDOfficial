@@ -8,11 +8,120 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import Image from "next/image";
+import { useSession } from "next-auth/react";
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
+import { FormEvent, useState } from "react";
 
-export function VerifyMail() {
+export function VerifyMail({ callbackUrl }: any) {
+  const { data: session } = useSession();
+  const router = useRouter();
+  const resend = async () => {
+    if (!session?.user?.email) {
+      return toast.error("something went wrong", {
+        description: "No email address found at your session!",
+        action: {
+          label: "Login",
+          onClick: () => router.push("/login"),
+        },
+      });
+    }
+    try {
+      const response = await fetch("/api/auth/verify-mail/resend", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email: session?.user?.email }),
+      });
+      console.log(response);
+      if (!response?.ok || response?.status !== 200) {
+        toast.error("something went wrong", {
+          description:
+            response?.statusText || "Failed to resend verification code",
+          action: {
+            label: "Home",
+            onClick: () => router.push("/"),
+          },
+        });
+      }
+      if (response?.status === 200) {
+        toast.success("Verification code sent successfully!");
+      }
+    } catch (error) {
+      console.log(error);
+      toast.error("something went wrong", {
+        description:
+          (error as string) || "Verification code sent unsuccessful!",
+        action: {
+          label: "Login",
+          onClick: () => router.push("/login"),
+        },
+      });
+    }
+  };
+  const [code, setCode] = useState("");
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+
+  const handleVerify = async (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setIsLoading(true);
+
+    if (!session?.user?.email) {
+      setIsLoading(false);
+      return toast.error("something went wrong", {
+        description: "No email address found at your session!",
+        action: {
+          label: "Login",
+          onClick: () => router.push("/login"),
+        },
+      });
+    }
+
+    if (!code) {
+      setIsLoading(false);
+      return toast.error("Verification code is required");
+    }
+
+    try {
+      const response = await fetch("/api/auth/verify-mail/verify", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email: session?.user?.email, code: code }),
+      });
+      console.log(response);
+      if (!response?.ok || response?.status !== 200) {
+        toast.error("something went wrong", {
+          description: response?.statusText || "Failed to verify code",
+          action: {
+            label: "Home",
+            onClick: () => router.push("/"),
+          },
+        });
+      }
+      if (response?.status === 200) {
+        toast.success("Verification successful!");
+        router?.push(callbackUrl || "/");
+      }
+      if (response?.status === 402) {
+        router?.push(callbackUrl || "/");
+      }
+    } catch (error) {
+      console.log(error);
+      toast.error("something went wrong", {
+        description: (error as string) || "Verification was unsuccessful!",
+        action: {
+          label: "Home",
+          onClick: () => router.push("/"),
+        },
+      });
+    }
+  };
   return (
     <div className="flex min-h-screen flex-col items-center justify-center bg-gray-100 dark:bg-gray-900">
-      <Link href="/">
+      <Link href={`${callbackUrl || "/"}`}>
         <Button className="absolute right-4 top-4" variant="link">
           skip
         </Button>
@@ -32,18 +141,25 @@ export function VerifyMail() {
           We have sent a verification code to your email. Please enter the code
           below.
         </p>
-        <div className="space-y-4">
+        <form onSubmit={handleVerify} className="space-y-4">
           <div className="space-y-2">
             <Label htmlFor="code">Verification Code</Label>
-            <Input id="code" required />
+            <Input
+              name="code"
+              onChange={(e) => setCode(e.target.value)}
+              placeholder="g_1GY"
+              type="text"
+              id="code"
+              required={true}
+            />
           </div>
           <Button className="w-full" type="submit">
             Verify Code
           </Button>
-        </div>
+        </form>
         <p className="text-center text-sm text-gray-500 dark:text-gray-400">
           Did not receive the code?
-          <Button className="underline" variant="link">
+          <Button onClick={() => resend()} className="underline" variant="link">
             Resend Code
           </Button>
         </p>
