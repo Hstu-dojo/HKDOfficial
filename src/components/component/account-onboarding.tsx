@@ -5,7 +5,7 @@
  */
 
 import { FormEvent, useState, useEffect, useLayoutEffect } from "react";
-import { signIn, useSession } from "next-auth/react";
+import { signIn, useSession, getSession } from "next-auth/react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -48,8 +48,10 @@ export function AccountOnboarding({ callbackUrl }: any) {
   useLayoutEffect(() => {
     setLoadingVerify(true);
     try {
+      const updatedSession = getSession();
+      // console.log(updatedSession);
       //@ts-ignore
-      if (session?.user?.emailVerified === true) {
+      if (updatedSession?.user?.emailVerified === true) {
         router.push(callbackUrl || "/");
       }
     } catch (error) {
