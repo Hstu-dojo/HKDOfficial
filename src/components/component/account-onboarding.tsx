@@ -48,8 +48,8 @@ export function AccountOnboarding({ callbackUrl }: any) {
     //@ts-ignore
     if (session?.user?.emailVerified === true) {
       router.push(callbackUrl || "/");
+      setLoadingVerify(false);
     }
-    setLoadingVerify(false);
     //@ts-ignore
   }, [callbackUrl, router, session?.user?.emailVerified]);
 
