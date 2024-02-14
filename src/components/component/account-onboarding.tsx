@@ -41,7 +41,7 @@ export function AccountOnboarding({ callbackUrl }: any) {
   const [email, setEmail] = useState(session?.user?.email || "");
   const [password, setPassword] = useState("");
   const [userName, setUsername] = useState("");
-  const [loadingVerify, setLoadingVerify] = useState(false);
+  const [loadingVerify, setLoadingVerify] = useState(true);
   const [userAvatar, setAvatar] = useState("/image/avatar/Milo.svg");
   const router = useRouter();
 
