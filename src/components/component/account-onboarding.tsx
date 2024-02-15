@@ -34,33 +34,19 @@ import {
 } from "@/components/ui/card";
 import Image from "next/image";
 
-export function AccountOnboarding({ callbackUrl }: any) {
+export function AccountOnboarding(
+  { callbackUrl }: any,
+  { loadingVerify }: any,
+) {
   //   console.log(searchParams?.callbackUrl);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const { data: session } = useSession();
   const [email, setEmail] = useState(session?.user?.email || "");
   const [password, setPassword] = useState("");
   const [userName, setUsername] = useState("");
-  const [loadingVerify, setLoadingVerify] = useState(true);
+
   const [userAvatar, setAvatar] = useState("/image/avatar/Milo.svg");
   const router = useRouter();
-
-  useEffect(() => {
-    setLoadingVerify(true);
-    try {
-      const updatedSession = getSession();
-      // console.log(updatedSession);
-      //@ts-ignore
-      if (updatedSession?.user?.emailVerified === true) {
-        router.push(callbackUrl || "/");
-      }
-    } catch (error) {
-      console.log(error);
-    } finally {
-      setLoadingVerify(false);
-    }
-    //@ts-ignore
-  }, [callbackUrl, router, session?.user?.emailVerified]);
 
   const onSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
