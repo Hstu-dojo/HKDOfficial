@@ -6,6 +6,10 @@
 ## default
 ```mermaid
 erDiagram
+"email-log" {
+    String id PK
+    Json payload
+}
 "account" {
     Int id PK
     String userId FK
@@ -100,6 +104,12 @@ erDiagram
 "user-role" }o--|| "user" : user
 "verification-token" }o--|| "user" : user
 ```
+
+### `email-log`
+
+**Properties**
+  - `id`: 
+  - `payload`: 
 
 ### `account`
 

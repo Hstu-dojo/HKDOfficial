@@ -37,6 +37,12 @@ enum ProviderType {
   GitHub
 }
 
+model EmailLog{
+  id            String    @id @default(uuid())
+  payload       Json
+  @@map("email-log")
+}
+
 
 model Account {
   id                 Int  @id @default(sequence())
