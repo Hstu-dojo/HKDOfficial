@@ -7,6 +7,6 @@ export async function POST(req: NextRequest, res: NextResponse) {
     //@ts-ignore
     payload: data || {},
   });
-  console.log(data);
+  console.log(result);
   return NextResponse.json({ status: 200, statusText: JSON.stringify(result) });
 }
