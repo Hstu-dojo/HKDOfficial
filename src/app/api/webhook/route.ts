@@ -4,8 +4,9 @@ import { prisma } from "@/lib/connect-db";
 export async function POST(req: NextRequest, res: NextResponse) {
   const data = await req.json();
   const result = await prisma?.emailLog.create({
-    //@ts-ignore
-    payload: data || {},
+    data: {
+      payload: data,
+    },
   });
   console.log(result);
   return NextResponse.json({ status: 200, statusText: JSON.stringify(result) });
