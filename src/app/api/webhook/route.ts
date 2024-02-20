@@ -3,7 +3,7 @@ import { prisma } from "@/lib/connect-db";
 
 export async function POST(req: NextRequest, res: NextResponse) {
   const data = await req.json();
-  const result = prisma?.emailLog.create({
+  const result = await prisma?.emailLog.create({
     //@ts-ignore
     payload: data || {},
   });

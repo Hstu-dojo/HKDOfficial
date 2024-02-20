@@ -7,3 +7,7 @@
 ## DB Link
 
 <https://hkd.onrender.com>
+
+## CRON Job Monitor
+
+- [DB UP Render Monitor](https://s1zvvp0k.status.cron-job.org/)
