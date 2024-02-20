@@ -7,100 +7,100 @@
 ```mermaid
 erDiagram
 "email-log" {
-    String id PK
-    Json payload
+  String id PK
+  Json payload
 }
 "account" {
-    Int id PK
-    String userId FK
-    String name
-    String name_bangla
-    String father_name
-    String image
-    String avatar "nullable"
-    String bio "nullable"
-    String sex
-    DateTime dob
-    String phone
-    String address
-    String city
-    String state
-    String country
-    String postalCode
-    Int age
-    String bloodGroup
-    Float height
-    Float weight
-    String occupation
-    IdentityType identity_type
-    String identity_number
-    String identity_image "nullable"
-    String institute
-    String faculty "nullable"
-    String department "nullable"
-    String session "nullable"
-    String signature_image
-    DateTime created_at
-    DateTime updated_at
+  Int id PK
+  String userId FK
+  String name
+  String name_bangla
+  String father_name
+  String image
+  String avatar "nullable"
+  String bio "nullable"
+  String sex
+  DateTime dob
+  String phone
+  String address
+  String city
+  String state
+  String country
+  String postalCode
+  Int age
+  String bloodGroup
+  Float height
+  Float weight
+  String occupation
+  IdentityType identity_type
+  String identity_number
+  String identity_image "nullable"
+  String institute
+  String faculty "nullable"
+  String department "nullable"
+  String session "nullable"
+  String signature_image
+  DateTime created_at
+  DateTime updated_at
 }
 "session" {
-    String id PK
-    String sessionToken UK
-    String userId FK
-    DateTime expires
+  String id PK
+  String sessionToken UK
+  String userId FK
+  DateTime expires
 }
 "user" {
-    String id PK
-    String email UK
-    Boolean emailVerified "nullable"
-    String password
-    String userName UK
-    String userAvatar
-    Roletype defaultRole
-    DateTime created_at
-    DateTime updated_at
+  String id PK
+  String email UK
+  Boolean emailVerified "nullable"
+  String password
+  String userName UK
+  String userAvatar
+  Roletype defaultRole
+  DateTime created_at
+  DateTime updated_at
 }
 "provider" {
-    String id PK
-    String userId FK
-    ProviderType provider
-    String providerAccountId "nullable"
-    Json profile "nullable"
-    String refresh_token "nullable"
-    String access_token "nullable"
-    Int expires_at "nullable"
-    String token_type "nullable"
-    String scope "nullable"
-    String id_token "nullable"
-    String session_state "nullable"
-    DateTime created_at
-    DateTime updated_at
+  String id PK
+  String userId FK
+  ProviderType provider
+  String providerAccountId "nullable"
+  Json profile "nullable"
+  String refresh_token "nullable"
+  String access_token "nullable"
+  Int expires_at "nullable"
+  String token_type "nullable"
+  String scope "nullable"
+  String id_token "nullable"
+  String session_state "nullable"
+  DateTime created_at
+  DateTime updated_at
 }
 "user-role" {
-    String id PK
-    Roletype role
-    String levelId FK "nullable"
-    String userId FK
-    DateTime created_at
-    DateTime updated_at
+  String id PK
+  Roletype role
+  String levelId FK "nullable"
+  String userId FK
+  DateTime created_at
+  DateTime updated_at
 }
 "permission-group" {
-    String id PK
-    String levelName
-    String features
+  String id PK
+  String levelName
+  String features
 }
 "verification-token" {
-    String id PK
-    String uid FK
-    String token
-    Int validity
-    DateTime created_at
-    DateTime updated_at
+  String id PK
+  String uid FK
+  String token
+  Int validity
+  DateTime created_at
+  DateTime updated_at
 }
 "account" |o--|| "user" : user
 "session" |o--|| "user" : user
 "provider" }o--|| "user" : user
-"user-role" |o--|| "permission-group" : level
+"user-role" |o--o| "permission-group" : level
 "user-role" }o--|| "user" : user
 "verification-token" }o--|| "user" : user
 ```
