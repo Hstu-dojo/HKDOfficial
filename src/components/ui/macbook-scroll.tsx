@@ -117,7 +117,7 @@ export const MacbookScroll = ({
         )}
         {badge && <div className="absolute bottom-4 left-4">{badge}</div>}
       </div>
-      
+      {/* @ts-ignore */}
       <BackgroundBeams style={{
           translateY: textTransform,
           opacity: textOpacity,
