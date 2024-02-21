@@ -122,6 +122,7 @@ export const CardItem = ({
 
   useEffect(() => {
     handleAnimations();
+    //@ts-ignore
   }, [isMouseEntered]);
 
   const handleAnimations = () => {

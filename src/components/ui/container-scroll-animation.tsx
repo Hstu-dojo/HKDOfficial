@@ -114,6 +114,7 @@ export const Card = ({
             <div className="absolute top-2 right-2 rounded-full text-xs font-bold bg-white px-2 py-1">
               {user.badge}
             </div>
+            {/* @ts-ignore */}
             <img
               src={user.image}
               className="rounded-tr-md rounded-tl-md text-sm "
