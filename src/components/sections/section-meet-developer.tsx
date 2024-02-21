@@ -11,13 +11,13 @@ const MeetDev = () => {
             Meet the Developer. <br /> Md. Hasan
           </span>
         }
-        badge={
-          <Link href="https://peerlist.io/manuarora">
-            <Badge className="h-10 w-10 -rotate-12 transform" />
-          </Link>
-        }
+        // badge={
+        //   <Link href="https://peerlist.io/manuarora">
+        //     <Badge className="h-10 w-10 -rotate-12 transform" />
+        //   </Link>
+        // }
         src={`/hero/dev.png`}
-        showGradient={true}
+        showGradient={false}
       />
     </div>
   );
