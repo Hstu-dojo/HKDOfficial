@@ -6,11 +6,11 @@ const MeetDev = () => {
   return (
     <div className="w-full  overflow-hidden">
       <MacbookScroll
-        // title={
-        //   <span>
-        //     Meet the Developer. <br /> Md. Hasan
-        //   </span>
-        // }
+        title={
+          <span>
+            Meet the Developer. <br /> Md. Hasan
+          </span>
+        }
         // badge={
         //   <Link href="https://peerlist.io/manuarora">
         //     <Badge className="h-10 w-10 -rotate-12 transform" />
