@@ -25,6 +25,7 @@ import { IconCaretLeftFilled } from "@tabler/icons-react";
 import { IconCaretDownFilled } from "@tabler/icons-react";
 import Image from "next/image";
 import Link from "next/link";
+import { BackgroundBeams } from "./background-beams";
 
 export const MacbookScroll = ({
   src,
@@ -116,6 +117,8 @@ export const MacbookScroll = ({
         )}
         {badge && <div className="absolute bottom-4 left-4">{badge}</div>}
       </div>
+      
+      <BackgroundBeams />
     </div>
   );
 };

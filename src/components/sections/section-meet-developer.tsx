@@ -1,7 +1,6 @@
 import React from "react";
 import { MacbookScroll } from "@/components/ui/macbook-scroll";
 import Link from "next/link";
-import { BackgroundBeams } from "../ui/background-beams";
 
 const MeetDev = () => {
   return (
@@ -20,7 +19,6 @@ const MeetDev = () => {
         src={`/hero/dev.png`}
         showGradient={false}
       />
-      <BackgroundBeams />
     </div>
   );
 };
