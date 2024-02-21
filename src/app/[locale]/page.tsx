@@ -7,7 +7,6 @@ import SectionLatestNews from "@/components/sections/section-latest-news";
 import SectionPartners from "@/components/sections/section-partners";
 import SectionPromo from "@/components/sections/section-promo";
 import SectionTestimonialsSlider from "@/components/sections/section-testimonials-slider";
-import MeetDev from "@/components/sections/section-meet-developer";
 import Furious5 from "@/components/sections/furious5/furious5";
 import { HallOfFrame } from "@/components/sections/section-hall-of-frame";
 
@@ -22,7 +21,6 @@ export default function Home() {
         <SectionTestimonialsSlider />
         <HallOfFrame />
         <SectionLatestNews />
-        <MeetDev />
         <Furious5 />
         <SectionPartners />
         <SectionCTA />
