@@ -8,6 +8,7 @@ import SectionPartners from "@/components/sections/section-partners";
 import SectionPromo from "@/components/sections/section-promo";
 import SectionTestimonialsSlider from "@/components/sections/section-testimonials-slider";
 import Furious5 from "@/components/sections/furious5/furious5";
+import { HallOfFrame } from "@/components/sections/section-hall-of-frame";
 
 export default function Home() {
   return (
@@ -18,6 +19,7 @@ export default function Home() {
         <SectionIconBoxes />
         <SectionPromo />
         <SectionTestimonialsSlider />
+        <HallOfFrame />
         <SectionLatestNews />
         <Furious5 />
         <SectionPartners />
