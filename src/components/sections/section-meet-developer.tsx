@@ -8,7 +8,7 @@ const MeetDev = () => {
       <MacbookScroll
         title={
           <span>
-            M33T 7H3 D3V. <br /> Mr. H4549
+            Meet the Developer. <br /> Md. Hasan
           </span>
         }
         badge={
