@@ -5,6 +5,7 @@ import * as DialogPrimitive from "@radix-ui/react-dialog";
 import { X } from "lucide-react";
 
 import { cn } from "@/lib/utils";
+import { BackgroundBeams } from "./background-beams";
 
 const Dialog = DialogPrimitive.Root;
 
@@ -25,7 +26,9 @@ const DialogOverlay = React.forwardRef<
       className,
     )}
     {...props}
-  />
+  >
+    <BackgroundBeams />
+  </DialogPrimitive.Overlay>
 ));
 DialogOverlay.displayName = DialogPrimitive.Overlay.displayName;
 

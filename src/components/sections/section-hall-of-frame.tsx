@@ -1,17 +1,19 @@
 "use client";
 import React from "react";
 import { ContainerScroll } from "@/components/ui/container-scroll-animation";
+import { BackgroundBeams } from "../ui/background-beams";
 
 export function HallOfFrame() {
   return (
     <div className="flex flex-col overflow-hidden">
+      <BackgroundBeams />
       <ContainerScroll
         users={users}
         titleComponent={
           <>
             <h1 className="text-4xl font-semibold text-black dark:text-white">
               Bringing you the <br />
-              <span className="text-4xl md:text-[6rem] font-bold mt-1 leading-none">
+              <span className="mt-1 text-4xl font-bold leading-none md:text-[6rem]">
                 Hall of Frame
               </span>
             </h1>

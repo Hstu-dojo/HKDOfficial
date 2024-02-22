@@ -9,6 +9,7 @@ import {
 } from "@/components/ui/dialog";
 import { UserAuthForm } from "@/components/auth/user-auth-form";
 import { cn } from "@/lib/utils";
+import { BackgroundBeams } from "../ui/background-beams";
 
 export default function LoginModal({ callbackUrl }: any) {
   const router = useRouter();
@@ -18,6 +19,7 @@ export default function LoginModal({ callbackUrl }: any) {
 
   return (
     <Dialog open={IsOpen} onOpenChange={() => router.back()}>
+      <BackgroundBeams />
       <DialogContent className="w-full max-w-[400px] rounded-md">
         <DialogHeader>
           <DialogTitle>

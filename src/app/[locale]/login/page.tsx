@@ -8,6 +8,7 @@ import {
   UserAuthForm,
   UserAuthFormProps,
 } from "@/components/auth/user-auth-form";
+import { BackgroundBeams } from "@/components/ui/background-beams";
 interface ExtendedUserAuthFormProps extends UserAuthFormProps {
   callbackUrl: string;
 }
@@ -76,6 +77,7 @@ export default function AuthenticationPage({ searchParams }: any) {
           </div>
         </div>
         <div className="lg:p-8">
+          <BackgroundBeams />
           <div className="mx-auto flex w-full flex-col justify-center space-y-6 sm:w-[350px]">
             <div className="flex flex-col space-y-2 text-center">
               <h1 className="text-2xl font-semibold tracking-tight">
@@ -85,8 +87,6 @@ export default function AuthenticationPage({ searchParams }: any) {
                 Enter your credentials below to log into your account
               </p>
             </div>
-            
-
 
             <UserAuthForm callbackUrl={callbackUrl?.toString()} />
             <p className="px-8 text-center text-sm text-muted-foreground">
