@@ -125,6 +125,16 @@ module.exports = {
           "0%, 100%": { transform: "translateY(5%)" },
           "50%": { transform: "translateY(0)" },
         },
+        spotlight: {
+          "0%": {
+            opacity: 0,
+            transform: "translate(-72%, -62%) scale(0.5)",
+          },
+          "100%": {
+            opacity: 1,
+            transform: "translate(-50%,-40%) scale(1)",
+          },
+        },
         "accordion-down": {
           from: { height: 0 },
           to: { height: "var(--radix-accordion-content-height)" },
@@ -148,11 +158,9 @@ module.exports = {
         "accordion-up": "accordion-up 0.2s ease-out",
         "fade-in": "fade-in 0.2s ease-in-out",
         "fade-out": "fade-out 0.2s ease-in-out",
+        spotlight: "spotlight 2s ease .75s 1 forwards",
       },
     },
   },
-  plugins: [
-    require("tailwindcss-animate"),
-    require("@tailwindcss/typography"),
-  ],
+  plugins: [require("tailwindcss-animate"), require("@tailwindcss/typography")],
 };
