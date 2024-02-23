@@ -18,7 +18,7 @@ export function GoogleGeminiEffectPWA() {
 
   return (
     <div
-      className="-pt-40 relative h-[400vh] w-full overflow-clip rounded-md dark:border dark:border-white/[0.1]"
+      className="-pt-40 relative h-[400vh] w-full overflow-clip"
       ref={ref}
     >
       <GoogleGeminiEffect

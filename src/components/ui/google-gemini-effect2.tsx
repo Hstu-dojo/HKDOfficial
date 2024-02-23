@@ -2,6 +2,8 @@
 import { cn } from "@/lib/utils";
 import { motion, MotionValue } from "framer-motion";
 import React from "react";
+import { useRouter } from "next/navigation";
+import { Button } from "@/components/ui/button";
 
 const transition = {
   duration: 0,
@@ -19,6 +21,7 @@ export const GoogleGeminiEffect = ({
   description?: string;
   className?: string;
 }) => {
+  const router = useRouter();
   return (
     <div className={cn("sticky top-80 -z-20", className)}>
       {/* <p className="text-lg md:text-7xl font-normal pb-4 text-center bg-clip-text text-transparent bg-gradient-to-b from-neutral-100 to-neutral-300">
@@ -30,9 +33,14 @@ export const GoogleGeminiEffect = ({
         works!`}
       </p> */}
       <div className="absolute  flex h-full w-full items-center justify-center ">
-        <button className="mx-auto mt-8 w-fit rounded-full bg-white px-2 py-1 text-xs font-bold text-black md:mt-24 md:px-4  md:py-2 md:text-base ">
+        <Button
+          size="lg"
+          variant={"outline"}
+          onClick={() => router.push("https://shahriarhasan.vercel.app")}
+          className="mx-auto mt-8 md:mt-24 md:px-4  md:py-2"
+        >
           visit: shahriarhasan.vercel.app
-        </button>
+        </Button>
       </div>
       <svg
         width="1440"
