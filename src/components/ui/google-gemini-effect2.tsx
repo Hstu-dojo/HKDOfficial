@@ -37,7 +37,7 @@ export const GoogleGeminiEffect = ({
           size="lg"
           variant={"outline"}
           onClick={() => router.push("https://shahriarhasan.vercel.app")}
-          className="mx-auto mt-8 md:mt-24 md:px-4  md:py-2"
+          className="mt-24 px-4 py-2"
         >
           visit: shahriarhasan.vercel.app
         </Button>
