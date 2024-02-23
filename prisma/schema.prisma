@@ -147,6 +147,7 @@ model UserRole{
   updated_at DateTime @updatedAt
 
   @@map("user-role")
+  @@unique([userId, role]) 
 
 }
 model Level{

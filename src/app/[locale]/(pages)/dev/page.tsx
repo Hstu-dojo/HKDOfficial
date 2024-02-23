@@ -3,6 +3,7 @@ import Footer from "@/components/layout/footer";
 import type { Metadata } from "next";
 import SectionPageTitle from "@/components/sections/section-page-title";
 import MeetDev from "@/components/sections/section-meet-developer";
+import { GoogleGeminiEffectPWA } from "@/components/sections/section-app-install";
 
 
 export const metadata: Metadata = {
@@ -17,6 +18,7 @@ export default function PageAbout() {
       <Header />
       <main>
         <MeetDev />
+        <GoogleGeminiEffectPWA />
       </main>
       <Footer />
     </>
