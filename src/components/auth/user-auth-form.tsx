@@ -20,13 +20,13 @@ export function UserAuthForm({
   callbackUrl,
   ...props
 }: UserAuthFormProps) {
-  // console.log(callbackUrl);
+  // console.log(callbackUrl); 
   const [isLoading, setIsLoading] = React.useState<boolean>(false);
   const { data: session } = useSession();
   const router = useRouter();
   React.useLayoutEffect(() => {
     if (session?.user?.email) {
-      router.push(callbackUrl || "/");
+      // router.push(callbackUrl || "/");
     }
   }, [callbackUrl, router, session?.user?.email]);
   async function onSubmit(event: React.SyntheticEvent) {

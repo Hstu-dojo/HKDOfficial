@@ -1,8 +1,9 @@
 import { withAuth } from "next-auth/middleware";
+import type { NextRequest } from "next/server";
 export const withAuthMiddleware: any = withAuth({
   callbacks: {
     authorized: async ({ req, token }) => {
-    //   console.log(token);
+      //   console.log(token);
       if (req?.nextUrl?.pathname === "/docs") {
         return (token?.role as String) === "ADMIN";
       }
