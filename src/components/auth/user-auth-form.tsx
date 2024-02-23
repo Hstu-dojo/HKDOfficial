@@ -26,7 +26,7 @@ export function UserAuthForm({
   const router = useRouter();
   React.useLayoutEffect(() => {
     if (session?.user?.email) {
-      // router.push(callbackUrl || "/");
+      router.push("/");
     }
   }, [callbackUrl, router, session?.user?.email]);
   async function onSubmit(event: React.SyntheticEvent) {
