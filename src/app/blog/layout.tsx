@@ -1,4 +1,3 @@
-import "../globals.css";
 import { Roboto } from "next/font/google";
 import BackToTop from "@/components/back-to-top";
 import React from "react";
@@ -17,7 +16,7 @@ export default async function RootLayout({
 }) {
   // get next theme color
   return (
-    <body className={`${roboto.className}`}>
+    <body style={{ color: "#64748B" }} className={`${roboto.className}`}>
       <Header />
       <div className="mt-16 md:mt-20">{children}</div>
       <BackToTop />
