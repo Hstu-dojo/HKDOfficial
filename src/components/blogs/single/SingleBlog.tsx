@@ -14,7 +14,10 @@ export default function SingleBlog({ post }: { post: SanityDocument }) {
   const { title, mainImage, body } = post;
 
   return (
-    <main className="container prose prose-lg mx-auto p-4">
+    <main
+      style={{ color: "#64748B" }}
+      className="container prose prose-lg mx-auto p-4"
+    >
       {title ? <h1>{title}</h1> : null}
       {mainImage ? (
         <Image
