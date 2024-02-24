@@ -72,6 +72,11 @@ export const mainNav = [
         items: [],
       },
       {
+        title: "Blog",
+        href: "/blog",
+        items: [],
+      },
+      {
         title: "Developer",
         href: "/dev",
         items: [],

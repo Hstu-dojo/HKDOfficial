@@ -12,7 +12,7 @@ export default function RootLayout({
   const locale = cookies().get("Next-Locale")?.value || "en";
   return (
     <html lang={locale} suppressHydrationWarning>
-      <body>
+      <body className="dark:bg-slate-850 dark:text-slate-400">
         {/* updated theme provider  */}
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
           {children}

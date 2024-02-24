@@ -69,9 +69,7 @@ export default async function RootLayout({
 }) {
   const session = await getServerSession();
   return (
-    <body
-      className={`${roboto.className} dark:bg-slate-850 dark:text-slate-400`}
-    >
+    <body className={`${roboto.className} `}>
       <SessionProvider session={session}>
         {children}
         {loginDialogue}
