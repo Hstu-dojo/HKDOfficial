@@ -94,60 +94,6 @@ module.exports = {
           foreground: "hsl(222.2 84% 4.9%)",
         },
       },
-      text: {
-        slate: {
-          base: "#64748B",
-          50: "#F8FAFC",
-          100: "#F1F5F9",
-          200: "#E2E8F0",
-          300: "#CBD5E1",
-          400: "#94A3B8",
-          500: "#64748B",
-          600: "#475569",
-          700: "#334155",
-          800: "#1E293B",
-          850: "#141C2E",
-          900: "#0F172A",
-          950: "#020617",
-        },
-        yellow: "#fbc02d",
-        green: "#44d88d",
-        border: "#E8ECED",
-        input: "#E8ECED",
-        ring: "hsl(222.2 84% 4.9%)",
-        background: "#ffffff",
-        foreground: "#333b69",
-        primary: {
-          DEFAULT: "#0097B2",
-          foreground: "#ffffff",
-        },
-        secondary: {
-          DEFAULT: "#5E17EB",
-          foreground: "#ffffff",
-        },
-        tertiary: {
-          DEFAULT: "#0CC0DF",
-        },
-        quaternary: {
-          DEFAULT: "#fa6262",
-        },
-        destructive: {
-          DEFAULT: "hsl(0 84.2% 60.2%)",
-          foreground: "hsl(210 40% 98%)",
-        },
-        muted: {
-          DEFAULT: "#f7f9fa",
-          foreground: "#6a798c",
-        },
-        popover: {
-          DEFAULT: "hsl(0 0% 100%)",
-          foreground: "hsl(224 71.4% 4.1%)",
-        },
-        card: {
-          DEFAULT: "hsl(0 0% 100%)",
-          foreground: "hsl(222.2 84% 4.9%)",
-        },
-      },
       transitionTimingFunction: {
         "out-flex": "cubic-bezier(0.05, 0.6, 0.4, 0.9)",
       },

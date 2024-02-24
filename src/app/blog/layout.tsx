@@ -2,6 +2,7 @@ import { Roboto } from "next/font/google";
 import BackToTop from "@/components/back-to-top";
 import React from "react";
 import Header from "@/components/layout/header";
+import { ThemeProvider } from "@/context/ThemeProvider";
 
 const roboto = Roboto({
   subsets: ["latin"],
@@ -16,9 +17,11 @@ export default async function RootLayout({
 }) {
   return (
     <body className={`${roboto.className} `}>
-      <Header />
-      <div className="mt-16 md:mt-20">{children}</div>
-      <BackToTop />
+      <ThemeProvider attribute="class" forcedTheme="light">
+        <Header />
+        <div className="mt-16 md:mt-20">{children}</div>
+        <BackToTop />
+      </ThemeProvider>
     </body>
   );
 }
