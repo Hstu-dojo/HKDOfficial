@@ -1,5 +1,5 @@
 {
-  "name": "margin_nextjs",
+  "name": "hstu_karate_dojo",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -34,7 +34,10 @@
     "@react-email/render": "^0.0.9",
     "@react-email/tailwind": "^0.0.12",
     "@react-google-maps/api": "^2.19.2",
+    "@sanity/client": "^6.14.3",
     "@sanity/image-url": "^1.0.2",
+    "@sanity/overlays": "^2.3.19",
+    "@sanity/react-loader": "^1.8.7",
     "@sanity/vision": "^3.30.0",
     "@svgr/core": "^8.1.0",
     "@svgr/webpack": "^8.1.0",

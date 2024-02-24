@@ -7,6 +7,8 @@ import BackToTop from "@/components/back-to-top";
 import { getServerSession } from "next-auth";
 import SessionProvider from "@/utils/SessionProvider";
 import React from "react";
+import { draftMode } from "next/headers";
+import LiveVisualEditing from "@/components/blogs/LiveVisualEditing";
 
 const roboto = Roboto({
   subsets: ["latin"],
@@ -66,6 +68,7 @@ export default async function RootLayout({
 }: {
   children: React.ReactNode;
   loginDialogue?: React.ReactNode;
+  
 }) {
   const session = await getServerSession();
   return (
@@ -75,6 +78,7 @@ export default async function RootLayout({
       <SessionProvider session={session}>
         {children}
         {loginDialogue}
+        {draftMode().isEnabled && <LiveVisualEditing />}
       </SessionProvider>
 
       <Toaster richColors />
