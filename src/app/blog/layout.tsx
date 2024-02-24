@@ -17,7 +17,7 @@ export default async function RootLayout({
   return (
     <body className={`${roboto.className} `}>
       <Header />
-      {children}
+      <div className="mt-16 md:mt-20">{children}</div>
       <BackToTop />
     </body>
   );

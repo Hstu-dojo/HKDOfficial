@@ -1,3 +1,4 @@
+import "./globals.css";
 import { cookies } from "next/headers";
 import { ThemeProvider } from "@/context/ThemeProvider";
 import "./globals.css";
