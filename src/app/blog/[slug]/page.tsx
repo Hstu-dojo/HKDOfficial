@@ -3,9 +3,9 @@
 import { QueryParams, SanityDocument } from "next-sanity";
 import { draftMode } from "next/headers";
 
-import { POSTS_QUERY, POST_QUERY } from "../../../../../../sanity/lib/queries";
-import { loadQuery } from "../../../../../../sanity/lib/store";
-import { client } from "../../../../../../sanity/lib/client";
+import { POSTS_QUERY, POST_QUERY } from "../../../../sanity/lib/queries";
+import { loadQuery } from "../../../../sanity/lib/store";
+import { client } from "../../../../sanity/lib/client";
 import SingleBlog from "@/components/blogs/single/SingleBlog";
 import SingleBlogPreview from "@/components/blogs/single/SingleBlogPreview";
 

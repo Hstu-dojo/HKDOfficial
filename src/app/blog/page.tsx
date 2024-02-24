@@ -4,8 +4,8 @@ import { SanityDocument } from "next-sanity";
 import { draftMode } from "next/headers";
 
 import SanityBlogs from "@/components/blogs/sanity-blogs";
-import { POSTS_QUERY } from "../../../../../sanity/lib/queries";
-import { loadQuery } from "../../../../../sanity/lib/store";
+import { POSTS_QUERY } from "../../../sanity/lib/queries";
+import { loadQuery } from "../../../sanity/lib/store";
 import BlogsPreview from "@/components/blogs/PostPreview";
 
 export default async function Page() {
