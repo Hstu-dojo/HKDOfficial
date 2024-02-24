@@ -66,7 +66,9 @@ export default async function RootLayout({
   loginDialogue?: React.ReactNode;
 }) {
   return (
-    <body className={`${roboto.className} `}>
+    <body
+      className={`${roboto.className} dark:bg-slate-850 dark:text-slate-200`}
+    >
       {children}
       {loginDialogue}
 

@@ -16,7 +16,7 @@ export default async function RootLayout({
   const session = await getServerSession();
   return (
     <html lang={locale} suppressHydrationWarning>
-      <body className="dark:bg-slate-850 dark:text-slate-400">
+      <body className="dark:bg-slate-850 dark:text-slate-200">
         {/* updated theme provider  */}
         <SessionProvider session={session}>
           <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
