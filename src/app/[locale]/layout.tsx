@@ -4,8 +4,6 @@ import { Roboto } from "next/font/google";
 import { Toaster } from "sonner";
 import { siteConfig } from "@/config/site";
 import BackToTop from "@/components/back-to-top";
-import { getServerSession } from "next-auth";
-import SessionProvider from "@/utils/SessionProvider";
 import React from "react";
 
 const roboto = Roboto({
@@ -67,13 +65,10 @@ export default async function RootLayout({
   children: React.ReactNode;
   loginDialogue?: React.ReactNode;
 }) {
-  const session = await getServerSession();
   return (
     <body className={`${roboto.className} `}>
-      <SessionProvider session={session}>
-        {children}
-        {loginDialogue}
-      </SessionProvider>
+      {children}
+      {loginDialogue}
 
       <Toaster richColors />
       <BackToTop />
