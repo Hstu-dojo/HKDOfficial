@@ -18,7 +18,7 @@ export default async function RootLayout({
   return (
     <body className={`${roboto.className}`}>
       <Header />
-      <div style={{ color: "#64748B" }} className="mt-16 md:mt-20">
+      <div style={{ color: "#64748B" }} className="mt-20 lg:mt-28">
         {children}
       </div>
       <BackToTop />
