@@ -16,9 +16,11 @@ export default async function RootLayout({
 }) {
   // get next theme color
   return (
-    <body style={{ color: "#64748B" }} className={`${roboto.className}`}>
+    <body className={`${roboto.className}`}>
       <Header />
-      <div className="mt-16 md:mt-20">{children}</div>
+      <div style={{ color: "#64748B" }} className="mt-16 md:mt-20">
+        {children}
+      </div>
       <BackToTop />
     </body>
   );
