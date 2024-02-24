@@ -20,6 +20,7 @@ const withPWA = require("@ducanh2912/next-pwa").default({
 const nextConfig = {
   experimental: {
     serverComponentsExternalPackages: ["@prisma/client", "bcrypt"],
+    taint: true,
   },
   images: {
     remotePatterns: [
@@ -42,6 +43,10 @@ const nextConfig = {
       {
         protocol: "https",
         hostname: "secure.gravatar.com",
+      },
+      {
+        protocol: "https",
+        hostname: "cdn.sanity.io",
       },
     ],
   },
