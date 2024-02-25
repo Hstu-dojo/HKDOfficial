@@ -9,7 +9,7 @@ import { token } from "../../../../sanity/lib/token";
 const clientWithToken = client.withConfig({ token });
 
 export async function GET(request: Request) {
-  const { isValid, redirectTo = "/blog" } = await validatePreviewUrl(
+  const { isValid, redirectTo = "/" } = await validatePreviewUrl(
     clientWithToken,
     request.url,
   );
