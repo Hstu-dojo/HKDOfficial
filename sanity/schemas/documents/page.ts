@@ -92,6 +92,7 @@ export default defineType({
           name: "image",
           title: "Image",
           options: {
+            //@ts-ignore
             hotspot: true,
           },
           preview: {

@@ -66,6 +66,7 @@ export default defineType({
       description:
         "Select the name of Author who worked on the project. If the author is not listed, you can add them by clicking the 'Create' button.",
       options: {
+      //@ts-ignore
         hotspot: true,
       },
       type: "reference",
@@ -80,6 +81,7 @@ export default defineType({
         "This image will be used as the cover image for the project. If you choose to add it to the show case projects, this is the image displayed in the list within the homepage.",
       type: "image",
       options: {
+      //@ts-ignore
         hotspot: true,
       },
       validation: (rule) => rule.required(),
@@ -153,6 +155,7 @@ export default defineType({
           name: "image",
           title: "Image",
           options: {
+      //@ts-ignore
             hotspot: true,
           },
           preview: {

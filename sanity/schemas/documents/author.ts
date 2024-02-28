@@ -1,4 +1,4 @@
-import {defineField, defineType} from 'sanity'
+import { defineField, defineType } from "sanity";
 import { UsersIcon } from "@sanity/icons";
 
 export default defineType({
@@ -26,6 +26,7 @@ export default defineType({
       title: "Image",
       type: "image",
       options: {
+        //@ts-ignore
         hotspot: true,
       },
       //@ts-ignore
