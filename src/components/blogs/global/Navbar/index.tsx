@@ -1,0 +1,16 @@
+import dynamic from "next/dynamic";
+import { draftMode } from "next/headers";
+
+import NavbarLayout from "./NavbarLayout";
+import { loadSettings } from "../../../../../sanity/loader/loadQuery";
+const NavbarPreview = dynamic(() => import("./NavbarPreview"));
+
+export async function Navbar() {
+  const initial = await loadSettings();
+
+  if (draftMode().isEnabled) {
+    return <NavbarPreview initial={initial} />;
+  }
+
+  return <NavbarLayout data={initial.data} />;
+}
