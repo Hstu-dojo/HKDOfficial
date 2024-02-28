@@ -72,11 +72,6 @@ export const mainNav = [
         items: [],
       },
       {
-        title: "Blog",
-        href: "/blog",
-        items: [],
-      },
-      {
         title: "Developer",
         href: "/dev",
         items: [],
@@ -103,21 +98,22 @@ export const mainNav = [
       },
     ],
   },
-  {
-    title: "Blog",
-    items: [
-      {
-        title: "Blog Listing",
-        href: "/posts",
-        items: [],
-      },
-      {
-        title: "Single Post",
-        href: "/posts/effective-marketing-for-start-ups",
-        items: [],
-      },
-    ],
-  },
+
+  // {
+  //   title: "Posts",
+  //   items: [
+  //     {
+  //       title: "Blog Listing",
+  //       href: "/posts",
+  //       items: [],
+  //     },
+  //     {
+  //       title: "Single Post",
+  //       href: "/posts/effective-marketing-for-start-ups",
+  //       items: [],
+  //     },
+  //   ],
+  // },
   {
     title: "En/Fr",
     items: [
@@ -133,6 +129,11 @@ export const mainNav = [
       },
     ],
   },
+  {
+    title: "Blog",
+    href: "/blog",
+  },
+
   {
     title: "User",
     href: "/profile",
