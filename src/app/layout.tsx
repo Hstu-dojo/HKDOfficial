@@ -4,7 +4,7 @@ import "./globals.css";
 import { getServerSession } from "next-auth";
 import SessionProvider from "@/utils/SessionProvider";
 import { SpeedInsights } from "@vercel/speed-insights/next";
-
+import { Analytics } from "@vercel/analytics/react";
 export default async function RootLayout({
   children,
 }: {
@@ -18,6 +18,7 @@ export default async function RootLayout({
         {/* updated theme provider  */}
         <SessionProvider session={session}>{children}</SessionProvider>
         <SpeedInsights />
+        <Analytics />
       </body>
     </html>
   );
