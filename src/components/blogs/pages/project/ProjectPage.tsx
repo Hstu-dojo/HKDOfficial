@@ -4,6 +4,7 @@ import { Header } from "../../shared/Header";
 import ImageBox from "../../shared/ImageBox";
 import { ProjectPayload } from "../../../../../sanity/lib/sanity_types";
 import { CustomPortableText } from "../../shared/CustomPortableText";
+import Disqus from "../../disqus";
 
 export interface ProjectPageProps {
   data: ProjectPayload | null;
@@ -21,6 +22,7 @@ export function ProjectPage({ data, encodeDataAttribute }: ProjectPageProps) {
     site,
     tags,
     title,
+    slug,
   } = data ?? {};
 
   const startYear = new Date(duration?.start!).getFullYear();
@@ -105,6 +107,7 @@ export function ProjectPage({ data, encodeDataAttribute }: ProjectPageProps) {
           />
         )}
       </div>
+      <Disqus id={data?.slug ?? ""} />
       <div className="absolute left-0 w-screen border-t" />
     </div>
   );
