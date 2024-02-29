@@ -6,7 +6,7 @@ const BlogComments = ({ post }: any) => {
 
   return (
     <DiscussionEmbed
-      shortname="deothemes"
+      shortname="hstu"
       config={{
         url: pageURL,
         identifier: post.id.toString(),

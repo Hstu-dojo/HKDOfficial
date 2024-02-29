@@ -68,7 +68,12 @@ export function loadSettings() {
   return loadQuery<SettingsPayload>(
     settingsQuery,
     {},
-    { next: { tags: ["settings", "home", "page", "project"] } },
+    {
+      next: {
+        tags: ["settings", "home", "page", "project"],
+        revalidate: 18000,
+      },
+    },
   );
 }
 
@@ -76,7 +81,7 @@ export function loadHomePage() {
   return loadQuery<HomePagePayload | null>(
     homePageQuery,
     {},
-    { next: { tags: ["home", "project"] } },
+    { next: { tags: ["home", "project"], revalidate: 18000 } },
   );
 }
 
