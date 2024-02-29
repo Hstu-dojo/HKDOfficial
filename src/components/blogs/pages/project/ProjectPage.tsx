@@ -107,7 +107,7 @@ export function ProjectPage({ data, encodeDataAttribute }: ProjectPageProps) {
           />
         )}
       </div>
-      <Disqus id={data?.slug ?? ""} />
+      {/* <Disqus id={data?.slug ?? ""} /> */}
       <div className="absolute left-0 w-screen border-t" />
     </div>
   );
