@@ -4,7 +4,7 @@
 
 import { visionTool } from "@sanity/vision";
 import { defineConfig } from "sanity";
-import { structureTool } from "sanity/structure";
+// import { structureTool } from "sanity/structure";
 import { presentationTool } from "sanity/presentation";
 import { deskTool } from "sanity/desk";
 import { unsplashImageAsset } from "sanity-plugin-asset-source-unsplash";
