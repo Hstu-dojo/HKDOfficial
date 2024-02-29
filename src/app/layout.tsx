@@ -3,6 +3,7 @@ import { cookies } from "next/headers";
 import "./globals.css";
 import { getServerSession } from "next-auth";
 import SessionProvider from "@/utils/SessionProvider";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 
 export default async function RootLayout({
   children,
@@ -16,6 +17,7 @@ export default async function RootLayout({
       <body className="dark:bg-slate-850 dark:text-slate-200">
         {/* updated theme provider  */}
         <SessionProvider session={session}>{children}</SessionProvider>
+        <SpeedInsights />
       </body>
     </html>
   );
