@@ -1,11 +1,7 @@
 "use client";
 import { DiscussionEmbed } from "disqus-react";
 
-type BlogCommentsProps = {
-  post: Post;
-};
-
-const BlogComments = ({ post }: BlogCommentsProps) => {
+const BlogComments = ({ post }: any) => {
   const pageURL = typeof window !== "undefined" ? window.location.href : "";
 
   return (
@@ -14,7 +10,7 @@ const BlogComments = ({ post }: BlogCommentsProps) => {
       config={{
         url: pageURL,
         identifier: post.id.toString(),
-        title: post.title.rendered,
+        title: post.title.rendered || post.title,
       }}
     />
   );

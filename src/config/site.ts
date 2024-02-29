@@ -99,21 +99,21 @@ export const mainNav = [
     ],
   },
 
-  // {
-  //   title: "Posts",
-  //   items: [
-  //     {
-  //       title: "Blog Listing",
-  //       href: "/posts",
-  //       items: [],
-  //     },
-  //     {
-  //       title: "Single Post",
-  //       href: "/posts/effective-marketing-for-start-ups",
-  //       items: [],
-  //     },
-  //   ],
-  // },
+  {
+    title: "Posts",
+    items: [
+      {
+        title: "Blog Listing",
+        href: "/posts",
+        items: [],
+      },
+      {
+        title: "Single Post",
+        href: "/posts/effective-marketing-for-start-ups",
+        items: [],
+      },
+    ],
+  },
   {
     title: "En/Fr",
     items: [

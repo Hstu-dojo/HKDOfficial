@@ -15,8 +15,8 @@ function Disqus({ id }: { id: string }) {
     *  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables    */
     
     var disqus_config = function () {
-    // this.page.url = PAGE_URL;  // Replace PAGE_URL with your page's canonical URL variable
-    this.page.identifier = '${id}' ; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+    // this.page.url = 'https://karate.paradox-bd.com';  // Replace PAGE_URL with your page's canonical URL variable
+    this.page.identifier = '12345' ; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
     };
     
     (function() { // DON'T EDIT BELOW THIS LINE
@@ -27,8 +27,11 @@ function Disqus({ id }: { id: string }) {
     })();
           `}
         </script>
-        <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by HKD.</a></noscript>
       </Helmet>
+      <noscript>
+        Please enable JavaScript to view the{" "}
+        <a href="https://disqus.com/?ref_noscript">comments powered by HKD.</a>
+      </noscript>
     </div>
   );
 }
