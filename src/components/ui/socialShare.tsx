@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
-
+import { toast } from "sonner";
 export default function SocialShare() {
   const [currentURL, setCurrentURL] = useState("");
 
@@ -18,6 +18,8 @@ export default function SocialShare() {
     textArea.select();
     document.execCommand("copy");
     document.body.removeChild(textArea);
+    toast.success("Link copied to clipboard!");
+
     // alert("Link copied to clipboard!");
   };
 
