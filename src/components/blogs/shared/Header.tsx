@@ -1,4 +1,5 @@
 import { CustomPortableText } from './CustomPortableText'
+import TypewriterEffectComponent from './TypewriterEffectComponent'
 
 interface HeaderProps {
   centered?: boolean
@@ -15,7 +16,7 @@ export function Header(props: HeaderProps) {
       {/* Title */}
       {title && (
         <div className="text-3xl font-extrabold tracking-tight md:text-5xl">
-          {title}
+          <TypewriterEffectComponent text={title} />
         </div>
       )}
       {/* Description */}
