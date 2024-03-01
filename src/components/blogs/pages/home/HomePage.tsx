@@ -8,6 +8,8 @@ import type { HomePagePayload } from "../../../../../sanity/lib/sanity_types";
 import { FollowerPointerCard } from "@/components/ui/following-pointer";
 import Image from "next/image";
 import AvatarBox from "../../shared/AvatarBox";
+import { WallMagazine } from "../../shared/WallMagazine";
+import TypewriterEffectComponent from "../../shared/TypewriterEffectComponent";
 
 export interface HomePageProps {
   data: HomePagePayload | null;
@@ -19,44 +21,52 @@ export function HomePage({ data, encodeDataAttribute }: HomePageProps) {
   const { overview = [], showcaseProjects = [], title = "" } = data ?? {};
   // console.log(showcaseProjects[0]);
   return (
-    <div className="space-y-20">
-      {/* Header */}
-      {title && <Header centered title={title} description={overview} />}
-      {/* Showcase projects */}
-      {showcaseProjects && showcaseProjects.length > 0 && (
-        <div className="mx-auto max-w-[100rem] rounded-md border">
-          {showcaseProjects.map((project, key) => {
-            const href = resolveHref(project?._type, project?.slug);
-            if (!href) {
-              return null;
-            }
-            return (
-              <Link
-                key={key}
-                href={href}
-                data-sanity={encodeDataAttribute?.([
-                  "showcaseProjects",
-                  key,
-                  "slug",
-                ])}
-              >
-                <FollowerPointerCard
-                  title={
-                    <TitleComponent
-                      // @ts-ignore
-                      title={project?.author?.name as any}
-                      // @ts-ignore
-                      avatar={project?.author?.image as any}
-                    />
-                  }
+    <div>
+      <div className="space-y-20">
+        {/* Header */}
+        {title && <Header centered title={title} description={overview} />}
+        {/* Showcase projects */}
+        {showcaseProjects && showcaseProjects.length > 0 && (
+          <div className="mx-auto max-w-[100rem] rounded-md border">
+            {showcaseProjects.map((project, key) => {
+              const href = resolveHref(project?._type, project?.slug);
+              if (!href) {
+                return null;
+              }
+              return (
+                <Link
+                  key={key}
+                  href={href}
+                  data-sanity={encodeDataAttribute?.([
+                    "showcaseProjects",
+                    key,
+                    "slug",
+                  ])}
                 >
-                  <ProjectListItem project={project} odd={key % 2} />
-                </FollowerPointerCard>
-              </Link>
-            );
-          })}
+                  <FollowerPointerCard
+                    title={
+                      <TitleComponent
+                        // @ts-ignore
+                        title={project?.author?.name as any}
+                        // @ts-ignore
+                        avatar={project?.author?.image as any}
+                      />
+                    }
+                  >
+                    <ProjectListItem project={project} odd={key % 2} />
+                  </FollowerPointerCard>
+                </Link>
+              );
+            })}
+          </div>
+        )}
+      </div>
+      <div className="mt-20 lg:mt-28">
+        <div className="my-5 text-center">
+          <TypewriterEffectComponent text={"Explore our Wall Magazine"} />
         </div>
-      )}
+        <WallMagazine />
+      </div>
     </div>
   );
 }
