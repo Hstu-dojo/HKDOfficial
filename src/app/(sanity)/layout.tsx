@@ -1,5 +1,6 @@
 import React from "react";
 import { IBM_Plex_Mono, Inter, PT_Serif } from "next/font/google";
+import { ThemeProvider } from "@/context/ThemeProvider";
 
 const serif = PT_Serif({
   variable: "--font-serif",
@@ -30,7 +31,9 @@ export default async function RootLayout({
       lang="en"
       className={`${mono.variable} ${sans.variable} ${serif.variable}`}
     >
-      <div>{children}</div>
+      <ThemeProvider attribute="class" forcedTheme="light">
+        {children}
+      </ThemeProvider>
     </body>
   );
 }
