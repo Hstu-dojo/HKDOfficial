@@ -17,7 +17,7 @@ export interface HomePageProps {
 export function HomePage({ data, encodeDataAttribute }: HomePageProps) {
   // Default to an empty object to allow previews on non-existent documents
   const { overview = [], showcaseProjects = [], title = "" } = data ?? {};
-  console.log(showcaseProjects[0]);
+  // console.log(showcaseProjects[0]);
   return (
     <div className="space-y-20">
       {/* Header */}
@@ -43,9 +43,9 @@ export function HomePage({ data, encodeDataAttribute }: HomePageProps) {
                 <FollowerPointerCard
                   title={
                     <TitleComponent
-                    // @ts-ignore
+                      // @ts-ignore
                       title={project?.author?.name as any}
-                    // @ts-ignore
+                      // @ts-ignore
                       avatar={project?.author?.image as any}
                     />
                   }
@@ -61,19 +61,13 @@ export function HomePage({ data, encodeDataAttribute }: HomePageProps) {
   );
 }
 
-const TitleComponent = ({
-  title,
-  avatar,
-}: {
-  title: any;
-  avatar: any;
-}) => (
+const TitleComponent = ({ title, avatar }: { title: any; avatar: any }) => (
   <div className="flex items-center space-x-2">
-    {/* <AvatarBox
+    <AvatarBox
       image={avatar}
       alt={`Cover image from `}
-      classesWrapper="relative  aspect-[16/9]"
-    /> */}
+      classesWrapper="relative"
+    />
     <p>{title}</p>
   </div>
 );

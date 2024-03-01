@@ -25,17 +25,14 @@ export default function AvatarBox({
     image && urlForImage(image)?.height(height).width(width).fit("crop").url();
 
   return (
-    <div
-      className={`w-full overflow-hidden rounded-[3px] bg-gray-50 ${classesWrapper}`}
-      data-sanity={props["data-sanity"]}
-    >
+    <div className={` border-2 border-white rounded-full`} data-sanity={props["data-sanity"]}>
       {imageUrl && (
         <Image
-          className="absolute h-full w-full"
+          className=""
           alt={alt}
-          width={width}
-          height={height}
-          sizes={size}
+          width={20}
+          height={20}
+          // sizes={size}
           src={imageUrl}
         />
       )}
