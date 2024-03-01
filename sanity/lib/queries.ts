@@ -15,6 +15,11 @@ export const homePageQuery = groq`
       coverImage,
       overview,
       "slug": slug.current,
+      author->{
+        name,
+        "slug": slug.current,
+        image,
+      },
       tags,
       title,
     },

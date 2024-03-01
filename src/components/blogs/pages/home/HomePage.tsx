@@ -5,6 +5,9 @@ import { ProjectListItem } from "./ProjectListItem";
 import { Header } from "../../shared/Header";
 import { resolveHref } from "../../../../../sanity/lib/utils";
 import type { HomePagePayload } from "../../../../../sanity/lib/sanity_types";
+import { FollowerPointerCard } from "@/components/ui/following-pointer";
+import Image from "next/image";
+import AvatarBox from "../../shared/AvatarBox";
 
 export interface HomePageProps {
   data: HomePagePayload | null;
@@ -14,7 +17,7 @@ export interface HomePageProps {
 export function HomePage({ data, encodeDataAttribute }: HomePageProps) {
   // Default to an empty object to allow previews on non-existent documents
   const { overview = [], showcaseProjects = [], title = "" } = data ?? {};
-
+  console.log(showcaseProjects[0]);
   return (
     <div className="space-y-20">
       {/* Header */}
@@ -37,7 +40,18 @@ export function HomePage({ data, encodeDataAttribute }: HomePageProps) {
                   "slug",
                 ])}
               >
-                <ProjectListItem project={project} odd={key % 2} />
+                <FollowerPointerCard
+                  title={
+                    <TitleComponent
+                    // @ts-ignore
+                      title={project?.author?.name as any}
+                    // @ts-ignore
+                      avatar={project?.author?.image as any}
+                    />
+                  }
+                >
+                  <ProjectListItem project={project} odd={key % 2} />
+                </FollowerPointerCard>
               </Link>
             );
           })}
@@ -46,5 +60,22 @@ export function HomePage({ data, encodeDataAttribute }: HomePageProps) {
     </div>
   );
 }
+
+const TitleComponent = ({
+  title,
+  avatar,
+}: {
+  title: any;
+  avatar: any;
+}) => (
+  <div className="flex items-center space-x-2">
+    {/* <AvatarBox
+      image={avatar}
+      alt={`Cover image from `}
+      classesWrapper="relative  aspect-[16/9]"
+    /> */}
+    <p>{title}</p>
+  </div>
+);
 
 export default HomePage;
