@@ -7,6 +7,8 @@ import { ProjectPayload } from "../../../../../sanity/lib/sanity_types";
 import { CustomPortableText } from "../../shared/CustomPortableText";
 import BlogComments from "@/components/blog-comments";
 import { TracingBeam } from "@/components/ui/tracing-beam";
+import SocialShare from "@/components/ui/socialShare";
+
 export interface ProjectPageProps {
   data: ProjectPayload | null;
   encodeDataAttribute?: EncodeDataAttributeCallback;
@@ -35,7 +37,7 @@ export function ProjectPage({ data, encodeDataAttribute }: ProjectPageProps) {
 
   return (
     <div>
-      <TracingBeam className="px-6">
+      <TracingBeam className="px-6 mb-12">
         <div className="mb-20 space-y-6">
           {/* Header */}
           <Header title={title} description={overview} />
@@ -113,6 +115,7 @@ export function ProjectPage({ data, encodeDataAttribute }: ProjectPageProps) {
             />
           )}
         </div>
+        <SocialShare />
       </TracingBeam>
       <BlogComments post={post} />
 

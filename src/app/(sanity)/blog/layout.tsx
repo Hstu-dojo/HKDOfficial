@@ -12,6 +12,7 @@ import {
   loadSettings,
 } from "../../../../sanity/loader/loadQuery";
 import { urlForOpenGraphImage } from "../../../../sanity/lib/utils";
+import ChatPlugin from "@/components/chat";
 
 const LiveVisualEditing = dynamic(
   () => import("@/components/blogs/LiveVisualEditing"),
@@ -63,6 +64,7 @@ export default async function IndexRoute({
         </Suspense>
       </div>
       <BackToTop />
+      <ChatPlugin />
       {draftMode().isEnabled && <LiveVisualEditing />}
     </>
   );
