@@ -13,9 +13,8 @@ import {
   DrawerTitle,
   DrawerTrigger,
 } from "@/components/ui/drawer";
-import {
-  Button,
-} from "@/components/ui/button";
+import { Button } from "@/components/ui/button";
+import SocialShare from "@/components/ui/socialShare";
 
 interface FooterProps {
   data: SettingsPayload;
@@ -25,6 +24,7 @@ export default function Footer(props: FooterProps) {
   const { data } = props;
   const [isBottom, setIsBottom] = useState(false);
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const [scrollThreshold, setScrollThreshold] = useState(0);
   const footer = data?.footer || ([] as PortableTextBlock[]);
 
   useEffect(() => {
@@ -46,15 +46,15 @@ export default function Footer(props: FooterProps) {
 
       const windowBottom = windowHeight + window.pageYOffset;
 
-      // Calculate the scroll position when the user is near the bottom of the page
-      // (e.g., within the last 10% of the page)
-      const triggerOffset = 0.9;
-      const triggerScrollPosition = documentHeight * triggerOffset;
+      const triggerOffset = 0.1; // You can adjust this threshold value
+      const triggerScrollPosition = documentHeight * (1 - triggerOffset);
 
       if (windowBottom >= triggerScrollPosition) {
         setIsBottom(true);
+        setScrollThreshold(windowBottom - triggerScrollPosition);
       } else {
         setIsBottom(false);
+        setScrollThreshold(0);
       }
     };
 
@@ -66,8 +66,10 @@ export default function Footer(props: FooterProps) {
   }, []);
 
   const onFooterBottomReached = () => {
-    // Trigger the opening of the drawer
-    setDrawerOpen(true);
+    // Open the drawer only when the user scrolls further down after reaching the bottom
+    if (isBottom && scrollThreshold > 0) {
+      setDrawerOpen(true);
+    }
   };
 
   useEffect(() => {
@@ -75,7 +77,14 @@ export default function Footer(props: FooterProps) {
       // Trigger the provided callback when the bottom of the footer is reached
       onFooterBottomReached();
     }
-  }, [isBottom]);
+    //@ts-ignore
+  }, [isBottom, scrollThreshold]);
+
+  // const handleCancelClick = () => {
+  //   // Scroll to the top of the page
+  //   window.scrollTo({ top: 0, behavior: "auto" }); // Use "auto" for instant scroll
+  //   setDrawerOpen(false);
+  // };
 
   return (
     <footer className="bottom-0 w-full bg-white py-12 text-center md:py-20">
@@ -88,15 +97,16 @@ export default function Footer(props: FooterProps) {
       <Drawer open={drawerOpen}>
         <DrawerContent>
           <DrawerHeader>
-            <DrawerTitle>Are you absolutely sure?</DrawerTitle>
-            <DrawerDescription>This action cannot be undone.</DrawerDescription>
+            <DrawerTitle>Might be helpful for someone?</DrawerTitle>
+            <DrawerDescription className="w-full flex justify-center"><SocialShare /></DrawerDescription>
           </DrawerHeader>
-          <DrawerFooter>
-            {/* <Button>Submit</Button> */}
+          {/* <DrawerFooter>
             <DrawerClose>
-              <Button onClick={() => { setDrawerOpen(false) }} variant="outline">Cancel</Button>
+              <Button onClick={handleCancelClick} variant="outline">
+                Cancel
+              </Button>
             </DrawerClose>
-          </DrawerFooter>
+          </DrawerFooter> */}
         </DrawerContent>
       </Drawer>
     </footer>
