@@ -1,6 +1,7 @@
 import React from "react";
 import { IBM_Plex_Mono, Inter, PT_Serif } from "next/font/google";
 import { ThemeProvider } from "@/context/ThemeProvider";
+import { Toaster } from "sonner";
 
 const serif = PT_Serif({
   variable: "--font-serif",
@@ -34,6 +35,7 @@ export default async function RootLayout({
       <ThemeProvider attribute="class" forcedTheme="light">
         {children}
       </ThemeProvider>
+        <Toaster richColors />
     </body>
   );
 }
