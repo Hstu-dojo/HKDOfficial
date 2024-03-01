@@ -13,6 +13,7 @@ export default function SocialShare() {
     // Copy the link to the clipboard
     const textArea = document.createElement("textarea");
     textArea.value = currentURL;
+    navigator.clipboard.writeText(currentURL);
     document.body.appendChild(textArea);
     textArea.select();
     document.execCommand("copy");
@@ -160,7 +161,7 @@ export default function SocialShare() {
         />
         <button
           onClick={handleCopyLink}
-          className="bg-indigo-500 text-white rounded text-sm py-2 px-5 mr-2 hover:bg-indigo-600"
+          className="mr-2 rounded bg-indigo-500 px-5 py-2 text-sm text-white hover:bg-indigo-600"
         >
           Copy
         </button>
