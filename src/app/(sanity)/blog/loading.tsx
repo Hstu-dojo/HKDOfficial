@@ -1,10 +1,10 @@
 import { Skeleton } from "@/components/ui/skeleton";
-import BlogLoader from "@/components/blogs/loader/BlogLoader";
+// import BlogLoader from "@/components/blogs/loader/BlogLoader";
 
 export default function SkeletonCard() {
   return (
-    <div className="m-auto flex w-full flex-col gap-6 overflow-hidden items-center justify-center">
-      <BlogLoader />
+    <div className="m-auto flex w-full flex-col items-center justify-center overflow-hidden">
+      {/* <BlogLoader /> */}
       <div className="m-auto flex w-full flex-wrap items-center justify-evenly gap-3">
         {Array.from({ length: 6 }).map((_, i) => (
           <div key={i} className="flex flex-col space-y-3">

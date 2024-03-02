@@ -1,7 +1,7 @@
 import "./BlogLoader.scss";
 export default function BlogLoader() {
   return (
-    <div id="w-full h-200">
+    <div id="w-full pt-60 h-[400px]">
       <div
         className="divider font-extralight tracking-tighter"
         aria-hidden="true"
