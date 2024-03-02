@@ -2,11 +2,11 @@ import { toPlainText } from "@portabletext/react";
 import { Metadata, ResolvingMetadata } from "next";
 import dynamic from "next/dynamic";
 import { draftMode } from "next/headers";
-import { notFound } from "next/navigation";
 import { loadProject } from "../../../../../../sanity/loader/loadQuery";
 import { urlForOpenGraphImage } from "../../../../../../sanity/lib/utils";
 import { generateStaticSlugs } from "../../../../../../sanity/loader/generateStaticSlugs";
 import ProjectPage from "@/components/blogs/pages/project/ProjectPage";
+import ErrorPage from "@/app/not-found";
 
 const ProjectPreview = dynamic(
   () => import("@/components/blogs/pages/project/ProjectPreview"),
@@ -48,7 +48,7 @@ export default async function ProjectSlugRoute({ params }: Props) {
   }
 
   if (!initial.data) {
-    notFound();
+    return <ErrorPage />;
   }
 
   return <ProjectPage data={initial.data} />;
