@@ -57,9 +57,10 @@ export default async function IndexRoute({
         <Suspense>
           <Navbar />
         </Suspense>
-        <div className="mt-20 flex-grow px-4 md:px-16 lg:px-32">
+        {/* <div className="mt-20 flex-grow px-4 md:px-16 lg:px-32">
           <Suspense fallback={<SkeletonCard />}>{children}</Suspense>
-        </div>
+        </div> */}
+        <SkeletonCard />
         <Suspense>
           <Footer />
         </Suspense>
