@@ -77,6 +77,7 @@
     "resend": "^2.0.0-canary.2",
     "sanity": "^3.30.0",
     "sanity-plugin-asset-source-unsplash": "^1.1.2",
+    "sass": "^1.71.1",
     "sharp": "^0.32.6",
     "sonner": "^1.4.0",
     "styled-components": "^6.1.8",

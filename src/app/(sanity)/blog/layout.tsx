@@ -13,6 +13,7 @@ import {
 } from "../../../../sanity/loader/loadQuery";
 import { urlForOpenGraphImage } from "../../../../sanity/lib/utils";
 import ChatPlugin from "@/components/chat";
+import SkeletonCard from "./loading";
 
 const LiveVisualEditing = dynamic(
   () => import("@/components/blogs/LiveVisualEditing"),
@@ -57,7 +58,7 @@ export default async function IndexRoute({
           <Navbar />
         </Suspense>
         <div className="mt-20 flex-grow px-4 md:px-16 lg:px-32">
-          <Suspense>{children}</Suspense>
+          <Suspense fallback={<SkeletonCard />}>{children}</Suspense>
         </div>
         <Suspense>
           <Footer />
