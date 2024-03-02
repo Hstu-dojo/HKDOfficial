@@ -63,3 +63,34 @@ export const settingsQuery = groq`
     ogImage,
   }
 `;
+
+export const findTagQuery = (tag: string) => groq`
+  *[_type == "post" && $tag in tags] {
+    _id,
+    title,
+    "slug": slug.current,
+    tags,
+  }
+`;
+
+export const findByCategoryQuery = (category: string) => groq`
+  *[_type == "post" && category == $category] {
+    _id,
+    title,
+    "slug": slug.current,
+    category,
+  }
+`;
+
+export const findByAuthorQuery = (authorSlug: string) => groq`
+  *[_type == "post" && author.slug.current == $authorSlug] {
+    _id,
+    title,
+    "slug": slug.current,
+    author->{
+      name,
+      "slug": slug.current,
+      image,
+    },
+  }
+`;

@@ -9,6 +9,9 @@ import {
   pagesBySlugQuery,
   projectBySlugQuery,
   settingsQuery,
+  findTagQuery,
+  findByCategoryQuery,
+  findByAuthorQuery,
 } from "../lib/queries";
 import { token } from "../lib/token";
 import {
@@ -89,7 +92,7 @@ export function loadProject(slug: string) {
   return loadQuery<ProjectPayload | null>(
     projectBySlugQuery,
     { slug },
-    { next: { tags: [`project:${slug}`] } },
+    { next: { tags: [`project:${slug}`], revalidate: 18000 } },
   );
 }
 
@@ -97,6 +100,31 @@ export function loadPage(slug: string) {
   return loadQuery<PagePayload | null>(
     pagesBySlugQuery,
     { slug },
-    { next: { tags: [`page:${slug}`] } },
+    { next: { tags: [`page:${slug}`], revalidate: 18000 } },
+  );
+}
+
+export function loadPostsByTag(tag: string) {
+  const tags = "#membership";
+  return loadQuery<ProjectPayload | null>(
+    findTagQuery(tags),
+    { tags }, // Remove the unnecessary comma here
+    { next: { tags: [`tag:${tags}`], revalidate: 18000 } },
+  );
+}
+
+export function loadPostsByCategory(category: string) {
+  return loadQuery<any>(
+    findByCategoryQuery(category),
+    {},
+    { next: { tags: [`category:${category}`], revalidate: 18000 } },
+  );
+}
+
+export function loadPostsByAuthor(authorSlug: string) {
+  return loadQuery<any>(
+    findByAuthorQuery(authorSlug),
+    {},
+    { next: { tags: [`author:${authorSlug}`], revalidate: 18000 } },
   );
 }
