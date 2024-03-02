@@ -15,6 +15,7 @@ import {
 } from "@/components/ui/drawer";
 import { Button } from "@/components/ui/button";
 import SocialShare from "@/components/ui/socialShare";
+import GTranslate from "@/components/gTranslate";
 
 interface FooterProps {
   data: SettingsPayload;
@@ -94,11 +95,17 @@ export default function Footer(props: FooterProps) {
           value={footer}
         />
       )}
+      <div className="flex w-full flex-row flex-wrap items-center justify-center">
+        <GTranslate />
+      </div>
+
       <Drawer open={drawerOpen}>
         <DrawerContent>
           <DrawerHeader>
             <DrawerTitle>Might be helpful for someone?</DrawerTitle>
-            <DrawerDescription className="w-full flex justify-center"><SocialShare /></DrawerDescription>
+            <DrawerDescription className="flex w-full justify-center">
+              <SocialShare />
+            </DrawerDescription>
           </DrawerHeader>
           {/* <DrawerFooter>
             <DrawerClose>
