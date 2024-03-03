@@ -5,16 +5,16 @@ module.exports = {
   sitemapSize: 5000,
   generateRobotsTxt: true,
   exclude: ["/protected-page", "/awesome/secret-page"],
-  alternateRefs: [
-    {
-      href: `https://karate.paradox-bd.com/en`,
-      hreflang: "en",
-    },
-    {
-      href: `https://karate.paradox-bd.com/fr`,
-      hreflang: "fr",
-    },
-  ],
+  // alternateRefs: [
+  //   {
+  //     href: `https://karate.paradox-bd.com/en`,
+  //     hreflang: "en",
+  //   },
+  //   {
+  //     href: `https://karate.paradox-bd.com/fr`,
+  //     hreflang: "fr",
+  //   },
+  // ],
   // Default transformation function
   transform: async (config, path) => {
     return {
@@ -25,9 +25,7 @@ module.exports = {
       alternateRefs: config.alternateRefs ?? [],
     };
   },
-  additionalPaths: async (config) => [
-    await config.transform(config, "/additional-page"),
-  ],
+  additionalPaths: async (config) => [await config.transform(config, "/blog")],
   robotsTxtOptions: {
     policies: [
       {
