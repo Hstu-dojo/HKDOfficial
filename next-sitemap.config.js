@@ -4,7 +4,7 @@ module.exports = {
   priority: 0.7,
   sitemapSize: 5000,
   generateRobotsTxt: true,
-  exclude: ["/protected-page", "/awesome/secret-page"],
+  exclude: ["/protected-page", "/awesome/secret-page", "/docs"],
   // alternateRefs: [
   //   {
   //     href: `https://karate.paradox-bd.com/en`,
