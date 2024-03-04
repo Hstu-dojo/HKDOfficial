@@ -1,5 +1,4 @@
 import * as queryStore from "@sanity/react-loader";
-import { draftMode } from "next/headers";
 
 import { client } from "../lib/client";
 import {
@@ -30,7 +29,7 @@ import {
 // Automatically handle draft mode
 export const loadQuery = ((query, params = {}, options = {}) => {
   const {
-    perspective = draftMode().isEnabled ? "previewDrafts" : "published",
+    perspective = "published",
   } = options;
   // Don't cache by default
   let revalidate: NextFetchRequestConfig["revalidate"] = 0;
