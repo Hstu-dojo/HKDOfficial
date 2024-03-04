@@ -13,7 +13,7 @@ import {
   PaginationPrevious,
 } from "@/components/ui/pagination";
 import type { PortableTextBlock } from '@portabletext/types'
-import { CustomPortableText } from '@/components/blogs/shared/CustomPortableText2'
+import { CustomPortableText } from '@/components/blogs/shared/CustomPortableText'
 export const HoverEffect = ({
   items,
   className,
