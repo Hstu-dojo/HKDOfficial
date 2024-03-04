@@ -1,4 +1,4 @@
-import { loadAllProject } from "../../../sanity/loader/loadQuery";
+import { loadAllProject } from "../../../sanity/loader/loadQuery2";
 import { HoverEffect } from "@/components/ui/card-hover-effect";
 
 export async function CardHoverEffect() {
