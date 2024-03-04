@@ -12,7 +12,7 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination";
-import { CustomPortableText } from '@/components/blogs/shared/CustomPortableText'
+// import { CustomPortableText } from '@/components/blogs/shared/CustomPortableText'
 export const HoverEffect = ({
   items,
   className,
@@ -68,7 +68,7 @@ export const HoverEffect = ({
             </AnimatePresence>
             <Card>
               <CardTitle>{item?.title}</CardTitle>
-              <CardDescription>{isClient ? <CustomPortableText value={item?.overview as any} /> : 'Rendering'}</CardDescription>
+              {/* <CardDescription>{isClient ? <CustomPortableText value={item?.overview as any} /> : 'Rendering'}</CardDescription> */}
             </Card>
           </Link>
         ))}
