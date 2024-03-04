@@ -1,7 +1,8 @@
+"use client";
 import { cn } from "@/lib/utils";
 import { AnimatePresence, motion } from "framer-motion";
 import Link from "next/link";
-import { useState } from "react";
+import { useState, useEffect } from 'react'
 import {
   Pagination,
   PaginationContent,
@@ -11,10 +12,12 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination";
-
+import type { PortableTextBlock } from '@portabletext/types'
+import { CustomPortableText } from '@/components/blogs/shared/CustomPortableText2'
 export const HoverEffect = ({
   items,
   className,
+  data2
 }: {
   items: {
     title: string;
@@ -22,21 +25,27 @@ export const HoverEffect = ({
     link: string;
   }[];
   className?: string;
+  data2: any;
 }) => {
   let [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
-
+   const [isClient, setIsClient] = useState(false)
+ 
+  useEffect(() => {
+    setIsClient(true)
+  }, [])
+    console.log(data2)
   return (
-    <div className="mt-5  rounded-xl border border-slate-300 p-3 ">
+    <div suppressHydrationWarning className="mt-5  rounded-xl border border-slate-300 p-3 ">
       <div
         className={cn(
           "grid grid-cols-1 md:grid-cols-2  lg:grid-cols-3",
           className,
         )}
       >
-        {items.map((item, idx) => (
+        {data2?.map((item:any, idx:any) => (
           <Link
-            href={item?.link}
-            key={item?.link}
+            href={`/blog/post/${item?.slug}`}
+            key={item?._id}
             className="group relative  block h-full w-full p-2"
             onMouseEnter={() => setHoveredIndex(idx)}
             onMouseLeave={() => setHoveredIndex(null)}
@@ -59,8 +68,8 @@ export const HoverEffect = ({
               )}
             </AnimatePresence>
             <Card>
-              <CardTitle>{item.title}</CardTitle>
-              <CardDescription>{item.description}</CardDescription>
+              <CardTitle>{item?.title}</CardTitle>
+              <CardDescription>{isClient ? <CustomPortableText value={item?.overview as PortableTextBlock[]} /> : 'Rendering..'}</CardDescription>
             </Card>
           </Link>
         ))}
