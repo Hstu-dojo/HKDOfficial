@@ -12,6 +12,7 @@ import {
   findTagQuery,
   findByCategoryQuery,
   findByAuthorQuery,
+  allProjectSlugQuery,
 } from "../lib/queries";
 import { token } from "../lib/token";
 import {
@@ -95,6 +96,13 @@ export function loadProject(slug: string) {
     { next: { tags: [`project:${slug}`], revalidate: 18000 } },
   );
 }
+export function loadAllProject(page: number, limit: number) {
+  return loadQuery<any>(
+    allProjectSlugQuery(page, limit), // Pass the page and limit parameters to the query
+    {},
+    { next: { tags: [`project`], revalidate: 18000 } },
+  );
+}
 
 export function loadPage(slug: string) {
   return loadQuery<PagePayload | null>(
@@ -105,18 +113,18 @@ export function loadPage(slug: string) {
 }
 
 export function loadPostsByTag(tag: string) {
-  const tags = "#membership";
-  return loadQuery<ProjectPayload | null>(
-    findTagQuery(tags),
-    { tags }, // Remove the unnecessary comma here
-    { next: { tags: [`tag:${tags}`], revalidate: 18000 } },
+  return loadQuery<any>(
+    findTagQuery(tag), // Use the double curly braces to reference the tag parameter
+    //@ts-ignore
+    { tag }, // Provide the tag parameter here
+    { next: { tags: [`tag:${tag}`], revalidate: 18000 } },
   );
 }
 
 export function loadPostsByCategory(category: string) {
   return loadQuery<any>(
     findByCategoryQuery(category),
-    {},
+    { category },
     { next: { tags: [`category:${category}`], revalidate: 18000 } },
   );
 }

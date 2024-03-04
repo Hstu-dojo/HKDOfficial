@@ -23,7 +23,7 @@ export function FloatingNavbar() {
     },
   ];
   return (
-    <div className="relative  w-full">
+    <div className="relative z-50 w-full">
       <FloatingNav navItems={navItems} />
     </div>
   );

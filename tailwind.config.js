@@ -43,6 +43,13 @@ module.exports = {
       "7xl": ["4rem", { lineHeight: "normal" }],
     },
     extend: {
+       zIndex: {
+        '60': 60,
+        '70': 70,
+        '80': 80,
+        '90': 90,
+        '100': 100,
+      },
       colors: {
         slate: {
           base: "#64748B",

@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "prisma generate && next-sitemap && next dev",
+    "dev": "prisma generate && next-sitemap && next dev --turbo",
     "build": "prisma generate && prisma db push && next build",
     "postbuild": "next-sitemap",
     "start": "next start",
