@@ -1,4 +1,4 @@
-"use client";
+"use client"
 import { cn } from "@/lib/utils";
 import { AnimatePresence, motion } from "framer-motion";
 import Link from "next/link";
@@ -12,7 +12,6 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination";
-import type { PortableTextBlock } from '@portabletext/types'
 import { CustomPortableText } from '@/components/blogs/shared/CustomPortableText'
 export const HoverEffect = ({
   items,
@@ -69,7 +68,7 @@ export const HoverEffect = ({
             </AnimatePresence>
             <Card>
               <CardTitle>{item?.title}</CardTitle>
-              <CardDescription>{isClient ? <CustomPortableText value={item?.overview as PortableTextBlock[]} /> : 'Rendering..'}</CardDescription>
+              <CardDescription>{isClient ? <CustomPortableText value={item?.overview as any} /> : 'Rendering'}</CardDescription>
             </Card>
           </Link>
         ))}
