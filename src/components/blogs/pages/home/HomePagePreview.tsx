@@ -27,5 +27,5 @@ export default function HomePagePreview(props: Props) {
     );
   }
 
-  return <HomePage data={data} encodeDataAttribute={encodeDataAttribute} data2={undefined} />;
+  return <HomePage data={data} encodeDataAttribute={encodeDataAttribute} />;
 }
