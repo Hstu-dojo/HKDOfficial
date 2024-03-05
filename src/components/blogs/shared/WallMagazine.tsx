@@ -121,7 +121,7 @@ const SkeletonOne = ({ avatar }: any) => {
     <motion.div
       initial="initial"
       whileHover="animate"
-      className="dark:bg-dot-white/[0.2] bg-dot-black/[0.2] flex h-[280px] min-h-[6rem] w-full flex-1 flex-col space-y-2 overflow-y-scroll"
+      className="scroll-m-0 dark:bg-dot-white/[0.2] bg-dot-black/[0.2] flex h-[280px] min-h-[6rem] w-full flex-1 flex-col space-y-2 overflow-y-scroll"
     >
       {avatar?.map((item: any, i: number) => (
         <motion.div
