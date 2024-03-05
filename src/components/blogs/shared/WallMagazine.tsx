@@ -150,7 +150,7 @@ const SkeletonOne = ({ avatar }: any) => {
           key={i}
           variants={i % 2 === 0 ? variants : variantsSecond}
           className={
-            `flex items-center space-x-2 rounded-full border border-neutral-100 bg-white p-2 dark:border-white/[0.2] dark:bg-black ` +
+            `flex items-center gap-2 rounded-full border border-neutral-100 bg-white p-2 dark:border-white/[0.2] dark:bg-black ` +
             `${i % 2 === 0 ? "flex-row" : "flex-row-reverse"}`
           }
         >
