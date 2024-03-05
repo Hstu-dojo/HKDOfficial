@@ -146,7 +146,7 @@ const SkeletonOne = ({ avatar }: any) => {
       className="dark:bg-dot-white/[0.2] bg-dot-black/[0.2] scrollbar-hide flex h-[280px] min-h-[6rem] w-full flex-1 flex-col space-y-2 overflow-y-scroll"
       ref={containerRef}
     >
-      {avatar?.map((item: any, i: number) => (
+      {avatar?.slice(0, 4)?.map((item: any, i: number) => (
         <motion.div
           key={i}
           variants={i % 2 === 0 ? variants : variantsSecond}
@@ -292,7 +292,10 @@ const SkeletonFour = () => {
           Delusional
         </p>
       </motion.div>
-      <motion.div style={{zIndex: 3}} className="relative flex h-full w-1/3 flex-col items-center justify-center rounded-2xl border border-neutral-200 bg-white p-4 dark:border-white/[0.1] dark:bg-black">
+      <motion.div
+        style={{ zIndex: 3 }}
+        className="relative flex h-full w-1/3 flex-col items-center justify-center rounded-2xl border border-neutral-200 bg-white p-4 dark:border-white/[0.1] dark:bg-black"
+      >
         <Image
           src="/logo.png"
           alt="avatar"
