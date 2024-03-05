@@ -58,6 +58,7 @@ export interface ProjectPayload {
   slug: string;
   tags?: string[];
   title?: string;
+  author?: any;
 }
 
 export interface SettingsPayload {

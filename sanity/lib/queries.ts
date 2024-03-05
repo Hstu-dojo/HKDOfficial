@@ -49,6 +49,11 @@ export const projectBySlugQuery = groq`
     "slug": slug.current,
     tags,
     title,
+    author->{
+        name,
+        "slug": slug.current,
+        image,
+    },
   }
 `;
 export const allProjectSlugQuery = (page: number, limit: number) => groq`

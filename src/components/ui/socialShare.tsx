@@ -64,7 +64,7 @@ export default function SocialShare() {
 
   return (
     <div className="my-4 max-w-md">
-      <p className="text-sm">Share this doc via</p>
+      <p className="text-lg font-bold text-slate-700">Share this doc via</p>
 
       <div className="my-4 flex justify-around">
         {/* FACEBOOK ICON */}

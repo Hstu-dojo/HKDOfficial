@@ -8,6 +8,7 @@ import { CustomPortableText } from "../../shared/CustomPortableText";
 import BlogComments from "@/components/blog-comments";
 import { TracingBeam } from "@/components/ui/tracing-beam";
 import SocialShare from "@/components/ui/socialShare";
+import AvatarBox from "../../shared/AvatarBox";
 
 export interface ProjectPageProps {
   data: ProjectPayload | null;
@@ -16,6 +17,7 @@ export interface ProjectPageProps {
 
 export function ProjectPage({ data, encodeDataAttribute }: ProjectPageProps) {
   // Default to an empty object to allow previews on non-existent documents
+  // console.log(data);
   const {
     client,
     coverImage,
@@ -37,7 +39,7 @@ export function ProjectPage({ data, encodeDataAttribute }: ProjectPageProps) {
 
   return (
     <div>
-      <TracingBeam className="px-6 mb-12">
+      <TracingBeam className="mb-12 px-6">
         <div className="mb-20 space-y-6">
           {/* Header */}
           <Header title={title} description={overview} />
@@ -115,7 +117,23 @@ export function ProjectPage({ data, encodeDataAttribute }: ProjectPageProps) {
             />
           )}
         </div>
-        <SocialShare />
+        <div className="flex flex-row flex-wrap justify-between gap-5">
+          <div>
+            <h2 className="text-lg font-bold">Written By</h2>
+            <div className="flex items-center space-x-4">
+              <div className="rounded-full border-2 border-primary">
+                <AvatarBox image={data?.author?.image} />
+              </div>
+              <div className="flex flex-col justify-around">
+                <h3 className="text-sm font-bold">{data?.author?.name}</h3>
+                <p className="mouse-pointer -mt-7 text-xs text-gray-600 underline">
+                  View Details
+                </p>
+              </div>
+            </div>
+          </div>
+          <SocialShare />
+        </div>
       </TracingBeam>
       <BlogComments post={post} />
 
