@@ -66,7 +66,7 @@ export function HomePage({ data, encodeDataAttribute }: HomePageProps) {
           <TypewriterEffectComponent text={"Explore our Wall Magazine"} />
         </div>
         <WallMagazine />
-        <AllProjects />
+        {/* <AllProjects /> */}
       </div>
     </div>
   );
