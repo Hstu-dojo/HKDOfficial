@@ -9,6 +9,7 @@ export default defineType({
       name: 'name',
       title: 'Name',
       type: 'string',
+      options: {hotspot: true},
     }),
     defineField({
       name: 'slug',
@@ -17,6 +18,7 @@ export default defineType({
       options: {
         source: 'name',
         maxLength: 96,
+        hotspot: true
       },
     }),
     defineField({
@@ -26,6 +28,7 @@ export default defineType({
       options: {
         hotspot: true,
       },
+      //@ts-ignore
       fields: [
         {
           name: 'alt',
@@ -38,6 +41,8 @@ export default defineType({
       name: 'bio',
       title: 'Bio',
       type: 'array',
+      options: {hotspot: true},
+      //@ts-ignore
       of: [
         {
           title: 'Block',

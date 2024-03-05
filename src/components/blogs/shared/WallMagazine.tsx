@@ -1,6 +1,7 @@
 "use client";
 import { cn } from "@/lib/utils";
 import React from "react";
+import AvatarBox from "./AvatarBox";
 import { BentoGrid, BentoGridItem } from "@/components/ui/bento-grid";
 import {
   IconBoxAlignRightFilled,
@@ -11,8 +12,66 @@ import {
 } from "@tabler/icons-react";
 import { motion } from "framer-motion";
 import Image from "next/image";
+export function WallMagazine({ avatar }: { avatar: any }) {
+  // console.log(avatar);
+  const items = [
+    {
+      title: "AI Content Generation",
+      description: (
+        <span className="text-sm">
+          Experience the power of AI in generating unique content.
+        </span>
+      ),
+      header: <SkeletonOne avatar={avatar} />,
+      className: "md:col-span-1",
+      icon: <IconClipboardCopy className="h-4 w-4 text-neutral-500" />,
+    },
+    {
+      title: "Automated Proofreading",
+      description: (
+        <span className="text-sm">
+          Let AI handle the proofreading of your documents.
+        </span>
+      ),
+      header: <SkeletonTwo />,
+      className: "md:col-span-1",
+      icon: <IconFileBroken className="h-4 w-4 text-neutral-500" />,
+    },
+    {
+      title: "Training Posts",
+      description: (
+        <span className="text-sm">
+          Get regular posts about training and tutorials as blog posts.
+        </span>
+      ),
+      header: <SkeletonThree />,
+      className: "md:col-span-1",
+      icon: <IconSignature className="h-4 w-4 text-neutral-500" />,
+    },
+    {
+      title: "Sentiment Analysis",
+      description: (
+        <span className="text-sm">
+          Understand the sentiment of your text with AI analysis.
+        </span>
+      ),
+      header: <SkeletonFour />,
+      className: "md:col-span-2",
+      icon: <IconTableColumn className="h-4 w-4 text-neutral-500" />,
+    },
 
-export function WallMagazine() {
+    {
+      title: "Text Summarization",
+      description: (
+        <span className="text-sm">
+          Summarize your lengthy documents with AI technology.
+        </span>
+      ),
+      header: <SkeletonFive />,
+      className: "md:col-span-1",
+      icon: <IconBoxAlignRightFilled className="h-4 w-4 text-neutral-500" />,
+    },
+  ];
   return (
     <BentoGrid className="mx-auto max-w-4xl md:auto-rows-[20rem]">
       {items.map((item, i) => (
@@ -32,7 +91,7 @@ const Skeleton = () => (
   <div className="dark:bg-dot-white/[0.2] bg-dot-black/[0.2] flex h-full min-h-[6rem] w-full   flex-1 rounded-xl border  border-transparent bg-neutral-100 [mask-image:radial-gradient(ellipse_at_center,white,transparent)] dark:border-white/[0.2] dark:bg-black"></div>
 );
 
-const SkeletonOne = () => {
+const SkeletonOne = ({ avatar }: any) => {
   const variants = {
     initial: {
       x: 0,
@@ -62,29 +121,25 @@ const SkeletonOne = () => {
     <motion.div
       initial="initial"
       whileHover="animate"
-      className="dark:bg-dot-white/[0.2] bg-dot-black/[0.2] flex h-full min-h-[6rem] w-full flex-1 flex-col space-y-2"
+      className="dark:bg-dot-white/[0.2] bg-dot-black/[0.2] flex h-[280px] min-h-[6rem] w-full flex-1 flex-col space-y-2 overflow-y-scroll"
     >
-      <motion.div
-        variants={variants}
-        className="flex flex-row items-center space-x-2 rounded-full border border-neutral-100  bg-white p-2 dark:border-white/[0.2] dark:bg-black"
-      >
-        <div className="h-6 w-6 flex-shrink-0 rounded-full bg-gradient-to-r from-pink-500 to-violet-500" />
-        <div className="h-4 w-full rounded-full bg-gray-100 dark:bg-neutral-900" />
-      </motion.div>
-      <motion.div
-        variants={variantsSecond}
-        className="ml-auto flex w-3/4 flex-row items-center space-x-2 rounded-full border border-neutral-100 bg-white p-2 dark:border-white/[0.2] dark:bg-black"
-      >
-        <div className="h-4 w-full rounded-full bg-gray-100 dark:bg-neutral-900" />
-        <div className="h-6 w-6 flex-shrink-0 rounded-full bg-gradient-to-r from-pink-500 to-violet-500" />
-      </motion.div>
-      <motion.div
-        variants={variants}
-        className="flex flex-row items-center space-x-2 rounded-full border border-neutral-100 bg-white p-2 dark:border-white/[0.2] dark:bg-black"
-      >
-        <div className="h-6 w-6 flex-shrink-0 rounded-full bg-gradient-to-r from-pink-500 to-violet-500" />
-        <div className="h-4 w-full rounded-full bg-gray-100 dark:bg-neutral-900" />
-      </motion.div>
+      {avatar?.map((item: any, i: number) => (
+        <motion.div
+          key={i}
+          variants={i % 2 === 0 ? variants : variantsSecond}
+          className={
+            `flex items-center space-x-2 rounded-full border border-neutral-100 bg-white p-2 dark:border-white/[0.2] dark:bg-black ` +
+            `${i % 2 === 0 ? "flex-row" : "flex-row-reverse"}`
+          }
+        >
+          <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-gradient-to-r from-primary to-tertiary">
+            <AvatarBox image={item?.image} />
+          </div>
+          <div className="h-7 w-full overflow-hidden rounded-full bg-gray-100 text-center text-sm text-gray-700">
+            {item?.name}
+          </div>
+        </motion.div>
+      ))}
     </motion.div>
   );
 };
@@ -305,61 +360,3 @@ const SkeletonFive = () => {
     </motion.div>
   );
 };
-const items = [
-  {
-    title: "AI Content Generation",
-    description: (
-      <span className="text-sm">
-        Experience the power of AI in generating unique content.
-      </span>
-    ),
-    header: <SkeletonOne />,
-    className: "md:col-span-1",
-    icon: <IconClipboardCopy className="h-4 w-4 text-neutral-500" />,
-  },
-  {
-    title: "Automated Proofreading",
-    description: (
-      <span className="text-sm">
-        Let AI handle the proofreading of your documents.
-      </span>
-    ),
-    header: <SkeletonTwo />,
-    className: "md:col-span-1",
-    icon: <IconFileBroken className="h-4 w-4 text-neutral-500" />,
-  },
-  {
-    title: "Training Posts",
-    description: (
-      <span className="text-sm">
-        Get regular posts about training and tutorials as blog posts.
-      </span>
-    ),
-    header: <SkeletonThree />,
-    className: "md:col-span-1",
-    icon: <IconSignature className="h-4 w-4 text-neutral-500" />,
-  },
-  {
-    title: "Sentiment Analysis",
-    description: (
-      <span className="text-sm">
-        Understand the sentiment of your text with AI analysis.
-      </span>
-    ),
-    header: <SkeletonFour />,
-    className: "md:col-span-2",
-    icon: <IconTableColumn className="h-4 w-4 text-neutral-500" />,
-  },
-
-  {
-    title: "Text Summarization",
-    description: (
-      <span className="text-sm">
-        Summarize your lengthy documents with AI technology.
-      </span>
-    ),
-    header: <SkeletonFive />,
-    className: "md:col-span-1",
-    icon: <IconBoxAlignRightFilled className="h-4 w-4 text-neutral-500" />,
-  },
-];

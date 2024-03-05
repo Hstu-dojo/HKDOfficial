@@ -114,3 +114,14 @@ export const findByAuthorQuery = (authorSlug: string) => groq`
     },
   }
 `;
+
+
+export const allAuthorsQuery = groq`
+  *[_type == "author"] {
+    _id,
+    name,
+    "slug": slug.current,
+    image,
+    bio
+  }
+`;

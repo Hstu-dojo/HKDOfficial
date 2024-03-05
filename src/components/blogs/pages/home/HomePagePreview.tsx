@@ -30,6 +30,7 @@ export default function HomePagePreview(props: Props) {
     <HomePage
       data={data}
       data2={undefined}
+      avatar={undefined}
       encodeDataAttribute={encodeDataAttribute}
     />
   );

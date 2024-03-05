@@ -13,6 +13,7 @@ import {
   findByCategoryQuery,
   findByAuthorQuery,
   allProjectSlugQuery,
+  allAuthorsQuery,
 } from "../lib/queries";
 import { token } from "../lib/token";
 import {
@@ -135,4 +136,8 @@ export function loadPostsByAuthor(authorSlug: string) {
     {},
     { next: { tags: [`author:${authorSlug}`], revalidate: 18000 } },
   );
+}
+
+export function loadAllAuthors() {
+  return loadQuery<any>(allAuthorsQuery, {},{ next: { revalidate: 18000 } });
 }
