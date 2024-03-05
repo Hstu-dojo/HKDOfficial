@@ -153,7 +153,15 @@ const SkeletonThree = () => {
         backgroundSize: "400% 400%",
       }}
     >
-      <motion.div className="h-full w-full rounded-lg"></motion.div>
+      <motion.div className="h-full w-full rounded-lg">
+        <Image
+          className="h-full w-full rounded-lg object-cover"
+          src="/image/kick.gif"
+          width={400}
+          height={300}
+          alt="kick gif"
+        />
+      </motion.div>
     </motion.div>
   );
 };
@@ -321,10 +329,10 @@ const items = [
     icon: <IconFileBroken className="h-4 w-4 text-neutral-500" />,
   },
   {
-    title: "Contextual Suggestions",
+    title: "Training Posts",
     description: (
       <span className="text-sm">
-        Get AI-powered suggestions based on your writing context.
+        Get regular posts about training and tutorials as blog posts.
       </span>
     ),
     header: <SkeletonThree />,

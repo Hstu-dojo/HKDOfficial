@@ -12,6 +12,7 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination";
+import { Skeleton } from "@/components/ui/skeleton"
 import { CustomPortableText } from "@/components/blogs/shared/CustomPortableText";
 import ImageBox from "../blogs/shared/ImageBox";
 import { cn } from "@/lib/utils";
@@ -122,7 +123,10 @@ export const HoverEffect = ({
                     value={item?.overview as PortableTextBlock[]}
                   />
                 ) : (
-                  "Rendering"
+                  <div className="space-y-2">
+                    <Skeleton className="h-4 w-full" />
+                    <Skeleton className="h-4 w-3/4" />
+                  </div>
                 )}
               </CardDescription>
             </Card>
