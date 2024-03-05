@@ -1,6 +1,6 @@
 import { HoverEffect } from "@/components/ui/card-hover-effect";
 
-export async function CardHoverEffect({ data2 }) {
+export async function CardHoverEffect({ data2 }: any) {
   return (
     <div className="mx-auto max-w-5xl px-2 md:px-4 lg:px-6">
       <HoverEffect items={projects} data2={data2} />
