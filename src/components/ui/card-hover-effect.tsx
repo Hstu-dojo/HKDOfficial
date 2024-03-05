@@ -55,7 +55,7 @@ export const HoverEffect = ({
     }
   };
 
-  const maxPage = Math.ceil(data2.length / itemsPerPage);
+  const maxPage = Math.ceil(data2?.length / itemsPerPage);
 
   return (
     <div
