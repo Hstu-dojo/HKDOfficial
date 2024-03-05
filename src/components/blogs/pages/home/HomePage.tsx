@@ -13,13 +13,14 @@ import AllProjects from "../../allProjects";
 
 export interface HomePageProps {
   data: HomePagePayload | null;
+  data2: any;
   encodeDataAttribute?: EncodeDataAttributeCallback;
 }
 
-export function HomePage({ data, encodeDataAttribute }: HomePageProps) {
+export function HomePage({ data, data2, encodeDataAttribute }: HomePageProps) {
   // Default to an empty object to allow previews on non-existent documents
   const { overview = [], showcaseProjects = [], title = "" } = data ?? {};
-  // console.log(showcaseProjects[0]);
+  // console.log(data2);
   return (
     <div>
       <div className="space-y-20">
@@ -66,7 +67,7 @@ export function HomePage({ data, encodeDataAttribute }: HomePageProps) {
           <TypewriterEffectComponent text={"Explore our Wall Magazine"} />
         </div>
         <WallMagazine />
-        {/* <AllProjects /> */}
+        <AllProjects data2={data2} />
       </div>
     </div>
   );

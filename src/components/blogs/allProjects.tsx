@@ -1,11 +1,11 @@
 import React from "react";
 import { CardHoverEffect } from "./allCard";
 
-const AllProjects = () => {
+const AllProjects = ({ data2 }) => {
   // console.log(data2);
   return (
     <div>
-      <CardHoverEffect />
+      <CardHoverEffect data2={data2} />
     </div>
   );
 };

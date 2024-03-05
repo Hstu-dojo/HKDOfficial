@@ -1,13 +1,9 @@
-import { loadAllProject } from "../../../sanity/loader/loadQuery2";
 import { HoverEffect } from "@/components/ui/card-hover-effect";
 
-export async function CardHoverEffect() {
-  const page = 1; // specify the desired page number
-  const limit = 100; // specify the number of items per page
-  const initial2 = await loadAllProject(page, limit);
+export async function CardHoverEffect({ data2 }) {
   return (
     <div className="mx-auto max-w-5xl px-2 md:px-4 lg:px-6">
-      <HoverEffect items={projects} data2={initial2?.data} />
+      <HoverEffect items={projects} data2={data2} />
     </div>
   );
 }
