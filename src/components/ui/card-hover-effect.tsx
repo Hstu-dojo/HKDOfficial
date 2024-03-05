@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import Link from "next/link";
 import type { PortableTextBlock } from "@portabletext/types";
-
+import { GoCommentDiscussion } from "react-icons/go";
 import {
   Pagination,
   PaginationContent,
@@ -15,6 +15,7 @@ import {
 import { CustomPortableText } from "@/components/blogs/shared/CustomPortableText";
 import ImageBox from "../blogs/shared/ImageBox";
 import { cn } from "@/lib/utils";
+import { CommentCount } from "disqus-react";
 
 export const HoverEffect = ({
   items,
@@ -33,6 +34,7 @@ export const HoverEffect = ({
   const [currentPage, setCurrentPage] = useState(1);
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
   const [isClient, setIsClient] = useState(false);
+  const pageURL = typeof window !== "undefined" ? window.location.href : "";
 
   useEffect(() => {
     setIsClient(true);
@@ -102,6 +104,18 @@ export const HoverEffect = ({
                 />
               </div>
               <CardTitle>{item?.title}</CardTitle>
+              <div className="-mt-5 flex items-center justify-end gap-2 font-mono text-xs text-slate-500">
+                <GoCommentDiscussion />
+                <CommentCount
+                  shortname="hstu"
+                  config={{
+                    url: pageURL,
+                    identifier: item?.slug,
+                    title: item?.title,
+                  }}
+                />
+              </div>
+
               <CardDescription>
                 {isClient ? (
                   <CustomPortableText
@@ -180,7 +194,7 @@ export const CardDescription = ({
   return (
     <p
       className={cn(
-        "mt-8 text-sm leading-relaxed tracking-wide text-zinc-600",
+        "text-sm leading-relaxed tracking-wide text-zinc-600",
         className,
       )}
     >
