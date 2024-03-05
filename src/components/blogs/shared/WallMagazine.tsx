@@ -2,6 +2,7 @@
 import { cn } from "@/lib/utils";
 import React from "react";
 import AvatarBox from "./AvatarBox";
+import "./magazine.css"
 import { BentoGrid, BentoGridItem } from "@/components/ui/bento-grid";
 import {
   IconBoxAlignRightFilled,
@@ -12,6 +13,7 @@ import {
 } from "@tabler/icons-react";
 import { motion } from "framer-motion";
 import Image from "next/image";
+import { useEffect, useRef } from "react";
 export function WallMagazine({ avatar }: { avatar: any }) {
   // console.log(avatar);
   const items = [
@@ -23,7 +25,7 @@ export function WallMagazine({ avatar }: { avatar: any }) {
         </span>
       ),
       header: <SkeletonOne avatar={avatar} />,
-      className: "md:col-span-1",
+      className: "md:col-span-1 group ",
       icon: <IconClipboardCopy className="h-4 w-4 text-neutral-500" />,
     },
     {
@@ -92,24 +94,31 @@ const Skeleton = () => (
 );
 
 const SkeletonOne = ({ avatar }: any) => {
+  const containerRef = useRef<HTMLDivElement>(null);
+
   const variants = {
     initial: {
       x: 0,
+      y: 0,
     },
     animate: {
-      x: 10,
+      x: -10,
+      y: "-100%", // Scroll down to 100%
       rotate: 5,
       transition: {
         duration: 0.2,
       },
     },
   };
+
   const variantsSecond = {
     initial: {
       x: 0,
+      y: 0,
     },
     animate: {
-      x: -10,
+      x: 10,
+      y: "-100%", // Scroll down to 100%
       rotate: -5,
       transition: {
         duration: 0.2,
@@ -117,11 +126,24 @@ const SkeletonOne = ({ avatar }: any) => {
     },
   };
 
+  useEffect(() => {
+    if (containerRef.current) {
+      containerRef.current.addEventListener("mouseenter", () => {
+        containerRef.current?.classList.add("scrolling");
+      });
+
+      containerRef.current.addEventListener("mouseleave", () => {
+        containerRef.current?.classList.remove("scrolling");
+      });
+    }
+  }, []);
+
   return (
     <motion.div
       initial="initial"
       whileHover="animate"
-      className="scroll-m-0 dark:bg-dot-white/[0.2] bg-dot-black/[0.2] flex h-[280px] min-h-[6rem] w-full flex-1 flex-col space-y-2 overflow-y-scroll"
+      className="dark:bg-dot-white/[0.2] bg-dot-black/[0.2] flex h-[280px] min-h-[6rem] w-full flex-1 flex-col space-y-2 overflow-y-scroll scrollbar-hide"
+      ref={containerRef}
     >
       {avatar?.map((item: any, i: number) => (
         <motion.div

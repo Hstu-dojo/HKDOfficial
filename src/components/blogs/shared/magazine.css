@@ -1,0 +1,15 @@
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+.group.scrolling {
+  animation: scrollDown 5s ease-out;
+}
+/* 
+@keyframes scrollDown {
+  from {
+    transform: translateY(0);
+  }
+  to {
+    transform: translateY(50%);
+  }
+} */
