@@ -2,7 +2,8 @@
 import { cn } from "@/lib/utils";
 import React from "react";
 import AvatarBox from "./AvatarBox";
-import "./magazine.css"
+import "./magazine.css";
+import { TextGenerateEffect } from "@/components/ui/text-generate-effect";
 import { BentoGrid, BentoGridItem } from "@/components/ui/bento-grid";
 import {
   IconBoxAlignRightFilled,
@@ -142,7 +143,7 @@ const SkeletonOne = ({ avatar }: any) => {
     <motion.div
       initial="initial"
       whileHover="animate"
-      className="dark:bg-dot-white/[0.2] bg-dot-black/[0.2] flex h-[280px] min-h-[6rem] w-full flex-1 flex-col space-y-2 overflow-y-scroll scrollbar-hide"
+      className="dark:bg-dot-white/[0.2] bg-dot-black/[0.2] scrollbar-hide flex h-[280px] min-h-[6rem] w-full flex-1 flex-col space-y-2 overflow-y-scroll"
       ref={containerRef}
     >
       {avatar?.map((item: any, i: number) => (
@@ -166,6 +167,8 @@ const SkeletonOne = ({ avatar }: any) => {
   );
 };
 const SkeletonTwo = () => {
+  const words = `HSTU Karate Dojo is a karate club that is situated at Hajee Mohammad Dahesh Science & Technology University, Dinajpur-5200. The dojo began its journey in 2022. Now, it is the official club at this university. At present, the dojo is active.
+`;
   const variants = {
     initial: {
       width: 0,
@@ -189,9 +192,9 @@ const SkeletonTwo = () => {
       initial="initial"
       animate="animate"
       whileHover="hover"
-      className="dark:bg-dot-white/[0.2] bg-dot-black/[0.2] flex h-full min-h-[6rem] w-full flex-1 flex-col space-y-2"
+      className="dark:bg-dot-white/[0.2] bg-dot-black/[0.2] flex h-full min-h-[6rem] w-full flex-1 flex-col space-y-2 text-justify text-sm text-gray-500"
     >
-      {arr.map((_, i) => (
+      {/* {arr.map((_, i) => (
         <motion.div
           key={"skelenton-two" + i}
           variants={variants}
@@ -200,7 +203,8 @@ const SkeletonTwo = () => {
           }}
           className="flex h-4 w-full flex-row items-center space-x-2 rounded-full  border border-neutral-100 bg-neutral-100 p-2 dark:border-white/[0.2] dark:bg-black"
         ></motion.div>
-      ))}
+      ))} */}
+      <TextGenerateEffect words={words} />
     </motion.div>
   );
 };
@@ -275,7 +279,7 @@ const SkeletonFour = () => {
         className="flex h-full w-1/3 flex-col items-center justify-center rounded-2xl border border-neutral-200 bg-white p-4 dark:border-white/[0.1] dark:bg-black"
       >
         <Image
-          src="https://pbs.twimg.com/profile_images/1417752099488636931/cs2R59eW_400x400.jpg"
+          src="/logo.png"
           alt="avatar"
           height="100"
           width="100"
@@ -288,9 +292,9 @@ const SkeletonFour = () => {
           Delusional
         </p>
       </motion.div>
-      <motion.div className="relative z-20 flex h-full w-1/3 flex-col items-center justify-center rounded-2xl border border-neutral-200 bg-white p-4 dark:border-white/[0.1] dark:bg-black">
+      <motion.div style={{zIndex: 3}} className="relative flex h-full w-1/3 flex-col items-center justify-center rounded-2xl border border-neutral-200 bg-white p-4 dark:border-white/[0.1] dark:bg-black">
         <Image
-          src="https://pbs.twimg.com/profile_images/1417752099488636931/cs2R59eW_400x400.jpg"
+          src="/logo.png"
           alt="avatar"
           height="100"
           width="100"
@@ -308,7 +312,7 @@ const SkeletonFour = () => {
         className="flex h-full w-1/3 flex-col items-center justify-center rounded-2xl border border-neutral-200 bg-white p-4 dark:border-white/[0.1] dark:bg-black"
       >
         <Image
-          src="https://pbs.twimg.com/profile_images/1417752099488636931/cs2R59eW_400x400.jpg"
+          src="/logo.png"
           alt="avatar"
           height="100"
           width="100"
@@ -361,7 +365,7 @@ const SkeletonFive = () => {
         className="flex flex-row items-start space-x-2 rounded-2xl border border-neutral-100  bg-white p-2 dark:border-white/[0.2] dark:bg-black"
       >
         <Image
-          src="https://pbs.twimg.com/profile_images/1417752099488636931/cs2R59eW_400x400.jpg"
+          src="/logo.png"
           alt="avatar"
           height="100"
           width="100"
