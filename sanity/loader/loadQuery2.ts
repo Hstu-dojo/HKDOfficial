@@ -1,6 +1,6 @@
+//@ts-nocheck
 import * as queryStore from "@sanity/react-loader";
 
-import { client } from "../lib/client";
 import {
   homePageQuery,
   pagesBySlugQuery,
@@ -27,10 +27,8 @@ import {
  */
 
 // Automatically handle draft mode
-export const loadQuery = ((query, params = {}, options = {}) => {
-  const {
-    perspective = "published",
-  } = options;
+export const loadQuery: any = ((query, params = {}, options = {}) => {
+  const { perspective = "published" } = options;
   // Don't cache by default
   let revalidate: NextFetchRequestConfig["revalidate"] = 0;
   // If `next.tags` is set, and we're not using the CDN, then it's safe to cache
@@ -50,34 +48,6 @@ export const loadQuery = ((query, params = {}, options = {}) => {
  * Loaders that are used in more than one place are declared here, otherwise they're colocated with the component
  */
 
-export function loadSettings() {
-  return loadQuery<SettingsPayload>(
-    settingsQuery,
-    {},
-    {
-      next: {
-        tags: ["settings", "home", "page", "project"],
-        revalidate: 18000,
-      },
-    },
-  );
-}
-
-export function loadHomePage() {
-  return loadQuery<HomePagePayload | null>(
-    homePageQuery,
-    {},
-    { next: { tags: ["home", "project"], revalidate: 18000 } },
-  );
-}
-
-export function loadProject(slug: string) {
-  return loadQuery<ProjectPayload | null>(
-    projectBySlugQuery,
-    { slug },
-    { next: { tags: [`project:${slug}`], revalidate: 18000 } },
-  );
-}
 export function loadAllProject(page: number, limit: number) {
   return loadQuery<any>(
     allProjectSlugQuery(page, limit), // Pass the page and limit parameters to the query

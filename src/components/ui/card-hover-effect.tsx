@@ -1,23 +1,25 @@
-"use client"
-import { cn } from "@/lib/utils";
+"use client";
+import { useState, useEffect } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import Link from "next/link";
-import { useState, useEffect } from 'react'
+import type { PortableTextBlock } from "@portabletext/types";
+
 import {
   Pagination,
   PaginationContent,
-  PaginationEllipsis,
   PaginationItem,
   PaginationLink,
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination";
-import type { PortableTextBlock } from '@portabletext/types'
-import { CustomPortableText } from '@/components/blogs/shared/CustomPortableText'
+import { CustomPortableText } from "@/components/blogs/shared/CustomPortableText";
+import ImageBox from "../blogs/shared/ImageBox";
+import { cn } from "@/lib/utils";
+
 export const HoverEffect = ({
   items,
   className,
-  data2
+  data2,
 }: {
   items: {
     title: string;
@@ -27,22 +29,46 @@ export const HoverEffect = ({
   className?: string;
   data2: any;
 }) => {
-  let [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
-   const [isClient, setIsClient] = useState(false)
- 
+  const itemsPerPage = 6;
+  const [currentPage, setCurrentPage] = useState(1);
+  const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
+  const [isClient, setIsClient] = useState(false);
+
   useEffect(() => {
-    setIsClient(true)
-  }, [])
-    console.log(data2)
+    setIsClient(true);
+  }, []);
+
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const visibleItems = data2?.slice(startIndex, endIndex);
+
+  const handlePreviousPage = () => {
+    if (currentPage > 1) {
+      setCurrentPage((prevPage) => prevPage - 1);
+    }
+  };
+
+  const handleNextPage = () => {
+    const maxPage = Math.ceil(data2.length / itemsPerPage);
+    if (currentPage < maxPage) {
+      setCurrentPage((prevPage) => prevPage + 1);
+    }
+  };
+
+  const maxPage = Math.ceil(data2.length / itemsPerPage);
+
   return (
-    <div suppressHydrationWarning className="mt-5  rounded-xl border border-slate-300 p-3 ">
+    <div
+      suppressHydrationWarning
+      className="mt-5  rounded-xl border border-slate-300 p-3 "
+    >
       <div
         className={cn(
           "grid grid-cols-1 md:grid-cols-2  lg:grid-cols-3",
           className,
         )}
       >
-        {data2?.map((item:any, idx:any) => (
+        {visibleItems?.map((item: any, idx: any) => (
           <Link
             href={`/blog/post/${item?.slug}`}
             key={item?._id}
@@ -68,26 +94,41 @@ export const HoverEffect = ({
               )}
             </AnimatePresence>
             <Card>
+              <div className="w-full rounded-lg">
+                <ImageBox
+                  image={item?.coverImage}
+                  alt={`Cover image from ${item?.title}`}
+                  classesWrapper="relative aspect-[16/9]"
+                />
+              </div>
               <CardTitle>{item?.title}</CardTitle>
-              <CardDescription>{isClient ? <CustomPortableText value={item?.overview as PortableTextBlock[]} /> : 'Rendering'}</CardDescription>
+              <CardDescription>
+                {isClient ? (
+                  <CustomPortableText
+                    value={item?.overview as PortableTextBlock[]}
+                  />
+                ) : (
+                  "Rendering"
+                )}
+              </CardDescription>
             </Card>
           </Link>
         ))}
       </div>
-      <div className="mt-2 flex w-[100%] justify-end">
+      <div className="mt-2 flex w-[100%] cursor-pointer justify-end">
         <Pagination>
           <PaginationContent className="font-thin">
             <PaginationItem>
-              <PaginationPrevious href="#" />
+              <PaginationPrevious
+                onClick={handlePreviousPage}
+                className={currentPage === 1 ? "hidden" : ""}
+              />
             </PaginationItem>
             <PaginationItem>
-              <PaginationLink href="#">1</PaginationLink>
-            </PaginationItem>
-            <PaginationItem>
-              <PaginationEllipsis />
-            </PaginationItem>
-            <PaginationItem>
-              <PaginationNext href="#" />
+              <PaginationNext
+                onClick={handleNextPage}
+                className={currentPage === maxPage ? "hidden" : ""}
+              />
             </PaginationItem>
           </PaginationContent>
         </Pagination>
@@ -95,7 +136,6 @@ export const HoverEffect = ({
     </div>
   );
 };
-
 export const Card = ({
   className,
   children,
