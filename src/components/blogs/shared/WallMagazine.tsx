@@ -288,15 +288,15 @@ const SkeletonFour = ({ trending }: any) => {
         <motion.div
           key={i}
           variants={i % 2 === 0 ? first : i === 1 ? undefined : second}
-          className={`flex h-full w-1/3 cursor-pointer flex-col items-center justify-center rounded-2xl border border-neutral-200 bg-white p-4 dark:border-white/[0.1] dark:bg-black`}
+          className={`flex h-full w-1/3 cursor-pointer flex-col items-center justify-between rounded-2xl border border-neutral-200 bg-white p-4 px-1 dark:border-white/[0.1] dark:bg-black`}
           style={{ zIndex: i === 1 ? 3 : 1 }}
           onClick={() => router.push(`/blog/post/${item?.slug}`)}
         >
-          <motion.div className="h-full w-full rounded-lg">
+          <motion.div className=" h-20 w-20 rounded-full">
             <ImageBox
               alt="avatar"
               image={item?.coverImage}
-              classesWrapper="h-full w-full rounded-lg object-cover relative aspect-[16/9]"
+              classesWrapper="h-full w-full rounded-full object-cover relative aspect-[16/9]"
             />
           </motion.div>
           <p className="text-center text-xs font-semibold text-neutral-500 sm:text-sm">
