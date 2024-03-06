@@ -9,7 +9,7 @@ import {
   pagesBySlugQuery,
   projectBySlugQuery,
   settingsQuery,
-  findTagQuery,
+  projectByTagQuery,
   findByCategoryQuery,
   findByAuthorQuery,
   allProjectSlugQuery,
@@ -115,7 +115,7 @@ export function loadPage(slug: string) {
 
 export function loadPostsByTag(tag: string) {
   return loadQuery<any>(
-    findTagQuery(tag), // Use the double curly braces to reference the tag parameter
+    projectByTagQuery(tag), // Use the double curly braces to reference the tag parameter
     //@ts-ignore
     { tag }, // Provide the tag parameter here
     { next: { tags: [`tag:${tag}`], revalidate: 18000 } },
@@ -139,5 +139,5 @@ export function loadPostsByAuthor(authorSlug: string) {
 }
 
 export function loadAllAuthors() {
-  return loadQuery<any>(allAuthorsQuery, {},{ next: { revalidate: 18000 } });
+  return loadQuery<any>(allAuthorsQuery, {}, { next: { revalidate: 18000 } });
 }

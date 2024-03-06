@@ -56,6 +56,26 @@ export const projectBySlugQuery = groq`
     },
   }
 `;
+
+export const projectByTagQuery = (tag: string) => groq`
+  *[_type == "project" && $tag in tags] {
+    _id,
+    client,
+    coverImage,
+    description,
+    duration,
+    overview,
+    site,
+    "slug": slug.current,
+    tags,
+    title,
+    author->{
+        name,
+        "slug": slug.current,
+        image,
+    },
+  }
+`;
 export const allProjectSlugQuery = (page: number, limit: number) => groq`
   *[_type == "project"] | order(_updatedAt desc)[${(page - 1) * limit}...${
     page * limit
@@ -114,7 +134,6 @@ export const findByAuthorQuery = (authorSlug: string) => groq`
     },
   }
 `;
-
 
 export const allAuthorsQuery = groq`
   *[_type == "author"] {

@@ -31,6 +31,7 @@ export default function HomePagePreview(props: Props) {
       data={data}
       data2={undefined}
       avatar={undefined}
+      trending={undefined}
       encodeDataAttribute={encodeDataAttribute}
     />
   );

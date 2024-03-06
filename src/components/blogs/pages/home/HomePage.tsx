@@ -15,6 +15,7 @@ export interface HomePageProps {
   data: HomePagePayload | null;
   data2: any;
   avatar: any;
+  trending: any;
   encodeDataAttribute?: EncodeDataAttributeCallback;
 }
 
@@ -22,6 +23,7 @@ export function HomePage({
   data,
   data2,
   avatar,
+  trending,
   encodeDataAttribute,
 }: HomePageProps) {
   // Default to an empty object to allow previews on non-existent documents
@@ -72,7 +74,7 @@ export function HomePage({
         <div className="my-5 text-center">
           <TypewriterEffectComponent text={"Explore our Wall Magazine"} />
         </div>
-        <WallMagazine avatar={avatar} />
+        <WallMagazine trending={trending} avatar={avatar} />
         <AllProjects data2={data2} />
       </div>
     </div>

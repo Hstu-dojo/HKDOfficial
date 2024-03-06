@@ -7,6 +7,7 @@ import {
   loadHomePage,
   loadAllProject,
   loadAllAuthors,
+  loadPostsByTag,
 } from "../../../../sanity/loader/loadQuery";
 import { studioUrl } from "../../../../sanity/env";
 const HomePagePreview = dynamic(
@@ -19,6 +20,7 @@ export default async function IndexRoute() {
   const page = 1; // specify the desired page number
   const limit = 100; // specify the number of items per page
   const initial2 = await loadAllProject(page, limit);
+  const initial4 = await loadPostsByTag("trending");
 
   if (draftMode().isEnabled) {
     return <HomePagePreview initial={initial} />;
@@ -36,5 +38,12 @@ export default async function IndexRoute() {
     );
   }
 
-  return <HomePage data={initial?.data} data2={initial2?.data} avatar={initial3?.data} />;
+  return (
+    <HomePage
+      data={initial?.data}
+      data2={initial2?.data}
+      avatar={initial3?.data}
+      trending={initial4?.data}
+    />
+  );
 }
