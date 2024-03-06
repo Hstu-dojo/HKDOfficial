@@ -2,10 +2,11 @@ import { DocumentTextIcon, ImageIcon } from "@sanity/icons";
 import { defineArrayMember, defineField, defineType } from "sanity";
 
 export default defineType({
-  type: "document",
+  type: "page",
   name: "page",
   title: "Page",
   icon: DocumentTextIcon,
+  //@ts-ignore
   fields: [
     defineField({
       type: "string",

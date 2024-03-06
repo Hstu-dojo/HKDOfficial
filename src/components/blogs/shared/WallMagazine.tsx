@@ -175,7 +175,7 @@ const SkeletonOne = ({ avatar }: any) => {
   );
 };
 const SkeletonTwo = () => {
-  const words = `HSTU Karate Dojo is a karate club that is situated at Hajee Mohammad Dahesh Science & Technology University, Dinajpur-5200. The dojo began its journey in 2022. Now, it is the official club at this university. At present, the dojo is active.
+  const words = `HSTU Karate Dojo is a karate club that is situated at Hajee Mohammad Dahesh Science & Technology University, Dinajpur-5200. The dojo began its journey in 2022. Now, it is the official club at this university.
 `;
   const variants = {
     initial: {
@@ -292,16 +292,18 @@ const SkeletonFour = ({ trending }: any) => {
           style={{ zIndex: i === 1 ? 3 : 1 }}
           onClick={() => router.push(`/blog/post/${item?.slug}`)}
         >
-          <motion.div className=" h-20 w-20 rounded-full">
-            <ImageBox
-              alt="avatar"
-              image={item?.coverImage}
-              classesWrapper="h-full w-full rounded-full object-cover relative aspect-[16/9]"
-            />
-          </motion.div>
-          <p className="text-center text-xs font-semibold text-neutral-500 sm:text-sm">
-            {item?.title.slice(0, 30)}..
-          </p>
+          <div className="flex flex-col items-center justify-center">
+            <motion.div className=" h-16 w-16 rounded-full">
+              <ImageBox
+                alt="avatar"
+                image={item?.coverImage}
+                classesWrapper="h-full w-full rounded-full object-cover relative aspect-[16/9]"
+              />
+            </motion.div>
+            <p className="text-center text-xs font-semibold text-neutral-500 sm:text-sm">
+              {item?.title.slice(0, 30)}..
+            </p>
+          </div>
           <p className="mt-1 rounded-full border border-red-500 bg-red-100 px-2 py-0.5 text-xs text-red-600 dark:bg-red-900/20">
             {(item?.author?.name).slice(0, 15)}..
           </p>
