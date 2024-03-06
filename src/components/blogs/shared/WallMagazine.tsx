@@ -255,7 +255,7 @@ const SkeletonThree = () => {
   );
 };
 const SkeletonFour = ({ trending }: any) => {
-  console.log(trending)
+  // console.log(trending)
   const first = {
     initial: {
       x: 20,
