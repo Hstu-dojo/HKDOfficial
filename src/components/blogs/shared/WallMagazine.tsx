@@ -255,6 +255,7 @@ const SkeletonThree = () => {
   );
 };
 const SkeletonFour = ({ trending }: any) => {
+  console.log(trending)
   const first = {
     initial: {
       x: 20,
@@ -284,12 +285,12 @@ const SkeletonFour = ({ trending }: any) => {
       className="dark:bg-dot-white/[0.2] bg-dot-black/[0.2] flex h-full min-h-[7rem] w-full flex-1 flex-row space-x-2"
     >
       {/* first card  */}
-      {trending?.slice(0, 2)?.map((item: any, i: number) => (
+      {trending?.slice(0, 3)?.map((item: any, i: number) => (
         <motion.div
           key={i}
-          variants={i % 2 === 0 ? first : i === 1 ? undefined : second}
+          variants={i === 1 ? first : i === 2 ? undefined : second}
           className={`flex h-full w-1/3 cursor-pointer flex-col items-center justify-between rounded-2xl border border-neutral-200 bg-white p-4 px-1 dark:border-white/[0.1] dark:bg-black`}
-          style={{ zIndex: i === 1 ? 3 : 1 }}
+          style={{ zIndex: i === 2 ? 3 : 1 }}
           onClick={() => router.push(`/blog/post/${item?.slug}`)}
         >
           <div className="flex flex-col items-center justify-center">

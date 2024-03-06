@@ -2,7 +2,7 @@ import { DocumentTextIcon, ImageIcon } from "@sanity/icons";
 import { defineArrayMember, defineField, defineType } from "sanity";
 
 export default defineType({
-  type: "page",
+  type: "document",
   name: "page",
   title: "Page",
   icon: DocumentTextIcon,

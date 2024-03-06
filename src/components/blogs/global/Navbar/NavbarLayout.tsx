@@ -28,7 +28,7 @@ export default function Navbar(props: NavbarProps) {
                   ? "font-extrabold text-black"
                   : "text-gray-600"
               }`}
-              href={href}
+              href={href === "/blog" ? `${href}` : `/blog${href}`}
             >
               {menuItem.title}
             </Link>

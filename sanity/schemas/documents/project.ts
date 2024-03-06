@@ -4,7 +4,7 @@ import { defineArrayMember, defineField, defineType } from "sanity";
 export default defineType({
   name: "project",
   title: "Posts",
-  type: "project",
+  type: "document",
   icon: ProjectsIcon,
   // Uncomment below to have edits publish automatically as you type
   // liveEdit: true,
