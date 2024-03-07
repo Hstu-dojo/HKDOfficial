@@ -1,6 +1,6 @@
 "use client";
 
-import { sendEmail } from "@/actions/sendEmail";
+// import { sendEmail } from "@/actions/sendEmail";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import {
@@ -19,11 +19,13 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { ContactFormSchema } from "@/lib/schema";
 import { Spinner } from "@/components/icons/icons";
+import { useRouter } from "next/navigation";
 
 type FormInputs = z.infer<typeof ContactFormSchema>;
 
 export default function ContactForm() {
   const [isPending, startTransition] = useTransition();
+  const router = useRouter();
 
   const form = useForm<FormInputs>({
     resolver: zodResolver(ContactFormSchema),
@@ -36,17 +38,22 @@ export default function ContactForm() {
 
   function onSubmit(data: FormInputs) {
     startTransition(async () => {
-      const response = await sendEmail(data);
+      // const response = await sendEmail(data);
 
-      if (response.success) {
-        toast.success("Email sent!");
-        form.reset();
-        return;
-      }
+      // console.log(data);
+      router.push(
+        `mailto:hstu.dojo@gmail.com?from=${data?.email}&subject=${data?.name}&body=${data?.message}`,
+      );
 
-      if (response.error) {
-        toast.error(response.error);
-      }
+      // if (response.success) {
+      toast.success("Opening at mail app!");
+      // form.reset();
+      // return;
+      // }
+
+      // if (response.error) {
+      //   toast.error(response.error);
+      // }
     });
   }
 
@@ -56,19 +63,19 @@ export default function ContactForm() {
         <ul className="mb-6 space-y-1 text-center text-sm">
           <li>
             <address className="-mt-px leading-6">
-              8910 University Center Lane Suite 620 San Diego, CA 92102
+              HSTU, Basherhat, Dinajpur-5200. Bangladesh.
             </address>
           </li>
           <li>
             <span>Phone: </span>
-            <a href="tel:+1-800-1554-456-123" className="hover:text-primary">
-              + 1 (800) 155 4561
+            <a href="tel:+8801777300309" className="hover:text-primary">
+              + 880 1777-300309
             </a>
           </li>
           <li>
             <span>Email: </span>
-            <a href="mailto:hi@margin.com" className="hover:text-primary">
-              hi@margin.com
+            <a href="mailto:hstu.dojo@gmail.com" className="hover:text-primary">
+              hstu.dojo@gmail.com
             </a>
           </li>
         </ul>
@@ -84,7 +91,7 @@ export default function ContactForm() {
                   name="name"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className="dark:text-white">Name</FormLabel>
+                      <FormLabel className="dark:text-white">Subject</FormLabel>
                       <FormControl>
                         <Input {...field} />
                       </FormControl>
@@ -130,15 +137,19 @@ export default function ContactForm() {
               />
             </div>
 
-            <Button type="submit" size="lg" disabled={isPending}>
-              {isPending ? (
+            <Button
+              type="submit"
+              size="lg"
+              // disabled={isPending}
+            >
+              {/* {isPending ? (
                 <>
                   <Spinner className="mr-2 h-5 w-5 animate-spin" />
                   <span>Sending</span>
                 </>
-              ) : (
-                <span>Send Message</span>
-              )}
+              ) : ( */}
+              <span>Send Message</span>
+              {/* )} */}
             </Button>
           </form>
         </Form>
