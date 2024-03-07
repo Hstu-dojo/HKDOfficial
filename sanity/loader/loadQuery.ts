@@ -25,6 +25,7 @@ import {
 
 const serverClient = client.withConfig({
   token,
+  useCdn: true,
   stega: {
     // Enable stega if it's a Vercel preview deployment, as the Vercel Toolbar has controls that shows overlays
     enabled: process.env.VERCEL_ENV === "preview",
