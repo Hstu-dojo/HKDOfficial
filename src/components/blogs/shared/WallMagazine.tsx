@@ -288,9 +288,10 @@ const SkeletonFour = ({ trending }: any) => {
       {trending?.slice(0, 3)?.map((item: any, i: number) => (
         <motion.div
           key={i}
-          variants={i === 1 ? first : i === 2 ? undefined : second}
+          // variants={i === 1 ? first : i === 2 ? undefined : second}
+          variants={i === 1 ? undefined : i === 2 ? second : first}
           className={`flex h-full w-1/3 cursor-pointer flex-col items-center justify-between rounded-2xl border border-neutral-200 bg-white p-4 px-1 dark:border-white/[0.1] dark:bg-black`}
-          style={{ zIndex: i === 2 ? 3 : 1 }}
+          style={{ zIndex: i === 1 ? 3 : 1 }}
           onClick={() => router.push(`/blog/post/${item?.slug}`)}
         >
           <div className="flex flex-col items-center justify-center">
