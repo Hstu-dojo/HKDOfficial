@@ -295,11 +295,11 @@ const SkeletonFour = ({ trending }: any) => {
           onClick={() => router.push(`/blog/post/${item?.slug}`)}
         >
           <div className="flex flex-col items-center justify-center">
-            <motion.div className=" h-16 w-16 rounded-full">
+            <motion.div className="">
               <ImageBox
                 alt="avatar"
                 image={item?.coverImage}
-                classesWrapper="h-full w-full rounded-full object-cover relative aspect-[16/9]"
+                classesWrapper="h-8 w-8 md:h-16 overflow-hidden rounded-full object-cover relative aspect-[16/9]"
               />
             </motion.div>
             <p className="text-center text-xs font-semibold text-neutral-500 sm:text-sm">
