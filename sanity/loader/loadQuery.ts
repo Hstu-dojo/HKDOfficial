@@ -77,7 +77,7 @@ export function loadSettings() {
     {
       next: {
         tags: ["settings", "home", "page", "project"],
-        revalidate: 18000,
+        revalidate: 1800,
       },
     },
   );
@@ -87,7 +87,7 @@ export function loadHomePage() {
   return loadQuery<HomePagePayload | null>(
     homePageQuery,
     {},
-    { next: { tags: ["home", "project"], revalidate: 18000 } },
+    { next: { tags: ["home", "project"], revalidate: 1800 } },
   );
 }
 
@@ -95,14 +95,14 @@ export function loadProject(slug: string) {
   return loadQuery<ProjectPayload | null>(
     projectBySlugQuery,
     { slug },
-    { next: { tags: [`project:${slug}`], revalidate: 18000 } },
+    { next: { tags: [`project:${slug}`], revalidate: 1800 } },
   );
 }
 export function loadAllProject(page: number, limit: number) {
   return loadQuery<any>(
     allProjectSlugQuery(page, limit), // Pass the page and limit parameters to the query
     {},
-    { next: { tags: [`project`], revalidate: 18000 } },
+    { next: { tags: [`project`], revalidate: 1800 } },
   );
 }
 
@@ -110,7 +110,7 @@ export function loadPage(slug: string) {
   return loadQuery<PagePayload | null>(
     pagesBySlugQuery,
     { slug },
-    { next: { tags: [`page:${slug}`], revalidate: 18000 } },
+    { next: { tags: [`page:${slug}`], revalidate: 1800 } },
   );
 }
 
@@ -119,7 +119,7 @@ export function loadPostsByTag(tag: string) {
     projectByTagQuery(tag), // Use the double curly braces to reference the tag parameter
     //@ts-ignore
     { tag }, // Provide the tag parameter here
-    { next: { tags: [`tag:${tag}`], revalidate: 18000 } },
+    { next: { tags: [`tag:${tag}`], revalidate: 1800 } },
   );
 }
 
@@ -127,7 +127,7 @@ export function loadPostsByCategory(category: string) {
   return loadQuery<any>(
     findByCategoryQuery(category),
     { category },
-    { next: { tags: [`category:${category}`], revalidate: 18000 } },
+    { next: { tags: [`category:${category}`], revalidate: 1800 } },
   );
 }
 
@@ -135,10 +135,10 @@ export function loadPostsByAuthor(authorSlug: string) {
   return loadQuery<any>(
     findByAuthorQuery(authorSlug),
     {},
-    { next: { tags: [`author:${authorSlug}`], revalidate: 18000 } },
+    { next: { tags: [`author:${authorSlug}`], revalidate: 1800 } },
   );
 }
 
 export function loadAllAuthors() {
-  return loadQuery<any>(allAuthorsQuery, {}, { next: { revalidate: 18000 } });
+  return loadQuery<any>(allAuthorsQuery, {}, { next: { revalidate: 1800 } });
 }
