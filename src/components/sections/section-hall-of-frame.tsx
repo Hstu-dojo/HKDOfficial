@@ -1,15 +1,29 @@
 "use client";
-import React from "react";
+import React, { useState } from 'react';
 import { ContainerScroll } from "@/components/ui/container-scroll-animation";
 import { BackgroundBeams } from "../ui/background-beams";
 import TypewriterEffectComponent from "../blogs/shared/TypewriterEffectComponent";
 
 export function HallOfFrame() {
+  const [isPlaying, setIsPlaying] = useState(false);
+  const audioPath = '/assets/hof.mp3'; // Replace with the actual path to your audio file
+
+  const handleMouseEnter = () => {
+    const audio = new Audio(audioPath);
+    audio.play();
+    setIsPlaying(true);
+  };
+
+  const handleMouseLeave = () => {
+    const audio = new Audio(audioPath);
+    audio.pause();
+    setIsPlaying(false);
+  };
   return (
-    <div onMouseEnter={() => {
-      const audio = new Audio('/assets/hof.mp3'); // Replace with the actual path to your audio file
-      audio.play();
-    }} className="flex flex-col overflow-hidden">
+    <div 
+        onMouseEnter={handleMouseEnter}
+        onMouseLeave={handleMouseLeave}
+        className="flex flex-col overflow-hidden">
       <BackgroundBeams />
       <ContainerScroll
         users={users}
