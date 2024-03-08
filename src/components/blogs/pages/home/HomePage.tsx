@@ -75,9 +75,9 @@ export function HomePage({
         <div className="my-5 text-center">
           <TypewriterEffectComponent text={"Explore our Wall Magazine"} />
         </div>
-        <WallMagazine trending={trending} avatar={avatar} />
+        <div className='mt-10 md:mt-20'><WallMagazine trending={trending} avatar={avatar} /></div>
         <AllProjects data2={data2} />
-        <div className="hidden md:flex -mt-28"><HallOfFrame /></div>
+        <div className="hidden md:flex"><HallOfFrame /></div>
         
       </div>
     </div>
