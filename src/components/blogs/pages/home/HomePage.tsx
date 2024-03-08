@@ -77,7 +77,8 @@ export function HomePage({
         </div>
         <WallMagazine trending={trending} avatar={avatar} />
         <AllProjects data2={data2} />
-        <HallOfFrame />
+        <div className="hidden md:flex"><HallOfFrame /></div>
+        
       </div>
     </div>
   );
