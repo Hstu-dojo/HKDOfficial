@@ -1,6 +1,6 @@
 import type { EncodeDataAttributeCallback } from "@sanity/react-loader";
 import Link from "next/link";
-
+import Furious5 from "@/components/sections/furious5/furious5";
 import { ProjectListItem } from "./ProjectListItem";
 import { Header } from "../../shared/Header";
 import { resolveHref } from "../../../../../sanity/lib/utils";
@@ -76,6 +76,7 @@ export function HomePage({
         </div>
         <WallMagazine trending={trending} avatar={avatar} />
         <AllProjects data2={data2} />
+        <Furious5 />
       </div>
     </div>
   );

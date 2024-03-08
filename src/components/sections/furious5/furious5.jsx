@@ -7,6 +7,7 @@ import styles from "./styles";
 import { TypingText, TitleText } from "./components/CustomTexts";
 import ExploreCard from "./components/ExploreCard";
 import { exploreWorlds } from "./exploreWorlds";
+import TypewriterEffectComponent from "@/components/blogs/shared/TypewriterEffectComponent";
 
 const Furious5 = () => {
   const [active, setActive] = useState("world-2");
@@ -29,9 +30,8 @@ const Furious5 = () => {
           }
           textStyles="text-center"
         /> */}
-        <h2 className="text-center font-bold">
-          Choose the world you want to explore
-        </h2>
+        <div className="mt-20 lg:mt-28 mb-10 text-center"><TypewriterEffectComponent text={"Start your new amazing journey with us"} /></div>
+        
         <TypingText title="| Meet Furious Five" textStyles="text-center" />
 
         <div className="mt-[50px] flex min-h-[70vh] flex-col gap-5 lg:flex-row">
