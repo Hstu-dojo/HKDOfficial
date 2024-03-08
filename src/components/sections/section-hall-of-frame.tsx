@@ -3,7 +3,6 @@ import React, { useState, useRef } from 'react';
 import { ContainerScroll } from "@/components/ui/container-scroll-animation";
 import { BackgroundBeams } from "../ui/background-beams";
 import TypewriterEffectComponent from "../blogs/shared/TypewriterEffectComponent";
-import { GoogleGeminiEffectPWA } from "@/components/sections/section-app-install";
 
 export function HallOfFrame() {
   const [isPlaying, setIsPlaying] = useState(false);
@@ -38,7 +37,6 @@ export function HallOfFrame() {
           </>
         }
       />
-      <GoogleGeminiEffectPWA />
     </div>
   );
 }
