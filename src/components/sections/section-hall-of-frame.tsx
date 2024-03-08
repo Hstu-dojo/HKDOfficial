@@ -6,7 +6,10 @@ import TypewriterEffectComponent from "../blogs/shared/TypewriterEffectComponent
 
 export function HallOfFrame() {
   return (
-    <div className="flex flex-col overflow-hidden">
+    <div onMouseEnter={() => {
+      const audio = new Audio('/assets/hof.mp3'); // Replace with the actual path to your audio file
+      audio.play();
+    }} className="flex flex-col overflow-hidden">
       <BackgroundBeams />
       <ContainerScroll
         users={users}
