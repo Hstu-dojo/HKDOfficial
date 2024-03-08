@@ -2,7 +2,7 @@
 import React from "react";
 import { ContainerScroll } from "@/components/ui/container-scroll-animation";
 import { BackgroundBeams } from "../ui/background-beams";
-import TypewriterEffectComponent from "../../shared/TypewriterEffectComponent";
+import TypewriterEffectComponent from "../blogs/shared/TypewriterEffectComponent";
 
 export function HallOfFrame() {
   return (
