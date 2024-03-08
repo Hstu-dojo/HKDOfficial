@@ -302,7 +302,7 @@ const SkeletonFour = ({ trending }: any) => {
                 classesWrapper="h-8 w-8 md:h-16 overflow-hidden rounded-full object-cover relative aspect-[16/9]"
               />
             </motion.div>
-            <p className="text-center text-xs font-semibold text-neutral-500 sm:text-sm">
+            <p className="text-center text-xs font-semibold text-neutral-500 sm:text-sm mt-2">
               {item?.title.slice(0, 30)}..
             </p>
           </div>
