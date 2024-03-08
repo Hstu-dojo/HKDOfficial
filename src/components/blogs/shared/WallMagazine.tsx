@@ -306,7 +306,7 @@ const SkeletonFour = ({ trending }: any) => {
               {item?.title.slice(0, 30)}..
             </p>
           </div>
-          <p className="mt-1 rounded-full border border-red-500 bg-red-100 px-2 py-0.5 text-xs text-red-600 dark:bg-red-900/20">
+          <p className="mt-1 rounded-full border border-red-500 bg-red-100 px-2 py-0.5 text-[8px] text-red-600 dark:bg-red-900/20">
             {(item?.author?.name).slice(0, 15)}..
           </p>
         </motion.div>
