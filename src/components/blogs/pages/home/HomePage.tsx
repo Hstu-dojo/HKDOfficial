@@ -71,11 +71,11 @@ export function HomePage({
           </div>
         )}
       </div>
-      <div className="mt-20 lg:mt-28">
+      <div className="mt-28 lg:mt-40">
         <div className="my-5 text-center">
           <TypewriterEffectComponent text={"Explore our Wall Magazine"} />
         </div>
-        <div className='mt-10 md:mt-20'><WallMagazine trending={trending} avatar={avatar} /></div>
+        <div><WallMagazine trending={trending} avatar={avatar} /></div>
         <AllProjects data2={data2} />
         <div className="hidden md:flex"><HallOfFrame /></div>
         
