@@ -2,6 +2,7 @@
 import React from "react";
 import { ContainerScroll } from "@/components/ui/container-scroll-animation";
 import { BackgroundBeams } from "../ui/background-beams";
+import TypewriterEffectComponent from "../../shared/TypewriterEffectComponent";
 
 export function HallOfFrame() {
   return (
@@ -14,7 +15,7 @@ export function HallOfFrame() {
             <h1 className="text-4xl font-semibold text-black dark:text-white">
               Bringing you the <br />
               <span className="mt-1 text-4xl font-bold leading-none md:text-[6rem]">
-                Hall of Frame
+                <TypewriterEffectComponent text={"Hall of Frame"} />
               </span>
             </h1>
           </>

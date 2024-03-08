@@ -7,7 +7,7 @@ import styles from "./styles";
 import { TypingText, TitleText } from "./components/CustomTexts";
 import ExploreCard from "./components/ExploreCard";
 import { exploreWorlds } from "./exploreWorlds";
-import TypewriterEffectComponent from "@/components/blogs/shared/TypewriterEffectComponent";
+// import TypewriterEffectComponent from "@/components/blogs/shared/TypewriterEffectComponent";
 
 const Furious5 = () => {
   const [active, setActive] = useState("world-2");
@@ -21,7 +21,7 @@ const Furious5 = () => {
         viewport={{ once: false, amount: 0.25 }}
         className={`${styles.innerWidth} mx-auto flex flex-col`}
       >
-        {/* <TitleText
+        <TitleText
           title={
             <>
               Choose the world you want <br className="hidden md:block" /> to
@@ -29,8 +29,8 @@ const Furious5 = () => {
             </>
           }
           textStyles="text-center"
-        /> */}
-        <div className="mt-20 lg:mt-28 mb-10 text-center"><TypewriterEffectComponent text={"Start your new amazing journey with us"} /></div>
+        />
+        {/* <div className="mt-20 lg:mt-28 mb-10 text-center"><TypewriterEffectComponent text={"Start your new amazing journey with us"} /></div> */}
         
         <TypingText title="| Meet Furious Five" textStyles="text-center" />
 
