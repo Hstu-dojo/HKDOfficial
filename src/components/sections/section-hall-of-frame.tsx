@@ -6,17 +6,16 @@ import TypewriterEffectComponent from "../blogs/shared/TypewriterEffectComponent
 
 export function HallOfFrame() {
   const [isPlaying, setIsPlaying] = useState(false);
-  const audioPath = '/assets/hof.mp3'; // Replace with the actual path to your audio file
+  const audioRef = useRef(new Audio('/assets/hof.mp3'));
 
   const handleMouseEnter = () => {
-    const audio = new Audio(audioPath);
-    audio.play();
+    audioRef.current.play();
     setIsPlaying(true);
   };
 
   const handleMouseLeave = () => {
-    const audio = new Audio(audioPath);
-    audio.pause();
+    audioRef.current.pause();
+    audioRef.current.currentTime = 0; // Reset the audio to the beginning
     setIsPlaying(false);
   };
   return (
