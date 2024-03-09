@@ -15,7 +15,7 @@ export function HallOfFrame() {
 
   const handleMouseLeave = () => {
     audioRef.current.pause();
-    audioRef.current.currentTime = 0; // Reset the audio to the beginning
+    //audioRef.current.currentTime = 0; // Reset the audio to the beginning
     setIsPlaying(false);
   };
   return (
