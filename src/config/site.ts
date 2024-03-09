@@ -28,7 +28,7 @@ export const mainNav = [
     items: [
       {
         title: "Home Marketing",
-        href: "/",
+        href: "/home",
         items: [],
       },
       {
