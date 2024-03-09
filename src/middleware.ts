@@ -5,7 +5,7 @@ import { withAuthMiddleware } from "./middlewares/authentication";
 const middlewares = {
   // define your middlewares here...
   // first internationalization, then auth middleware!
-  "/": withLocaleMiddleware,
+  "/home": withLocaleMiddleware,
   "/about": withLocaleMiddleware,
   "/dev": withLocaleMiddleware,
   "/login": withLocaleMiddleware,
