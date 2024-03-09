@@ -17,6 +17,13 @@ const withPWA = require("@ducanh2912/next-pwa").default({
 });
 // const removeImports = require("next-remove-imports")();
 
+const redirects = async () => {
+  return [
+    // Add your redirects here
+    { source: '/', destination: '/blog', permanent: false },
+  ];
+};
+
 const nextConfig = {
   experimental: {
     serverComponentsExternalPackages: ["@prisma/client", "bcrypt"],
@@ -54,6 +61,7 @@ const nextConfig = {
       },
     ],
   },
+  redirects,
 };
 // module.exports = removeImports(withPWA(nextConfig));
 

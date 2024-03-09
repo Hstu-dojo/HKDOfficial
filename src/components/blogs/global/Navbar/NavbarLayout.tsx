@@ -4,7 +4,7 @@ import {
   MenuItem,
   SettingsPayload,
 } from "../../../../../sanity/lib/sanity_types";
-import { FloatingNavbar } from "./FloatingNav";
+// import { FloatingNavbar } from "./FloatingNav";
 interface NavbarProps {
   data: SettingsPayload;
 }
@@ -34,7 +34,7 @@ export default function Navbar(props: NavbarProps) {
             </Link>
           );
         })}
-      <FloatingNavbar />
+      {/* <FloatingNavbar /> */}
     </div>
   );
 }
