@@ -1,6 +1,6 @@
 import type { EncodeDataAttributeCallback } from "@sanity/react-loader";
 import Link from "next/link";
-import { HallOfFrame } from "@/components/sections/section-hall-of-frame";
+// import { HallOfFrame } from "@/components/sections/section-hall-of-frame";
 import { ProjectListItem } from "./ProjectListItem";
 import { Header } from "../../shared/Header";
 import { resolveHref } from "../../../../../sanity/lib/utils";
@@ -77,7 +77,7 @@ export function HomePage({
         </div>
         <div><WallMagazine trending={trending} avatar={avatar} /></div>
         <AllProjects data2={data2} />
-        <div className="hidden md:flex"><HallOfFrame /></div>
+        {/* <div className="hidden md:flex"><HallOfFrame /></div> */}
         
       </div>
     </div>
