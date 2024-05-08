@@ -14,7 +14,7 @@ import { variants } from "../utils/animationVariants";
 import downloadPhoto from "../utils/downloadPhoto";
 import { range } from "../utils/range";
 import type { ImageProps, SharedModalProps } from "../utils/types";
-import Twitter from "./Icons/Twitter";
+import Twitter from "./icons/Twitter";
 
 export default function SharedModal({
   index,
