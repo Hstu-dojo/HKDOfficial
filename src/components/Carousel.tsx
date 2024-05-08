@@ -1,5 +1,6 @@
 import Image from "next/image";
 import { useRouter } from "next/router";
+//@ts-ignore
 import useKeypress from "react-use-keypress";
 import type { ImageProps } from "../utils/types";
 import { useLastViewedPhoto } from "../utils/useLastViewedPhoto";
@@ -16,8 +17,8 @@ export default function Carousel({
   const [, setLastViewedPhoto] = useLastViewedPhoto();
 
   function closeModal() {
-    setLastViewedPhoto(currentPhoto.id);
-    router.push("/", undefined, { shallow: true });
+    setLastViewedPhoto(currentPhoto?.id as any);
+    router.push("/gallery", undefined, { shallow: true });
   }
 
   function changePhotoId(newVal: number) {
@@ -35,7 +36,7 @@ export default function Carousel({
         onClick={closeModal}
       >
         <Image
-          src={currentPhoto.blurDataUrl}
+          src={currentPhoto?.blurDataUrl as any}
           className="pointer-events-none h-full w-full"
           alt="blurred background"
           fill
