@@ -25,7 +25,9 @@ export default function Modal({
 
   function handleClose() {
     router.push("/gallery", undefined, { shallow: true });
-    onClose();
+    if (onClose) {
+      onClose();
+    }
   }
 
   function changePhotoId(newVal: number) {
