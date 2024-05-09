@@ -26,19 +26,20 @@ const Home: NextPage = ({ images }: { images: ImageProps[] }) => {
       setLastViewedPhoto(null);
     }
   }, [photoId, lastViewedPhoto, setLastViewedPhoto]);
+  console.log(photoId);
   const [currentURL, setCurrentURL] = useState("");
 
   useEffect(() => {
     // Get the current URL
     setCurrentURL(window.location.href);
   }, []);
-  const ShareFunc =() =>{
+  const ShareFunc = () => {
     // Replace this with your custom share functionality
     navigator?.share({
       title: "HKD Blog",
       text: currentURL,
     });
-  }
+  };
 
   return (
     <>
@@ -80,7 +81,7 @@ const Home: NextPage = ({ images }: { images: ImageProps[] }) => {
                   width={36}
                   height={36}
                 />
-                <span className="hidden lg:flex">HSTU Dojo</span>
+                <span className="flex">HSTU Dojo</span>
               </div>
             </Link>
             <h1 className="mb-4 mt-8 text-base font-bold uppercase tracking-widest">
@@ -103,7 +104,7 @@ const Home: NextPage = ({ images }: { images: ImageProps[] }) => {
           {images.map(({ id, public_id, format, blurDataUrl }) => (
             <Link
               key={id}
-              href={`/?photoId=${id}`}
+              href={`/gallery?photoId=${id}`}
               as={`/p/${id}`}
               ref={id === Number(lastViewedPhoto) ? lastViewedPhotoRef : null}
               shallow

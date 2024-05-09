@@ -63,11 +63,11 @@ export default function Modal({
       static
       open={true}
       onClose={handleClose}
-      initialFocus={overlayRef}
+      initialFocus={overlayRef as any}
       className="fixed inset-0 z-10 flex items-center justify-center"
     >
       <Dialog.Overlay
-        ref={overlayRef}
+        ref={overlayRef as any}
         as={motion.div}
         key="backdrop"
         className="fixed inset-0 z-30 bg-black/70 backdrop-blur-2xl"
