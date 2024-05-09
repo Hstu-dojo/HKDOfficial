@@ -3,9 +3,9 @@ import Head from "next/head";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { useEffect, useRef } from "react";
+import { useState, useEffect, useRef } from "react";
 import Bridge from "../components/icons/Bridge";
-import Logo from "../components/icons/Logo";
+// import Logo from "../components/icons/Logo";
 import Modal from "../components/Modal";
 import cloudinary from "../utils/cloudinary";
 import getBase64ImageUrl from "../utils/generateBlurPlaceholder";
@@ -26,11 +26,24 @@ const Home: NextPage = ({ images }: { images: ImageProps[] }) => {
       setLastViewedPhoto(null);
     }
   }, [photoId, lastViewedPhoto, setLastViewedPhoto]);
+  const [currentURL, setCurrentURL] = useState("");
+
+  useEffect(() => {
+    // Get the current URL
+    setCurrentURL(window.location.href);
+  }, []);
+  const ShareFunc =() =>{
+    // Replace this with your custom share functionality
+    navigator?.share({
+      title: "HKD Blog",
+      text: currentURL,
+    });
+  }
 
   return (
     <>
       <Head>
-        <title>Next.js Conf 2022 Photos</title>
+        <title>HSTU Karate Dojo Gallery</title>
         <meta
           property="og:image"
           content="https://nextjsconf-pics.vercel.app/og-image.png"
@@ -57,19 +70,32 @@ const Home: NextPage = ({ images }: { images: ImageProps[] }) => {
               </span>
               <span className="absolute bottom-0 left-0 right-0 h-[400px] bg-gradient-to-b from-black/0 via-black to-black"></span>
             </div>
-            <Logo />
+            {/* <Logo /> */}
+            <Link href="/">
+              <div className=" z-20 flex items-center px-10 pt-6 text-lg font-medium text-white md:pt-8">
+                <Image
+                  src="/logo.png"
+                  className="mr-3"
+                  alt="Logo"
+                  width={36}
+                  height={36}
+                />
+                <span className="hidden lg:flex">HSTU Dojo</span>
+              </div>
+            </Link>
             <h1 className="mb-4 mt-8 text-base font-bold uppercase tracking-widest">
-              2022 Event Photos
+              2024 Grading Test (March)
             </h1>
             <p className="max-w-[40ch] text-white/75 sm:max-w-[32ch]">
-              Our incredible Next.js community got together in San Francisco for
-              our first ever in-person conference!
+              New belt test (Orange & Step-green) among our Dojo members. It was
+              a fantastic day!
             </p>
             <a
               className="pointer z-10 mt-6 rounded-lg border border-white bg-white px-3 py-2 text-sm font-semibold text-black transition hover:bg-white/10 hover:text-white md:mt-4"
               href="#"
-              target="_blank"
+              // target="_blank"
               rel="noreferrer"
+              onClick={ShareFunc}
             >
               Share
             </a>
@@ -104,30 +130,12 @@ const Home: NextPage = ({ images }: { images: ImageProps[] }) => {
       <footer className="p-6 text-center text-white/80 sm:p-12">
         Thank you to{" "}
         <a
-          href="https://edelsonphotography.com/"
+          href="https://www.facebook.com/100007316528556"
           target="_blank"
           className="font-semibold hover:text-white"
           rel="noreferrer"
         >
-          Josh Edelson
-        </a>
-        ,{" "}
-        <a
-          href="https://www.newrevmedia.com/"
-          target="_blank"
-          className="font-semibold hover:text-white"
-          rel="noreferrer"
-        >
-          Jenny Morgan
-        </a>
-        , and{" "}
-        <a
-          href="https://www.garysextonphotography.com/"
-          target="_blank"
-          className="font-semibold hover:text-white"
-          rel="noreferrer"
-        >
-          Gary Sexton
+          Atik Mahbub
         </a>{" "}
         for the pictures.
       </footer>
