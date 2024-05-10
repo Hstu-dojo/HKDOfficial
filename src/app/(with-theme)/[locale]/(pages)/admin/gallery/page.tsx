@@ -1,22 +1,21 @@
 import { Metadata } from "next";
 import Image from "next/image";
-import { PlusCircledIcon } from "@radix-ui/react-icons";
 
-import { Button } from "@/components/ui/button";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 import { AlbumArtwork } from "@/components/gallery/album-artwork";
 import { Menu } from "@/components/gallery/menu";
+import ClourinnaryUpButton from "@/components/gallery/ClourinnaryUpButton";
 import { PodcastEmptyPlaceholder } from "@/components/gallery/podcast-empty-placeholder";
 import { Sidebar } from "@/components/gallery/sidebar";
 import { listenNowAlbums, madeForYouAlbums } from "@/db/albums";
 import { playlists } from "@/db/playlists";
 
 export const metadata: Metadata = {
-  title: "Music App",
-  description: "Example music app using the components.",
+  title: "Gallery admin",
+  description: "Admin's gallery management.",
 };
 
 export default function MusicPage() {
@@ -58,10 +57,7 @@ export default function MusicPage() {
                         </TabsTrigger>
                       </TabsList>
                       <div className="ml-auto mr-4">
-                        <Button>
-                          <PlusCircledIcon className="mr-2 h-4 w-4" />
-                          Add music
-                        </Button>
+                        <ClourinnaryUpButton />
                       </div>
                     </div>
                     <TabsContent
@@ -96,7 +92,12 @@ export default function MusicPage() {
                           <ScrollBar orientation="horizontal" />
                         </ScrollArea>
                       </div>
-                      <div className="mt-6 space-y-1">
+                    </TabsContent>
+                    <TabsContent
+                      value="podcasts"
+                      className="h-full flex-col border-none p-0 data-[state=active]:flex"
+                    >
+                      <div className="space-y-1">
                         <h2 className="text-2xl font-semibold tracking-tight">
                           Made for You
                         </h2>
@@ -122,13 +123,8 @@ export default function MusicPage() {
                           <ScrollBar orientation="horizontal" />
                         </ScrollArea>
                       </div>
-                    </TabsContent>
-                    <TabsContent
-                      value="podcasts"
-                      className="h-full flex-col border-none p-0 data-[state=active]:flex"
-                    >
                       <div className="flex items-center justify-between">
-                        <div className="space-y-1">
+                        <div className="mt-6 space-y-1 ">
                           <h2 className="text-2xl font-semibold tracking-tight">
                             New Episodes
                           </h2>
