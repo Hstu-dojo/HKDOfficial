@@ -6,24 +6,21 @@ class MyDocument extends Document {
       <Html lang="en">
         <Head>
           <link rel="icon" href="/favicon.ico" />
-          <meta
-            name="description"
-            content="See pictures from Next.js Conf and the After Party."
-          />
-          <meta property="og:site_name" content="nextjsconf-pics.vercel.app" />
+          <meta name="description" content="See pictures from HKD belt test." />
+          <meta property="og:site_name" content="karate.paradox-bd.com" />
           <meta
             property="og:description"
-            content="See pictures from Next.js Conf and the After Party."
+            content="See pictures from HKD belt test."
           />
-          <meta property="og:title" content="Next.js Conf 2022 Pictures" />
+          <meta property="og:title" content="HKD belt test 2024 Pictures" />
           <meta name="twitter:card" content="summary_large_image" />
-          <meta name="twitter:title" content="Next.js Conf 2022 Pictures" />
+          <meta name="twitter:title" content="HKD belt test 2024 Pictures" />
           <meta
             name="twitter:description"
-            content="See pictures from Next.js Conf and the After Party."
+            content="See pictures from HKD belt test."
           />
         </Head>
-        <body className="bg-black antialiased">
+        <body className="antialiased">
           <Main />
           <NextScript />
         </body>
