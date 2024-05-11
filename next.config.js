@@ -14,6 +14,10 @@ const withPWA = require("@ducanh2912/next-pwa").default({
   workboxOptions: {
     disableDevLogs: true,
   },
+  fallbacks: {
+    // Failed page requests fallback to this.
+    document: "/~offline",
+  },
 });
 // const removeImports = require("next-remove-imports")();
 
