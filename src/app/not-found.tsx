@@ -3,7 +3,7 @@ import "./globals.css";
 const ErrorPage = () => {
   return (
     <section>
-      <div className=" text-white">
+      <div className="bg-black text-white">
         <div className="flex h-screen">
           <div className="m-auto text-center">
             <div>
