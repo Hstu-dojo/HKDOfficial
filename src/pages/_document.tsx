@@ -20,7 +20,7 @@ class MyDocument extends Document {
             content="See pictures from HKD belt test."
           />
         </Head>
-        <body className="antialiased">
+        <body className="bg-black antialiased">
           <Main />
           <NextScript />
         </body>
