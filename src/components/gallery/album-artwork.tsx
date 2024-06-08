@@ -12,6 +12,7 @@ import {
   ContextMenuSubTrigger,
   ContextMenuTrigger,
 } from "@/components/ui/context-menu";
+import { CldImage } from "next-cloudinary";
 
 import { Album } from "@/db/albums";
 import { playlists } from "@/db/playlists";
@@ -20,6 +21,7 @@ interface AlbumArtworkProps extends React.HTMLAttributes<HTMLDivElement> {
   album: Album;
   aspectRatio?: "portrait" | "square";
   width?: number;
+  secure_url: string;
   height?: number;
 }
 
@@ -37,7 +39,7 @@ export function AlbumArtwork({
         <ContextMenuTrigger>
           <div className="overflow-hidden rounded-md">
             <Image
-              src={album.cover}
+              src={album?.secure_url ?? ""}
               alt={album.name}
               width={width}
               height={height}

@@ -13,5 +13,6 @@ export default async function getResults() {
     cachedResults = fetchedResults;
   }
 
+  // const cloudinaryFolder =  cloudinary.v2.api.create_folder
   return cachedResults;
 }
