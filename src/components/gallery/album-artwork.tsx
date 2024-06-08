@@ -1,4 +1,4 @@
-import Image from "next/image";
+"use client";
 import { PlusCircledIcon } from "@radix-ui/react-icons";
 
 import { cn } from "@/lib/utils";
@@ -33,20 +33,31 @@ export function AlbumArtwork({
   className,
   ...props
 }: AlbumArtworkProps) {
+  const blurDataUrl =
+    "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8/5+hHgAHggJ/PchI7wAAAABJRU5ErkJggg==";
   return (
     <div className={cn("space-y-3", className)} {...props}>
       <ContextMenu>
         <ContextMenuTrigger>
           <div className="overflow-hidden rounded-md">
-            <Image
+            <CldImage
+              //@ts-ignore
               src={album?.secure_url ?? ""}
               alt={album.name}
-              width={width}
-              height={height}
+              width={720}
+              height={480}
+              placeholder="blur"
+              blurDataURL={blurDataUrl}
+              sizes="(max-width: 640px) 100vw,
+                  (max-width: 1280px) 50vw,
+                  (max-width: 1536px) 33vw,
+                  25vw"
               className={cn(
                 "h-auto w-auto object-cover transition-all hover:scale-105",
-                aspectRatio === "portrait" ? "aspect-[3/4]" : "aspect-square",
+                // aspectRatio === "portrait" ? "aspect-[3/4]" : "aspect-square",
               )}
+              // className="transform rounded-lg brightness-90 transition will-change-auto group-hover:brightness-110"
+              style={{ transform: "translate3d(0, 0, 0)" }}
             />
           </div>
         </ContextMenuTrigger>

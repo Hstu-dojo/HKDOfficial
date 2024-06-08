@@ -23,14 +23,14 @@ const PreviewImages = async () => {
         </div>
       </div>
       <Separator className="my-4" />
-      <div className="relative">
+      <div className="mx-auto max-w-[1960px] p-4">
         {/* <ScrollArea> */}
-        <div className="flex flex-wrap space-x-4 pb-4">
+        <div className="2xl:columns-4 columns-1 sm:columns-2 xl:columns-3">
           {results?.resources?.map((album: Album) => (
             <AlbumArtwork
               key={album.name}
               album={album}
-              className="w-1/4 min-w-[150px] max-w-[250px]"
+              className="transform rounded-lg brightness-90 transition will-change-auto group-hover:brightness-110"
               aspectRatio="portrait"
               width={250}
               height={330}
