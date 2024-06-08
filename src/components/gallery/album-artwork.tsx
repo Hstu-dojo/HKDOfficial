@@ -1,4 +1,3 @@
-"use client";
 import { PlusCircledIcon } from "@radix-ui/react-icons";
 
 import { cn } from "@/lib/utils";
@@ -12,10 +11,11 @@ import {
   ContextMenuSubTrigger,
   ContextMenuTrigger,
 } from "@/components/ui/context-menu";
-import { CldImage } from "next-cloudinary";
+// import { CldImage } from "next-cloudinary";
 
 import { Album } from "@/db/albums";
 import { playlists } from "@/db/playlists";
+import Image from "next/image";
 
 interface AlbumArtworkProps extends React.HTMLAttributes<HTMLDivElement> {
   album: Album;
@@ -40,7 +40,7 @@ export function AlbumArtwork({
       <ContextMenu>
         <ContextMenuTrigger>
           <div className="overflow-hidden rounded-md">
-            <CldImage
+            <Image
               //@ts-ignore
               src={album?.secure_url ?? ""}
               alt={album.name}
