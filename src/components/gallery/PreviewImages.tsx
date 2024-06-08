@@ -3,15 +3,29 @@ import { Album, listenNowAlbums } from "@/db/albums";
 import { AlbumArtwork } from "@/components/gallery/album-artwork";
 import { Separator } from "@/components/ui/separator";
 import cloudinary from "@/utils/cloudinary";
+import type { ImageProps } from "@/utils/types";
+import getBase64ImageUrl from "@/utils/generateBlurPlaceholder";
 
 const PreviewImages = async () => {
   const assetFolder = process.env.CLOUDINARY_FOLDER || "/";
-  const results = await cloudinary.v2.search
+  let results = await cloudinary.v2.search
     .expression(`resource_type:image AND asset_folder:${assetFolder}`)
     .sort_by("public_id", "desc")
     .max_results(30)
     .execute();
-  console.log(results.resources);
+  const blurImagePromises = results.resources.map((image: ImageProps) => {
+    return getBase64ImageUrl(image);
+  });
+  const imagesWithBlurDataUrls = await Promise.all(blurImagePromises);
+
+  for (let i = 0; i < results?.resources?.length; i++) {
+    results.resources[i] = {
+      ...results?.resources[i],
+      blurDataUrl: imagesWithBlurDataUrls[i],
+    };
+  }
+
+  // console.log(reducedResults)
   return (
     <div>
       <div className="flex items-center justify-between ">
@@ -28,7 +42,7 @@ const PreviewImages = async () => {
         <div className="2xl:columns-4 columns-1 sm:columns-2 xl:columns-3">
           {results?.resources?.map((album: Album) => (
             <AlbumArtwork
-              key={album.name}
+              key={album.asset_id}
               album={album}
               className="transform rounded-lg brightness-90 transition will-change-auto group-hover:brightness-110"
               aspectRatio="portrait"
