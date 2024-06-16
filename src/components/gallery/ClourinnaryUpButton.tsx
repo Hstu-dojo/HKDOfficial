@@ -4,12 +4,14 @@ import { PlusCircledIcon } from "@radix-ui/react-icons";
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { useTheme } from "next-themes";
+import { useRouter } from "next/navigation";
 type Props = {
   uploadPreset?: string;
 };
 export default function ClourinnaryUpButton({ uploadPreset }: Props) {
   const { setTheme } = useTheme();
   const [isClient, setIsClient] = useState(false);
+  const router = useRouter();
 
   useEffect(() => {
     setIsClient(true);

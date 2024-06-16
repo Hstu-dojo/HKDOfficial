@@ -16,11 +16,12 @@ import {
 } from "@/components/ui/navigation-menu";
 
 import { footerNav } from "@/config/site";
+import MaxWidthWrapper from "../maxWidthWrapper";
 
 const Footer = () => {
   return (
     <footer>
-      <div className="container">
+      <MaxWidthWrapper className="container">
         <div className="pb-16 pt-28">
           <div className="gap-10 space-y-10 md:grid md:grid-cols-12 md:space-y-0">
             <div className="col-span-3">
@@ -114,7 +115,7 @@ const Footer = () => {
             </div>
           </div>
         </div>
-      </div>
+      </MaxWidthWrapper>
       <div className="border-t py-12">
         <div className="container text-center">
           <span className="text-xs">

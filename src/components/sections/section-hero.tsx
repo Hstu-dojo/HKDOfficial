@@ -1,9 +1,10 @@
 import HeroTriangle from "@/components/hero-triangle";
 import NewsletterForm from "@/components/forms/newsletter-form";
+import MaxWidthWrapper from "../maxWidthWrapper";
 
 const SectionHero = () => {
   return (
-    <div className="relative overflow-hidden">
+    <MaxWidthWrapper className="relative overflow-hidden">
       <HeroTriangle />
       <section className="pb-16 pt-32 md:pt-40 lg:pb-40 lg:pt-60">
         <div className="container max-w-6xl">
@@ -22,7 +23,7 @@ const SectionHero = () => {
           <NewsletterForm />
         </div>
       </section>
-    </div>
+    </MaxWidthWrapper>
   );
 };
 

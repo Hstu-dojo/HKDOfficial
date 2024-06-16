@@ -1,5 +1,5 @@
 import { cn } from "@/lib/utils";
-import { Spotlight } from "@/components/ui/Spotlight";
+// import { Spotlight } from "@/components/ui/Spotlight";
 
 type SectionPageTitleProps = {
   children: React.ReactNode;
@@ -16,10 +16,10 @@ const SectionPageTitle = ({
 }: SectionPageTitleProps) => {
   return (
     <section className="bg-muted pb-32 pt-48 dark:bg-slate-900">
-      <Spotlight
+      {/* <Spotlight
         className="-top-[550px] left-0 md:-top-[450px] md:left-60"
         fill="white"
-      />
+      /> */}
       <div className="container">
         <div className="mx-auto max-w-3xl text-center">
           <h1 className={cn("mb-6", titleClasses)}>{children}</h1>

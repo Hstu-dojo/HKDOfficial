@@ -1,6 +1,7 @@
 "use client";
 import { motion } from "framer-motion";
 import IconBox from "@/components/icon-box";
+import MaxWidthWrapper from "../maxWidthWrapper";
 
 export const iconBoxes = [
   {
@@ -39,7 +40,7 @@ const fadeInAnimationVariants = {
 
 const SectionIconBoxes = ({ noTitle }: { noTitle?: boolean }) => {
   return (
-    <section className="py-16 lg:py-24">
+    <MaxWidthWrapper className="py-16 lg:py-24">
       <div className="container">
         {!noTitle && (
           <div className="flex justify-center">
@@ -73,7 +74,7 @@ const SectionIconBoxes = ({ noTitle }: { noTitle?: boolean }) => {
           })}
         </div>
       </div>
-    </section>
+    </MaxWidthWrapper>
   );
 };
 

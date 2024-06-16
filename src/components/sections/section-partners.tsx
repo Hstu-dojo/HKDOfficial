@@ -1,3 +1,4 @@
+import MaxWidthWrapper from "../maxWidthWrapper";
 import SectionTitle from "./section-title";
 import Image from "next/image";
 
@@ -10,7 +11,7 @@ const SectionPartners = () => {
         fill
         className="object-cover object-center opacity-50"
       />
-      <div className="container relative max-w-6xl">
+      <MaxWidthWrapper className="container relative">
         <SectionTitle
           subtitle="An idea that takes the parts of a structure and turns whole system."
           sectionClasses="mx-auto max-w-xl text-center mb-12"
@@ -56,7 +57,7 @@ const SectionPartners = () => {
             className="m-2 md:m-5"
           />
         </div>
-      </div>
+      </MaxWidthWrapper>
     </section>
   );
 };

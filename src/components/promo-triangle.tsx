@@ -20,7 +20,7 @@ const PromoTriangle = (props: SVGProps<SVGSVGElement>) => {
         xmlns="http://www.w3.org/2000/svg"
         xmlnsXlink="http://www.w3.org/1999/xlink"
         xmlSpace="preserve"
-        className="absolute -left-[1300px] -top-[550px] -z-10 hidden w-[1920px] -rotate-[17deg]  lg:block xl:-left-[1180px]"
+        className="absolute -left-[1300px] -top-[380px] -z-10 hidden w-[1850px] -rotate-[27deg]  lg:block xl:-left-[1180px]"
         viewBox="0 0 600 480"
         {...props}
       >

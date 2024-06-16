@@ -1,10 +1,11 @@
 import PromoTriangle from "@/components/promo-triangle";
 import { Button } from "@/components/ui/button";
 import { ChevronRightIcon } from "@heroicons/react/20/solid";
+import MaxWidthWrapper from "../maxWidthWrapper";
 
 const SectionPromo = () => {
   return (
-    <section className="relative pb-28 pt-10 lg:pb-64 lg:pt-24">
+    <MaxWidthWrapper className="relative overflow-hidden pb-28 pt-10 lg:pb-64 lg:pt-24">
       <PromoTriangle />
       <div className="container">
         <div className="lg:ml-auto lg:w-[45%]">
@@ -26,7 +27,7 @@ const SectionPromo = () => {
           </Button>
         </div>
       </div>
-    </section>
+    </MaxWidthWrapper>
   );
 };
 

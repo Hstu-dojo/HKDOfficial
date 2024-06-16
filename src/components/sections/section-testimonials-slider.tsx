@@ -7,6 +7,7 @@ import SectionTitle from "./section-title";
 // Import Swiper styles
 import "swiper/css";
 import "swiper/css/navigation";
+import MaxWidthWrapper from "../maxWidthWrapper";
 
 export const testimonials = [
   {
@@ -46,7 +47,7 @@ export const testimonials = [
 const SectionTestimonialsSlider = () => {
   return (
     <section className="bg-secondary py-24">
-      <div className="container max-w-6xl">
+      <MaxWidthWrapper className="container max-w-6xl">
         <SectionTitle
           subtitle="Those who already tried it."
           sectionClasses="mb-12"
@@ -70,7 +71,7 @@ const SectionTestimonialsSlider = () => {
             modules: [Navigation],
           }}
         />
-      </div>
+      </MaxWidthWrapper>
     </section>
   );
 };

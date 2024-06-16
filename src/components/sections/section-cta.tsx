@@ -2,10 +2,11 @@
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import PwaInstall from "@/components/sections/pwa-install";
+import MaxWidthWrapper from "../maxWidthWrapper";
 
 const SectionCTA = () => {
   return (
-    <section>
+    <MaxWidthWrapper>
       <motion.div
         initial={{ opacity: 0, y: 60 }}
         whileInView={{ opacity: 1, y: 0 }}
@@ -26,7 +27,7 @@ const SectionCTA = () => {
           </div>
         </div>
       </motion.div>
-    </section>
+    </MaxWidthWrapper>
   );
 };
 

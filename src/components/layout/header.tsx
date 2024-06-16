@@ -8,6 +8,7 @@ import { mainNav } from "@/config/site";
 import { cn } from "@/lib/utils";
 import { MobileNav } from "./mobile-nav";
 import { signIn, signOut, useSession } from "next-auth/react";
+import MaxWidthWrapper from "../maxWidthWrapper";
 
 const Header = () => {
   const [stickyClass, setStickyClass] = useState("");
@@ -31,41 +32,38 @@ const Header = () => {
   };
 
   return (
-    <>
-      <header className="fixed top-0 z-20 w-full">
-        <div
-          className={cn(
-            "flex items-center px-4 py-5 transition-all lg:py-12 xl:px-20",
-            stickyClass,
-          )}
-        >
-          <Link href="/" className="mr-12 shrink-0">
-            <SiteLogo
-              width={123}
-              height={39}
-              lightClasses="w-4/5 dark:hidden lg:w-auto"
-              darkClasses="hidden w-4/5 dark:block lg:w-auto"
-            />
-          </Link>
+    <header className="fixed left-0 top-0 z-20 w-full">
+      <div className={cn("py-5 transition-all lg:py-12", stickyClass)}>
+        <MaxWidthWrapper>
+          <div className="flex items-center ">
+            <Link href="/" className="mr-12 shrink-0">
+              <SiteLogo
+                width={123}
+                height={39}
+                lightClasses="w-4/5 dark:hidden lg:w-auto"
+                darkClasses="hidden w-4/5 dark:block lg:w-auto"
+              />
+            </Link>
 
-          <div className="relative flex w-full items-center justify-end lg:justify-start lg:bg-transparent">
-            <MainNav items={mainNav} />
-            <DarkModeSwitch />
-            <MobileNav mainNavItems={mainNav} />
+            <div className="relative flex w-full items-center justify-end lg:justify-start lg:bg-transparent">
+              <MainNav items={mainNav} />
+              <DarkModeSwitch />
+              <MobileNav mainNavItems={mainNav} />
 
-            <div className="hidden lg:ml-auto lg:inline-block">
-              <a
-                href="tel:63-995-3959"
-                className="inline-block rounded-md bg-gradient-to-l from-primary to-tertiary px-4 py-2.5 text-center font-bold text-white"
-              >
-                <span className="block text-xxs">Call us for Free</span>
-                <span className="text-md">63-995-3959</span>
-              </a>
+              <div className="hidden lg:ml-auto lg:inline-block">
+                <a
+                  href="tel:63-995-3959"
+                  className="inline-block rounded-md bg-gradient-to-l from-primary to-tertiary px-4 py-2.5 text-center font-bold text-white"
+                >
+                  <span className="block text-xxs">Call us for Free</span>
+                  <span className="text-md">63-995-3959</span>
+                </a>
+              </div>
             </div>
           </div>
-        </div>
-      </header>
-    </>
+        </MaxWidthWrapper>
+      </div>
+    </header>
   );
 };
 
