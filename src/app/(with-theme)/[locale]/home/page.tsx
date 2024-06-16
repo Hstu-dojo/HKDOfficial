@@ -7,9 +7,12 @@ import SectionLatestNews from "@/components/sections/section-latest-news";
 import SectionPartners from "@/components/sections/section-partners";
 import SectionPromo from "@/components/sections/section-promo";
 import SectionTestimonialsSlider from "@/components/sections/section-testimonials-slider";
-import Furious5 from "@/components/sections/furious5/furious5";
+// import SectionTestimonialsSliderLayout2 from "@/components/sections/section-testimonials-slider-layout-2";
+// import Furious5 from "@/components/sections/furious5/furious5";
 import ChatPlugin from "@/components/chat";
-
+import SectionBenefits from "@/components/sections/section-benefits";
+import SectionIconBoxesLayout2 from "@/components/sections/section-icon-boxes-layout-2";
+import SectionFAQ from "@/components/sections/section-faq";
 export default function Home() {
   return (
     <>
@@ -18,9 +21,13 @@ export default function Home() {
         <SectionHero />
         <SectionIconBoxes />
         <SectionPromo />
+        <SectionBenefits />
+        <SectionIconBoxesLayout2 />
         <SectionTestimonialsSlider />
+        {/* <SectionTestimonialsSliderLayout2 /> */}
+        <SectionFAQ />
         <SectionLatestNews />
-        <Furious5 />
+        {/* <Furious5 /> */}
         <SectionPartners />
         <SectionCTA />
         <ChatPlugin />

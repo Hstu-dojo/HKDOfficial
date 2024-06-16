@@ -7,6 +7,7 @@ import SectionTitle from "./section-title";
 // Import Swiper styles
 import "swiper/css";
 import "swiper/css/pagination";
+import MaxWidthWrapper from "../maxWidthWrapper";
 
 export const testimonials = [
   {
@@ -47,8 +48,8 @@ export const testimonials = [
 
 const SectionTestimonialsSliderLayout2 = () => {
   return (
-    <section className="overflow-hidden bg-gradient-to-b from-[#EBE4FA]/25 to-muted/25 py-20 dark:bg-slate-900 dark:bg-none lg:py-24">
-      <div className="container relative xl:left-[calc((100vw-1312px)/4)] xl:max-w-[calc(1312px+((100vw-1312px)/2))] xl:pr-[calc((100vw-1280px)/2)]">
+    <div className="overflow-hidden bg-gradient-to-b from-[#EBE4FA]/25 to-muted/25 py-20 dark:bg-slate-900 dark:bg-none lg:py-24">
+      <MaxWidthWrapper className="container relative xl:left-[calc((100vw-1312px)/4)] xl:max-w-[calc(1312px+((100vw-1312px)/2))] xl:pr-[calc((100vw-1280px)/2)]">
         <SectionTitle
           subtitle="10,000k+ Customers those who already tried our services."
           sectionClasses="mx-auto max-w-xl text-center mb-12"
@@ -73,8 +74,8 @@ const SectionTestimonialsSliderLayout2 = () => {
             pagination: { clickable: true },
           }}
         />
-      </div>
-    </section>
+      </MaxWidthWrapper>
+    </div>
   );
 };
 
