@@ -9,11 +9,12 @@ import {
 } from "@/components/ui/dialog";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
 import { Play } from "@/components/icons/icons";
+import MaxWidthWrapper from "../maxWidthWrapper";
 
 const SectionBenefits = () => {
   return (
     <section className="relative overflow-hidden bg-gradient-to-b from-[#EBE4FA]/25 to-muted/25 py-24 dark:bg-slate-900 dark:bg-none lg:py-32">
-      <div className="container">
+      <MaxWidthWrapper className="container">
         <div className="flex flex-wrap items-center justify-between lg:flex-nowrap">
           <div className="relative z-[1] mb-10 lg:w-1/2">
             <Image
@@ -50,7 +51,7 @@ const SectionBenefits = () => {
                     >
                       <iframe
                         className="h-full w-full"
-                        src="https://www.youtube.com/embed/dQw4w9WgXcQ?autoplay=1&amp;modestbranding=1&amp;showinfo=0"
+                        src="https://www.youtube.com/embed/tEtbYvezleA?autoplay=1&amp;modestbranding=1&amp;showinfo=0"
                         allow="autoplay"
                       ></iframe>
                     </AspectRatio>
@@ -101,7 +102,7 @@ const SectionBenefits = () => {
             </div>
           </div>
         </div>
-      </div>
+      </MaxWidthWrapper>
     </section>
   );
 };

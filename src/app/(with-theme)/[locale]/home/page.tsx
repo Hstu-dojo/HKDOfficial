@@ -20,12 +20,12 @@ export default function Home() {
       <main className="relative">
         <SectionHero />
         <SectionIconBoxes />
-        <SectionPromo />
         <SectionBenefits />
-        <SectionIconBoxesLayout2 />
+        <SectionPromo />
+        {/* <SectionIconBoxesLayout2 /> */}
+        <SectionFAQ />
         <SectionTestimonialsSlider />
         {/* <SectionTestimonialsSliderLayout2 /> */}
-        <SectionFAQ />
         <SectionLatestNews />
         {/* <Furious5 /> */}
         <SectionPartners />

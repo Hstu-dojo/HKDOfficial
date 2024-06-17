@@ -8,6 +8,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
+import MaxWidthWrapper from "../maxWidthWrapper";
 
 const accordionItems = [
   {
@@ -30,7 +31,7 @@ const accordionItems = [
 const SectionFAQ = () => {
   return (
     <section className="relative overflow-hidden py-24 dark:bg-slate-900 lg:py-32">
-      <div className="container">
+      <MaxWidthWrapper className="container">
         <div className="flex flex-wrap items-center justify-between lg:flex-nowrap">
           <div className="lg:w-[45%] lg:pr-10">
             <motion.div
@@ -140,7 +141,7 @@ const SectionFAQ = () => {
             </motion.div>
           </div>
         </div>
-      </div>
+      </MaxWidthWrapper>
     </section>
   );
 };

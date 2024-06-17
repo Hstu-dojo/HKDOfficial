@@ -1,11 +1,12 @@
 "use client";
 import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
+import "swiper/css/autoplay"; // Import autoplay styles
 import Testimonial from "./testimonial";
 import { SwiperOptions } from "swiper/types";
 import { useRef, useCallback } from "react";
 import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/20/solid";
-import { Navigation } from "swiper/modules";
+import { Navigation, Autoplay } from "swiper/modules"; // Import Autoplay module
 
 type TestimonialsSliderProps = {
   testimonials: Testimonial[];
@@ -53,7 +54,15 @@ const TestimonialsSlider = ({
           </button>
         </div>
       )}
-      <Swiper {...swiperParams} ref={sliderRef}>
+      <Swiper
+        {...swiperParams}
+        modules={[...(swiperParams.modules || []), Autoplay]} // Add Autoplay module
+        autoplay={{
+          delay: 3000, // Time between slides in ms
+          disableOnInteraction: false, // Autoplay will not be disabled after user interactions
+        }}
+        ref={sliderRef}
+      >
         {testimonials.map((testimonial) => (
           <SwiperSlide key={testimonial.name}>
             <Testimonial testimonial={testimonial} />

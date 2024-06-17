@@ -14,7 +14,7 @@ export default async function RootLayout({
   const session = await getServerSession();
   return (
     <html lang={locale} suppressHydrationWarning>
-      <body className="dark:bg-slate-850 dark:text-slate-200">
+      <body className="min-w-[350px] overflow-x-scroll dark:bg-slate-850 dark:text-slate-200">
         {/* updated theme provider  */}
         <SessionProvider session={session}>{children}</SessionProvider>
         <SpeedInsights />

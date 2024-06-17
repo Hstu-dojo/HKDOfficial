@@ -48,7 +48,7 @@ export const testimonials = [
 
 const SectionTestimonialsSliderLayout2 = () => {
   return (
-    <div className="overflow-hidden bg-gradient-to-b from-[#EBE4FA]/25 to-muted/25 py-20 dark:bg-slate-900 dark:bg-none lg:py-24">
+    <div className=" overflow-hidden bg-gradient-to-b from-[#EBE4FA]/25 to-muted/25 py-20 dark:bg-slate-900 dark:bg-none lg:py-24">
       <MaxWidthWrapper className="container relative xl:left-[calc((100vw-1312px)/4)] xl:max-w-[calc(1312px+((100vw-1312px)/2))] xl:pr-[calc((100vw-1280px)/2)]">
         <SectionTitle
           subtitle="10,000k+ Customers those who already tried our services."
