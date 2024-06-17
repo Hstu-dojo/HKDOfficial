@@ -24,26 +24,6 @@ export const siteConfig = {
 
 export const mainNav = [
   {
-    title: "Home",
-    items: [
-      {
-        title: "Home Marketing",
-        href: "/home",
-        items: [],
-      },
-      {
-        title: "Home SEO Agency",
-        href: "/seo-agency",
-        items: [],
-      },
-      {
-        title: "Home Consulting",
-        href: "/consulting",
-        items: [],
-      },
-    ],
-  },
-  {
     title: "Pages",
     items: [
       {
@@ -76,44 +56,39 @@ export const mainNav = [
         href: "/dev",
         items: [],
       },
-      {
-        title: "404",
-        href: "/page-404",
-        items: [],
-      },
     ],
   },
-  {
-    title: "Projects",
-    items: [
-      {
-        title: "Projects Listing",
-        href: "/projects",
-        items: [],
-      },
-      {
-        title: "Single Project",
-        href: "/projects/rocking-the-rank-1-in-the-events-industry",
-        items: [],
-      },
-    ],
-  },
+  // {
+  //   title: "Projects",
+  //   items: [
+  //     {
+  //       title: "Projects Listing",
+  //       href: "/projects",
+  //       items: [],
+  //     },
+  //     {
+  //       title: "Single Project",
+  //       href: "/projects/rocking-the-rank-1-in-the-events-industry",
+  //       items: [],
+  //     },
+  //   ],
+  // },
 
-  {
-    title: "Posts",
-    items: [
-      {
-        title: "Blog Listing",
-        href: "/posts",
-        items: [],
-      },
-      {
-        title: "Single Post",
-        href: "/posts/effective-marketing-for-start-ups",
-        items: [],
-      },
-    ],
-  },
+  // {
+  //   title: "Posts",
+  //   items: [
+  //     {
+  //       title: "Blog Listing",
+  //       href: "/posts",
+  //       items: [],
+  //     },
+  //     {
+  //       title: "Single Post",
+  //       href: "/posts/effective-marketing-for-start-ups",
+  //       items: [],
+  //     },
+  //   ],
+  // },
   {
     title: "En/Fr",
     items: [
