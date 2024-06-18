@@ -25,7 +25,7 @@ const SectionBenefits = () => {
               className="absolute -z-[1] -translate-y-8 scale-110 dark:opacity-10"
             />
             <Image
-              src="/benefits_img_1.jpg"
+              src="/image/kata-prc.jpg"
               alt="karate training"
               width={540}
               height={540}
@@ -33,7 +33,7 @@ const SectionBenefits = () => {
             />
             <div className="absolute -right-10 top-1/4 w-1/2 animate-fly rounded-xl lg:w-auto">
               <Image
-                src="/benefits_img_2.jpg"
+                src="/image/kick.gif"
                 alt="karate competition"
                 width={320}
                 height={320}
