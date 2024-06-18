@@ -11,11 +11,12 @@ const SectionHero = () => {
           <div className="flex">
             <div className="lg:w-[45%]">
               <h1 className="text-headings max-w-xs text-3xl lg:text-4xl">
-                Marketing That Generate Results.
+                Welcome to HSTU Karate Dojo
               </h1>
               <p className="mb-12 text-lg text-slate-700 dark:text-slate-300">
-                Focus on engaging, reusable content that decrease the cost per
-                leads while helps you to increase profits margin.
+                Discover the art of karate at Hajee Mohammad Dahesh Science &
+                Technology University. Join us for rigorous training, community
+                engagement, and competitive success.
               </p>
             </div>
           </div>

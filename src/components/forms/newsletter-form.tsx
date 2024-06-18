@@ -68,9 +68,7 @@ const NewsletterForm = () => {
 
   return (
     <div className="rounded-md bg-muted px-8 py-10 shadow-lg dark:bg-slate-800 dark:shadow-slate-850/20 md:px-16 md:pb-5">
-      <h2 className="mb-8 text-lg">
-        Get the free checklist, 7 ways to improve your business
-      </h2>
+      <h2 className="mb-8 text-lg">Stay Updated with HSTU Karate Dojo</h2>
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(onSubmit)}
@@ -107,6 +105,7 @@ const NewsletterForm = () => {
                       className="material-input rounded-none border-0 border-b-[1px] border-slate-300 bg-transparent px-0 dark:border-slate-600 dark:bg-transparent"
                       type="email"
                       placeholder="Email"
+                      required
                       {...field}
                     />
                   </FormControl>
@@ -120,10 +119,10 @@ const NewsletterForm = () => {
             {isPending ? (
               <>
                 <Spinner className="mr-2 h-5 w-5 animate-spin" />
-                <span>Free Download</span>
+                <span>Subscribe</span>
               </>
             ) : (
-              <span>Free Download</span>
+              <span>Subscribe</span>
             )}
           </Button>
         </form>

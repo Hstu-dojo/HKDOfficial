@@ -10,19 +10,13 @@ const SectionPromo = () => {
       <div className="container">
         <div className="lg:ml-auto lg:w-[45%]">
           <h2 className="max-w-md">
-            Is your website driving sales for your business?
+            Ready to Embark on Your Karate Journey?
           </h2>
           <p className="mb-10 text-lg">
-            As you may already know, there are an infinite number of things you
-            can test on your site to help you increase sales. From layout to
-            copy to design, there are limitless combinations of changes that may
-            improve your visitor-to-sale conversion rate. But what&apos;s
-            &quot;enough&quot; when you&apos;re just starting out? What elements
-            should you focus on testing before rolling out your traffic
-            campaign?
+            Join HSTU Karate Dojo and experience the art of karate in a supportive and dynamic environment. Whether you&apos;re a beginner or an advanced practitioner, our programs are designed to help you achieve your personal best. Train with experienced instructors, participate in competitions, and engage in community activities.
           </p>
           <Button>
-            Get Started
+            Join Now
             <ChevronRightIcon width={20} height={20} className="-mr-2 ml-4" />
           </Button>
         </div>

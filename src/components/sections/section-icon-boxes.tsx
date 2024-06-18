@@ -5,22 +5,22 @@ import MaxWidthWrapper from "../maxWidthWrapper";
 
 export const iconBoxes = [
   {
-    icon: "/icons/medical-research-6506_05214fe4-cb2e-4171-ac03-72168bf2981b.svg",
-    title: "Analytics and Research",
+    icon: "/icons/karate-analytics.svg",
+    title: "Training Programs",
     description:
-      "We also provide tangible results and measurable long-term value business.",
+      "Join our comprehensive training programs to enhance your physical fitness, mental acuity, and technical proficiency in karate.",
   },
   {
-    icon: "/icons/edit-document-4191_913956ad-aac3-4d29-b4ef-061756334d24.svg",
-    title: "Copywriting",
+    icon: "/icons/karate-copywriting.svg",
+    title: "Workshops and Seminars",
     description:
-      "We also provide tangible results and measurable long-term value business.",
+      "Participate in our workshops and seminars to learn more about karate and self-defense, and engage with the community.",
   },
   {
-    icon: "/icons/currency-2634_d41cd9f8-1db2-4236-b082-94568e599e40.svg",
-    title: "Sales growth",
+    icon: "/icons/karate-sales-growth.svg",
+    title: "Competitions",
     description:
-      "We also provide tangible results and measurable long-term value business.",
+      "Compete in intra-university and inter-university championships to showcase your skills and bring honor to HSTU.",
   },
 ];
 
@@ -46,9 +46,9 @@ const SectionIconBoxes = ({ noTitle }: { noTitle?: boolean }) => {
           <div className="flex justify-center">
             <div className="text-center lg:w-3/5">
               <h2 className="mb-12">
-                Do you want to{" "}
-                <span className="text-primary">generate more traffic</span> to
-                your website? We know the solution.
+                Are you ready to{" "}
+                <span className="text-primary">join our dojo</span>? Discover
+                the path to excellence in karate.
               </h2>
             </div>
           </div>

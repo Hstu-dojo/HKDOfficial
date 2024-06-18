@@ -13,7 +13,11 @@ import ChatPlugin from "@/components/chat";
 import SectionBenefits from "@/components/sections/section-benefits";
 import SectionIconBoxesLayout2 from "@/components/sections/section-icon-boxes-layout-2";
 import SectionFAQ from "@/components/sections/section-faq";
-export default function Home() {
+import { loadAllProject } from "../../../../sanity/loader/loadQuery";
+export default async function Home() {
+    const page = 1; // specify the desired page number
+    const limit = 100; 
+  const initial2 = await loadAllProject(page, limit);
   return (
     <>
       <Header />
@@ -26,7 +30,7 @@ export default function Home() {
         <SectionFAQ />
         <SectionTestimonialsSlider />
         {/* <SectionTestimonialsSliderLayout2 /> */}
-        <SectionLatestNews />
+        <SectionLatestNews data2={initial2?.data} />
         {/* <Furious5 /> */}
         <SectionPartners />
         <SectionCTA />

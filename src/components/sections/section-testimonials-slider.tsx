@@ -11,35 +11,35 @@ import MaxWidthWrapper from "../maxWidthWrapper";
 
 export const testimonials = [
   {
-    name: "Monika Ragpa",
-    company: "DeoThemes",
+    name: "John Doe",
+    affiliation: "HSTU Student",
     comment:
-      "“I have witnessed and admired the work for years. I highly recommend this work for anyone seeking to increase.”",
-    image: "/testimonials/1.png",
+      "“Joining the HSTU Karate Dojo has been an incredible experience. The training is top-notch and the sensei is very supportive.”",
+    image: "/testimonials/john_doe.png",
     rating: 5,
   },
   {
-    name: "Alex Shadow",
-    company: "DeoThemes",
+    name: "Jane Smith",
+    affiliation: "HSTU Faculty",
     comment:
-      "“Every detail has been taken care these team are realy amazing and talented! I will work only to help your sales goals.”",
-    image: "/testimonials/2.png",
+      "“The dojo provides a great environment for learning and personal growth. I highly recommend it to anyone interested in martial arts.”",
+    image: "/testimonials/jane_smith.png",
     rating: 5,
   },
   {
-    name: "Chandler",
-    company: "DeoThemes",
+    name: "Alex Johnson",
+    affiliation: "HSTU Alumni",
     comment:
-      "“Every detail has been taken care these team are realy amazing and talented! I will work only to help your sales goals.”",
-    image: "/testimonials/1.png",
+      "“The discipline and skills I've gained from the HSTU Karate Dojo have been invaluable. It's a fantastic community.”",
+    image: "/testimonials/alex_johnson.png",
     rating: 5,
   },
   {
-    name: "Nathaniel",
-    company: "DeoThemes",
+    name: "Emily Davis",
+    affiliation: "HSTU Staff",
     comment:
-      "“I have witnessed and admired the work for years. I highly recommend this work for anyone seeking to increase.”",
-    image: "/testimonials/2.png",
+      "“I appreciate the structured training sessions and the opportunity to compete in championships. The dojo has been a great addition to my routine.”",
+    image: "/testimonials/emily_davis.png",
     rating: 5,
   },
 ];
@@ -54,7 +54,7 @@ const SectionTestimonialsSlider = () => {
           titleClasses="mb-3 text-white"
           subtitleClasses="text-md font-medium text-white"
         >
-          Satisfied Customers
+          Satisfied Members
         </SectionTitle>
         <TestimonialsSlider
           testimonials={testimonials}

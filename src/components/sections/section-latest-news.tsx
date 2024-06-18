@@ -3,8 +3,9 @@ import { motion } from "framer-motion";
 import PostList from "@/components/posts/post-list";
 import SectionTitle from "./section-title";
 import MaxWidthWrapper from "../maxWidthWrapper";
+import AllProjects from "../blogs/allProjects";
 
-const SectionLatestNews = () => {
+const SectionLatestNews = ({data2}: any) => {
   return (
     <div className="bg-muted py-16 dark:bg-slate-900 lg:py-24">
       <MaxWidthWrapper>
@@ -26,7 +27,8 @@ const SectionLatestNews = () => {
             >
               Latest News
             </SectionTitle>
-            <PostList limit={3} showPagination={false} />
+            <AllProjects data2={data2} />
+            {/* <PostList limit={3} showPagination={true} /> */}
           </motion.div>
         </div>
       </MaxWidthWrapper>

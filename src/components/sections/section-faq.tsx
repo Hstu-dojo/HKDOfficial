@@ -12,19 +12,19 @@ import MaxWidthWrapper from "../maxWidthWrapper";
 
 const accordionItems = [
   {
-    title: "What is tax and legal advisory?",
+    title: "What is HSTU Karate Dojo?",
     content:
-      "The most comprehensive complete-system warranty in the solar industry. Hassle-free replacement, repair or reimbursement. Comprehensive complete-system warranty in the solar industry",
+      "HSTU Karate Dojo is the official karate club of Hajee Mohammad Danesh Science & Technology University, established in 2022 to provide martial arts training to the university community.",
   },
   {
-    title: "Technical team of enthusiastic?",
+    title: "Who can join the dojo?",
     content:
-      "The most comprehensive complete-system warranty in the solar industry. Hassle-free replacement, repair or reimbursement. Comprehensive complete-system warranty in the solar industry",
+      "All students, faculty, and staff of HSTU are welcome to join the dojo, regardless of their prior experience in karate.",
   },
   {
-    title: "Do you give guarantee and after sales service?",
+    title: "What types of activities does the dojo offer?",
     content:
-      "The most comprehensive complete-system warranty in the solar industry. Hassle-free replacement, repair or reimbursement. Comprehensive complete-system warranty in the solar industry",
+      "The dojo offers rigorous training sessions, participation in intra-university and inter-university championships, workshops, seminars, and community engagement activities.",
   },
 ];
 
@@ -44,8 +44,8 @@ const SectionFAQ = () => {
             >
               <h2>Frequently Asked Questions</h2>
               <p className="mb-8 text-lg">
-                The most comprehensive complete-system warranty in the solar
-                industry. Hassle-free replacement, repair or reimbursement.
+                Find answers to the most commonly asked questions about HSTU
+                Karate Dojo and learn more about our activities and membership.
               </p>
               <Accordion
                 type="multiple"
@@ -67,8 +67,8 @@ const SectionFAQ = () => {
               </Accordion>
               <span className="mt-14 inline-block text-lg">
                 Any Question?{" "}
-                <a href="mailto:support@margin.com" className="text-primary">
-                  support@margin.com
+                <a href="mailto:hstu.dojo@gmail.com" className="text-primary">
+                  hstu.dojo@gmail.com
                 </a>
               </span>
             </motion.div>
@@ -92,22 +92,20 @@ const SectionFAQ = () => {
               />
               <div className="mt-12 md:flex md:space-x-8 lg:justify-end">
                 <Image
-                  src="/faq.jpg"
-                  alt="benefits"
+                  src="/dojo.jpg"
+                  alt="HSTU Karate Dojo"
                   width={320}
                   height={320}
                   className="mb-8 inline-block rounded-xl"
                 />
                 <div className="relative mb-8 max-w-[13.125rem] self-end rounded-xl bg-white bg-gradient-to-b from-secondary/70 to-quaternary/70 p-8 shadow-lg">
                   <span className="mb-4 block text-base font-semibold text-white">
-                    Individual Investors
+                    Members Trained
                   </span>
                   <span className="mb-4 block text-3xl font-bold text-white">
-                    7,000+
+                    150+
                   </span>
-                  <span className="block text-base text-white">
-                    Sed do eiusmod tempor.
-                  </span>
+                  <span className="block text-base text-white">Since 2022</span>
                 </div>
               </div>
               <div className="relative">
@@ -127,13 +125,13 @@ const SectionFAQ = () => {
 
                   <div className="text-left">
                     <span className="mb-4 block text-base font-semibold text-white">
-                      Invested to date
+                      Competitions Participated
                     </span>
                     <span className="mb-4 block text-3xl font-bold text-white">
-                      $3.7B
+                      10+
                     </span>
                     <span className="block text-base text-white">
-                      Sed do eiusmod tempor.
+                      Intra and inter-university
                     </span>
                   </div>
                 </div>
