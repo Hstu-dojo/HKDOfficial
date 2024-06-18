@@ -136,7 +136,7 @@ export const footerNav = [
       },
       {
         title: "Blog",
-        href: "/posts",
+        href: "/blog",
         external: false,
       },
       {
@@ -147,31 +147,11 @@ export const footerNav = [
     ],
   },
   {
-    title: "Solutions",
+    title: "Updates",
     items: [
       {
-        title: "Marketing Strategy",
-        href: "#",
-        external: false,
-      },
-      {
-        title: "Advertising",
-        href: "#",
-        external: false,
-      },
-      {
-        title: "SMM",
-        href: "#",
-        external: false,
-      },
-      {
-        title: "SEO",
-        href: "#",
-        external: false,
-      },
-      {
-        title: "Google Ads",
-        href: "#",
+        title: "Gallery",
+        href: "/gallery",
         external: false,
       },
     ],

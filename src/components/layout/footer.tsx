@@ -34,23 +34,23 @@ const Footer = () => {
                 />
               </Link>
               <p className="mb-8 mt-6">
-                Tools to Effectively Build Your Brand and Grow Your Business.
+                Promoting the Art of Karate for Mind and Body Excellence.
               </p>
               <div className="flex space-x-2">
                 <a
-                  href="#"
+                  href="https://x.com/HstuDojo"
                   className="mb-2 flex h-10 w-10 items-center justify-center rounded bg-black text-white transition-colors hover:bg-foreground hover:text-white"
                 >
                   <FontAwesomeIcon icon={faXTwitter} width={15} />
                 </a>
                 <a
-                  href="#"
+                  href="https://www.facebook.com/hstu.karate.dojo"
                   className="mb-2 flex h-10 w-10 items-center justify-center rounded bg-[#324e8c] text-white transition-colors hover:bg-foreground hover:text-white"
                 >
                   <FontAwesomeIcon icon={faFacebook} width={15} />
                 </a>
                 <a
-                  href="#"
+                  href="https://www.youtube.com/@hstu.karate.dojo_1"
                   className="mb-2 flex h-10 w-10 items-center justify-center rounded bg-[#cd201f] text-white transition-colors hover:bg-foreground hover:text-white"
                 >
                   <FontAwesomeIcon icon={faYoutube} width={15} />
@@ -89,26 +89,26 @@ const Footer = () => {
                 </div>
               ))}
             <div className="col-span-3 xl:col-span-2">
-              <h2 className="mb-4 text-sm">Company</h2>
+              <h2 className="mb-4 text-sm">Contact</h2>
               <ul className="space-y-2 text-sm">
                 <li>
                   <address className="-mt-px leading-6">
-                    8910 University Center Lane Suite 620 San Diego, CA 92102
+                    HSTU, Basherhat, Dinajpur-5200. Bangladesh.
                   </address>
                 </li>
                 <li>
                   <span>Phone: </span>
-                  <a
-                    href="tel:+1-800-1554-456-123"
-                    className="hover:text-primary"
-                  >
-                    + 1 (800) 155 4561
+                  <a href="tel:+8801777-300309" className="hover:text-primary">
+                    +880 1777 - 300309
                   </a>
                 </li>
                 <li>
                   <span>Email: </span>
-                  <a href="mailto:hi@margin.com" className="hover:text-primary">
-                    hi@margin.com
+                  <a
+                    href="mailto:hstu.dojo@gmail.com"
+                    className="hover:text-primary"
+                  >
+                    hstu.dojo@gmail.com
                   </a>
                 </li>
               </ul>
@@ -119,9 +119,12 @@ const Footer = () => {
       <div className="border-t py-12">
         <div className="container text-center">
           <span className="text-xs">
-            © {new Date().getFullYear()} Margin Next.js, Made by{" "}
-            <a href="https://deothemes.com" className="hover:text-primary">
-              DeoThemes
+            © {new Date().getFullYear()} HSTU Karate Dojo- App, Made by{" "}
+            <a
+              href="https://shahriarhasan.vercel.app"
+              className="hover:text-primary"
+            >
+              Hasan
             </a>
           </span>
         </div>

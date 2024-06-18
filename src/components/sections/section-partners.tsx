@@ -13,12 +13,12 @@ const SectionPartners = () => {
       />
       <MaxWidthWrapper className="container relative">
         <SectionTitle
-          subtitle="An idea that takes the parts of a structure and turns whole system."
+          subtitle="Connecting with our esteemed partners to elevate our dojo."
           sectionClasses="mx-auto max-w-xl text-center mb-12"
           titleClasses="mb-3 text-center text-white"
           subtitleClasses="text-md font-medium text-white"
         >
-          Join thousands of independent entrepreneurs who tried Margin
+          Proud Partners of HSTU Karate Dojo
         </SectionTitle>
         <div className="flex flex-wrap justify-center">
           <Image
