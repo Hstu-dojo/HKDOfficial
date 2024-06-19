@@ -2,20 +2,20 @@ import Image from "next/image";
 
 export const statistics = [
   {
-    number: "36",
-    title: "Sucessful Projects",
+    number: "50+",
+    title: "Active Members",
   },
   {
-    number: "100%",
-    title: "Achieved ROI",
+    number: "3+",
+    title: "Championships Won",
   },
   {
-    number: "550",
-    title: "Happy Customers",
+    number: "2022",
+    title: "Established",
   },
   {
-    number: "3x",
-    title: "Increased Profits",
+    number: "3+",
+    title: "Experienced Instructors",
   },
 ];
 

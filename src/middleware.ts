@@ -6,7 +6,8 @@ const middlewares = {
   // define your middlewares here...
   // first internationalization, then auth middleware!
   "/": withLocaleMiddleware,
-  "/services": withLocaleMiddleware,
+  // "/services": withLocaleMiddleware,
+  // "/pricing": withLocaleMiddleware,
   "/about": withLocaleMiddleware,
   "/admin": withLocaleMiddleware,
   "/admin/:path": withLocaleMiddleware,

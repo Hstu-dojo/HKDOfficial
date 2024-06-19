@@ -7,7 +7,7 @@ const SectionChecklist = () => {
         <div className="mx-auto max-w-6xl">
           <div className="rounded-md bg-white px-6 py-16 text-center shadow-lg dark:bg-slate-800 dark:shadow-slate-850/20 sm:px-12">
             <h3 className="mb-6">
-              Sales organisations are able to set and manage performance goals
+              Key Features and Values of HSTU Karate Dojo
             </h3>
             <div className="flex flex-wrap text-left md:flex-nowrap md:space-x-10">
               <div className="w-full md:w-1/2">
@@ -17,7 +17,7 @@ const SectionChecklist = () => {
                     className="mr-1 mt-0.5 shrink-0 fill-green"
                   />
                   <span className="text-md text-foreground dark:text-slate-400">
-                    Develop a comprehensive paid search strategy
+                    Established in 2022
                   </span>
                 </div>
                 <div className="mb-1 flex">
@@ -26,7 +26,16 @@ const SectionChecklist = () => {
                     className="mr-1 mt-0.5 shrink-0 fill-green"
                   />
                   <span className="text-md text-foreground dark:text-slate-400">
-                    Monitor performance throughout each sales
+                    Emphasis on discipline, respect, and self-improvement
+                  </span>
+                </div>
+                <div className="mb-1 flex">
+                  <CheckLineIcon
+                    size={20}
+                    className="mr-1 mt-0.5 shrink-0 fill-green"
+                  />
+                  <span className="text-md text-foreground dark:text-slate-400">
+                    Experienced instructors guiding the training
                   </span>
                 </div>
               </div>
@@ -37,7 +46,8 @@ const SectionChecklist = () => {
                     className="mr-1 mt-0.5 shrink-0 fill-green"
                   />
                   <span className="text-md text-foreground dark:text-slate-400">
-                    Ensure each task is assigned to the right person
+                    Participation in intra-university and inter-university
+                    championships
                   </span>
                 </div>
                 <div className="mb-1 flex">
@@ -46,7 +56,16 @@ const SectionChecklist = () => {
                     className="mr-1 mt-0.5 shrink-0 fill-green"
                   />
                   <span className="text-md text-foreground dark:text-slate-400">
-                    Clear communication can easily manage
+                    Active community engagement and social responsibility
+                  </span>
+                </div>
+                <div className="mb-1 flex">
+                  <CheckLineIcon
+                    size={20}
+                    className="mr-1 mt-0.5 shrink-0 fill-green"
+                  />
+                  <span className="text-md text-foreground dark:text-slate-400">
+                    Supportive and inclusive training environment
                   </span>
                 </div>
               </div>

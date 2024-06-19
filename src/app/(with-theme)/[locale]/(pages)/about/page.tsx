@@ -18,17 +18,12 @@ export default function PageAbout() {
     <>
       <Header />
       <main className="relative">
-        <SectionPageTitle
-          subtitle="Focus on engaging, reusable content that decrease the cost per leads
-            while helps you to increase profits margin. Margin strives to
-            deliver the tools and support that helps companies grow with
-            unparalleled success."
-        >
+        <SectionPageTitle subtitle="HSTU Karate Dojo (HKD) is the official karate club at Hajee Mohammad Danesh Science & Technology University (HSTU) in Dinajpur, Bangladesh. Established in 2022, HKD focuses on discipline, respect, and self-improvement through rigorous training under experienced instructors.">
           About
         </SectionPageTitle>
         <SectionChecklist />
         <SectionStats />
-        <SectionTeam />
+        {/* <SectionTeam /> */}
         <SectionCTALayout4 />
       </main>
       <Footer />

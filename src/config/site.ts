@@ -55,16 +55,16 @@ export const mainNav = [
         href: "/about",
         items: [],
       },
-      {
-        title: "Services",
-        href: "/services",
-        items: [],
-      },
-      {
-        title: "Pricing",
-        href: "/pricing",
-        items: [],
-      },
+      // {
+      //   title: "Services",
+      //   href: "/services",
+      //   items: [],
+      // },
+      // {
+      //   title: "Pricing",
+      //   href: "/pricing",
+      //   items: [],
+      // },
       {
         title: "Contact",
         href: "/contact",
@@ -148,16 +148,16 @@ export const footerNav = [
         href: "/about",
         external: false,
       },
-      {
-        title: "Services",
-        href: "/services",
-        external: false,
-      },
-      {
-        title: "Pricing",
-        href: "/pricing",
-        external: false,
-      },
+      // {
+      //   title: "Services",
+      //   href: "/services",
+      //   external: false,
+      // },
+      // {
+      //   title: "Pricing",
+      //   href: "/pricing",
+      //   external: false,
+      // },
       {
         title: "Blog",
         href: "/blog",
@@ -246,11 +246,11 @@ export const footerNav2 = [
         href: "/about",
         external: false,
       },
-      {
-        title: "Services & Pricing",
-        href: "/services",
-        external: false,
-      },
+      // {
+      //   title: "Services & Pricing",
+      //   href: "/services",
+      //   external: false,
+      // },
       {
         title: "SEO Blog & News",
         href: "/posts",
