@@ -55,7 +55,7 @@ const Header = () => {
                   href="tel:+8801777-300309"
                   className="inline-block rounded-md bg-gradient-to-l from-primary to-tertiary px-4 py-2.5 text-center font-bold text-white"
                 >
-                  <span className="block text-xxs">Call us for Free</span>
+                  <span className="block text-xxs">Call us for Info.</span>
                   <span className="text-md">+8801777-300309</span>
                 </a>
               </div>

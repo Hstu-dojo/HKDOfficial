@@ -23,7 +23,7 @@ const IconBox = ({
           alt={title || ""}
           width={72}
           height={72}
-          className="mb-6 inline-block"
+          className="mb-6 inline-block rounded"
         />
       ) : null}
       {title ? <h3 className="mb-4 text-md">{title}</h3> : null}

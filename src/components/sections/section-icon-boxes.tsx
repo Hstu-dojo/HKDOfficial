@@ -5,19 +5,19 @@ import MaxWidthWrapper from "../maxWidthWrapper";
 
 export const iconBoxes = [
   {
-    icon: "/icons/karate-analytics.svg",
+    icon: "/gif/1797-stretching.gif",
     title: "Training Programs",
     description:
       "Join our comprehensive training programs to enhance your physical fitness, mental acuity, and technical proficiency in karate.",
   },
   {
-    icon: "/icons/karate-copywriting.svg",
+    icon: "/gif/1022-podium-conference.gif",
     title: "Workshops and Seminars",
     description:
       "Participate in our workshops and seminars to learn more about karate and self-defense, and engage with the community.",
   },
   {
-    icon: "/icons/karate-sales-growth.svg",
+    icon: "/gif/660-karate-fight (1).gif",
     title: "Competitions",
     description:
       "Compete in intra-university and inter-university championships to showcase your skills and bring honor to HSTU.",

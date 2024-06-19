@@ -25,7 +25,7 @@ const SectionBenefits = () => {
               className="absolute -z-[1] -translate-y-8 scale-110 dark:opacity-10"
             />
             <Image
-              src="/image/kata-prc.jpg"
+              src="/image/8.jpg"
               alt="karate training"
               width={540}
               height={540}

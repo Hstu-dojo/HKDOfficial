@@ -92,7 +92,7 @@ const SectionFAQ = () => {
               />
               <div className="mt-12 md:flex md:space-x-8 lg:justify-end">
                 <Image
-                  src="/dojo.jpg"
+                  src="/image/kata-prc.jpg"
                   alt="HSTU Karate Dojo"
                   width={320}
                   height={320}

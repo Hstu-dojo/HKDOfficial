@@ -22,39 +22,18 @@ const SectionPartners = () => {
         </SectionTitle>
         <div className="flex flex-wrap justify-center">
           <Image
-            src="/partners/1.png"
+            src="/image/hstu.png"
             alt="partner 1"
-            width={173}
-            height={103}
-            className="m-2 md:m-5"
+            width={73}
+            height={73}
+            className="m-2 object-cover object-center md:m-5"
           />
           <Image
-            src="/partners/2.png"
+            src="/image/sdch.jpg"
             alt="partner 2"
-            width={173}
-            height={103}
-            className="m-2 md:m-5"
-          />
-          <Image
-            src="/partners/3.png"
-            alt="partner 3"
-            width={173}
-            height={103}
-            className="m-2 md:m-5"
-          />
-          <Image
-            src="/partners/4.png"
-            alt="partner 4"
-            width={173}
-            height={103}
-            className="m-2 md:m-5"
-          />
-          <Image
-            src="/partners/5.png"
-            alt="partner 5"
-            width={173}
-            height={103}
-            className="m-2 md:m-5"
+            width={73}
+            height={73}
+            className="m-2 object-cover object-center md:m-5"
           />
         </div>
       </MaxWidthWrapper>

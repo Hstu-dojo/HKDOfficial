@@ -11,35 +11,35 @@ import MaxWidthWrapper from "../maxWidthWrapper";
 
 export const testimonials = [
   {
-    name: "John Doe",
+    name: "Md. hasan",
     affiliation: "HSTU Student",
     comment:
       "“Joining the HSTU Karate Dojo has been an incredible experience. The training is top-notch and the sensei is very supportive.”",
-    image: "/testimonials/john_doe.png",
+    image: "https://i.pravatar.cc/300",
     rating: 5,
   },
   {
-    name: "Jane Smith",
+    name: "Loveraj acharya",
     affiliation: "HSTU Faculty",
     comment:
       "“The dojo provides a great environment for learning and personal growth. I highly recommend it to anyone interested in martial arts.”",
-    image: "/testimonials/jane_smith.png",
-    rating: 5,
+    image: "https://i.pravatar.cc/300",
+    rating: 4,
   },
   {
-    name: "Alex Johnson",
+    name: "Md. hasan",
     affiliation: "HSTU Alumni",
     comment:
       "“The discipline and skills I've gained from the HSTU Karate Dojo have been invaluable. It's a fantastic community.”",
-    image: "/testimonials/alex_johnson.png",
+    image: "https://i.pravatar.cc/300",
     rating: 5,
   },
   {
-    name: "Emily Davis",
+    name: "Shahriar",
     affiliation: "HSTU Staff",
     comment:
       "“I appreciate the structured training sessions and the opportunity to compete in championships. The dojo has been a great addition to my routine.”",
-    image: "/testimonials/emily_davis.png",
+    image: "https://i.pravatar.cc/300",
     rating: 5,
   },
 ];
