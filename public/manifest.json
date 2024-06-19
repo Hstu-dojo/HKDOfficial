@@ -50,7 +50,7 @@
   "orientation": "portrait",
   "screenshots": [
     {
-      "src": "og-image.jpg",
+      "src": "og-image.png",
       "sizes": "1024x1024",
       "type": "image/png"
     }
