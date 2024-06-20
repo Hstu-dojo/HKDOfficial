@@ -16,6 +16,8 @@ import {
 import { Album } from "@/db/albums";
 import { playlists } from "@/db/playlists";
 import Image from "next/image";
+import FavBtn from "./FavBtn";
+
 
 interface AlbumArtworkProps extends React.HTMLAttributes<HTMLDivElement> {
   album: Album;
@@ -33,12 +35,14 @@ export function AlbumArtwork({
   className,
   ...props
 }: AlbumArtworkProps) {
+  // console.log(album);
   const blurDataUrl =
     "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8/5+hHgAHggJ/PchI7wAAAABJRU5ErkJggg==";
   return (
     <div className={cn("space-y-3", className)} {...props}>
       <ContextMenu>
-        <ContextMenuTrigger>
+        <ContextMenuTrigger className="group">
+          <FavBtn public_id={album?.public_id} />
           <div className="overflow-hidden rounded-md">
             <Image
               //@ts-ignore
@@ -53,12 +57,17 @@ export function AlbumArtwork({
                   (max-width: 1536px) 33vw,
                   25vw"
               className={cn(
-                "h-auto w-auto object-cover transition-all hover:scale-105",
+                "h-auto w-auto object-cover transition-all hover:scale-105 group-hover:opacity-40",
                 // aspectRatio === "portrait" ? "aspect-[3/4]" : "aspect-square",
               )}
               // className="transform rounded-lg brightness-90 transition will-change-auto group-hover:brightness-110"
               style={{ transform: "translate3d(0, 0, 0)" }}
             />
+            <div className="fixed bottom-0 hidden w-full bg-black/25 py-5 group-hover:block">
+              <p className="mx-2 overflow-hidden font-sans font-bold text-slate-700 dark:text-slate-300">
+                {album?.filename}
+              </p>
+            </div>
           </div>
         </ContextMenuTrigger>
         <ContextMenuContent className="w-40">

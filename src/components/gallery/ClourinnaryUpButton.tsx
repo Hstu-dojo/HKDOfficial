@@ -19,7 +19,14 @@ export default function ClourinnaryUpButton({ uploadPreset }: Props) {
   return (
     <>
       {isClient ? (
-        <CldUploadButton uploadPreset={`${uploadPreset}`}>
+        <CldUploadButton
+          onUpload={() => {
+            setTimeout(() => {
+              router.refresh();
+            }, 1000);
+          }}
+          uploadPreset={`${uploadPreset}`}
+        >
           <Button onClick={() => setTheme("light")}>
             <PlusCircledIcon className="mr-2 h-4 w-4" /> Upload
           </Button>

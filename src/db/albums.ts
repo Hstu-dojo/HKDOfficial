@@ -2,6 +2,8 @@ import { StaticImport } from "next/dist/shared/lib/get-img-props";
 import { Key } from "react";
 
 export interface Album {
+  public_id: string[];
+  filename: string | undefined;
   blurDataUrl: string | undefined;
   asset_id: Key | null | undefined;
   secure_url?: string | StaticImport;
@@ -19,6 +21,8 @@ export const listenNowAlbums: Album[] = [
     asset_id: undefined,
     secure_url: undefined,
     blurDataUrl: undefined,
+    filename: undefined,
+    public_id: [],
   },
   {
     name: "Async Awakenings",
@@ -28,6 +32,8 @@ export const listenNowAlbums: Album[] = [
     asset_id: undefined,
     secure_url: undefined,
     blurDataUrl: undefined,
+    filename: undefined,
+    public_id: [],
   },
   {
     name: "The Art of Reusability",
@@ -37,6 +43,8 @@ export const listenNowAlbums: Album[] = [
     asset_id: undefined,
     secure_url: undefined,
     blurDataUrl: undefined,
+    filename: undefined,
+    public_id: [],
   },
   {
     name: "Stateful Symphony",
@@ -46,6 +54,8 @@ export const listenNowAlbums: Album[] = [
     asset_id: undefined,
     secure_url: undefined,
     blurDataUrl: undefined,
+    filename: undefined,
+    public_id: [],
   },
 ];
 
@@ -58,6 +68,8 @@ export const madeForYouAlbums: Album[] = [
     asset_id: undefined,
     secure_url: undefined,
     blurDataUrl: undefined,
+    filename: undefined,
+    public_id: [],
   },
   {
     name: "Functional Fury",
@@ -67,6 +79,8 @@ export const madeForYouAlbums: Album[] = [
     asset_id: undefined,
     secure_url: undefined,
     blurDataUrl: undefined,
+    filename: undefined,
+    public_id: [],
   },
   {
     name: "React Rendezvous",
@@ -76,6 +90,8 @@ export const madeForYouAlbums: Album[] = [
     asset_id: undefined,
     secure_url: undefined,
     blurDataUrl: undefined,
+    filename: undefined,
+    public_id: [],
   },
   {
     name: "Stateful Symphony",
@@ -85,6 +101,8 @@ export const madeForYouAlbums: Album[] = [
     asset_id: undefined,
     secure_url: undefined,
     blurDataUrl: undefined,
+    filename: undefined,
+    public_id: [],
   },
   {
     name: "Async Awakenings",
@@ -94,6 +112,8 @@ export const madeForYouAlbums: Album[] = [
     asset_id: undefined,
     secure_url: undefined,
     blurDataUrl: undefined,
+    filename: undefined,
+    public_id: [],
   },
   {
     name: "The Art of Reusability",
@@ -103,5 +123,7 @@ export const madeForYouAlbums: Album[] = [
     asset_id: undefined,
     secure_url: undefined,
     blurDataUrl: undefined,
+    filename: undefined,
+    public_id: [],
   },
 ];
