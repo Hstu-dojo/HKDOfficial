@@ -2,11 +2,10 @@
 import { Button } from "@/components/ui/button";
 import { HeartFilledIcon } from "@radix-ui/react-icons";
 import { AddImageToFav } from "@/actions/AddImageToFav";
-import { startTransition, useTransition } from "react";
-import { start } from "repl";
+import { useTransition } from "react";
 
 const FavBtn = ({ public_id }: any) => {
-  const [transition, setTransition] = useTransition();
+  const [transition, startTransition] = useTransition();
   // const addFavorite = async () => {
   //   try {
   //     const response = await fetch("/api/gallery/upload", {
