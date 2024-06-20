@@ -66,37 +66,42 @@ export const HeroParallax = ({
         <HeroTriangle />
         <Header />
         <NewsletterForm />
-
-        <motion.div
-          style={{
-            rotateX,
-            rotateZ,
-            translateY,
-            opacity,
-          }}
-          className=""
-        >
-          {/* <motion.div className="relative bottom-16">
+        <div className="relative">
+          <div
+            className="absolute inset-0 hidden bg-cover bg-center opacity-30 lg:block"
+            style={{ backgroundImage: "url('/logo.svg')" }}
+          ></div>
+          <motion.div
+            style={{
+              rotateX,
+              rotateZ,
+              translateY,
+              opacity,
+            }}
+            className="relative"
+          >
+            {/* <motion.div className="relative bottom-16">
         </motion.div> */}
-          <motion.div className="relative bottom-80 mb-20 flex flex-row-reverse space-x-20 space-x-reverse">
-            {firstRow.map((product) => (
-              <ProductCard
-                product={product}
-                translate={translateX}
-                key={product.title}
-              />
-            ))}
-          </motion.div>
-          <motion.div className="relative bottom-80 mb-20 flex  flex-row space-x-20 ">
-            {secondRow.map((product) => (
-              <ProductCard
-                product={product}
-                translate={translateXReverse}
-                key={product.title}
-              />
-            ))}
-          </motion.div>
-          {/* <motion.div className="flex flex-row-reverse space-x-20 space-x-reverse">
+
+            <motion.div className="relative bottom-96 mb-20 flex flex-row-reverse space-x-20 space-x-reverse">
+              {firstRow.map((product) => (
+                <ProductCard
+                  product={product}
+                  translate={translateX}
+                  key={product.title}
+                />
+              ))}
+            </motion.div>
+            <motion.div className="relative bottom-96 mb-20 flex  flex-row space-x-20 ">
+              {secondRow.map((product) => (
+                <ProductCard
+                  product={product}
+                  translate={translateXReverse}
+                  key={product.title}
+                />
+              ))}
+            </motion.div>
+            {/* <motion.div className="flex flex-row-reverse space-x-20 space-x-reverse">
             {thirdRow.map((product) => (
               <ProductCard
                 product={product}
@@ -105,7 +110,8 @@ export const HeroParallax = ({
               />
             ))}
           </motion.div> */}
-        </motion.div>
+          </motion.div>
+        </div>
       </div>
     </MaxWidthWrapper>
   );
@@ -113,11 +119,11 @@ export const HeroParallax = ({
 
 export const Header = () => {
   return (
-    <div className="relative left-0 top-0 mx-16 w-full max-w-7xl px-4  py-20 md:pb-40 md:pt-20">
+    <div className="relative left-0 top-0 mx-20 w-full max-w-7xl py-20 md:pb-40 md:pt-20">
       <h1 className="text-headings text-2xl font-bold md:text-7xl">
         Welcome to HSTU <br /> Karate Dojo
       </h1>
-      <p className="mt-8 max-w-2xl text-base text-slate-700 dark:text-slate-300 md:text-xl">
+      <p className="mt-8 max-w-lg text-base text-slate-700 dark:text-slate-300 md:text-lg">
         Discover the art of karate at Hajee Mohammad Dahesh Science & Technology
         University. Join us for rigorous training, community engagement, and
         competitive success.
