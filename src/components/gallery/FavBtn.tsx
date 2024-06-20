@@ -1,6 +1,6 @@
 "use client";
 import { Button } from "@/components/ui/button";
-import { HeartFilledIcon } from "@radix-ui/react-icons";
+import { HeartIcon } from "@radix-ui/react-icons";
 import { AddImageToFav } from "@/actions/AddImageToFav";
 import { useTransition } from "react";
 
@@ -35,10 +35,10 @@ const FavBtn = ({ public_id }: any) => {
         });
       }}
       size={"icon"}
-      variant={"secondary"}
+      variant={"outline"}
       className="font absolute right-3 top-3 z-10 hidden items-center justify-center hover:text-destructive group-hover:flex"
     >
-      <HeartFilledIcon className="h-6 w-6" />
+      <HeartIcon className="h-6 w-6" />
     </Button>
   );
 };

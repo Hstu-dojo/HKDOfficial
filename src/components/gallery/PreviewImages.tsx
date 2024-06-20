@@ -11,6 +11,7 @@ const PreviewImages = async () => {
   let results = await cloudinary.v2.search
     .expression(`resource_type:image AND asset_folder:${assetFolder}`)
     .sort_by("public_id", "desc")
+    .with_field("tags")
     .max_results(30)
     .execute();
   const blurImagePromises = results.resources.map((image: ImageProps) => {

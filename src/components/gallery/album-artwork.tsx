@@ -1,4 +1,5 @@
-import { PlusCircledIcon } from "@radix-ui/react-icons";
+"use client";
+import { HeartFilledIcon, PlusCircledIcon } from "@radix-ui/react-icons";
 
 import { cn } from "@/lib/utils";
 import {
@@ -17,7 +18,7 @@ import { Album } from "@/db/albums";
 import { playlists } from "@/db/playlists";
 import Image from "next/image";
 import FavBtn from "./FavBtn";
-
+import { RmvFromFav } from "@/actions/AddImageToFav";
 
 interface AlbumArtworkProps extends React.HTMLAttributes<HTMLDivElement> {
   album: Album;
@@ -35,14 +36,20 @@ export function AlbumArtwork({
   className,
   ...props
 }: AlbumArtworkProps) {
-  // console.log(album);
+  const isFavourite = album?.tags?.includes("favorite");
+
+  // console.log(album?.tags);
   const blurDataUrl =
     "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8/5+hHgAHggJ/PchI7wAAAABJRU5ErkJggg==";
   return (
     <div className={cn("space-y-3", className)} {...props}>
       <ContextMenu>
         <ContextMenuTrigger className="group">
-          <FavBtn public_id={album?.public_id} />
+          {isFavourite ? (
+            <HeartFilledIcon className="font absolute right-3 top-3 z-10 flex h-6 w-6 items-center justify-center text-destructive drop-shadow-sm transition-shadow" />
+          ) : (
+            <FavBtn public_id={album.public_id} />
+          )}
           <div className="overflow-hidden rounded-md">
             <Image
               //@ts-ignore
@@ -71,7 +78,16 @@ export function AlbumArtwork({
           </div>
         </ContextMenuTrigger>
         <ContextMenuContent className="w-40">
-          <ContextMenuItem>Add to Library</ContextMenuItem>
+          {isFavourite && (
+            <ContextMenuItem
+              onClick={async () => {
+                await RmvFromFav(album.public_id);
+                await new Promise((resolve)=>setTimeout(resolve, 1000))
+              }}
+            >
+              Remove Favorite
+            </ContextMenuItem>
+          )}
           <ContextMenuSub>
             <ContextMenuSubTrigger>Add to Playlist</ContextMenuSubTrigger>
             <ContextMenuSubContent className="w-48">

@@ -2,7 +2,8 @@ import { StaticImport } from "next/dist/shared/lib/get-img-props";
 import { Key } from "react";
 
 export interface Album {
-  public_id: string[];
+  tags: string[];
+  public_id: string | string[] | undefined;
   filename: string | undefined;
   blurDataUrl: string | undefined;
   asset_id: Key | null | undefined;
@@ -23,6 +24,7 @@ export const listenNowAlbums: Album[] = [
     blurDataUrl: undefined,
     filename: undefined,
     public_id: [],
+    tags: [],
   },
   {
     name: "Async Awakenings",
@@ -34,6 +36,7 @@ export const listenNowAlbums: Album[] = [
     blurDataUrl: undefined,
     filename: undefined,
     public_id: [],
+    tags: [],
   },
   {
     name: "The Art of Reusability",
@@ -45,6 +48,7 @@ export const listenNowAlbums: Album[] = [
     blurDataUrl: undefined,
     filename: undefined,
     public_id: [],
+    tags: [],
   },
   {
     name: "Stateful Symphony",
@@ -56,6 +60,7 @@ export const listenNowAlbums: Album[] = [
     blurDataUrl: undefined,
     filename: undefined,
     public_id: [],
+    tags: [],
   },
 ];
 
@@ -70,6 +75,7 @@ export const madeForYouAlbums: Album[] = [
     blurDataUrl: undefined,
     filename: undefined,
     public_id: [],
+    tags: [],
   },
   {
     name: "Functional Fury",
@@ -81,6 +87,7 @@ export const madeForYouAlbums: Album[] = [
     blurDataUrl: undefined,
     filename: undefined,
     public_id: [],
+    tags: [],
   },
   {
     name: "React Rendezvous",
@@ -92,6 +99,7 @@ export const madeForYouAlbums: Album[] = [
     blurDataUrl: undefined,
     filename: undefined,
     public_id: [],
+    tags: [],
   },
   {
     name: "Stateful Symphony",
@@ -103,6 +111,7 @@ export const madeForYouAlbums: Album[] = [
     blurDataUrl: undefined,
     filename: undefined,
     public_id: [],
+    tags: [],
   },
   {
     name: "Async Awakenings",
@@ -114,6 +123,7 @@ export const madeForYouAlbums: Album[] = [
     blurDataUrl: undefined,
     filename: undefined,
     public_id: [],
+    tags: [],
   },
   {
     name: "The Art of Reusability",
@@ -125,5 +135,6 @@ export const madeForYouAlbums: Album[] = [
     blurDataUrl: undefined,
     filename: undefined,
     public_id: [],
+    tags: [],
   },
 ];
