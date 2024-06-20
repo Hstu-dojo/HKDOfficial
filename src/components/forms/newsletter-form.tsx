@@ -67,7 +67,7 @@ const NewsletterForm = () => {
   }
 
   return (
-    <div className="rounded-md bg-muted px-8 py-10 shadow-lg dark:bg-slate-800 dark:shadow-slate-850/20 md:px-16 md:pb-5">
+    <div className="z-10 mx-20 rounded-md bg-muted px-8 py-10 shadow-lg dark:bg-slate-800 dark:shadow-slate-850/20 md:px-16 md:pb-5">
       <h2 className="mb-8 text-lg">Stay Updated with HSTU Karate Dojo</h2>
       <Form {...form}>
         <form
