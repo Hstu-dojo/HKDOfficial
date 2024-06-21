@@ -1,10 +1,11 @@
 "use client";
-import { Button } from "@/components/ui/button";
-import { HeartIcon } from "@radix-ui/react-icons";
+import { buttonVariants } from "@/components/ui/button";
+import { HeartFilledIcon, HeartIcon } from "@radix-ui/react-icons";
 import { AddImageToFav } from "@/actions/AddImageToFav";
 import { useTransition } from "react";
+import { cn } from "@/lib/utils";
 
-const FavBtn = ({ public_id }: any) => {
+const FavBtn = ({ album }: any) => {
   const [transition, startTransition] = useTransition();
   // const addFavorite = async () => {
   //   try {
@@ -26,20 +27,31 @@ const FavBtn = ({ public_id }: any) => {
   //     console.error("Error adding tag:", error);
   //   }
   // };
-
+  const isFavourite = album?.tags?.includes("favorite");
+  // console.log(album);
+  const public_id = album?.public_id;
   return (
-    <Button
+    <button
       onClick={() => {
-        startTransition(() => {
-          AddImageToFav(public_id);
+        startTransition(async () => {
+          await AddImageToFav(public_id, isFavourite);
         });
       }}
-      size={"icon"}
-      variant={"outline"}
-      className="font absolute right-3 top-3 z-10 hidden items-center justify-center hover:text-destructive group-hover:flex"
+      className={cn(
+        "font absolute right-3 top-3 z-10 hidden items-center justify-center hover:text-destructive group-hover:flex",
+        buttonVariants({
+          className: "hidden group-hover:flex",
+          variant: "ghost",
+          size: "icon",
+        }),
+      )}
     >
-      <HeartIcon className="h-6 w-6" />
-    </Button>
+      {isFavourite ? (
+        <HeartFilledIcon className="h-6 w-6" />
+      ) : (
+        <HeartIcon className="h-6 w-6" />
+      )}
+    </button>
   );
 };
 

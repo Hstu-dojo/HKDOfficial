@@ -1,4 +1,3 @@
-"use client";
 import { HeartFilledIcon, PlusCircledIcon } from "@radix-ui/react-icons";
 
 import { cn } from "@/lib/utils";
@@ -18,7 +17,7 @@ import { Album } from "@/db/albums";
 import { playlists } from "@/db/playlists";
 import Image from "next/image";
 import FavBtn from "./FavBtn";
-import { RmvFromFav } from "@/actions/AddImageToFav";
+import { Button } from "../ui/button";
 
 interface AlbumArtworkProps extends React.HTMLAttributes<HTMLDivElement> {
   album: Album;
@@ -36,20 +35,26 @@ export function AlbumArtwork({
   className,
   ...props
 }: AlbumArtworkProps) {
+  // console.log(album?.tags);
   const isFavourite = album?.tags?.includes("favorite");
 
-  // console.log(album?.tags);
   const blurDataUrl =
     "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8/5+hHgAHggJ/PchI7wAAAABJRU5ErkJggg==";
   return (
     <div className={cn("space-y-3", className)} {...props}>
       <ContextMenu>
         <ContextMenuTrigger className="group">
-          {isFavourite ? (
-            <HeartFilledIcon className="font absolute right-3 top-3 z-10 flex h-6 w-6 items-center justify-center text-destructive drop-shadow-sm transition-shadow" />
-          ) : (
-            <FavBtn public_id={album.public_id} />
+          {isFavourite && (
+            <Button
+              variant={"ghost"}
+              size={"icon"}
+              className="font absolute right-3 top-3 z-10 flex items-center justify-center drop-shadow-sm transition-shadow group-hover:hidden"
+            >
+              <HeartFilledIcon className=" h-6 w-6 " />
+            </Button>
           )}
+          <FavBtn album={album} />
+
           <div className="overflow-hidden rounded-md">
             <Image
               //@ts-ignore
@@ -78,16 +83,8 @@ export function AlbumArtwork({
           </div>
         </ContextMenuTrigger>
         <ContextMenuContent className="w-40">
-          {isFavourite && (
-            <ContextMenuItem
-              onClick={async () => {
-                await RmvFromFav(album.public_id);
-                await new Promise((resolve)=>setTimeout(resolve, 1000))
-              }}
-            >
-              Remove Favorite
-            </ContextMenuItem>
-          )}
+          <ContextMenuItem>Add to album</ContextMenuItem>
+
           <ContextMenuSub>
             <ContextMenuSubTrigger>Add to Playlist</ContextMenuSubTrigger>
             <ContextMenuSubContent className="w-48">
