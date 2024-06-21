@@ -6,10 +6,14 @@ import cloudinary from "@/utils/cloudinary";
 import type { ImageProps } from "@/utils/types";
 import getBase64ImageUrl from "@/utils/generateBlurPlaceholder";
 
-const PreviewImages = async () => {
+const PreviewImages = async ({ tag }: { tag?: string }) => {
   const assetFolder = process.env.CLOUDINARY_FOLDER || "/";
+  const expression =
+    tag !== ""
+      ? `resource_type:image AND tags=${tag} AND asset_folder:${assetFolder}`
+      : `resource_type:image AND asset_folder:${assetFolder}`;
   let results = await cloudinary.v2.search
-    .expression(`resource_type:image AND asset_folder:${assetFolder}`)
+    .expression(expression)
     .sort_by("public_id", "desc")
     .with_field("tags")
     .max_results(30)

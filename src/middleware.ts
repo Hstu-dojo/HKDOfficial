@@ -10,7 +10,7 @@ const middlewares = {
   // "/pricing": withLocaleMiddleware,
   "/about": withLocaleMiddleware,
   "/admin": withLocaleMiddleware,
-  "/admin/:path": withLocaleMiddleware,
+  "/admin/:path*": withLocaleMiddleware,
   "/dev": withLocaleMiddleware,
   "/login": withLocaleMiddleware,
   "/register": withLocaleMiddleware,
