@@ -4,13 +4,11 @@ import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 import { AlbumArtwork } from "@/components/gallery/album-artwork";
-import { Menu } from "@/components/gallery/menu";
 import ClourinnaryUpButton from "@/components/gallery/ClourinnaryUpButton";
 import { PodcastEmptyPlaceholder } from "@/components/gallery/podcast-empty-placeholder";
-import { Sidebar } from "@/components/gallery/sidebar";
 import PreviewImages from "@/components/gallery/PreviewImages";
 import { listenNowAlbums, madeForYouAlbums } from "@/db/albums";
-import { playlists } from "@/db/playlists";
+
 
 export const metadata: Metadata = {
   title: "Gallery admin",
@@ -20,12 +18,7 @@ const uploadPreset = process.env.CLOUDINARY_UPLOAD_PRESET;
 export default function MusicPage() {
   return (
     <>
-      <div className="block">
-        <Menu />
-        <div className="border-t">
-          <div className="">
-            <div className="grid lg:grid-cols-5">
-              <Sidebar playlists={playlists} className="hidden lg:block" />
+      
               <div className="col-span-3 lg:col-span-4 lg:border-l">
                 <div className="h-full px-4 py-6 lg:px-8">
                   <Tabs defaultValue="music" className="h-full space-y-6">
@@ -97,10 +90,7 @@ export default function MusicPage() {
                   </Tabs>
                 </div>
               </div>
-            </div>
-          </div>
-        </div>
-      </div>
+            
     </>
   );
 }

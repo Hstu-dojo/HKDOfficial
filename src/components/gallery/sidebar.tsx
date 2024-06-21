@@ -1,7 +1,8 @@
+"use client";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
-
+import { useRouter } from "next/navigation";
 import { Playlist } from "@/db/playlists";
 
 interface SidebarProps extends React.HTMLAttributes<HTMLDivElement> {
@@ -9,6 +10,7 @@ interface SidebarProps extends React.HTMLAttributes<HTMLDivElement> {
 }
 
 export function Sidebar({ className, playlists }: SidebarProps) {
+  const router = useRouter();
   return (
     <div className={cn("pb-12", className)}>
       <div className="space-y-4 py-4">
@@ -17,7 +19,11 @@ export function Sidebar({ className, playlists }: SidebarProps) {
             Discover
           </h2>
           <div className="space-y-1">
-            <Button variant="secondary" className="w-full justify-start">
+            <Button
+              onClick={() => router.push("/admin/gallery")}
+              variant="ghost"
+              className="w-full justify-start"
+            >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 viewBox="0 0 24 24"
@@ -33,7 +39,11 @@ export function Sidebar({ className, playlists }: SidebarProps) {
               </svg>
               Listen Now
             </Button>
-            <Button variant="ghost" className="w-full justify-start">
+            <Button
+              onClick={() => router.push("/admin/gallery/search")}
+              variant="ghost"
+              className="w-full justify-start"
+            >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 viewBox="0 0 24 24"
@@ -51,7 +61,11 @@ export function Sidebar({ className, playlists }: SidebarProps) {
               </svg>
               Browse
             </Button>
-            <Button variant="ghost" className="w-full justify-start">
+            <Button
+              onClick={() => router.push("/admin/gallery/favorite")}
+              variant="ghost"
+              className="w-full justify-start"
+            >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 viewBox="0 0 24 24"
@@ -68,7 +82,7 @@ export function Sidebar({ className, playlists }: SidebarProps) {
                 <path d="M16.2 7.8c2.3 2.3 2.3 6.1 0 8.5" />
                 <path d="M19.1 4.9C23 8.8 23 15.1 19.1 19" />
               </svg>
-              Radio
+              Favorite
             </Button>
           </div>
         </div>
