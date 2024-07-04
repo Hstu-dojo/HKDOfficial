@@ -16,6 +16,7 @@ import { SettingsPayload } from "../../../../../sanity/lib/sanity_types";
 // import { Button } from "@/components/ui/button";
 // import SocialShare from "@/components/ui/socialShare";
 import GTranslate from "@/components/gTranslate";
+import GNewsRevManager from "@/components/GNewsRevManager";
 
 interface FooterProps {
   data: SettingsPayload;
@@ -97,6 +98,7 @@ export default function Footer(props: FooterProps) {
       )}
       <div className="flex w-full flex-row flex-wrap items-center justify-center">
         <GTranslate />
+        <GNewsRevManager />
       </div>
 
       {/* <Drawer open={drawerOpen}>
