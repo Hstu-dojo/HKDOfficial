@@ -17,3 +17,4 @@ Host: https://karate.paradox-bd.com
 
 # Sitemaps
 Sitemap: https://karate.paradox-bd.com/sitemap.xml
+Sitemap: https://karate.paradox-bd.com/blog/sitemap.xml

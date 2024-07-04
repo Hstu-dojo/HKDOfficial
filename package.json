@@ -87,6 +87,7 @@
     "remixicon": "^3.5.0",
     "remixicon-react": "^1.0.0",
     "resend": "^2.0.0-canary.2",
+    "rss": "^1.2.2",
     "sanity": "^3.30.0",
     "sanity-plugin-asset-source-unsplash": "^1.1.2",
     "sass": "^1.71.1",
