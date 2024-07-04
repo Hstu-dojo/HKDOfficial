@@ -42,7 +42,7 @@ module.exports = {
       },
     ],
     additionalSitemaps: [
-      `${siteUrl}/blog/sitemap.xml`,
+      `${process.env.SITE_URL}/blog/sitemap.xml`,
       //   "https://example.com/my-custom-sitemap-2.xml",
       //   "https://example.com/my-custom-sitemap-3.xml",
     ],
