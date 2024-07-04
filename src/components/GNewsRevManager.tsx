@@ -26,7 +26,6 @@ function GNewsRevManager() {
   });`}
         </script>
       </Helmet>
-      <div id="google_translate_element"></div>
     </div>
   );
 }
