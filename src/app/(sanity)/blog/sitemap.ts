@@ -12,7 +12,7 @@ export default async function sitemap({
   const initial2 = await loadAllProject(page, limit);
   const data: any = initial2?.data;
   const BASE_URL = process.env.SITE_URL;
-  console.log(data);
+//   console.log(data);
 
   return data.map((blog: { _updatedAt: any; slug: any; date: any }) => ({
     url: `${BASE_URL}/blog/post/${blog?.slug}`,
