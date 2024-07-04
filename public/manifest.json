@@ -50,9 +50,9 @@
   "orientation": "portrait",
   "screenshots": [
     {
-      "src": "og-image.png",
-      "sizes": "1024x1024",
-      "type": "image/png"
+      "src": "/image/screenshot.jpg",
+      "sizes": "450x1024",
+      "type": "image/jpeg"
     }
   ],
   "launch_handler": {
