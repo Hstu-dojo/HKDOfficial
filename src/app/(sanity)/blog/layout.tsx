@@ -14,6 +14,7 @@ import {
 import { urlForOpenGraphImage } from "../../../../sanity/lib/utils";
 import ChatPlugin from "@/components/chat";
 import SkeletonCard from "./loading";
+import GNewsRevManager from "@/components/GNewsRevManager";
 
 const LiveVisualEditing = dynamic(
   () => import("@/components/blogs/LiveVisualEditing"),
@@ -66,6 +67,7 @@ export default async function IndexRoute({
       </div>
       <BackToTop />
       <ChatPlugin />
+      <GNewsRevManager />
       {draftMode().isEnabled && <LiveVisualEditing />}
     </>
   );
