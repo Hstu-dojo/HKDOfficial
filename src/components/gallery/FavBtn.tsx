@@ -4,8 +4,12 @@ import { HeartFilledIcon, HeartIcon } from "@radix-ui/react-icons";
 import { AddImageToFav } from "@/actions/AddImageToFav";
 import { useTransition } from "react";
 import { cn } from "@/lib/utils";
+import { usePathname, useRouter } from "next/navigation";
 
 const FavBtn = ({ album }: any) => {
+  const path = usePathname();
+  const router = useRouter();
+
   const [transition, startTransition] = useTransition();
   // const addFavorite = async () => {
   //   try {
@@ -28,13 +32,16 @@ const FavBtn = ({ album }: any) => {
   //   }
   // };
   const isFavourite = album?.tags?.includes("favorite");
+  // get current window url
   // console.log(album);
   const public_id = album?.public_id;
   return (
     <button
       onClick={() => {
         startTransition(async () => {
-          await AddImageToFav(public_id, isFavourite);
+          return AddImageToFav(public_id, isFavourite, path as string).then(
+            () => router.refresh(),
+          );
         });
       }}
       className={cn(

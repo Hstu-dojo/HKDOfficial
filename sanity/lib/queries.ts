@@ -89,6 +89,7 @@ export const allProjectSlugQuery = (page: number, limit: number) => groq`
     "slug": slug.current,
     tags,
     title,
+    _updatedAt
   }
 `;
 
