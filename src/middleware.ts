@@ -1,4 +1,4 @@
-import { createMiddleware } from "next-easy-middlewares";
+import createMiddleware from "@hasanshahriar32/next-easy-middlewares-root";
 import { withLocaleMiddleware } from "./middlewares/internationalization";
 import { withAuthMiddleware } from "./middlewares/authentication";
 

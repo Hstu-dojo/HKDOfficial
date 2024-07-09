@@ -9,7 +9,7 @@ import { prisma } from "@/lib/connect-db";
 //fix Type error: Type 'OmitWithTag<typeof import("C:/Users/mrhas/Desktop/karate_dojo/src/app/api/auth/[...nextauth]/route"), "GET" | "POST" | "HEAD" | "OPTIONS" | "PUT" | "DELETE" | "PATCH" | "config" | "generateStaticParams" | ... 6 more ... | "maxDuration", "">' does not satisfy the constraint '{ [x: string]: never; }'.
 interface UpdatedNextAuthOptions extends NextAuthOptions {}
 
-const authOptions: UpdatedNextAuthOptions = {
+export const authOptions: UpdatedNextAuthOptions = {
   session: {
     strategy: "jwt",
   },
