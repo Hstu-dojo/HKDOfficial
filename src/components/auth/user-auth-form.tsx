@@ -3,7 +3,7 @@
 import * as React from "react";
 import { useSession, signIn, getSession } from "next-auth/react";
 import { cn } from "@/lib/utils";
-import { FaGithub } from "react-icons/fa6";
+import { FaGithub, FaGoogle } from "react-icons/fa6";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -20,7 +20,7 @@ export function UserAuthForm({
   callbackUrl,
   ...props
 }: UserAuthFormProps) {
-  // console.log(callbackUrl); 
+  // console.log(callbackUrl);
   const [isLoading, setIsLoading] = React.useState<boolean>(false);
   const { data: session } = useSession();
   const router = useRouter();
@@ -136,6 +136,25 @@ export function UserAuthForm({
         </div>
       </div>
       <Button
+        variant="outline"
+        type="button"
+        disabled={isLoading}
+        onClick={() => {
+          signIn("google", {
+            callbackUrl: callbackUrl || "/",
+          });
+          // signIn("github", { callbackUrl: callbackUrl || "/" });
+        }}
+      >
+        {/* {isLoading ? (
+          <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
+        ) : (
+        )}{" "} */}
+        <FaGoogle className="mr-2" />
+        Google
+      </Button>
+      <Button
+        className=""
         variant="outline"
         type="button"
         disabled={isLoading}
