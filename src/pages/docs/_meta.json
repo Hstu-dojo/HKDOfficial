@@ -1,6 +1,7 @@
 {
+  "readme": "Readme",
   "index": "Index",
   "erd": "Erd Diagram",
-  "readme": "Readme",
+  "db_live": "Database Live View",
   "dev": "Developer Info"
 }

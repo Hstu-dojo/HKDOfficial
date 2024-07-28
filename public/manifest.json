@@ -4,13 +4,49 @@
   "protocol_handlers": [{ "protocol": "mailto", "url": "/newEmail?to=%s" }],
   "shortcuts": [
     {
-      "name": "HSTU Karate Dojo",
-      "short_name": "HSTU Dojo",
+      "name": "HKD Home",
+      "short_name": "Home",
       "description": "Power up your skill with HSTU Karate Dojo. We offer junior to senior level karate trainings. Let us take you to your next level⚡",
       "url": "/en?startLive",
       "icons": [
         {
-          "src": "AppImages/android/android-launchericon-192-192.png",
+          "src": "/icons/icons8-home.svg",
+          "sizes": "192x192"
+        }
+      ]
+    },
+    {
+      "name": "About Section",
+      "short_name": "About",
+      "description": "Power up your skill with HSTU Karate Dojo. We offer junior to senior level karate trainings. Let us take you to your next level⚡",
+      "url": "/about",
+      "icons": [
+        {
+          "src": "/icons/icons8-info-squared.svg",
+          "sizes": "192x192"
+        }
+      ]
+    },
+    {
+      "name": "Contact Section",
+      "short_name": "Contact",
+      "description": "Power up your skill with HSTU Karate Dojo. We offer junior to senior level karate trainings. Let us take you to your next level⚡",
+      "url": "/contact",
+      "icons": [
+        {
+          "src": "/icons/icons8-contact.svg",
+          "sizes": "192x192"
+        }
+      ]
+    },
+    {
+      "name": "Blog Section",
+      "short_name": "Blog",
+      "description": "Power up your skill with HSTU Karate Dojo. We offer junior to senior level karate trainings. Let us take you to your next level⚡",
+      "url": "/blog",
+      "icons": [
+        {
+          "src": "/icons/icons8-blog.svg",
           "sizes": "192x192"
         }
       ]
