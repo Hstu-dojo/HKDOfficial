@@ -22,7 +22,7 @@
       "url": "/about",
       "icons": [
         {
-          "src": "/icons/icons8-info-squared.svg",
+          "src": "/icons/icons8-info.svg",
           "sizes": "192x192"
         }
       ]
@@ -46,7 +46,7 @@
       "url": "/blog",
       "icons": [
         {
-          "src": "/icons/icons8-blog.svg",
+          "src": "/icons/icons8-edit-file.svg",
           "sizes": "192x192"
         }
       ]
