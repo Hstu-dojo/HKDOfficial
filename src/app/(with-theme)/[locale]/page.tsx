@@ -8,7 +8,7 @@ import SectionPromo from "@/components/sections/section-promo";
 // import SectionBlog from "@/components/sections/section-blog";
 import SectionTestimonialsSlider from "@/components/sections/section-testimonials-slider";
 // import SectionTestimonialsSliderLayout2 from "@/components/sections/section-testimonials-slider-layout-2";
-// import Furious5 from "@/components/sections/furious5/furious5";
+import Furious5 from "@/components/sections/furious5/furious5";
 import ChatPlugin from "@/components/chat";
 import SectionBenefits from "@/components/sections/section-benefits";
 import SectionFAQ from "@/components/sections/section-faq";
@@ -28,7 +28,7 @@ export default function Home() {
         <SectionTestimonialsSlider />
         {/* <SectionTestimonialsSliderLayout2 /> */}
 
-        {/* <Furious5 /> */}
+        <Furious5 />
         <SectionPartners />
         <SectionCTA />
         <ChatPlugin />
