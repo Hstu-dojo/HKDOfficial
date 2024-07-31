@@ -25,24 +25,24 @@ const ExploreCard = ({ id, imgUrl, title, index, active, handleClick }) => (
       }`}
     />
     {active !== id ? (
-      <h3 className="absolute z-0 text-[18px] font-semibold text-white sm:text-[26px] lg:bottom-20 -bottom-5 lg:origin-[0,0] lg:rotate-[-90deg]">
+      <h3 className="absolute -bottom-5 z-0 text-[18px] font-semibold text-white sm:text-[26px] lg:bottom-20 lg:origin-[0,0] lg:rotate-[-90deg]">
         {title}
       </h3>
     ) : (
-      <div className="absolute overflow-hidden bottom-0 flex h-[150px] lg:h-[250px] w-full flex-col justify-evenly rounded-b-[24px] bg-[rgba(0,0,0,0.5)] p-8">
+      <div className="absolute bottom-0 flex h-[150px] w-full flex-col justify-evenly overflow-hidden rounded-b-[24px] bg-[rgba(0,0,0,0.5)] p-8 lg:h-[250px]">
         <div
           className={`${styles.flexCenter} glassmorphism mb-[16px] h-[50px] w-[60px] rounded-[24px]`}
         >
           <Image
             height={200}
             width={200}
-            src="/headset.svg"
+            src="/icons/icons8-karateka.svg"
             alt="headset"
             className="h-50 w-50 object-cover"
           />
         </div>
         <p className="text-[16px] font-normal uppercase leading-[20.16px] text-white">
-          Enter Metaverse
+          {id}
         </p>
         <h2 className="mt-[4px] text-lg font-semibold text-white sm:text-xl">
           {title}

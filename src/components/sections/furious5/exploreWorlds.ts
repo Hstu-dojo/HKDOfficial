@@ -1,27 +1,27 @@
 export const exploreWorlds = [
   {
-    id: "world-1",
+    id: "warrior-1",
     imgUrl: "/furious5/img (2).JPG",
-    title: "The Hogwarts",
+    title: "Viper",
   },
   {
-    id: "world-2",
+    id: "warrior-2",
     imgUrl: "/furious5/img (1).JPG",
-    title: "The Upside Down",
+    title: "Mantis",
   },
   {
-    id: "world-3",
+    id: "warrior-3",
     imgUrl: "/furious5/img (4).JPG",
-    title: "Kadirojo Permai",
+    title: "Monk",
   },
   {
-    id: "world-4",
+    id: "warrior-4",
     imgUrl: "/furious5/img (3).JPG",
-    title: "Paradise Island",
+    title: "Tigress",
   },
   {
-    id: "world-5",
+    id: "warrior-5",
     imgUrl: "/furious5/img (5).JPG",
-    title: "Hawkins Labs",
+    title: "Crane",
   },
 ];
