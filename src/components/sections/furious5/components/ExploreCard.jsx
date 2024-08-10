@@ -36,7 +36,7 @@ const ExploreCard = ({ id, imgUrl, title, index, active, handleClick }) => (
           <Image
             height={200}
             width={200}
-            src="/icons/icons8-karateka.svg"
+            src="/icons/icons8-karate.svg"
             alt="headset"
             className="h-50 w-50 object-cover"
           />
