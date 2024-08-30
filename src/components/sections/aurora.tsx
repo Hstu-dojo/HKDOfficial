@@ -3,7 +3,8 @@
 import { motion } from "framer-motion";
 import React from "react";
 import { AuroraBackground } from "../ui/aurora-background";
-import { signIn, useSession } from "next-auth/react";
+import { useSession } from "next-auth/react";
+import Link from "next/link";
 
 export default function AuroraBd() {
     const { data: session } = useSession();
@@ -26,9 +27,11 @@ export default function AuroraBd() {
           Fill following info caoutiously.
         </div>
         { !session?.user?.email &&
-        <button onClick={() => signIn()} className="w-fit rounded-full bg-black px-4 py-2 text-white dark:bg-white dark:text-black">
-          Login now
-        </button>}
+        <Link href="/login">
+          <button className="w-fit rounded-full bg-black px-4 py-2 text-white dark:bg-white dark:text-black">
+            Login now
+          </button>
+        </Link>}
       </motion.div>
     </AuroraBackground>
   );
