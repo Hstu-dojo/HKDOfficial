@@ -11,6 +11,7 @@ const middlewares = {
   "/about": withLocaleMiddleware,
   "/admin": withLocaleMiddleware,
   "/admin/:path*": withLocaleMiddleware,
+  "/apply/:path*": [withLocaleMiddleware, withAuthMiddleware],
   "/dev": withLocaleMiddleware,
   "/login": withLocaleMiddleware,
   "/register": withLocaleMiddleware,

@@ -43,12 +43,12 @@ module.exports = {
       "7xl": ["4rem", { lineHeight: "normal" }],
     },
     extend: {
-       zIndex: {
-        '60': 60,
-        '70': 70,
-        '80': 80,
-        '90': 90,
-        '100': 100,
+      zIndex: {
+        60: 60,
+        70: 70,
+        80: 80,
+        90: 90,
+        100: 100,
       },
       colors: {
         slate: {
@@ -131,6 +131,14 @@ module.exports = {
         1600: "1600ms",
       },
       keyframes: {
+        aurora: {
+          from: {
+            backgroundPosition: "50% 50%, 50% 50%",
+          },
+          to: {
+            backgroundPosition: "350% 50%, 350% 50%",
+          },
+        },
         fly: {
           "0%, 100%": { transform: "translateY(5%)" },
           "50%": { transform: "translateY(0)" },
@@ -169,6 +177,7 @@ module.exports = {
         "fade-in": "fade-in 0.2s ease-in-out",
         "fade-out": "fade-out 0.2s ease-in-out",
         spotlight: "spotlight 2s ease .75s 1 forwards",
+        aurora: "aurora 60s linear infinite",
       },
     },
   },

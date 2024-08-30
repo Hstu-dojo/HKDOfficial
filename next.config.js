@@ -32,6 +32,17 @@ const nextConfig = {
   experimental: {
     serverComponentsExternalPackages: ["@prisma/client", "bcrypt"],
     taint: true,
+    turbo: {
+      resolveExtensions: [
+        ".mdx",
+        ".tsx",
+        ".ts",
+        ".jsx",
+        ".js",
+        ".mjs",
+        ".json",
+      ],
+    },
   },
   typescript: {
     // Set this to false if you want production builds to abort if there's type errors
