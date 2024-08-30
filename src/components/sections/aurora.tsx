@@ -27,7 +27,7 @@ export default function AuroraBd() {
           Fill following info caoutiously.
         </div>
         { !session?.user?.email &&
-        <Link href="/login">
+        <Link href="/login?callbackUrl=/apply/1">
           <button className="w-fit rounded-full bg-black px-4 py-2 text-white dark:bg-white dark:text-black">
             Login now
           </button>
