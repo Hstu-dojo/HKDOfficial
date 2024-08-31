@@ -13,6 +13,13 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { toast } from "@/components/ui/use-toast";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/components/ui/card"
@@ -20,6 +27,7 @@ import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Checkbox } from "@/components/ui/checkbox";
 import MaxWidthWrapper from "./maxWidthWrapper"
+import Link from "next/link";
 
 const FormSchema = z.object({
   username: z.string().min(2, { message: "Username must be at least 2 characters." }),
@@ -61,8 +69,8 @@ export function EnrollForm() {
       age: 0,
       height: 0,
       weight: 0,
-      sex: "Male",
-      bloodGroup: "A+",
+      sex: undefined,
+      bloodGroup: undefined,
       nationality: "",
       religion: "",
       nid: "",
@@ -84,6 +92,7 @@ export function EnrollForm() {
         </pre>
       ),
     });
+    console.log(data);
   }
 
   return (
@@ -108,7 +117,7 @@ export function EnrollForm() {
                   name="username"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Username</FormLabel>
+                      <FormLabel>Member Name</FormLabel>
                       <FormControl>
                         <Input placeholder="Enter your name" {...field} />
                       </FormControl>
@@ -177,8 +186,7 @@ export function EnrollForm() {
                     </FormItem>
                   )}
                 />
-              </div>
-              <div className="space-y-4">
+
                 <FormField
                   control={form.control}
                   name="phone"
@@ -232,6 +240,9 @@ export function EnrollForm() {
                           type="number"
                           placeholder="Enter your age"
                           {...field}
+                          onChange={(e) =>
+                            field.onChange(Number(e.target.value))
+                          }
                         />
                       </FormControl>
                       <FormMessage />
@@ -249,6 +260,9 @@ export function EnrollForm() {
                           type="number"
                           placeholder="Enter your height"
                           {...field}
+                          onChange={(e) =>
+                            field.onChange(Number(e.target.value))
+                          }
                         />
                       </FormControl>
                       <FormMessage />
@@ -266,25 +280,42 @@ export function EnrollForm() {
                           type="number"
                           placeholder="Enter your weight"
                           {...field}
+                          onChange={(e) =>
+                            field.onChange(Number(e.target.value))
+                          }
                         />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
                   )}
                 />
+              </div>
+              <div className="space-y-4">
                 <FormField
                   control={form.control}
                   name="sex"
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Sex</FormLabel>
-                      <FormControl>
-                        <select {...field} className="form-select">
-                          <option value="Male">Male</option>
-                          <option value="Female">Female</option>
-                          <option value="Other">Other</option>
-                        </select>
-                      </FormControl>
+                      <Select
+                        onValueChange={field.onChange}
+                        defaultValue={field.value}
+                      >
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select your gender" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          <SelectItem value="Male">Male</SelectItem>
+                          <SelectItem value="Female">Female</SelectItem>
+                          <SelectItem value="Other">Other</SelectItem>
+                        </SelectContent>
+                      </Select>
+                      {/* <FormDescription>
+                        You can manage email addresses in your{" "}
+                        <Link href="/examples/forms">email settings</Link>.
+                      </FormDescription> */}
                       <FormMessage />
                     </FormItem>
                   )}
@@ -295,18 +326,30 @@ export function EnrollForm() {
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Blood Group</FormLabel>
-                      <FormControl>
-                        <select {...field} className="form-select">
-                          <option value="A+">A+</option>
-                          <option value="A-">A-</option>
-                          <option value="B+">B+</option>
-                          <option value="B-">B-</option>
-                          <option value="AB+">AB+</option>
-                          <option value="AB-">AB-</option>
-                          <option value="O+">O+</option>
-                          <option value="O-">O-</option>
-                        </select>
-                      </FormControl>
+                      <Select
+                        onValueChange={field.onChange}
+                        defaultValue={field.value}
+                      >
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Blood Group" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          <SelectItem value="A+">A+</SelectItem>
+                          <SelectItem value="A-">A-</SelectItem>
+                          <SelectItem value="B+">B+</SelectItem>
+                          <SelectItem value="B-">B-</SelectItem>
+                          <SelectItem value="AB+">AB+</SelectItem>
+                          <SelectItem value="AB-">AB-</SelectItem>
+                          <SelectItem value="O+">O+</SelectItem>
+                          <SelectItem value="O-">O-</SelectItem>
+                        </SelectContent>
+                      </Select>
+                      {/* <FormDescription>
+                        You can manage email addresses in your{" "}
+                        <Link href="/examples/forms">email settings</Link>.
+                      </FormDescription> */}
                       <FormMessage />
                     </FormItem>
                   )}
@@ -431,16 +474,23 @@ export function EnrollForm() {
                   control={form.control}
                   name="agreement"
                   render={({ field }) => (
-                    <FormItem>
-                      <div className="flex items-start space-x-2">
-                        <FormControl>
-                          <Checkbox {...field} />
-                        </FormControl>
+                    <FormItem className="shadow flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4">
+                      <FormControl>
+                        <Checkbox
+                          checked={field.value}
+                          onCheckedChange={field.onChange}
+                        />
+                      </FormControl>
+                      <div className="space-y-1 leading-none">
                         <FormLabel>
-                          I agree to the terms and conditions
+                          User agreement to terms and conditions.
                         </FormLabel>
+                        <FormDescription>
+                          I agree to the{" "}
+                          <Link href="/blog/rules">terms and conditions</Link>{" "}
+                          page.
+                        </FormDescription>
                       </div>
-                      <FormMessage />
                     </FormItem>
                   )}
                 />
