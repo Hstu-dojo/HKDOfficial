@@ -73,7 +73,7 @@ const SectionFAQ = () => {
                     <div
                       className="flex flex-col space-y-2"
                       id="chatling-inline-bot"
-                      style={{ width: "50%", height: "500px" }}
+                      style={{ width: "100%", height: "500px" }}
                     ></div>
                     <Helmet>
                       <script
