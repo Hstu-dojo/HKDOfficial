@@ -9,6 +9,7 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import MaxWidthWrapper from "../maxWidthWrapper";
+import { Helmet } from "react-helmet";
 
 const accordionItems = [
   {
@@ -64,6 +65,28 @@ const SectionFAQ = () => {
                     </AccordionContent>
                   </AccordionItem>
                 ))}
+                <AccordionItem key="ai" value="ai">
+                  <AccordionTrigger className="text-md">
+                    Ask more to HKD AI
+                  </AccordionTrigger>
+                  <AccordionContent>
+                    <div
+                      className="flex flex-col space-y-2"
+                      id="chatling-inline-bot"
+                      style={{ width: "50%", height: "500px" }}
+                    ></div>
+                    <Helmet>
+                      <script
+                        async
+                        data-id="2546634911"
+                        data-display="page_inline"
+                        id="chatling-embed-script"
+                        type="text/javascript"
+                        src="https://chatling.ai/js/embed.js"
+                      ></script>
+                    </Helmet>
+                  </AccordionContent>
+                </AccordionItem>
               </Accordion>
               <span className="mt-14 inline-block text-lg">
                 Any Question?{" "}

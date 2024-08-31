@@ -494,11 +494,11 @@ export function EnrollForm() {
                     </FormItem>
                   )}
                 />
-              <div className="flex w-full justify-end">
-                <Button type="submit" className="ml-auto">
-                  Register
-                </Button>
-              </div>
+                <div className="flex w-full justify-end">
+                  <Button type="submit" className="ml-auto">
+                    Register
+                  </Button>
+                </div>
               </div>
             </form>
           </Form>
