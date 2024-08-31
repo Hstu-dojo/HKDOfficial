@@ -50,7 +50,7 @@ const SectionFAQ = () => {
               </p>
               <Accordion
                 type="single"
-                defaultValue={[accordionItems[0].title]}
+                // defaultValue={[accordionItems[0].title]}
                 className="w-full"
               >
                 {accordionItems?.map((item, index) => (
@@ -71,7 +71,7 @@ const SectionFAQ = () => {
                   </AccordionTrigger>
                   <AccordionContent>
                     <div
-                      className="flex flex-col space-y-2"
+                      className="flex flex-col space-y-2 filter dark:invert"
                       id="chatling-inline-bot"
                       style={{ width: "100%", height: "500px" }}
                     ></div>
