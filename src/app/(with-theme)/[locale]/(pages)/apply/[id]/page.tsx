@@ -21,6 +21,7 @@ import { Input } from "@/components/ui/input";
 import { toast } from "@/components/ui/use-toast";
 import AuroraBd from "@/components/sections/aurora";
 import MaxWidthWrapper from "@/components/maxWidthWrapper";
+import { EnrollForm } from "@/components/enroll-form";
 
 const FormSchema = z.object({
   username: z.string().min(2, {
@@ -56,7 +57,8 @@ export default function InputForm() {
         </SectionPageTitle> */}
         <AuroraBd />
         <MaxWidthWrapper>
-          <Form {...form}>
+          <EnrollForm />
+          {/* <Form {...form}>
             <form
               onSubmit={form.handleSubmit(onSubmit)}
               className="w-2/3 space-y-6"
@@ -79,7 +81,7 @@ export default function InputForm() {
               />
               <Button type="submit">Submit</Button>
             </form>
-          </Form>
+          </Form> */}
         </MaxWidthWrapper>
       </main>
       <Footer />
