@@ -49,7 +49,7 @@ const SectionFAQ = () => {
                 Karate Dojo and learn more about our activities and membership.
               </p>
               <Accordion
-                type="multiple"
+                type="single"
                 defaultValue={[accordionItems[0].title]}
                 className="w-full"
               >
