@@ -63,7 +63,7 @@ export default function PageSelection({ menuItems }:any) {
     return (
       <Popover open={open} onOpenChange={setOpen}>
         <PopoverTrigger asChild>
-          <Button variant="outline" className="w-[150px] justify-start">
+          <Button variant="outline" className="justify-start">
             {selectedStatus ? <>{selectedStatus.label}</> : <> Explore</>}
           </Button>
         </PopoverTrigger>
@@ -77,7 +77,7 @@ export default function PageSelection({ menuItems }:any) {
   return (
     <Drawer open={open} onOpenChange={setOpen}>
       <DrawerTrigger asChild>
-        <Button variant="outline" className="w-[150px] justify-start">
+        <Button variant="outline" className=" justify-start">
           {selectedStatus ? <>{selectedStatus.label}</> : <> Explore</>}
         </Button>
       </DrawerTrigger>
@@ -117,11 +117,11 @@ function StatusList({
                 key={status.title}
                 value={status.title}
                 onSelect={(value) => {
-                  setSelectedStatus(
-                    menuItems.find((priority: any) => priority.title === value) || null,
-                  );
+                  // setSelectedStatus(
+                  //   menuItems.find((priority: any) => priority.title === value) || null,
+                  // );
                   router.push(`/blog/${href}`);
-                  console.log(href)
+                  // console.log(href)
                   setOpen(false);
                 }}
               >
