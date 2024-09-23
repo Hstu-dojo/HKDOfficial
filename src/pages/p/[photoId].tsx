@@ -15,7 +15,7 @@ const Home: NextPage = ({ currentPhoto }: { currentPhoto: ImageProps }) => {
   const currentPhotoUrl = `https://res.cloudinary.com/${process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}/image/upload/c_scale,w_2560/${currentPhoto.public_id}.${currentPhoto.format}`;
 
   return (
-    <>
+    <div className="bg-black">
       <Head>
         <title>HKD Images</title>
         <meta property="og:image" content={currentPhotoUrl} />
@@ -24,7 +24,7 @@ const Home: NextPage = ({ currentPhoto }: { currentPhoto: ImageProps }) => {
       <main className="mx-auto max-w-[1960px] p-4">
         <Carousel currentPhoto={currentPhoto} index={index} />
       </main>
-    </>
+    </div>
   );
 };
 

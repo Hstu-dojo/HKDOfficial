@@ -42,13 +42,13 @@ const Home: NextPage = ({ images }: { images: ImageProps[] }) => {
   };
 
   return (
-    <>
+    <div className="bg-black">
       <Head>
         <title>HSTU Karate Dojo Gallery</title>
         <meta property="og:image" content="/og-image.png" />
         <meta name="twitter:image" content="/og-image.png" />
       </Head>
-      <main className="mx-auto max-w-[1960px] p-4">
+      <main className="mx-auto max-w-[1960px] p-4 ">
         {photoId && (
           <Modal
             images={images}
@@ -134,7 +134,7 @@ const Home: NextPage = ({ images }: { images: ImageProps[] }) => {
         </a>{" "}
         for the pictures.
       </footer>
-    </>
+    </div>
   );
 };
 

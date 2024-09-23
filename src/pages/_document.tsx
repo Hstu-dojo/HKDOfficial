@@ -21,10 +21,10 @@ class MyDocument extends Document {
             content="See pictures from HKD belt test."
           />
         </Head>
-        <body className="bg-black antialiased">
-            <ThemeProvider attribute="class" forcedTheme="dark" enableSystem>
-              <Main />
-            </ThemeProvider>
+        <body className="antialiased">
+          <ThemeProvider attribute="class" defaultTheme="dark" enableSystem>
+            <Main />
+          </ThemeProvider>
           <NextScript />
         </body>
       </Html>
