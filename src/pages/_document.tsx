@@ -1,4 +1,5 @@
 import Document, { Head, Html, Main, NextScript } from "next/document";
+import { ThemeProvider } from "@/context/ThemeProvider";
 
 class MyDocument extends Document {
   render() {
@@ -21,7 +22,9 @@ class MyDocument extends Document {
           />
         </Head>
         <body className="bg-black antialiased">
-          <Main />
+            <ThemeProvider attribute="class" forcedTheme="dark" enableSystem>
+              <Main />
+            </ThemeProvider>
           <NextScript />
         </body>
       </Html>
