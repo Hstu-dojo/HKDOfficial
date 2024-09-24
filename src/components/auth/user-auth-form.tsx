@@ -135,43 +135,34 @@ export function UserAuthForm({
           </span>
         </div>
       </div>
-      <Button
-        variant="outline"
-        type="button"
-        disabled={isLoading}
-        onClick={() => {
-          signIn("google", {
-            callbackUrl: callbackUrl || "/",
-          });
-          // signIn("github", { callbackUrl: callbackUrl || "/" });
-        }}
-      >
-        {/* {isLoading ? (
-          <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
-        ) : (
-        )}{" "} */}
-        <FaGoogle className="mr-2" />
-        Google
-      </Button>
-      <Button
-        className=""
-        variant="outline"
-        type="button"
-        disabled={isLoading}
-        onClick={() => {
-          signIn("github", {
-            callbackUrl: callbackUrl || "/",
-          });
-          // signIn("github", { callbackUrl: callbackUrl || "/" });
-        }}
-      >
-        {/* {isLoading ? (
-          <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
-        ) : (
-        )}{" "} */}
-        <FaGithub className="mr-2" />
-        GitHub
-      </Button>
+      <div className="mt-4 flex justify-center space-x-4">
+        <Button
+          className="flex h-12 w-12 items-center justify-center rounded-full p-3"
+          variant="outline"
+          type="button"
+          disabled={isLoading}
+          onClick={() => {
+            signIn("google", {
+              callbackUrl: callbackUrl || "/",
+            });
+          }}
+        >
+          <FaGoogle className="h-6 w-6" />
+        </Button>
+        <Button
+          className="flex h-12 w-12 items-center justify-center rounded-full p-3"
+          variant="outline"
+          type="button"
+          disabled={isLoading}
+          onClick={() => {
+            signIn("github", {
+              callbackUrl: callbackUrl || "/",
+            });
+          }}
+        >
+          <FaGithub className="h-6 w-6" />
+        </Button>
+      </div>
     </div>
   );
 }
