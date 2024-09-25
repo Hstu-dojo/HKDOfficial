@@ -135,7 +135,7 @@ export function UserAuthForm({
           </span>
         </div>
       </div>
-      <div className="mt-4 flex justify-center space-x-4">
+      <div className="flex justify-center space-x-4">
         <Button
           className="flex h-12 w-12 items-center justify-center rounded-full p-3"
           variant="outline"
