@@ -1,3 +1,5 @@
+# Readme
+
 ## Erd Diagram
 
 [Erd Diagram](./public/erd/ERD.md)
@@ -6,7 +8,7 @@
 
 ## DB Link
 
-<https://hkd.onrender.com>
+[https://hkd-f37c.onrender.com/](https://hkd-f37c.onrender.com/)
 
 ## CRON Job Monitor
 
