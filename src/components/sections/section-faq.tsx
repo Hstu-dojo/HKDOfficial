@@ -65,7 +65,7 @@ const SectionFAQ = () => {
                     </AccordionContent>
                   </AccordionItem>
                 ))}
-                <AccordionItem key="ai" value="ai">
+                {/* <AccordionItem key="ai" value="ai">
                   <AccordionTrigger className="text-md">
                     Ask more to HKD AI
                   </AccordionTrigger>
@@ -86,7 +86,7 @@ const SectionFAQ = () => {
                       ></script>
                     </Helmet>
                   </AccordionContent>
-                </AccordionItem>
+                </AccordionItem> */}
               </Accordion>
               <span className="mt-14 inline-block text-lg">
                 Any Question?{" "}
