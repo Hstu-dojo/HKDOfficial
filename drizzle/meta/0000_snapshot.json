@@ -1,5 +1,5 @@
 {
-  "id": "4239676b-38e4-4642-b1f0-7dc908ce7fc0",
+  "id": "3bd57ef1-57c6-419a-9ce1-def489d853ee",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -233,7 +233,8 @@
           "name": "id",
           "type": "text",
           "primaryKey": true,
-          "notNull": true
+          "notNull": true,
+          "default": "gen_random_uuid()"
         },
         "payload": {
           "name": "payload",
@@ -255,7 +256,8 @@
           "name": "id",
           "type": "text",
           "primaryKey": true,
-          "notNull": true
+          "notNull": true,
+          "default": "gen_random_uuid()"
         },
         "level_name": {
           "name": "level_name",
@@ -283,7 +285,8 @@
           "name": "id",
           "type": "text",
           "primaryKey": true,
-          "notNull": true
+          "notNull": true,
+          "default": "gen_random_uuid()"
         },
         "user_id": {
           "name": "user_id",
@@ -394,7 +397,8 @@
           "name": "id",
           "type": "text",
           "primaryKey": true,
-          "notNull": true
+          "notNull": true,
+          "default": "gen_random_uuid()"
         },
         "session_token": {
           "name": "session_token",
@@ -457,7 +461,8 @@
           "name": "id",
           "type": "text",
           "primaryKey": true,
-          "notNull": true
+          "notNull": true,
+          "default": "gen_random_uuid()"
         },
         "email": {
           "name": "email",
@@ -541,7 +546,8 @@
           "name": "id",
           "type": "text",
           "primaryKey": true,
-          "notNull": true
+          "notNull": true,
+          "default": "gen_random_uuid()"
         },
         "role": {
           "name": "role",
@@ -626,7 +632,8 @@
           "name": "id",
           "type": "text",
           "primaryKey": true,
-          "notNull": true
+          "notNull": true,
+          "default": "gen_random_uuid()"
         },
         "uid": {
           "name": "uid",

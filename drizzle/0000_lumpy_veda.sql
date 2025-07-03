@@ -52,18 +52,18 @@ CREATE TABLE IF NOT EXISTS "account" (
 );
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "email-log" (
-	"id" text PRIMARY KEY NOT NULL,
+	"id" text PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"payload" json
 );
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "permission-group" (
-	"id" text PRIMARY KEY NOT NULL,
+	"id" text PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"level_name" text NOT NULL,
 	"features" text[] NOT NULL
 );
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "provider" (
-	"id" text PRIMARY KEY NOT NULL,
+	"id" text PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"user_id" text NOT NULL,
 	"provider" "provider_type" NOT NULL,
 	"provider_account_id" text,
@@ -80,7 +80,7 @@ CREATE TABLE IF NOT EXISTS "provider" (
 );
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "session" (
-	"id" text PRIMARY KEY NOT NULL,
+	"id" text PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"session_token" text NOT NULL,
 	"user_id" text NOT NULL,
 	"expires" timestamp with time zone NOT NULL,
@@ -89,7 +89,7 @@ CREATE TABLE IF NOT EXISTS "session" (
 );
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "user" (
-	"id" text PRIMARY KEY NOT NULL,
+	"id" text PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"email" text NOT NULL,
 	"email_verified" boolean DEFAULT false,
 	"password" text NOT NULL,
@@ -103,7 +103,7 @@ CREATE TABLE IF NOT EXISTS "user" (
 );
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "user-role" (
-	"id" text PRIMARY KEY NOT NULL,
+	"id" text PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"role" "roletype" DEFAULT 'GUEST' NOT NULL,
 	"level_id" text,
 	"user_id" text NOT NULL,
@@ -113,7 +113,7 @@ CREATE TABLE IF NOT EXISTS "user-role" (
 );
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "verification-token" (
-	"id" text PRIMARY KEY NOT NULL,
+	"id" text PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"uid" text NOT NULL,
 	"token" text NOT NULL,
 	"validity" integer DEFAULT 1 NOT NULL,
