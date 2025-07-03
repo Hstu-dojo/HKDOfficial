@@ -1,3 +1,6 @@
 {
-  "cSpell.words": ["jpegtran"]
+  "cSpell.words": [
+    "jpegtran"
+  ],
+  "postman.settings.dotenv-detection-notification-visibility": false
 }
