@@ -30,7 +30,7 @@ const redirects = async () => {
 
 const nextConfig = {
   experimental: {
-    serverComponentsExternalPackages: ["@prisma/client", "bcrypt"],
+    serverComponentsExternalPackages: ["postgres", "bcrypt"],
     taint: true,
     turbo: {
       resolveExtensions: [

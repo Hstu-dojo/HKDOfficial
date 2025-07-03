@@ -4,7 +4,9 @@ import GitHubProvider from "next-auth/providers/github";
 import GoogleProvider from "next-auth/providers/google";
 import { compare } from "@/lib/hash";
 import { findUserByEmail } from "@/lib/db/user";
-import { prisma } from "@/lib/connect-db";
+import { db } from "@/lib/connect-db";
+import { user as userTable, provider as providerTable } from "@/db/schema";
+import { eq } from "drizzle-orm";
 // fix Property 'authOptions' is incompatible with index signature.
 //fix Type error: Type 'OmitWithTag<typeof import("C:/Users/mrhas/Desktop/karate_dojo/src/app/api/auth/[...nextauth]/route"), "GET" | "POST" | "HEAD" | "OPTIONS" | "PUT" | "DELETE" | "PATCH" | "config" | "generateStaticParams" | ... 6 more ... | "maxDuration", "">' does not satisfy the constraint '{ [x: string]: never; }'.
 interface UpdatedNextAuthOptions extends NextAuthOptions {}
@@ -65,28 +67,21 @@ export const authOptions: UpdatedNextAuthOptions = {
           about = user?.defaultRole as string;
           // if user is not verified, then verify the user
           if (user?.emailVerified === false) {
-            await prisma?.user?.update({
-              where: {
-                id: user?.id,
-              },
-              data: {
-                emailVerified: true,
-              },
-            });
+            await db.update(userTable).set({
+              emailVerified: true,
+            }).where(eq(userTable.id, user.id));
             user.emailVerified = true;
           }
 
           // if the provider of github is not set, then set the provider
           if (
-            user?.providers?.find((p) => p.provider === "GitHub") === undefined
+            user?.providers?.find((p: any) => p.provider === "GitHub") === undefined
           ) {
-            await prisma?.provider?.create({
-              data: {
-                provider: "GitHub",
-                providerAccountId: profile?.id.toString() as string,
-                userId: user?.id as string,
-                profile: profile as object | "not found" as object,
-              },
+            await db.insert(providerTable).values({
+              provider: "GitHub",
+              providerAccountId: profile?.id.toString() as string,
+              userId: user?.id as string,
+              profile: profile as object,
             });
           }
         } else {
@@ -114,28 +109,21 @@ export const authOptions: UpdatedNextAuthOptions = {
           about = user?.defaultRole as string;
           // if user is not verified, then verify the user
           if (user?.emailVerified === false) {
-            await prisma?.user?.update({
-              where: {
-                id: user?.id,
-              },
-              data: {
-                emailVerified: true,
-              },
-            });
+            await db.update(userTable).set({
+              emailVerified: true,
+            }).where(eq(userTable.id, user.id));
             user.emailVerified = true;
           }
 
           // if the provider of Google is not set, then set the provider
           if (
-            user?.providers?.find((p) => p.provider === "Google") === undefined
+            user?.providers?.find((p: any) => p.provider === "Google") === undefined
           ) {
-            await prisma?.provider?.create({
-              data: {
-                provider: "Google",
-                providerAccountId: profile?.id.toString() as string,
-                userId: user?.id as string,
-                profile: profile as object | "not found" as object,
-              },
+            await db.insert(providerTable).values({
+              provider: "Google",
+              providerAccountId: profile?.id.toString() as string,
+              userId: user?.id as string,
+              profile: profile as object,
             });
           }
         } else {

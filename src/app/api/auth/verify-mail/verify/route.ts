@@ -1,6 +1,8 @@
 //@ts-nocheck
 import { NextResponse, NextRequest } from "next/server";
-import { prisma } from "@/lib/connect-db";
+import { db } from "@/lib/connect-db";
+import { user, verificationToken } from "@/db/schema";
+import { eq, and, gte, lt, desc } from "drizzle-orm";
 
 export const POST = async (req: NextRequest, res: NextResponse) => {
   const data = await req.json();
@@ -8,13 +10,9 @@ export const POST = async (req: NextRequest, res: NextResponse) => {
   const email = data["email"];
   const code = data["code"];
 
-  const existingUser = await prisma?.user?.findFirst({
-    where: {
-      email: email,
-    },
-  });
+  const existingUser = await db.select().from(user).where(eq(user.email, email)).limit(1);
 
-  if (!existingUser) {
+  if (existingUser.length === 0) {
     return NextResponse.json(
       {
         message: "User do not exists!",
@@ -22,7 +20,7 @@ export const POST = async (req: NextRequest, res: NextResponse) => {
       { status: 403, statusText: "User do not exists! try creating one" },
     );
   }
-  if (existingUser?.emailVerified === true) {
+  if (existingUser[0]?.emailVerified === true) {
     return NextResponse.json(
       {
         message: "User already verified!",
@@ -37,19 +35,22 @@ export const POST = async (req: NextRequest, res: NextResponse) => {
   // Get the last day code from the database
   const currentDate = new Date();
   currentDate.setUTCHours(currentDate.getUTCHours() + 0); // Adjusting to UTC+6
+  
+  const startOfDay = new Date(currentDate.setHours(0, 0, 0, 0));
+  const endOfDay = new Date(currentDate.setHours(23, 59, 59, 999));
 
-  const lastDayCode = await prisma?.verificationToken?.findMany({
-    where: {
-      uid: existingUser.id,
-      created_at: {
-        gte: new Date(currentDate.setHours(0, 0, 0, 0)), // Filter for today's date in UTC+6
-        lt: new Date(currentDate.setHours(23, 59, 59, 999)), // Filter for today's date in UTC+6
-      },
-    },
-    orderBy: {
-      created_at: "desc", // Order by createdAt in descending order to get the latest entry
-    },
-  });
+  const lastDayCode = await db
+    .select()
+    .from(verificationToken)
+    .where(
+      and(
+        eq(verificationToken.uid, existingUser[0].id),
+        gte(verificationToken.createdAt, startOfDay),
+        lt(verificationToken.createdAt, endOfDay)
+      )
+    )
+    .orderBy(desc(verificationToken.createdAt));
+    
   // Check if the provided code matches any of the tokens
   const isCodeValid = lastDayCode.some((token) => token.token === code);
 
@@ -64,14 +65,11 @@ export const POST = async (req: NextRequest, res: NextResponse) => {
 
   // Proceed with the verification process since the code is valid
   // Update the user's emailVerified status
-  const updatedUser = await prisma?.user?.update({
-    where: {
-      id: existingUser.id,
-    },
-    data: {
-      emailVerified: true,
-    },
-  });
+  const updatedUser = await db
+    .update(user)
+    .set({ emailVerified: true })
+    .where(eq(user.id, existingUser[0].id))
+    .returning();
 
   return NextResponse.json(
     { message: "Verification successful!" },
