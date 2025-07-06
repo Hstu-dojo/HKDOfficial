@@ -60,42 +60,54 @@ export const authOptions: UpdatedNextAuthOptions = {
       clientId: process.env.GITHUB_CLIENT_ID as string,
       clientSecret: process.env.GITHUB_CLIENT_SECRET as string,
       async profile(profile) {
-        const user = await findUserByEmail(profile?.email);
-        // console.log(user);
-        let about = "";
-        if (user) {
-          about = user?.defaultRole as string;
-          // if user is not verified, then verify the user
-          if (user?.emailVerified === false) {
-            await db.update(userTable).set({
-              emailVerified: true,
-            }).where(eq(userTable.id, user.id));
-            user.emailVerified = true;
-          }
+        try {
+          const user = await findUserByEmail(profile?.email);
+          // console.log(user);
+          let about = "";
+          if (user) {
+            about = user?.defaultRole as string;
+            // if user is not verified, then verify the user
+            if (user?.emailVerified === false) {
+              await db.update(userTable).set({
+                emailVerified: true,
+              }).where(eq(userTable.id, user.id));
+            }
 
-          // if the provider of github is not set, then set the provider
-          if (
-            user?.providers?.find((p: any) => p.provider === "GitHub") === undefined
-          ) {
-            await db.insert(providerTable).values({
-              provider: "GitHub",
-              providerAccountId: profile?.id.toString() as string,
-              userId: user?.id as string,
-              profile: profile as object,
-            });
+            // if the provider of github is not set, then set the provider
+            if (
+              user?.providers?.find((p: any) => p.provider === "GitHub") === undefined
+            ) {
+              await db.insert(providerTable).values({
+                provider: "GitHub",
+                providerAccountId: profile?.id.toString() as string,
+                userId: user?.id as string,
+                profile: profile as object,
+              });
+            }
+          } else {
+            about = "GUEST";
           }
-        } else {
-          about = "GUEST";
+          return {
+            id: user?.id || "0",
+            name: profile?.name,
+            email: profile?.email,
+            image: profile?.avatar_url,
+            profile: profile?.bio,
+            role: about || "GUEST",
+            emailVerified: user?.emailVerified || true,
+          };
+        } catch (error) {
+          console.error("GitHub profile error:", error);
+          return {
+            id: "0",
+            name: profile?.name,
+            email: profile?.email,
+            image: profile?.avatar_url,
+            profile: profile?.bio,
+            role: "GUEST",
+            emailVerified: true,
+          };
         }
-        return {
-          id: user?.id || "0",
-          name: profile?.name,
-          email: profile?.email,
-          image: profile?.avatar_url,
-          profile: profile?.bio,
-          role: about || "GUEST",
-          emailVerified: user?.emailVerified,
-        };
       },
     }),
     GoogleProvider({
@@ -112,7 +124,6 @@ export const authOptions: UpdatedNextAuthOptions = {
             await db.update(userTable).set({
               emailVerified: true,
             }).where(eq(userTable.id, user.id));
-            user.emailVerified = true;
           }
 
           // if the provider of Google is not set, then set the provider
@@ -136,7 +147,7 @@ export const authOptions: UpdatedNextAuthOptions = {
           image: profile?.avatar_url,
           profile: profile?.bio,
           role: about || "GUEST",
-          emailVerified: user?.emailVerified,
+          emailVerified: user?.emailVerified || true,
         };
       },
     }),
