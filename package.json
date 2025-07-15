@@ -134,5 +134,6 @@
     "prettier": "^3.6.2",
     "prettier-plugin-tailwindcss": "^0.5.14",
     "drizzle-kit": "^0.24.0"
-  }
+  },
+  "packageManager": "pnpm@9.12.3"
 }
