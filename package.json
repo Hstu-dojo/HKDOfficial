@@ -5,7 +5,7 @@
   "scripts": {
     "turbo": "drizzle-kit generate && next-sitemap && next dev --turbo",
     "dev": "drizzle-kit generate && next-sitemap && next dev",
-    "build": "drizzle-kit generate && drizzle-kit push && next build",
+    "build": "next build",
     "db:generate": "drizzle-kit generate",
     "db:studio": "drizzle-kit studio",
     "db:migrate": "drizzle-kit migrate",
