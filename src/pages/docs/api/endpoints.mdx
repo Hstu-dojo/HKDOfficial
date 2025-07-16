@@ -1,0 +1,125 @@
+# API Endpoints Overview
+
+This page provides a comprehensive overview of all available API endpoints in the Karate Dojo application.
+
+## Authentication Endpoints
+
+### POST /api/auth/signin
+- **Description**: User sign-in
+- **Authentication**: Not required
+- **Parameters**: `email`, `password`
+- **Response**: User session data
+
+### POST /api/auth/signup
+- **Description**: User registration
+- **Authentication**: Not required
+- **Parameters**: `email`, `password`, `name`
+- **Response**: User creation confirmation
+
+### POST /api/auth/signout
+- **Description**: User sign-out
+- **Authentication**: Required
+- **Response**: Success confirmation
+
+## User Management Endpoints
+
+### GET /api/users/profile
+- **Description**: Get current user profile
+- **Authentication**: Required
+- **Response**: User profile data
+
+### PUT /api/users/profile
+- **Description**: Update user profile
+- **Authentication**: Required
+- **Parameters**: Profile fields to update
+- **Response**: Updated profile data
+
+### GET /api/users
+- **Description**: List all users (Admin only)
+- **Authentication**: Required (Admin role)
+- **Response**: Array of user objects
+
+## RBAC Endpoints
+
+### GET /api/rbac/roles
+- **Description**: Get all roles
+- **Authentication**: Required
+- **Response**: Array of role objects
+
+### POST /api/rbac/roles
+- **Description**: Create new role
+- **Authentication**: Required (Admin role)
+- **Parameters**: Role definition
+- **Response**: Created role object
+
+### GET /api/rbac/permissions
+- **Description**: Get all permissions
+- **Authentication**: Required
+- **Response**: Array of permission objects
+
+### POST /api/rbac/assign-role
+- **Description**: Assign role to user
+- **Authentication**: Required (Admin role)
+- **Parameters**: `userId`, `roleId`
+- **Response**: Assignment confirmation
+
+## Dashboard Endpoints
+
+### GET /api/dashboard/stats
+- **Description**: Get dashboard statistics
+- **Authentication**: Required
+- **Response**: Dashboard data object
+
+### GET /api/dashboard/activities
+- **Description**: Get user activities
+- **Authentication**: Required
+- **Response**: Array of activity objects
+
+## System Endpoints
+
+### GET /api/health
+- **Description**: Health check endpoint
+- **Authentication**: Not required
+- **Response**: System health status
+
+### GET /api/info
+- **Description**: API information
+- **Authentication**: Not required
+- **Response**: API version and details
+
+### GET /api/swagger
+- **Description**: OpenAPI specification
+- **Authentication**: Not required
+- **Response**: OpenAPI JSON specification
+
+## Rate Limiting
+
+All endpoints are subject to rate limiting:
+
+- **Authenticated users**: 1000 requests per hour
+- **Anonymous users**: 100 requests per hour
+- **Burst limit**: 50 requests per minute
+
+## Error Handling
+
+All endpoints return consistent error responses:
+
+```json
+{
+  "error": "Error message",
+  "code": "ERROR_CODE",
+  "timestamp": "2025-01-01T00:00:00Z"
+}
+```
+
+## Response Format
+
+Successful responses follow this format:
+
+```json
+{
+  "data": {},
+  "message": "Success message",
+  "timestamp": "2025-01-01T00:00:00Z"
+}
+```
