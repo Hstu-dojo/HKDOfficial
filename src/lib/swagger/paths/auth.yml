@@ -1,0 +1,157 @@
+/auth/signup:
+  post:
+    tags:
+      - Authentication
+    summary: Register a new user
+    description: Create a new user account with email and password
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/UserSignup'
+    responses:
+      201:
+        description: User created successfully
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserResponse'
+      400:
+        $ref: '#/components/responses/ValidationError'
+      409:
+        description: User already exists
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                error:
+                  type: string
+                  example: "User already exists"
+      500:
+        $ref: '#/components/responses/ServerError'
+
+/auth/signin:
+  post:
+    tags:
+      - Authentication
+    summary: Sign in user
+    description: Authenticate user with email and password
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/UserLogin'
+    responses:
+      200:
+        description: Login successful
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AuthResponse'
+      400:
+        $ref: '#/components/responses/ValidationError'
+      401:
+        description: Invalid credentials
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                error:
+                  type: string
+                  example: "Invalid credentials"
+      500:
+        $ref: '#/components/responses/ServerError'
+
+/auth/signout:
+  post:
+    tags:
+      - Authentication
+    summary: Sign out user
+    description: Sign out the current user and invalidate session
+    security:
+      - sessionAuth: []
+    responses:
+      200:
+        description: Logout successful
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message:
+                  type: string
+                  example: "Logged out successfully"
+      401:
+        $ref: '#/components/responses/UnauthorizedError'
+      500:
+        $ref: '#/components/responses/ServerError'
+
+/auth/verify-email:
+  post:
+    tags:
+      - Authentication
+    summary: Send email verification
+    description: Send verification email to user
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/EmailVerificationRequest'
+    responses:
+      200:
+        description: Verification email sent
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message:
+                  type: string
+                  example: "Verification email sent"
+      400:
+        $ref: '#/components/responses/ValidationError'
+      500:
+        $ref: '#/components/responses/ServerError'
+
+/auth/verify-token:
+  post:
+    tags:
+      - Authentication
+    summary: Verify email token
+    description: Verify email using verification token
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/TokenVerificationRequest'
+    responses:
+      200:
+        description: Email verified successfully
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message:
+                  type: string
+                  example: "Email verified successfully"
+      400:
+        $ref: '#/components/responses/ValidationError'
+      401:
+        description: Invalid or expired token
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                error:
+                  type: string
+                  example: "Invalid or expired token"
+      500:
+        $ref: '#/components/responses/ServerError'

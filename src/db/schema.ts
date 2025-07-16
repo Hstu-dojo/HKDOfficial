@@ -1,10 +1,12 @@
-import { pgTable, text, integer, boolean, timestamp, real, json, pgEnum, serial } from "drizzle-orm/pg-core";
+import { pgTable, text, integer, boolean, timestamp, real, json, pgEnum, serial, unique } from "drizzle-orm/pg-core";
 import { relations, sql } from "drizzle-orm";
 
 // Enums
 export const roletypeEnum = pgEnum("roletype", ["ADMIN", "MODERATOR", "INSTRUCTOR", "MEMBER", "GUEST"]);
 export const identityTypeEnum = pgEnum("identity_type", ["NID", "BIRTH_CERTIFICATE", "PASSPORT", "DRIVING_LICENSE"]);
 export const providerTypeEnum = pgEnum("provider_type", ["Google", "GitHub"]);
+export const resourceTypeEnum = pgEnum("resource_type", ["USER", "ACCOUNT", "SESSION", "PROVIDER", "ROLE", "PERMISSION", "COURSE", "BLOG", "MEDIA"]);
+export const actionEnum = pgEnum("action", ["CREATE", "READ", "UPDATE", "DELETE", "MANAGE"]);
 
 // Tables
 export const emailLog = pgTable("email-log", {
@@ -20,6 +22,7 @@ export const user = pgTable("user", {
   userName: text("user_name").unique().notNull(),
   userAvatar: text("user_avatar").notNull(),
   defaultRole: roletypeEnum("default_role").default("GUEST").notNull(),
+  roleId: text("role_id").references(() => role.id, { onDelete: "set null" }),
   createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
   updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow().notNull(),
 });
@@ -88,14 +91,47 @@ export const level = pgTable("permission-group", {
   features: text("features").array().notNull(),
 });
 
-export const userRole = pgTable("user-role", {
+// RBAC Tables
+export const role = pgTable("roles", {
   id: text("id").primaryKey().default(sql`gen_random_uuid()`),
-  role: roletypeEnum("role").default("GUEST").notNull(),
-  levelId: text("level_id").unique().references(() => level.id),
-  userId: text("user_id").notNull().references(() => user.id),
+  name: text("name").notNull().unique(),
+  description: text("description"),
+  isActive: boolean("is_active").default(true).notNull(),
   createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
   updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow().notNull(),
 });
+
+export const permission = pgTable("permissions", {
+  id: text("id").primaryKey().default(sql`gen_random_uuid()`),
+  name: text("name").notNull().unique(),
+  description: text("description"),
+  resource: resourceTypeEnum("resource").notNull(),
+  action: actionEnum("action").notNull(),
+  createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
+  updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow().notNull(),
+}, (table) => ({
+  uniqueResourceAction: unique().on(table.resource, table.action),
+}));
+
+export const rolePermission = pgTable("role_permissions", {
+  id: text("id").primaryKey().default(sql`gen_random_uuid()`),
+  roleId: text("role_id").notNull().references(() => role.id, { onDelete: "cascade" }),
+  permissionId: text("permission_id").notNull().references(() => permission.id, { onDelete: "cascade" }),
+  createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
+}, (table) => ({
+  uniqueRolePermission: unique().on(table.roleId, table.permissionId),
+}));
+
+export const userRole = pgTable("user_roles", {
+  id: text("id").primaryKey().default(sql`gen_random_uuid()`),
+  userId: text("user_id").notNull().references(() => user.id, { onDelete: "cascade" }),
+  roleId: text("role_id").notNull().references(() => role.id, { onDelete: "cascade" }),
+  assignedAt: timestamp("assigned_at", { withTimezone: true }).defaultNow().notNull(),
+  assignedBy: text("assigned_by").references(() => user.id, { onDelete: "set null" }),
+  isActive: boolean("is_active").default(true).notNull(),
+}, (table) => ({
+  uniqueUserRole: unique().on(table.userId, table.roleId),
+}));
 
 export const verificationToken = pgTable("verification-token", {
   id: text("id").primaryKey().default(sql`gen_random_uuid()`),
@@ -144,14 +180,34 @@ export const userRoleRelations = relations(userRole, ({ one }) => ({
     fields: [userRole.userId],
     references: [user.id],
   }),
-  level: one(level, {
-    fields: [userRole.levelId],
-    references: [level.id],
+  role: one(role, {
+    fields: [userRole.roleId],
+    references: [role.id],
+  }),
+}));
+
+export const roleRelations = relations(role, ({ many }) => ({
+  users: many(userRole),
+  permissions: many(rolePermission),
+}));
+
+export const permissionRelations = relations(permission, ({ many }) => ({
+  roles: many(rolePermission),
+}));
+
+export const rolePermissionRelations = relations(rolePermission, ({ one }) => ({
+  role: one(role, {
+    fields: [rolePermission.roleId],
+    references: [role.id],
+  }),
+  permission: one(permission, {
+    fields: [rolePermission.permissionId],
+    references: [permission.id],
   }),
 }));
 
 export const levelRelations = relations(level, ({ many }) => ({
-  roles: many(userRole),
+  // Keep existing level relations if needed
 }));
 
 export const verificationTokenRelations = relations(verificationToken, ({ one }) => ({

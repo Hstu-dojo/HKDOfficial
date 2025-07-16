@@ -1,0 +1,246 @@
+Role:
+  type: object
+  properties:
+    id:
+      type: string
+      format: uuid
+      description: Unique identifier for the role
+    name:
+      type: string
+      description: Role name
+    description:
+      type: string
+      nullable: true
+      description: Role description
+    isActive:
+      type: boolean
+      description: Whether the role is active
+    createdAt:
+      type: string
+      format: date-time
+      description: When the role was created
+    updatedAt:
+      type: string
+      format: date-time
+      description: When the role was last updated
+  required:
+    - id
+    - name
+    - isActive
+
+NewRole:
+  type: object
+  properties:
+    name:
+      type: string
+      minLength: 1
+      description: Role name
+    description:
+      type: string
+      description: Role description
+  required:
+    - name
+
+Permission:
+  type: object
+  properties:
+    id:
+      type: string
+      format: uuid
+      description: Unique identifier for the permission
+    name:
+      type: string
+      description: Permission name
+    description:
+      type: string
+      nullable: true
+      description: Permission description
+    resource:
+      type: string
+      enum: [USER, ACCOUNT, SESSION, PROVIDER, ROLE, PERMISSION, COURSE, BLOG, MEDIA]
+      description: Resource type
+    action:
+      type: string
+      enum: [CREATE, READ, UPDATE, DELETE, MANAGE]
+      description: Action type
+    createdAt:
+      type: string
+      format: date-time
+      description: When the permission was created
+    updatedAt:
+      type: string
+      format: date-time
+      description: When the permission was last updated
+  required:
+    - id
+    - name
+    - resource
+    - action
+
+NewPermission:
+  type: object
+  properties:
+    name:
+      type: string
+      minLength: 1
+      description: Permission name
+    description:
+      type: string
+      description: Permission description
+    resource:
+      type: string
+      enum: [USER, ACCOUNT, SESSION, PROVIDER, ROLE, PERMISSION, COURSE, BLOG, MEDIA]
+      description: Resource type
+    action:
+      type: string
+      enum: [CREATE, READ, UPDATE, DELETE, MANAGE]
+      description: Action type
+  required:
+    - name
+    - resource
+    - action
+
+UserRole:
+  type: object
+  properties:
+    id:
+      type: string
+      format: uuid
+      description: Unique identifier for the user role assignment
+    userId:
+      type: string
+      format: uuid
+      description: User ID
+    roleId:
+      type: string
+      format: uuid
+      description: Role ID
+    assignedAt:
+      type: string
+      format: date-time
+      description: When the role was assigned
+    assignedBy:
+      type: string
+      format: uuid
+      nullable: true
+      description: ID of user who assigned the role
+    isActive:
+      type: boolean
+      description: Whether the role assignment is active
+  required:
+    - id
+    - userId
+    - roleId
+    - assignedAt
+    - isActive
+
+RolePermission:
+  type: object
+  properties:
+    id:
+      type: string
+      format: uuid
+      description: Unique identifier for the role permission assignment
+    roleId:
+      type: string
+      format: uuid
+      description: Role ID
+    permissionId:
+      type: string
+      format: uuid
+      description: Permission ID
+    createdAt:
+      type: string
+      format: date-time
+      description: When the permission was assigned to the role
+  required:
+    - id
+    - roleId
+    - permissionId
+    - createdAt
+
+RoleAssignment:
+  type: object
+  properties:
+    userId:
+      type: string
+      format: uuid
+      description: User ID
+    roleId:
+      type: string
+      format: uuid
+      description: Role ID
+  required:
+    - userId
+    - roleId
+
+PermissionAssignment:
+  type: object
+  properties:
+    roleId:
+      type: string
+      format: uuid
+      description: Role ID
+    permissionId:
+      type: string
+      format: uuid
+      description: Permission ID
+  required:
+    - roleId
+    - permissionId
+
+UserPermissions:
+  type: object
+  properties:
+    userId:
+      type: string
+      format: uuid
+      description: User ID
+    roles:
+      type: array
+      items:
+        $ref: '#/components/schemas/Role'
+      description: User's roles
+    permissions:
+      type: array
+      items:
+        $ref: '#/components/schemas/Permission'
+      description: User's permissions
+
+RolesResponse:
+  type: object
+  properties:
+    roles:
+      type: array
+      items:
+        $ref: '#/components/schemas/Role'
+
+PermissionsResponse:
+  type: object
+  properties:
+    permissions:
+      type: array
+      items:
+        $ref: '#/components/schemas/Permission'
+
+RoleResponse:
+  type: object
+  properties:
+    roleId:
+      type: string
+      format: uuid
+      description: Created role ID
+    message:
+      type: string
+      description: Success message
+
+PermissionResponse:
+  type: object
+  properties:
+    permissionId:
+      type: string
+      format: uuid
+      description: Created permission ID
+    message:
+      type: string
+      description: Success message

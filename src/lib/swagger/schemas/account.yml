@@ -1,0 +1,275 @@
+Account:
+  type: object
+  properties:
+    id:
+      type: integer
+      description: Unique identifier for the account
+    userId:
+      type: string
+      format: uuid
+      description: Associated user ID
+    name:
+      type: string
+      description: Full name
+    nameBangla:
+      type: string
+      description: Name in Bengali
+    fatherName:
+      type: string
+      description: Father's name
+    image:
+      type: string
+      description: Profile image URL
+    avatar:
+      type: string
+      nullable: true
+      description: Avatar image URL
+    bio:
+      type: string
+      nullable: true
+      description: Biography
+    sex:
+      type: string
+      description: Gender
+    dob:
+      type: string
+      format: date-time
+      description: Date of birth
+    phone:
+      type: string
+      description: Phone number
+    address:
+      type: string
+      description: Address
+    city:
+      type: string
+      description: City
+    state:
+      type: string
+      description: State
+    country:
+      type: string
+      description: Country
+    postalCode:
+      type: string
+      description: Postal code
+    age:
+      type: integer
+      description: Age
+    bloodGroup:
+      type: string
+      description: Blood group
+    height:
+      type: number
+      format: float
+      description: Height in cm
+    weight:
+      type: number
+      format: float
+      description: Weight in kg
+    occupation:
+      type: string
+      description: Occupation
+    identityType:
+      type: string
+      enum: [NID, BIRTH_CERTIFICATE, PASSPORT, DRIVING_LICENSE]
+      description: Identity document type
+    identityNumber:
+      type: string
+      description: Identity document number
+    identityImage:
+      type: string
+      nullable: true
+      description: Identity document image URL
+    institute:
+      type: string
+      description: Educational institute
+    faculty:
+      type: string
+      nullable: true
+      description: Faculty
+    department:
+      type: string
+      nullable: true
+      description: Department
+    session:
+      type: string
+      nullable: true
+      description: Academic session
+    signatureImage:
+      type: string
+      description: Signature image URL
+    createdAt:
+      type: string
+      format: date-time
+      description: When the account was created
+    updatedAt:
+      type: string
+      format: date-time
+      description: When the account was last updated
+  required:
+    - id
+    - userId
+    - name
+    - nameBangla
+    - fatherName
+    - image
+    - sex
+    - dob
+    - phone
+    - address
+    - city
+    - state
+    - country
+    - postalCode
+    - age
+    - bloodGroup
+    - height
+    - weight
+    - occupation
+    - identityType
+    - identityNumber
+    - institute
+    - signatureImage
+
+NewAccount:
+  type: object
+  properties:
+    userId:
+      type: string
+      format: uuid
+      description: Associated user ID
+    name:
+      type: string
+      description: Full name
+    nameBangla:
+      type: string
+      description: Name in Bengali
+    fatherName:
+      type: string
+      description: Father's name
+    image:
+      type: string
+      description: Profile image URL
+    avatar:
+      type: string
+      description: Avatar image URL
+    bio:
+      type: string
+      description: Biography
+    sex:
+      type: string
+      description: Gender
+    dob:
+      type: string
+      format: date-time
+      description: Date of birth
+    phone:
+      type: string
+      description: Phone number
+    address:
+      type: string
+      description: Address
+    city:
+      type: string
+      description: City
+    state:
+      type: string
+      description: State
+    country:
+      type: string
+      description: Country
+    postalCode:
+      type: string
+      description: Postal code
+    age:
+      type: integer
+      description: Age
+    bloodGroup:
+      type: string
+      description: Blood group
+    height:
+      type: number
+      format: float
+      description: Height in cm
+    weight:
+      type: number
+      format: float
+      description: Weight in kg
+    occupation:
+      type: string
+      description: Occupation
+    identityType:
+      type: string
+      enum: [NID, BIRTH_CERTIFICATE, PASSPORT, DRIVING_LICENSE]
+      description: Identity document type
+    identityNumber:
+      type: string
+      description: Identity document number
+    identityImage:
+      type: string
+      description: Identity document image URL
+    institute:
+      type: string
+      description: Educational institute
+    faculty:
+      type: string
+      description: Faculty
+    department:
+      type: string
+      description: Department
+    session:
+      type: string
+      description: Academic session
+    signatureImage:
+      type: string
+      description: Signature image URL
+  required:
+    - userId
+    - name
+    - nameBangla
+    - fatherName
+    - image
+    - sex
+    - dob
+    - phone
+    - address
+    - city
+    - state
+    - country
+    - postalCode
+    - age
+    - bloodGroup
+    - height
+    - weight
+    - occupation
+    - identityType
+    - identityNumber
+    - institute
+    - signatureImage
+
+AccountResponse:
+  type: object
+  properties:
+    account:
+      $ref: '#/components/schemas/Account'
+    message:
+      type: string
+      description: Success message
+
+AccountsResponse:
+  type: object
+  properties:
+    accounts:
+      type: array
+      items:
+        $ref: '#/components/schemas/Account'
+    total:
+      type: integer
+      description: Total number of accounts
+    page:
+      type: integer
+      description: Current page number
+    limit:
+      type: integer
+      description: Number of accounts per page
