@@ -1,7 +1,17 @@
 "use client";
 import { useState, useEffect } from "react";
-import SwaggerUI from "swagger-ui-react";
-import "swagger-ui-react/swagger-ui.css";
+import dynamic from 'next/dynamic';
+// import "swagger-ui-react/swagger-ui.css";
+
+// Dynamically import SwaggerUI to avoid SSR issues
+const SwaggerUI = dynamic(() => import('swagger-ui-react'), {
+  ssr: false,
+  loading: () => (
+    <div className="flex justify-center items-center min-h-screen">
+      <div className="text-lg">Loading API Documentation...</div>
+    </div>
+  ),
+});
 
 export default function SwaggerDocsPage() {
   const [swaggerSpec, setSwaggerSpec] = useState<any>(null);
@@ -44,7 +54,7 @@ export default function SwaggerDocsPage() {
   if (loading) {
     return (
       <div className="flex justify-center items-center min-h-screen">
-        <div className="text-lg">Loading Interactive API Documentation...</div>
+        <div className="text-lg">Loading API Documentation...</div>
       </div>
     );
   }
@@ -100,29 +110,35 @@ export default function SwaggerDocsPage() {
         
         {/* Swagger UI Component */}
         <div className="swagger-ui-wrapper">
-          <SwaggerUI
-            spec={swaggerSpec}
-            deepLinking={true}
-            tryItOutEnabled={true}
-            supportedSubmitMethods={['get', 'post', 'put', 'delete', 'patch']}
-            docExpansion="list"
-            defaultModelsExpandDepth={1}
-            defaultModelExpandDepth={1}
-            displayRequestDuration={true}
-            filter={true}
-            persistAuthorization={true}
-            requestInterceptor={(request: any) => {
-              console.log('API Request:', request);
-              return request;
-            }}
-            responseInterceptor={(response: any) => {
-              console.log('API Response:', response);
-              return response;
-            }}
-            onComplete={() => {
-              console.log('Swagger UI loaded successfully');
-            }}
-          />
+          {swaggerSpec ? (
+            <SwaggerUI
+              spec={swaggerSpec}
+              deepLinking={true}
+              tryItOutEnabled={true}
+              supportedSubmitMethods={['get', 'post', 'put', 'delete', 'patch']}
+              docExpansion="list"
+              defaultModelsExpandDepth={1}
+              defaultModelExpandDepth={1}
+              displayRequestDuration={true}
+              filter={true}
+              persistAuthorization={true}
+              requestInterceptor={(request: any) => {
+                console.log('API Request:', request);
+                return request;
+              }}
+              responseInterceptor={(response: any) => {
+                console.log('API Response:', response);
+                return response;
+              }}
+              onComplete={() => {
+                console.log('Swagger UI loaded successfully');
+              }}
+            />
+          ) : (
+            <div className="flex justify-center items-center p-8">
+              <div className="text-lg">Loading Swagger specification...</div>
+            </div>
+          )}
         </div>
       </div>
     </div>
