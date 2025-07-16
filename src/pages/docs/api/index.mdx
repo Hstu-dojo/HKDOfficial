@@ -1,9 +1,13 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useState } from 'react';
 
 export function SwaggerUI() {
-  const swaggerContainerRef = useRef<HTMLDivElement>(null);
+  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
+    setMounted(true);
+    
+    if (typeof window === 'undefined') return;
+    
     // Dynamically load Swagger UI scripts and styles
     const loadSwaggerUI = async () => {
       // Load CSS
@@ -29,7 +33,7 @@ export function SwaggerUI() {
       // Initialize Swagger UI
       const origin = window.location.origin;
       
-      // @ts-ignore - SwaggerUIBundle is loaded dynamically
+      // @ts-ignore
       const ui = SwaggerUIBundle({
         url: `${origin}/api/swagger`,
         dom_id: '#swagger-ui',
@@ -53,14 +57,6 @@ export function SwaggerUI() {
         displayRequestDuration: true,
         filter: true,
         persistAuthorization: true,
-        requestInterceptor: function(request) {
-          console.log('API Request:', request);
-          return request;
-        },
-        responseInterceptor: function(response) {
-          console.log('API Response:', response);
-          return response;
-        },
         onComplete: function() {
           console.log('Swagger UI loaded successfully');
         }
@@ -71,24 +67,19 @@ export function SwaggerUI() {
     };
 
     loadSwaggerUI();
-
-    // Cleanup function
-    return () => {
-      // Remove added scripts and styles
-      const scripts = document.querySelectorAll('script[src*="swagger-ui"]');
-      const links = document.querySelectorAll('link[href*="swagger-ui"]');
-      
-      scripts.forEach(script => script.remove());
-      links.forEach(link => link.remove());
-    };
   }, []);
+
+  if (!mounted) {
+    return (
+      <div className="flex justify-center items-center p-8">
+        <div className="text-lg">Loading API Documentation...</div>
+      </div>
+    );
+  }
 
   return (
     <div className="swagger-ui-container">
-      <div 
-        id="swagger-ui" 
-        ref={swaggerContainerRef}
-      />
+      <div id="swagger-ui" />
       <style jsx global>{`
         .swagger-ui-container {
           font-family: inherit !important;
@@ -130,21 +121,6 @@ export function SwaggerUI() {
           opacity: 0.95;
         }
         
-        .swagger-ui .opblock .opblock-summary {
-          border-color: currentColor !important;
-          background: transparent !important;
-        }
-        
-        .swagger-ui .opblock .opblock-summary-description {
-          color: inherit !important;
-          opacity: 0.8;
-        }
-        
-        .swagger-ui .opblock .opblock-summary-path {
-          color: inherit !important;
-          font-weight: 600;
-        }
-        
         .swagger-ui .btn.try-out__btn {
           background: #3b82f6 !important;
           border-color: #3b82f6 !important;
@@ -179,18 +155,6 @@ export function SwaggerUI() {
         .swagger-ui .btn.cancel:hover {
           background: #dc2626 !important;
           border-color: #dc2626 !important;
-        }
-        
-        .swagger-ui .btn.clear {
-          background: #6b7280 !important;
-          border-color: #6b7280 !important;
-          color: white !important;
-          font-weight: 500 !important;
-        }
-        
-        .swagger-ui .btn.clear:hover {
-          background: #4b5563 !important;
-          border-color: #4b5563 !important;
         }
         
         .swagger-ui input[type="text"],
@@ -252,51 +216,6 @@ export function SwaggerUI() {
           border: 1px solid currentColor !important;
           border-radius: 6px !important;
           opacity: 0.9;
-        }
-        
-        .swagger-ui .parameter__name {
-          color: inherit !important;
-          font-weight: 600;
-        }
-        
-        .swagger-ui .parameter__type {
-          color: inherit !important;
-          opacity: 0.7;
-        }
-        
-        .swagger-ui .response-col_description {
-          color: inherit !important;
-        }
-        
-        .swagger-ui .response-col_status {
-          color: inherit !important;
-          font-weight: 600;
-        }
-        
-        .swagger-ui .model-title {
-          color: inherit !important;
-          font-weight: 600;
-        }
-        
-        .swagger-ui .model-toggle {
-          color: inherit !important;
-        }
-        
-        .swagger-ui table {
-          border-collapse: collapse !important;
-        }
-        
-        .swagger-ui table thead tr th {
-          border-bottom: 1px solid currentColor !important;
-          color: inherit !important;
-          font-weight: 600;
-          opacity: 0.9;
-        }
-        
-        .swagger-ui table tbody tr td {
-          border-bottom: 1px solid currentColor !important;
-          color: inherit !important;
-          opacity: 0.8;
         }
         
         /* Method colors */
@@ -366,26 +285,6 @@ export function SwaggerUI() {
           .swagger-ui .opblock.opblock-patch {
             background: rgba(139, 92, 246, 0.1) !important;
           }
-        }
-        
-        /* Custom scrollbar */
-        .swagger-ui ::-webkit-scrollbar {
-          width: 8px;
-          height: 8px;
-        }
-        
-        .swagger-ui ::-webkit-scrollbar-track {
-          background: transparent;
-        }
-        
-        .swagger-ui ::-webkit-scrollbar-thumb {
-          background: currentColor;
-          opacity: 0.3;
-          border-radius: 4px;
-        }
-        
-        .swagger-ui ::-webkit-scrollbar-thumb:hover {
-          opacity: 0.5;
         }
       `}</style>
     </div>
