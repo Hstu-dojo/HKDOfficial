@@ -36,17 +36,17 @@ export default function SwaggerDocsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen">
       <div className="max-w-7xl mx-auto px-4 py-8">
-        <div className="bg-white rounded-lg shadow-lg p-8">
+        <div className="rounded-lg shadow-lg p-8 border">
           <div className="mb-8">
-            <h1 className="text-3xl font-bold text-gray-900 mb-2">
+            <h1 className="text-3xl font-bold mb-2">
               {swaggerSpec?.info?.title || "API Documentation"}
             </h1>
-            <p className="text-gray-600 mb-4">
+            <p className="opacity-70 mb-4">
               {swaggerSpec?.info?.description || "REST API Documentation"}
             </p>
-            <div className="flex gap-4 text-sm text-gray-500">
+            <div className="flex gap-4 text-sm opacity-60">
               <span>Version: {swaggerSpec?.info?.version}</span>
               <span>•</span>
               <span>Contact: {swaggerSpec?.info?.contact?.email}</span>
@@ -56,8 +56,8 @@ export default function SwaggerDocsPage() {
           {/* Authentication */}
           <div className="mb-8">
             <h2 className="text-2xl font-bold mb-4">Authentication</h2>
-            <div className="bg-blue-50 p-4 rounded-lg">
-              <p className="text-sm text-blue-700">
+            <div className="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-lg border border-blue-200 dark:border-blue-800">
+              <p className="text-sm text-blue-700 dark:text-blue-300">
                 This API uses session-based authentication with NextAuth. 
                 Include your session token in the cookie header for authenticated requests.
               </p>
@@ -69,9 +69,9 @@ export default function SwaggerDocsPage() {
             <h2 className="text-2xl font-bold mb-4">API Categories</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {swaggerSpec?.tags?.map((tag: any) => (
-                <div key={tag.name} className="bg-gray-50 p-4 rounded-lg">
-                  <h3 className="font-semibold text-gray-900">{tag.name}</h3>
-                  <p className="text-sm text-gray-600">{tag.description}</p>
+                <div key={tag.name} className="p-4 rounded-lg border bg-opacity-50">
+                  <h3 className="font-semibold">{tag.name}</h3>
+                  <p className="text-sm opacity-70">{tag.description}</p>
                 </div>
               ))}
             </div>
@@ -83,7 +83,7 @@ export default function SwaggerDocsPage() {
             <div className="space-y-6">
               {Object.entries(swaggerSpec?.paths || {}).map(([path, methods]: [string, any]) => (
                 <div key={path} className="border rounded-lg p-6">
-                  <h3 className="text-xl font-semibold mb-4 text-gray-900">{path}</h3>
+                  <h3 className="text-xl font-semibold mb-4">{path}</h3>
                   <div className="space-y-4">
                     {Object.entries(methods).map(([method, details]: [string, any]) => (
                       <div key={method} className="border-l-4 border-blue-500 pl-4">
@@ -99,17 +99,17 @@ export default function SwaggerDocsPage() {
                           </span>
                           <span className="font-semibold">{details.summary}</span>
                         </div>
-                        <p className="text-sm text-gray-600 mb-2">{details.description}</p>
+                        <p className="text-sm opacity-70 mb-2">{details.description}</p>
                         <div className="flex gap-2 flex-wrap">
                           {details.tags?.map((tag: string) => (
-                            <span key={tag} className="px-2 py-1 bg-gray-100 text-gray-700 rounded text-xs">
+                            <span key={tag} className="px-2 py-1 bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 rounded text-xs">
                               {tag}
                             </span>
                           ))}
                         </div>
                         {details.security && (
                           <div className="mt-2">
-                            <span className="text-xs text-orange-600">🔒 Authentication required</span>
+                            <span className="text-xs text-orange-600 dark:text-orange-400">🔒 Authentication required</span>
                           </div>
                         )}
                       </div>
@@ -125,9 +125,9 @@ export default function SwaggerDocsPage() {
             <h2 className="text-2xl font-bold mb-4">Data Models</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {Object.entries(swaggerSpec?.components?.schemas || {}).map(([name, schema]: [string, any]) => (
-                <div key={name} className="bg-gray-50 p-4 rounded-lg">
-                  <h3 className="font-semibold text-gray-900 mb-2">{name}</h3>
-                  <div className="text-sm text-gray-600">
+                <div key={name} className="p-4 rounded-lg border bg-opacity-50">
+                  <h3 className="font-semibold mb-2">{name}</h3>
+                  <div className="text-sm opacity-70">
                     <div className="mb-2">Type: {schema.type}</div>
                     {schema.required && (
                       <div className="mb-2">
@@ -138,7 +138,7 @@ export default function SwaggerDocsPage() {
                       {Object.entries(schema.properties || {}).map(([prop, details]: [string, any]) => (
                         <div key={prop} className="flex justify-between">
                           <span className="font-mono text-xs">{prop}</span>
-                          <span className="text-xs text-gray-500">{details.type}</span>
+                          <span className="text-xs opacity-60">{details.type}</span>
                         </div>
                       ))}
                     </div>
@@ -151,18 +151,18 @@ export default function SwaggerDocsPage() {
           {/* Response Codes */}
           <div className="mb-8">
             <h2 className="text-2xl font-bold mb-4">Response Codes</h2>
-            <div className="bg-gray-50 p-4 rounded-lg">
+            <div className="p-4 rounded-lg border bg-opacity-50">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
                 <div>
-                  <h4 className="font-semibold text-green-700">Success</h4>
-                  <div className="space-y-1">
+                  <h4 className="font-semibold text-green-700 dark:text-green-400">Success</h4>
+                  <div className="space-y-1 opacity-70">
                     <div>200 - OK</div>
                     <div>201 - Created</div>
                   </div>
                 </div>
                 <div>
-                  <h4 className="font-semibold text-red-700">Error</h4>
-                  <div className="space-y-1">
+                  <h4 className="font-semibold text-red-700 dark:text-red-400">Error</h4>
+                  <div className="space-y-1 opacity-70">
                     <div>400 - Bad Request</div>
                     <div>401 - Unauthorized</div>
                     <div>403 - Forbidden</div>
@@ -178,7 +178,7 @@ export default function SwaggerDocsPage() {
           {/* Raw Swagger JSON */}
           <div className="mb-8">
             <h2 className="text-2xl font-bold mb-4">Raw Swagger JSON</h2>
-            <div className="bg-gray-900 text-green-400 p-4 rounded-lg overflow-x-auto">
+            <div className="bg-gray-900 dark:bg-gray-800 text-green-400 dark:text-green-300 p-4 rounded-lg overflow-x-auto">
               <pre className="text-sm">
                 <code>{JSON.stringify(swaggerSpec, null, 2)}</code>
               </pre>
@@ -187,9 +187,9 @@ export default function SwaggerDocsPage() {
 
           {/* Footer */}
           <div className="border-t pt-6">
-            <div className="flex justify-between items-center text-sm text-gray-500">
+            <div className="flex justify-between items-center text-sm opacity-60">
               <div>
-                <a href="/api/swagger" className="text-blue-600 hover:text-blue-800">
+                <a href="/api/swagger" className="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300">
                   Download JSON
                 </a>
               </div>

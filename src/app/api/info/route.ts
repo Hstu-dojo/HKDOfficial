@@ -7,6 +7,7 @@ export async function GET() {
     endpoints: {
       documentation: "/api",
       swagger: "/api/swagger",
+      info: "/api/info",
       authentication: {
         signup: "/api/auth/signup",
         signin: "/api/auth/signin"
