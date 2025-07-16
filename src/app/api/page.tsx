@@ -122,9 +122,6 @@ export default function SwaggerDocsPage() {
             onComplete={() => {
               console.log('Swagger UI loaded successfully');
             }}
-            onFailure={(error: any) => {
-              console.error('Swagger UI error:', error);
-            }}
           />
         </div>
       </div>
