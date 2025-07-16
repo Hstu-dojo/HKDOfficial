@@ -50,15 +50,51 @@ export function SwaggerUI() {
         ],
         layout: "StandaloneLayout",
         tryItOutEnabled: true,
-        supportedSubmitMethods: ['get', 'post', 'put', 'delete', 'patch'],
+        supportedSubmitMethods: ['get', 'post', 'put', 'delete', 'patch', 'head', 'options'],
         docExpansion: "list",
         defaultModelsExpandDepth: 1,
         defaultModelExpandDepth: 1,
         displayRequestDuration: true,
         filter: true,
         persistAuthorization: true,
+        showExtensions: true,
+        showCommonExtensions: true,
+        validatorUrl: null, // Disable validator for better compatibility
+        oauth2RedirectUrl: `${origin}/docs/api/oauth2-redirect.html`,
+        requestInterceptor: (request) => {
+          // Add CORS headers for testing
+          request.headers['Access-Control-Allow-Origin'] = '*';
+          request.headers['Access-Control-Allow-Methods'] = 'GET, POST, PUT, DELETE, PATCH, HEAD, OPTIONS';
+          request.headers['Access-Control-Allow-Headers'] = 'Content-Type, Authorization, X-Requested-With';
+          console.log('Request:', request);
+          return request;
+        },
+        responseInterceptor: (response) => {
+          console.log('API Response:', response);
+          return response;
+        },
         onComplete: function() {
           console.log('Swagger UI loaded successfully');
+          
+          // Ensure try it out buttons are enabled
+          setTimeout(() => {
+            const tryItOutButtons = document.querySelectorAll('.try-out__btn');
+            tryItOutButtons.forEach(btn => {
+              if (btn.textContent?.includes('Try it out')) {
+                btn.removeAttribute('disabled');
+                btn.style.pointerEvents = 'auto';
+                btn.style.opacity = '1';
+              }
+            });
+            
+            // Add click handlers for better debugging
+            const executeButtons = document.querySelectorAll('.btn.execute');
+            executeButtons.forEach(btn => {
+              btn.addEventListener('click', () => {
+                console.log('Execute button clicked');
+              });
+            });
+          }, 1000);
         }
       });
       
