@@ -1,6 +1,6 @@
 'use client';
 
-import { useSession } from 'next-auth/react';
+import { useCompleteSession } from './useCompleteSession';
 import { useState, useEffect } from 'react';
 import type { ResourceType, ActionType } from '@/lib/rbac/types';
 
@@ -13,12 +13,15 @@ interface UserPermissions {
 }
 
 export function useRBAC() {
-  const { data: session, status } = useSession();
+  const { data: session, status, hasCompleteData } = useCompleteSession();
   const [permissions, setPermissions] = useState<UserPermissions | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (status === 'loading') return;
+    if (status === 'loading' || !hasCompleteData) {
+      setLoading(true);
+      return;
+    }
     
     if (!session?.user?.id) {
       setPermissions(null);
@@ -55,7 +58,7 @@ export function useRBAC() {
     }
 
     fetchPermissions();
-  }, [session, status]);
+  }, [session, status, hasCompleteData]);
 
   const hasPermission = (resource: ResourceType, action: ActionType): boolean => {
     if (!permissions) return false;

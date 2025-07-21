@@ -156,24 +156,43 @@ export const authOptions: UpdatedNextAuthOptions = {
     signIn: "/login",
   },
   callbacks: {
-    session: ({ session, token }) => {
-      // console.log("session callback", { session, token });
+    session: async ({ session, token }) => {
+      console.log("session callback", { session, token });
+      
+      // Ensure we always have the complete user data
+      const completeUser = {
+        id: token.id,
+        email: token.email,
+        name: token.name,
+        image: token.image as string | null | undefined,
+        profile: token.profile,
+        role: token.role,
+        emailVerified: token.emailVerified,
+      };
+
+      // If token is missing id but has email, try to get it from database
+      if (!token.id && token.email) {
+        try {
+          const dbUser = await findUserByEmail(token.email);
+          if (dbUser) {
+            completeUser.id = dbUser.id;
+            completeUser.role = dbUser.defaultRole;
+            completeUser.emailVerified = dbUser.emailVerified;
+          }
+        } catch (error) {
+          console.error("Error fetching user in session callback:", error);
+        }
+      }
+
       return {
         ...session,
-        user: {
-          ...session.user,
-          id: token.id,
-          email: token.email,
-          name: token.name,
-          image: token.image as string | null | undefined,
-          profile: token.profile,
-          role: token.role,
-          emailVerified: token.emailVerified,
-        },
+        user: completeUser,
       };
     },
-    jwt: ({ token, user }) => {
-      // console.log("jwt callback", { token, user });
+    jwt: async ({ token, user, account, profile, trigger }) => {
+      console.log("jwt callback", { token, user, account, trigger });
+      
+      // On initial sign in, user object is available
       if (user) {
         const u = user as unknown as any;
         return {
@@ -186,6 +205,25 @@ export const authOptions: UpdatedNextAuthOptions = {
           role: u.role,
           emailVerified: u.emailVerified,
         };
+      }
+
+      // On subsequent calls, if token doesn't have id but has email, 
+      // try to fetch user data from database
+      if (!token.id && token.email) {
+        try {
+          const dbUser = await findUserByEmail(token.email);
+          if (dbUser) {
+            return {
+              ...token,
+              id: dbUser.id,
+              role: dbUser.defaultRole,
+              emailVerified: dbUser.emailVerified,
+              profile: token.profile || "hi there!",
+            };
+          }
+        } catch (error) {
+          console.error("Error fetching user in JWT callback:", error);
+        }
       }
 
       return token;
