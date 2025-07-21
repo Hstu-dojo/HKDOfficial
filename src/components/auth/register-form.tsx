@@ -2,6 +2,7 @@
 
 import { FormEvent, useState, useEffect } from "react";
 import { signIn } from "next-auth/react";
+import { useSearchParams } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -20,11 +21,9 @@ import {
 } from "@/components/ui/select";
 import Image from "next/image";
 
-export function RegisterForm(
-  { className, ...props }: UserAuthFormProps,
-  { searchParams }: any,
-) {
-  //   console.log(searchParams?.callbackUrl);
+export function RegisterForm({ className, ...props }: UserAuthFormProps) {
+  const searchParams = useSearchParams();
+  //   console.log(searchParams?.get('callbackUrl'));
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
