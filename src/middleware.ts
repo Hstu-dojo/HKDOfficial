@@ -1,6 +1,7 @@
 import createMiddleware from "@hasanshahriar32/next-easy-middlewares-root";
 import { withLocaleMiddleware } from "./middlewares/internationalization";
 import { withAuthMiddleware } from "./middlewares/authentication";
+import { withAdminMiddleware } from "./middlewares/admin";
 
 const middlewares = {
   // define your middlewares here...
@@ -9,8 +10,8 @@ const middlewares = {
   // "/services": withLocaleMiddleware,
   // "/pricing": withLocaleMiddleware,
   "/about": withLocaleMiddleware,
-  "/admin": withLocaleMiddleware,
-  "/admin/:path*": withLocaleMiddleware,
+  "/admin": [withLocaleMiddleware, withAdminMiddleware],
+  "/admin/:path*": [withLocaleMiddleware, withAdminMiddleware],
   "/apply/:path*": [withLocaleMiddleware, withAuthMiddleware],
   "/dev": withLocaleMiddleware,
   "/login": withLocaleMiddleware,
