@@ -132,3 +132,25 @@ export function protectApiRoute(
     return handler(request, context);
   };
 }
+
+/**
+ * Function for protecting page routes
+ */
+export async function protectPage(
+  resource: ResourceType,
+  action: ActionType
+): Promise<RBACContext> {
+  const context = await getRBACContext();
+  
+  if (!context) {
+    // This will be handled by the client-side redirect
+    throw new Error("Unauthorized");
+  }
+
+  const permitted = await hasPermission(context.userId, resource, action);
+  if (!permitted) {
+    throw new Error("Forbidden");
+  }
+
+  return context;
+}
