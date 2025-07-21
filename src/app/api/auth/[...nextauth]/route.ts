@@ -157,7 +157,7 @@ export const authOptions: UpdatedNextAuthOptions = {
   },
   callbacks: {
     session: async ({ session, token }) => {
-      console.log("session callback", { session, token });
+      // console.log("session callback", { session, token });
       
       // Ensure we always have the complete user data
       const completeUser = {
