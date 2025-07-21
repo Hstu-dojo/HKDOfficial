@@ -128,7 +128,7 @@ export default function PermissionsPage() {
         <h1 className="text-3xl font-bold">RBAC Management</h1>
         <button
           onClick={handleSeedData}
-          className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700"
+          className="bg-green-600 text-red-700 px-4 py-2 rounded hover:bg-green-700"
         >
           Seed Default Data
         </button>

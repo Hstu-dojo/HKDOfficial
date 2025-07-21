@@ -35,6 +35,9 @@ importers:
       '@hookform/resolvers':
         specifier: ^3.10.0
         version: 3.10.0(react-hook-form@7.59.0(react@18.2.0))
+      '@portabletext/react':
+        specifier: ^3.2.1
+        version: 3.2.1(react@18.2.0)
       '@radix-ui/react-accordion':
         specifier: ^1.2.11
         version: 1.2.11(@types/react-dom@18.3.7(@types/react@18.3.23))(@types/react@18.3.23)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
@@ -318,6 +321,9 @@ importers:
       '@tailwindcss/typography':
         specifier: ^0.5.16
         version: 0.5.16(tailwindcss@3.4.17)
+      '@types/dotenv':
+        specifier: ^8.2.3
+        version: 8.2.3
       '@types/imagemin':
         specifier: ^8.0.5
         version: 8.0.5
@@ -4115,6 +4121,10 @@ packages:
   '@types/debug@4.1.12':
     resolution: {integrity: sha512-vIChWdVG3LG1SMxEvI/AK+FWJthlrqlTu7fbrlywTkkaONwk/UAGaULXRlf8vkzFBLVm0zkMdCquhL5aOjhXPQ==}
 
+  '@types/dotenv@8.2.3':
+    resolution: {integrity: sha512-g2FXjlDX/cYuc5CiQvyU/6kkbP1JtmGzh0obW50zD7OKeILVL0NSpPWLXVfqoAGQjom2/SLLx9zHq0KXvD6mbw==}
+    deprecated: This is a stub types definition. dotenv provides its own type definitions, so you do not need this installed.
+
   '@types/eslint-scope@3.7.7':
     resolution: {integrity: sha512-MzMFlSLBqNF2gcHWO0G1vP/YQyfvrxZ0bF+u7mzUdZ1/xK4A4sru+nraZz5i3iEIk1l1uyicaDVTB4QbbEkAYg==}
 
@@ -5742,6 +5752,10 @@ packages:
   dot-prop@8.0.2:
     resolution: {integrity: sha512-xaBe6ZT4DHPkg0k4Ytbvn5xoxgpG0jOS1dYxSOwAHPuNLjP3/OzN0gH55SrLqpx8cBfSaVt91lXYkApjb+nYdQ==}
     engines: {node: '>=16'}
+
+  dotenv@17.2.0:
+    resolution: {integrity: sha512-Q4sgBT60gzd0BB0lSyYD3xM4YxrXA9y4uBDof1JNYGzOXrQdQ6yX+7XIAqoFOGQFOTK1D3Hts5OllpxMDZFONQ==}
+    engines: {node: '>=12'}
 
   drizzle-kit@0.24.2:
     resolution: {integrity: sha512-nXOaTSFiuIaTMhS8WJC2d4EBeIcN9OSt2A2cyFbQYBAZbi7lRsVGJNqDpEwPqYfJz38yxbY/UtbvBBahBfnExQ==}
@@ -14121,7 +14135,7 @@ snapshots:
     dependencies:
       '@sanity/client': 7.6.0(debug@4.4.1)
       '@sanity/comlink': 3.0.5
-      '@sanity/visual-editing-types': 1.1.0(@sanity/client@7.6.0)(@sanity/types@3.96.0(@types/react@18.3.23))
+      '@sanity/visual-editing-types': 1.1.0(@sanity/client@7.6.0(debug@4.4.1))(@sanity/types@3.96.0(@types/react@18.3.23)(debug@4.4.1))
     transitivePeerDependencies:
       - '@sanity/types'
 
@@ -14392,6 +14406,12 @@ snapshots:
   '@sanity/visual-editing-types@1.1.0(@sanity/client@6.29.1)(@sanity/types@3.96.0(@types/react@18.3.23))':
     dependencies:
       '@sanity/client': 6.29.1(debug@4.4.1)
+    optionalDependencies:
+      '@sanity/types': 3.96.0(@types/react@18.3.23)(debug@4.4.1)
+
+  '@sanity/visual-editing-types@1.1.0(@sanity/client@7.6.0(debug@4.4.1))(@sanity/types@3.96.0(@types/react@18.3.23)(debug@4.4.1))':
+    dependencies:
+      '@sanity/client': 7.6.0(debug@4.4.1)
     optionalDependencies:
       '@sanity/types': 3.96.0(@types/react@18.3.23)(debug@4.4.1)
 
@@ -14691,6 +14711,10 @@ snapshots:
   '@types/debug@4.1.12':
     dependencies:
       '@types/ms': 2.1.0
+
+  '@types/dotenv@8.2.3':
+    dependencies:
+      dotenv: 17.2.0
 
   '@types/eslint-scope@3.7.7':
     dependencies:
@@ -16361,6 +16385,8 @@ snapshots:
   dot-prop@8.0.2:
     dependencies:
       type-fest: 3.13.1
+
+  dotenv@17.2.0: {}
 
   drizzle-kit@0.24.2:
     dependencies:
