@@ -17,15 +17,14 @@ export async function withAdminMiddleware(request: NextRequest) {
       return NextResponse.redirect(loginUrl);
     }
 
-    // Check if user has admin access
-    // For now, we'll check if the user exists in the token
-    // The actual role checking will be done on the client side with useRBAC
+    // Check if user exists in token
     if (!token.id) {
-      const unauthorizedUrl = new URL('/unauthorized', request.url);
-      return NextResponse.redirect(unauthorizedUrl);
+      const loginUrl = new URL('/login', request.url);
+      loginUrl.searchParams.set('callbackUrl', request.url);
+      return NextResponse.redirect(loginUrl);
     }
 
-    // Allow the request to continue
+    // Allow the request to continue - role checking will be done client-side
     return NextResponse.next();
   } catch (error) {
     console.error('Admin middleware error:', error);

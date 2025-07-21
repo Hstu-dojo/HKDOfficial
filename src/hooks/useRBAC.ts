@@ -29,18 +29,27 @@ export function useRBAC() {
     // Fetch user permissions from the API
     async function fetchPermissions() {
       try {
-        const response = await fetch('/api/rbac/user-permissions');
+        const response = await fetch(`/api/rbac/user-permissions/${session!.user!.id}`);
         if (response.ok) {
           const data = await response.json();
-          setPermissions(data);
+          // Transform the data to match expected format
+          const transformedData = {
+            roles: data.userPermissions.roles.map((role: any) => role.name),
+            permissions: data.userPermissions.permissions.map((perm: any) => ({
+              resource: perm.resource,
+              action: perm.action,
+            })),
+          };
+          setPermissions(transformedData);
+          setLoading(false);
         } else {
-          console.error('Failed to fetch user permissions');
+          console.error('Failed to fetch user permissions:', response.status, response.statusText);
           setPermissions(null);
+          setLoading(false);
         }
       } catch (error) {
         console.error('Error fetching permissions:', error);
         setPermissions(null);
-      } finally {
         setLoading(false);
       }
     }

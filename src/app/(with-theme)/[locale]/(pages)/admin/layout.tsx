@@ -1,6 +1,5 @@
 import { Metadata } from "next";
 import { AdminLayout } from "@/components/admin/AdminLayout";
-import { AdminRouteGuard } from "@/components/admin/AdminRouteGuard";
 
 export const metadata: Metadata = {
   title: "Admin Panel | Karate Dojo",
@@ -13,8 +12,6 @@ export default function RootAdminLayout({
   children: React.ReactNode;
 }) {
   return (
-    <AdminRouteGuard>
-      <AdminLayout>{children}</AdminLayout>
-    </AdminRouteGuard>
+    <AdminLayout>{children}</AdminLayout>
   );
 }
