@@ -18,9 +18,13 @@ export const metadata: Metadata = {
   description: "Authentication forms built using the components.",
 };
 
-export default function AuthenticationPage({ searchParams }: any) {
-  // console.log(searchParams);
-  const callbackUrl = searchParams?.callbackUrl as ExtendedUserAuthFormProps;
+interface PageProps {
+  searchParams: Promise<{ callbackUrl?: string }>;
+}
+
+export default async function AuthenticationPage({ searchParams }: PageProps) {
+  const resolvedSearchParams = await searchParams;
+  const callbackUrl = resolvedSearchParams?.callbackUrl;
   return (
     <>
       <Link href="/">

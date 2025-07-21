@@ -3,10 +3,12 @@ import {
   UserAuthForm,
   UserAuthFormProps,
 } from "@/components/auth/user-auth-form";
-interface ExtendedUserAuthFormProps extends UserAuthFormProps {
-  callbackUrl: string;
+interface PageProps {
+  searchParams: Promise<{ callbackUrl?: string }>;
 }
-export default async function Login({ searchParams }: any) {
-  const callbackUrl = searchParams?.callbackUrl as ExtendedUserAuthFormProps;
+
+export default async function Login({ searchParams }: PageProps) {
+  const resolvedSearchParams = await searchParams;
+  const callbackUrl = resolvedSearchParams?.callbackUrl;
   return <LoginModal callbackUrl={callbackUrl?.toString()} />;
 }
