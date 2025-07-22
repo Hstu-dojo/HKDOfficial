@@ -9,15 +9,16 @@ import { loadQuery } from "../../../../sanity/lib/store";
 import BlogsPreview from "@/components/blogs/PostPreview";
 
 export default async function Page() {
+  const draftModeEnabled = (await draftMode()).isEnabled;
   const initial = await loadQuery<SanityDocument[]>(
     POSTS_QUERY,
     {},
     {
-      perspective: draftMode().isEnabled ? "previewDrafts" : "published",
+      perspective: draftModeEnabled ? "drafts" : "published",
     },
   );
 
-  return draftMode().isEnabled ? (
+  return draftModeEnabled ? (
     <BlogsPreview initial={initial} />
   ) : (
     <SanityBlogs posts={initial.data} />

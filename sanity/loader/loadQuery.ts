@@ -38,13 +38,13 @@ const serverClient = client.withConfig({
  * Live mode in `sanity/presentation` still works, as it uses the `useLiveMode` hook to update `useQuery` instances with
  * live draft content using `postMessage`.
  */
-queryStore.setServerClient(serverClient);
+queryStore.setServerClient(serverClient as any);
 
 const usingCdn = serverClient.config().useCdn;
 // Automatically handle draft mode
-export const loadQuery = ((query, params = {}, options = {}) => {
+export const loadQuery = (async (query, params = {}, options = {}) => {
   const {
-    perspective = draftMode().isEnabled ? "previewDrafts" : "published",
+    perspective = (await draftMode()).isEnabled ? "drafts" : "published",
   } = options;
   // Don't cache by default
   let revalidate: NextFetchRequestConfig["revalidate"] = 0;
@@ -62,7 +62,7 @@ export const loadQuery = ((query, params = {}, options = {}) => {
     },
     perspective,
     // @TODO add support in `@sanity/client/stega` for the below
-    // stega: {enabled: draftMode().isEnabled}
+    // stega: {enabled: (await draftMode()).isEnabled}
   });
 }) satisfies typeof queryStore.loadQuery;
 

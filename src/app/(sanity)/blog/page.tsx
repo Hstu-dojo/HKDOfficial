@@ -22,7 +22,7 @@ export default async function IndexRoute() {
   const initial2 = await loadAllProject(page, limit);
   const initial4 = await loadPostsByTag("trending");
 
-  if (draftMode().isEnabled) {
+  if ((await draftMode()).isEnabled) {
     return <HomePagePreview initial={initial} />;
   }
 

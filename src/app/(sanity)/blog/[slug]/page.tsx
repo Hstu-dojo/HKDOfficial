@@ -39,7 +39,7 @@ export function generateStaticParams() {
 export default async function PageSlugRoute({ params }: Props) {
   const initial = await loadPage(params.slug);
 
-  if (draftMode().isEnabled) {
+  if ((await draftMode()).isEnabled) {
     return <PagePreview params={params} initial={initial} />;
   }
 

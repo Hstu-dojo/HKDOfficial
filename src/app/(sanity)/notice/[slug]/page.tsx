@@ -18,13 +18,14 @@ export async function generateStaticParams() {
 }
 
 export default async function Page({ params }: { params: QueryParams }) {
+  const draftModeEnabled = (await draftMode()).isEnabled;
   const initial = await loadQuery<SanityDocument>(POST_QUERY, params, {
     // Because of Next.js, RSC and Dynamic Routes this currently
     // cannot be set on the loadQuery function at the "top level"
-    perspective: draftMode().isEnabled ? "previewDrafts" : "published",
+    perspective: draftModeEnabled ? "drafts" : "published",
   });
 
-  return draftMode().isEnabled ? (
+  return draftModeEnabled ? (
     <SingleBlogPreview initial={initial} params={params} />
   ) : (
     <SingleBlog post={initial.data} />

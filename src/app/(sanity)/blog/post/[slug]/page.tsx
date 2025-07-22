@@ -43,7 +43,7 @@ export function generateStaticParams() {
 export default async function ProjectSlugRoute({ params }: Props) {
   const initial = await loadProject(params.slug);
 
-  if (draftMode().isEnabled) {
+  if ((await draftMode()).isEnabled) {
     return <ProjectPreview params={params} initial={initial} />;
   }
 

@@ -21,7 +21,7 @@ export default async function RootLayout({
       <Header />
       <div style={{ color: "#64748B" }} className="mt-20 lg:mt-28">
         {children}
-        {draftMode().isEnabled && <LiveVisualEditing />}
+        {(await draftMode()).isEnabled && <LiveVisualEditing />}
       </div>
       <BackToTop />
     </body>

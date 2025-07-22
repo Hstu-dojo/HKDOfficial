@@ -68,7 +68,7 @@ export default async function IndexRoute({
       <BackToTop />
       <ChatPlugin />
       <GNewsRevManager />
-      {draftMode().isEnabled && <LiveVisualEditing />}
+      {(await draftMode()).isEnabled && <LiveVisualEditing />}
     </>
   );
 }
