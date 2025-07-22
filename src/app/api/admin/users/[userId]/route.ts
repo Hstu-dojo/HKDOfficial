@@ -100,6 +100,8 @@ export const DELETE = protectApiRoute("USER", "DELETE", async (request, context)
     const url = new URL(request.url);
     const userId = url.pathname.split('/').pop();
 
+    console.log('DELETE user request:', { userId, contextUserId: context.userId });
+
     if (!userId) {
       return NextResponse.json({ error: "User ID is required" }, { status: 400 });
     }
@@ -112,26 +114,41 @@ export const DELETE = protectApiRoute("USER", "DELETE", async (request, context)
       );
     }
 
+    console.log('Attempting to delete user roles for userId:', userId);
+    
     // Delete user roles first (foreign key constraint)
-    await db.delete(userRole).where(eq(userRole.userId, userId));
+    const deletedRoles = await db.delete(userRole).where(eq(userRole.userId, userId)).returning();
+    console.log('Deleted user roles:', deletedRoles.length);
 
+    console.log('Attempting to delete user:', userId);
+    
     // Delete user
     const deletedUser = await db
       .delete(user)
       .where(eq(user.id, userId))
       .returning();
 
+    console.log('Delete user result:', { deletedCount: deletedUser.length });
+
     if (deletedUser.length === 0) {
       return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
+
+    console.log('User deleted successfully:', deletedUser[0].id);
 
     return NextResponse.json({
       message: "User deleted successfully",
     });
   } catch (error) {
     console.error("Error deleting user:", error);
+    const err = error as Error;
+    console.error("Error details:", {
+      name: err.name,
+      message: err.message,
+      stack: err.stack,
+    });
     return NextResponse.json(
-      { error: "Failed to delete user" },
+      { error: `Failed to delete user: ${err.message}` },
       { status: 500 }
     );
   }
