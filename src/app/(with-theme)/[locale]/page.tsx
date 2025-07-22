@@ -12,7 +12,11 @@ import Furious5 from "@/components/sections/furious5/furious5";
 import ChatPlugin from "@/components/chat";
 import SectionBenefits from "@/components/sections/section-benefits";
 import SectionFAQ from "@/components/sections/section-faq";
+import FeaturedPostsServer from "@/components/sections/featured-posts-server";
 // import SectionIconBoxesLayout2 from "@/components/sections/section-icon-boxes-layout-2";
+
+// Enable ISR with revalidation every 60 seconds
+export const revalidate = 60;
 export default function Home() {
   return (
     <>
@@ -23,6 +27,7 @@ export default function Home() {
         <SectionBenefits />
         <SectionPromo />
         {/* <SectionIconBoxesLayout2 /> */}
+        <FeaturedPostsServer />
         {/* <SectionBlog /> */}
         <SectionFAQ />
         <SectionTestimonialsSlider />

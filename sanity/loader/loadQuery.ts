@@ -148,6 +148,11 @@ export function loadFeaturedProjects() {
   return loadQuery<any>(
     featuredProjectsQuery,
     {},
-    { next: { tags: ["featured-projects"], revalidate: 1800 } }
+    { 
+      next: { 
+        tags: ["featured-projects", "project", "home"], 
+        revalidate: 60 // Revalidate every minute for dynamic updates
+      } 
+    }
   );
 }
