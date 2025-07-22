@@ -59,6 +59,7 @@ export interface ProjectPayload {
   tags?: string[];
   title?: string;
   author?: any;
+  isFeatured?: boolean;
 }
 
 export interface SettingsPayload {

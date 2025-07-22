@@ -14,6 +14,7 @@ import {
   findByAuthorQuery,
   allProjectSlugQuery,
   allAuthorsQuery,
+  featuredProjectsQuery,
 } from "../lib/queries";
 import { token } from "../lib/token";
 import {
@@ -141,4 +142,12 @@ export function loadPostsByAuthor(authorSlug: string) {
 
 export function loadAllAuthors() {
   return loadQuery<any>(allAuthorsQuery, {}, { next: { revalidate: 1800 } });
+}
+
+export function loadFeaturedProjects() {
+  return loadQuery<any>(
+    featuredProjectsQuery,
+    {},
+    { next: { tags: ["featured-projects"], revalidate: 1800 } }
+  );
 }

@@ -120,6 +120,13 @@ export default defineType({
       of: [{ type: "reference", to: { type: "category" } }],
     }),
     defineField({
+      name: "isFeatured",
+      title: "Featured Post",
+      description: "Mark this post as featured to display it prominently on the homepage",
+      type: "boolean",
+      initialValue: false,
+    }),
+    defineField({
       name: "description",
       title: "Project Description",
       type: "array",

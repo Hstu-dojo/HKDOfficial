@@ -49,6 +49,7 @@ export const projectBySlugQuery = groq`
     "slug": slug.current,
     tags,
     title,
+    isFeatured,
     author->{
         name,
         "slug": slug.current,
@@ -69,6 +70,7 @@ export const projectByTagQuery = (tag: string) => groq`
     "slug": slug.current,
     tags,
     title,
+    isFeatured,
     author->{
         name,
         "slug": slug.current,
@@ -89,6 +91,29 @@ export const allProjectSlugQuery = (page: number, limit: number) => groq`
     "slug": slug.current,
     tags,
     title,
+    isFeatured,
+    _updatedAt
+  }
+`;
+
+export const featuredProjectsQuery = groq`
+  *[_type == "project" && isFeatured == true] | order(_updatedAt desc) {
+    _id,
+    client,
+    coverImage,
+    description,
+    duration,
+    overview,
+    site,
+    "slug": slug.current,
+    tags,
+    title,
+    isFeatured,
+    author->{
+        name,
+        "slug": slug.current,
+        image,
+    },
     _updatedAt
   }
 `;
