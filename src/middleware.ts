@@ -1,4 +1,4 @@
-import createMiddleware from "@hasanshahriar32/next-easy-middlewares-root";
+import { createNEMO } from "@rescale/nemo";
 import { withLocaleMiddleware } from "./middlewares/internationalization";
 import { withAuthMiddleware } from "./middlewares/authentication";
 import { withAdminMiddleware } from "./middlewares/admin";
@@ -29,7 +29,7 @@ const middlewares = {
 };
 
 // Create middlewares helper
-export const middleware = createMiddleware(middlewares);
+export const middleware = createNEMO(middlewares);
 
 export const config = {
   /*
