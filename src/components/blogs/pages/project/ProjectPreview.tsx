@@ -16,7 +16,7 @@ export default function ProjectPreview(props: Props) {
   const { params, initial } = props;
   const { data, encodeDataAttribute } = useQuery<ProjectPayload | null>(
     projectBySlugQuery,
-    params,
+    { slug: params.slug },
     { initial },
   );
 

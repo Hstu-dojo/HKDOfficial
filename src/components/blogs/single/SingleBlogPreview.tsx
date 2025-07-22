@@ -18,7 +18,7 @@ export default function SingleBlogPreview({
 }) {
   const { data } = useQuery<SanityDocument | null>(
     POST_QUERY,
-    params,
+    { slug: (params as any).slug },
     { initial }
   );
 

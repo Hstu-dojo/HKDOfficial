@@ -19,7 +19,7 @@ export async function generateStaticParams() {
 
 export default async function Page({ params }: { params: QueryParams }) {
   const draftModeEnabled = (await draftMode()).isEnabled;
-  const initial = await loadQuery<SanityDocument>(POST_QUERY, params, {
+  const initial = await loadQuery<SanityDocument>(POST_QUERY, { slug: (params as any).slug }, {
     // Because of Next.js, RSC and Dynamic Routes this currently
     // cannot be set on the loadQuery function at the "top level"
     perspective: draftModeEnabled ? "drafts" : "published",

@@ -10,7 +10,7 @@ export const locate: DocumentLocationResolver = (params, context) => {
     // Subscribe to the latest slug and title
     const doc$ = context.documentStore.listenQuery(
       `*[_id == $id][0]{slug,title}`,
-      { id: params.id, type: params.type },
+      { id: params.id },
       { perspective: "drafts" } // returns a draft article if it exists
     );
     // Return a streaming list of locations
@@ -35,5 +35,37 @@ export const locate: DocumentLocationResolver = (params, context) => {
       })
     );
   }
+
+  // Set up locations for project documents
+  if (params.type === "project") {
+    // Subscribe to the latest slug and title
+    const doc$ = context.documentStore.listenQuery(
+      `*[_id == $id][0]{slug,title}`,
+      { id: params.id },
+      { perspective: "drafts" } // returns a draft article if it exists
+    );
+    // Return a streaming list of locations
+    return doc$.pipe(
+      map((doc) => {
+        // If the document doesn't exist or have a slug, return null
+        if (!doc || !doc.slug?.current) {
+          return null;
+        }
+        return {
+          locations: [
+            {
+              title: doc.title || "Untitled",
+              href: `/blog/post/${doc.slug.current}`,
+            },
+            {
+              title: "Projects",
+              href: "/blog/",
+            },
+          ],
+        };
+      })
+    );
+  }
+
   return null;
 }

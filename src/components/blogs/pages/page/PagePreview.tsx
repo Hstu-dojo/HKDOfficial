@@ -14,7 +14,7 @@ type Props = {
 
 export default function PagePreview(props: Props) {
   const { params, initial } = props;
-  const { data } = useQuery<PagePayload | null>(pagesBySlugQuery, params, {
+  const { data } = useQuery<PagePayload | null>(pagesBySlugQuery, { slug: params.slug }, {
     initial,
   });
 
