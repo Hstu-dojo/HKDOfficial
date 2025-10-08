@@ -75,7 +75,7 @@ export default function ResendConfirmationPage() {
 
         <div className="text-center">
           <Link 
-            href="/login" 
+            href="/en/login" 
             className="text-sm text-muted-foreground hover:underline"
           >
             Back to Login

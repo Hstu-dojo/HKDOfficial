@@ -57,7 +57,7 @@ export function RegisterForm({ className, ...props }: UserAuthFormProps) {
           description: "something went wrong, please try again later",
           action: {
             label: "Login",
-            onClick: () => router.push("/login"),
+            onClick: () => router.push("/en/login"),
           },
         });
       } else {
@@ -88,7 +88,7 @@ export function RegisterForm({ className, ...props }: UserAuthFormProps) {
             },
           },
         });
-        return router.push("/login");
+        return router.push("/en/login");
       }
       setIsLoading(false);
     } catch (error) {
@@ -97,7 +97,7 @@ export function RegisterForm({ className, ...props }: UserAuthFormProps) {
         description: "something went wrong, please try again later",
         action: {
           label: "Home",
-          onClick: () => router.push("/"),
+          onClick: () => router.push("/en"),
         },
       });
     }

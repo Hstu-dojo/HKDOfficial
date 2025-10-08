@@ -23,7 +23,7 @@ export async function POST(request: Request) {
           username: userName,
           avatar_url: userAvatar,
         },
-        emailRedirectTo: `${process.env.NEXT_PUBLIC_APP_URL}/auth/callback`
+        emailRedirectTo: `${process.env.NEXT_PUBLIC_APP_URL}/auth/callback?next=/en`
       }
     })
 

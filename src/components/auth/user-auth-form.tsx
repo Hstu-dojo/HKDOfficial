@@ -87,10 +87,10 @@ export function UserAuthForm({
         // Check if email is verified
         if (!result.user.emailVerified) {
           router.push(
-            `/onboarding/verify-email?callbackUrl=${callbackUrl || "/"}`,
+            `/en/onboarding/verify-email?callbackUrl=${callbackUrl || "/en"}`,
           );
         } else {
-          router.push(callbackUrl || "/");
+          router.push(callbackUrl || "/en");
         }
       }
       setIsLoading(false);
