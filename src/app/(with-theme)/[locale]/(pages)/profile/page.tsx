@@ -18,15 +18,20 @@ export default function Profile() {
     );
   }
 
+  // Temporarily show debug info instead of blocking access
   if (status === 'unauthenticated') {
     return (
       <div className="flex min-h-screen items-center justify-center">
-        <Card className="w-full max-w-md">
+        <Card className="w-full max-w-2xl">
           <CardHeader>
-            <CardTitle>Access Denied</CardTitle>
+            <CardTitle>Debug: Access Denied</CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="mb-4">You need to be signed in to view this page.</p>
+            <p className="mb-4">Status: {status}</p>
+            <p className="mb-4">Session data:</p>
+            <pre className="text-xs bg-gray-100 p-4 rounded overflow-auto mb-4">
+              {JSON.stringify({ session, status }, null, 2)}
+            </pre>
             <Button onClick={() => router.push('/login')}>Sign In</Button>
           </CardContent>
         </Card>

@@ -10,6 +10,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 interface UserAuthFormProps extends React.HTMLAttributes<HTMLDivElement> {}
 import { toast } from "sonner";
+import { supabase } from "@/lib/supabase/supabase";
 import avatarsData from "@/db/avatars.json";
 import {
   Select,
@@ -41,26 +42,29 @@ export function RegisterForm({ className, ...props }: UserAuthFormProps) {
     }
     // console.log(email, password, userName, userAvatar);
     try {
-      const response = await fetch("/api/auth/supabase-signup", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ email, password, userName, userAvatar }),
+      // Use Supabase client directly instead of API route
+      const { data, error } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          data: {
+            username: userName,
+            avatar_url: userAvatar,
+          },
+          emailRedirectTo: `${window.location.origin}/auth/callback`
+        }
       });
-      
-      const result = await response.json();
-      console.log(response);
-      
-      if (!response.ok) {
-        toast(result.error || "something went wrong", {
+
+      if (error) {
+        console.error('Supabase Auth Error:', error);
+        toast(error.message || "something went wrong", {
           description: "something went wrong, please try again later",
           action: {
             label: "Login",
             onClick: () => router.push("/en/login"),
           },
         });
-      } else {
+      } else if (data.user) {
         toast("Register Successful 🎉", {
           description: "Please check your email to verify your account before signing in. Didn't receive the email?",
           action: {

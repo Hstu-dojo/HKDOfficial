@@ -10,6 +10,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { useSession } from "@/hooks/useSessionCompat";
+import { supabase } from "@/lib/supabase/supabase";
 export interface UserAuthFormProps
   extends React.HTMLAttributes<HTMLDivElement> {
   callbackUrl?: string;
@@ -39,20 +40,18 @@ export function UserAuthForm({
     const password = formData.get("password") as string;
 
     try {
-      const response = await fetch("/api/auth/supabase-signin", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ email, password }),
+      // Use Supabase client directly instead of API route
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
       });
 
-      const result = await response.json();
-
-      if (!response.ok) {
+      if (error) {
+        console.error('Supabase Auth Error:', error);
+        
         // Handle email not confirmed error with resend option
-        if (result.code === 'email_not_confirmed') {
-          toast.error(result.error, {
+        if (error.message === 'Email not confirmed') {
+          toast.error('Please check your email and click the confirmation link before signing in.', {
             action: {
               label: "Resend Email",
               onClick: async () => {
@@ -62,7 +61,7 @@ export function UserAuthForm({
                     headers: {
                       "Content-Type": "application/json",
                     },
-                    body: JSON.stringify({ email: result.email }),
+                    body: JSON.stringify({ email }),
                   });
                   
                   const resendResult = await resendResponse.json();
@@ -79,18 +78,18 @@ export function UserAuthForm({
             },
           });
         } else {
-          toast.error(result.error || "Invalid credentials or user not found");
+          toast.error(error.message || "Invalid credentials or user not found");
         }
-      } else {
+      } else if (data.user) {
         toast.success("Welcome back!");
         
         // Check if email is verified
-        if (!result.user.emailVerified) {
+        if (!data.user.email_confirmed_at) {
           router.push(
             `/en/onboarding/verify-email?callbackUrl=${callbackUrl || "/en"}`,
           );
         } else {
-          router.push(callbackUrl || "/en");
+          router.push(callbackUrl || "/en/profile");
         }
       }
       setIsLoading(false);
