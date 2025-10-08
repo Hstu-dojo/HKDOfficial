@@ -125,8 +125,14 @@ export default async function ProjectPage({ params: { slug } }: Params) {
 }
 
 export async function generateStaticParams() {
-  const postsData: Promise<Post[]> = getPosts("100", undefined, "projects");
-  const posts = await postsData;
+  try {
+    const postsData: Promise<Post[]> = getPosts("100", undefined, "projects");
+    const posts = await postsData;
 
-  return posts.map((post) => ({ slug: post.slug }));
+    return posts.map((post) => ({ slug: post.slug }));
+  } catch (error) {
+    console.error("Failed to fetch projects for static generation:", error);
+    // Return empty array if WordPress API is not available
+    return [];
+  }
 }
