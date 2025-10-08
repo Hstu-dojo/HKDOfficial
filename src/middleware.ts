@@ -25,8 +25,8 @@ const middlewares = {
   "/onboarding/:path*": withLocaleMiddleware, // [withLocaleMiddleware, withAuthMiddleware],
   "/[slug]/onboarding/:path*": withLocaleMiddleware, // withAuthMiddleware,
 
-  "/docs": withLocaleMiddleware, // withAuthMiddleware,
-  "/docs/:path*": withLocaleMiddleware, // withAuthMiddleware,
+  "/docs": withAdminMiddleware, // withAuthMiddleware,
+  "/docs/:path*": withAdminMiddleware, // withAuthMiddleware,
 };
 
 // Create middlewares helper

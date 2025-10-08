@@ -1,7 +1,7 @@
 'use client';
 
 import { useRBAC } from '@/hooks/useRBAC';
-import { useSession } from 'next-auth/react';
+import { useSession } from '@/hooks/useSessionCompat';
 import { 
   UserGroupIcon, 
   CalendarIcon, 
@@ -112,6 +112,14 @@ export default function AdminDashboard() {
       icon: ShieldCheckIcon,
       color: 'bg-blue-500',
       show: hasPermission('ROLE', 'READ'),
+    },
+    {
+      title: 'Create Admin User',
+      description: 'Create and manage admin users',
+      href: '/admin/create-admin',
+      icon: UserGroupIcon,
+      color: 'bg-purple-500',
+      show: hasRole('SUPER_ADMIN'),
     },
     {
       title: 'Add New User',
