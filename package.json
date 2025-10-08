@@ -63,6 +63,8 @@
     "@sanity/ui": "^2.16.7",
     "@sanity/vision": "^4.1.0",
     "@sanity/visual-editing": "^2.7.2",
+    "@supabase/auth-helpers-nextjs": "^0.10.0",
+    "@supabase/supabase-js": "^2.74.0",
     "@svgr/core": "^8.1.0",
     "@svgr/webpack": "^8.1.0",
     "@tabler/icons-react": "^2.47.0",

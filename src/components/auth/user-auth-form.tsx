@@ -1,7 +1,6 @@
 "use client";
 
 import * as React from "react";
-import { useSession, signIn, getSession } from "next-auth/react";
 import { cn } from "@/lib/utils";
 import { FaGithub, FaGoogle } from "react-icons/fa6";
 import { Button } from "@/components/ui/button";
@@ -10,6 +9,7 @@ import { Label } from "@/components/ui/label";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
+import { useAuth } from "@/context/AuthContext";
 export interface UserAuthFormProps
   extends React.HTMLAttributes<HTMLDivElement> {
   callbackUrl?: string;
@@ -22,13 +22,13 @@ export function UserAuthForm({
 }: UserAuthFormProps) {
   // console.log(callbackUrl);
   const [isLoading, setIsLoading] = React.useState<boolean>(false);
-  const { data: session } = useSession();
+  const { user } = useAuth();
   const router = useRouter();
   React.useLayoutEffect(() => {
-    if (session?.user?.email) {
+    if (user?.email) {
       router.push("/");
     }
-  }, [callbackUrl, router, session?.user?.email]);
+  }, [callbackUrl, router, user?.email]);
   async function onSubmit(event: React.SyntheticEvent) {
     event.preventDefault();
     setIsLoading(true);
@@ -39,26 +39,59 @@ export function UserAuthForm({
     const password = formData.get("password") as string;
 
     try {
-      const response = await signIn("credentials", {
-        email,
-        password,
-        redirect: false,
+      const response = await fetch("/api/auth/supabase-signin", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email, password }),
       });
-      if (!response?.ok) {
-        toast.error("invalid credentials or user not found");
-      }
-      if (response?.ok) {
-        // console.log(response);
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        // Handle email not confirmed error with resend option
+        if (result.code === 'email_not_confirmed') {
+          toast.error(result.error, {
+            action: {
+              label: "Resend Email",
+              onClick: async () => {
+                try {
+                  const resendResponse = await fetch("/api/auth/resend-confirmation", {
+                    method: "POST",
+                    headers: {
+                      "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({ email: result.email }),
+                  });
+                  
+                  const resendResult = await resendResponse.json();
+                  
+                  if (resendResponse.ok) {
+                    toast.success(resendResult.message);
+                  } else {
+                    toast.error(resendResult.error || "Failed to resend email");
+                  }
+                } catch (error) {
+                  toast.error("Failed to resend email");
+                }
+              },
+            },
+          });
+        } else {
+          toast.error(result.error || "Invalid credentials or user not found");
+        }
+      } else {
         toast.success("Welcome back!");
-        // console.log(session);
-        const updatedSession = await getSession();
-        // console.log(updatedSession);
-        //@ts-ignore
-        if (updatedSession?.user?.emailVerified === false) {
+        
+        // Check if email is verified
+        if (!result.user.emailVerified) {
           router.push(
             `/onboarding/verify-email?callbackUrl=${callbackUrl || "/"}`,
           );
-        } else router.push(callbackUrl || "/");
+        } else {
+          router.push(callbackUrl || "/");
+        }
       }
       setIsLoading(false);
     } catch (error) {
@@ -141,10 +174,9 @@ export function UserAuthForm({
           variant="outline"
           type="button"
           disabled={isLoading}
-          onClick={() => {
-            signIn("google", {
-              callbackUrl: callbackUrl || "/",
-            });
+          onClick={async () => {
+            // TODO: Implement Supabase Google OAuth
+            toast.info("Google sign-in will be implemented with Supabase OAuth");
           }}
         >
           <FaGoogle className="h-6 w-6" />
@@ -154,10 +186,9 @@ export function UserAuthForm({
           variant="outline"
           type="button"
           disabled={isLoading}
-          onClick={() => {
-            signIn("github", {
-              callbackUrl: callbackUrl || "/",
-            });
+          onClick={async () => {
+            // TODO: Implement Supabase GitHub OAuth  
+            toast.info("GitHub sign-in will be implemented with Supabase OAuth");
           }}
         >
           <FaGithub className="h-6 w-6" />

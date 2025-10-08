@@ -12,20 +12,21 @@ const middlewares = {
   "/about": withLocaleMiddleware,
   "/admin": [withLocaleMiddleware, withAdminMiddleware],
   "/admin/:path*": [withLocaleMiddleware, withAdminMiddleware],
-  "/apply/:path*": [withLocaleMiddleware, withAuthMiddleware],
+  // Temporarily disabled auth middleware during Supabase migration
+  "/apply/:path*": withLocaleMiddleware, // [withLocaleMiddleware, withAuthMiddleware],
   "/dev": withLocaleMiddleware,
   "/login": withLocaleMiddleware,
   "/register": withLocaleMiddleware,
   "/contact": withLocaleMiddleware,
   "/posts": withLocaleMiddleware,
   "/posts/:path*": withLocaleMiddleware,
-  "/profile": [withLocaleMiddleware, withAuthMiddleware],
-  "/[slug]/profile": withAuthMiddleware,
-  "/onboarding/:path*": [withLocaleMiddleware, withAuthMiddleware],
-  "/[slug]/onboarding/:path*": withAuthMiddleware,
+  "/profile": withLocaleMiddleware, // [withLocaleMiddleware, withAuthMiddleware],
+  "/[slug]/profile": withLocaleMiddleware, // withAuthMiddleware,
+  "/onboarding/:path*": withLocaleMiddleware, // [withLocaleMiddleware, withAuthMiddleware],
+  "/[slug]/onboarding/:path*": withLocaleMiddleware, // withAuthMiddleware,
 
-  "/docs": withAuthMiddleware,
-  "/docs/:path*": withAuthMiddleware,
+  "/docs": withLocaleMiddleware, // withAuthMiddleware,
+  "/docs/:path*": withLocaleMiddleware, // withAuthMiddleware,
 };
 
 // Create middlewares helper

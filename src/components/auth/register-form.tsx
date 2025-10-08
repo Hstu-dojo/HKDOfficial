@@ -1,7 +1,6 @@
 "use client";
 
 import { FormEvent, useState, useEffect } from "react";
-import { signIn } from "next-auth/react";
 import { useSearchParams } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -42,35 +41,56 @@ export function RegisterForm({ className, ...props }: UserAuthFormProps) {
     }
     // console.log(email, password, userName, userAvatar);
     try {
-      const response = await fetch("/api/auth/signup", {
+      const response = await fetch("/api/auth/supabase-signup", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({ email, password, userName, userAvatar }),
       });
+      
+      const result = await response.json();
       console.log(response);
+      
       if (!response.ok) {
-        toast(response?.statusText || "something went wrong", {
+        toast(result.error || "something went wrong", {
           description: "something went wrong, please try again later",
           action: {
             label: "Login",
             onClick: () => router.push("/login"),
           },
         });
-      }
-      //   return redirect("/auth/signin");
-      setIsLoading(false);
-      if (response.ok) {
+      } else {
         toast("Register Successful 🎉", {
-          description: "Your account has been created successfully",
+          description: "Please check your email to verify your account before signing in. Didn't receive the email?",
           action: {
-            label: "Login",
-            onClick: () => router.push("/login"),
+            label: "Resend Email",
+            onClick: async () => {
+              try {
+                const resendResponse = await fetch("/api/auth/resend-confirmation", {
+                  method: "POST",
+                  headers: {
+                    "Content-Type": "application/json",
+                  },
+                  body: JSON.stringify({ email }),
+                });
+                
+                const resendResult = await resendResponse.json();
+                
+                if (resendResponse.ok) {
+                  toast.success(resendResult.message);
+                } else {
+                  toast.error(resendResult.error || "Failed to resend email");
+                }
+              } catch (error) {
+                toast.error("Failed to resend email");
+              }
+            },
           },
         });
         return router.push("/login");
       }
+      setIsLoading(false);
     } catch (error) {
       setIsLoading(false);
       toast("something went wrong", {
