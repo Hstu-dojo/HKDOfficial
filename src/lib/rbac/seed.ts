@@ -69,41 +69,110 @@ const defaultPermissions: Array<{
   { name: "update_media", resource: "MEDIA", action: "UPDATE", description: "Update media files" },
   { name: "delete_media", resource: "MEDIA", action: "DELETE", description: "Delete media files" },
   { name: "manage_media", resource: "MEDIA", action: "MANAGE", description: "Full media management" },
+  
+  // Karate-specific permissions
+  // Class permissions
+  { name: "create_class", resource: "CLASS", action: "CREATE", description: "Create new classes" },
+  { name: "read_class", resource: "CLASS", action: "READ", description: "View classes" },
+  { name: "update_class", resource: "CLASS", action: "UPDATE", description: "Update classes" },
+  { name: "delete_class", resource: "CLASS", action: "DELETE", description: "Delete classes" },
+  { name: "manage_class", resource: "CLASS", action: "MANAGE", description: "Full class management" },
+  
+  // Equipment permissions
+  { name: "create_equipment", resource: "EQUIPMENT", action: "CREATE", description: "Create new equipment" },
+  { name: "read_equipment", resource: "EQUIPMENT", action: "READ", description: "View equipment" },
+  { name: "update_equipment", resource: "EQUIPMENT", action: "UPDATE", description: "Update equipment" },
+  { name: "delete_equipment", resource: "EQUIPMENT", action: "DELETE", description: "Delete equipment" },
+  { name: "manage_equipment", resource: "EQUIPMENT", action: "MANAGE", description: "Full equipment management" },
+  
+  // Member permissions
+  { name: "create_member", resource: "MEMBER", action: "CREATE", description: "Create new members" },
+  { name: "read_member", resource: "MEMBER", action: "READ", description: "View members" },
+  { name: "update_member", resource: "MEMBER", action: "UPDATE", description: "Update members" },
+  { name: "delete_member", resource: "MEMBER", action: "DELETE", description: "Delete members" },
+  { name: "manage_member", resource: "MEMBER", action: "MANAGE", description: "Full member management" },
+  
+  // Bill permissions
+  { name: "create_bill", resource: "BILL", action: "CREATE", description: "Create new bills" },
+  { name: "read_bill", resource: "BILL", action: "READ", description: "View bills" },
+  { name: "update_bill", resource: "BILL", action: "UPDATE", description: "Update bills" },
+  { name: "delete_bill", resource: "BILL", action: "DELETE", description: "Delete bills" },
+  { name: "manage_bill", resource: "BILL", action: "MANAGE", description: "Full bill management" },
+  
+  // Payment permissions
+  { name: "create_payment", resource: "PAYMENT", action: "CREATE", description: "Create new payments" },
+  { name: "read_payment", resource: "PAYMENT", action: "READ", description: "View payments" },
+  { name: "update_payment", resource: "PAYMENT", action: "UPDATE", description: "Update payments" },
+  { name: "delete_payment", resource: "PAYMENT", action: "DELETE", description: "Delete payments" },
+  { name: "manage_payment", resource: "PAYMENT", action: "MANAGE", description: "Full payment management" },
 ];
 
 // Role-Permission mappings
-const rolePermissionMappings = {
+const rolePermissionMappings: { [key: string]: string[] } = {
   SUPER_ADMIN: [
-    "manage_user", "manage_account", "manage_role", "manage_permission",
-    "manage_course", "manage_blog", "manage_media"
+    // All permissions
+    "create_user", "read_user", "update_user", "delete_user", "manage_user",
+    "create_account", "read_account", "update_account", "delete_account", "manage_account",
+    "create_role", "read_role", "update_role", "delete_role", "manage_role",
+    "create_permission", "read_permission", "update_permission", "delete_permission", "manage_permission",
+    "create_course", "read_course", "update_course", "delete_course", "manage_course",
+    "create_blog", "read_blog", "update_blog", "delete_blog", "manage_blog",
+    "create_media", "read_media", "update_media", "delete_media", "manage_media",
+    // Karate permissions
+    "create_class", "read_class", "update_class", "delete_class", "manage_class",
+    "create_equipment", "read_equipment", "update_equipment", "delete_equipment", "manage_equipment",
+    "create_member", "read_member", "update_member", "delete_member", "manage_member",
+    "create_bill", "read_bill", "update_bill", "delete_bill", "manage_bill",
+    "create_payment", "read_payment", "update_payment", "delete_payment", "manage_payment",
   ],
   ADMIN: [
-    "create_user", "read_user", "update_user", "delete_user",
-    "create_account", "read_account", "update_account", "delete_account",
-    "read_role", "read_permission",
-    "manage_course", "manage_blog", "manage_media"
-  ],
-  MODERATOR: [
-    "read_user", "update_user",
+    // Most permissions except system-level ones
+    "read_user", "update_user", "delete_user",
     "read_account", "update_account",
-    "read_role", "read_permission",
-    "create_course", "read_course", "update_course",
-    "create_blog", "read_blog", "update_blog",
-    "create_media", "read_media", "update_media"
+    "read_role",
+    "read_permission",
+    "create_course", "read_course", "update_course", "delete_course", "manage_course",
+    "create_blog", "read_blog", "update_blog", "delete_blog", "manage_blog",
+    "create_media", "read_media", "update_media", "delete_media", "manage_media",
+    // Karate management permissions
+    "create_class", "read_class", "update_class", "delete_class", "manage_class",
+    "create_equipment", "read_equipment", "update_equipment", "delete_equipment", "manage_equipment",
+    "create_member", "read_member", "update_member", "delete_member", "manage_member",
+    "create_bill", "read_bill", "update_bill", "delete_bill", "manage_bill",
+    "create_payment", "read_payment", "update_payment", "delete_payment", "manage_payment",
   ],
   INSTRUCTOR: [
-    "read_user", "read_account",
+    // Teaching-related permissions
+    "read_user",
+    "read_account",
     "create_course", "read_course", "update_course",
     "create_blog", "read_blog", "update_blog",
-    "create_media", "read_media", "update_media"
+    "read_media", "create_media",
+    // Karate instruction permissions
+    "create_class", "read_class", "update_class",
+    "read_equipment",
+    "read_member", "update_member",
+    "read_bill",
+    "read_payment",
   ],
-  MEMBER: [
-    "read_user", "read_account",
-    "read_course", "read_blog", "read_media"
+  STUDENT: [
+    // Basic read permissions
+    "read_course",
+    "read_blog",
+    "read_media",
+    // Karate student permissions
+    "read_class",
+    "read_equipment",
+    "read_member", // Can view other members
+    "read_bill", // Can view their own bills
+    "read_payment", // Can view their own payments
   ],
-  GUEST: [
-    "read_course", "read_blog", "read_media"
-  ]
+  USER: [
+    // Minimal permissions
+    "read_blog",
+    // Basic karate info access
+    "read_class",
+  ],
 };
 
 export async function seedRBACData() {

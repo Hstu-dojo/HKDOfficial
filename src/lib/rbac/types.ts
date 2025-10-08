@@ -22,7 +22,7 @@ declare module "next-auth/jwt" {
 }
 
 // RBAC Types
-export type ResourceType = "USER" | "ACCOUNT" | "SESSION" | "VERIFICATION_TOKEN" | "PROVIDER" | "ROLE" | "PERMISSION" | "LEVEL" | "COURSE" | "BLOG" | "MEDIA";
+export type ResourceType = "USER" | "ACCOUNT" | "SESSION" | "VERIFICATION_TOKEN" | "PROVIDER" | "ROLE" | "PERMISSION" | "LEVEL" | "COURSE" | "BLOG" | "MEDIA" | "CLASS" | "EQUIPMENT" | "MEMBER" | "BILL" | "PAYMENT";
 export type ActionType = "CREATE" | "READ" | "UPDATE" | "DELETE" | "MANAGE";
 
 export interface Permission {

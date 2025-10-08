@@ -1,6 +1,7 @@
 #!/usr/bin/env tsx
 
 // RBAC Seed Script - TypeScript version
+//@ts-ignore
 import 'dotenv/config';
 
 async function main() {
