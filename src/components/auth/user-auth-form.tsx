@@ -9,7 +9,7 @@ import { Label } from "@/components/ui/label";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import { useAuth } from "@/context/AuthContext";
+import { useSession } from "@/hooks/useSessionCompat";
 export interface UserAuthFormProps
   extends React.HTMLAttributes<HTMLDivElement> {
   callbackUrl?: string;
@@ -22,13 +22,13 @@ export function UserAuthForm({
 }: UserAuthFormProps) {
   // console.log(callbackUrl);
   const [isLoading, setIsLoading] = React.useState<boolean>(false);
-  const { user } = useAuth();
+  const { data: session } = useSession();
   const router = useRouter();
   React.useLayoutEffect(() => {
-    if (user?.email) {
+    if (session?.user?.email) {
       router.push("/");
     }
-  }, [callbackUrl, router, user?.email]);
+  }, [callbackUrl, router, session?.user?.email]);
   async function onSubmit(event: React.SyntheticEvent) {
     event.preventDefault();
     setIsLoading(true);

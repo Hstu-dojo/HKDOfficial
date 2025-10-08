@@ -8,7 +8,7 @@ import {
 } from "framer-motion";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
-import { useSession } from "next-auth/react";
+import { useSession } from "@/hooks/useSessionCompat";
 
 export const FloatingNav = ({
   navItems,

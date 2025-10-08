@@ -7,12 +7,14 @@ import { DarkModeSwitch } from "../dark-mode-switch";
 import { mainNav } from "@/config/site";
 import { cn } from "@/lib/utils";
 import { MobileNav } from "./mobile-nav";
-import { signIn, signOut, useSession } from "next-auth/react";
+import { useSession } from "@/hooks/useSessionCompat";
+import { useAuth } from "@/context/AuthContext";
 import MaxWidthWrapper from "../maxWidthWrapper";
 
 const Header = () => {
   const [stickyClass, setStickyClass] = useState("");
   const { data: session } = useSession();
+  const { signOut } = useAuth();
 
   useEffect(() => {
     window.addEventListener("scroll", stickyHeader);

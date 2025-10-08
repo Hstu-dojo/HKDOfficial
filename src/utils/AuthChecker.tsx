@@ -1,6 +1,6 @@
 "use client";
 import { redirect } from "next/navigation";
-import { useSession } from "next-auth/react";
+import { useSession } from "@/hooks/useSessionCompat";
 import { useEffect } from "react";
 
 export default function AuthChecker(Component: any) {

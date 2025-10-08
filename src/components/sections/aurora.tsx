@@ -3,7 +3,7 @@
 import { motion } from "framer-motion";
 import React from "react";
 import { AuroraBackground } from "../ui/aurora-background";
-import { useSession } from "next-auth/react";
+import { useSession } from "@/hooks/useSessionCompat";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 

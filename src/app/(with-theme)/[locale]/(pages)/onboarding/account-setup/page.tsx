@@ -1,7 +1,7 @@
 "use client";
 import { AccountOnboarding } from "@/components/component/account-onboarding";
 import { Button } from "@/components/ui/button";
-import { useSession } from "next-auth/react";
+import { useSession } from "@/hooks/useSessionCompat";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useLayoutEffect, useState } from "react";
