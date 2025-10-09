@@ -43,17 +43,19 @@ export default function ResetPasswordForm() {
         } else {
           console.log('No session found - checking for auth code or recovery tokens');
           
-          // First check for auth code in URL parameters
-          const urlParams = new URLSearchParams(window.location.search);
-          const authCode = urlParams.get('code');
+          // Supabase password recovery sends tokens in URL hash, not query params
+          console.log('Checking URL hash for recovery tokens...');
           
-          if (authCode) {
-            console.log('Auth code found in URL, redirecting to callback to establish session:', authCode);
-            
-            // Redirect to auth callback to properly exchange the code for a session
-            // Then callback will redirect back here
-            window.location.href = `/auth/callback?code=${authCode}&next=/en/reset-password`;
-            return;
+          // Wait a bit for Supabase client to process hash parameters
+          await new Promise(resolve => setTimeout(resolve, 500));
+          
+          // Check session again after giving Supabase time to process
+          const { data: { session: updatedSession } } = await supabase.auth.getSession();
+          
+          if (updatedSession) {
+            console.log('Session found after hash processing');
+            hasResetCodeRef.current = true;
+            if (mounted) setIsValidToken(true);
           } else {
             // Check if we have recovery token in URL hash (direct Supabase redirect)
             const hashParams = new URLSearchParams(window.location.hash.substring(1));
@@ -102,18 +104,20 @@ export default function ResetPasswordForm() {
             return;
           }
           
-          if (event === 'PASSWORD_RECOVERY' && session) {
-            console.log('Password recovery event detected');
+          if (event === 'PASSWORD_RECOVERY') {
+            console.log('PASSWORD_RECOVERY event detected - valid reset session');
+            hasResetCodeRef.current = true;
             setIsValidToken(true);
           } else if (event === 'SIGNED_IN' && session) {
             console.log('User signed in with recovery session');
+            hasResetCodeRef.current = true;
             setIsValidToken(true);
           } else if (event === 'INITIAL_SESSION' && session) {
             console.log('Initial session found');
             setIsValidToken(true);
-          } else if (!session) {
-            console.log('No session - invalid link');
-            setIsValidToken(false);
+          } else if (!session && event === 'INITIAL_SESSION') {
+            console.log('No initial session - waiting for recovery tokens');
+            // Don't set to false yet, give Supabase time to process hash
           }
         });
 

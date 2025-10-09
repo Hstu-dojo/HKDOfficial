@@ -14,7 +14,8 @@ export async function POST(request: NextRequest) {
 
     const supabase = createServerClient();
 
-    // Send password reset email  
+    // Send password reset email
+    // Supabase will include the recovery token in the URL hash
     const { error } = await supabase.auth.resetPasswordForEmail(email, {
       redirectTo: `${process.env.NEXT_PUBLIC_APP_URL}/en/reset-password`,
     });
