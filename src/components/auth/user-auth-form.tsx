@@ -152,7 +152,7 @@ export function UserAuthForm({
           </Link>
         </small>
         <small>
-          <Link className="hover:underline" href="/forget">
+          <Link className="hover:underline" href="/en/forget">
             forget password?
           </Link>
         </small>
