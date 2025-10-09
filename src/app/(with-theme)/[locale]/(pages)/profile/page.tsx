@@ -41,16 +41,42 @@ export default function Profile() {
       
       // If sync_email flag is present, sync the email to local database
       if (shouldSyncEmail === 'true') {
-        fetch('/api/sync-email', { method: 'POST' })
-          .then(res => res.json())
-          .then(data => {
-            if (data.success) {
-              setEmailChangeMessage(`Email updated successfully to ${data.email}! Please refresh to see changes.`);
-            }
+        // Get the old email from localStorage
+        const oldEmail = localStorage.getItem('email_change_old');
+        console.log('Attempting to sync email. Old email from storage:', oldEmail);
+        
+        if (oldEmail) {
+          setEmailChangeMessage('Syncing email to database...');
+          
+          fetch('/api/sync-email', { 
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ oldEmail })
           })
-          .catch(err => {
-            console.error('Failed to sync email:', err);
-          });
+            .then(res => res.json())
+            .then(data => {
+              console.log('Sync API response:', data);
+              if (data.success) {
+                setEmailChangeMessage(`✅ Email updated successfully to ${data.email}! Database synced. Refreshing...`);
+                // Clear the stored old email
+                localStorage.removeItem('email_change_old');
+                // Refresh the page to show new email
+                setTimeout(() => window.location.reload(), 2000);
+              } else {
+                setEmailChangeError(`Database sync failed: ${data.error}`);
+                console.error('Sync failed:', data.error);
+              }
+            })
+            .catch(err => {
+              console.error('Failed to sync email:', err);
+              setEmailChangeError('Failed to sync email to database. Please contact support.');
+            });
+        } else {
+          setEmailChangeError('Cannot sync: old email not found. Please try changing email again.');
+          console.error('Old email not found in localStorage');
+        }
       }
       
       // Clear URL params after showing message
@@ -59,7 +85,7 @@ export default function Profile() {
       newUrl.searchParams.delete('sync_email');
       window.history.replaceState({}, '', newUrl.toString());
       
-      setTimeout(() => setEmailChangeMessage(""), 8000);
+      setTimeout(() => setEmailChangeMessage(""), 10000);
     }
     
     if (error) {
@@ -164,6 +190,13 @@ export default function Profile() {
     setEmailChangeMessage("");
 
     try {
+      // Store the current email BEFORE changing it
+      const currentEmail = user?.email;
+      if (currentEmail) {
+        localStorage.setItem('email_change_old', currentEmail);
+        console.log('Stored old email for sync:', currentEmail);
+      }
+
       const { error } = await supabase.auth.updateUser({ 
         email: newEmail 
       });
@@ -171,7 +204,7 @@ export default function Profile() {
       if (error) throw error;
 
       setEmailChangeMessage(
-        "Confirmation emails sent! Please check both your old and new email addresses to confirm the change."
+        "Confirmation email sent! Please check your new email address to confirm the change."
       );
       setNewEmail("");
     } catch (error: any) {
