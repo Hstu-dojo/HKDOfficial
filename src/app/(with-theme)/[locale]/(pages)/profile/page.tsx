@@ -56,6 +56,36 @@ export default function Profile() {
     }
   }, [searchParams]);
 
+  // TEMPORARY WORKAROUND: Handle hash fragment from default Supabase email template
+  // This detects when user lands on page from email confirmation link
+  useEffect(() => {
+    // Check if there's a hash fragment with message
+    const hash = window.location.hash;
+    if (hash.includes('message=')) {
+      const hashParams = new URLSearchParams(hash.substring(1));
+      const hashMessage = hashParams.get('message');
+      
+      if (hashMessage) {
+        // This means user clicked email confirmation link
+        // Show informational message
+        setEmailChangeMessage(
+          'Email confirmation received. Please check if your email has been updated. If not, please update the Supabase email template as described in EMAIL_CHANGE_SETUP_REQUIRED.md'
+        );
+        
+        // Clean up hash
+        window.history.replaceState({}, '', window.location.pathname + window.location.search);
+        
+        // Try to refresh user session to get updated email
+        supabase.auth.getUser().then(({ data }) => {
+          if (data.user && user && data.user.email !== user.email) {
+            // Email was actually updated! Show success
+            setEmailChangeMessage('Email updated successfully! Please refresh the page to see changes.');
+          }
+        });
+      }
+    }
+  }, [user]);
+
   // Initialize form with current user data
   useEffect(() => {
     if (user) {
