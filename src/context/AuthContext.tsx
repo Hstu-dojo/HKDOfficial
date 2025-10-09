@@ -10,6 +10,9 @@ const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
 )
 
+// Export the supabase client for use in other components
+export { supabase }
+
 interface AuthContextType {
   user: User | null
   session: Session | null

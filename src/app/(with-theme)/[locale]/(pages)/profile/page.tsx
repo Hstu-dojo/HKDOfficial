@@ -1,20 +1,18 @@
 "use client";
 import { useState, useEffect } from "react";
-import { useAuth } from "@/context/AuthContext";
+import { useAuth, supabase } from "@/context/AuthContext";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { useRouter } from "next/navigation";
-import { createClient } from "@/lib/supabase/client";
 import { User, Mail, Phone, Calendar, Shield, Check, AlertCircle, Loader2 } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 
 export default function Profile() {
   const { user, loading, signOut } = useAuth();
   const router = useRouter();
-  const supabase = createClient();
 
   // Form states
   const [newEmail, setNewEmail] = useState("");
@@ -47,7 +45,7 @@ export default function Profile() {
     });
 
     return () => subscription.unsubscribe();
-  }, [supabase.auth]);
+  }, []);
 
   if (loading) {
     return (
