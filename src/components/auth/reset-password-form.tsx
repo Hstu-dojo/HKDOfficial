@@ -47,14 +47,29 @@ export default function ResetPasswordForm() {
           const authCode = urlParams.get('code');
           
           if (authCode) {
-            console.log('Auth code found in URL, treating as valid for password reset:', authCode);
+            console.log('Auth code found in URL, verifying:', authCode);
             
-            // For now, treat any code parameter as valid for password reset
-            // The actual validation will happen when the user submits the new password
-            console.log('Assuming code is valid - allowing password reset');
-            hasResetCodeRef.current = true;
-            if (mounted) {
-              setIsValidToken(true);
+            try {
+              // Verify the OTP token to check if it's valid
+              const { data: verifyData, error: verifyError } = await supabase.auth.verifyOtp({
+                token_hash: authCode,
+                type: 'recovery',
+              });
+
+              if (verifyError) {
+                console.error('Code verification failed:', verifyError);
+                if (mounted) setIsValidToken(false);
+              } else if (verifyData.session) {
+                console.log('Code verified successfully, session established');
+                hasResetCodeRef.current = true;
+                if (mounted) setIsValidToken(true);
+              } else {
+                console.error('Code verification returned no session');
+                if (mounted) setIsValidToken(false);
+              }
+            } catch (verifyError) {
+              console.error('Exception during code verification:', verifyError);
+              if (mounted) setIsValidToken(false);
             }
           } else {
             // Check if we have recovery token in URL hash (direct Supabase redirect)
@@ -160,44 +175,26 @@ export default function ResetPasswordForm() {
     setIsLoading(true);
 
     try {
-      // Get the reset code from URL if it exists
-      const urlParams = new URLSearchParams(window.location.search);
-      const resetCode = urlParams.get('code');
+      // The code has already been verified and session established during initialization
+      // Just update the password now
+      console.log('Updating password for authenticated user');
       
-      if (resetCode) {
-        // Use API endpoint to handle password reset with code
-        const response = await fetch('/api/auth/reset-password', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            code: resetCode,
-            password: password,
-          }),
-        });
+      const { error: updateError } = await supabase.auth.updateUser({
+        password: password
+      });
 
-        const result = await response.json();
-
-        if (!response.ok) {
-          throw new Error(result.error || 'Failed to reset password');
-        }
-
-        toast.success("Password updated successfully");
-        router.push("/en/login");
-      } else {
-        // Fallback to regular password update if user has a session
-        const { error } = await supabase.auth.updateUser({
-          password: password
-        });
-
-        if (error) {
-          throw error;
-        }
-
-        toast.success("Password updated successfully");
-        router.push("/en/login");
+      if (updateError) {
+        console.error('Password update error:', updateError);
+        throw updateError;
       }
+
+      console.log('Password updated successfully');
+      toast.success("Password updated successfully");
+      
+      // Sign out after password reset for security
+      await supabase.auth.signOut();
+      
+      router.push("/en/login");
     } catch (error: any) {
       console.error("Reset password error:", error);
       toast.error(error.message || "Failed to update password");
