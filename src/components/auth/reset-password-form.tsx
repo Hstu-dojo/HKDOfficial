@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
@@ -13,6 +13,7 @@ export default function ResetPasswordForm() {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [isValidToken, setIsValidToken] = useState<boolean | null>(null);
+  const hasResetCodeRef = useRef(false);
   
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -51,10 +52,9 @@ export default function ResetPasswordForm() {
             // For now, treat any code parameter as valid for password reset
             // The actual validation will happen when the user submits the new password
             console.log('Assuming code is valid - allowing password reset');
+            hasResetCodeRef.current = true;
             if (mounted) {
               setIsValidToken(true);
-              // Clear the code from URL to clean up
-              window.history.replaceState({}, '', '/en/reset-password');
             }
           } else {
             // Check if we have recovery token in URL hash (direct Supabase redirect)
@@ -97,6 +97,12 @@ export default function ResetPasswordForm() {
           console.log('Session exists:', !!session);
           
           if (!mounted) return;
+          
+          // Don't override isValidToken if we already detected a reset code
+          if (hasResetCodeRef.current) {
+            console.log('Reset code already detected, ignoring auth state change');
+            return;
+          }
           
           if (event === 'PASSWORD_RECOVERY' && session) {
             console.log('Password recovery event detected');
