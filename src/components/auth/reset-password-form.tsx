@@ -98,38 +98,35 @@ export default function ResetPasswordForm() {
                 // Check if this is a PKCE token (starts with pkce_)
                 if (accessToken.startsWith('pkce_')) {
                   console.log('PKCE access token detected in hash');
+                  console.warn('PKCE flow detected - Supabase client should auto-process this');
                   
-                  try {
-                    // For PKCE access tokens, we can try to set it directly as the session
-                    // First check if there's also a refresh token
-                    if (refreshToken) {
-                      console.log('PKCE token with refresh token - setting session');
-                      const { data, error } = await supabase.auth.setSession({
-                        access_token: accessToken,
-                        refresh_token: refreshToken,
-                      });
-                      
-                      if (error) {
-                        console.error('Error setting PKCE session:', error);
-                        if (mounted) setIsValidToken(false);
-                      } else if (data.session) {
-                        console.log('PKCE session set successfully');
-                        hasResetCodeRef.current = true;
-                        if (mounted) setIsValidToken(true);
-                      } else {
-                        console.error('No session created from PKCE tokens');
-                        if (mounted) setIsValidToken(false);
-                      }
-                    } else {
-                      console.log('PKCE token without refresh token - attempting direct use');
-                      // For PKCE tokens without refresh token, store the code for API use
-                      setResetCode(accessToken);
+                  // For PKCE tokens, Supabase client library should automatically process them
+                  // Let's give it more time and check multiple times
+                  let attempts = 0;
+                  const maxAttempts = 5;
+                  
+                  while (attempts < maxAttempts && mounted) {
+                    await new Promise(resolve => setTimeout(resolve, 500));
+                    
+                    const { data: { session: checkSession } } = await supabase.auth.getSession();
+                    
+                    if (checkSession) {
+                      console.log(`Session found after ${attempts + 1} attempts`);
                       hasResetCodeRef.current = true;
                       if (mounted) setIsValidToken(true);
+                      break;
                     }
-                  } catch (error) {
-                    console.error('Exception during PKCE token processing:', error);
-                    if (mounted) setIsValidToken(false);
+                    
+                    attempts++;
+                    console.log(`Waiting for session creation, attempt ${attempts}/${maxAttempts}`);
+                  }
+                  
+                  if (attempts >= maxAttempts) {
+                    console.error('Session was not created after multiple attempts');
+                    console.log('Storing PKCE token for API fallback');
+                    setResetCode(accessToken);
+                    hasResetCodeRef.current = true;
+                    if (mounted) setIsValidToken(true);
                   }
                 } else if (refreshToken) {
                   console.log('Recovery tokens found in URL hash - setting session');
@@ -233,9 +230,32 @@ export default function ResetPasswordForm() {
     setIsLoading(true);
 
     try {
-      if (resetCode) {
-        // We have a reset code from URL - use API endpoint to handle it
-        console.log('Resetting password using code');
+      // First, always check if we have a valid session
+      const { data: { session } } = await supabase.auth.getSession();
+      
+      if (session) {
+        // User has an established session - update password directly using Supabase client
+        console.log('Updating password for authenticated user with active session');
+        
+        const { error: updateError } = await supabase.auth.updateUser({
+          password: password
+        });
+
+        if (updateError) {
+          console.error('Password update error:', updateError);
+          throw updateError;
+        }
+
+        console.log('Password updated successfully via session');
+        toast.success("Password updated successfully");
+        
+        // Sign out after password reset for security
+        await supabase.auth.signOut();
+        
+        router.push("/en/login");
+      } else if (resetCode) {
+        // No session but we have a reset code - use API endpoint to handle it
+        console.log('No session found, resetting password using code via API');
         
         const response = await fetch('/api/auth/update-password-with-code', {
           method: 'POST',
@@ -257,25 +277,9 @@ export default function ResetPasswordForm() {
         toast.success("Password updated successfully");
         router.push("/en/login");
       } else {
-        // User has an established session - update password directly
-        console.log('Updating password for authenticated user');
-        
-        const { error: updateError } = await supabase.auth.updateUser({
-          password: password
-        });
-
-        if (updateError) {
-          console.error('Password update error:', updateError);
-          throw updateError;
-        }
-
-        console.log('Password updated successfully');
-        toast.success("Password updated successfully");
-        
-        // Sign out after password reset for security
-        await supabase.auth.signOut();
-        
-        router.push("/en/login");
+        // No session and no reset code - this shouldn't happen
+        console.error('No session or reset code available');
+        throw new Error('Unable to reset password - no valid session or reset code');
       }
     } catch (error: any) {
       console.error("Reset password error:", error);

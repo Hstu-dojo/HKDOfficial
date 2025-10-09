@@ -46,64 +46,66 @@ export async function POST(request: NextRequest) {
     const { createServerClient } = await import("@/lib/supabase/server");
     const supabase = createServerClient();
 
-    // Try to use the code as an access token to create a temporary session
+    // Try to use the code/token to get the user
     let userId: string;
     
-    if (code.startsWith('pkce_')) {
-      // For PKCE tokens, we need to exchange them for a session first
-      try {
-        const { data, error } = await supabase.auth.exchangeCodeForSession(code);
+    try {
+      // Create a temporary client with the access token
+      // Even PKCE tokens can be used as Bearer tokens for authentication
+      const tempClient = createClient(
+        process.env.NEXT_PUBLIC_SUPABASE_URL!,
+        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+      );
+      
+      // Set the session using the token
+      // For PKCE tokens, we need to extract them differently
+      let accessToken = code;
+      
+      // If it's a PKCE token from the hash, it's already an access token
+      console.log('Attempting to verify token/code:', code.substring(0, 20) + '...');
+      
+      // Try to get the user using this token as an access token
+      const { data: { user }, error } = await tempClient.auth.getUser(accessToken);
+      
+      if (error || !user) {
+        console.error("Failed to get user from token:", error);
         
-        if (error || !data.user) {
-          console.error("Failed to exchange PKCE code:", error);
-          return NextResponse.json(
-            { error: "Invalid or expired reset code" },
-            { status: 400 }
-          );
-        }
-        
-        userId = data.user.id;
-      } catch (error) {
-        console.error("Exception exchanging PKCE code:", error);
-        return NextResponse.json(
-          { error: "Invalid or expired reset code" },
-          { status: 400 }
-        );
-      }
-    } else {
-      // For regular codes, try to use them as access tokens
-      try {
-        // Create a temporary client with the access token
-        const tempClient = createClient(
+        // If direct token usage failed, try to use it as a session token
+        // by creating a minimal session object
+        const tempClientWithAuth = createClient(
           process.env.NEXT_PUBLIC_SUPABASE_URL!,
           process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
           {
             global: {
               headers: {
-                Authorization: `Bearer ${code}`
+                Authorization: `Bearer ${accessToken}`
               }
             }
           }
         );
         
-        const { data: { user }, error } = await tempClient.auth.getUser();
+        const { data: { user: authUser }, error: authError } = await tempClientWithAuth.auth.getUser();
         
-        if (error || !user) {
-          console.error("Failed to get user from token:", error);
+        if (authError || !authUser) {
+          console.error("Failed to authenticate with token:", authError);
           return NextResponse.json(
             { error: "Invalid or expired reset code" },
             { status: 400 }
           );
         }
         
+        userId = authUser.id;
+      } else {
         userId = user.id;
-      } catch (error) {
-        console.error("Exception getting user from token:", error);
-        return NextResponse.json(
-          { error: "Invalid or expired reset code" },
-          { status: 400 }
-        );
       }
+      
+      console.log('Successfully identified user:', userId);
+    } catch (error) {
+      console.error("Exception getting user from token:", error);
+      return NextResponse.json(
+        { error: "Invalid or expired reset code" },
+        { status: 400 }
+      );
     }
 
     // Update the user's password
