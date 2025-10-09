@@ -39,38 +39,67 @@ export default function ResetPasswordForm() {
           console.log('Valid session found - user can reset password');
           if (mounted) setIsValidToken(true);
         } else {
-          console.log('No session found - checking for recovery tokens in URL hash');
+          console.log('No session found - checking for auth code or recovery tokens');
           
-          // Check if we have recovery token in URL hash (direct Supabase redirect)
-          const hashParams = new URLSearchParams(window.location.hash.substring(1));
-          const accessToken = hashParams.get('access_token');
-          const refreshToken = hashParams.get('refresh_token');
-          const type = hashParams.get('type');
+          // First check for auth code in URL parameters
+          const urlParams = new URLSearchParams(window.location.search);
+          const authCode = urlParams.get('code');
           
-          console.log('Hash params - type:', type, 'access_token exists:', !!accessToken);
-          
-          if (type === 'recovery' && accessToken && refreshToken) {
-            console.log('Recovery tokens found in URL hash - setting session');
+          if (authCode) {
+            console.log('Auth code found in URL, exchanging for session:', authCode);
             
-            // Set the session using the tokens from the URL
-            const { data, error } = await supabase.auth.setSession({
-              access_token: accessToken,
-              refresh_token: refreshToken,
-            });
-            
-            if (error) {
-              console.error('Error setting session:', error);
-              if (mounted) setIsValidToken(false);
-            } else if (data.session) {
-              console.log('Session set successfully from recovery tokens');
-              if (mounted) setIsValidToken(true);
-            } else {
-              console.error('No session created from tokens');
+            try {
+              // Exchange the code for a session
+              const { data, error } = await supabase.auth.exchangeCodeForSession(authCode);
+              
+              if (error) {
+                console.error('Code exchange error:', error);
+                if (mounted) setIsValidToken(false);
+              } else if (data.session) {
+                console.log('Session established successfully from auth code');
+                if (mounted) setIsValidToken(true);
+                // Clear the code from URL to clean up
+                window.history.replaceState({}, '', '/en/reset-password');
+              } else {
+                console.error('No session after code exchange');
+                if (mounted) setIsValidToken(false);
+              }
+            } catch (codeError) {
+              console.error('Exception during code exchange:', codeError);
               if (mounted) setIsValidToken(false);
             }
           } else {
-            console.log('No valid session or recovery tokens - invalid reset link');
-            if (mounted) setIsValidToken(false);
+            // Check if we have recovery token in URL hash (direct Supabase redirect)
+            const hashParams = new URLSearchParams(window.location.hash.substring(1));
+            const accessToken = hashParams.get('access_token');
+            const refreshToken = hashParams.get('refresh_token');
+            const type = hashParams.get('type');
+            
+            console.log('Hash params - type:', type, 'access_token exists:', !!accessToken);
+            
+            if (type === 'recovery' && accessToken && refreshToken) {
+              console.log('Recovery tokens found in URL hash - setting session');
+              
+              // Set the session using the tokens from the URL
+              const { data, error } = await supabase.auth.setSession({
+                access_token: accessToken,
+                refresh_token: refreshToken,
+              });
+              
+              if (error) {
+                console.error('Error setting session:', error);
+                if (mounted) setIsValidToken(false);
+              } else if (data.session) {
+                console.log('Session set successfully from recovery tokens');
+                if (mounted) setIsValidToken(true);
+              } else {
+                console.error('No session created from tokens');
+                if (mounted) setIsValidToken(false);
+              }
+            } else {
+              console.log('No valid session, auth code, or recovery tokens - invalid reset link');
+              if (mounted) setIsValidToken(false);
+            }
           }
         }
 
