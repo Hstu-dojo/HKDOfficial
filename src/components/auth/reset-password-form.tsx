@@ -50,10 +50,26 @@ export default function ResetPasswordForm() {
           
           if (code) {
             console.log('Password reset code found in URL (PKCE flow):', code);
-            console.warn('Supabase is using PKCE flow which is not supported for password recovery.');
-            console.warn('Please configure Supabase to use direct token flow for password recovery.');
-            // For now, show error
-            if (mounted) setIsValidToken(false);
+            
+            // Exchange the code for a session
+            try {
+              const { data, error } = await supabase.auth.exchangeCodeForSession(code);
+              
+              if (error) {
+                console.error('Error exchanging code for session:', error);
+                if (mounted) setIsValidToken(false);
+              } else if (data.session) {
+                console.log('Session created successfully from PKCE code');
+                hasResetCodeRef.current = true;
+                if (mounted) setIsValidToken(true);
+              } else {
+                console.error('No session created from PKCE code');
+                if (mounted) setIsValidToken(false);
+              }
+            } catch (error) {
+              console.error('Exception during code exchange:', error);
+              if (mounted) setIsValidToken(false);
+            }
           } else {
             // Check for hash parameters (legacy/direct flow)
             console.log('Checking URL hash for recovery tokens...');
@@ -76,24 +92,66 @@ export default function ResetPasswordForm() {
               const type = hashParams.get('type');
               
               console.log('Hash params - type:', type, 'access_token exists:', !!accessToken);
+              console.log('Access token value:', accessToken?.substring(0, 20) + '...');
               
-              if (type === 'recovery' && accessToken && refreshToken) {
-                console.log('Recovery tokens found in URL hash - setting session');
-                
-                // Set the session using the tokens from the URL
-                const { data, error } = await supabase.auth.setSession({
-                  access_token: accessToken,
-                  refresh_token: refreshToken,
-                });
-                
-                if (error) {
-                  console.error('Error setting session:', error);
-                  if (mounted) setIsValidToken(false);
-                } else if (data.session) {
-                  console.log('Session set successfully from recovery tokens');
-                  if (mounted) setIsValidToken(true);
+              if (type === 'recovery' && accessToken) {
+                // Check if this is a PKCE token (starts with pkce_)
+                if (accessToken.startsWith('pkce_')) {
+                  console.log('PKCE access token detected in hash');
+                  
+                  try {
+                    // For PKCE access tokens, we can try to set it directly as the session
+                    // First check if there's also a refresh token
+                    if (refreshToken) {
+                      console.log('PKCE token with refresh token - setting session');
+                      const { data, error } = await supabase.auth.setSession({
+                        access_token: accessToken,
+                        refresh_token: refreshToken,
+                      });
+                      
+                      if (error) {
+                        console.error('Error setting PKCE session:', error);
+                        if (mounted) setIsValidToken(false);
+                      } else if (data.session) {
+                        console.log('PKCE session set successfully');
+                        hasResetCodeRef.current = true;
+                        if (mounted) setIsValidToken(true);
+                      } else {
+                        console.error('No session created from PKCE tokens');
+                        if (mounted) setIsValidToken(false);
+                      }
+                    } else {
+                      console.log('PKCE token without refresh token - attempting direct use');
+                      // For PKCE tokens without refresh token, store the code for API use
+                      setResetCode(accessToken);
+                      hasResetCodeRef.current = true;
+                      if (mounted) setIsValidToken(true);
+                    }
+                  } catch (error) {
+                    console.error('Exception during PKCE token processing:', error);
+                    if (mounted) setIsValidToken(false);
+                  }
+                } else if (refreshToken) {
+                  console.log('Recovery tokens found in URL hash - setting session');
+                  
+                  // Set the session using the tokens from the URL
+                  const { data, error } = await supabase.auth.setSession({
+                    access_token: accessToken,
+                    refresh_token: refreshToken,
+                  });
+                  
+                  if (error) {
+                    console.error('Error setting session:', error);
+                    if (mounted) setIsValidToken(false);
+                  } else if (data.session) {
+                    console.log('Session set successfully from recovery tokens');
+                    if (mounted) setIsValidToken(true);
+                  } else {
+                    console.error('No session created from tokens');
+                    if (mounted) setIsValidToken(false);
+                  }
                 } else {
-                  console.error('No session created from tokens');
+                  console.log('Access token without refresh token - invalid reset link');
                   if (mounted) setIsValidToken(false);
                 }
               } else {

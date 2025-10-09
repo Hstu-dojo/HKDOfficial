@@ -46,22 +46,69 @@ export async function POST(request: NextRequest) {
     const { createServerClient } = await import("@/lib/supabase/server");
     const supabase = createServerClient();
 
-    // Try to use the code as a one-time token
-    // This is a workaround since exchangeCodeForSession doesn't work for password recovery
-    const { data: userData, error: userError } = await supabaseAdmin.auth.admin.getUserById(code);
+    // Try to use the code as an access token to create a temporary session
+    let userId: string;
     
-    if (userError) {
-      // Code is not a user ID, try to parse it differently
-      console.error("Failed to get user from code:", userError);
-      return NextResponse.json(
-        { error: "Invalid or expired reset code" },
-        { status: 400 }
-      );
+    if (code.startsWith('pkce_')) {
+      // For PKCE tokens, we need to exchange them for a session first
+      try {
+        const { data, error } = await supabase.auth.exchangeCodeForSession(code);
+        
+        if (error || !data.user) {
+          console.error("Failed to exchange PKCE code:", error);
+          return NextResponse.json(
+            { error: "Invalid or expired reset code" },
+            { status: 400 }
+          );
+        }
+        
+        userId = data.user.id;
+      } catch (error) {
+        console.error("Exception exchanging PKCE code:", error);
+        return NextResponse.json(
+          { error: "Invalid or expired reset code" },
+          { status: 400 }
+        );
+      }
+    } else {
+      // For regular codes, try to use them as access tokens
+      try {
+        // Create a temporary client with the access token
+        const tempClient = createClient(
+          process.env.NEXT_PUBLIC_SUPABASE_URL!,
+          process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+          {
+            global: {
+              headers: {
+                Authorization: `Bearer ${code}`
+              }
+            }
+          }
+        );
+        
+        const { data: { user }, error } = await tempClient.auth.getUser();
+        
+        if (error || !user) {
+          console.error("Failed to get user from token:", error);
+          return NextResponse.json(
+            { error: "Invalid or expired reset code" },
+            { status: 400 }
+          );
+        }
+        
+        userId = user.id;
+      } catch (error) {
+        console.error("Exception getting user from token:", error);
+        return NextResponse.json(
+          { error: "Invalid or expired reset code" },
+          { status: 400 }
+        );
+      }
     }
 
     // Update the user's password
     const { error: updateError } = await supabaseAdmin.auth.admin.updateUserById(
-      userData.user.id,
+      userId,
       { password }
     );
 
