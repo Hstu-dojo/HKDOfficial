@@ -200,11 +200,25 @@ export async function seedRBACData() {
     // Create permissions
     const createdPermissions: Record<string, string> = {};
     
+    const allowedResources = [
+      "USER", "ACCOUNT", "SESSION", "PROVIDER", "ROLE", "PERMISSION",
+      "COURSE", "BLOG", "MEDIA", "CLASS", "EQUIPMENT", "MEMBER", "BILL", "PAYMENT"
+    ] as const;
+
     for (const permData of defaultPermissions) {
+      if (!allowedResources.includes(permData.resource as typeof allowedResources[number])) {
+        console.warn(`Skipping permission with invalid resource: ${permData.name} (${permData.resource})`);
+        continue;
+      }
       const existingPermission = await db.select().from(permission).where(eq(permission.name, permData.name)).limit(1);
       
       if (existingPermission.length === 0) {
-        const permId = await createPermission(permData.name, permData.resource, permData.action, permData.description);
+        const permId = await createPermission(
+          permData.name,
+          permData.resource as typeof allowedResources[number],
+          permData.action,
+          permData.description
+        );
         if (permId) {
           createdPermissions[permData.name] = permId;
           console.log(`Created permission: ${permData.name}`);

@@ -28,9 +28,18 @@ export const POST = protectApiRoute("PERMISSION", "CREATE", async (request, cont
       }, { status: 400 });
     }
     
+    const allowedResources = [
+      "USER", "ACCOUNT", "SESSION", "PROVIDER", "ROLE", "PERMISSION",
+      "COURSE", "BLOG", "MEDIA", "CLASS", "EQUIPMENT", "MEMBER", "BILL", "PAYMENT"
+    ] as const;
+
+    if (!allowedResources.includes(resource)) {
+      return NextResponse.json({ error: "Invalid resource type" }, { status: 400 });
+    }
+
     const permissionId = await createPermission(
       name, 
-      resource as ResourceType, 
+      resource, 
       action as ActionType, 
       description
     );
