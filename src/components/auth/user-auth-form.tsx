@@ -174,8 +174,28 @@ export function UserAuthForm({
           type="button"
           disabled={isLoading}
           onClick={async () => {
-            // TODO: Implement Supabase Google OAuth
-            toast.info("Google sign-in will be implemented with Supabase OAuth");
+            setIsLoading(true);
+            try {
+              const { data, error } = await supabase.auth.signInWithOAuth({
+                provider: 'google',
+                options: {
+                  redirectTo: `${window.location.origin}/auth/callback?next=${callbackUrl || '/en/profile'}`
+                }
+              });
+              
+              if (error) {
+                console.error('Google OAuth Error:', error);
+                toast.error("Failed to sign in with Google");
+                setIsLoading(false);
+              } else {
+                toast.success("Redirecting to Google...");
+                // The redirect will happen automatically
+              }
+            } catch (error) {
+              console.error('Google OAuth Error:', error);
+              toast.error("Failed to sign in with Google");
+              setIsLoading(false);
+            }
           }}
         >
           <FaGoogle className="h-6 w-6" />
@@ -186,8 +206,28 @@ export function UserAuthForm({
           type="button"
           disabled={isLoading}
           onClick={async () => {
-            // TODO: Implement Supabase GitHub OAuth  
-            toast.info("GitHub sign-in will be implemented with Supabase OAuth");
+            setIsLoading(true);
+            try {
+              const { data, error } = await supabase.auth.signInWithOAuth({
+                provider: 'github',
+                options: {
+                  redirectTo: `${window.location.origin}/auth/callback?next=${callbackUrl || '/en/profile'}`
+                }
+              });
+              
+              if (error) {
+                console.error('GitHub OAuth Error:', error);
+                toast.error("Failed to sign in with GitHub");
+                setIsLoading(false);
+              } else {
+                toast.success("Redirecting to GitHub...");
+                // The redirect will happen automatically
+              }
+            } catch (error) {
+              console.error('GitHub OAuth Error:', error);
+              toast.error("Failed to sign in with GitHub");
+              setIsLoading(false);
+            }
           }}
         >
           <FaGithub className="h-6 w-6" />

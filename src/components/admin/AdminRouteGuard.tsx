@@ -1,5 +1,5 @@
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/app/api/auth/[...nextauth]/route";
+import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs';
+import { cookies } from 'next/headers';
 import { redirect } from "next/navigation";
 import { getUserPermissions, hasRole } from "@/lib/rbac/permissions";
 
@@ -17,10 +17,12 @@ export async function AdminRouteGuard({
   requiredRole, 
   requiredPermission 
 }: AdminRouteGuardProps) {
-  const session = await getServerSession(authOptions);
+  const cookieStore = cookies();
+  const supabase = createRouteHandlerClient({ cookies: () => cookieStore });
+  const { data: { session }, error } = await supabase.auth.getSession();
 
   // Redirect if not authenticated
-  if (!session?.user?.id) {
+  if (error || !session?.user?.id) {
     redirect('/login?callbackUrl=/admin');
   }
 

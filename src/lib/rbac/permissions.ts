@@ -152,7 +152,7 @@ export async function createRole(name: string, description?: string): Promise<st
  */
 export async function createPermission(
   name: string,
-  resource: ResourceType,
+  resource: "USER" | "ACCOUNT" | "SESSION" | "PROVIDER" | "ROLE" | "PERMISSION" | "COURSE" | "BLOG" | "MEDIA" | "CLASS" | "EQUIPMENT" | "MEMBER" | "BILL" | "PAYMENT",
   action: ActionType,
   description?: string
 ): Promise<string | null> {

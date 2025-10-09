@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/app/api/auth/[...nextauth]/route";
+import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs';
+import { cookies } from 'next/headers';
 import { hasPermission, hasRole } from "./permissions";
 import type { ResourceType, ActionType, RBACContext } from "./types";
 
@@ -9,8 +9,11 @@ import type { ResourceType, ActionType, RBACContext } from "./types";
  */
 export async function getRBACContext(): Promise<RBACContext | null> {
   try {
-    const session = await getServerSession(authOptions);
-    if (!session?.user?.id) {
+    const cookieStore = cookies();
+    const supabase = createRouteHandlerClient({ cookies: () => cookieStore });
+    const { data: { session }, error } = await supabase.auth.getSession();
+    
+    if (error || !session?.user?.id) {
       return null;
     }
 

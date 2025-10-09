@@ -1,0 +1,104 @@
+# Supabase Email Templates
+
+This document contains all custom email templates for HSTU Karate Dojo's Supabase authentication system. Each template uses a consistent aqua and purple design theme, dojo branding, and is mobile responsive.
+
+---
+
+## 1. Email Confirmation
+
+**Use for:** User signup confirmation
+
+**Supabase Path:** Authentication → Email Templates → "Confirm signup"
+
+```html
+<!-- Confirm Email Template -->
+<h2>Welcome to HSTU Karate Dojo!</h2>
+<p>Thank you for joining. Please confirm your email address to activate your account.</p>
+<p><a href="{{ .ConfirmationURL }}" style="background:linear-gradient(135deg,#06b6d4,#8b5cf6);color:#fff;padding:12px 24px;border-radius:8px;text-decoration:none;font-weight:bold;">Confirm Email</a></p>
+<!-- Use the full HTML template provided earlier for production -->
+```
+
+---
+
+## 2. Invitation Email
+
+**Use for:** Inviting users to join the dojo platform
+
+**Supabase Path:** Authentication → Email Templates → "Invite user"
+
+```html
+<!-- Invitation Template -->
+<h2>You've Been Invited!</h2>
+<p>You have been invited to join <strong>HSTU Karate Dojo</strong> at {{ .SiteURL }}.</p>
+<p><a href="{{ .ConfirmationURL }}" style="background:linear-gradient(135deg,#06b6d4,#8b5cf6);color:#fff;padding:12px 24px;border-radius:8px;text-decoration:none;font-weight:bold;">Accept Invitation</a></p>
+```
+
+---
+
+## 3. Magic Link Login
+
+**Use for:** Passwordless login via magic link
+
+**Supabase Path:** Authentication → Email Templates → "Magic link"
+
+```html
+<!-- Magic Link Template -->
+<h2>Magic Link Login</h2>
+<p>Click below to log in instantly:</p>
+<p><a href="{{ .ConfirmationURL }}" style="background:linear-gradient(135deg,#06b6d4,#8b5cf6);color:#fff;padding:12px 24px;border-radius:8px;text-decoration:none;font-weight:bold;">Log In</a></p>
+```
+
+---
+
+## 4. Confirm Email Change
+
+**Use for:** Confirming change of user email address
+
+**Supabase Path:** Authentication → Email Templates → "Change email"
+
+```html
+<!-- Email Change Template -->
+<h2>Confirm Change of Email</h2>
+<p>Confirm the update of your email from <strong>{{ .Email }}</strong> to <strong>{{ .NewEmail }}</strong>:</p>
+<p><a href="{{ .ConfirmationURL }}" style="background:linear-gradient(135deg,#06b6d4,#8b5cf6);color:#fff;padding:12px 24px;border-radius:8px;text-decoration:none;font-weight:bold;">Change Email</a></p>
+```
+
+---
+
+## 5. Password Reset
+
+**Use for:** User password reset requests
+
+**Supabase Path:** Authentication → Email Templates → "Reset password"
+
+```html
+<!-- Password Reset Template -->
+<h2>Reset Password</h2>
+<p>Click below to reset your password:</p>
+<p><a href="{{ .ConfirmationURL }}" style="background:linear-gradient(135deg,#06b6d4,#8b5cf6);color:#fff;padding:12px 24px;border-radius:8px;text-decoration:none;font-weight:bold;">Reset Password</a></p>
+```
+
+---
+
+## 6. Reauthentication Code
+
+**Use for:** Confirming user identity for sensitive actions
+
+**Supabase Path:** Authentication → Email Templates → "Reauthentication"
+
+```html
+<!-- Reauthentication Code Template -->
+<h2>Confirm Reauthentication</h2>
+<p>Enter the code below in your application:</p>
+<p style="font-size:2em;font-weight:bold;color:#8b5cf6;background:#f0fdf4;padding:12px 24px;border-radius:8px;">{{ .Token }}</p>
+```
+
+---
+
+## Instructions
+
+- Copy the relevant template into Supabase's Email Templates section for each action.
+- Replace the minimal example with the full HTML/CSS template for production use (see previous responses for full code).
+- All templates use Supabase variables like `{{ .ConfirmationURL }}`, `{{ .Email }}`, `{{ .NewEmail }}`, `{{ .SiteURL }}`, and `{{ .Token }}`.
+- For full branding, use the logo URL: `https://avatars.githubusercontent.com/u/160392953?v=4` and update contact info as needed.
+- For advanced customization, use the full HTML templates provided in earlier responses.
