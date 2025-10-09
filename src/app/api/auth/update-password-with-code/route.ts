@@ -43,8 +43,8 @@ export async function POST(request: NextRequest) {
     // The code is the user's temporary access token
     // We need to verify it and get the user ID
     // For now, let's try a different approach using the regular client
-    const { createClient: createSupabaseClient } = await import("@/lib/supabase/server");
-    const supabase = createSupabaseClient();
+    const { createServerClient } = await import("@/lib/supabase/server");
+    const supabase = createServerClient();
 
     // Try to use the code as a one-time token
     // This is a workaround since exchangeCodeForSession doesn't work for password recovery
