@@ -19,53 +19,52 @@ export default function ResetPasswordForm() {
   const supabase = createClient();
 
   useEffect(() => {
-    // Handle the reset token from URL fragments (Supabase sends tokens as #access_token=...)
-    const handleAuthState = async () => {
+    const initializeAuth = async () => {
       try {
-        // First, try to get the session
-        const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+        // Get the code from URL parameters (Supabase sends ?code= for password recovery)
+        const code = searchParams ? searchParams.get('code') : null;
         
-        if (sessionError) {
-          console.error("Session error:", sessionError);
-        }
-
-        // Listen for auth state changes (this handles the token from URL)
-        const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
-          console.log('Auth state change:', event, session);
+        if (code) {
+          // Exchange the code for a session
+          console.log('Exchanging code for session:', code);
+          const { data, error } = await supabase.auth.exchangeCodeForSession(code);
           
-          if (event === 'PASSWORD_RECOVERY' || (event === 'SIGNED_IN' && session)) {
-            // Valid password recovery session
+          if (error) {
+            console.error('Code exchange error:', error);
+            setIsValidToken(false);
+            return;
+          }
+          
+          if (data.session) {
+            console.log('Session established successfully');
             setIsValidToken(true);
-          } else if (event === 'SIGNED_OUT' || !session) {
-            // No valid session
+          } else {
+            console.error('No session after code exchange');
             setIsValidToken(false);
           }
-        });
-
-        // If we already have a session, check if it's valid
-        if (session) {
-          setIsValidToken(true);
         } else {
-          // Try to recover session from URL
-          const { error: recoverError } = await supabase.auth.getSession();
-          if (recoverError) {
-            console.error("Recovery error:", recoverError);
+          // No code parameter, check if we already have a session
+          const { data: { session }, error } = await supabase.auth.getSession();
+          
+          if (error) {
+            console.error('Session check error:', error);
+            setIsValidToken(false);
+          } else if (session) {
+            console.log('Existing session found');
+            setIsValidToken(true);
+          } else {
+            console.log('No code and no session - invalid reset link');
             setIsValidToken(false);
           }
         }
-
-        // Cleanup subscription
-        return () => {
-          subscription?.unsubscribe();
-        };
       } catch (error) {
-        console.error("Auth setup error:", error);
+        console.error('Auth initialization error:', error);
         setIsValidToken(false);
       }
     };
 
-    handleAuthState();
-  }, [supabase.auth]);
+    initializeAuth();
+  }, [supabase.auth, searchParams]);
 
   async function onSubmit(event: React.FormEvent) {
     event.preventDefault();
