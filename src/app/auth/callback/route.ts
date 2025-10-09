@@ -26,13 +26,6 @@ export async function GET(request: Request) {
       if (!error && data.user) {
         const supabaseUser = data.user
         
-        // Check if this is a password reset flow
-        const nextParam = requestUrl.searchParams.get('next')
-        if (nextParam && nextParam.includes('reset-password')) {
-          // This is a password reset session - redirect to reset password page
-          return NextResponse.redirect(new URL('/en/reset-password', requestUrl.origin))
-        }
-        
         // Check if user exists in local database
         try {
           const existingUser = await db

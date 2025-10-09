@@ -19,21 +19,52 @@ export default function ResetPasswordForm() {
   const supabase = createClient();
 
   useEffect(() => {
-    // Check if we have a valid session from the reset link
-    const checkSession = async () => {
-      const { data: { session }, error } = await supabase.auth.getSession();
-      
-      if (error) {
-        console.error("Session error:", error);
-        setIsValidToken(false);
-        return;
-      }
+    // Handle the reset token from URL fragments (Supabase sends tokens as #access_token=...)
+    const handleAuthState = async () => {
+      try {
+        // First, try to get the session
+        const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+        
+        if (sessionError) {
+          console.error("Session error:", sessionError);
+        }
 
-      // If we have a session, the reset token is valid
-      setIsValidToken(!!session);
+        // Listen for auth state changes (this handles the token from URL)
+        const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
+          console.log('Auth state change:', event, session);
+          
+          if (event === 'PASSWORD_RECOVERY' || (event === 'SIGNED_IN' && session)) {
+            // Valid password recovery session
+            setIsValidToken(true);
+          } else if (event === 'SIGNED_OUT' || !session) {
+            // No valid session
+            setIsValidToken(false);
+          }
+        });
+
+        // If we already have a session, check if it's valid
+        if (session) {
+          setIsValidToken(true);
+        } else {
+          // Try to recover session from URL
+          const { error: recoverError } = await supabase.auth.getSession();
+          if (recoverError) {
+            console.error("Recovery error:", recoverError);
+            setIsValidToken(false);
+          }
+        }
+
+        // Cleanup subscription
+        return () => {
+          subscription?.unsubscribe();
+        };
+      } catch (error) {
+        console.error("Auth setup error:", error);
+        setIsValidToken(false);
+      }
     };
 
-    checkSession();
+    handleAuthState();
   }, [supabase.auth]);
 
   async function onSubmit(event: React.FormEvent) {
