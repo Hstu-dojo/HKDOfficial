@@ -23,57 +23,74 @@ export default function ResetPasswordForm() {
 
     const initializeAuth = async () => {
       try {
-        // First, set up auth state listener for password recovery events
+        console.log('Initializing password reset form...');
+        console.log('Current URL:', window.location.href);
+        console.log('Hash params:', window.location.hash);
+        
+        // Check if we have recovery token in URL hash
+        const hashParams = new URLSearchParams(window.location.hash.substring(1));
+        const accessToken = hashParams.get('access_token');
+        const refreshToken = hashParams.get('refresh_token');
+        const type = hashParams.get('type');
+        const isRecoveryType = type === 'recovery';
+        
+        console.log('Hash params - type:', type, 'access_token exists:', !!accessToken);
+        
+        if (isRecoveryType && accessToken && refreshToken) {
+          console.log('Recovery tokens found in URL hash - setting session');
+          
+          // Set the session using the tokens from the URL
+          const { data, error } = await supabase.auth.setSession({
+            access_token: accessToken,
+            refresh_token: refreshToken,
+          });
+          
+          if (error) {
+            console.error('Error setting session:', error);
+            if (mounted) setIsValidToken(false);
+          } else if (data.session) {
+            console.log('Session set successfully from recovery tokens');
+            if (mounted) setIsValidToken(true);
+          } else {
+            console.error('No session created from tokens');
+            if (mounted) setIsValidToken(false);
+          }
+        }
+
+        // Set up auth state listener (always do this to handle state changes)
         const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
           console.log('Auth state change event:', event);
-          console.log('Session:', session);
+          console.log('Session exists:', !!session);
           
           if (!mounted) return;
           
-          if (event === 'PASSWORD_RECOVERY') {
+          if (event === 'PASSWORD_RECOVERY' && session) {
             console.log('Password recovery event detected');
             setIsValidToken(true);
           } else if (event === 'SIGNED_IN' && session) {
-            console.log('User signed in during recovery flow');
+            console.log('User signed in with recovery session');
             setIsValidToken(true);
-          } else if (event === 'SIGNED_OUT') {
-            console.log('User signed out');
+          } else if (event === 'INITIAL_SESSION' && session) {
+            console.log('Initial session found');
+            setIsValidToken(true);
+          } else if (!session) {
+            console.log('No session - invalid link');
             setIsValidToken(false);
           }
         });
 
-        // Get the code from URL parameters
-        const code = searchParams ? searchParams.get('code') : null;
-        
-        if (code) {
-          console.log('Found auth code in URL:', code);
-          
-          // Exchange the code for a session
-          const { data, error } = await supabase.auth.exchangeCodeForSession(code);
-          
-          if (error) {
-            console.error('Code exchange error:', error);
-            if (mounted) setIsValidToken(false);
-            return;
-          }
-          
-          console.log('Code exchange successful:', data);
-          
-          // The auth state change listener will handle setting isValidToken
-        } else {
-          console.log('No auth code found, checking existing session');
-          
-          // Check if we already have a valid session
+        // If no recovery tokens were found in hash, check current session
+        if (!isRecoveryType) {
           const { data: { session }, error } = await supabase.auth.getSession();
           
           if (error) {
             console.error('Session check error:', error);
             if (mounted) setIsValidToken(false);
           } else if (session) {
-            console.log('Existing session found:', session);
+            console.log('Existing session found');
             if (mounted) setIsValidToken(true);
           } else {
-            console.log('No session found - invalid reset link');
+            console.log('No session and no recovery tokens - invalid link');
             if (mounted) setIsValidToken(false);
           }
         }
@@ -94,7 +111,7 @@ export default function ResetPasswordForm() {
       mounted = false;
       cleanup?.then(cleanupFn => cleanupFn?.());
     };
-  }, [supabase.auth, searchParams]);
+  }, [supabase.auth]);
 
   async function onSubmit(event: React.FormEvent) {
     event.preventDefault();
