@@ -42,31 +42,10 @@ export async function GET(request: Request) {
       return NextResponse.redirect(errorUrl)
     }
 
-    // Update local database with new email
-    if (data.user && data.user.email) {
-      try {
-        // Get the old email from user metadata if available
-        const oldEmail = data.user.user_metadata?.old_email;
-        
-        if (oldEmail) {
-          // Update the email in local database
-          await db
-            .update(user)
-            .set({ 
-              email: data.user.email,
-              emailVerified: true 
-            })
-            .where(eq(user.email, oldEmail))
-        }
-      } catch (dbError) {
-        // Continue even if database sync fails - Supabase email is updated
-        console.error('Failed to sync email to local database:', dbError)
-      }
-    }
-
     // Email change successful - redirect to profile with success message
     const successUrl = new URL('/en/profile', requestUrl.origin)
     successUrl.searchParams.set('message', 'Email updated successfully!')
+    successUrl.searchParams.set('sync_email', 'true') // Flag to trigger client-side sync
     return NextResponse.redirect(successUrl)
   }
 

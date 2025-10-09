@@ -34,15 +34,32 @@ export default function Profile() {
     
     const message = searchParams.get('message');
     const error = searchParams.get('error');
+    const shouldSyncEmail = searchParams.get('sync_email');
     
     if (message) {
       setEmailChangeMessage(message);
+      
+      // If sync_email flag is present, sync the email to local database
+      if (shouldSyncEmail === 'true') {
+        fetch('/api/sync-email', { method: 'POST' })
+          .then(res => res.json())
+          .then(data => {
+            if (data.success) {
+              setEmailChangeMessage(`Email updated successfully to ${data.email}! Please refresh to see changes.`);
+            }
+          })
+          .catch(err => {
+            console.error('Failed to sync email:', err);
+          });
+      }
+      
       // Clear URL params after showing message
       const newUrl = new URL(window.location.href);
       newUrl.searchParams.delete('message');
+      newUrl.searchParams.delete('sync_email');
       window.history.replaceState({}, '', newUrl.toString());
       
-      setTimeout(() => setEmailChangeMessage(""), 5000);
+      setTimeout(() => setEmailChangeMessage(""), 8000);
     }
     
     if (error) {
