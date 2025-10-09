@@ -38,6 +38,7 @@ export default function ResetPasswordForm() {
         
         if (session) {
           console.log('Valid session found - user can reset password');
+          hasResetCodeRef.current = true;
           if (mounted) setIsValidToken(true);
         } else {
           console.log('No session found - checking for auth code or recovery tokens');
@@ -47,30 +48,12 @@ export default function ResetPasswordForm() {
           const authCode = urlParams.get('code');
           
           if (authCode) {
-            console.log('Auth code found in URL, verifying:', authCode);
+            console.log('Auth code found in URL, redirecting to callback to establish session:', authCode);
             
-            try {
-              // Verify the OTP token to check if it's valid
-              const { data: verifyData, error: verifyError } = await supabase.auth.verifyOtp({
-                token_hash: authCode,
-                type: 'recovery',
-              });
-
-              if (verifyError) {
-                console.error('Code verification failed:', verifyError);
-                if (mounted) setIsValidToken(false);
-              } else if (verifyData.session) {
-                console.log('Code verified successfully, session established');
-                hasResetCodeRef.current = true;
-                if (mounted) setIsValidToken(true);
-              } else {
-                console.error('Code verification returned no session');
-                if (mounted) setIsValidToken(false);
-              }
-            } catch (verifyError) {
-              console.error('Exception during code verification:', verifyError);
-              if (mounted) setIsValidToken(false);
-            }
+            // Redirect to auth callback to properly exchange the code for a session
+            // Then callback will redirect back here
+            window.location.href = `/auth/callback?code=${authCode}&next=/en/reset-password`;
+            return;
           } else {
             // Check if we have recovery token in URL hash (direct Supabase redirect)
             const hashParams = new URLSearchParams(window.location.hash.substring(1));
