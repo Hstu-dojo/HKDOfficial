@@ -25,34 +25,51 @@ export default function ResetPasswordForm() {
       try {
         console.log('Initializing password reset form...');
         console.log('Current URL:', window.location.href);
-        console.log('Hash params:', window.location.hash);
         
-        // Check if we have recovery token in URL hash
-        const hashParams = new URLSearchParams(window.location.hash.substring(1));
-        const accessToken = hashParams.get('access_token');
-        const refreshToken = hashParams.get('refresh_token');
-        const type = hashParams.get('type');
-        const isRecoveryType = type === 'recovery';
+        // Check if we already have a valid session (user came from auth callback)
+        const { data: { session }, error } = await supabase.auth.getSession();
         
-        console.log('Hash params - type:', type, 'access_token exists:', !!accessToken);
+        if (error) {
+          console.error('Session check error:', error);
+          if (mounted) setIsValidToken(false);
+          return;
+        }
         
-        if (isRecoveryType && accessToken && refreshToken) {
-          console.log('Recovery tokens found in URL hash - setting session');
+        if (session) {
+          console.log('Valid session found - user can reset password');
+          if (mounted) setIsValidToken(true);
+        } else {
+          console.log('No session found - checking for recovery tokens in URL hash');
           
-          // Set the session using the tokens from the URL
-          const { data, error } = await supabase.auth.setSession({
-            access_token: accessToken,
-            refresh_token: refreshToken,
-          });
+          // Check if we have recovery token in URL hash (direct Supabase redirect)
+          const hashParams = new URLSearchParams(window.location.hash.substring(1));
+          const accessToken = hashParams.get('access_token');
+          const refreshToken = hashParams.get('refresh_token');
+          const type = hashParams.get('type');
           
-          if (error) {
-            console.error('Error setting session:', error);
-            if (mounted) setIsValidToken(false);
-          } else if (data.session) {
-            console.log('Session set successfully from recovery tokens');
-            if (mounted) setIsValidToken(true);
+          console.log('Hash params - type:', type, 'access_token exists:', !!accessToken);
+          
+          if (type === 'recovery' && accessToken && refreshToken) {
+            console.log('Recovery tokens found in URL hash - setting session');
+            
+            // Set the session using the tokens from the URL
+            const { data, error } = await supabase.auth.setSession({
+              access_token: accessToken,
+              refresh_token: refreshToken,
+            });
+            
+            if (error) {
+              console.error('Error setting session:', error);
+              if (mounted) setIsValidToken(false);
+            } else if (data.session) {
+              console.log('Session set successfully from recovery tokens');
+              if (mounted) setIsValidToken(true);
+            } else {
+              console.error('No session created from tokens');
+              if (mounted) setIsValidToken(false);
+            }
           } else {
-            console.error('No session created from tokens');
+            console.log('No valid session or recovery tokens - invalid reset link');
             if (mounted) setIsValidToken(false);
           }
         }
@@ -79,21 +96,7 @@ export default function ResetPasswordForm() {
           }
         });
 
-        // If no recovery tokens were found in hash, check current session
-        if (!isRecoveryType) {
-          const { data: { session }, error } = await supabase.auth.getSession();
-          
-          if (error) {
-            console.error('Session check error:', error);
-            if (mounted) setIsValidToken(false);
-          } else if (session) {
-            console.log('Existing session found');
-            if (mounted) setIsValidToken(true);
-          } else {
-            console.log('No session and no recovery tokens - invalid link');
-            if (mounted) setIsValidToken(false);
-          }
-        }
+
 
         // Cleanup function
         return () => {

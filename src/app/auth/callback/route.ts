@@ -77,8 +77,9 @@ export async function GET(request: Request) {
           // Continue with the flow even if database sync fails
         }
 
-        // Check if this is a password reset flow
-        if (type === 'recovery') {
+        // Check if this is a password reset flow by examining the next parameter
+        if (next === '/en/reset-password') {
+          console.log('Password recovery detected, redirecting to reset password page')
           return NextResponse.redirect(new URL('/en/reset-password', requestUrl.origin))
         }
 
