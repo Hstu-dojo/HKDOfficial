@@ -28,135 +28,17 @@ export default function ResetPasswordForm() {
         console.log('Initializing password reset form...');
         console.log('Current URL:', window.location.href);
         
-        // Check if we already have a valid session (user came from auth callback)
-        const { data: { session }, error } = await supabase.auth.getSession();
-        
-        if (error) {
-          console.error('Session check error:', error);
-          if (mounted) setIsValidToken(false);
-          return;
-        }
+        // Supabase will automatically process the hash and emit PASSWORD_RECOVERY event
+        // We just need to wait for it
+        const { data: { session } } = await supabase.auth.getSession();
         
         if (session) {
-          console.log('Valid session found - user can reset password');
+          console.log('Session found - user authenticated for password reset');
           hasResetCodeRef.current = true;
           if (mounted) setIsValidToken(true);
         } else {
-          console.log('No session found - checking for auth code or recovery tokens');
-          
-          // Check for code parameter (Supabase PKCE flow)
-          const urlParams = new URLSearchParams(window.location.search);
-          const code = urlParams.get('code');
-          
-          if (code) {
-            console.log('Password reset code found in URL (PKCE flow):', code);
-            
-            // Exchange the code for a session
-            try {
-              const { data, error } = await supabase.auth.exchangeCodeForSession(code);
-              
-              if (error) {
-                console.error('Error exchanging code for session:', error);
-                if (mounted) setIsValidToken(false);
-              } else if (data.session) {
-                console.log('Session created successfully from PKCE code');
-                hasResetCodeRef.current = true;
-                if (mounted) setIsValidToken(true);
-              } else {
-                console.error('No session created from PKCE code');
-                if (mounted) setIsValidToken(false);
-              }
-            } catch (error) {
-              console.error('Exception during code exchange:', error);
-              if (mounted) setIsValidToken(false);
-            }
-          } else {
-            // Check for hash parameters (legacy/direct flow)
-            console.log('Checking URL hash for recovery tokens...');
-            
-            // Wait a bit for Supabase client to process hash parameters
-            await new Promise(resolve => setTimeout(resolve, 500));
-            
-            // Check session again after giving Supabase time to process
-            const { data: { session: updatedSession } } = await supabase.auth.getSession();
-            
-            if (updatedSession) {
-              console.log('Session found after hash processing');
-              hasResetCodeRef.current = true;
-              if (mounted) setIsValidToken(true);
-            } else {
-              // Check if we have recovery token in URL hash (direct Supabase redirect)
-              const hashParams = new URLSearchParams(window.location.hash.substring(1));
-              const accessToken = hashParams.get('access_token');
-              const refreshToken = hashParams.get('refresh_token');
-              const type = hashParams.get('type');
-              
-              console.log('Hash params - type:', type, 'access_token exists:', !!accessToken);
-              console.log('Access token value:', accessToken?.substring(0, 20) + '...');
-              
-              if (type === 'recovery' && accessToken) {
-                // Check if this is a PKCE token (starts with pkce_)
-                if (accessToken.startsWith('pkce_')) {
-                  console.log('PKCE access token detected in hash');
-                  console.warn('PKCE flow detected - Supabase client should auto-process this');
-                  
-                  // For PKCE tokens, Supabase client library should automatically process them
-                  // Let's give it more time and check multiple times
-                  let attempts = 0;
-                  const maxAttempts = 5;
-                  
-                  while (attempts < maxAttempts && mounted) {
-                    await new Promise(resolve => setTimeout(resolve, 500));
-                    
-                    const { data: { session: checkSession } } = await supabase.auth.getSession();
-                    
-                    if (checkSession) {
-                      console.log(`Session found after ${attempts + 1} attempts`);
-                      hasResetCodeRef.current = true;
-                      if (mounted) setIsValidToken(true);
-                      break;
-                    }
-                    
-                    attempts++;
-                    console.log(`Waiting for session creation, attempt ${attempts}/${maxAttempts}`);
-                  }
-                  
-                  if (attempts >= maxAttempts) {
-                    console.error('Session was not created after multiple attempts');
-                    console.log('Storing PKCE token for API fallback');
-                    setResetCode(accessToken);
-                    hasResetCodeRef.current = true;
-                    if (mounted) setIsValidToken(true);
-                  }
-                } else if (refreshToken) {
-                  console.log('Recovery tokens found in URL hash - setting session');
-                  
-                  // Set the session using the tokens from the URL
-                  const { data, error } = await supabase.auth.setSession({
-                    access_token: accessToken,
-                    refresh_token: refreshToken,
-                  });
-                  
-                  if (error) {
-                    console.error('Error setting session:', error);
-                    if (mounted) setIsValidToken(false);
-                  } else if (data.session) {
-                    console.log('Session set successfully from recovery tokens');
-                    if (mounted) setIsValidToken(true);
-                  } else {
-                    console.error('No session created from tokens');
-                    if (mounted) setIsValidToken(false);
-                  }
-                } else {
-                  console.log('Access token without refresh token - invalid reset link');
-                  if (mounted) setIsValidToken(false);
-                }
-              } else {
-                console.log('No valid session, auth code, or recovery tokens - invalid reset link');
-                if (mounted) setIsValidToken(false);
-              }
-            }
-          }
+          console.log('No session yet - waiting for Supabase to process recovery link');
+          // The onAuthStateChange listener will handle the PASSWORD_RECOVERY event
         }
 
         // Set up auth state listener (always do this to handle state changes)
@@ -166,17 +48,21 @@ export default function ResetPasswordForm() {
           
           if (!mounted) return;
           
+          // PASSWORD_RECOVERY is the KEY event for password reset
+          if (event === 'PASSWORD_RECOVERY') {
+            console.log('PASSWORD_RECOVERY event detected - this is the official password reset flow');
+            hasResetCodeRef.current = true;
+            if (mounted) setIsValidToken(true);
+            return;
+          }
+          
           // Don't override isValidToken if we already detected a reset code
           if (hasResetCodeRef.current) {
             console.log('Reset code already detected, ignoring auth state change');
             return;
           }
           
-          if (event === 'PASSWORD_RECOVERY') {
-            console.log('PASSWORD_RECOVERY event detected - valid reset session');
-            hasResetCodeRef.current = true;
-            setIsValidToken(true);
-          } else if (event === 'SIGNED_IN' && session) {
+          if (event === 'SIGNED_IN' && session) {
             console.log('User signed in with recovery session');
             hasResetCodeRef.current = true;
             setIsValidToken(true);
