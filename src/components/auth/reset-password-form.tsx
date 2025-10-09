@@ -13,6 +13,7 @@ export default function ResetPasswordForm() {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [isValidToken, setIsValidToken] = useState<boolean | null>(null);
+  const [resetCode, setResetCode] = useState<string | null>(null);
   const hasResetCodeRef = useRef(false);
   
   const router = useRouter();
@@ -43,50 +44,62 @@ export default function ResetPasswordForm() {
         } else {
           console.log('No session found - checking for auth code or recovery tokens');
           
-          // Supabase password recovery sends tokens in URL hash, not query params
-          console.log('Checking URL hash for recovery tokens...');
+          // Check for code parameter (Supabase PKCE flow)
+          const urlParams = new URLSearchParams(window.location.search);
+          const code = urlParams.get('code');
           
-          // Wait a bit for Supabase client to process hash parameters
-          await new Promise(resolve => setTimeout(resolve, 500));
-          
-          // Check session again after giving Supabase time to process
-          const { data: { session: updatedSession } } = await supabase.auth.getSession();
-          
-          if (updatedSession) {
-            console.log('Session found after hash processing');
-            hasResetCodeRef.current = true;
-            if (mounted) setIsValidToken(true);
+          if (code) {
+            console.log('Password reset code found in URL (PKCE flow):', code);
+            console.warn('Supabase is using PKCE flow which is not supported for password recovery.');
+            console.warn('Please configure Supabase to use direct token flow for password recovery.');
+            // For now, show error
+            if (mounted) setIsValidToken(false);
           } else {
-            // Check if we have recovery token in URL hash (direct Supabase redirect)
-            const hashParams = new URLSearchParams(window.location.hash.substring(1));
-            const accessToken = hashParams.get('access_token');
-            const refreshToken = hashParams.get('refresh_token');
-            const type = hashParams.get('type');
+            // Check for hash parameters (legacy/direct flow)
+            console.log('Checking URL hash for recovery tokens...');
             
-            console.log('Hash params - type:', type, 'access_token exists:', !!accessToken);
+            // Wait a bit for Supabase client to process hash parameters
+            await new Promise(resolve => setTimeout(resolve, 500));
             
-            if (type === 'recovery' && accessToken && refreshToken) {
-              console.log('Recovery tokens found in URL hash - setting session');
+            // Check session again after giving Supabase time to process
+            const { data: { session: updatedSession } } = await supabase.auth.getSession();
+            
+            if (updatedSession) {
+              console.log('Session found after hash processing');
+              hasResetCodeRef.current = true;
+              if (mounted) setIsValidToken(true);
+            } else {
+              // Check if we have recovery token in URL hash (direct Supabase redirect)
+              const hashParams = new URLSearchParams(window.location.hash.substring(1));
+              const accessToken = hashParams.get('access_token');
+              const refreshToken = hashParams.get('refresh_token');
+              const type = hashParams.get('type');
               
-              // Set the session using the tokens from the URL
-              const { data, error } = await supabase.auth.setSession({
-                access_token: accessToken,
-                refresh_token: refreshToken,
-              });
+              console.log('Hash params - type:', type, 'access_token exists:', !!accessToken);
               
-              if (error) {
-                console.error('Error setting session:', error);
-                if (mounted) setIsValidToken(false);
-              } else if (data.session) {
-                console.log('Session set successfully from recovery tokens');
-                if (mounted) setIsValidToken(true);
+              if (type === 'recovery' && accessToken && refreshToken) {
+                console.log('Recovery tokens found in URL hash - setting session');
+                
+                // Set the session using the tokens from the URL
+                const { data, error } = await supabase.auth.setSession({
+                  access_token: accessToken,
+                  refresh_token: refreshToken,
+                });
+                
+                if (error) {
+                  console.error('Error setting session:', error);
+                  if (mounted) setIsValidToken(false);
+                } else if (data.session) {
+                  console.log('Session set successfully from recovery tokens');
+                  if (mounted) setIsValidToken(true);
+                } else {
+                  console.error('No session created from tokens');
+                  if (mounted) setIsValidToken(false);
+                }
               } else {
-                console.error('No session created from tokens');
+                console.log('No valid session, auth code, or recovery tokens - invalid reset link');
                 if (mounted) setIsValidToken(false);
               }
-            } else {
-              console.log('No valid session, auth code, or recovery tokens - invalid reset link');
-              if (mounted) setIsValidToken(false);
             }
           }
         }
@@ -162,26 +175,50 @@ export default function ResetPasswordForm() {
     setIsLoading(true);
 
     try {
-      // The code has already been verified and session established during initialization
-      // Just update the password now
-      console.log('Updating password for authenticated user');
-      
-      const { error: updateError } = await supabase.auth.updateUser({
-        password: password
-      });
+      if (resetCode) {
+        // We have a reset code from URL - use API endpoint to handle it
+        console.log('Resetting password using code');
+        
+        const response = await fetch('/api/auth/update-password-with-code', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            code: resetCode,
+            password: password,
+          }),
+        });
 
-      if (updateError) {
-        console.error('Password update error:', updateError);
-        throw updateError;
+        const result = await response.json();
+
+        if (!response.ok) {
+          throw new Error(result.error || 'Failed to reset password');
+        }
+
+        toast.success("Password updated successfully");
+        router.push("/en/login");
+      } else {
+        // User has an established session - update password directly
+        console.log('Updating password for authenticated user');
+        
+        const { error: updateError } = await supabase.auth.updateUser({
+          password: password
+        });
+
+        if (updateError) {
+          console.error('Password update error:', updateError);
+          throw updateError;
+        }
+
+        console.log('Password updated successfully');
+        toast.success("Password updated successfully");
+        
+        // Sign out after password reset for security
+        await supabase.auth.signOut();
+        
+        router.push("/en/login");
       }
-
-      console.log('Password updated successfully');
-      toast.success("Password updated successfully");
-      
-      // Sign out after password reset for security
-      await supabase.auth.signOut();
-      
-      router.push("/en/login");
     } catch (error: any) {
       console.error("Reset password error:", error);
       toast.error(error.message || "Failed to update password");

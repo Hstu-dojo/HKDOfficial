@@ -20,8 +20,17 @@ export async function GET(request: Request) {
     const cookieStore = cookies()
     const supabase = createRouteHandlerClient({ cookies: () => cookieStore })
     
+    // Check if this is a password recovery request
+    const isPasswordRecovery = next === '/en/reset-password'
+    
     try {
       const { data, error } = await supabase.auth.exchangeCodeForSession(code)
+      
+      // If exchange fails with PKCE error and this is password recovery, redirect anyway
+      if (error && isPasswordRecovery && error.message.includes('code verifier')) {
+        console.log('PKCE error on password recovery - redirecting to reset page anyway')
+        return NextResponse.redirect(new URL('/en/reset-password', requestUrl.origin))
+      }
       
       if (!error && data.user) {
         const supabaseUser = data.user
