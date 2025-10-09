@@ -6,13 +6,14 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { User, Mail, Phone, Calendar, Shield, Check, AlertCircle, Loader2 } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 
 export default function Profile() {
   const { user, loading, signOut } = useAuth();
   const router = useRouter();
+  const searchParams = useSearchParams();
 
   // Form states
   const [newEmail, setNewEmail] = useState("");
@@ -26,6 +27,34 @@ export default function Profile() {
   const [profileUpdateMessage, setProfileUpdateMessage] = useState("");
   const [emailChangeError, setEmailChangeError] = useState("");
   const [profileUpdateError, setProfileUpdateError] = useState("");
+
+  // Check for URL parameters (success/error messages from email confirmation)
+  useEffect(() => {
+    if (!searchParams) return;
+    
+    const message = searchParams.get('message');
+    const error = searchParams.get('error');
+    
+    if (message) {
+      setEmailChangeMessage(message);
+      // Clear URL params after showing message
+      const newUrl = new URL(window.location.href);
+      newUrl.searchParams.delete('message');
+      window.history.replaceState({}, '', newUrl.toString());
+      
+      setTimeout(() => setEmailChangeMessage(""), 5000);
+    }
+    
+    if (error) {
+      setEmailChangeError(error);
+      // Clear URL params after showing error
+      const newUrl = new URL(window.location.href);
+      newUrl.searchParams.delete('error');
+      window.history.replaceState({}, '', newUrl.toString());
+      
+      setTimeout(() => setEmailChangeError(""), 5000);
+    }
+  }, [searchParams]);
 
   // Initialize form with current user data
   useEffect(() => {

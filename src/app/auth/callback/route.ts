@@ -29,6 +29,25 @@ export async function GET(request: Request) {
     return NextResponse.redirect(new URL('/en/reset-password', requestUrl.origin))
   }
 
+  // Handle email change confirmation
+  if (token_hash && type === 'email_change') {
+    const { data, error } = await supabase.auth.verifyOtp({
+      token_hash,
+      type: 'email_change',
+    })
+
+    if (error) {
+      const errorUrl = new URL('/en/profile', requestUrl.origin)
+      errorUrl.searchParams.set('error', 'Email change verification failed')
+      return NextResponse.redirect(errorUrl)
+    }
+
+    // Email change successful - redirect to profile with success message
+    const successUrl = new URL('/en/profile', requestUrl.origin)
+    successUrl.searchParams.set('message', 'Email updated successfully!')
+    return NextResponse.redirect(successUrl)
+  }
+
   // Handle regular OAuth or signup confirmation with code
   if (code) {
     try {
