@@ -8,14 +8,38 @@ import { eq } from 'drizzle-orm'
 export async function GET(request: Request) {
   const requestUrl = new URL(request.url)
   const code = requestUrl.searchParams.get('code')
+  const token_hash = requestUrl.searchParams.get('token_hash')
+  const type = requestUrl.searchParams.get('type')
   const next = requestUrl.searchParams.get('next') ?? '/en'
-  const type = requestUrl.searchParams.get('type') // Check if this is a password reset
 
   console.log('Auth callback - URL:', requestUrl.toString())
   console.log('Auth callback - code:', code)
-  console.log('Auth callback - next:', next)
+  console.log('Auth callback - token_hash:', token_hash)
   console.log('Auth callback - type:', type)
+  console.log('Auth callback - next:', next)
 
+  const cookieStore = cookies()
+  const supabase = createRouteHandlerClient({ cookies: () => cookieStore })
+
+  // Handle password recovery with token_hash (PKCE flow for password reset)
+  if (token_hash && type === 'recovery') {
+    console.log('Password recovery with token_hash detected')
+    
+    const { error } = await supabase.auth.verifyOtp({
+      token_hash,
+      type: 'recovery',
+    })
+
+    if (error) {
+      console.error('Error verifying recovery token:', error)
+      return NextResponse.redirect(new URL('/en/auth/auth-code-error', requestUrl.origin))
+    }
+
+    console.log('Recovery token verified successfully, redirecting to reset password page')
+    return NextResponse.redirect(new URL('/en/reset-password', requestUrl.origin))
+  }
+
+  // Handle regular OAuth or signup confirmation with code
   if (code) {
     const cookieStore = cookies()
     const supabase = createRouteHandlerClient({ cookies: () => cookieStore })
