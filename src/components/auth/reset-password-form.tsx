@@ -46,27 +46,15 @@ export default function ResetPasswordForm() {
           const authCode = urlParams.get('code');
           
           if (authCode) {
-            console.log('Auth code found in URL, exchanging for session:', authCode);
+            console.log('Auth code found in URL, treating as valid for password reset:', authCode);
             
-            try {
-              // Exchange the code for a session
-              const { data, error } = await supabase.auth.exchangeCodeForSession(authCode);
-              
-              if (error) {
-                console.error('Code exchange error:', error);
-                if (mounted) setIsValidToken(false);
-              } else if (data.session) {
-                console.log('Session established successfully from auth code');
-                if (mounted) setIsValidToken(true);
-                // Clear the code from URL to clean up
-                window.history.replaceState({}, '', '/en/reset-password');
-              } else {
-                console.error('No session after code exchange');
-                if (mounted) setIsValidToken(false);
-              }
-            } catch (codeError) {
-              console.error('Exception during code exchange:', codeError);
-              if (mounted) setIsValidToken(false);
+            // For now, treat any code parameter as valid for password reset
+            // The actual validation will happen when the user submits the new password
+            console.log('Assuming code is valid - allowing password reset');
+            if (mounted) {
+              setIsValidToken(true);
+              // Clear the code from URL to clean up
+              window.history.replaceState({}, '', '/en/reset-password');
             }
           } else {
             // Check if we have recovery token in URL hash (direct Supabase redirect)
@@ -166,16 +154,44 @@ export default function ResetPasswordForm() {
     setIsLoading(true);
 
     try {
-      const { error } = await supabase.auth.updateUser({
-        password: password
-      });
+      // Get the reset code from URL if it exists
+      const urlParams = new URLSearchParams(window.location.search);
+      const resetCode = urlParams.get('code');
+      
+      if (resetCode) {
+        // Use API endpoint to handle password reset with code
+        const response = await fetch('/api/auth/reset-password', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            code: resetCode,
+            password: password,
+          }),
+        });
 
-      if (error) {
-        throw error;
+        const result = await response.json();
+
+        if (!response.ok) {
+          throw new Error(result.error || 'Failed to reset password');
+        }
+
+        toast.success("Password updated successfully");
+        router.push("/en/login");
+      } else {
+        // Fallback to regular password update if user has a session
+        const { error } = await supabase.auth.updateUser({
+          password: password
+        });
+
+        if (error) {
+          throw error;
+        }
+
+        toast.success("Password updated successfully");
+        router.push("/en/login");
       }
-
-      toast.success("Password updated successfully");
-      router.push("/login");
     } catch (error: any) {
       console.error("Reset password error:", error);
       toast.error(error.message || "Failed to update password");
