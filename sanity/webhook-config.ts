@@ -3,7 +3,7 @@
 
 export const webhookConfig = {
   name: 'Next.js Revalidation Webhook',
-  url: process.env.NEXT_PUBLIC_SITE_URL + '/api/revalidate-sanity',
+  url: process.env.NEXT_PUBLIC_APP_URL + '/api/revalidate-sanity',
   method: 'POST',
   headers: {
     'Content-Type': 'application/json',
@@ -58,7 +58,7 @@ To set up the webhook in Sanity Studio:
 
 Environment Variables needed:
 - SANITY_REVALIDATE_SECRET=your-webhook-secret-key
-- NEXT_PUBLIC_SITE_URL=https://yourdomain.com (your production URL)
+- NEXT_PUBLIC_APP_URL=https://yourdomain.com (your production URL)
 
 For local development, use ngrok or similar to expose your local server:
 - URL: https://your-ngrok-url.ngrok.io/api/revalidate-sanity

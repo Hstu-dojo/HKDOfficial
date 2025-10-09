@@ -11,6 +11,11 @@ export async function GET(request: Request) {
   const next = requestUrl.searchParams.get('next') ?? '/en'
   const type = requestUrl.searchParams.get('type') // Check if this is a password reset
 
+  console.log('Auth callback - URL:', requestUrl.toString())
+  console.log('Auth callback - code:', code)
+  console.log('Auth callback - next:', next)
+  console.log('Auth callback - type:', type)
+
   if (code) {
     const cookieStore = cookies()
     const supabase = createRouteHandlerClient({ cookies: () => cookieStore })
@@ -20,6 +25,13 @@ export async function GET(request: Request) {
       
       if (!error && data.user) {
         const supabaseUser = data.user
+        
+        // Check if this is a password reset flow
+        const nextParam = requestUrl.searchParams.get('next')
+        if (nextParam && nextParam.includes('reset-password')) {
+          // This is a password reset session - redirect to reset password page
+          return NextResponse.redirect(new URL('/en/reset-password', requestUrl.origin))
+        }
         
         // Check if user exists in local database
         try {
