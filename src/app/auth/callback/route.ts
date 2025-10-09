@@ -12,49 +12,27 @@ export async function GET(request: Request) {
   const type = requestUrl.searchParams.get('type')
   const next = requestUrl.searchParams.get('next') ?? '/en'
 
-  console.log('Auth callback - URL:', requestUrl.toString())
-  console.log('Auth callback - code:', code)
-  console.log('Auth callback - token_hash:', token_hash)
-  console.log('Auth callback - type:', type)
-  console.log('Auth callback - next:', next)
-
   const cookieStore = cookies()
   const supabase = createRouteHandlerClient({ cookies: () => cookieStore })
 
   // Handle password recovery with token_hash (PKCE flow for password reset)
   if (token_hash && type === 'recovery') {
-    console.log('Password recovery with token_hash detected')
-    
     const { error } = await supabase.auth.verifyOtp({
       token_hash,
       type: 'recovery',
     })
 
     if (error) {
-      console.error('Error verifying recovery token:', error)
       return NextResponse.redirect(new URL('/en/auth/auth-code-error', requestUrl.origin))
     }
 
-    console.log('Recovery token verified successfully, redirecting to reset password page')
     return NextResponse.redirect(new URL('/en/reset-password', requestUrl.origin))
   }
 
   // Handle regular OAuth or signup confirmation with code
   if (code) {
-    const cookieStore = cookies()
-    const supabase = createRouteHandlerClient({ cookies: () => cookieStore })
-    
-    // Check if this is a password recovery request
-    const isPasswordRecovery = next === '/en/reset-password'
-    
     try {
       const { data, error } = await supabase.auth.exchangeCodeForSession(code)
-      
-      // If exchange fails with PKCE error and this is password recovery, redirect anyway
-      if (error && isPasswordRecovery && error.message.includes('code verifier')) {
-        console.log('PKCE error on password recovery - redirecting to reset page anyway')
-        return NextResponse.redirect(new URL('/en/reset-password', requestUrl.origin))
-      }
       
       if (!error && data.user) {
         const supabaseUser = data.user
@@ -106,21 +84,14 @@ export async function GET(request: Request) {
               .where(eq(user.email, supabaseUser.email!))
           }
         } catch (dbError) {
-          console.error('Database sync error:', dbError)
           // Continue with the flow even if database sync fails
-        }
-
-        // Check if this is a password reset flow by examining the next parameter
-        if (next === '/en/reset-password') {
-          console.log('Password recovery detected, redirecting to reset password page')
-          return NextResponse.redirect(new URL('/en/reset-password', requestUrl.origin))
         }
 
         // Redirect to success page - whether it's a new user or existing user login
         return NextResponse.redirect(new URL(`${next}?verified=true`, requestUrl.origin))
       }
     } catch (exchangeError) {
-      console.error('Code exchange error:', exchangeError)
+      // Handle exchange errors silently
     }
   }
 

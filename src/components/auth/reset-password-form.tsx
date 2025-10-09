@@ -25,53 +25,32 @@ export default function ResetPasswordForm() {
 
     const initializeAuth = async () => {
       try {
-        console.log('Initializing password reset form...');
-        console.log('Current URL:', window.location.href);
-        
-        // Supabase will automatically process the hash and emit PASSWORD_RECOVERY event
-        // We just need to wait for it
         const { data: { session } } = await supabase.auth.getSession();
         
         if (session) {
-          console.log('Session found - user authenticated for password reset');
           hasResetCodeRef.current = true;
           if (mounted) setIsValidToken(true);
-        } else {
-          console.log('No session yet - waiting for Supabase to process recovery link');
-          // The onAuthStateChange listener will handle the PASSWORD_RECOVERY event
         }
 
-        // Set up auth state listener (always do this to handle state changes)
+        // Set up auth state listener to handle PASSWORD_RECOVERY event
         const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
-          console.log('Auth state change event:', event);
-          console.log('Session exists:', !!session);
-          
           if (!mounted) return;
           
-          // PASSWORD_RECOVERY is the KEY event for password reset
+          // PASSWORD_RECOVERY is the key event for password reset
           if (event === 'PASSWORD_RECOVERY') {
-            console.log('PASSWORD_RECOVERY event detected - this is the official password reset flow');
             hasResetCodeRef.current = true;
             if (mounted) setIsValidToken(true);
             return;
           }
           
           // Don't override isValidToken if we already detected a reset code
-          if (hasResetCodeRef.current) {
-            console.log('Reset code already detected, ignoring auth state change');
-            return;
-          }
+          if (hasResetCodeRef.current) return;
           
           if (event === 'SIGNED_IN' && session) {
-            console.log('User signed in with recovery session');
             hasResetCodeRef.current = true;
             setIsValidToken(true);
           } else if (event === 'INITIAL_SESSION' && session) {
-            console.log('Initial session found');
             setIsValidToken(true);
-          } else if (!session && event === 'INITIAL_SESSION') {
-            console.log('No initial session - waiting for recovery tokens');
-            // Don't set to false yet, give Supabase time to process hash
           }
         });
 
@@ -116,23 +95,17 @@ export default function ResetPasswordForm() {
     setIsLoading(true);
 
     try {
-      // First, always check if we have a valid session
       const { data: { session } } = await supabase.auth.getSession();
       
       if (session) {
-        // User has an established session - update password directly using Supabase client
-        console.log('Updating password for authenticated user with active session');
-        
         const { error: updateError } = await supabase.auth.updateUser({
           password: password
         });
 
         if (updateError) {
-          console.error('Password update error:', updateError);
           throw updateError;
         }
 
-        console.log('Password updated successfully via session');
         toast.success("Password updated successfully");
         
         // Sign out after password reset for security
@@ -140,8 +113,6 @@ export default function ResetPasswordForm() {
         
         router.push("/en/login");
       } else if (resetCode) {
-        // No session but we have a reset code - use API endpoint to handle it
-        console.log('No session found, resetting password using code via API');
         
         const response = await fetch('/api/auth/update-password-with-code', {
           method: 'POST',
@@ -163,12 +134,9 @@ export default function ResetPasswordForm() {
         toast.success("Password updated successfully");
         router.push("/en/login");
       } else {
-        // No session and no reset code - this shouldn't happen
-        console.error('No session or reset code available');
         throw new Error('Unable to reset password - no valid session or reset code');
       }
     } catch (error: any) {
-      console.error("Reset password error:", error);
       toast.error(error.message || "Failed to update password");
     } finally {
       setIsLoading(false);

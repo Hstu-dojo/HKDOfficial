@@ -14,13 +14,11 @@ export async function POST(request: NextRequest) {
 
     const supabase = createServerClient();
 
-    // Send password reset email
     const { error } = await supabase.auth.resetPasswordForEmail(email, {
       redirectTo: `${process.env.NEXT_PUBLIC_APP_URL}/auth/callback?next=/en/reset-password`,
     });
 
     if (error) {
-      console.error("Reset password error:", error);
       return NextResponse.json(
         { error: "Failed to send reset email" },
         { status: 400 }
@@ -32,7 +30,6 @@ export async function POST(request: NextRequest) {
     });
 
   } catch (error) {
-    console.error("Forgot password API error:", error);
     return NextResponse.json(
       { error: "Internal server error" },
       { status: 500 }

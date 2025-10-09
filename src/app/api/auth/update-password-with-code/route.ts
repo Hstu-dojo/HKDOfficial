@@ -26,9 +26,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    console.log('Updating password with reset code');
-
-    // Use Supabase Admin client to update password without needing the code exchange
+    // Use Supabase Admin client to update password
     const supabaseAdmin = createClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
       process.env.SUPABASE_SERVICE_ROLE_KEY!,
@@ -57,28 +55,16 @@ export async function POST(request: NextRequest) {
         process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
       );
       
-      // Set the session using the token
-      // For PKCE tokens, we need to extract them differently
-      let accessToken = code;
-      
-      // If it's a PKCE token from the hash, it's already an access token
-      console.log('Attempting to verify token/code:', code.substring(0, 20) + '...');
-      
-      // Try to get the user using this token as an access token
-      const { data: { user }, error } = await tempClient.auth.getUser(accessToken);
+      const { data: { user }, error } = await tempClient.auth.getUser(code);
       
       if (error || !user) {
-        console.error("Failed to get user from token:", error);
-        
-        // If direct token usage failed, try to use it as a session token
-        // by creating a minimal session object
         const tempClientWithAuth = createClient(
           process.env.NEXT_PUBLIC_SUPABASE_URL!,
           process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
           {
             global: {
               headers: {
-                Authorization: `Bearer ${accessToken}`
+                Authorization: `Bearer ${code}`
               }
             }
           }
@@ -87,7 +73,6 @@ export async function POST(request: NextRequest) {
         const { data: { user: authUser }, error: authError } = await tempClientWithAuth.auth.getUser();
         
         if (authError || !authUser) {
-          console.error("Failed to authenticate with token:", authError);
           return NextResponse.json(
             { error: "Invalid or expired reset code" },
             { status: 400 }
@@ -98,10 +83,7 @@ export async function POST(request: NextRequest) {
       } else {
         userId = user.id;
       }
-      
-      console.log('Successfully identified user:', userId);
     } catch (error) {
-      console.error("Exception getting user from token:", error);
       return NextResponse.json(
         { error: "Invalid or expired reset code" },
         { status: 400 }
@@ -115,21 +97,18 @@ export async function POST(request: NextRequest) {
     );
 
     if (updateError) {
-      console.error("Password update error:", updateError);
       return NextResponse.json(
         { error: "Failed to update password" },
         { status: 400 }
       );
     }
 
-    console.log('Password updated successfully');
     return NextResponse.json({
       success: true,
       message: "Password updated successfully",
     });
 
   } catch (error) {
-    console.error("Update password API error:", error);
     return NextResponse.json(
       { error: "Internal server error" },
       { status: 500 }
