@@ -9,6 +9,7 @@ export async function GET(request: Request) {
   const requestUrl = new URL(request.url)
   const code = requestUrl.searchParams.get('code')
   const next = requestUrl.searchParams.get('next') ?? '/en'
+  const type = requestUrl.searchParams.get('type') // Check if this is a password reset
 
   if (code) {
     const cookieStore = cookies()
@@ -69,6 +70,11 @@ export async function GET(request: Request) {
         } catch (dbError) {
           console.error('Database sync error:', dbError)
           // Continue with the flow even if database sync fails
+        }
+
+        // Check if this is a password reset flow
+        if (type === 'recovery') {
+          return NextResponse.redirect(new URL('/en/reset-password', requestUrl.origin))
         }
 
         // Redirect to success page - whether it's a new user or existing user login
