@@ -112,28 +112,43 @@ export async function GET(request: Request) {
   // Handle regular OAuth or signup confirmation with code
   if (code) {
     try {
+      console.log('📝 Exchanging code for session...')
       const { data, error } = await supabase.auth.exchangeCodeForSession(code)
+      
+      if (error) {
+        console.error('❌ Exchange code error:', error)
+        throw error
+      }
       
       if (!error && data.user) {
         const supabaseUser = data.user
         const identities = supabaseUser.identities || []
         
-        console.log('User identities:', identities.map(i => ({ provider: i.provider, id: i.id })))
+        console.log('✅ User authenticated via Supabase')
+        console.log('👤 User ID:', supabaseUser.id)
+        console.log('📧 Email:', supabaseUser.email)
+        console.log('🔑 Identities:', identities.map(i => ({ provider: i.provider, id: i.id })))
         
         // Detect if this is OAuth-only user (no email/password identity)
         const isOAuthOnly = identities.length > 0 && identities.every(i => i.provider !== 'email')
         const oauthIdentity = identities.find(i => i.provider !== 'email')
         
+        console.log('🔍 Is OAuth-only user:', isOAuthOnly)
+        
         // Check if user exists in local database
+        console.log('🔍 Checking if user exists in local database...')
         const existingUser = await db
           .select()
           .from(user)
           .where(eq(user.supabaseUserId, supabaseUser.id))
           .limit(1)
 
+        console.log('📊 Existing user found:', existingUser.length > 0)
+
         // First-time OAuth user without local database record
         if (existingUser.length === 0 && isOAuthOnly && oauthIdentity) {
           console.log('🆕 First-time OAuth user detected:', oauthIdentity.provider)
+          console.log('➡️  Redirecting to password setup page...')
           
           // Prepare user data for password setup page
           const providerData = {
@@ -158,7 +173,7 @@ export async function GET(request: Request) {
         try {
           if (existingUser.length === 0) {
             // Create new user in local database
-            console.log('Creating new user in local DB for Supabase user:', supabaseUser.id);
+            console.log('💾 Creating new user in local DB for Supabase user:', supabaseUser.id);
             
             // Get username and avatar from metadata
             const userName = supabaseUser.user_metadata?.username || 
@@ -178,7 +193,15 @@ export async function GET(request: Request) {
               linkedAt: identity.created_at || new Date().toISOString(),
             }))
             
-            await db.insert(user).values({
+            console.log('📦 User data to insert:', {
+              supabaseUserId: supabaseUser.id,
+              email: supabaseUser.email,
+              userName,
+              hasPassword: identities.some(i => i.provider === 'email'),
+              authProviders: authProviders.length,
+            })
+            
+            const insertResult = await db.insert(user).values({
               supabaseUserId: supabaseUser.id,
               email: supabaseUser.email,
               emailVerified: supabaseUser.email_confirmed_at ? true : false,
@@ -190,10 +213,12 @@ export async function GET(request: Request) {
               authProviders: authProviders as any,
             })
 
-            console.log('✅ User created in local DB with', authProviders.length, 'auth provider(s)');
+            console.log('✅ User created in local DB successfully with', authProviders.length, 'auth provider(s)');
+            console.log('📊 Insert result:', insertResult);
           } else {
             // User already exists - update their providers and info
-            console.log('Updating existing user in local DB with new providers');
+            console.log('🔄 Updating existing user in local DB');
+            console.log('👤 Existing user:', existingUser[0].userName, '(', existingUser[0].email, ')');
             
             // Build updated auth providers array
             const authProviders = identities.map(identity => ({
@@ -203,7 +228,9 @@ export async function GET(request: Request) {
               linkedAt: identity.last_sign_in_at || new Date().toISOString(),
             }))
             
-            await db
+            console.log('📦 Updating with providers:', authProviders.map(p => p.provider))
+            
+            const updateResult = await db
               .update(user)
               .set({ 
                 email: supabaseUser.email,
@@ -217,10 +244,14 @@ export async function GET(request: Request) {
               })
               .where(eq(user.supabaseUserId, supabaseUser.id))
               
-            console.log('✅ User updated with', authProviders.length, 'auth provider(s)');
+            console.log('✅ User updated successfully with', authProviders.length, 'auth provider(s)');
+            console.log('📊 Update result:', updateResult);
           }
-        } catch (dbError) {
-          console.error('Database error during user creation/update:', dbError);
+        } catch (dbError: any) {
+          console.error('❌ DATABASE ERROR during user creation/update:');
+          console.error('Error message:', dbError.message);
+          console.error('Error code:', dbError.code);
+          console.error('Full error:', dbError);
           // Continue with the flow even if database sync fails
         }
 

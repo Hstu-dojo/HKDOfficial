@@ -18,6 +18,7 @@ interface CreateOAuthUserRequest {
  */
 export async function POST(request: NextRequest) {
   try {
+    console.log('🔷 create-oauth-user API called');
     const body: CreateOAuthUserRequest = await request.json();
     const {
       supabaseUserId,
@@ -28,8 +29,11 @@ export async function POST(request: NextRequest) {
       hasPassword
     } = body;
 
+    console.log('📦 Request body:', { supabaseUserId, email, provider, hasPassword, fullName: !!fullName, avatarUrl: !!avatarUrl });
+
     // Validation
     if (!supabaseUserId || !email || !provider) {
+      console.error('❌ Validation failed: Missing required fields');
       return NextResponse.json(
         { error: 'Missing required fields: supabaseUserId, email, provider' },
         { status: 400 }
@@ -37,6 +41,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Check if user already exists
+    console.log('🔍 Checking if user exists in database...');
     const existingUser = await db
       .select()
       .from(user)
@@ -45,13 +50,18 @@ export async function POST(request: NextRequest) {
 
     if (existingUser.length > 0) {
       // User exists - update their auth providers and password status
+      console.log('👤 User already exists, updating...');
       const currentUser = existingUser[0];
       const currentProviders = (currentUser.authProviders as any[]) || [];
+      
+      console.log('📊 Current providers:', currentProviders.map((p: any) => p.provider));
       
       // Check if provider already exists
       const providerExists = currentProviders.some(
         (p: any) => p.provider === provider
       );
+      
+      console.log('🔍 Provider', provider, 'already linked:', providerExists);
       
       // Add provider if not already linked
       const updatedProviders = providerExists
@@ -65,6 +75,8 @@ export async function POST(request: NextRequest) {
             },
           ];
 
+      console.log('📦 Updated providers:', updatedProviders.map((p: any) => p.provider));
+
       await db
         .update(user)
         .set({
@@ -73,6 +85,8 @@ export async function POST(request: NextRequest) {
           updatedAt: new Date(),
         })
         .where(eq(user.supabaseUserId, supabaseUserId));
+
+      console.log('✅ User updated successfully');
 
       return NextResponse.json({
         success: true,
@@ -98,6 +112,14 @@ export async function POST(request: NextRequest) {
     const userName = generateUsername();
     const userAvatar = avatarUrl || '/image/avatar/Milo.svg';
 
+    console.log('💾 Creating new user with data:', {
+      userName,
+      email,
+      hasPassword,
+      provider,
+      emailVerified: true,
+    });
+
     await db.insert(user).values({
       supabaseUserId,
       email,
@@ -115,6 +137,8 @@ export async function POST(request: NextRequest) {
         },
       ] as any,
     });
+
+    console.log('✅ User created successfully');
 
     return NextResponse.json({
       success: true,
