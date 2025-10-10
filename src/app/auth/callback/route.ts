@@ -12,6 +12,8 @@ export async function GET(request: Request) {
   const type = requestUrl.searchParams.get('type')
   const next = requestUrl.searchParams.get('next') ?? '/en'
 
+  console.log('🔍 Callback received:', { code: !!code, token_hash: !!token_hash, type, next })
+
   const cookieStore = cookies()
   const supabase = createRouteHandlerClient({ cookies: () => cookieStore })
 
@@ -27,6 +29,64 @@ export async function GET(request: Request) {
     }
 
     return NextResponse.redirect(new URL('/en/reset-password', requestUrl.origin))
+  }
+
+  // Handle signup confirmation with token_hash (PKCE flow)
+  if (token_hash && type === 'signup') {
+    const { data, error } = await supabase.auth.verifyOtp({
+      token_hash,
+      type: 'email',
+    })
+
+    if (error) {
+      console.error('Signup verification error:', error)
+      return NextResponse.redirect(new URL('/en/auth/auth-code-error', requestUrl.origin))
+    }
+
+    // Verification successful - create user in local database
+    if (data.user) {
+      const supabaseUser = data.user
+      
+      try {
+        // Check if user exists in local database
+        const existingUser = await db
+          .select()
+          .from(user)
+          .where(eq(user.supabaseUserId, supabaseUser.id))
+          .limit(1)
+
+        if (existingUser.length === 0) {
+          // Create new user in local database
+          console.log('Creating new user after email confirmation:', supabaseUser.id);
+          
+          const userName = supabaseUser.user_metadata?.username || 
+                         supabaseUser.user_metadata?.user_name ||
+                         supabaseUser.user_metadata?.full_name || 
+                         supabaseUser.email!.split('@')[0];
+          
+          const userAvatar = supabaseUser.user_metadata?.avatar_url || "/image/avatar/Milo.svg";
+          
+          await db.insert(user).values({
+            supabaseUserId: supabaseUser.id,
+            email: supabaseUser.email,
+            emailVerified: true, // Just confirmed!
+            password: `supabase_${supabaseUser.id}`,
+            userName: userName,
+            userAvatar: userAvatar,
+            defaultRole: "GUEST",
+          })
+
+          console.log('✅ User created in local DB after signup confirmation');
+        }
+      } catch (dbError) {
+        console.error('Database error during signup confirmation:', dbError);
+      }
+    }
+
+    // Redirect to login page with success message
+    const successUrl = new URL('/en/login', requestUrl.origin)
+    successUrl.searchParams.set('verified', 'true')
+    return NextResponse.redirect(successUrl)
   }
 
   // Handle email change confirmation

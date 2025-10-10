@@ -25,6 +25,19 @@ export function UserAuthForm({
   const [isLoading, setIsLoading] = React.useState<boolean>(false);
   const { data: session } = useSession();
   const router = useRouter();
+  
+  // Show success message if redirected after email verification
+  React.useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('verified') === 'true') {
+      toast.success("Email verified successfully! 🎉", {
+        description: "You can now sign in with your credentials.",
+      });
+      // Clean up URL
+      window.history.replaceState({}, '', window.location.pathname);
+    }
+  }, []);
+  
   React.useLayoutEffect(() => {
     if (session?.user?.email) {
       router.push("/");
