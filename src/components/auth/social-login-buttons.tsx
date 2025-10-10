@@ -7,10 +7,10 @@ import { supabase } from "@/lib/supabase/supabase";
 import { toast } from "sonner";
 
 interface SocialLoginButtonsProps {
-  redirectTo?: string;
+  redirectTo?: string; // Final destination AFTER successful auth
 }
 
-export function SocialLoginButtons({ redirectTo = "/auth/callback" }: SocialLoginButtonsProps) {
+export function SocialLoginButtons({ redirectTo = "/en/profile" }: SocialLoginButtonsProps) {
   const [isLoadingGoogle, setIsLoadingGoogle] = useState(false);
   const [isLoadingGithub, setIsLoadingGithub] = useState(false);
 
@@ -20,10 +20,14 @@ export function SocialLoginButtons({ redirectTo = "/auth/callback" }: SocialLogi
       if (provider === 'google') setIsLoadingGoogle(true);
       if (provider === 'github') setIsLoadingGithub(true);
 
+      // IMPORTANT: OAuth must ALWAYS go through /auth/callback first to exchange code
+      // The 'next' parameter tells callback where to redirect after successful auth
+      const callbackUrl = `${window.location.origin}/auth/callback?next=${encodeURIComponent(redirectTo)}`;
+
       const { error } = await supabase.auth.signInWithOAuth({
         provider,
         options: {
-          redirectTo: `${window.location.origin}${redirectTo}`,
+          redirectTo: callbackUrl,
           queryParams: {
             access_type: 'offline',
             prompt: 'consent',
