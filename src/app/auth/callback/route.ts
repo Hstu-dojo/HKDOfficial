@@ -57,53 +57,52 @@ export async function GET(request: Request) {
       if (!error && data.user) {
         const supabaseUser = data.user
         
-        // Check if user exists in local database
+        // Check if user exists in local database by Supabase ID
         try {
           const existingUser = await db
             .select()
             .from(user)
-            .where(eq(user.email, supabaseUser.email!))
+            .where(eq(user.supabaseUserId, supabaseUser.id))
             .limit(1)
 
           if (existingUser.length === 0) {
-            // Create new user in local database for OAuth users
-            // Use a temporary password - user will be prompted to set a real one
-            const tempPassword = `temp_${supabaseUser.id}_${Date.now()}`;
+            // Create new user in local database
+            console.log('Creating new user in local DB for Supabase user:', supabaseUser.id);
+            
+            // Get username and avatar from metadata (set during signup)
+            const userName = supabaseUser.user_metadata?.username || 
+                           supabaseUser.user_metadata?.user_name ||
+                           supabaseUser.user_metadata?.full_name || 
+                           supabaseUser.email!.split('@')[0];
+            
+            const userAvatar = supabaseUser.user_metadata?.avatar_url || "/image/avatar/Milo.svg";
             
             await db.insert(user).values({
-              email: supabaseUser.email!,
-              emailVerified: true,
-              password: tempPassword, // Temporary - user will set their own
-              userName: supabaseUser.user_metadata?.full_name || 
-                        supabaseUser.user_metadata?.user_name || 
-                        supabaseUser.email!.split('@')[0],
-              userAvatar: supabaseUser.user_metadata?.avatar_url || "/image/avatar/Milo.svg",
-              defaultRole: "MEMBER", // Default role for OAuth users
+              supabaseUserId: supabaseUser.id, // Link to Supabase!
+              email: supabaseUser.email, // Optional - for display only
+              emailVerified: supabaseUser.email_confirmed_at ? true : false,
+              password: `supabase_${supabaseUser.id}`, // Placeholder - not used for Supabase auth
+              userName: userName,
+              userAvatar: userAvatar,
+              defaultRole: "GUEST", // Default role - will be upgraded after admin approval
             })
 
-            // Redirect new OAuth users to password setup page
-            const setupUrl = new URL('/en/auth/setup-password', requestUrl.origin);
-            setupUrl.searchParams.set('email', supabaseUser.email!);
-            setupUrl.searchParams.set('provider', supabaseUser.app_metadata?.provider || 'OAuth');
-            setupUrl.searchParams.set('callbackUrl', next);
-            return NextResponse.redirect(setupUrl);
+            console.log('✅ User created in local DB');
           } else {
-            // User already exists - this is a login, not registration
-            // Update verification status and sync profile data from OAuth provider
+            // User already exists - update their info
+            console.log('Updating existing user in local DB');
             await db
               .update(user)
               .set({ 
-                emailVerified: true,
-                // Update avatar if OAuth provides one, otherwise keep existing
+                email: supabaseUser.email, // Update email (optional field)
+                emailVerified: supabaseUser.email_confirmed_at ? true : false,
+                // Update avatar if provided
                 userAvatar: supabaseUser.user_metadata?.avatar_url || existingUser[0].userAvatar,
-                // Update username if OAuth provides a better one, otherwise keep existing
-                userName: supabaseUser.user_metadata?.full_name || 
-                          supabaseUser.user_metadata?.user_name || 
-                          existingUser[0].userName
               })
-              .where(eq(user.email, supabaseUser.email!))
+              .where(eq(user.supabaseUserId, supabaseUser.id))
           }
         } catch (dbError) {
+          console.error('Database error during user creation/update:', dbError);
           // Continue with the flow even if database sync fails
         }
 
@@ -111,6 +110,7 @@ export async function GET(request: Request) {
         return NextResponse.redirect(new URL(`${next}?verified=true`, requestUrl.origin))
       }
     } catch (exchangeError) {
+      console.error('Exchange code error:', exchangeError);
       // Handle exchange errors silently
     }
   }

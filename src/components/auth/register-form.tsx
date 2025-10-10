@@ -58,16 +58,43 @@ export function RegisterForm({ className, ...props }: UserAuthFormProps) {
 
       if (error) {
         console.error('Supabase Auth Error:', error);
-        toast(error.message || "something went wrong", {
-          description: "something went wrong, please try again later",
-          action: {
-            label: "Login",
-            onClick: () => router.push("/en/login"),
-          },
-        });
-      } else if (data.user) {
-        toast("Register Successful 🎉", {
-          description: "Please check your email to verify your account before signing in. Didn't receive the email?",
+        
+        // Handle specific error cases
+        if (error.message.includes('already registered') || error.message.includes('already exists')) {
+          toast.error("Email already exists", {
+            description: "This email is already registered. Please login instead.",
+            action: {
+              label: "Go to Login",
+              onClick: () => router.push("/en/login"),
+            },
+          });
+        } else {
+          toast.error(error.message || "Registration failed", {
+            description: error.message || "Something went wrong, please try again later",
+          });
+        }
+        setIsLoading(false);
+        return;
+      }
+      
+      // Check if user was actually created (not duplicate)
+      if (data.user) {
+        // Check if this is a duplicate signup (Supabase doesn't always return error)
+        if (data.user.identities && data.user.identities.length === 0) {
+          // User already exists but email confirmation is enabled
+          toast.error("Email already exists", {
+            description: "This email is already registered. Please login or reset your password if you forgot it.",
+            action: {
+              label: "Go to Login",
+              onClick: () => router.push("/en/login"),
+            },
+          });
+          setIsLoading(false);
+          return;
+        }
+        
+        toast.success("Registration Successful! 🎉", {
+          description: "Please check your email to verify your account before signing in.",
           action: {
             label: "Resend Email",
             onClick: async () => {
