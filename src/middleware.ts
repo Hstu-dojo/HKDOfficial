@@ -36,12 +36,13 @@ export const config = {
   /*
    * Match all paths except for:
    * 1. /api/ routes
-   * 2. /_next/ (Next.js internals)
-   * 3. /_static (inside /public)
-   * 4. /_vercel (Vercel internals)
-   * 5. Static files (e.g. /favicon.ico, /sitemap.xml, /robots.txt, etc.)
+   * 2. /auth/ routes (Supabase authentication callbacks)
+   * 3. /_next/ (Next.js internals)
+   * 4. /_static (inside /public)
+   * 5. /_vercel (Vercel internals)
+   * 6. Static files (e.g. /favicon.ico, /sitemap.xml, /robots.txt, etc.)
    */
   matcher: [
-    "/((?!api|static|.*\\..*|_next|favicon.ico|sitemap.xml|robots.txt).*)",
+    "/((?!api|auth|static|.*\\..*|_next|favicon.ico|sitemap.xml|robots.txt).*)",
   ],
 };
