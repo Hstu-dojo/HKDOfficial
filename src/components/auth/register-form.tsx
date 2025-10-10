@@ -43,6 +43,24 @@ export function RegisterForm({ className, ...props }: UserAuthFormProps) {
     }
     // console.log(email, password, userName, userAvatar);
     try {
+      // Check if username already exists in local database
+      const checkUsernameResponse = await fetch('/api/auth/check-username', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ userName })
+      });
+      
+      if (checkUsernameResponse.ok) {
+        const checkResult = await checkUsernameResponse.json();
+        if (checkResult.exists) {
+          toast.error("Username already taken", {
+            description: "This username is already registered. Please choose a different username.",
+          });
+          setIsLoading(false);
+          return;
+        }
+      }
+      
       // Use Supabase client directly instead of API route
       const { data, error } = await supabase.auth.signUp({
         email,
@@ -77,21 +95,15 @@ export function RegisterForm({ className, ...props }: UserAuthFormProps) {
         return;
       }
       
-      // Check if user was actually created (not duplicate)
+      // Registration initiated successfully
       if (data.user) {
-        // Check if this is a duplicate signup (Supabase doesn't always return error)
-        if (data.user.identities && data.user.identities.length === 0) {
-          // User already exists but email confirmation is enabled
-          toast.error("Email already exists", {
-            description: "This email is already registered. Please login or reset your password if you forgot it.",
-            action: {
-              label: "Go to Login",
-              onClick: () => router.push("/en/login"),
-            },
-          });
-          setIsLoading(false);
-          return;
-        }
+        // Log for debugging
+        console.log('Signup response:', { 
+          userId: data.user.id,
+          email: data.user.email,
+          hasIdentities: data.user.identities && data.user.identities.length > 0,
+          hasSession: !!data.session
+        });
         
         toast.success("Registration Successful! 🎉", {
           description: "Please check your email to verify your account before signing in.",
