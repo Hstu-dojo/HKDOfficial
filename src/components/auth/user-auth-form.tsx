@@ -9,7 +9,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { useSession } from "@/hooks/useSessionCompat";
-import { supabase } from "@/lib/supabase/supabase";
+import { createClient } from "@/lib/supabase/client";
 import { SocialLoginButtons } from "@/components/auth/social-login-buttons";
 export interface UserAuthFormProps
   extends React.HTMLAttributes<HTMLDivElement> {
@@ -54,6 +54,7 @@ export function UserAuthForm({
 
     try {
       // Use Supabase client directly instead of API route
+      const supabase = createClient();
       const { data, error } = await supabase.auth.signInWithPassword({
         email,
         password,

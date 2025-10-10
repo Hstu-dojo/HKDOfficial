@@ -10,7 +10,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 interface UserAuthFormProps extends React.HTMLAttributes<HTMLDivElement> {}
 import { toast } from "sonner";
-import { supabase } from "@/lib/supabase/supabase";
+import { createClient } from "@/lib/supabase/client";
 import avatarsData from "@/db/avatars.json";
 import {
   Select,
@@ -77,6 +77,7 @@ export function RegisterForm({ className, ...props }: UserAuthFormProps) {
       }
       
       // Use Supabase client directly instead of API route
+      const supabase = createClient();
       const { data, error } = await supabase.auth.signUp({
         email,
         password,

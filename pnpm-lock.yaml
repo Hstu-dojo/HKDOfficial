@@ -314,9 +314,6 @@ importers:
       styled-components:
         specifier: ^6.1.19
         version: 6.1.19(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      supabase:
-        specifier: link:@/lib/supabase/supabase
-        version: link:@/lib/supabase/supabase
       swiper:
         specifier: ^10.3.1
         version: 10.3.1
