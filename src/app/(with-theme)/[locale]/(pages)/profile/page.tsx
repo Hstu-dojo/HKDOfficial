@@ -151,6 +151,14 @@ export default function Profile() {
       }
 
       try {
+        // First, try to get fresh user data from Supabase
+        const { data: userData, error: userError } = await supabase.auth.getUser();
+        
+        if (userError) {
+          console.error('Error fetching user:', userError);
+        }
+
+        // Then get identities
         const { data, error } = await supabase.auth.getUserIdentities();
         
         if (error) {
@@ -165,8 +173,8 @@ export default function Profile() {
         ) || false;
         
         setHasPassword(hasEmailIdentity);
-        console.log('User identities:', data?.identities);
-        console.log('Has password:', hasEmailIdentity);
+        console.log('User identities:', data?.identities?.map(i => ({ provider: i.provider, id: i.id })));
+        console.log('Has password (email identity):', hasEmailIdentity);
       } catch (err) {
         console.error('Error checking identities:', err);
       } finally {
@@ -307,7 +315,11 @@ export default function Profile() {
       }
 
       // For users with existing password, verify current password first
-      if (hasPassword && currentPassword) {
+      if (hasPassword) {
+        if (!currentPassword) {
+          throw new Error("Please enter your current password");
+        }
+
         // Try to sign in with current password to verify it
         const { error: verifyError } = await supabase.auth.signInWithPassword({
           email: user.email!,
@@ -357,7 +369,12 @@ export default function Profile() {
       setCurrentPassword("");
       setNewPassword("");
       setConfirmPassword("");
-      setHasPassword(true);
+      
+      // Update hasPassword state after successful password set
+      // This will trigger the UI to show "Change Password" mode next time
+      if (!hasPassword) {
+        setHasPassword(true);
+      }
       
       setTimeout(() => setPasswordChangeMessage(""), 5000);
     } catch (error: any) {
