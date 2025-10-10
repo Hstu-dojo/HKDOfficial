@@ -19,14 +19,24 @@ export default function Profile() {
   const [newEmail, setNewEmail] = useState("");
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
+  const [currentPassword, setCurrentPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   
   // UI states
   const [isEmailChanging, setIsEmailChanging] = useState(false);
   const [isProfileUpdating, setIsProfileUpdating] = useState(false);
+  const [isPasswordChanging, setIsPasswordChanging] = useState(false);
   const [emailChangeMessage, setEmailChangeMessage] = useState("");
   const [profileUpdateMessage, setProfileUpdateMessage] = useState("");
+  const [passwordChangeMessage, setPasswordChangeMessage] = useState("");
   const [emailChangeError, setEmailChangeError] = useState("");
   const [profileUpdateError, setProfileUpdateError] = useState("");
+  const [passwordChangeError, setPasswordChangeError] = useState("");
+  
+  // Check if user has password (from identities)
+  const [hasPassword, setHasPassword] = useState(false);
+  const [isCheckingPassword, setIsCheckingPassword] = useState(true);
 
   // Check for URL parameters (success/error messages from email confirmation)
   useEffect(() => {
@@ -130,6 +140,41 @@ export default function Profile() {
       setName(user.user_metadata?.name || "");
       setPhone(user.phone || "");
     }
+  }, [user]);
+
+  // Check if user has a password by looking at their identities
+  useEffect(() => {
+    const checkUserIdentities = async () => {
+      if (!user) {
+        setIsCheckingPassword(false);
+        return;
+      }
+
+      try {
+        const { data, error } = await supabase.auth.getUserIdentities();
+        
+        if (error) {
+          console.error('Error fetching identities:', error);
+          setIsCheckingPassword(false);
+          return;
+        }
+
+        // User has password if they have an 'email' identity
+        const hasEmailIdentity = data?.identities?.some(
+          (identity) => identity.provider === 'email'
+        ) || false;
+        
+        setHasPassword(hasEmailIdentity);
+        console.log('User identities:', data?.identities);
+        console.log('Has password:', hasEmailIdentity);
+      } catch (err) {
+        console.error('Error checking identities:', err);
+      } finally {
+        setIsCheckingPassword(false);
+      }
+    };
+
+    checkUserIdentities();
   }, [user]);
 
   // Listen for auth state changes
@@ -242,6 +287,83 @@ export default function Profile() {
       setProfileUpdateError(error.message || "Failed to update profile");
     } finally {
       setIsProfileUpdating(false);
+    }
+  };
+
+  const handlePasswordChange = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsPasswordChanging(true);
+    setPasswordChangeError("");
+    setPasswordChangeMessage("");
+
+    try {
+      // Validation
+      if (newPassword.length < 6) {
+        throw new Error("Password must be at least 6 characters long");
+      }
+
+      if (newPassword !== confirmPassword) {
+        throw new Error("Passwords do not match");
+      }
+
+      // For users with existing password, verify current password first
+      if (hasPassword && currentPassword) {
+        // Try to sign in with current password to verify it
+        const { error: verifyError } = await supabase.auth.signInWithPassword({
+          email: user.email!,
+          password: currentPassword,
+        });
+
+        if (verifyError) {
+          throw new Error("Current password is incorrect");
+        }
+      }
+
+      // Update password
+      const { error } = await supabase.auth.updateUser({
+        password: newPassword
+      });
+
+      if (error) throw error;
+
+      // Update local database to reflect user now has password
+      if (!hasPassword) {
+        try {
+          const response = await fetch('/api/auth/update-password-status', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ 
+              supabaseUserId: user.id,
+              hasPassword: true 
+            }),
+          });
+
+          if (!response.ok) {
+            console.error('Failed to update password status in database');
+          }
+        } catch (dbError) {
+          console.error('Error updating database:', dbError);
+          // Don't throw - password was updated successfully in Supabase
+        }
+      }
+
+      setPasswordChangeMessage(
+        hasPassword 
+          ? "Password changed successfully!" 
+          : "Password set successfully! You can now use it to sign in."
+      );
+      
+      // Clear form
+      setCurrentPassword("");
+      setNewPassword("");
+      setConfirmPassword("");
+      setHasPassword(true);
+      
+      setTimeout(() => setPasswordChangeMessage(""), 5000);
+    } catch (error: any) {
+      setPasswordChangeError(error.message || "Failed to update password");
+    } finally {
+      setIsPasswordChanging(false);
     }
   };
 
@@ -394,6 +516,114 @@ export default function Profile() {
                 )}
               </Button>
             </form>
+          </CardContent>
+        </Card>
+
+        {/* Change/Set Password Card */}
+        <Card>
+          <CardHeader>
+            <CardTitle>{hasPassword ? "Change Password" : "Set Password"}</CardTitle>
+            <CardDescription>
+              {hasPassword 
+                ? "Update your password to keep your account secure" 
+                : "Set a password to enable email/password login in addition to OAuth"
+              }
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            {isCheckingPassword ? (
+              <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                <Loader2 className="h-4 w-4 animate-spin" />
+                <span>Loading password settings...</span>
+              </div>
+            ) : (
+              <form onSubmit={handlePasswordChange} className="space-y-4">
+                {hasPassword && (
+                  <div className="space-y-2">
+                    <Label htmlFor="current-password">Current Password</Label>
+                    <Input
+                      id="current-password"
+                      type="password"
+                      value={currentPassword}
+                      onChange={(e) => setCurrentPassword(e.target.value)}
+                      placeholder="Enter current password"
+                      required
+                    />
+                  </div>
+                )}
+
+                <div className="space-y-2">
+                  <Label htmlFor="new-password">New Password</Label>
+                  <Input
+                    id="new-password"
+                    type="password"
+                    value={newPassword}
+                    onChange={(e) => setNewPassword(e.target.value)}
+                    placeholder="Enter new password"
+                    required
+                  />
+                  <p className="text-xs text-muted-foreground">
+                    Password must be at least 6 characters long
+                  </p>
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="confirm-password">Confirm New Password</Label>
+                  <Input
+                    id="confirm-password"
+                    type="password"
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
+                    placeholder="Confirm new password"
+                    required
+                  />
+                </div>
+
+                {passwordChangeMessage && (
+                  <Alert className="bg-green-50 border-green-200">
+                    <Check className="h-4 w-4 text-green-600" />
+                    <AlertDescription className="text-green-800">
+                      {passwordChangeMessage}
+                    </AlertDescription>
+                  </Alert>
+                )}
+
+                {passwordChangeError && (
+                  <Alert variant="destructive">
+                    <AlertCircle className="h-4 w-4" />
+                    <AlertDescription>{passwordChangeError}</AlertDescription>
+                  </Alert>
+                )}
+
+                <Button 
+                  type="submit" 
+                  disabled={
+                    isPasswordChanging || 
+                    !newPassword || 
+                    !confirmPassword ||
+                    (hasPassword && !currentPassword)
+                  }
+                >
+                  {isPasswordChanging ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      {hasPassword ? "Changing password..." : "Setting password..."}
+                    </>
+                  ) : (
+                    hasPassword ? "Change Password" : "Set Password"
+                  )}
+                </Button>
+
+                {!hasPassword && (
+                  <Alert className="bg-blue-50 border-blue-200">
+                    <Shield className="h-4 w-4 text-blue-600" />
+                    <AlertDescription className="text-blue-800 text-sm">
+                      You currently sign in with OAuth (Google/GitHub). Setting a password will allow you to also sign in using your email and password.
+                    </AlertDescription>
+                  </Alert>
+                )}
+              </form>
+            )}
           </CardContent>
         </Card>
 
