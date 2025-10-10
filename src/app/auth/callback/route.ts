@@ -113,14 +113,24 @@ export async function GET(request: Request) {
   if (code) {
     try {
       console.log('📝 Exchanging code for session...')
+      console.log('🔑 Code received:', code.substring(0, 20) + '...')
+      console.log('🌐 Request URL:', requestUrl.toString())
+      
       const { data, error } = await supabase.auth.exchangeCodeForSession(code)
       
       if (error) {
         console.error('❌ Exchange code error:', error)
-        throw error
+        console.error('❌ Error details:', {
+          message: error.message,
+          status: error.status,
+          code: error.code,
+        })
+        return NextResponse.redirect(
+          new URL(`/en/auth/auth-code-error?error=${encodeURIComponent(error.message)}`, requestUrl.origin)
+        )
       }
       
-      if (!error && data.user) {
+      if (data.user) {
         const supabaseUser = data.user
         const identities = supabaseUser.identities || []
         
@@ -256,14 +266,20 @@ export async function GET(request: Request) {
         }
 
         // Redirect to success page
+        console.log('✅ Callback complete, redirecting to:', next)
         return NextResponse.redirect(new URL(`${next}?verified=true`, requestUrl.origin))
       }
-    } catch (exchangeError) {
-      console.error('Exchange code error:', exchangeError);
-      // Handle exchange errors silently
+    } catch (exchangeError: any) {
+      console.error('❌ FATAL: Exchange code error:', exchangeError);
+      console.error('❌ Error stack:', exchangeError.stack);
+      return NextResponse.redirect(
+        new URL(`/en/auth/auth-code-error?error=${encodeURIComponent(exchangeError.message || 'Unknown error')}`, requestUrl.origin)
+      )
     }
   }
 
   // Redirect to error page with language prefix
-  return NextResponse.redirect(new URL('/en/auth/auth-code-error', requestUrl.origin))
+  console.error('❌ No code or token_hash provided, redirecting to error')
+  console.error('❌ Search params:', Object.fromEntries(requestUrl.searchParams))
+  return NextResponse.redirect(new URL('/en/auth/auth-code-error?error=no_code', requestUrl.origin))
 }

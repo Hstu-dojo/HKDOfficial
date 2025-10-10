@@ -29,16 +29,28 @@ export default function AuthCodeErrorPage() {
       return 'Your email verification link has expired. Please request a new one.'
     }
     if (errorDetails.error === 'access_denied') {
-      return 'Email verification was denied or cancelled.'
+      return 'Authentication was denied or cancelled.'
     }
-    return errorDetails.error_description || 'An error occurred during email verification.'
+    if (errorDetails.error === 'no_code') {
+      return 'No authentication code was received from the OAuth provider. Please try again.'
+    }
+    if (errorDetails.error_description) {
+      return errorDetails.error_description
+    }
+    if (errorDetails.error) {
+      return `Error: ${errorDetails.error}`
+    }
+    return 'An error occurred during authentication.'
   }
 
   const getErrorTitle = () => {
     if (errorDetails.error_code === 'otp_expired') {
       return 'Verification Link Expired'
     }
-    return 'Email Verification Failed'
+    if (errorDetails.error === 'no_code') {
+      return 'OAuth Authentication Failed'
+    }
+    return 'Authentication Failed'
   }
 
   return (
