@@ -43,16 +43,31 @@ export function RegisterForm({ className, ...props }: UserAuthFormProps) {
     }
     // console.log(email, password, userName, userAvatar);
     try {
-      // Check if username already exists in local database
-      const checkUsernameResponse = await fetch('/api/auth/check-username', {
+      // Check if email or username already exists
+      const checkResponse = await fetch('/api/auth/check-registration', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ userName })
+        body: JSON.stringify({ email, userName })
       });
       
-      if (checkUsernameResponse.ok) {
-        const checkResult = await checkUsernameResponse.json();
-        if (checkResult.exists) {
+      if (checkResponse.ok) {
+        const checkResult = await checkResponse.json();
+        
+        // Check for email duplication
+        if (checkResult.emailExists) {
+          toast.error("Email already registered", {
+            description: "This email is already registered. Please login instead or use a different email.",
+            action: {
+              label: "Go to Login",
+              onClick: () => router.push("/en/login"),
+            },
+          });
+          setIsLoading(false);
+          return;
+        }
+        
+        // Check for username duplication
+        if (checkResult.usernameExists) {
           toast.error("Username already taken", {
             description: "This username is already registered. Please choose a different username.",
           });
@@ -104,6 +119,19 @@ export function RegisterForm({ className, ...props }: UserAuthFormProps) {
           hasIdentities: data.user.identities && data.user.identities.length > 0,
           hasSession: !!data.session
         });
+        
+        // Check if this is actually a duplicate (Supabase returns user but no identities)
+        if (data.user.identities && data.user.identities.length === 0) {
+          toast.error("Email already registered", {
+            description: "This email is already registered. Please login instead or check your email for the confirmation link.",
+            action: {
+              label: "Go to Login",
+              onClick: () => router.push("/en/login"),
+            },
+          });
+          setIsLoading(false);
+          return;
+        }
         
         toast.success("Registration Successful! 🎉", {
           description: "Please check your email to verify your account before signing in.",
