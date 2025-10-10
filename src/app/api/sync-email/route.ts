@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { createServerClient } from '@/lib/supabase/server';
+import { createClient } from '@/lib/supabase/server';
 import { db } from '@/lib/connect-db';
 import { user, provider } from '@/db/schemas/auth/users';
 import { eq, or, sql } from 'drizzle-orm';
@@ -11,7 +11,7 @@ export async function POST(request: Request) {
     const oldEmail = body.oldEmail;
 
     // Get authenticated user from Supabase
-    const supabase = createServerClient();
+    const supabase = await createClient();
     const { data: { user: authUser }, error: authError } = await supabase.auth.getUser();
 
     if (authError || !authUser) {

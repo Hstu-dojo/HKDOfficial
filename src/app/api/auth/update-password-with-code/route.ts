@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createClient } from "@supabase/supabase-js";
+import { createClient as createSupabaseClient } from "@supabase/supabase-js";
+import { createClient } from "@/lib/supabase/server";
 
 export async function POST(request: NextRequest) {
   try {
@@ -27,7 +28,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Use Supabase Admin client to update password
-    const supabaseAdmin = createClient(
+    const supabaseAdmin = createSupabaseClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
       process.env.SUPABASE_SERVICE_ROLE_KEY!,
       {
@@ -41,8 +42,7 @@ export async function POST(request: NextRequest) {
     // The code is the user's temporary access token
     // We need to verify it and get the user ID
     // For now, let's try a different approach using the regular client
-    const { createServerClient } = await import("@/lib/supabase/server");
-    const supabase = createServerClient();
+    const supabase = await createClient();
 
     // Try to use the code/token to get the user
     let userId: string;
@@ -50,7 +50,7 @@ export async function POST(request: NextRequest) {
     try {
       // Create a temporary client with the access token
       // Even PKCE tokens can be used as Bearer tokens for authentication
-      const tempClient = createClient(
+      const tempClient = createSupabaseClient(
         process.env.NEXT_PUBLIC_SUPABASE_URL!,
         process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
       );
@@ -58,7 +58,7 @@ export async function POST(request: NextRequest) {
       const { data: { user }, error } = await tempClient.auth.getUser(code);
       
       if (error || !user) {
-        const tempClientWithAuth = createClient(
+        const tempClientWithAuth = createSupabaseClient(
           process.env.NEXT_PUBLIC_SUPABASE_URL!,
           process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
           {
