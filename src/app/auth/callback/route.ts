@@ -12,7 +12,13 @@ export async function GET(request: Request) {
   const type = requestUrl.searchParams.get('type')
   const next = requestUrl.searchParams.get('next') ?? '/en'
 
-  console.log('🔍 Callback received:', { code: !!code, token_hash: !!token_hash, type, next })
+  console.log('🔍 Callback received:', { 
+    code: !!code, 
+    token_hash: !!token_hash, 
+    type, 
+    next,
+    fullUrl: requestUrl.toString()
+  })
 
   const cookieStore = cookies()
   const supabase = createRouteHandlerClient({ cookies: () => cookieStore })

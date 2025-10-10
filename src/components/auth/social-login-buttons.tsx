@@ -28,6 +28,7 @@ export function SocialLoginButtons({ redirectTo = "/en/profile" }: SocialLoginBu
         provider,
         options: {
           redirectTo: callbackUrl,
+          skipBrowserRedirect: false, // Allow browser redirect
           queryParams: {
             access_type: 'offline',
             prompt: 'consent',
