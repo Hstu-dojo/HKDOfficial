@@ -1,5 +1,4 @@
-import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs'
-import { cookies } from 'next/headers'
+import { createClient } from '@/lib/supabase/server'
 import { NextResponse } from 'next/server'
 import { db } from '@/lib/connect-db'
 import { user } from '@/db/schema'
@@ -20,8 +19,7 @@ export async function GET(request: Request) {
     fullUrl: requestUrl.toString()
   })
 
-  const cookieStore = cookies()
-  const supabase = createRouteHandlerClient({ cookies: () => cookieStore })
+  const supabase = await createClient()
 
   // Handle password recovery with token_hash (PKCE flow for password reset)
   if (token_hash && type === 'recovery') {

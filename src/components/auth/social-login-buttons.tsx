@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { FaGoogle, FaGithub } from "react-icons/fa6";
 import { Button } from "@/components/ui/button";
-import { supabase } from "@/lib/supabase/supabase";
+import { createClient } from "@/lib/supabase/client";
 import { toast } from "sonner";
 
 interface SocialLoginButtonsProps {
@@ -19,6 +19,9 @@ export function SocialLoginButtons({ redirectTo = "/en/profile" }: SocialLoginBu
       // Set loading state
       if (provider === 'google') setIsLoadingGoogle(true);
       if (provider === 'github') setIsLoadingGithub(true);
+
+      // Create Supabase client
+      const supabase = createClient();
 
       // IMPORTANT: OAuth must ALWAYS go through /auth/callback first to exchange code
       // The 'next' parameter tells callback where to redirect after successful auth
