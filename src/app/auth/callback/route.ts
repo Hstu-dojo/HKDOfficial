@@ -116,57 +116,115 @@ export async function GET(request: Request) {
       
       if (!error && data.user) {
         const supabaseUser = data.user
+        const identities = supabaseUser.identities || []
         
-        // Check if user exists in local database by Supabase ID
-        try {
-          const existingUser = await db
-            .select()
-            .from(user)
-            .where(eq(user.supabaseUserId, supabaseUser.id))
-            .limit(1)
+        console.log('User identities:', identities.map(i => ({ provider: i.provider, id: i.id })))
+        
+        // Detect if this is OAuth-only user (no email/password identity)
+        const isOAuthOnly = identities.length > 0 && identities.every(i => i.provider !== 'email')
+        const oauthIdentity = identities.find(i => i.provider !== 'email')
+        
+        // Check if user exists in local database
+        const existingUser = await db
+          .select()
+          .from(user)
+          .where(eq(user.supabaseUserId, supabaseUser.id))
+          .limit(1)
 
+        // First-time OAuth user without local database record
+        if (existingUser.length === 0 && isOAuthOnly && oauthIdentity) {
+          console.log('🆕 First-time OAuth user detected:', oauthIdentity.provider)
+          
+          // Prepare user data for password setup page
+          const providerData = {
+            supabaseUserId: supabaseUser.id,
+            email: supabaseUser.email,
+            provider: oauthIdentity.provider,
+            fullName: supabaseUser.user_metadata?.full_name || 
+                     supabaseUser.user_metadata?.name ||
+                     supabaseUser.user_metadata?.user_name,
+            avatarUrl: supabaseUser.user_metadata?.avatar_url || 
+                      supabaseUser.user_metadata?.picture ||
+                      supabaseUser.user_metadata?.avatar,
+          }
+          
+          // Redirect to password setup page
+          const setupUrl = new URL('/en/onboarding/set-password', requestUrl.origin)
+          setupUrl.searchParams.set('data', encodeURIComponent(JSON.stringify(providerData)))
+          return NextResponse.redirect(setupUrl)
+        }
+
+        // User exists or has email identity - create/update local database record
+        try {
           if (existingUser.length === 0) {
             // Create new user in local database
             console.log('Creating new user in local DB for Supabase user:', supabaseUser.id);
             
-            // Get username and avatar from metadata (set during signup)
+            // Get username and avatar from metadata
             const userName = supabaseUser.user_metadata?.username || 
                            supabaseUser.user_metadata?.user_name ||
                            supabaseUser.user_metadata?.full_name || 
                            supabaseUser.email!.split('@')[0];
             
-            const userAvatar = supabaseUser.user_metadata?.avatar_url || "/image/avatar/Milo.svg";
+            const userAvatar = supabaseUser.user_metadata?.avatar_url || 
+                             supabaseUser.user_metadata?.picture ||
+                             "/image/avatar/Milo.svg";
+            
+            // Build auth providers array from identities
+            const authProviders = identities.map(identity => ({
+              provider: identity.provider,
+              providerId: identity.id,
+              email: identity.identity_data?.email || supabaseUser.email,
+              linkedAt: identity.created_at || new Date().toISOString(),
+            }))
             
             await db.insert(user).values({
-              supabaseUserId: supabaseUser.id, // Link to Supabase!
-              email: supabaseUser.email, // Optional - for display only
+              supabaseUserId: supabaseUser.id,
+              email: supabaseUser.email,
               emailVerified: supabaseUser.email_confirmed_at ? true : false,
-              password: `supabase_${supabaseUser.id}`, // Placeholder - not used for Supabase auth
+              password: `supabase_${supabaseUser.id}`,
               userName: userName,
               userAvatar: userAvatar,
-              defaultRole: "GUEST", // Default role - will be upgraded after admin approval
+              defaultRole: "GUEST",
+              hasPassword: identities.some(i => i.provider === 'email'),
+              authProviders: authProviders as any,
             })
 
-            console.log('✅ User created in local DB');
+            console.log('✅ User created in local DB with', authProviders.length, 'auth provider(s)');
           } else {
-            // User already exists - update their info
-            console.log('Updating existing user in local DB');
+            // User already exists - update their providers and info
+            console.log('Updating existing user in local DB with new providers');
+            
+            // Build updated auth providers array
+            const authProviders = identities.map(identity => ({
+              provider: identity.provider,
+              providerId: identity.id,
+              email: identity.identity_data?.email || supabaseUser.email,
+              linkedAt: identity.last_sign_in_at || new Date().toISOString(),
+            }))
+            
             await db
               .update(user)
               .set({ 
-                email: supabaseUser.email, // Update email (optional field)
+                email: supabaseUser.email,
                 emailVerified: supabaseUser.email_confirmed_at ? true : false,
-                // Update avatar if provided
-                userAvatar: supabaseUser.user_metadata?.avatar_url || existingUser[0].userAvatar,
+                userAvatar: supabaseUser.user_metadata?.avatar_url || 
+                          supabaseUser.user_metadata?.picture ||
+                          existingUser[0].userAvatar,
+                hasPassword: identities.some(i => i.provider === 'email'),
+                authProviders: authProviders as any,
+                updatedAt: new Date(),
               })
               .where(eq(user.supabaseUserId, supabaseUser.id))
+              
+            console.log('✅ User updated with', authProviders.length, 'auth provider(s)');
           }
         } catch (dbError) {
           console.error('Database error during user creation/update:', dbError);
           // Continue with the flow even if database sync fails
         }
 
-        // Redirect to success page - whether it's a new user or existing user login
+        // Redirect to success page
         return NextResponse.redirect(new URL(`${next}?verified=true`, requestUrl.origin))
       }
     } catch (exchangeError) {

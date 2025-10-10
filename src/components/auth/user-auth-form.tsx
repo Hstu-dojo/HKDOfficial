@@ -2,7 +2,6 @@
 
 import * as React from "react";
 import { cn } from "@/lib/utils";
-import { FaGithub, FaGoogle } from "react-icons/fa6";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -11,6 +10,7 @@ import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { useSession } from "@/hooks/useSessionCompat";
 import { supabase } from "@/lib/supabase/supabase";
+import { SocialLoginButtons } from "@/components/auth/social-login-buttons";
 export interface UserAuthFormProps
   extends React.HTMLAttributes<HTMLDivElement> {
   callbackUrl?: string;
@@ -170,82 +170,7 @@ export function UserAuthForm({
           </Link>
         </small>
       </div>
-      <div className="relative">
-        <div className="absolute inset-0 flex items-center">
-          <span className="w-full border-t" />
-        </div>
-        <div className="relative flex justify-center text-xs uppercase">
-          <span className="bg-background px-2 text-muted-foreground dark:bg-slate-800">
-            Or continue with
-          </span>
-        </div>
-      </div>
-      <div className="flex justify-center space-x-4">
-        <Button
-          className="flex h-12 w-12 items-center justify-center rounded-full p-3"
-          variant="outline"
-          type="button"
-          disabled={isLoading}
-          onClick={async () => {
-            setIsLoading(true);
-            try {
-              const { data, error } = await supabase.auth.signInWithOAuth({
-                provider: 'google',
-                options: {
-                  redirectTo: `${window.location.origin}/auth/callback?next=${callbackUrl || '/en/profile'}`
-                }
-              });
-              
-              if (error) {
-                console.error('Google OAuth Error:', error);
-                toast.error("Failed to sign in with Google");
-                setIsLoading(false);
-              } else {
-                toast.success("Redirecting to Google...");
-                // The redirect will happen automatically
-              }
-            } catch (error) {
-              console.error('Google OAuth Error:', error);
-              toast.error("Failed to sign in with Google");
-              setIsLoading(false);
-            }
-          }}
-        >
-          <FaGoogle className="h-6 w-6" />
-        </Button>
-        <Button
-          className="flex h-12 w-12 items-center justify-center rounded-full p-3"
-          variant="outline"
-          type="button"
-          disabled={isLoading}
-          onClick={async () => {
-            setIsLoading(true);
-            try {
-              const { data, error } = await supabase.auth.signInWithOAuth({
-                provider: 'github',
-                options: {
-                  redirectTo: `${window.location.origin}/auth/callback?next=${callbackUrl || '/en/profile'}`
-                }
-              });
-              
-              if (error) {
-                console.error('GitHub OAuth Error:', error);
-                toast.error("Failed to sign in with GitHub");
-                setIsLoading(false);
-              } else {
-                toast.success("Redirecting to GitHub...");
-                // The redirect will happen automatically
-              }
-            } catch (error) {
-              console.error('GitHub OAuth Error:', error);
-              toast.error("Failed to sign in with GitHub");
-              setIsLoading(false);
-            }
-          }}
-        >
-          <FaGithub className="h-6 w-6" />
-        </Button>
-      </div>
+      <SocialLoginButtons redirectTo={callbackUrl || '/en/profile'} />
     </div>
   );
 }

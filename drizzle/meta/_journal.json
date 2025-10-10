@@ -8,6 +8,13 @@
       "when": 1760048125313,
       "tag": "0000_numerous_sersi",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1760072445662,
+      "tag": "0001_furry_lucky_pierre",
+      "breakpoints": true
     }
   ]
 }

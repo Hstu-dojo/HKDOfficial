@@ -1,4 +1,4 @@
-import { pgTable, text, integer, boolean, timestamp, json, serial, unique, real } from "drizzle-orm/pg-core";
+import { pgTable, text, integer, boolean, timestamp, json, jsonb, serial, unique, real } from "drizzle-orm/pg-core";
 import { relations, sql } from "drizzle-orm";
 import { roletypeEnum, identityTypeEnum, providerTypeEnum } from "../enums";
 import { role } from "./rbac";
@@ -19,6 +19,16 @@ export const user = pgTable("user", {
   userAvatar: text("user_avatar").notNull(),
   defaultRole: roletypeEnum("default_role").default("GUEST").notNull(),
   roleId: text("role_id").references(() => role.id, { onDelete: "set null" }),
+  
+  // OAuth/Social Auth fields
+  hasPassword: boolean("has_password").default(false).notNull(), // Track if user has set a password
+  authProviders: jsonb("auth_providers").$type<Array<{
+    provider: string; // 'email', 'google', 'github', etc.
+    providerId?: string; // Provider-specific user ID
+    email: string; // Email used with this provider
+    linkedAt: string; // ISO timestamp when linked
+  }>>(), // Track all authentication methods linked to this user
+  
   createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
   updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow().notNull(),
 });
