@@ -35,7 +35,19 @@ EXCEPTION
 END $$;
 --> statement-breakpoint
 DO $$ BEGIN
+ CREATE TYPE "public"."identity_type" AS ENUM('NID', 'BIRTH_CERTIFICATE', 'PASSPORT', 'DRIVING_LICENSE');
+EXCEPTION
+ WHEN duplicate_object THEN null;
+END $$;
+--> statement-breakpoint
+DO $$ BEGIN
  CREATE TYPE "public"."payment_method" AS ENUM('bkash', 'cash', 'bank_transfer');
+EXCEPTION
+ WHEN duplicate_object THEN null;
+END $$;
+--> statement-breakpoint
+DO $$ BEGIN
+ CREATE TYPE "public"."provider_type" AS ENUM('Google', 'GitHub');
 EXCEPTION
  WHEN duplicate_object THEN null;
 END $$;
@@ -51,6 +63,109 @@ DO $$ BEGIN
 EXCEPTION
  WHEN duplicate_object THEN null;
 END $$;
+--> statement-breakpoint
+DO $$ BEGIN
+ CREATE TYPE "public"."roletype" AS ENUM('ADMIN', 'MODERATOR', 'INSTRUCTOR', 'MEMBER', 'GUEST');
+EXCEPTION
+ WHEN duplicate_object THEN null;
+END $$;
+--> statement-breakpoint
+CREATE TABLE IF NOT EXISTS "account" (
+	"id" serial PRIMARY KEY NOT NULL,
+	"user_id" text NOT NULL,
+	"name" text NOT NULL,
+	"name_bangla" text NOT NULL,
+	"father_name" text NOT NULL,
+	"image" text NOT NULL,
+	"avatar" text,
+	"bio" text,
+	"sex" text NOT NULL,
+	"dob" timestamp with time zone NOT NULL,
+	"phone" text NOT NULL,
+	"address" text NOT NULL,
+	"city" text NOT NULL,
+	"state" text NOT NULL,
+	"country" text NOT NULL,
+	"postal_code" text NOT NULL,
+	"age" integer NOT NULL,
+	"blood_group" text NOT NULL,
+	"height" real NOT NULL,
+	"weight" real NOT NULL,
+	"occupation" text NOT NULL,
+	"identity_type" "identity_type" NOT NULL,
+	"identity_number" text NOT NULL,
+	"identity_image" text,
+	"institute" text NOT NULL,
+	"faculty" text,
+	"department" text,
+	"session" text,
+	"signature_image" text NOT NULL,
+	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
+	"updated_at" timestamp with time zone DEFAULT now() NOT NULL,
+	CONSTRAINT "account_user_id_unique" UNIQUE("user_id")
+);
+--> statement-breakpoint
+CREATE TABLE IF NOT EXISTS "email-log" (
+	"id" text PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
+	"payload" json
+);
+--> statement-breakpoint
+CREATE TABLE IF NOT EXISTS "provider" (
+	"id" text PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
+	"user_id" text NOT NULL,
+	"provider" "provider_type" NOT NULL,
+	"provider_account_id" text,
+	"profile" json,
+	"refresh_token" text,
+	"access_token" text,
+	"expires_at" integer,
+	"token_type" text,
+	"scope" text,
+	"id_token" text,
+	"session_state" text,
+	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
+	"updated_at" timestamp with time zone DEFAULT now() NOT NULL
+);
+--> statement-breakpoint
+CREATE TABLE IF NOT EXISTS "session" (
+	"id" text PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
+	"session_token" text NOT NULL,
+	"user_id" text NOT NULL,
+	"expires" timestamp with time zone NOT NULL,
+	CONSTRAINT "session_session_token_unique" UNIQUE("session_token"),
+	CONSTRAINT "session_user_id_unique" UNIQUE("user_id")
+);
+--> statement-breakpoint
+CREATE TABLE IF NOT EXISTS "user" (
+	"id" text PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
+	"supabase_user_id" text,
+	"email" text,
+	"email_verified" boolean DEFAULT false,
+	"password" text NOT NULL,
+	"user_name" text NOT NULL,
+	"user_avatar" text NOT NULL,
+	"default_role" "roletype" DEFAULT 'GUEST' NOT NULL,
+	"role_id" text,
+	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
+	"updated_at" timestamp with time zone DEFAULT now() NOT NULL,
+	CONSTRAINT "user_supabase_user_id_unique" UNIQUE("supabase_user_id"),
+	CONSTRAINT "user_user_name_unique" UNIQUE("user_name")
+);
+--> statement-breakpoint
+CREATE TABLE IF NOT EXISTS "verification-token" (
+	"id" text PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
+	"uid" text NOT NULL,
+	"token" text NOT NULL,
+	"validity" integer DEFAULT 1 NOT NULL,
+	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
+	"updated_at" timestamp with time zone DEFAULT now() NOT NULL
+);
+--> statement-breakpoint
+CREATE TABLE IF NOT EXISTS "permission-group" (
+	"id" text PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
+	"level_name" text NOT NULL,
+	"features" text[] NOT NULL
+);
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "permissions" (
 	"id" text PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
@@ -80,6 +195,16 @@ CREATE TABLE IF NOT EXISTS "role_permissions" (
 	"permission_id" text NOT NULL,
 	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
 	CONSTRAINT "role_permissions_role_id_permission_id_unique" UNIQUE("role_id","permission_id")
+);
+--> statement-breakpoint
+CREATE TABLE IF NOT EXISTS "user_roles" (
+	"id" text PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
+	"user_id" text NOT NULL,
+	"role_id" text NOT NULL,
+	"assigned_at" timestamp with time zone DEFAULT now() NOT NULL,
+	"assigned_by" text,
+	"is_active" boolean DEFAULT true NOT NULL,
+	CONSTRAINT "user_roles_user_id_role_id_unique" UNIQUE("user_id","role_id")
 );
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "members" (
@@ -313,17 +438,36 @@ CREATE TABLE IF NOT EXISTS "system_settings" (
 	CONSTRAINT "system_settings_setting_key_unique" UNIQUE("setting_key")
 );
 --> statement-breakpoint
-ALTER TABLE "user-role" RENAME TO "user_roles";--> statement-breakpoint
-ALTER TABLE "user_roles" DROP CONSTRAINT "user-role_level_id_unique";--> statement-breakpoint
-ALTER TABLE "user_roles" DROP CONSTRAINT "user-role_level_id_permission-group_id_fk";
+DO $$ BEGIN
+ ALTER TABLE "account" ADD CONSTRAINT "account_user_id_user_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."user"("id") ON DELETE no action ON UPDATE no action;
+EXCEPTION
+ WHEN duplicate_object THEN null;
+END $$;
 --> statement-breakpoint
-ALTER TABLE "user_roles" DROP CONSTRAINT "user-role_user_id_user_id_fk";
+DO $$ BEGIN
+ ALTER TABLE "provider" ADD CONSTRAINT "provider_user_id_user_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."user"("id") ON DELETE no action ON UPDATE no action;
+EXCEPTION
+ WHEN duplicate_object THEN null;
+END $$;
 --> statement-breakpoint
-ALTER TABLE "user" ADD COLUMN "role_id" text;--> statement-breakpoint
-ALTER TABLE "user_roles" ADD COLUMN "role_id" text NOT NULL;--> statement-breakpoint
-ALTER TABLE "user_roles" ADD COLUMN "assigned_at" timestamp with time zone DEFAULT now() NOT NULL;--> statement-breakpoint
-ALTER TABLE "user_roles" ADD COLUMN "assigned_by" text;--> statement-breakpoint
-ALTER TABLE "user_roles" ADD COLUMN "is_active" boolean DEFAULT true NOT NULL;--> statement-breakpoint
+DO $$ BEGIN
+ ALTER TABLE "session" ADD CONSTRAINT "session_user_id_user_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."user"("id") ON DELETE no action ON UPDATE no action;
+EXCEPTION
+ WHEN duplicate_object THEN null;
+END $$;
+--> statement-breakpoint
+DO $$ BEGIN
+ ALTER TABLE "user" ADD CONSTRAINT "user_role_id_roles_id_fk" FOREIGN KEY ("role_id") REFERENCES "public"."roles"("id") ON DELETE set null ON UPDATE no action;
+EXCEPTION
+ WHEN duplicate_object THEN null;
+END $$;
+--> statement-breakpoint
+DO $$ BEGIN
+ ALTER TABLE "verification-token" ADD CONSTRAINT "verification-token_uid_user_id_fk" FOREIGN KEY ("uid") REFERENCES "public"."user"("id") ON DELETE no action ON UPDATE no action;
+EXCEPTION
+ WHEN duplicate_object THEN null;
+END $$;
+--> statement-breakpoint
 DO $$ BEGIN
  ALTER TABLE "role_permissions" ADD CONSTRAINT "role_permissions_role_id_roles_id_fk" FOREIGN KEY ("role_id") REFERENCES "public"."roles"("id") ON DELETE cascade ON UPDATE no action;
 EXCEPTION
@@ -332,6 +476,24 @@ END $$;
 --> statement-breakpoint
 DO $$ BEGIN
  ALTER TABLE "role_permissions" ADD CONSTRAINT "role_permissions_permission_id_permissions_id_fk" FOREIGN KEY ("permission_id") REFERENCES "public"."permissions"("id") ON DELETE cascade ON UPDATE no action;
+EXCEPTION
+ WHEN duplicate_object THEN null;
+END $$;
+--> statement-breakpoint
+DO $$ BEGIN
+ ALTER TABLE "user_roles" ADD CONSTRAINT "user_roles_user_id_user_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."user"("id") ON DELETE cascade ON UPDATE no action;
+EXCEPTION
+ WHEN duplicate_object THEN null;
+END $$;
+--> statement-breakpoint
+DO $$ BEGIN
+ ALTER TABLE "user_roles" ADD CONSTRAINT "user_roles_role_id_roles_id_fk" FOREIGN KEY ("role_id") REFERENCES "public"."roles"("id") ON DELETE cascade ON UPDATE no action;
+EXCEPTION
+ WHEN duplicate_object THEN null;
+END $$;
+--> statement-breakpoint
+DO $$ BEGIN
+ ALTER TABLE "user_roles" ADD CONSTRAINT "user_roles_assigned_by_user_id_fk" FOREIGN KEY ("assigned_by") REFERENCES "public"."user"("id") ON DELETE set null ON UPDATE no action;
 EXCEPTION
  WHEN duplicate_object THEN null;
 END $$;
@@ -485,33 +647,3 @@ DO $$ BEGIN
 EXCEPTION
  WHEN duplicate_object THEN null;
 END $$;
---> statement-breakpoint
-DO $$ BEGIN
- ALTER TABLE "user" ADD CONSTRAINT "user_role_id_roles_id_fk" FOREIGN KEY ("role_id") REFERENCES "public"."roles"("id") ON DELETE set null ON UPDATE no action;
-EXCEPTION
- WHEN duplicate_object THEN null;
-END $$;
---> statement-breakpoint
-DO $$ BEGIN
- ALTER TABLE "user_roles" ADD CONSTRAINT "user_roles_user_id_user_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."user"("id") ON DELETE cascade ON UPDATE no action;
-EXCEPTION
- WHEN duplicate_object THEN null;
-END $$;
---> statement-breakpoint
-DO $$ BEGIN
- ALTER TABLE "user_roles" ADD CONSTRAINT "user_roles_role_id_roles_id_fk" FOREIGN KEY ("role_id") REFERENCES "public"."roles"("id") ON DELETE cascade ON UPDATE no action;
-EXCEPTION
- WHEN duplicate_object THEN null;
-END $$;
---> statement-breakpoint
-DO $$ BEGIN
- ALTER TABLE "user_roles" ADD CONSTRAINT "user_roles_assigned_by_user_id_fk" FOREIGN KEY ("assigned_by") REFERENCES "public"."user"("id") ON DELETE set null ON UPDATE no action;
-EXCEPTION
- WHEN duplicate_object THEN null;
-END $$;
---> statement-breakpoint
-ALTER TABLE "user_roles" DROP COLUMN IF EXISTS "role";--> statement-breakpoint
-ALTER TABLE "user_roles" DROP COLUMN IF EXISTS "level_id";--> statement-breakpoint
-ALTER TABLE "user_roles" DROP COLUMN IF EXISTS "created_at";--> statement-breakpoint
-ALTER TABLE "user_roles" DROP COLUMN IF EXISTS "updated_at";--> statement-breakpoint
-ALTER TABLE "user_roles" ADD CONSTRAINT "user_roles_user_id_role_id_unique" UNIQUE("user_id","role_id");

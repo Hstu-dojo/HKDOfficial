@@ -11,7 +11,8 @@ export const emailLog = pgTable("email-log", {
 
 export const user = pgTable("user", {
   id: text("id").primaryKey().default(sql`gen_random_uuid()`),
-  email: text("email").unique().notNull(),
+  supabaseUserId: text("supabase_user_id").unique(), // Link to Supabase Auth user
+  email: text("email"), // Optional - use Supabase as source of truth
   emailVerified: boolean("email_verified").default(false),
   password: text("password").notNull(),
   userName: text("user_name").unique().notNull(),
