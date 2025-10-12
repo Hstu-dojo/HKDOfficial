@@ -128,7 +128,7 @@ export default function ContactForm() {
                     <FormLabel className="dark:text-white">{t('contact.messageLabel')}</FormLabel>
                     <FormControl>
                       <Textarea
-                        placeholder="How can we help your business grow?"
+                        placeholder={t('contact.messagePlaceholder')}
                         rows={6}
                         {...field}
                       />

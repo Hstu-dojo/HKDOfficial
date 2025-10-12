@@ -214,11 +214,49 @@ export default {
     nameLabel: "Name",
     emailLabel: "Email",
     messageLabel: "Message",
+    messagePlaceholder: "How can we help your business grow?",
     submitButton: "Send Message",
     sending: "Sending...",
     address: "HSTU, Basherhat, Dinajpur-5200. Bangladesh.",
     phone: "Phone",
     email: "Email",
+  },
+
+  // About Page
+  about: {
+    title: "About",
+    subtitle: "HSTU Karate Dojo (HKD) is the official karate club at Hajee Mohammad Danesh Science & Technology University (HSTU) in Dinajpur, Bangladesh. Established in 2022, HKD focuses on discipline, respect, and self-improvement through rigorous training under experienced instructors.",
+    keyFeatures: "Key Features and Values of HSTU Karate Dojo",
+    features: {
+      established: "Established in 2022",
+      discipline: "Emphasis on discipline, respect, and self-improvement",
+      instructors: "Experienced instructors guiding the training",
+      championships: "Participation in intra-university and inter-university championships",
+      community: "Active community engagement and social responsibility",
+      environment: "Supportive and inclusive training environment",
+    },
+    stats: {
+      title: "Statistics",
+      activeMembers: "Active Members",
+      activeMembersCount: "50+",
+      championships: "Championships Won",
+      championshipsCount: "3+",
+      established: "Established",
+      establishedYear: "2022",
+      instructors: "Experienced Instructors",
+      instructorsCount: "3+",
+    },
+    cta: {
+      title: "Get, keep and grow more customers. We're here to help.",
+      button: "Let's Work Together",
+    },
+  },
+
+  // Developer Page
+  dev: {
+    title: "Meet the Developer.",
+    name: "Md. Hasan",
+    websiteLabel: "shahriarhasan.vercel.app",
   },
 
   // Admin Pages

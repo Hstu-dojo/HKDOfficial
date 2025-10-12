@@ -6,6 +6,7 @@ import SectionChecklist from "@/components/sections/section-checklist";
 import SectionCTALayout4 from "@/components/sections/section-cta-layout-4";
 import SectionStats from "@/components/sections/section-stats";
 import SectionTeam from "@/components/sections/section-team";
+import { getI18n } from "@/locales/server";
 
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL!),
@@ -13,13 +14,15 @@ export const metadata: Metadata = {
   description: "About page",
 };
 
-export default function PageAbout() {
+export default async function PageAbout() {
+  const t = await getI18n();
+  
   return (
     <>
       <Header />
       <main className="relative">
-        <SectionPageTitle subtitle="HSTU Karate Dojo (HKD) is the official karate club at Hajee Mohammad Danesh Science & Technology University (HSTU) in Dinajpur, Bangladesh. Established in 2022, HKD focuses on discipline, respect, and self-improvement through rigorous training under experienced instructors.">
-          About
+        <SectionPageTitle subtitle={t('about.subtitle')}>
+          {t('about.title')}
         </SectionPageTitle>
         <SectionChecklist />
         <SectionStats />

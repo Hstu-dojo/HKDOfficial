@@ -1,14 +1,19 @@
+"use client";
+
 import React from "react";
 import { MacbookScroll } from "@/components/ui/macbook-scroll";
 import Link from "next/link";
+import { useI18n } from "@/locales/client";
 
 const MeetDev = () => {
+  const t = useI18n();
+  
   return (
     <div className="w-full  overflow-hidden">
       <MacbookScroll
         title={
           <span>
-            Meet the Developer. <br /> Md. Hasan
+            {t('dev.title')} <br /> {t('dev.name')}
           </span>
         }
         // badge={

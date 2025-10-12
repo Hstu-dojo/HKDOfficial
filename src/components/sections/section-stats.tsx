@@ -1,30 +1,35 @@
-import Image from "next/image";
+"use client";
 
-export const statistics = [
-  {
-    number: "50+",
-    title: "Active Members",
-  },
-  {
-    number: "3+",
-    title: "Championships Won",
-  },
-  {
-    number: "2022",
-    title: "Established",
-  },
-  {
-    number: "3+",
-    title: "Experienced Instructors",
-  },
-];
+import Image from "next/image";
+import { useI18n } from "@/locales/client";
 
 const SectionStats = () => {
+  const t = useI18n();
+  
+  const statistics = [
+    {
+      number: t('about.stats.activeMembersCount'),
+      title: t('about.stats.activeMembers'),
+    },
+    {
+      number: t('about.stats.championshipsCount'),
+      title: t('about.stats.championships'),
+    },
+    {
+      number: t('about.stats.establishedYear'),
+      title: t('about.stats.established'),
+    },
+    {
+      number: t('about.stats.instructorsCount'),
+      title: t('about.stats.instructors'),
+    },
+  ];
+  
   return (
     <section className="relative py-16 after:absolute after:inset-0 after:bg-secondary/80 lg:py-28">
       <Image
         src="/statistic.jpg"
-        alt="Statistics"
+        alt={t('about.stats.title')}
         fill
         className="object-cover object-center"
       />
