@@ -114,7 +114,7 @@ export const mainNav = [
   //   ],
   // },
   {
-    title: "En/Fr",
+    title: "English / বাংলা",
     items: [
       {
         title: "English",
@@ -122,8 +122,8 @@ export const mainNav = [
         items: [],
       },
       {
-        title: "French",
-        href: "/fr",
+        title: "বাংলা",
+        href: "/bn",
         items: [],
       },
     ],

@@ -20,12 +20,14 @@ import { z } from "zod";
 import { ContactFormSchema } from "@/lib/schema";
 import { Spinner } from "@/components/icons/icons";
 import { useRouter } from "next/navigation";
+import { useI18n } from "@/locales/client";
 
 type FormInputs = z.infer<typeof ContactFormSchema>;
 
 export default function ContactForm() {
   const [isPending, startTransition] = useTransition();
   const router = useRouter();
+  const t = useI18n();
 
   const form = useForm<FormInputs>({
     resolver: zodResolver(ContactFormSchema),
@@ -63,17 +65,17 @@ export default function ContactForm() {
         <ul className="mb-6 space-y-1 text-center text-sm">
           <li>
             <address className="-mt-px leading-6">
-              HSTU, Basherhat, Dinajpur-5200. Bangladesh.
+              {t('contact.address')}
             </address>
           </li>
           <li>
-            <span>Phone: </span>
+            <span>{t('contact.phone')}: </span>
             <a href="tel:+8801777300309" className="hover:text-primary">
               + 880 1777-300309
             </a>
           </li>
           <li>
-            <span>Email: </span>
+            <span>{t('contact.email')}: </span>
             <a href="mailto:hstu.dojo@gmail.com" className="hover:text-primary">
               hstu.dojo@gmail.com
             </a>
@@ -91,7 +93,7 @@ export default function ContactForm() {
                   name="name"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className="dark:text-white">Subject</FormLabel>
+                      <FormLabel className="dark:text-white">{t('contact.nameLabel')}</FormLabel>
                       <FormControl>
                         <Input {...field} />
                       </FormControl>
@@ -106,7 +108,7 @@ export default function ContactForm() {
                   name="email"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className="dark:text-white">Email</FormLabel>
+                      <FormLabel className="dark:text-white">{t('contact.emailLabel')}</FormLabel>
                       <FormControl>
                         <Input {...field} />
                       </FormControl>
@@ -123,7 +125,7 @@ export default function ContactForm() {
                 name="message"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="dark:text-white">Message</FormLabel>
+                    <FormLabel className="dark:text-white">{t('contact.messageLabel')}</FormLabel>
                     <FormControl>
                       <Textarea
                         placeholder="How can we help your business grow?"
@@ -148,7 +150,7 @@ export default function ContactForm() {
                   <span>Sending</span>
                 </>
               ) : ( */}
-              <span>Send Message</span>
+              <span>{t('contact.submitButton')}</span>
               {/* )} */}
             </Button>
           </form>

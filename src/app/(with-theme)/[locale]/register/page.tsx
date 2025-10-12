@@ -6,13 +6,15 @@ import { cn } from "@/lib/utils";
 import { buttonVariants } from "@/components/ui/button";
 import { RegisterForm } from "@/components/auth/register-form";
 import { BackgroundBeams } from "@/components/ui/background-beams";
+import { getI18n } from "@/locales/server";
 
 export const metadata: Metadata = {
   title: "Register",
   description: "Authentication forms built using the components.",
 };
 
-export default function AuthenticationPage() {
+export default async function AuthenticationPage() {
+  const t = await getI18n();
   return (
     <>
       <Link href="/">
@@ -33,27 +35,27 @@ export default function AuthenticationPage() {
           <div className="mx-auto flex w-full flex-col justify-center space-y-6 sm:w-[350px]">
             <div className="flex flex-col space-y-2 text-center">
               <h1 className="text-2xl font-semibold tracking-tight">
-                Create an account
+                {t('auth.register.title')}
               </h1>
               <p className="text-sm text-muted-foreground">
-                Enter your credentials below to create your account
+                {t('auth.register.subtitle')}
               </p>
             </div>
             <RegisterForm />
             <p className="px-8 text-center text-sm text-muted-foreground">
-              By clicking continue, you agree to our{" "}
+              {t('auth.login.termsPrefix')}{" "}
               <Link
                 href="/terms"
                 className="underline underline-offset-4 hover:text-primary"
               >
-                Terms of Service
+                {t('auth.login.termsOfService')}
               </Link>{" "}
-              and{" "}
+              {t('auth.login.and')}{" "}
               <Link
                 href="/privacy"
                 className="underline underline-offset-4 hover:text-primary"
               >
-                Privacy Policy
+                {t('auth.login.privacyPolicy')}
               </Link>
               .
             </p>
@@ -66,7 +68,7 @@ export default function AuthenticationPage() {
             "absolute left-4 top-4 md:left-8 md:top-8",
           )}
         >
-          Login
+          {t('header.login')}
         </Link>
         <div className="relative hidden h-full flex-col bg-muted p-10 text-white dark:border-r lg:flex">
           <div className="absolute inset-0 bg-secondary">

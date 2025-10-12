@@ -10,11 +10,13 @@ import { MobileNav } from "./mobile-nav";
 import { useSession } from "@/hooks/useSessionCompat";
 import { useAuth } from "@/context/AuthContext";
 import MaxWidthWrapper from "../maxWidthWrapper";
+import { useI18n } from "@/locales/client";
 
 const Header = () => {
   const [stickyClass, setStickyClass] = useState("");
   const { data: session } = useSession();
   const { signOut } = useAuth();
+  const t = useI18n();
 
   useEffect(() => {
     window.addEventListener("scroll", stickyHeader);
@@ -57,7 +59,7 @@ const Header = () => {
                   href="tel:+8801777-300309"
                   className="inline-block rounded-md bg-gradient-to-l from-primary to-tertiary px-4 py-2.5 text-center font-bold text-white"
                 >
-                  <span className="block text-xxs">Call us for Info.</span>
+                  <span className="block text-xxs">{t('cta.callForInfo')}</span>
                   <span className="text-md">+8801777-300309</span>
                 </a>
               </div>

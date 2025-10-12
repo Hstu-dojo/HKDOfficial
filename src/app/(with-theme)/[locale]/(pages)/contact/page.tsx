@@ -4,6 +4,7 @@ import type { Metadata } from "next";
 import SectionPageTitle from "@/components/sections/section-page-title";
 import SectionGoogleMap from "@/components/sections/section-google-map";
 import SectionContactForm from "@/components/sections/section-contact-form";
+import { getI18n } from "@/locales/server";
 
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL!),
@@ -11,13 +12,15 @@ export const metadata: Metadata = {
   description: "Contact page",
 };
 
-export default function PageContact() {
+export default async function PageContact() {
+  const t = await getI18n();
+  
   return (
     <>
       <Header />
       <main className="relative">
-        <SectionPageTitle subtitle="Let’s have a dicussion about your business">
-          Contact
+        <SectionPageTitle subtitle={t('contact.subtitle')}>
+          {t('contact.title')}
         </SectionPageTitle>
         <SectionContactForm />
         {/* <SectionGoogleMap /> */}

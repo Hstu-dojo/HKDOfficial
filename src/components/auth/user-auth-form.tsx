@@ -11,6 +11,7 @@ import { toast } from "sonner";
 import { useSession } from "@/hooks/useSessionCompat";
 import { createClient } from "@/lib/supabase/client";
 import { SocialLoginButtons } from "@/components/auth/social-login-buttons";
+import { useI18n } from "@/locales/client";
 export interface UserAuthFormProps
   extends React.HTMLAttributes<HTMLDivElement> {
   callbackUrl?: string;
@@ -25,6 +26,7 @@ export function UserAuthForm({
   const [isLoading, setIsLoading] = React.useState<boolean>(false);
   const { data: session } = useSession();
   const router = useRouter();
+  const t = useI18n();
   
   // Show success message if redirected after email verification
   React.useEffect(() => {
@@ -120,7 +122,7 @@ export function UserAuthForm({
         <div className="grid gap-2">
           <div className="grid gap-1">
             <Label className="sr-only" htmlFor="email">
-              Email
+              {t('auth.login.emailLabel')}
             </Label>
             <Input
               id="email"
@@ -136,7 +138,7 @@ export function UserAuthForm({
           </div>
           <div className="grid gap-1">
             <Label className="sr-only" htmlFor="password">
-              Email
+              {t('auth.login.passwordLabel')}
             </Label>
             <Input
               id="password"
@@ -154,20 +156,20 @@ export function UserAuthForm({
             {/* {isLoading && (
               <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
             )} */}
-            Sign In with Email
+            {t('auth.login.signInButton')}
           </Button>
         </div>
       </form>
       <div className="flex-rol relative bottom-4 flex flex-wrap items-center justify-between">
         <small>
-          new user?{" "}
+          {t('auth.login.newUser')}{" "}
           <Link className="hover:underline" href="/register">
-            Register
+            {t('auth.login.registerLink')}
           </Link>
         </small>
         <small>
           <Link className="hover:underline" href="/en/forget">
-            forget password?
+            {t('auth.login.forgetPassword')}
           </Link>
         </small>
       </div>

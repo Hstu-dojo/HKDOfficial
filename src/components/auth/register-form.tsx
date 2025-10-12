@@ -21,6 +21,7 @@ import {
 } from "@/components/ui/select";
 import Image from "next/image";
 import { SocialLoginButtons } from "@/components/auth/social-login-buttons";
+import { useI18n } from "@/locales/client";
 
 export function RegisterForm({ className, ...props }: UserAuthFormProps) {
   const searchParams = useSearchParams();
@@ -31,6 +32,7 @@ export function RegisterForm({ className, ...props }: UserAuthFormProps) {
   const [userName, setUsername] = useState("");
   const [userAvatar, setAvatar] = useState("/image/avatar/Milo.svg");
   const router = useRouter();
+  const t = useI18n();
   const onSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setIsLoading(true);
@@ -188,13 +190,13 @@ export function RegisterForm({ className, ...props }: UserAuthFormProps) {
         <div className="grid gap-2">
           <div className="grid gap-1">
             <Label className="sr-only" htmlFor="username">
-              Username
+              {t('auth.register.usernameLabel')}
             </Label>
             <Input
               className="border-green-500"
               id="username"
               onChange={(e) => setUsername(e.target.value)}
-              placeholder="username (unique)"
+              placeholder={t('auth.register.usernamePlaceholder')}
               type="text"
               autoCapitalize="none"
               autoComplete="username"
@@ -205,12 +207,12 @@ export function RegisterForm({ className, ...props }: UserAuthFormProps) {
           </div>
           <div className="grid gap-1">
             <Label className="sr-only" htmlFor="email">
-              Email
+              {t('auth.register.emailLabel')}
             </Label>
             <Input
               id="email"
               onChange={(e) => setEmail(e.target.value)}
-              placeholder="email address"
+              placeholder={t('auth.register.emailPlaceholder')}
               type="email"
               autoCapitalize="none"
               autoComplete="email"
@@ -221,12 +223,12 @@ export function RegisterForm({ className, ...props }: UserAuthFormProps) {
           </div>
           <div className="grid gap-1">
             <Label className="sr-only" htmlFor="password">
-              Password
+              {t('auth.register.passwordLabel')}
             </Label>
             <Input
               id="password"
               onChange={(e) => setPassword(e.target.value)}
-              placeholder="password"
+              placeholder={t('auth.register.passwordLabel')}
               type="password"
               autoCapitalize="none"
               autoComplete="password"
@@ -238,7 +240,7 @@ export function RegisterForm({ className, ...props }: UserAuthFormProps) {
           <div className="grid gap-1">
             <Select required={false} onValueChange={(e) => setAvatar(e)}>
               <SelectTrigger className="w-full">
-                <SelectValue placeholder="avatar" />
+                <SelectValue placeholder={t('auth.register.avatarLabel')} />
               </SelectTrigger>
               <SelectContent className="h-60 overflow-y-auto ">
                 {avatars.map((avatar: any, index: any) => (
@@ -269,16 +271,16 @@ export function RegisterForm({ className, ...props }: UserAuthFormProps) {
             {/* {isLoading && (
               <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
             )} */}
-            Register with Email
+            {t('auth.register.registerButton')}
           </Button>
         </div>
       </form>
       <SocialLoginButtons redirectTo="/en/profile" />
       <div className="flex-rol relative bottom-4 flex flex-wrap items-center justify-between">
         <small>
-          existing member?{" "}
+          {t('auth.register.existingMember')}{" "}
           <Link className="hover:underline" href="/login">
-            Login
+            {t('auth.register.loginLink')}
           </Link>
         </small>
       </div>
