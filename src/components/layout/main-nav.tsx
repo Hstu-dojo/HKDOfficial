@@ -3,6 +3,7 @@
 import * as React from "react";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
+import { useCurrentLocale } from "@/locales/client";
 
 import {
   NavigationMenu,
@@ -20,6 +21,7 @@ interface MainNavProps {
 }
 
 export default function MainNav({ items }: MainNavProps) {
+  const locale = useCurrentLocale();
   return (
     <>
       <NavigationMenu className="hidden lg:block">
@@ -31,7 +33,7 @@ export default function MainNav({ items }: MainNavProps) {
                   <NavigationMenuTrigger>{item.title}</NavigationMenuTrigger>
                 ) : (
                   item.href && (
-                    <Link href={item.href} legacyBehavior passHref>
+                    <Link href={`/${locale}${item.href}`} legacyBehavior passHref>
                       <NavigationMenuLink
                         className={navigationMenuTriggerStyle()}
                       >
@@ -46,7 +48,7 @@ export default function MainNav({ items }: MainNavProps) {
                       {item?.items.map((subItem) => (
                         <ListItem
                           key={subItem.title}
-                          href={subItem.href}
+                          href={`/${locale}${subItem.href}`}
                           title={subItem.title}
                         ></ListItem>
                       ))}

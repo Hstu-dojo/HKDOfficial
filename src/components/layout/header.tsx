@@ -10,13 +10,14 @@ import { MobileNav } from "./mobile-nav";
 import { useSession } from "@/hooks/useSessionCompat";
 import { useAuth } from "@/context/AuthContext";
 import MaxWidthWrapper from "../maxWidthWrapper";
-import { useI18n } from "@/locales/client";
+import { useI18n, useCurrentLocale } from "@/locales/client";
 
 const Header = () => {
   const [stickyClass, setStickyClass] = useState("");
   const { data: session } = useSession();
   const { signOut } = useAuth();
   const t = useI18n();
+  const locale = useCurrentLocale();
 
   useEffect(() => {
     window.addEventListener("scroll", stickyHeader);
@@ -40,7 +41,7 @@ const Header = () => {
       <div className={cn("py-5 transition-all lg:py-12", stickyClass)}>
         <MaxWidthWrapper>
           <div className="flex items-center ">
-            <Link href="/" className="mr-12 shrink-0">
+            <Link href={`/${locale}`} className="mr-12 shrink-0">
               <SiteLogo
                 width={123}
                 height={39}

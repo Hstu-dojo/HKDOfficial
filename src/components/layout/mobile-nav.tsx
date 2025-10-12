@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useSelectedLayoutSegment } from "next/navigation";
 import SiteLogo from "./site-logo";
 import { cn } from "@/lib/utils";
+import { useCurrentLocale } from "@/locales/client";
 import {
   Accordion,
   AccordionContent,
@@ -25,6 +26,7 @@ export function MobileNav({
 }: MobileNavProps) {
   const segment = useSelectedLayoutSegment();
   const [isOpen, setIsOpen] = React.useState(false);
+  const locale = useCurrentLocale();
 
   return (
     <Sheet open={isOpen} onOpenChange={setIsOpen}>
@@ -65,7 +67,7 @@ export function MobileNav({
       <SheetContent side="left" className="w-full pl-1 pr-0 sm:max-w-full">
         <div className="px-7">
           <Link
-            href="/"
+            href={`/${locale}`}
             className="mr-12 block shrink-0"
             onClick={() => setIsOpen(false)}
           >
@@ -99,7 +101,7 @@ export function MobileNav({
                             subItem.href ? (
                               <MobileLink
                                 key={index}
-                                href={String(subItem.href)}
+                                href={`/${locale}${subItem.href}`}
                                 segment={String(segment)}
                                 setIsOpen={setIsOpen}
                                 disabled={subItem.disabled}
@@ -122,7 +124,7 @@ export function MobileNav({
                     item.href && (
                       <div>
                         <Link
-                          href={item.href}
+                          href={`/${locale}${item.href}`}
                           className="block border-b py-4 text-sm transition-colors hover:text-primary focus:text-primary"
                         >
                           {item.title}

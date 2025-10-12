@@ -13,6 +13,8 @@ export default {
     logout: "Logout",
     profile: "Profile",
     signOut: "Sign Out",
+    blog: "Blog",
+    user: "User",
   },
   
   // Hero Section
@@ -25,6 +27,117 @@ export default {
     on: "on",
     welcomeTitle: "Welcome to HSTU Karate Dojo",
     welcomeSubtitle: "Discover the art of karate at Hajee Mohammad Danesh Science & Technology University. Join us for rigorous training, community engagement, and competitive success.",
+    newsletter: {
+      title: "Stay Updated with HSTU Karate Dojo",
+      name: "Name",
+      email: "Email",
+      subscribe: "Subscribe",
+    },
+    joinDojo: "Are you ready to join our dojo? Discover the path to excellence in karate.",
+  },
+
+  // Homepage Sections
+  homepage: {
+    iconBoxes: {
+      training: {
+        title: "Training Programs",
+        description: "Join our comprehensive training programs to enhance your physical fitness, mental acuity, and technical proficiency in karate.",
+      },
+      workshops: {
+        title: "Workshops and Seminars",
+        description: "Participate in our workshops and seminars to learn more about karate and self-defense, and engage with the community.",
+      },
+      competitions: {
+        title: "Competitions",
+        description: "Compete in intra-university and inter-university championships to showcase your skills and bring honor to HSTU.",
+      },
+    },
+    benefits: {
+      title: "Discover the Benefits of Joining HSTU Karate Dojo",
+      subtitle: "Enhance your physical and mental capabilities through disciplined karate training. Experience the transformative power of martial arts.",
+      discipline: {
+        title: "Discipline and Respect",
+        description: "Our dojo instills values of discipline, respect, and perseverance in all members.",
+      },
+      community: {
+        title: "Community Engagement",
+        description: "Participate in events and activities that promote community involvement and social responsibility.",
+      },
+    },
+    promo: {
+      title: "Ready to Embark on Your Karate Journey?",
+      description: "Join HSTU Karate Dojo and experience the art of karate in a supportive and dynamic environment. Whether you're a beginner or an advanced practitioner, our programs are designed to help you achieve your personal best. Train with experienced instructors, participate in competitions, and engage in community activities.",
+      joinNow: "Join Now",
+    },
+    featuredPosts: {
+      title: "✨ Featured Content",
+      subtitle: "Featured Posts",
+      description: "Discover our most popular and engaging content, handpicked just for you",
+      topFeatured: "🌟 TOP FEATURED",
+      readMore: "Read More",
+      viewAll: "View All Posts",
+      posts: {
+        beltTest: {
+          title: "First belt test (stripe-orange)",
+          description: "We have arranged belt test among the students.",
+          tags: ["trending"],
+        },
+        membership: {
+          title: "Membership for HKD",
+          description: "HSTU Karate Dojo is open to having students at this moment. If you want to be a registered member, then contact the authority in the",
+          tags: ["membership", "registration"],
+        },
+        kata: {
+          title: "KATA Practice",
+          description: "Kata (Japanese: 形, or more traditionally, 型; lit. \"form\") is a Japanese word describing detailed patterns of movements practiced either solo or in pairs.",
+          tags: ["about", "karate"],
+        },
+      },
+    },
+    faq: {
+      title: "Frequently Asked Questions",
+      subtitle: "Find answers to the most commonly asked questions about HSTU Karate Dojo and learn more about our activities and membership.",
+      question1: "What is HSTU Karate Dojo?",
+      question2: "Who can join the dojo?",
+      question3: "What types of activities does the dojo offer?",
+      anyQuestion: "Any Question?",
+    },
+    stats: {
+      membersTrained: "Members Trained",
+      membersCount: "150+",
+      since: "Since 2022",
+      competitions: "Competitions Participated",
+      competitionsCount: "10+",
+      competitionsType: "Intra and inter-university",
+      satisfied: "Satisfied Members",
+      satisfiedDesc: "Those who already tried it.",
+    },
+    testimonials: {
+      testimonialOf: "Testimonial of",
+      hasan1: "Joining the HSTU Karate Dojo has been an incredible experience. The training is top-notch and the sensei is very supportive.",
+      loveraj: "The dojo provides a great environment for learning and personal growth. I highly recommend it to anyone interested in martial arts.",
+      hasan2: "The discipline and skills I've gained from the HSTU Karate Dojo have been invaluable. It's a fantastic community.",
+      shahriar: "I appreciate the structured training sessions and the opportunity to compete in championships. The dojo has been a great addition to my routine.",
+    },
+    furious5: {
+      title: "Choose the world you want to explore",
+      subtitle: "Meet Furious Five",
+      viper: "Viper",
+      mantis: "Mantis",
+      monk: "Monk",
+      tigress: "Tigress",
+      crane: "Crane",
+    },
+    partners: {
+      title: "Partners",
+      subtitle: "Proud Partners of HSTU Karate Dojo",
+      description: "Connecting with our esteemed partners to elevate our dojo.",
+    },
+    finalCta: {
+      title: "Karate is not just about fighting, it's a lifestyle!",
+      getApp: "Get App",
+      joinYou: "Let's Join You",
+    },
   },
 
   // Authentication Pages
@@ -143,6 +256,11 @@ export default {
     allRightsReserved: "All rights reserved",
     termsOfService: "Terms of Service",
     privacyPolicy: "Privacy Policy",
+    tagline: "Promoting the Art of Karate for Mind and Body Excellence.",
+    resources: "Resources",
+    updates: "Updates",
+    gallery: "Gallery",
+    madeBy: "Made by",
   },
 
   // Call to Action
