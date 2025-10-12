@@ -4,6 +4,7 @@ import { Toaster } from "sonner";
 import { siteConfig } from "@/config/site";
 import BackToTop from "@/components/back-to-top";
 import React from "react";
+import { I18nProviderClient } from "@/locales/client";
 
 const roboto = Roboto({
   subsets: ["latin"],
@@ -60,19 +61,25 @@ export const metadata: Metadata = {
 export default async function RootLayout({
   children,
   loginDialogue,
+  params,
 }: {
   children: React.ReactNode;
   loginDialogue?: React.ReactNode;
+  params: Promise<{ locale: string }>;
 }) {
+  const { locale } = await params;
+  
   return (
     <body
       className={`${roboto.className} dark:bg-slate-850 dark:text-slate-200`}
     >
-      {children}
-      {loginDialogue}
+      <I18nProviderClient locale={locale}>
+        {children}
+        {loginDialogue}
 
-      <Toaster richColors />
-      <BackToTop />
+        <Toaster richColors />
+        <BackToTop />
+      </I18nProviderClient>
     </body>
   );
 }
