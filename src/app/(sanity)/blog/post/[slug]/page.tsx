@@ -7,6 +7,7 @@ import { urlForOpenGraphImage } from "../../../../../../sanity/lib/utils";
 import { generateStaticSlugs } from "../../../../../../sanity/loader/generateStaticSlugs";
 import ProjectPage from "@/components/blogs/pages/project/ProjectPage";
 import ErrorPage from "@/app/not-found";
+import Script from "next/script";
 
 const ProjectPreview = dynamic(
   () => import("@/components/blogs/pages/project/ProjectPreview"),
@@ -53,5 +54,52 @@ export default async function ProjectSlugRoute({ params }: Props) {
     return <ErrorPage />;
   }
 
-  return <ProjectPage data={initial.data} />;
+  const project = initial.data;
+  const BASE_URL = process.env.SITE_URL || process.env.NEXT_PUBLIC_SITE_URL || "https://karate.paradox-bd.com";
+  
+  // Generate NewsArticle structured data for Google News
+  const structuredData = {
+    "@context": "https://schema.org",
+    "@type": "NewsArticle",
+    "headline": project.title,
+    "description": project.overview ? toPlainText(project.overview) : project.title,
+    "image": project.coverImage ? urlForOpenGraphImage(project.coverImage) : undefined,
+    "datePublished": (project as any)._createdAt || new Date().toISOString(),
+    "dateModified": (project as any)._updatedAt || new Date().toISOString(),
+    "author": {
+      "@type": project.author?.name ? "Person" : "Organization",
+      "name": project.author?.name || "HSTU Karate Dojo",
+      ...(project.author?.image && {
+        "image": project.author.image
+      })
+    },
+    "publisher": {
+      "@type": "Organization",
+      "name": "HSTU Karate Dojo",
+      "logo": {
+        "@type": "ImageObject",
+        "url": `${BASE_URL}/logo.png`
+      }
+    },
+    "mainEntityOfPage": {
+      "@type": "WebPage",
+      "@id": `${BASE_URL}/blog/post/${slug}`
+    },
+    ...(project.tags && project.tags.length > 0 && {
+      "keywords": project.tags.join(", ")
+    })
+  };
+
+  return (
+    <>
+      <Script
+        id="article-structured-data"
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(structuredData),
+        }}
+      />
+      <ProjectPage data={project} />
+    </>
+  );
 }
