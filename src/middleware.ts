@@ -10,23 +10,29 @@ const middlewares = {
   // "/services": withLocaleMiddleware,
   // "/pricing": withLocaleMiddleware,
   "/about": withLocaleMiddleware,
+  
+  // Admin routes - require admin-level roles
   "/admin": [withLocaleMiddleware, withAdminMiddleware],
   "/admin/:path*": [withLocaleMiddleware, withAdminMiddleware],
-  // Temporarily disabled auth middleware during Supabase migration
-  "/apply/:path*": withLocaleMiddleware, // [withLocaleMiddleware, withAuthMiddleware],
+  
+  // Protected routes - require authentication
+  "/apply/:path*": [withLocaleMiddleware, withAuthMiddleware],
+  "/profile": [withLocaleMiddleware, withAuthMiddleware],
+  "/[slug]/profile": [withLocaleMiddleware, withAuthMiddleware],
+  "/onboarding/:path*": [withLocaleMiddleware, withAuthMiddleware],
+  "/[slug]/onboarding/:path*": [withLocaleMiddleware, withAuthMiddleware],
+  
+  // Public routes
   "/dev": withLocaleMiddleware,
   "/login": withLocaleMiddleware,
   "/register": withLocaleMiddleware,
   "/contact": withLocaleMiddleware,
   "/posts": withLocaleMiddleware,
   "/posts/:path*": withLocaleMiddleware,
-  "/profile": withLocaleMiddleware, // [withLocaleMiddleware, withAuthMiddleware],
-  "/[slug]/profile": withLocaleMiddleware, // withAuthMiddleware,
-  "/onboarding/:path*": withLocaleMiddleware, // [withLocaleMiddleware, withAuthMiddleware],
-  "/[slug]/onboarding/:path*": withLocaleMiddleware, // withAuthMiddleware,
 
-  "/docs": withAdminMiddleware, // withAuthMiddleware,
-  "/docs/:path*": withAdminMiddleware, // withAuthMiddleware,
+  // Docs routes - require admin-level roles
+  "/docs": [withLocaleMiddleware, withAdminMiddleware],
+  "/docs/:path*": [withLocaleMiddleware, withAdminMiddleware],
 };
 
 // Create middlewares helper
