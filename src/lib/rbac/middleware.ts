@@ -3,6 +3,27 @@ import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs';
 import { cookies } from 'next/headers';
 import { hasPermission, hasRole } from "./permissions";
 import type { ResourceType, ActionType, RBACContext } from "./types";
+import { db } from "@/lib/connect-db";
+import { user } from "@/db/schema";
+import { eq } from "drizzle-orm";
+
+/**
+ * Get local DB user ID from Supabase user ID
+ */
+export async function getLocalUserId(supabaseUserId: string): Promise<string | null> {
+  try {
+    const result = await db
+      .select({ id: user.id })
+      .from(user)
+      .where(eq(user.supabaseUserId, supabaseUserId))
+      .limit(1);
+    
+    return result.length > 0 ? result[0].id : null;
+  } catch (error) {
+    console.error("Error getting local user ID:", error);
+    return null;
+  }
+}
 
 /**
  * Get the current user's RBAC context
@@ -17,9 +38,16 @@ export async function getRBACContext(): Promise<RBACContext | null> {
       return null;
     }
 
-    // For now, return basic context - can be enhanced with actual role fetching
+    // Get local DB user ID from Supabase user ID
+    const localUserId = await getLocalUserId(session.user.id);
+    
+    if (!localUserId) {
+      console.error("Local user not found for Supabase ID:", session.user.id);
+      return null;
+    }
+
     return {
-      userId: session.user.id,
+      userId: localUserId, // Use local DB user ID
       email: session.user.email!,
       roles: [], // Will be populated by getUserPermissions
     };

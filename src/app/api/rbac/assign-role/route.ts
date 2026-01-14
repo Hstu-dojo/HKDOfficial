@@ -17,7 +17,7 @@ export async function POST(request: Request) {
       );
     }
 
-    const { userId, roleId } = await request.json();
+    const { userId, roleId, isSupabaseId } = await request.json();
 
     if (!userId || !roleId) {
       return NextResponse.json(
@@ -26,8 +26,21 @@ export async function POST(request: Request) {
       );
     }
 
+    // If userId is a Supabase ID, convert it to local DB ID
+    let localUserId = userId;
+    if (isSupabaseId) {
+      const result = await db.select({ id: user.id }).from(user).where(eq(user.supabaseUserId, userId));
+      if (result.length === 0) {
+        return NextResponse.json(
+          { error: 'User not found' },
+          { status: 404 }
+        );
+      }
+      localUserId = result[0].id;
+    }
+
     // Verify user exists
-    const userExists = await db.select().from(user).where(eq(user.id, userId));
+    const userExists = await db.select().from(user).where(eq(user.id, localUserId));
     if (userExists.length === 0) {
       return NextResponse.json(
         { error: 'User not found' },

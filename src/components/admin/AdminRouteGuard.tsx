@@ -2,6 +2,7 @@ import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs';
 import { cookies } from 'next/headers';
 import { redirect } from "next/navigation";
 import { getUserPermissions, hasRole } from "@/lib/rbac/permissions";
+import { getLocalUserId } from "@/lib/rbac/middleware";
 
 interface AdminRouteGuardProps {
   children: React.ReactNode;
@@ -26,12 +27,20 @@ export async function AdminRouteGuard({
     redirect('/login?callbackUrl=/admin');
   }
 
+  // Get local DB user ID from Supabase user ID
+  const localUserId = await getLocalUserId(session.user.id);
+  
+  if (!localUserId) {
+    console.error('Local user not found for Supabase ID:', session.user.id);
+    redirect('/login?callbackUrl=/admin&error=user_not_found');
+  }
+
   try {
-    // Check for basic admin access
-    const isAdmin = await hasRole(session.user.id, 'SUPER_ADMIN') ||
-                   await hasRole(session.user.id, 'ADMIN') ||
-                   await hasRole(session.user.id, 'MODERATOR') ||
-                   await hasRole(session.user.id, 'INSTRUCTOR');
+    // Check for basic admin access using local user ID
+    const isAdmin = await hasRole(localUserId, 'SUPER_ADMIN') ||
+                   await hasRole(localUserId, 'ADMIN') ||
+                   await hasRole(localUserId, 'MODERATOR') ||
+                   await hasRole(localUserId, 'INSTRUCTOR');
 
     if (!isAdmin) {
       redirect('/unauthorized');
@@ -39,7 +48,7 @@ export async function AdminRouteGuard({
 
     // Check for specific role if required
     if (requiredRole) {
-      const hasRequiredRole = await hasRole(session.user.id, requiredRole);
+      const hasRequiredRole = await hasRole(localUserId, requiredRole);
       if (!hasRequiredRole) {
         redirect('/unauthorized');
       }
@@ -47,7 +56,7 @@ export async function AdminRouteGuard({
 
     // Check for specific permission if required
     if (requiredPermission) {
-      const userPermissions = await getUserPermissions(session.user.id);
+      const userPermissions = await getUserPermissions(localUserId);
       const hasRequiredPermission = userPermissions.permissions.some(
         (p) => p.resource === requiredPermission.resource && 
                (p.action === requiredPermission.action || p.action === 'MANAGE')

@@ -16,23 +16,55 @@ export function useRBAC() {
   const { data: session, status, hasCompleteData } = useCompleteSession();
   const [permissions, setPermissions] = useState<UserPermissions | null>(null);
   const [loading, setLoading] = useState(true);
+  const [localUserId, setLocalUserId] = useState<string | null>(null);
 
+  // First, get the local user ID from Supabase user ID
+  useEffect(() => {
+    if (status === 'loading' || !hasCompleteData) {
+      return;
+    }
+    
+    if (!session?.user?.id) {
+      setLocalUserId(null);
+      return;
+    }
+
+    async function getLocalUserId() {
+      try {
+        const response = await fetch(`/api/auth/get-local-user-id?supabaseId=${session!.user!.id}`);
+        if (response.ok) {
+          const data = await response.json();
+          setLocalUserId(data.localUserId);
+        } else {
+          console.error('Failed to get local user ID:', response.status, response.statusText);
+          setLocalUserId(null);
+        }
+      } catch (error) {
+        console.error('Error getting local user ID:', error);
+        setLocalUserId(null);
+      }
+    }
+
+    getLocalUserId();
+  }, [session, status, hasCompleteData]);
+
+  // Then fetch permissions using the local user ID
   useEffect(() => {
     if (status === 'loading' || !hasCompleteData) {
       setLoading(true);
       return;
     }
     
-    if (!session?.user?.id) {
+    if (!localUserId) {
       setPermissions(null);
       setLoading(false);
       return;
     }
 
-    // Fetch user permissions from the API
+    // Fetch user permissions from the API using local user ID
     async function fetchPermissions() {
       try {
-        const response = await fetch(`/api/rbac/user-permissions/${session!.user!.id}`);
+        const response = await fetch(`/api/rbac/user-permissions/${localUserId}`);
         if (response.ok) {
           const data = await response.json();
           // Transform the data to match expected format
@@ -58,7 +90,7 @@ export function useRBAC() {
     }
 
     fetchPermissions();
-  }, [session, status, hasCompleteData]);
+  }, [localUserId, status, hasCompleteData]);
 
   const hasPermission = (resource: ResourceType, action: ActionType): boolean => {
     if (!permissions) return false;

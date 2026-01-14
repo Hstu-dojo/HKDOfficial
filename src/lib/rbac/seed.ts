@@ -10,6 +10,8 @@ const defaultRoles = [
   { name: "ADMIN", description: "Administrator with management access" },
   { name: "MODERATOR", description: "Moderator with limited management access" },
   { name: "INSTRUCTOR", description: "Instructor with course management access" },
+  { name: "STUDENT", description: "Student with learning access" },
+  { name: "USER", description: "Regular user with basic access" },
   { name: "MEMBER", description: "Regular member with basic access" },
   { name: "GUEST", description: "Guest user with read-only access" },
 ];
