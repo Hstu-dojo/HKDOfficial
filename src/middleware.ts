@@ -31,8 +31,8 @@ const middlewares = {
   "/posts/:path*": withLocaleMiddleware,
 
   // Docs routes - require admin-level roles
-  "/docs": [withLocaleMiddleware, withAdminMiddleware],
-  "/docs/:path*": [withLocaleMiddleware, withAdminMiddleware],
+  "/docs": [withAdminMiddleware],
+  "/docs/:path*": [withAdminMiddleware],
 };
 
 // Create middlewares helper
