@@ -12,13 +12,27 @@ import { eq, and } from 'drizzle-orm';
 export async function withAdminMiddleware(request: NextRequest) {
   try {
     const response = NextResponse.next();
-    const supabase = createMiddlewareClient({ req: request, res: response });
+    
+    // Create Supabase client with proper request/response handling
+    const supabase = createMiddlewareClient({ 
+      req: request, 
+      res: response 
+    });
+
+    console.log('[Admin Middleware] Checking session for:', request.nextUrl.pathname);
 
     // Check if user is authenticated
     const { data: { session }, error } = await supabase.auth.getSession();
 
+    console.log('[Admin Middleware] Session:', {
+      hasSession: !!session,
+      userId: session?.user?.id,
+      error: error?.message
+    });
+
     if (error || !session?.user?.id) {
       // Not authenticated - redirect to login
+      console.log('[Admin Middleware] No session, redirecting to login');
       const loginUrl = new URL('/login', request.url);
       loginUrl.searchParams.set('callbackUrl', request.nextUrl.pathname);
       return NextResponse.redirect(loginUrl);
@@ -55,17 +69,22 @@ export async function withAdminMiddleware(request: NextRequest) {
         )
       );
 
+    console.log('[Admin Middleware] Roles:', userRoles.map(r => r.roleName).join(', '));
+
     // Check if user has any admin-level role
     const adminRoles = ['SUPER_ADMIN', 'ADMIN', 'MODERATOR', 'INSTRUCTOR'];
     const hasAdminRole = userRoles.some(ur => adminRoles.includes(ur.roleName));
 
+    console.log('[Admin Middleware] Has admin role:', hasAdminRole);
+
     if (!hasAdminRole) {
-      console.warn('User lacks admin privileges:', session.user.email);
+      console.warn('[Admin Middleware] Access denied for:', session.user.email);
       // Redirect to unauthorized page
       const unauthorizedUrl = new URL('/unauthorized', request.url);
       return NextResponse.redirect(unauthorizedUrl);
     }
 
+    console.log('[Admin Middleware] Access granted');
     // User is authenticated and has admin role - allow access
     return response;
   } catch (error) {
