@@ -1,5 +1,9 @@
 Role:
   type: object
+  description: |
+    Represents a role in the RBAC system. Roles can be assigned to users and
+    contain permissions. Default admin-level roles are: SUPER_ADMIN, ADMIN,
+    MODERATOR, INSTRUCTOR.
   properties:
     id:
       type: string
@@ -7,7 +11,7 @@ Role:
       description: Unique identifier for the role
     name:
       type: string
-      description: Role name
+      description: Role name (e.g., SUPER_ADMIN, ADMIN, MODERATOR, INSTRUCTOR, USER)
     description:
       type: string
       nullable: true
@@ -191,11 +195,15 @@ PermissionAssignment:
 
 UserPermissions:
   type: object
+  description: |
+    Contains the user's roles and aggregated permissions. Note that userId here
+    refers to the local database ID, not the Supabase Auth ID. Use the
+    /auth/get-local-user-id endpoint to map between them.
   properties:
     userId:
       type: string
       format: uuid
-      description: User ID
+      description: User ID (local database ID, not Supabase Auth ID)
     roles:
       type: array
       items:
@@ -244,3 +252,38 @@ PermissionResponse:
     message:
       type: string
       description: Success message
+
+AdminRoleCheckResponse:
+  type: object
+  description: Response from admin role check endpoint
+  properties:
+    hasAdminRole:
+      type: boolean
+      description: Whether the user has any admin-level role (SUPER_ADMIN, ADMIN, MODERATOR, INSTRUCTOR)
+    roles:
+      type: array
+      items:
+        type: string
+      description: List of active role names for the user
+      example: ["SUPER_ADMIN"]
+    localUserId:
+      type: string
+      format: uuid
+      description: User ID in the local database
+    error:
+      type: string
+      description: Error message if check failed
+  required:
+    - hasAdminRole
+
+LocalUserIdResponse:
+  type: object
+  description: Response from local user ID lookup endpoint
+  properties:
+    localUserId:
+      type: string
+      format: uuid
+      description: User ID in the local database mapped from Supabase Auth ID
+    error:
+      type: string
+      description: Error message if lookup failed

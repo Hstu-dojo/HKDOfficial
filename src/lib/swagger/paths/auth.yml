@@ -155,3 +155,128 @@
                   example: "Invalid or expired token"
       500:
         $ref: '#/components/responses/ServerError'
+
+/auth/check-admin-role:
+  get:
+    tags:
+      - Authentication
+      - RBAC
+    summary: Check if user has admin role
+    description: |
+      Internal endpoint used by middleware to verify if a user has admin-level roles.
+      Checks against SUPER_ADMIN, ADMIN, MODERATOR, and INSTRUCTOR roles.
+      
+      **Note:** This endpoint is primarily used by Edge Runtime middleware which cannot
+      perform direct database queries. It maps Supabase user IDs to local database IDs.
+    parameters:
+      - name: x-supabase-user-id
+        in: header
+        required: true
+        schema:
+          type: string
+          format: uuid
+        description: Supabase Auth user ID
+    responses:
+      200:
+        description: Role check result
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                hasAdminRole:
+                  type: boolean
+                  description: Whether the user has any admin-level role
+                roles:
+                  type: array
+                  items:
+                    type: string
+                  description: List of user's active role names
+                  example: ["SUPER_ADMIN", "INSTRUCTOR"]
+                localUserId:
+                  type: string
+                  format: uuid
+                  description: User ID in the local database
+      400:
+        description: Missing user ID
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                hasAdminRole:
+                  type: boolean
+                  example: false
+                error:
+                  type: string
+                  example: "No user ID provided"
+      404:
+        description: User not found in local database
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                hasAdminRole:
+                  type: boolean
+                  example: false
+                error:
+                  type: string
+                  example: "User not found"
+      500:
+        $ref: '#/components/responses/ServerError'
+
+/auth/get-local-user-id:
+  get:
+    tags:
+      - Authentication
+      - RBAC
+    summary: Get local database user ID from Supabase ID
+    description: |
+      Maps a Supabase Auth user ID to the corresponding local database user ID.
+      This is necessary because Supabase Auth uses its own user IDs which differ
+      from the local database user IDs used for RBAC.
+    security:
+      - sessionAuth: []
+    parameters:
+      - name: supabaseUserId
+        in: query
+        required: true
+        schema:
+          type: string
+          format: uuid
+        description: Supabase Auth user ID to look up
+    responses:
+      200:
+        description: Local user ID found
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                localUserId:
+                  type: string
+                  format: uuid
+                  description: User ID in the local database
+      400:
+        description: Missing Supabase user ID
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                error:
+                  type: string
+                  example: "supabaseUserId is required"
+      404:
+        description: User not found
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                error:
+                  type: string
+                  example: "User not found"
+      500:
+        $ref: '#/components/responses/ServerError'

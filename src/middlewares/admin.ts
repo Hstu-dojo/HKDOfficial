@@ -1,94 +1,84 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
-import { createMiddlewareClient } from '@supabase/auth-helpers-nextjs';
-import { db } from '@/lib/connect-db';
-import { user, userRole, role } from '@/db/schema';
-import { eq, and } from 'drizzle-orm';
+import { createServerClient } from '@supabase/ssr';
 
 /**
  * Admin middleware - checks if user is authenticated and has admin-level roles
  * Applies to /admin and /docs routes
+ * 
+ * Note: This runs in Edge Runtime, so we can't use Node.js modules like 'pg'.
+ * Database queries are done via API route instead.
  */
 export async function withAdminMiddleware(request: NextRequest) {
   try {
-    const response = NextResponse.next();
+    let response = NextResponse.next({
+      request: {
+        headers: request.headers,
+      },
+    });
     
-    // Create Supabase client with proper request/response handling
-    const supabase = createMiddlewareClient({ 
-      req: request, 
-      res: response 
-    });
+    // Create Supabase client using @supabase/ssr (handles base64 cookies properly)
+    const supabase = createServerClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+      {
+        cookies: {
+          getAll() {
+            return request.cookies.getAll();
+          },
+          setAll(cookiesToSet) {
+            cookiesToSet.forEach(({ name, value, options }) => {
+              request.cookies.set(name, value);
+            });
+            response = NextResponse.next({
+              request: {
+                headers: request.headers,
+              },
+            });
+            cookiesToSet.forEach(({ name, value, options }) => {
+              response.cookies.set(name, value, options);
+            });
+          },
+        },
+      }
+    );
 
-    console.log('[Admin Middleware] Checking session for:', request.nextUrl.pathname);
+    // Check if user is authenticated - use getUser() for security (validates with Supabase server)
+    const { data: { user: authUser }, error } = await supabase.auth.getUser();
 
-    // Check if user is authenticated
-    const { data: { session }, error } = await supabase.auth.getSession();
-
-    console.log('[Admin Middleware] Session:', {
-      hasSession: !!session,
-      userId: session?.user?.id,
-      error: error?.message
-    });
-
-    if (error || !session?.user?.id) {
+    if (!authUser?.id) {
       // Not authenticated - redirect to login
-      console.log('[Admin Middleware] No session, redirecting to login');
       const loginUrl = new URL('/login', request.url);
       loginUrl.searchParams.set('callbackUrl', request.nextUrl.pathname);
       return NextResponse.redirect(loginUrl);
     }
 
-    // Get local user ID from Supabase user ID
-    const localUser = await db
-      .select({ id: user.id })
-      .from(user)
-      .where(eq(user.supabaseUserId, session.user.id))
-      .limit(1);
+    // Check admin role via API route (Edge Runtime can't do direct DB queries)
+    const baseUrl = request.nextUrl.origin;
+    const checkRoleResponse = await fetch(`${baseUrl}/api/auth/check-admin-role`, {
+      method: 'GET',
+      headers: {
+        'x-supabase-user-id': authUser.id,
+      },
+    });
 
-    if (localUser.length === 0) {
-      console.error('User not found in local database:', session.user.id);
+    if (!checkRoleResponse.ok) {
+      console.error('[Admin Middleware] Failed to check role:', checkRoleResponse.status);
       const loginUrl = new URL('/login', request.url);
-      loginUrl.searchParams.set('error', 'user_not_found');
+      loginUrl.searchParams.set('error', 'role_check_failed');
       return NextResponse.redirect(loginUrl);
     }
 
-    // Check if user has admin-level roles
-    const userRoles = await db
-      .select({
-        roleName: role.name,
-        roleIsActive: role.isActive,
-        userRoleIsActive: userRole.isActive,
-      })
-      .from(userRole)
-      .innerJoin(role, eq(userRole.roleId, role.id))
-      .where(
-        and(
-          eq(userRole.userId, localUser[0].id),
-          eq(userRole.isActive, true),
-          eq(role.isActive, true)
-        )
-      );
+    const roleData = await checkRoleResponse.json();
 
-    console.log('[Admin Middleware] Roles:', userRoles.map(r => r.roleName).join(', '));
-
-    // Check if user has any admin-level role
-    const adminRoles = ['SUPER_ADMIN', 'ADMIN', 'MODERATOR', 'INSTRUCTOR'];
-    const hasAdminRole = userRoles.some(ur => adminRoles.includes(ur.roleName));
-
-    console.log('[Admin Middleware] Has admin role:', hasAdminRole);
-
-    if (!hasAdminRole) {
-      console.warn('[Admin Middleware] Access denied for:', session.user.email);
-      // Redirect to unauthorized page
+    if (!roleData.hasAdminRole) {
       const unauthorizedUrl = new URL('/unauthorized', request.url);
       return NextResponse.redirect(unauthorizedUrl);
     }
 
-    console.log('[Admin Middleware] Access granted');
-    // User is authenticated and has admin role - allow access
     return response;
   } catch (error) {
-    console.error('Admin middleware error:', error);
+    console.error('[Admin Middleware] Error:', error);
     // On error, redirect to login for safety
     const loginUrl = new URL('/login', request.url);
     loginUrl.searchParams.set('callbackUrl', request.nextUrl.pathname);

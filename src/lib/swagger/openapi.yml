@@ -42,10 +42,12 @@ components:
       type: http
       scheme: bearer
       bearerFormat: JWT
+      description: Supabase JWT access token
     sessionAuth:
       type: apiKey
       in: cookie
-      name: next-auth.session-token
+      name: sb-auth-token
+      description: Supabase session cookie (sb-{projectRef}-auth-token)
 
   responses:
     UnauthorizedError:
