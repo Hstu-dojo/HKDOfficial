@@ -1,7 +1,8 @@
 'use client';
 
 import { useState } from 'react';
-import { useSession, signOut } from 'next-auth/react';
+import { useSession } from '@/hooks/useSessionCompat';
+import { useAuth } from '@/context/AuthContext';
 import { useRBAC } from '@/hooks/useRBAC';
 import Image from 'next/image';
 import { 
@@ -21,6 +22,7 @@ interface AdminHeaderProps {
 
 export function AdminHeader({ onToggleSidebar, sidebarOpen }: AdminHeaderProps) {
   const { data: session } = useSession();
+  const { signOut } = useAuth();
   const { hasRole } = useRBAC();
   const [showUserMenu, setShowUserMenu] = useState(false);
 
@@ -113,9 +115,10 @@ export function AdminHeader({ onToggleSidebar, sidebarOpen }: AdminHeaderProps) 
                   </Link>
                   
                   <button
-                    onClick={() => {
+                    onClick={async () => {
                       setShowUserMenu(false);
-                      signOut({ callbackUrl: '/' });
+                      await signOut();
+                      window.location.href = '/';
                     }}
                     className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                   >

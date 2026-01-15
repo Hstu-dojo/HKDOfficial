@@ -1,7 +1,7 @@
 'use client';
 
 import { useCompleteSession } from '@/hooks/useCompleteSession';
-import { useSession } from 'next-auth/react';
+import { useSession } from '@/hooks/useSessionCompat';
 
 export function SessionDebugger() {
   const originalSession = useSession();
@@ -10,7 +10,7 @@ export function SessionDebugger() {
   return (
     <div className="space-y-4 p-4 bg-gray-100 rounded-lg">
       <div>
-        <h3 className="font-bold text-sm">Original useSession:</h3>
+        <h3 className="font-bold text-sm">Supabase Session (via useSessionCompat):</h3>
         <pre className="text-xs bg-white p-2 rounded overflow-auto">
           {JSON.stringify(originalSession.data, null, 2)}
         </pre>
