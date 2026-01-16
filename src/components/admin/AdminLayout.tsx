@@ -12,14 +12,30 @@ interface AdminLayoutProps {
   children: React.ReactNode;
 }
 
+// Roles that have access to the admin panel
+const ADMIN_ACCESS_ROLES = [
+  'SUPER_ADMIN',
+  'ADMIN',
+  'MODERATOR',
+  'INSTRUCTOR',
+  'STAFF',
+];
+
 export function AdminLayout({ children }: AdminLayoutProps) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const { data: session, status } = useSession();
-  const { hasRole, loading: rbacLoading } = useRBAC();
+  const { hasRole, hasAnyRole, permissions, loading: rbacLoading, error: rbacError, localUserId } = useRBAC();
   const router = useRouter();
 
-  // Check if user has admin access
-  const hasAdminAccess = hasRole('SUPER_ADMIN') || hasRole('ADMIN') || hasRole('MODERATOR') || hasRole('INSTRUCTOR');
+  // Check if user has admin access via RBAC roles
+  const hasAdminAccessByRole = hasAnyRole(ADMIN_ACCESS_ROLES);
+  
+  // Check if user has ANY permission (meaning they're in the RBAC system)
+  const hasAnyPermission = permissions && permissions.permissions && permissions.permissions.length > 0;
+  
+  // User has admin access if they have an admin role OR if they have any permission in the system
+  // This allows users who are assigned permissions to access the admin panel
+  const hasAdminAccess = hasAdminAccessByRole || hasAnyPermission;
 
   // Handle authentication redirect
   useEffect(() => {
@@ -91,17 +107,43 @@ export function AdminLayout({ children }: AdminLayoutProps) {
   if (!rbacLoading && !hasAdminAccess) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
-        <div className="max-w-md w-full text-center">
-          <h2 className="text-2xl font-bold text-gray-900">Access Denied</h2>
-          <p className="mt-2 text-gray-600">
-            You don&apos;t have the required permissions to access the admin panel.
-          </p>
-          
-          <div className="mt-6 space-x-4">
-            <button
-              onClick={() => router.push('/')}
-              className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700"
-            >
+        <div className="max-w-lg w-full text-center p-8">
+          <div className="bg-white shadow-lg rounded-lg p-6">
+            <h2 className="text-2xl font-bold text-gray-900">Access Denied</h2>
+            <p className="mt-2 text-gray-600">
+              You don&apos;t have the required permissions to access the admin panel.
+            </p>
+            
+            {/* Debug info for development */}
+            {process.env.NODE_ENV === 'development' && (
+              <div className="mt-4 p-3 bg-gray-100 rounded text-left text-xs">
+                <p className="font-semibold text-gray-700">Debug Info:</p>
+                <p className="text-gray-600">
+                  Local User ID: {localUserId || 'Not found'}
+                </p>
+                <p className="text-gray-600">
+                  Roles: {permissions?.roles?.map(r => r.name).join(', ') || 'None'}
+                </p>
+                <p className="text-gray-600">
+                  Permissions: {permissions?.permissions?.length || 0}
+                </p>
+                {rbacError && (
+                  <p className="text-red-600 mt-2">
+                    Error: {rbacError}
+                  </p>
+                )}
+                <p className="text-gray-600 mt-2 text-yellow-600">
+                  If you&apos;re a SUPER_ADMIN, you may need to run the RBAC seed script
+                  and assign your role in the userRole table.
+                </p>
+              </div>
+            )}
+
+            <div className="mt-6 space-x-4">
+              <button
+                onClick={() => router.push('/')}
+                className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700"
+              >
               Go Home
             </button>
             <button

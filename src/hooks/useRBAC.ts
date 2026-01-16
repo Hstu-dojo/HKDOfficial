@@ -1,11 +1,16 @@
 'use client';
 
 import { useCompleteSession } from './useCompleteSession';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import type { ResourceType, ActionType } from '@/lib/rbac/types';
 
 interface UserPermissions {
-  roles: string[];
+  roles: Array<{
+    id: string;
+    name: string;
+    description?: string;
+    isActive?: boolean;
+  }>;
   permissions: Array<{
     resource: ResourceType;
     action: ActionType;
@@ -17,6 +22,7 @@ export function useRBAC() {
   const [permissions, setPermissions] = useState<UserPermissions | null>(null);
   const [loading, setLoading] = useState(true);
   const [localUserId, setLocalUserId] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
   // First, get the local user ID from Supabase user ID
   useEffect(() => {
@@ -26,6 +32,7 @@ export function useRBAC() {
     
     if (!session?.user?.id) {
       setLocalUserId(null);
+      setLoading(false);
       return;
     }
 
@@ -35,13 +42,19 @@ export function useRBAC() {
         if (response.ok) {
           const data = await response.json();
           setLocalUserId(data.localUserId);
+          setError(null);
         } else {
-          console.error('Failed to get local user ID:', response.status, response.statusText);
+          const errorData = await response.json().catch(() => ({}));
+          console.error('Failed to get local user ID:', response.status, errorData);
           setLocalUserId(null);
+          setError(`Failed to get local user ID: ${errorData.error || response.statusText}`);
+          setLoading(false);
         }
-      } catch (error) {
-        console.error('Error getting local user ID:', error);
+      } catch (err) {
+        console.error('Error getting local user ID:', err);
         setLocalUserId(null);
+        setError('Network error getting local user ID');
+        setLoading(false);
       }
     }
 
@@ -56,71 +69,84 @@ export function useRBAC() {
     }
     
     if (!localUserId) {
-      setPermissions(null);
-      setLoading(false);
+      // Only set loading false if we've already tried to get local user ID
+      if (session?.user?.id && !loading) {
+        setPermissions(null);
+      }
       return;
     }
 
     // Fetch user permissions from the API using local user ID
     async function fetchPermissions() {
       try {
+        setLoading(true);
         const response = await fetch(`/api/rbac/user-permissions/${localUserId}`);
         if (response.ok) {
           const data = await response.json();
           // Transform the data to match expected format
-          const transformedData = {
-            roles: data.userPermissions.roles.map((role: any) => role.name),
+          const transformedData: UserPermissions = {
+            roles: data.userPermissions.roles.map((role: any) => ({
+              id: role.id,
+              name: role.name,
+              description: role.description,
+              isActive: role.isActive,
+            })),
             permissions: data.userPermissions.permissions.map((perm: any) => ({
               resource: perm.resource,
               action: perm.action,
             })),
           };
           setPermissions(transformedData);
-          setLoading(false);
+          setError(null);
         } else {
-          console.error('Failed to fetch user permissions:', response.status, response.statusText);
+          const errorData = await response.json().catch(() => ({}));
+          console.error('Failed to fetch user permissions:', response.status, errorData);
           setPermissions(null);
-          setLoading(false);
+          setError(`Failed to fetch permissions: ${errorData.error || response.statusText}`);
         }
-      } catch (error) {
-        console.error('Error fetching permissions:', error);
+      } catch (err) {
+        console.error('Error fetching permissions:', err);
         setPermissions(null);
+        setError('Network error fetching permissions');
+      } finally {
         setLoading(false);
       }
     }
 
     fetchPermissions();
-  }, [localUserId, status, hasCompleteData]);
+  }, [localUserId, status, hasCompleteData, session?.user?.id]);
 
-  const hasPermission = (resource: ResourceType, action: ActionType): boolean => {
+  const hasPermission = useCallback((resource: ResourceType, action: ActionType): boolean => {
     if (!permissions) return false;
     
     return permissions.permissions.some(
       (perm) => perm.resource === resource && (perm.action === action || perm.action === 'MANAGE')
     );
-  };
+  }, [permissions]);
 
-  const hasRole = (roleName: string): boolean => {
+  const hasRole = useCallback((roleName: string): boolean => {
     if (!permissions) return false;
     
-    return permissions.roles.includes(roleName);
-  };
+    return permissions.roles.some(r => r.name === roleName);
+  }, [permissions]);
 
-  const hasAnyRole = (roleNames: string[]): boolean => {
+  const hasAnyRole = useCallback((roleNames: string[]): boolean => {
     if (!permissions) return false;
     
-    return roleNames.some(role => permissions.roles.includes(role));
-  };
+    return roleNames.some(role => permissions.roles.some(r => r.name === role));
+  }, [permissions]);
 
-  const hasAllRoles = (roleNames: string[]): boolean => {
+  const hasAllRoles = useCallback((roleNames: string[]): boolean => {
     if (!permissions) return false;
     
-    return roleNames.every(role => permissions.roles.includes(role));
-  };
+    return roleNames.every(role => permissions.roles.some(r => r.name === role));
+  }, [permissions]);
 
   return {
     permissions,
     loading,
+    error,
+    localUserId,
     hasPermission,
     hasRole,
     hasAnyRole,

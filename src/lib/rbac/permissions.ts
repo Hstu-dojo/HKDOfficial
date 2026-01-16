@@ -1,5 +1,5 @@
 import { db } from "@/lib/connect-db";
-import { role, permission, rolePermission, userRole } from "@/db/schema";
+import { role, permission, rolePermission, userRole, user } from "@/db/schema";
 import { eq, and, inArray } from "drizzle-orm";
 import type { ResourceType, ActionType, Permission, Role, UserPermissions } from "./types";
 
@@ -58,6 +58,88 @@ export async function getUserPermissions(userId: string): Promise<UserPermission
     };
   } catch (error) {
     console.error("Error getting user permissions:", error);
+    return { userId, roles: [], permissions: [] };
+  }
+}
+
+/**
+ * Get user permissions with fallback to defaultRole from user table
+ * This handles the case where a user has a defaultRole but no explicit userRole assignment
+ */
+export async function getUserPermissionsWithFallback(userId: string): Promise<UserPermissions> {
+  try {
+    // First try to get permissions from the userRole table
+    const permissions = await getUserPermissions(userId);
+    
+    // If user has roles assigned in userRole table, return those
+    if (permissions.roles.length > 0) {
+      return permissions;
+    }
+    
+    // Fallback: Check user's defaultRole field
+    const userData = await db
+      .select({ defaultRole: user.defaultRole })
+      .from(user)
+      .where(eq(user.id, userId))
+      .limit(1);
+    
+    if (userData.length === 0 || !userData[0].defaultRole) {
+      return { userId, roles: [], permissions: [] };
+    }
+    
+    const defaultRoleName = userData[0].defaultRole;
+    
+    // Find the role in the role table
+    const roleData = await db
+      .select({
+        id: role.id,
+        name: role.name,
+        description: role.description,
+        isActive: role.isActive,
+      })
+      .from(role)
+      .where(eq(role.name, defaultRoleName))
+      .limit(1);
+    
+    if (roleData.length === 0 || !roleData[0].isActive) {
+      // Role doesn't exist in RBAC system yet, but user has defaultRole
+      // Return a minimal role object
+      return {
+        userId,
+        roles: [{
+          id: 'default',
+          name: defaultRoleName,
+          description: `Default role from user profile`,
+          isActive: true,
+        }],
+        permissions: [],
+      };
+    }
+    
+    // Get permissions for this role
+    const rolePerms = await db
+      .select({
+        permission: {
+          id: permission.id,
+          name: permission.name,
+          description: permission.description,
+          resource: permission.resource,
+          action: permission.action,
+        },
+      })
+      .from(rolePermission)
+      .innerJoin(permission, eq(rolePermission.permissionId, permission.id))
+      .where(eq(rolePermission.roleId, roleData[0].id));
+    
+    const uniquePermissions = rolePerms.map(rp => rp.permission);
+    
+    return {
+      userId,
+      roles: [roleData[0]],
+      permissions: uniquePermissions,
+    };
+  } catch (error) {
+    console.error("Error getting user permissions with fallback:", error);
     return { userId, roles: [], permissions: [] };
   }
 }

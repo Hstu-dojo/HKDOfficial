@@ -12,6 +12,10 @@ import {
   PhotoIcon,
   MapIcon,
   ShieldCheckIcon,
+  MegaphoneIcon,
+  AcademicCapIcon,
+  DocumentChartBarIcon,
+  TicketIcon,
 } from '@heroicons/react/24/outline';
 import { cn } from '@/lib/utils';
 
@@ -60,7 +64,7 @@ const navigation: NavItem[] = [
     icon: CalendarIcon,
     description: 'Manage class schedules',
     requiredPermission: {
-      resource: 'CLASS_SCHEDULE',
+      resource: 'CLASS',
       action: 'READ',
     },
   },
@@ -80,7 +84,47 @@ const navigation: NavItem[] = [
     icon: PhotoIcon,
     description: 'Manage media and images',
     requiredPermission: {
-      resource: 'MEDIA',
+      resource: 'GALLERY',
+      action: 'READ',
+    },
+  },
+  {
+    name: 'Events',
+    href: '/admin/events',
+    icon: TicketIcon,
+    description: 'Manage events and activities',
+    requiredPermission: {
+      resource: 'EVENT',
+      action: 'READ',
+    },
+  },
+  {
+    name: 'Announcements',
+    href: '/admin/announcements',
+    icon: MegaphoneIcon,
+    description: 'Manage announcements',
+    requiredPermission: {
+      resource: 'ANNOUNCEMENT',
+      action: 'READ',
+    },
+  },
+  {
+    name: 'Certificates',
+    href: '/admin/certificates',
+    icon: AcademicCapIcon,
+    description: 'Manage certificates',
+    requiredPermission: {
+      resource: 'CERTIFICATE',
+      action: 'READ',
+    },
+  },
+  {
+    name: 'Reports',
+    href: '/admin/reports',
+    icon: DocumentChartBarIcon,
+    description: 'View and generate reports',
+    requiredPermission: {
+      resource: 'REPORT',
       action: 'READ',
     },
   },
