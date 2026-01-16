@@ -9,9 +9,10 @@ export const providerTypeEnum = pgEnum("provider_type", ["Google", "GitHub"]);
 export const resourceTypeEnum = pgEnum("resource_type", [
   "USER", "ACCOUNT", "SESSION", "PROVIDER", "ROLE", "PERMISSION", 
   "COURSE", "BLOG", "MEDIA", "CLASS", "EQUIPMENT", "MEMBER", "BILL", "PAYMENT",
-  "GALLERY", "EVENT", "ANNOUNCEMENT", "CERTIFICATE", "REPORT"
+  "GALLERY", "EVENT", "ANNOUNCEMENT", "CERTIFICATE", "REPORT",
+  "ENROLLMENT", "MONTHLY_FEE", "SCHEDULE"
 ]);
-export const actionEnum = pgEnum("action", ["CREATE", "READ", "UPDATE", "DELETE", "MANAGE"]);
+export const actionEnum = pgEnum("action", ["CREATE", "READ", "UPDATE", "DELETE", "MANAGE", "APPROVE", "VERIFY"]);
 
 // Karate-specific Enums
 export const beltRankEnum = pgEnum('belt_rank', ['white', 'yellow', 'orange', 'green', 'blue', 'red', 'brown', 'black']);

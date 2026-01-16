@@ -7,7 +7,10 @@ import {
 } from "./auth";
 import { 
   members, registrations, classes, enrollments, attendance, 
-  beltProgressions, equipment, equipmentCheckouts 
+  beltProgressions, equipment, equipmentCheckouts,
+  courses, courseSchedules, courseInstructors,
+  enrollmentApplications, courseEnrollments,
+  monthlyFees, paymentReminders, paymentSettings
 } from "./karate";
 import { billableItems, bills, payments } from "./billing";
 import { blogs, notices, photoGroups, photos, systemSettings } from "./content";
@@ -271,6 +274,119 @@ export const photosRelations = relations(photos, ({ one }) => ({
 export const systemSettingsRelations = relations(systemSettings, ({ one }) => ({
   updater: one(user, {
     fields: [systemSettings.updatedBy],
+    references: [user.id],
+  }),
+}));
+
+// Course Relations
+export const coursesRelations = relations(courses, ({ one, many }) => ({
+  creator: one(user, {
+    fields: [courses.createdBy],
+    references: [user.id],
+  }),
+  schedules: many(courseSchedules),
+  instructors: many(courseInstructors),
+  enrollmentApplications: many(enrollmentApplications),
+  courseEnrollments: many(courseEnrollments),
+}));
+
+export const courseSchedulesRelations = relations(courseSchedules, ({ one }) => ({
+  course: one(courses, {
+    fields: [courseSchedules.courseId],
+    references: [courses.id],
+  }),
+}));
+
+export const courseInstructorsRelations = relations(courseInstructors, ({ one }) => ({
+  course: one(courses, {
+    fields: [courseInstructors.courseId],
+    references: [courses.id],
+  }),
+  instructor: one(user, {
+    fields: [courseInstructors.instructorId],
+    references: [user.id],
+  }),
+}));
+
+// Enrollment Application Relations
+export const enrollmentApplicationsRelations = relations(enrollmentApplications, ({ one }) => ({
+  user: one(user, {
+    fields: [enrollmentApplications.userId],
+    references: [user.id],
+  }),
+  course: one(courses, {
+    fields: [enrollmentApplications.courseId],
+    references: [courses.id],
+  }),
+  paymentVerifier: one(user, {
+    fields: [enrollmentApplications.paymentVerifiedBy],
+    references: [user.id],
+    relationName: "paymentVerifier",
+  }),
+  reviewer: one(user, {
+    fields: [enrollmentApplications.reviewedBy],
+    references: [user.id],
+    relationName: "applicationReviewer",
+  }),
+  member: one(members, {
+    fields: [enrollmentApplications.memberId],
+    references: [members.id],
+  }),
+}));
+
+export const courseEnrollmentsRelations = relations(courseEnrollments, ({ one, many }) => ({
+  course: one(courses, {
+    fields: [courseEnrollments.courseId],
+    references: [courses.id],
+  }),
+  member: one(members, {
+    fields: [courseEnrollments.memberId],
+    references: [members.id],
+  }),
+  application: one(enrollmentApplications, {
+    fields: [courseEnrollments.applicationId],
+    references: [enrollmentApplications.id],
+  }),
+  monthlyFees: many(monthlyFees),
+}));
+
+// Monthly Fee Relations
+export const monthlyFeesRelations = relations(monthlyFees, ({ one, many }) => ({
+  enrollment: one(courseEnrollments, {
+    fields: [monthlyFees.enrollmentId],
+    references: [courseEnrollments.id],
+  }),
+  member: one(members, {
+    fields: [monthlyFees.memberId],
+    references: [members.id],
+  }),
+  verifier: one(user, {
+    fields: [monthlyFees.verifiedBy],
+    references: [user.id],
+    relationName: "feeVerifier",
+  }),
+  waiver: one(user, {
+    fields: [monthlyFees.waivedBy],
+    references: [user.id],
+    relationName: "feeWaiver",
+  }),
+  reminders: many(paymentReminders),
+}));
+
+export const paymentRemindersRelations = relations(paymentReminders, ({ one }) => ({
+  monthlyFee: one(monthlyFees, {
+    fields: [paymentReminders.monthlyFeeId],
+    references: [monthlyFees.id],
+  }),
+  member: one(members, {
+    fields: [paymentReminders.memberId],
+    references: [members.id],
+  }),
+}));
+
+export const paymentSettingsRelations = relations(paymentSettings, ({ one }) => ({
+  updater: one(user, {
+    fields: [paymentSettings.updatedBy],
     references: [user.id],
   }),
 }));

@@ -22,8 +22,8 @@ declare module "next-auth/jwt" {
 }
 
 // RBAC Types
-export type ResourceType = "USER" | "ACCOUNT" | "SESSION" | "VERIFICATION_TOKEN" | "PROVIDER" | "ROLE" | "PERMISSION" | "LEVEL" | "COURSE" | "BLOG" | "MEDIA" | "CLASS" | "EQUIPMENT" | "MEMBER" | "BILL" | "PAYMENT" | "GALLERY" | "EVENT" | "ANNOUNCEMENT" | "CERTIFICATE" | "REPORT";
-export type ActionType = "CREATE" | "READ" | "UPDATE" | "DELETE" | "MANAGE";
+export type ResourceType = "USER" | "ACCOUNT" | "SESSION" | "VERIFICATION_TOKEN" | "PROVIDER" | "ROLE" | "PERMISSION" | "LEVEL" | "COURSE" | "BLOG" | "MEDIA" | "CLASS" | "EQUIPMENT" | "MEMBER" | "BILL" | "PAYMENT" | "GALLERY" | "EVENT" | "ANNOUNCEMENT" | "CERTIFICATE" | "REPORT" | "ENROLLMENT" | "MONTHLY_FEE" | "SCHEDULE";
+export type ActionType = "CREATE" | "READ" | "UPDATE" | "DELETE" | "MANAGE" | "APPROVE" | "VERIFY";
 
 export interface Permission {
   id: string;

@@ -142,6 +142,30 @@ const defaultPermissions: Array<{
   { name: "update_report", resource: "REPORT", action: "UPDATE", description: "Update reports" },
   { name: "delete_report", resource: "REPORT", action: "DELETE", description: "Delete reports" },
   { name: "manage_report", resource: "REPORT", action: "MANAGE", description: "Full report management" },
+  
+  // Enrollment permissions
+  { name: "create_enrollment", resource: "ENROLLMENT", action: "CREATE", description: "Create new enrollments" },
+  { name: "read_enrollment", resource: "ENROLLMENT", action: "READ", description: "View enrollments" },
+  { name: "update_enrollment", resource: "ENROLLMENT", action: "UPDATE", description: "Update enrollments" },
+  { name: "delete_enrollment", resource: "ENROLLMENT", action: "DELETE", description: "Delete enrollments" },
+  { name: "manage_enrollment", resource: "ENROLLMENT", action: "MANAGE", description: "Full enrollment management" },
+  { name: "approve_enrollment", resource: "ENROLLMENT", action: "APPROVE", description: "Approve/reject enrollment applications" },
+  { name: "verify_enrollment", resource: "ENROLLMENT", action: "VERIFY", description: "Verify enrollment payments" },
+  
+  // Monthly Fee permissions
+  { name: "create_monthly_fee", resource: "MONTHLY_FEE", action: "CREATE", description: "Create monthly fee records" },
+  { name: "read_monthly_fee", resource: "MONTHLY_FEE", action: "READ", description: "View monthly fees" },
+  { name: "update_monthly_fee", resource: "MONTHLY_FEE", action: "UPDATE", description: "Update monthly fees" },
+  { name: "delete_monthly_fee", resource: "MONTHLY_FEE", action: "DELETE", description: "Delete monthly fees" },
+  { name: "manage_monthly_fee", resource: "MONTHLY_FEE", action: "MANAGE", description: "Full monthly fee management" },
+  { name: "verify_monthly_fee", resource: "MONTHLY_FEE", action: "VERIFY", description: "Verify monthly fee payments" },
+  
+  // Schedule permissions
+  { name: "create_schedule", resource: "SCHEDULE", action: "CREATE", description: "Create schedules" },
+  { name: "read_schedule", resource: "SCHEDULE", action: "READ", description: "View schedules" },
+  { name: "update_schedule", resource: "SCHEDULE", action: "UPDATE", description: "Update schedules" },
+  { name: "delete_schedule", resource: "SCHEDULE", action: "DELETE", description: "Delete schedules" },
+  { name: "manage_schedule", resource: "SCHEDULE", action: "MANAGE", description: "Full schedule management" },
 ];
 
 // Role-Permission mappings
@@ -167,6 +191,12 @@ const rolePermissionMappings: { [key: string]: string[] } = {
     "create_announcement", "read_announcement", "update_announcement", "delete_announcement", "manage_announcement",
     "create_certificate", "read_certificate", "update_certificate", "delete_certificate", "manage_certificate",
     "create_report", "read_report", "update_report", "delete_report", "manage_report",
+    // Enrollment permissions
+    "create_enrollment", "read_enrollment", "update_enrollment", "delete_enrollment", "manage_enrollment", "approve_enrollment", "verify_enrollment",
+    // Monthly Fee permissions
+    "create_monthly_fee", "read_monthly_fee", "update_monthly_fee", "delete_monthly_fee", "manage_monthly_fee", "verify_monthly_fee",
+    // Schedule permissions
+    "create_schedule", "read_schedule", "update_schedule", "delete_schedule", "manage_schedule",
   ],
   ADMIN: [
     // Most permissions except system-level ones
@@ -189,6 +219,12 @@ const rolePermissionMappings: { [key: string]: string[] } = {
     "create_announcement", "read_announcement", "update_announcement", "delete_announcement", "manage_announcement",
     "create_certificate", "read_certificate", "update_certificate", "delete_certificate", "manage_certificate",
     "read_report", "create_report",
+    // Enrollment permissions for admin
+    "create_enrollment", "read_enrollment", "update_enrollment", "delete_enrollment", "manage_enrollment", "approve_enrollment", "verify_enrollment",
+    // Monthly Fee permissions for admin
+    "create_monthly_fee", "read_monthly_fee", "update_monthly_fee", "delete_monthly_fee", "manage_monthly_fee", "verify_monthly_fee",
+    // Schedule permissions for admin
+    "create_schedule", "read_schedule", "update_schedule", "delete_schedule", "manage_schedule",
   ],
   MODERATOR: [
     // Content moderation permissions
@@ -200,6 +236,12 @@ const rolePermissionMappings: { [key: string]: string[] } = {
     "read_announcement", "create_announcement", "update_announcement",
     "read_member",
     "read_class",
+    // Enrollment review permissions for moderator
+    "read_enrollment", "approve_enrollment", "verify_enrollment",
+    // Monthly Fee verification for moderator
+    "read_monthly_fee", "verify_monthly_fee",
+    // Schedule view
+    "read_schedule",
   ],
   INSTRUCTOR: [
     // Teaching-related permissions
@@ -219,6 +261,12 @@ const rolePermissionMappings: { [key: string]: string[] } = {
     "read_event", "create_event", "update_event",
     "read_announcement",
     "read_certificate", "create_certificate",
+    // Enrollment permissions for instructors
+    "read_enrollment",
+    // Schedule permissions for instructors
+    "create_schedule", "read_schedule", "update_schedule",
+    // Monthly fee view
+    "read_monthly_fee",
   ],
   STUDENT: [
     // Basic read permissions
@@ -236,6 +284,12 @@ const rolePermissionMappings: { [key: string]: string[] } = {
     "read_event",
     "read_announcement",
     "read_certificate", // Can view their own certificates
+    // Enrollment - can view own
+    "read_enrollment", "create_enrollment",
+    // Monthly fee - can view own
+    "read_monthly_fee",
+    // Schedule
+    "read_schedule",
   ],
   MEMBER: [
     // Similar to STUDENT but with less access
@@ -244,6 +298,10 @@ const rolePermissionMappings: { [key: string]: string[] } = {
     "read_gallery",
     "read_event",
     "read_announcement",
+    // Can create enrollment application
+    "create_enrollment",
+    "read_enrollment",
+    "read_schedule",
   ],
   USER: [
     // Minimal permissions
@@ -254,6 +312,10 @@ const rolePermissionMappings: { [key: string]: string[] } = {
     "read_gallery",
     "read_event",
     "read_announcement",
+    // Can apply for enrollment
+    "create_enrollment",
+    "read_enrollment",
+    "read_schedule",
   ],
 };
 
@@ -285,7 +347,8 @@ export async function seedRBACData() {
     const allowedResources = [
       "USER", "ACCOUNT", "SESSION", "PROVIDER", "ROLE", "PERMISSION",
       "COURSE", "BLOG", "MEDIA", "CLASS", "EQUIPMENT", "MEMBER", "BILL", "PAYMENT",
-      "GALLERY", "EVENT", "ANNOUNCEMENT", "CERTIFICATE", "REPORT"
+      "GALLERY", "EVENT", "ANNOUNCEMENT", "CERTIFICATE", "REPORT",
+      "ENROLLMENT", "MONTHLY_FEE", "SCHEDULE"
     ] as const;
 
     for (const permData of defaultPermissions) {

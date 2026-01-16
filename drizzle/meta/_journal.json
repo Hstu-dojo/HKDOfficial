@@ -15,6 +15,13 @@
       "when": 1760072445662,
       "tag": "0001_furry_lucky_pierre",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1768599364941,
+      "tag": "0002_silky_sir_ram",
+      "breakpoints": true
     }
   ]
 }
