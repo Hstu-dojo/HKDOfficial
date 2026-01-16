@@ -25,7 +25,12 @@ export const swaggerSpec = {
     { name: "Users", description: "User management" },
     { name: "RBAC", description: "Role-based access control" },
     { name: "Roles", description: "Role management" },
-    { name: "Permissions", description: "Permission management" }
+    { name: "Permissions", description: "Permission management" },
+    { name: "Gallery", description: "Gallery management (images, albums)" },
+    { name: "Events", description: "Event management" },
+    { name: "Announcements", description: "Announcement management" },
+    { name: "Certificates", description: "Certificate management" },
+    { name: "Reports", description: "Report generation and management" }
   ],
   security: [
     { bearerAuth: [] },
@@ -123,7 +128,7 @@ export const swaggerSpec = {
           description: { type: "string", nullable: true },
           resource: { 
             type: "string", 
-            enum: ["USER", "ACCOUNT", "SESSION", "PROVIDER", "ROLE", "PERMISSION", "COURSE", "BLOG", "MEDIA"] 
+            enum: ["USER", "ACCOUNT", "SESSION", "PROVIDER", "ROLE", "PERMISSION", "COURSE", "BLOG", "MEDIA", "CLASS", "EQUIPMENT", "MEMBER", "BILL", "PAYMENT", "GALLERY", "EVENT", "ANNOUNCEMENT", "CERTIFICATE", "REPORT"] 
           },
           action: { 
             type: "string", 
@@ -141,7 +146,7 @@ export const swaggerSpec = {
           description: { type: "string" },
           resource: { 
             type: "string", 
-            enum: ["USER", "ACCOUNT", "SESSION", "PROVIDER", "ROLE", "PERMISSION", "COURSE", "BLOG", "MEDIA"] 
+            enum: ["USER", "ACCOUNT", "SESSION", "PROVIDER", "ROLE", "PERMISSION", "COURSE", "BLOG", "MEDIA", "CLASS", "EQUIPMENT", "MEMBER", "BILL", "PAYMENT", "GALLERY", "EVENT", "ANNOUNCEMENT", "CERTIFICATE", "REPORT"] 
           },
           action: { 
             type: "string", 
@@ -517,6 +522,445 @@ export const swaggerSpec = {
           "401": { $ref: "#/components/responses/UnauthorizedError" },
           "403": { $ref: "#/components/responses/ForbiddenError" },
           "404": { $ref: "#/components/responses/NotFoundError" },
+          "500": { $ref: "#/components/responses/ServerError" }
+        }
+      }
+    },
+    "/rbac/roles/{roleId}": {
+      get: {
+        tags: ["RBAC", "Roles"],
+        summary: "Get role by ID",
+        description: "Retrieve a specific role with its permissions",
+        security: [{ sessionAuth: [] }],
+        parameters: [
+          {
+            name: "roleId",
+            in: "path",
+            required: true,
+            schema: { type: "string", format: "uuid" },
+            description: "Role ID"
+          }
+        ],
+        responses: {
+          "200": {
+            description: "Role retrieved successfully",
+            content: {
+              "application/json": {
+                schema: {
+                  type: "object",
+                  properties: {
+                    role: { $ref: "#/components/schemas/Role" },
+                    permissions: {
+                      type: "array",
+                      items: { $ref: "#/components/schemas/Permission" }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": { $ref: "#/components/responses/UnauthorizedError" },
+          "403": { $ref: "#/components/responses/ForbiddenError" },
+          "404": { $ref: "#/components/responses/NotFoundError" },
+          "500": { $ref: "#/components/responses/ServerError" }
+        }
+      },
+      put: {
+        tags: ["RBAC", "Roles"],
+        summary: "Update role",
+        description: "Update an existing role's name or description",
+        security: [{ sessionAuth: [] }],
+        parameters: [
+          {
+            name: "roleId",
+            in: "path",
+            required: true,
+            schema: { type: "string", format: "uuid" },
+            description: "Role ID"
+          }
+        ],
+        requestBody: {
+          required: true,
+          content: {
+            "application/json": {
+              schema: {
+                type: "object",
+                properties: {
+                  name: { type: "string", minLength: 1 },
+                  description: { type: "string" }
+                }
+              }
+            }
+          }
+        },
+        responses: {
+          "200": {
+            description: "Role updated successfully",
+            content: {
+              "application/json": {
+                schema: { $ref: "#/components/schemas/Success" }
+              }
+            }
+          },
+          "400": { $ref: "#/components/responses/ValidationError" },
+          "401": { $ref: "#/components/responses/UnauthorizedError" },
+          "403": { $ref: "#/components/responses/ForbiddenError" },
+          "404": { $ref: "#/components/responses/NotFoundError" },
+          "500": { $ref: "#/components/responses/ServerError" }
+        }
+      },
+      delete: {
+        tags: ["RBAC", "Roles"],
+        summary: "Delete role",
+        description: "Delete a role. Core roles (SUPER_ADMIN, ADMIN, USER) cannot be deleted.",
+        security: [{ sessionAuth: [] }],
+        parameters: [
+          {
+            name: "roleId",
+            in: "path",
+            required: true,
+            schema: { type: "string", format: "uuid" },
+            description: "Role ID"
+          }
+        ],
+        responses: {
+          "200": {
+            description: "Role deleted successfully",
+            content: {
+              "application/json": {
+                schema: { $ref: "#/components/schemas/Success" }
+              }
+            }
+          },
+          "400": {
+            description: "Cannot delete core role",
+            content: {
+              "application/json": {
+                schema: { $ref: "#/components/schemas/Error" }
+              }
+            }
+          },
+          "401": { $ref: "#/components/responses/UnauthorizedError" },
+          "403": { $ref: "#/components/responses/ForbiddenError" },
+          "404": { $ref: "#/components/responses/NotFoundError" },
+          "500": { $ref: "#/components/responses/ServerError" }
+        }
+      }
+    },
+    "/rbac/roles/{roleId}/permissions": {
+      get: {
+        tags: ["RBAC", "Roles"],
+        summary: "Get role permissions",
+        description: "Retrieve all permissions assigned to a specific role",
+        security: [{ sessionAuth: [] }],
+        parameters: [
+          {
+            name: "roleId",
+            in: "path",
+            required: true,
+            schema: { type: "string", format: "uuid" },
+            description: "Role ID"
+          }
+        ],
+        responses: {
+          "200": {
+            description: "Permissions retrieved successfully",
+            content: {
+              "application/json": {
+                schema: {
+                  type: "object",
+                  properties: {
+                    permissions: {
+                      type: "array",
+                      items: { $ref: "#/components/schemas/Permission" }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": { $ref: "#/components/responses/UnauthorizedError" },
+          "403": { $ref: "#/components/responses/ForbiddenError" },
+          "404": { $ref: "#/components/responses/NotFoundError" },
+          "500": { $ref: "#/components/responses/ServerError" }
+        }
+      },
+      post: {
+        tags: ["RBAC", "Roles"],
+        summary: "Assign permissions to role",
+        description: "Assign one or more permissions to a role",
+        security: [{ sessionAuth: [] }],
+        parameters: [
+          {
+            name: "roleId",
+            in: "path",
+            required: true,
+            schema: { type: "string", format: "uuid" },
+            description: "Role ID"
+          }
+        ],
+        requestBody: {
+          required: true,
+          content: {
+            "application/json": {
+              schema: {
+                type: "object",
+                properties: {
+                  permissionId: { type: "string", format: "uuid", description: "Single permission ID" },
+                  permissionIds: { 
+                    type: "array", 
+                    items: { type: "string", format: "uuid" },
+                    description: "Array of permission IDs for bulk assignment"
+                  }
+                }
+              }
+            }
+          }
+        },
+        responses: {
+          "200": {
+            description: "Permissions assigned successfully",
+            content: {
+              "application/json": {
+                schema: {
+                  type: "object",
+                  properties: {
+                    message: { type: "string" },
+                    count: { type: "integer", description: "Number of permissions assigned" }
+                  }
+                }
+              }
+            }
+          },
+          "400": { $ref: "#/components/responses/ValidationError" },
+          "401": { $ref: "#/components/responses/UnauthorizedError" },
+          "403": { $ref: "#/components/responses/ForbiddenError" },
+          "404": { $ref: "#/components/responses/NotFoundError" },
+          "500": { $ref: "#/components/responses/ServerError" }
+        }
+      },
+      delete: {
+        tags: ["RBAC", "Roles"],
+        summary: "Remove permissions from role",
+        description: "Remove one or more permissions from a role",
+        security: [{ sessionAuth: [] }],
+        parameters: [
+          {
+            name: "roleId",
+            in: "path",
+            required: true,
+            schema: { type: "string", format: "uuid" },
+            description: "Role ID"
+          }
+        ],
+        requestBody: {
+          required: true,
+          content: {
+            "application/json": {
+              schema: {
+                type: "object",
+                properties: {
+                  permissionId: { type: "string", format: "uuid", description: "Single permission ID" },
+                  permissionIds: { 
+                    type: "array", 
+                    items: { type: "string", format: "uuid" },
+                    description: "Array of permission IDs for bulk removal"
+                  }
+                }
+              }
+            }
+          }
+        },
+        responses: {
+          "200": {
+            description: "Permissions removed successfully",
+            content: {
+              "application/json": {
+                schema: {
+                  type: "object",
+                  properties: {
+                    message: { type: "string" },
+                    count: { type: "integer", description: "Number of permissions removed" }
+                  }
+                }
+              }
+            }
+          },
+          "400": { $ref: "#/components/responses/ValidationError" },
+          "401": { $ref: "#/components/responses/UnauthorizedError" },
+          "403": { $ref: "#/components/responses/ForbiddenError" },
+          "404": { $ref: "#/components/responses/NotFoundError" },
+          "500": { $ref: "#/components/responses/ServerError" }
+        }
+      }
+    },
+    "/rbac/permissions/{permissionId}": {
+      get: {
+        tags: ["RBAC", "Permissions"],
+        summary: "Get permission by ID",
+        description: "Retrieve a specific permission by its ID",
+        security: [{ sessionAuth: [] }],
+        parameters: [
+          {
+            name: "permissionId",
+            in: "path",
+            required: true,
+            schema: { type: "string", format: "uuid" },
+            description: "Permission ID"
+          }
+        ],
+        responses: {
+          "200": {
+            description: "Permission retrieved successfully",
+            content: {
+              "application/json": {
+                schema: {
+                  type: "object",
+                  properties: {
+                    permission: { $ref: "#/components/schemas/Permission" }
+                  }
+                }
+              }
+            }
+          },
+          "401": { $ref: "#/components/responses/UnauthorizedError" },
+          "403": { $ref: "#/components/responses/ForbiddenError" },
+          "404": { $ref: "#/components/responses/NotFoundError" },
+          "500": { $ref: "#/components/responses/ServerError" }
+        }
+      },
+      put: {
+        tags: ["RBAC", "Permissions"],
+        summary: "Update permission",
+        description: "Update an existing permission's properties",
+        security: [{ sessionAuth: [] }],
+        parameters: [
+          {
+            name: "permissionId",
+            in: "path",
+            required: true,
+            schema: { type: "string", format: "uuid" },
+            description: "Permission ID"
+          }
+        ],
+        requestBody: {
+          required: true,
+          content: {
+            "application/json": {
+              schema: {
+                type: "object",
+                properties: {
+                  name: { type: "string", minLength: 1 },
+                  description: { type: "string" },
+                  resource: { 
+                    type: "string", 
+                    enum: ["USER", "ACCOUNT", "SESSION", "PROVIDER", "ROLE", "PERMISSION", "COURSE", "BLOG", "MEDIA", "CLASS", "EQUIPMENT", "MEMBER", "BILL", "PAYMENT", "GALLERY", "EVENT", "ANNOUNCEMENT", "CERTIFICATE", "REPORT"]
+                  },
+                  action: { 
+                    type: "string", 
+                    enum: ["CREATE", "READ", "UPDATE", "DELETE", "MANAGE"] 
+                  }
+                }
+              }
+            }
+          }
+        },
+        responses: {
+          "200": {
+            description: "Permission updated successfully",
+            content: {
+              "application/json": {
+                schema: { $ref: "#/components/schemas/Success" }
+              }
+            }
+          },
+          "400": { $ref: "#/components/responses/ValidationError" },
+          "401": { $ref: "#/components/responses/UnauthorizedError" },
+          "403": { $ref: "#/components/responses/ForbiddenError" },
+          "404": { $ref: "#/components/responses/NotFoundError" },
+          "500": { $ref: "#/components/responses/ServerError" }
+        }
+      },
+      delete: {
+        tags: ["RBAC", "Permissions"],
+        summary: "Delete permission",
+        description: "Delete a permission from the system",
+        security: [{ sessionAuth: [] }],
+        parameters: [
+          {
+            name: "permissionId",
+            in: "path",
+            required: true,
+            schema: { type: "string", format: "uuid" },
+            description: "Permission ID"
+          }
+        ],
+        responses: {
+          "200": {
+            description: "Permission deleted successfully",
+            content: {
+              "application/json": {
+                schema: { $ref: "#/components/schemas/Success" }
+              }
+            }
+          },
+          "401": { $ref: "#/components/responses/UnauthorizedError" },
+          "403": { $ref: "#/components/responses/ForbiddenError" },
+          "404": { $ref: "#/components/responses/NotFoundError" },
+          "500": { $ref: "#/components/responses/ServerError" }
+        }
+      }
+    },
+    "/rbac/matrix": {
+      get: {
+        tags: ["RBAC"],
+        summary: "Get RBAC matrix",
+        description: "Retrieve the complete role-permission matrix showing all roles with their assigned permissions, grouped by resource type",
+        security: [{ sessionAuth: [] }],
+        responses: {
+          "200": {
+            description: "Matrix retrieved successfully",
+            content: {
+              "application/json": {
+                schema: {
+                  type: "object",
+                  properties: {
+                    roles: {
+                      type: "array",
+                      items: {
+                        type: "object",
+                        properties: {
+                          id: { type: "string", format: "uuid" },
+                          name: { type: "string" },
+                          description: { type: "string", nullable: true },
+                          isActive: { type: "boolean" },
+                          permissions: {
+                            type: "array",
+                            items: { $ref: "#/components/schemas/Permission" }
+                          }
+                        }
+                      }
+                    },
+                    permissionsByResource: {
+                      type: "object",
+                      description: "Permissions grouped by resource type",
+                      additionalProperties: {
+                        type: "array",
+                        items: { $ref: "#/components/schemas/Permission" }
+                      }
+                    },
+                    resources: {
+                      type: "array",
+                      items: { type: "string" },
+                      description: "List of all resource types"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": { $ref: "#/components/responses/UnauthorizedError" },
+          "403": { $ref: "#/components/responses/ForbiddenError" },
           "500": { $ref: "#/components/responses/ServerError" }
         }
       }

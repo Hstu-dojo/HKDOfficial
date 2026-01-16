@@ -107,6 +107,41 @@ const defaultPermissions: Array<{
   { name: "update_payment", resource: "PAYMENT", action: "UPDATE", description: "Update payments" },
   { name: "delete_payment", resource: "PAYMENT", action: "DELETE", description: "Delete payments" },
   { name: "manage_payment", resource: "PAYMENT", action: "MANAGE", description: "Full payment management" },
+  
+  // Gallery permissions
+  { name: "create_gallery", resource: "GALLERY", action: "CREATE", description: "Create new galleries" },
+  { name: "read_gallery", resource: "GALLERY", action: "READ", description: "View galleries" },
+  { name: "update_gallery", resource: "GALLERY", action: "UPDATE", description: "Update galleries" },
+  { name: "delete_gallery", resource: "GALLERY", action: "DELETE", description: "Delete galleries" },
+  { name: "manage_gallery", resource: "GALLERY", action: "MANAGE", description: "Full gallery management" },
+  
+  // Event permissions
+  { name: "create_event", resource: "EVENT", action: "CREATE", description: "Create new events" },
+  { name: "read_event", resource: "EVENT", action: "READ", description: "View events" },
+  { name: "update_event", resource: "EVENT", action: "UPDATE", description: "Update events" },
+  { name: "delete_event", resource: "EVENT", action: "DELETE", description: "Delete events" },
+  { name: "manage_event", resource: "EVENT", action: "MANAGE", description: "Full event management" },
+  
+  // Announcement permissions
+  { name: "create_announcement", resource: "ANNOUNCEMENT", action: "CREATE", description: "Create new announcements" },
+  { name: "read_announcement", resource: "ANNOUNCEMENT", action: "READ", description: "View announcements" },
+  { name: "update_announcement", resource: "ANNOUNCEMENT", action: "UPDATE", description: "Update announcements" },
+  { name: "delete_announcement", resource: "ANNOUNCEMENT", action: "DELETE", description: "Delete announcements" },
+  { name: "manage_announcement", resource: "ANNOUNCEMENT", action: "MANAGE", description: "Full announcement management" },
+  
+  // Certificate permissions
+  { name: "create_certificate", resource: "CERTIFICATE", action: "CREATE", description: "Create new certificates" },
+  { name: "read_certificate", resource: "CERTIFICATE", action: "READ", description: "View certificates" },
+  { name: "update_certificate", resource: "CERTIFICATE", action: "UPDATE", description: "Update certificates" },
+  { name: "delete_certificate", resource: "CERTIFICATE", action: "DELETE", description: "Delete certificates" },
+  { name: "manage_certificate", resource: "CERTIFICATE", action: "MANAGE", description: "Full certificate management" },
+  
+  // Report permissions
+  { name: "create_report", resource: "REPORT", action: "CREATE", description: "Create new reports" },
+  { name: "read_report", resource: "REPORT", action: "READ", description: "View reports" },
+  { name: "update_report", resource: "REPORT", action: "UPDATE", description: "Update reports" },
+  { name: "delete_report", resource: "REPORT", action: "DELETE", description: "Delete reports" },
+  { name: "manage_report", resource: "REPORT", action: "MANAGE", description: "Full report management" },
 ];
 
 // Role-Permission mappings
@@ -126,6 +161,12 @@ const rolePermissionMappings: { [key: string]: string[] } = {
     "create_member", "read_member", "update_member", "delete_member", "manage_member",
     "create_bill", "read_bill", "update_bill", "delete_bill", "manage_bill",
     "create_payment", "read_payment", "update_payment", "delete_payment", "manage_payment",
+    // New resource permissions
+    "create_gallery", "read_gallery", "update_gallery", "delete_gallery", "manage_gallery",
+    "create_event", "read_event", "update_event", "delete_event", "manage_event",
+    "create_announcement", "read_announcement", "update_announcement", "delete_announcement", "manage_announcement",
+    "create_certificate", "read_certificate", "update_certificate", "delete_certificate", "manage_certificate",
+    "create_report", "read_report", "update_report", "delete_report", "manage_report",
   ],
   ADMIN: [
     // Most permissions except system-level ones
@@ -142,6 +183,23 @@ const rolePermissionMappings: { [key: string]: string[] } = {
     "create_member", "read_member", "update_member", "delete_member", "manage_member",
     "create_bill", "read_bill", "update_bill", "delete_bill", "manage_bill",
     "create_payment", "read_payment", "update_payment", "delete_payment", "manage_payment",
+    // New resource permissions
+    "create_gallery", "read_gallery", "update_gallery", "delete_gallery", "manage_gallery",
+    "create_event", "read_event", "update_event", "delete_event", "manage_event",
+    "create_announcement", "read_announcement", "update_announcement", "delete_announcement", "manage_announcement",
+    "create_certificate", "read_certificate", "update_certificate", "delete_certificate", "manage_certificate",
+    "read_report", "create_report",
+  ],
+  MODERATOR: [
+    // Content moderation permissions
+    "read_user",
+    "read_blog", "update_blog",
+    "read_media", "update_media", "delete_media",
+    "read_gallery", "update_gallery",
+    "read_event", "update_event",
+    "read_announcement", "create_announcement", "update_announcement",
+    "read_member",
+    "read_class",
   ],
   INSTRUCTOR: [
     // Teaching-related permissions
@@ -156,6 +214,11 @@ const rolePermissionMappings: { [key: string]: string[] } = {
     "read_member", "update_member",
     "read_bill",
     "read_payment",
+    // New resources
+    "read_gallery", "create_gallery",
+    "read_event", "create_event", "update_event",
+    "read_announcement",
+    "read_certificate", "create_certificate",
   ],
   STUDENT: [
     // Basic read permissions
@@ -168,12 +231,29 @@ const rolePermissionMappings: { [key: string]: string[] } = {
     "read_member", // Can view other members
     "read_bill", // Can view their own bills
     "read_payment", // Can view their own payments
+    // Gallery and events access
+    "read_gallery",
+    "read_event",
+    "read_announcement",
+    "read_certificate", // Can view their own certificates
+  ],
+  MEMBER: [
+    // Similar to STUDENT but with less access
+    "read_blog",
+    "read_class",
+    "read_gallery",
+    "read_event",
+    "read_announcement",
   ],
   USER: [
     // Minimal permissions
     "read_blog",
     // Basic karate info access
     "read_class",
+    // Public gallery and announcements
+    "read_gallery",
+    "read_event",
+    "read_announcement",
   ],
 };
 
@@ -204,7 +284,8 @@ export async function seedRBACData() {
     
     const allowedResources = [
       "USER", "ACCOUNT", "SESSION", "PROVIDER", "ROLE", "PERMISSION",
-      "COURSE", "BLOG", "MEDIA", "CLASS", "EQUIPMENT", "MEMBER", "BILL", "PAYMENT"
+      "COURSE", "BLOG", "MEDIA", "CLASS", "EQUIPMENT", "MEMBER", "BILL", "PAYMENT",
+      "GALLERY", "EVENT", "ANNOUNCEMENT", "CERTIFICATE", "REPORT"
     ] as const;
 
     for (const permData of defaultPermissions) {

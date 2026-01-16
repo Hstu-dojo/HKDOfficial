@@ -8,7 +8,8 @@ export const providerTypeEnum = pgEnum("provider_type", ["Google", "GitHub"]);
 // RBAC Enums
 export const resourceTypeEnum = pgEnum("resource_type", [
   "USER", "ACCOUNT", "SESSION", "PROVIDER", "ROLE", "PERMISSION", 
-  "COURSE", "BLOG", "MEDIA", "CLASS", "EQUIPMENT", "MEMBER", "BILL", "PAYMENT"
+  "COURSE", "BLOG", "MEDIA", "CLASS", "EQUIPMENT", "MEMBER", "BILL", "PAYMENT",
+  "GALLERY", "EVENT", "ANNOUNCEMENT", "CERTIFICATE", "REPORT"
 ]);
 export const actionEnum = pgEnum("action", ["CREATE", "READ", "UPDATE", "DELETE", "MANAGE"]);
 
