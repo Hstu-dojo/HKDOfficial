@@ -2,9 +2,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/connect-db';
 import { enrollmentApplications, courses } from '@/db/schema';
 import { eq, and } from 'drizzle-orm';
-import { getRBACContext, getLocalUserId } from '@/lib/rbac/middleware';
-import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs';
-import { cookies } from 'next/headers';
+import { getLocalUserId } from '@/lib/rbac/middleware';
+import { createClient } from '@/lib/supabase/server';
 
 // Helper to generate application number
 function generateApplicationNumber(): string {
@@ -18,8 +17,7 @@ function generateApplicationNumber(): string {
 export async function POST(request: NextRequest) {
   try {
     // Get auth context
-    const cookieStore = cookies();
-    const supabase = createRouteHandlerClient({ cookies: () => cookieStore });
+    const supabase = await createClient();
     const { data: { session } } = await supabase.auth.getSession();
     
     if (!session?.user?.id) {
@@ -129,8 +127,7 @@ export async function POST(request: NextRequest) {
 export async function GET(request: NextRequest) {
   try {
     // Get auth context
-    const cookieStore = cookies();
-    const supabase = createRouteHandlerClient({ cookies: () => cookieStore });
+    const supabase = await createClient();
     const { data: { session } } = await supabase.auth.getSession();
     
     if (!session?.user?.id) {

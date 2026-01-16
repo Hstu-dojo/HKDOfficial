@@ -3,14 +3,12 @@ import { db } from '@/lib/connect-db';
 import { courseEnrollments, courses, members } from '@/db/schema';
 import { eq } from 'drizzle-orm';
 import { getLocalUserId } from '@/lib/rbac/middleware';
-import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs';
-import { cookies } from 'next/headers';
+import { createClient } from '@/lib/supabase/server';
 
 // GET /api/student/enrollments - Get current user's enrollments
 export async function GET(request: NextRequest) {
   try {
-    const cookieStore = cookies();
-    const supabase = createRouteHandlerClient({ cookies: () => cookieStore });
+    const supabase = await createClient();
     const { data: { session } } = await supabase.auth.getSession();
     
     if (!session?.user?.id) {

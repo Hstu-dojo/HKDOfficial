@@ -3,8 +3,7 @@ import { db } from '@/lib/connect-db';
 import { monthlyFees, members } from '@/db/schema';
 import { eq, and } from 'drizzle-orm';
 import { getLocalUserId } from '@/lib/rbac/middleware';
-import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs';
-import { cookies } from 'next/headers';
+import { createClient } from '@/lib/supabase/server';
 
 // POST /api/student/monthly-fees/[feeId]/pay - Submit payment for monthly fee
 export async function POST(
@@ -12,8 +11,7 @@ export async function POST(
   { params }: { params: Promise<{ feeId: string }> }
 ) {
   try {
-    const cookieStore = cookies();
-    const supabase = createRouteHandlerClient({ cookies: () => cookieStore });
+    const supabase = await createClient();
     const { data: { session } } = await supabase.auth.getSession();
     
     if (!session?.user?.id) {

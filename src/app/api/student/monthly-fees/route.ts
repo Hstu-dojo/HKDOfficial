@@ -3,14 +3,12 @@ import { db } from '@/lib/connect-db';
 import { monthlyFees, members, courses, courseEnrollments } from '@/db/schema';
 import { eq, desc } from 'drizzle-orm';
 import { getLocalUserId } from '@/lib/rbac/middleware';
-import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs';
-import { cookies } from 'next/headers';
+import { createClient } from '@/lib/supabase/server';
 
 // GET /api/student/monthly-fees - Get current user's monthly fees
 export async function GET(request: NextRequest) {
   try {
-    const cookieStore = cookies();
-    const supabase = createRouteHandlerClient({ cookies: () => cookieStore });
+    const supabase = await createClient();
     const { data: { session } } = await supabase.auth.getSession();
     
     if (!session?.user?.id) {
