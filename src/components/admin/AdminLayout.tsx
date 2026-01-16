@@ -144,14 +144,15 @@ export function AdminLayout({ children }: AdminLayoutProps) {
                 onClick={() => router.push('/')}
                 className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700"
               >
-              Go Home
-            </button>
-            <button
-              onClick={() => window.location.reload()}
-              className="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50"
-            >
-              Refresh
-            </button>
+                Go Home
+              </button>
+              <button
+                onClick={() => window.location.reload()}
+                className="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50"
+              >
+                Refresh
+              </button>
+            </div>
           </div>
         </div>
       </div>
