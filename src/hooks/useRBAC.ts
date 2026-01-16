@@ -24,97 +24,66 @@ export function useRBAC() {
   const [localUserId, setLocalUserId] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
-  // First, get the local user ID from Supabase user ID
-  useEffect(() => {
-    if (status === 'loading' || !hasCompleteData) {
-      return;
-    }
-    
-    if (!session?.user?.id) {
-      setLocalUserId(null);
-      setLoading(false);
-      return;
-    }
-
-    async function getLocalUserId() {
-      try {
-        const response = await fetch(`/api/auth/get-local-user-id?supabaseId=${session!.user!.id}`);
-        if (response.ok) {
-          const data = await response.json();
-          setLocalUserId(data.localUserId);
-          setError(null);
-        } else {
-          const errorData = await response.json().catch(() => ({}));
-          console.error('Failed to get local user ID:', response.status, errorData);
-          setLocalUserId(null);
-          setError(`Failed to get local user ID: ${errorData.error || response.statusText}`);
-          setLoading(false);
-        }
-      } catch (err) {
-        console.error('Error getting local user ID:', err);
-        setLocalUserId(null);
-        setError('Network error getting local user ID');
-        setLoading(false);
-      }
-    }
-
-    getLocalUserId();
-  }, [session, status, hasCompleteData]);
-
-  // Then fetch permissions using the local user ID
+  // Fetch RBAC data using the Supabase user ID via header
+  // This avoids cookie issues that can occur with getRBACContext
   useEffect(() => {
     if (status === 'loading' || !hasCompleteData) {
       setLoading(true);
       return;
     }
     
-    if (!localUserId) {
-      // Only set loading false if we've already tried to get local user ID
-      if (session?.user?.id && !loading) {
-        setPermissions(null);
-      }
+    if (!session?.user?.id) {
+      setLocalUserId(null);
+      setPermissions(null);
+      setLoading(false);
       return;
     }
 
-    // Fetch user permissions from the API using local user ID
-    async function fetchPermissions() {
+    async function fetchRBACData() {
       try {
         setLoading(true);
-        const response = await fetch(`/api/rbac/user-permissions/${localUserId}`);
+        console.log('[useRBAC] Fetching RBAC data for Supabase ID:', session!.user!.id);
+        
+        // Use the dedicated API endpoint that accepts Supabase ID via header
+        const response = await fetch('/api/auth/get-user-rbac', {
+          method: 'GET',
+          headers: {
+            'x-supabase-user-id': session!.user!.id,
+          },
+        });
+
         if (response.ok) {
           const data = await response.json();
-          // Transform the data to match expected format
-          const transformedData: UserPermissions = {
-            roles: data.userPermissions.roles.map((role: any) => ({
-              id: role.id,
-              name: role.name,
-              description: role.description,
-              isActive: role.isActive,
-            })),
-            permissions: data.userPermissions.permissions.map((perm: any) => ({
+          console.log('[useRBAC] Got RBAC data:', data);
+          
+          setLocalUserId(data.localUserId);
+          setPermissions({
+            roles: data.roles || [],
+            permissions: (data.permissions || []).map((perm: any) => ({
               resource: perm.resource,
               action: perm.action,
             })),
-          };
-          setPermissions(transformedData);
+          });
           setError(null);
         } else {
           const errorData = await response.json().catch(() => ({}));
-          console.error('Failed to fetch user permissions:', response.status, errorData);
+          console.error('[useRBAC] Failed to fetch RBAC data:', response.status, errorData);
+          setLocalUserId(null);
           setPermissions(null);
-          setError(`Failed to fetch permissions: ${errorData.error || response.statusText}`);
+          setError(`Failed to fetch RBAC data: ${errorData.error || response.statusText}`);
         }
       } catch (err) {
-        console.error('Error fetching permissions:', err);
+        console.error('[useRBAC] Error fetching RBAC data:', err);
+        setLocalUserId(null);
         setPermissions(null);
-        setError('Network error fetching permissions');
+        setError('Network error fetching RBAC data');
       } finally {
         setLoading(false);
       }
     }
 
-    fetchPermissions();
-  }, [localUserId, status, hasCompleteData, session?.user?.id]);
+    fetchRBACData();
+  }, [session, status, hasCompleteData]);
 
   const hasPermission = useCallback((resource: ResourceType, action: ActionType): boolean => {
     if (!permissions) return false;

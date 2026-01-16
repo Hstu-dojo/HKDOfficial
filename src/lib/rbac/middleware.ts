@@ -34,15 +34,24 @@ export async function getRBACContext(): Promise<RBACContext | null> {
     const supabase = createRouteHandlerClient({ cookies: () => cookieStore });
     const { data: { session }, error } = await supabase.auth.getSession();
     
+    console.log("[getRBACContext] Session check:", { 
+      hasSession: !!session, 
+      hasUser: !!session?.user,
+      userId: session?.user?.id,
+      error: error?.message 
+    });
+    
     if (error || !session?.user?.id) {
+      console.log("[getRBACContext] No valid session");
       return null;
     }
 
     // Get local DB user ID from Supabase user ID
     const localUserId = await getLocalUserId(session.user.id);
+    console.log("[getRBACContext] Local user lookup:", { supabaseId: session.user.id, localUserId });
     
     if (!localUserId) {
-      console.error("Local user not found for Supabase ID:", session.user.id);
+      console.error("[getRBACContext] Local user not found for Supabase ID:", session.user.id);
       return null;
     }
 
@@ -52,7 +61,7 @@ export async function getRBACContext(): Promise<RBACContext | null> {
       roles: [], // Will be populated by getUserPermissions
     };
   } catch (error) {
-    console.error("Error getting RBAC context:", error);
+    console.error("[getRBACContext] Error:", error);
     return null;
   }
 }

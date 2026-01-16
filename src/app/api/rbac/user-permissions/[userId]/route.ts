@@ -12,14 +12,20 @@ import {
 // Users can always fetch their OWN permissions, but need USER:READ for others
 export async function GET(request: NextRequest) {
   try {
+    console.log("[user-permissions API] Starting GET request");
+    
     const context = await getRBACContext();
+    console.log("[user-permissions API] RBAC Context:", context ? { userId: context.userId, email: context.email } : null);
     
     if (!context) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+      console.log("[user-permissions API] No context - returning 401");
+      return NextResponse.json({ error: "Unauthorized - No RBAC context" }, { status: 401 });
     }
 
     const url = new URL(request.url);
     const userId = url.pathname.split('/').pop();
+    console.log("[user-permissions API] Requested userId:", userId);
+    console.log("[user-permissions API] Context userId:", context.userId);
     
     if (!userId) {
       return NextResponse.json({ error: "User ID is required" }, { status: 400 });
@@ -28,6 +34,7 @@ export async function GET(request: NextRequest) {
     // Users can always fetch their own permissions
     // For other users, require USER:READ permission
     if (userId !== context.userId) {
+      console.log("[user-permissions API] Checking permission to read other user");
       const canReadOthers = await hasPermission(context.userId, "USER", "READ");
       if (!canReadOthers) {
         return NextResponse.json({ error: "Forbidden" }, { status: 403 });
@@ -35,10 +42,16 @@ export async function GET(request: NextRequest) {
     }
     
     // Use the fallback function that considers both userRole table AND defaultRole
+    console.log("[user-permissions API] Fetching permissions for userId:", userId);
     const userPermissions = await getUserPermissionsWithFallback(userId);
+    console.log("[user-permissions API] Got permissions:", { 
+      roles: userPermissions.roles.map(r => r.name), 
+      permissionCount: userPermissions.permissions.length 
+    });
+    
     return NextResponse.json({ userPermissions });
   } catch (error) {
-    console.error("Error fetching user permissions:", error);
+    console.error("[user-permissions API] Error:", error);
     return NextResponse.json({ error: "Failed to fetch user permissions" }, { status: 500 });
   }
 }

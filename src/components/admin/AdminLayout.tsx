@@ -114,30 +114,34 @@ export function AdminLayout({ children }: AdminLayoutProps) {
               You don&apos;t have the required permissions to access the admin panel.
             </p>
             
-            {/* Debug info for development */}
-            {process.env.NODE_ENV === 'development' && (
-              <div className="mt-4 p-3 bg-gray-100 rounded text-left text-xs">
-                <p className="font-semibold text-gray-700">Debug Info:</p>
-                <p className="text-gray-600">
-                  Local User ID: {localUserId || 'Not found'}
+            {/* Debug info - always show for troubleshooting */}
+            <div className="mt-4 p-3 bg-gray-100 rounded text-left text-xs">
+              <p className="font-semibold text-gray-700">Debug Info:</p>
+              <p className="text-gray-600">
+                Local User ID: {localUserId || 'Not found'}
+              </p>
+              <p className="text-gray-600">
+                Roles: {permissions?.roles?.map(r => r.name).join(', ') || 'None'}
+              </p>
+              <p className="text-gray-600">
+                Permissions Count: {permissions?.permissions?.length || 0}
+              </p>
+              <p className="text-gray-600">
+                Has Admin Role: {hasAdminAccessByRole ? 'Yes' : 'No'}
+              </p>
+              <p className="text-gray-600">
+                Has Any Permission: {hasAnyPermission ? 'Yes' : 'No'}
+              </p>
+              {rbacError && (
+                <p className="text-red-600 mt-2">
+                  Error: {rbacError}
                 </p>
-                <p className="text-gray-600">
-                  Roles: {permissions?.roles?.map(r => r.name).join(', ') || 'None'}
-                </p>
-                <p className="text-gray-600">
-                  Permissions: {permissions?.permissions?.length || 0}
-                </p>
-                {rbacError && (
-                  <p className="text-red-600 mt-2">
-                    Error: {rbacError}
-                  </p>
-                )}
-                <p className="text-gray-600 mt-2 text-yellow-600">
-                  If you&apos;re a SUPER_ADMIN, you may need to run the RBAC seed script
-                  and assign your role in the userRole table.
-                </p>
-              </div>
-            )}
+              )}
+              <p className="text-gray-600 mt-2 text-yellow-600">
+                If you&apos;re a SUPER_ADMIN, you may need to run the RBAC seed script
+                and assign your role in the userRole table.
+              </p>
+            </div>
 
             <div className="mt-6 space-x-4">
               <button
