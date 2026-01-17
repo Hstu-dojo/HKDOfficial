@@ -1,12 +1,12 @@
 import { Sidebar } from "@/components/gallery/sidebar";
 import { Menu } from "@/components/gallery/menu";
-import { playlists } from "@/db/playlists";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Gallery admin",
-  description: "Admin's gallery management.",
+  title: "Gallery Admin",
+  description: "Admin gallery management with Cloudinary.",
 };
+
 export default async function GalleryLayout({
   children,
 }: {
@@ -19,7 +19,7 @@ export default async function GalleryLayout({
         <div className="border-t">
           <div className="">
             <div className="grid lg:grid-cols-5">
-              <Sidebar playlists={playlists} className="hidden lg:block" />
+              <Sidebar className="hidden lg:block" />
               {children}
             </div>
           </div>

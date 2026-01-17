@@ -13,7 +13,10 @@ import {
   monthlyFees, paymentReminders, paymentSettings
 } from "./karate";
 import { billableItems, bills, payments } from "./billing";
-import { blogs, notices, photoGroups, photos, systemSettings } from "./content";
+import { 
+  blogs, notices, photoGroups, photos, systemSettings,
+  galleryFolders, galleryImages 
+} from "./content";
 
 // Auth Relations
 export const userRelations = relations(user, ({ one, many }) => ({
@@ -387,6 +390,40 @@ export const paymentRemindersRelations = relations(paymentReminders, ({ one }) =
 export const paymentSettingsRelations = relations(paymentSettings, ({ one }) => ({
   updater: one(user, {
     fields: [paymentSettings.updatedBy],
+    references: [user.id],
+  }),
+}));
+
+// Gallery Relations
+export const galleryFoldersRelations = relations(galleryFolders, ({ one, many }) => ({
+  parent: one(galleryFolders, {
+    fields: [galleryFolders.parentId],
+    references: [galleryFolders.id],
+    relationName: "parentFolder",
+  }),
+  children: many(galleryFolders, {
+    relationName: "parentFolder",
+  }),
+  images: many(galleryImages),
+  createdByUser: one(user, {
+    fields: [galleryFolders.createdBy],
+    references: [user.id],
+    relationName: "folderCreator",
+  }),
+  updatedByUser: one(user, {
+    fields: [galleryFolders.updatedBy],
+    references: [user.id],
+    relationName: "folderUpdater",
+  }),
+}));
+
+export const galleryImagesRelations = relations(galleryImages, ({ one }) => ({
+  folder: one(galleryFolders, {
+    fields: [galleryImages.folderId],
+    references: [galleryFolders.id],
+  }),
+  uploadedByUser: one(user, {
+    fields: [galleryImages.uploadedBy],
     references: [user.id],
   }),
 }));
