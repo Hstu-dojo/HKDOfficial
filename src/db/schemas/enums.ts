@@ -10,7 +10,7 @@ export const resourceTypeEnum = pgEnum("resource_type", [
   "USER", "ACCOUNT", "SESSION", "PROVIDER", "ROLE", "PERMISSION", 
   "COURSE", "BLOG", "MEDIA", "CLASS", "EQUIPMENT", "MEMBER", "BILL", "PAYMENT",
   "GALLERY", "EVENT", "ANNOUNCEMENT", "CERTIFICATE", "REPORT",
-  "ENROLLMENT", "MONTHLY_FEE", "SCHEDULE"
+  "ENROLLMENT", "MONTHLY_FEE", "SCHEDULE", "PROGRAM", "PROGRAM_REGISTRATION"
 ]);
 export const actionEnum = pgEnum("action", ["CREATE", "READ", "UPDATE", "DELETE", "MANAGE", "APPROVE", "VERIFY"]);
 

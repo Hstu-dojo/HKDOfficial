@@ -166,7 +166,21 @@ const defaultPermissions: Array<{
   { name: "update_schedule", resource: "SCHEDULE", action: "UPDATE", description: "Update schedules" },
   { name: "delete_schedule", resource: "SCHEDULE", action: "DELETE", description: "Delete schedules" },
   { name: "manage_schedule", resource: "SCHEDULE", action: "MANAGE", description: "Full schedule management" },
-];
+  // Program permissions
+  { name: "create_program", resource: "PROGRAM", action: "CREATE", description: "Create programs" },
+  { name: "read_program", resource: "PROGRAM", action: "READ", description: "View programs" },
+  { name: "update_program", resource: "PROGRAM", action: "UPDATE", description: "Update programs" },
+  { name: "delete_program", resource: "PROGRAM", action: "DELETE", description: "Delete programs" },
+  { name: "manage_program", resource: "PROGRAM", action: "MANAGE", description: "Manage programs" },
+
+  // Program Registration permissions
+  { name: "create_program_registration", resource: "PROGRAM_REGISTRATION", action: "CREATE", description: "Register for programs" },
+  { name: "read_program_registration", resource: "PROGRAM_REGISTRATION", action: "READ", description: "View program registrations" },
+  { name: "update_program_registration", resource: "PROGRAM_REGISTRATION", action: "UPDATE", description: "Update program registrations" },
+  { name: "delete_program_registration", resource: "PROGRAM_REGISTRATION", action: "DELETE", description: "Delete program registrations" },
+  { name: "manage_program_registration", resource: "PROGRAM_REGISTRATION", action: "MANAGE", description: "Manage program registrations" },
+  { name: "approve_program_registration", resource: "PROGRAM_REGISTRATION", action: "APPROVE", description: "Approve program registrations" },
+  { name: "verify_program_registration", resource: "PROGRAM_REGISTRATION", action: "VERIFY", description: "Verify program payments" },];
 
 // Role-Permission mappings
 const rolePermissionMappings: { [key: string]: string[] } = {
@@ -225,6 +239,10 @@ const rolePermissionMappings: { [key: string]: string[] } = {
     "create_monthly_fee", "read_monthly_fee", "update_monthly_fee", "delete_monthly_fee", "manage_monthly_fee", "verify_monthly_fee",
     // Schedule permissions for admin
     "create_schedule", "read_schedule", "update_schedule", "delete_schedule", "manage_schedule",
+    // Program permissions for admin
+    "create_program", "read_program", "update_program", "delete_program", "manage_program", 
+    // Program Registration permissions for admin
+    "read_program_registration", "update_program_registration", "delete_program_registration", "manage_program_registration", "approve_program_registration", "verify_program_registration",
   ],
   MODERATOR: [
     // Content moderation permissions
@@ -242,6 +260,10 @@ const rolePermissionMappings: { [key: string]: string[] } = {
     "read_monthly_fee", "verify_monthly_fee",
     // Schedule view
     "read_schedule",
+    // Program permissions for moderator
+    "read_program",
+    // Program Registration permissions for moderator
+    "read_program_registration", "approve_program_registration", "verify_program_registration",
   ],
   INSTRUCTOR: [
     // Teaching-related permissions
@@ -348,7 +370,7 @@ export async function seedRBACData() {
       "USER", "ACCOUNT", "SESSION", "PROVIDER", "ROLE", "PERMISSION",
       "COURSE", "BLOG", "MEDIA", "CLASS", "EQUIPMENT", "MEMBER", "BILL", "PAYMENT",
       "GALLERY", "EVENT", "ANNOUNCEMENT", "CERTIFICATE", "REPORT",
-      "ENROLLMENT", "MONTHLY_FEE", "SCHEDULE"
+      "ENROLLMENT", "MONTHLY_FEE", "SCHEDULE", "PROGRAM", "PROGRAM_REGISTRATION"
     ] as const;
 
     for (const permData of defaultPermissions) {

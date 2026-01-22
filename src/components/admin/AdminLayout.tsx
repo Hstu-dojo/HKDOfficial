@@ -47,10 +47,10 @@ export function AdminLayout({ children }: AdminLayoutProps) {
   // Loading states
   if (status === 'loading') {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+      <div className="min-h-screen flex items-center justify-center bg-background">
         <div className="text-center">
           <LoadingSpinner size="large" />
-          <p className="mt-4 text-gray-600">Loading admin panel...</p>
+          <p className="mt-4 text-muted-foreground">Loading admin panel...</p>
         </div>
       </div>
     );
@@ -59,9 +59,9 @@ export function AdminLayout({ children }: AdminLayoutProps) {
   // Not authenticated
   if (status === 'unauthenticated') {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+      <div className="min-h-screen flex items-center justify-center bg-background">
         <div className="text-center">
-          <h2 className="text-2xl font-bold text-gray-900">Redirecting to login...</h2>
+          <h2 className="text-2xl font-bold text-foreground">Redirecting to login...</h2>
         </div>
       </div>
     );
@@ -70,11 +70,11 @@ export function AdminLayout({ children }: AdminLayoutProps) {
   // RBAC still loading - show admin interface with limited access
   if (rbacLoading) {
     return (
-      <div className="flex h-screen bg-gray-100">
+      <div className="flex h-screen bg-muted/40">
         <div
           className={`fixed inset-y-0 left-0 z-50 lg:static lg:inset-0 transform transition-transform duration-200 ease-in-out lg:transform-none ${
             sidebarOpen ? 'translate-x-0' : '-translate-x-full'
-          } lg:translate-x-0`}
+          } lg:translate-x-0 bg-background border-r`}
         >
           <AdminSidebar />
         </div>
@@ -88,10 +88,10 @@ export function AdminLayout({ children }: AdminLayoutProps) {
           <main className="flex-1 overflow-y-auto focus:outline-none">
             <div className="py-6">
               <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-8">
-                <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
+                <div className="bg-primary/10 border border-primary/20 rounded-lg p-4 mb-6">
                   <div className="flex items-center">
                     <LoadingSpinner size="small" className="mr-3" />
-                    <p className="text-blue-800">Loading your permissions...</p>
+                    <p className="text-primary">Loading your permissions...</p>
                   </div>
                 </div>
                 {children}
@@ -106,38 +106,38 @@ export function AdminLayout({ children }: AdminLayoutProps) {
   // No admin access after RBAC loaded
   if (!rbacLoading && !hasAdminAccess) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+      <div className="min-h-screen flex items-center justify-center bg-background">
         <div className="max-w-lg w-full text-center p-8">
-          <div className="bg-white shadow-lg rounded-lg p-6">
-            <h2 className="text-2xl font-bold text-gray-900">Access Denied</h2>
-            <p className="mt-2 text-gray-600">
+          <div className="bg-card shadow-lg rounded-lg p-6 border border-border">
+            <h2 className="text-2xl font-bold text-foreground">Access Denied</h2>
+            <p className="mt-2 text-muted-foreground">
               You don&apos;t have the required permissions to access the admin panel.
             </p>
             
             {/* Debug info - always show for troubleshooting */}
-            <div className="mt-4 p-3 bg-gray-100 rounded text-left text-xs">
-              <p className="font-semibold text-gray-700">Debug Info:</p>
-              <p className="text-gray-600">
+            <div className="mt-4 p-3 bg-muted/50 rounded text-left text-xs">
+              <p className="font-semibold text-foreground">Debug Info:</p>
+              <p className="text-muted-foreground">
                 Local User ID: {localUserId || 'Not found'}
               </p>
-              <p className="text-gray-600">
+              <p className="text-muted-foreground">
                 Roles: {permissions?.roles?.map(r => r.name).join(', ') || 'None'}
               </p>
-              <p className="text-gray-600">
+              <p className="text-muted-foreground">
                 Permissions Count: {permissions?.permissions?.length || 0}
               </p>
-              <p className="text-gray-600">
+              <p className="text-muted-foreground">
                 Has Admin Role: {hasAdminAccessByRole ? 'Yes' : 'No'}
               </p>
-              <p className="text-gray-600">
+              <p className="text-muted-foreground">
                 Has Any Permission: {hasAnyPermission ? 'Yes' : 'No'}
               </p>
               {rbacError && (
-                <p className="text-red-600 mt-2">
+                <p className="text-destructive mt-2">
                   Error: {rbacError}
                 </p>
               )}
-              <p className="text-gray-600 mt-2 text-yellow-600">
+              <p className="text-muted-foreground mt-2 text-yellow-600">
                 If you&apos;re a SUPER_ADMIN, you may need to run the RBAC seed script
                 and assign your role in the userRole table.
               </p>
@@ -146,13 +146,13 @@ export function AdminLayout({ children }: AdminLayoutProps) {
             <div className="mt-6 space-x-4">
               <button
                 onClick={() => router.push('/')}
-                className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700"
+                className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-primary-foreground bg-primary hover:bg-primary/90"
               >
                 Go Home
               </button>
               <button
                 onClick={() => window.location.reload()}
-                className="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50"
+                className="inline-flex items-center px-4 py-2 border border-border text-sm font-medium rounded-md text-foreground bg-background hover:bg-accent"
               >
                 Refresh
               </button>
@@ -165,12 +165,12 @@ export function AdminLayout({ children }: AdminLayoutProps) {
 
   // Authenticated and has admin access
   return (
-    <div className="flex h-screen bg-gray-100">
+    <div className="flex h-screen bg-slate-50 text-slate-900 [&_h1]:text-slate-900 [&_h1]:dark:text-slate-900 [&_h2]:text-slate-900 [&_h2]:dark:text-slate-900 [&_h3]:text-slate-900 [&_h3]:dark:text-slate-900 [&_h4]:text-slate-900 [&_h4]:dark:text-slate-900">
       {/* Mobile sidebar overlay */}
       {sidebarOpen && (
         <div className="fixed inset-0 z-40 lg:hidden">
           <div
-            className="fixed inset-0 bg-gray-600 bg-opacity-75"
+            className="fixed inset-0 bg-slate-900/80 backdrop-blur-sm"
             onClick={() => setSidebarOpen(false)}
           />
         </div>
@@ -180,7 +180,7 @@ export function AdminLayout({ children }: AdminLayoutProps) {
       <div
         className={`fixed inset-y-0 left-0 z-50 lg:static lg:inset-0 transform transition-transform duration-200 ease-in-out lg:transform-none ${
           sidebarOpen ? 'translate-x-0' : '-translate-x-full'
-        } lg:translate-x-0`}
+        } lg:translate-x-0 bg-white border-r border-slate-200 shadow-sm`}
       >
         <AdminSidebar />
       </div>

@@ -74,33 +74,57 @@ function QuickAction({ title, description, href, icon: Icon, color }: QuickActio
   );
 }
 
-export default function AdminDashboard() {
+interface DashboardData {
+  stats: {
+    users: number;
+    courses: number;
+    media: number;
+  };
+  recentActivity: {
+    id: string;
+    type: 'USER' | 'COURSE' | 'MEDIA' | 'CLASS';
+    message: string;
+    timestamp: string;
+  }[];
+}
+
+interface AdminDashboardProps {
+  dashboardData?: DashboardData;
+}
+
+export default function AdminDashboard({ dashboardData }: AdminDashboardProps) {
   const { data: session } = useSession();
   const { hasPermission, hasRole } = useRBAC();
+
+  if (!dashboardData) {
+    return (
+      <div className="flex items-center justify-center min-h-[200px]">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-slate-900"></div>
+      </div>
+    );
+  }
 
   const stats = [
     {
       title: 'Total Users',
-      value: '1,247',
+      value: dashboardData.stats.users.toLocaleString(),
       description: 'Active registered users',
       icon: UserGroupIcon,
       href: hasPermission('USER', 'READ') ? '/admin/users' : undefined,
-      trend: { value: '+12% from last month', isPositive: true },
     },
     {
       title: 'Courses',
-      value: '18',
+      value: dashboardData.stats.courses.toLocaleString(),
       description: 'Available courses',
       icon: DocumentTextIcon,
       href: hasPermission('COURSE', 'READ') ? '/admin/courses' : undefined,
     },
     {
       title: 'Media Files',
-      value: '2,431',
-      description: 'Images and documents',
+      value: dashboardData.stats.media.toLocaleString(),
+      description: 'Gallery images',
       icon: PhotoIcon,
-      href: hasPermission('MEDIA', 'READ') ? '/admin/gallery' : undefined,
-      trend: { value: '+156 this month', isPositive: true },
+      href: hasPermission('GALLERY', 'READ') ? '/admin/gallery' : undefined,
     },
   ];
 
@@ -175,59 +199,57 @@ export default function AdminDashboard() {
         <div className="p-6">
           <h2 className="text-xl font-semibold text-gray-900 mb-4">Recent Activity</h2>
           <div className="space-y-4">
-            <div className="flex items-center p-4 bg-gray-50 rounded-lg">
-              <div className="flex-shrink-0">
-                <UserGroupIcon className="h-8 w-8 text-blue-600" />
-              </div>
-              <div className="ml-4">
-                <p className="text-sm font-medium text-gray-900">New user registered</p>
-                <p className="text-sm text-gray-500">john.doe@example.com joined 2 hours ago</p>
-              </div>
-            </div>
-            <div className="flex items-center p-4 bg-gray-50 rounded-lg">
-              <div className="flex-shrink-0">
-                <CalendarIcon className="h-8 w-8 text-green-600" />
-              </div>
-              <div className="ml-4">
-                <p className="text-sm font-medium text-gray-900">Class schedule updated</p>
-                <p className="text-sm text-gray-500">Advanced Karate class moved to 3:00 PM</p>
-              </div>
-            </div>
-            <div className="flex items-center p-4 bg-gray-50 rounded-lg">
-              <div className="flex-shrink-0">
-                <ShieldCheckIcon className="h-8 w-8 text-purple-600" />
-              </div>
-              <div className="ml-4">
-                <p className="text-sm font-medium text-gray-900">Permission updated</p>
-                <p className="text-sm text-gray-500">Instructor role permissions modified</p>
-              </div>
-            </div>
+            {dashboardData.recentActivity.length === 0 ? (
+              <p className="text-gray-500 text-sm">No recent activity.</p>
+            ) : (
+              dashboardData.recentActivity.map((activity) => {
+                let Icon = ShieldCheckIcon;
+                let colorClass = "text-gray-600";
+                let bgClass = "bg-gray-50";
+
+                switch (activity.type) {
+                  case 'USER':
+                    Icon = UserGroupIcon;
+                    colorClass = "text-blue-600";
+                    bgClass = "bg-blue-50";
+                    break;
+                  case 'COURSE':
+                    Icon = DocumentTextIcon;
+                    colorClass = "text-indigo-600";
+                    bgClass = "bg-indigo-50";
+                    break;
+                  case 'MEDIA':
+                    Icon = PhotoIcon;
+                    colorClass = "text-emerald-600";
+                    bgClass = "bg-emerald-50";
+                    break;
+                  case 'CLASS':
+                    Icon = CalendarIcon;
+                    colorClass = "text-purple-600";
+                    bgClass = "bg-purple-50";
+                    break;
+                }
+
+                return (
+                  <div key={activity.id} className={`flex items-center p-4 ${bgClass} rounded-lg`}>
+                    <div className="flex-shrink-0">
+                      <Icon className={`h-8 w-8 ${colorClass}`} />
+                    </div>
+                    <div className="ml-4">
+                      <p className="text-sm font-medium text-gray-900">{activity.message}</p>
+                      <p className="text-sm text-gray-500">
+                        {new Date(activity.timestamp).toLocaleString()}
+                      </p>
+                    </div>
+                  </div>
+                );
+              })
+            )}
           </div>
         </div>
       </div>
 
-      {/* System Status */}
-      {(hasRole('SUPER_ADMIN') || hasRole('ADMIN')) && (
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200">
-          <div className="p-6">
-            <h2 className="text-xl font-semibold text-gray-900 mb-4">System Status</h2>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div className="text-center p-4 bg-green-50 rounded-lg">
-                <div className="text-2xl font-bold text-green-600">99.9%</div>
-                <div className="text-sm text-gray-600">Uptime</div>
-              </div>
-              <div className="text-center p-4 bg-blue-50 rounded-lg">
-                <div className="text-2xl font-bold text-blue-600">42ms</div>
-                <div className="text-sm text-gray-600">Response Time</div>
-              </div>
-              <div className="text-center p-4 bg-purple-50 rounded-lg">
-                <div className="text-2xl font-bold text-purple-600">1.2GB</div>
-                <div className="text-sm text-gray-600">Storage Used</div>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
+      {/* System Status - Removed as we don't have real metrics yet */}
     </div>
   );
 }

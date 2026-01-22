@@ -33,13 +33,13 @@ export function AdminHeader({ onToggleSidebar, sidebarOpen }: AdminHeaderProps) 
   if (hasRole('INSTRUCTOR')) userRoles.push('Instructor');
 
   return (
-    <header className="bg-white shadow-sm border-b border-gray-200">
+    <header className="bg-white shadow-sm border-b border-slate-200">
       <div className="flex items-center justify-between h-16 px-4">
         {/* Left side - Toggle and breadcrumb */}
         <div className="flex items-center space-x-4">
           <button
             onClick={onToggleSidebar}
-            className="p-2 rounded-md text-gray-500 hover:text-gray-700 hover:bg-gray-100 lg:hidden"
+            className="p-2 rounded-md text-slate-500 hover:text-slate-700 hover:bg-slate-100 lg:hidden"
           >
             {sidebarOpen ? (
               <XMarkIcon className="h-6 w-6" />
@@ -49,11 +49,11 @@ export function AdminHeader({ onToggleSidebar, sidebarOpen }: AdminHeaderProps) 
           </button>
           
           <div className="flex items-center space-x-2">
-            <h1 className="text-lg font-semibold text-gray-900">
+            <h1 className="text-lg font-semibold text-slate-900">
               Admin Dashboard
             </h1>
             {userRoles.length > 0 && (
-              <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+              <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800 border border-blue-200">
                 {userRoles.join(', ')}
               </span>
             )}
@@ -63,14 +63,14 @@ export function AdminHeader({ onToggleSidebar, sidebarOpen }: AdminHeaderProps) 
         {/* Right side - Actions and user menu */}
         <div className="flex items-center space-x-4">
           {/* Notifications */}
-          <button className="p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-full">
+          <button className="p-2 text-slate-500 hover:text-slate-700 hover:bg-slate-100 rounded-full transition-colors">
             <BellIcon className="h-6 w-6" />
           </button>
 
           {/* Quick actions */}
           <div className="hidden sm:flex items-center space-x-2">
             <Link href="/">
-              <Button variant="outline" size="sm">
+              <Button variant="outline" size="sm" className="text-slate-700 border-slate-300 hover:bg-slate-50">
                 View Site
               </Button>
             </Link>
@@ -80,18 +80,18 @@ export function AdminHeader({ onToggleSidebar, sidebarOpen }: AdminHeaderProps) 
           <div className="relative">
             <button
               onClick={() => setShowUserMenu(!showUserMenu)}
-              className="flex items-center space-x-2 text-sm text-gray-700 hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 rounded-full p-2"
+              className="flex items-center space-x-2 text-sm text-slate-700 hover:text-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-500 focus:ring-offset-2 rounded-full p-2 transition-colors"
             >
               {session?.user?.image ? (
                 <Image
-                  className="h-8 w-8 rounded-full"
+                  className="h-8 w-8 rounded-full border border-slate-200"
                   src={session.user.image}
                   alt={session.user.name || 'User'}
                   width={32}
                   height={32}
                 />
               ) : (
-                <UserCircleIcon className="h-8 w-8 text-gray-400" />
+                <UserCircleIcon className="h-8 w-8 text-slate-400" />
               )}
               <span className="hidden sm:block font-medium">
                 {session?.user?.name || 'Admin'}

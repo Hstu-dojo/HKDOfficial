@@ -10,7 +10,8 @@ import {
   beltProgressions, equipment, equipmentCheckouts,
   courses, courseSchedules, courseInstructors,
   enrollmentApplications, courseEnrollments,
-  monthlyFees, paymentReminders, paymentSettings
+  monthlyFees, paymentReminders, paymentSettings,
+  programs, programRegistrations
 } from "./karate";
 import { billableItems, bills, payments } from "./billing";
 import { 
@@ -425,5 +426,29 @@ export const galleryImagesRelations = relations(galleryImages, ({ one }) => ({
   uploadedByUser: one(user, {
     fields: [galleryImages.uploadedBy],
     references: [user.id],
+  }),
+}));
+// Program Relations
+export const programsRelations = relations(programs, ({ one, many }) => ({
+  registrations: many(programRegistrations),
+  creator: one(user, {
+    fields: [programs.createdBy],
+    references: [user.id],
+  }),
+}));
+
+export const programRegistrationsRelations = relations(programRegistrations, ({ one }) => ({
+  program: one(programs, {
+    fields: [programRegistrations.programId],
+    references: [programs.id],
+  }),
+  user: one(user, {
+    fields: [programRegistrations.userId],
+    references: [user.id],
+  }),
+  verifier: one(user, {
+    fields: [programRegistrations.verifiedBy],
+    references: [user.id],
+    relationName: "verifiedBy",
   }),
 }));

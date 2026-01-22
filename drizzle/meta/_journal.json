@@ -29,6 +29,13 @@
       "when": 1768651150946,
       "tag": "0003_milky_shotgun",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1769109960522,
+      "tag": "0004_natural_lorna_dane",
+      "breakpoints": true
     }
   ]
 }

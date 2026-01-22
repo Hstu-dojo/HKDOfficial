@@ -55,47 +55,11 @@ const nextConfig = {
     remotePatterns: [
       {
         protocol: "https",
-        hostname: "deothemes.com",
+        hostname: "**",
       },
       {
-        protocol: "https",
-        hostname: "i.pravatar.cc",
-      },
-      {
-        protocol: "https",
-        hostname: "aceternity.com",
-      },
-      {
-        protocol: "https",
-        hostname: "images.unsplash.com",
-      },
-      {
-        protocol: "https",
-        hostname: "res.cloudinary.com",
-      },
-      {
-        protocol: "https",
-        hostname: "wordpress-597675-3975829.cloudwaysapps.com",
-      },
-      {
-        protocol: "https",
-        hostname: "i.ibb.co",
-      },
-      {
-        protocol: "https",
-        hostname: "pbs.twimg.com",
-      },
-      {
-        protocol: "https",
-        hostname: "karatebushido.com",
-      },
-      {
-        protocol: "https",
-        hostname: "secure.gravatar.com",
-      },
-      {
-        protocol: "https",
-        hostname: "cdn.sanity.io",
+        protocol: "http",
+        hostname: "**",
       },
     ],
   },
