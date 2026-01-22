@@ -211,6 +211,10 @@ const rolePermissionMappings: { [key: string]: string[] } = {
     "create_monthly_fee", "read_monthly_fee", "update_monthly_fee", "delete_monthly_fee", "manage_monthly_fee", "verify_monthly_fee",
     // Schedule permissions
     "create_schedule", "read_schedule", "update_schedule", "delete_schedule", "manage_schedule",
+    // Program permissions
+    "create_program", "read_program", "update_program", "delete_program", "manage_program",
+    // Program Registration permissions
+    "create_program_registration", "read_program_registration", "update_program_registration", "delete_program_registration", "manage_program_registration", "approve_program_registration", "verify_program_registration",
   ],
   ADMIN: [
     // Most permissions except system-level ones
