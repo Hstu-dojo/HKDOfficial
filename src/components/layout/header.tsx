@@ -12,6 +12,8 @@ import { useAuth } from "@/context/AuthContext";
 import MaxWidthWrapper from "../maxWidthWrapper";
 import { useI18n, useCurrentLocale } from "@/locales/client";
 
+import { OnboardingAlert } from "./onboarding-alert";
+
 const Header = () => {
   const [stickyClass, setStickyClass] = useState("");
   const { data: session } = useSession();
@@ -38,6 +40,7 @@ const Header = () => {
 
   return (
     <header className="fixed left-0 top-0 z-20 w-full">
+      <OnboardingAlert />
       <div className={cn("py-5 transition-all lg:py-12", stickyClass)}>
         <MaxWidthWrapper>
           <div className="flex items-center ">

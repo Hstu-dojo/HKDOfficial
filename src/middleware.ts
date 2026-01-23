@@ -19,7 +19,9 @@ const middlewares = {
   "/apply/:path*": [withLocaleMiddleware, withAuthMiddleware],
   "/profile": [withLocaleMiddleware, withAuthMiddleware],
   "/[slug]/profile": [withLocaleMiddleware, withAuthMiddleware],
+  "/onboarding": [withLocaleMiddleware, withAuthMiddleware],
   "/onboarding/:path*": [withLocaleMiddleware, withAuthMiddleware],
+  "/[slug]/onboarding": [withLocaleMiddleware, withAuthMiddleware],
   "/[slug]/onboarding/:path*": [withLocaleMiddleware, withAuthMiddleware],
   
   // Public routes

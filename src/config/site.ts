@@ -71,6 +71,16 @@ export const mainNav = [
         items: [],
       },
       {
+        title: "Programs",
+        href: "/karate/programs",
+        items: [],
+      },
+      {
+        title: "Courses",
+        href: "/karate/courses",
+        items: [],
+      },
+      {
         title: "Docs",
         href: "/docs",
         items: [],

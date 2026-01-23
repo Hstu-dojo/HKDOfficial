@@ -4,6 +4,7 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 
 import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 import {
   Form,
   FormControl,
@@ -54,7 +55,11 @@ const FormSchema = z.object({
   agreement: z.boolean().refine(val => val === true, { message: "You must agree to the terms." }),
 });
 
-export function EnrollForm() {
+import { submitOnboarding } from "@/actions/onboarding-actions";
+import { useRouter } from "next/navigation";
+
+export function EnrollForm({ className }: { className?: string }) {
+  const router = useRouter();
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
@@ -83,21 +88,41 @@ export function EnrollForm() {
     },
   });
 
-  function onSubmit(data: z.infer<typeof FormSchema>) {
-    toast({
-      title: "You submitted the following values:",
-      description: (
-        <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
-          <code className="text-white">{JSON.stringify(data, null, 2)}</code>
-        </pre>
-      ),
-    });
-    console.log(data);
+  async function onSubmit(data: z.infer<typeof FormSchema>) {
+    try {
+      toast({
+        title: "Submitting...",
+        description: "Please wait while we process your registration.",
+      });
+      
+      const result = await submitOnboarding(data);
+      
+      if (result.success) {
+          toast({
+              title: "Success!",
+              description: result.message,
+          });
+          // Redirect to profile or dashboard
+          router.push("/profile");
+      } else {
+          toast({
+              title: "Submission Failed",
+              description: result.message,
+              variant: "destructive",
+          });
+      }
+    } catch (error) {
+       toast({
+          title: "Error",
+          description: "An unexpected error occurred.",
+          variant: "destructive",
+       });
+    }
   }
 
   return (
     <MaxWidthWrapper>
-      <Card className="relative bottom-36 w-full">
+      <Card className={cn("relative bottom-36 w-full", className)}>
         <CardHeader>
           <CardTitle>Karate Dojo new membership</CardTitle>
           <CardDescription>

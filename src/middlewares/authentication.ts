@@ -1,4 +1,4 @@
-import { createMiddlewareClient } from '@supabase/auth-helpers-nextjs'
+import { createServerClient } from '@supabase/ssr'
 import type { NextRequest } from "next/server";
 import { NextResponse } from 'next/server'
 
@@ -7,15 +7,41 @@ import { NextResponse } from 'next/server'
  * Use this for routes that require authentication but not specific roles
  */
 export const withAuthMiddleware = async (req: NextRequest) => {
-  const res = NextResponse.next()
-  const supabase = createMiddlewareClient({ req, res })
+  let res = NextResponse.next({
+    request: {
+      headers: req.headers,
+    },
+  })
 
-  // Refresh session if expired - required for Server Components
-  const { data: { session }, error } = await supabase.auth.getSession()
+  const supabase = createServerClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    {
+      cookies: {
+        getAll() {
+          return req.cookies.getAll()
+        },
+        setAll(cookiesToSet) {
+          cookiesToSet.forEach(({ name, value, options }) => {
+            req.cookies.set(name, value)
+          })
+          res = NextResponse.next({
+            request: {
+              headers: req.headers,
+            },
+          })
+          cookiesToSet.forEach(({ name, value, options }) => {
+            res.cookies.set(name, value, options)
+          })
+        },
+      },
+    }
+  )
 
   // Check if user is authenticated
-  if (error || !session) {
-    console.log('User not authenticated, redirecting to login');
+  const { data: { user }, error } = await supabase.auth.getUser()
+
+  if (error || !user) {
     // Redirect to login page if not authenticated
     const loginUrl = new URL('/login', req.url)
     loginUrl.searchParams.set('callbackUrl', req.nextUrl.pathname)

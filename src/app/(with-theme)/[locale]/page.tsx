@@ -2,7 +2,7 @@ import Header from "@/components/layout/header";
 import Footer from "@/components/layout/footer";
 import SectionCTA from "@/components/sections/section-cta";
 import SectionHero from "@/components/sections/section-hero";
-import SectionIconBoxes from "@/components/sections/section-icon-boxes";
+import SectionHomePrograms from "@/components/sections/section-home-programs";
 import SectionPartners from "@/components/sections/section-partners";
 import SectionPromo from "@/components/sections/section-promo";
 // import SectionBlog from "@/components/sections/section-blog";
@@ -23,7 +23,7 @@ export default function Home() {
       <Header />
       <main className="relative">
         <SectionHero />
-        <SectionIconBoxes />
+        <SectionHomePrograms />
         <SectionBenefits />
         <SectionPromo />
         {/* <SectionIconBoxesLayout2 /> */}
