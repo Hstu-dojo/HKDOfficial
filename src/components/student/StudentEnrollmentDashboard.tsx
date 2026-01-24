@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useSession } from 'next-auth/react';
+import { useAuth } from '@/context/AuthContext';
 import Link from 'next/link';
 import {
   AcademicCapIcon,
@@ -81,7 +81,7 @@ const FEE_STATUS_CONFIG: Record<string, { label: string; color: string }> = {
 };
 
 export default function StudentEnrollmentDashboard() {
-  const { data: session, status: authStatus } = useSession();
+  const { user, loading: authLoading } = useAuth();
   const [applications, setApplications] = useState<Application[]>([]);
   const [enrollments, setEnrollments] = useState<Enrollment[]>([]);
   const [monthlyFees, setMonthlyFees] = useState<MonthlyFee[]>([]);
@@ -89,7 +89,7 @@ export default function StudentEnrollmentDashboard() {
 
   useEffect(() => {
     const fetchData = async () => {
-      if (authStatus !== 'authenticated') return;
+      if (authLoading || !user) return;
 
       try {
         setLoading(true);
@@ -123,7 +123,7 @@ export default function StudentEnrollmentDashboard() {
     };
 
     fetchData();
-  }, [authStatus]);
+  }, [authLoading, user]);
 
   const formatCurrency = (amount: number, currency: string) => {
     return new Intl.NumberFormat('en-BD', {
@@ -147,7 +147,7 @@ export default function StudentEnrollmentDashboard() {
     return date.toLocaleDateString('en-BD', { year: 'numeric', month: 'long' });
   };
 
-  if (authStatus === 'loading' || loading) {
+  if (authLoading || loading) {
     return (
       <div className="flex justify-center items-center min-h-[400px]">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-red-600"></div>
@@ -155,11 +155,11 @@ export default function StudentEnrollmentDashboard() {
     );
   }
 
-  if (authStatus === 'unauthenticated') {
+  if (!user) {
     return (
       <div className="text-center py-12">
-        <p className="text-gray-600">Please log in to view your enrollments.</p>
-        <Link href="/auth/signin" className="text-red-600 hover:underline mt-2 inline-block">
+        <p className="text-gray-600 dark:text-gray-400">Please log in to view your enrollments.</p>
+        <Link href="/login" className="text-red-600 hover:underline mt-2 inline-block">
           Sign In
         </Link>
       </div>
