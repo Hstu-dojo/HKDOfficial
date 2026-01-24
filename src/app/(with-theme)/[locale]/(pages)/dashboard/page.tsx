@@ -10,7 +10,8 @@ import {
   ClipboardDocumentCheckIcon, 
   CurrencyBangladeshiIcon,
   CalendarDaysIcon,
-  ClockIcon
+  ClockIcon,
+  TrophyIcon
 } from '@heroicons/react/24/outline';
 import { format } from 'date-fns';
 import { getUserDashboardData } from '@/actions/dashboard-actions';
@@ -44,7 +45,7 @@ export default async function DashboardPage() {
     );
   }
 
-  const { user, applications, enrollments, payments } = data;
+  const { user, applications, enrollments, payments, programRegistrations } = data;
 
   return (
     <>
@@ -181,6 +182,79 @@ export default async function DashboardPage() {
                         </div>
                     ) : (
                         <p className="text-slate-500 dark:text-slate-400 text-center py-4">No recent applications.</p>
+                    )}
+                </section>
+
+                {/* Program Registrations (Belt Tests, Competitions, etc.) */}
+                <section className="bg-white dark:bg-slate-800 rounded-2xl p-6 shadow-sm border border-slate-100 dark:border-slate-700/50">
+                    <div className="flex items-center gap-2 mb-6">
+                        <TrophyIcon className="h-6 w-6 text-primary" />
+                        <h2 className="text-xl font-bold text-slate-900 dark:text-slate-100">Program Registrations</h2>
+                    </div>
+
+                    {programRegistrations.length > 0 ? (
+                        <div className="space-y-4">
+                            {programRegistrations.map((reg: any) => (
+                                <div key={reg.id} className="p-4 rounded-xl bg-slate-50 dark:bg-slate-700/30 border border-slate-100 dark:border-slate-700">
+                                    <div className="flex flex-col md:flex-row md:items-center justify-between gap-3">
+                                        <div className="flex-1">
+                                            <div className="flex items-center gap-2 mb-1">
+                                                <span className="text-xs uppercase font-semibold text-primary bg-primary/10 px-2 py-0.5 rounded">
+                                                    {reg.programType?.replace('_', ' ') || 'Program'}
+                                                </span>
+                                            </div>
+                                            <h3 className="font-semibold text-slate-900 dark:text-slate-100">{reg.programTitle}</h3>
+                                            <div className="flex items-center gap-4 mt-1 text-sm text-slate-500 dark:text-slate-400">
+                                                {reg.programDate && (
+                                                    <span className="flex items-center gap-1">
+                                                        <CalendarDaysIcon className="h-4 w-4" />
+                                                        {format(new Date(reg.programDate), 'MMM d, yyyy')}
+                                                    </span>
+                                                )}
+                                                <span>৳{reg.feeAmount}</span>
+                                            </div>
+                                        </div>
+                                        <div className="flex flex-col items-end gap-2">
+                                            <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold
+                                                ${reg.status === 'approved' ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400' :
+                                                  reg.status === 'pending_payment' ? 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400' :
+                                                  reg.status === 'payment_submitted' ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400' :
+                                                  reg.status === 'payment_verified' ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400' :
+                                                  reg.status === 'rejected' ? 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400' :
+                                                  'bg-slate-100 text-slate-700 dark:bg-slate-700 dark:text-slate-300'}
+                                            `}>
+                                                {reg.status === 'pending_payment' ? 'Payment Pending' :
+                                                 reg.status === 'payment_submitted' ? 'Under Review' :
+                                                 reg.status === 'payment_verified' ? 'Verified' :
+                                                 reg.status.replace('_', ' ')}
+                                            </span>
+                                            {reg.transactionId && (
+                                                <span className="text-xs text-slate-400 dark:text-slate-500 font-mono">
+                                                    TXN: {reg.transactionId}
+                                                </span>
+                                            )}
+                                        </div>
+                                    </div>
+                                    {reg.status === 'approved' && (
+                                        <div className="mt-3 pt-3 border-t border-slate-200 dark:border-slate-600">
+                                            <p className="text-sm text-green-600 dark:text-green-400 font-medium">
+                                                ✓ You are registered for this program. See you there!
+                                            </p>
+                                        </div>
+                                    )}
+                                </div>
+                            ))}
+                        </div>
+                    ) : (
+                        <div className="text-center py-8">
+                            <p className="text-slate-500 dark:text-slate-400 mb-4">No program registrations yet.</p>
+                            <Link 
+                                href="/karate/programs" 
+                                className="inline-flex items-center justify-center px-4 py-2 rounded-lg bg-primary text-white font-medium hover:opacity-90 transition-opacity"
+                            >
+                                Browse Programs
+                            </Link>
+                        </div>
                     )}
                 </section>
             </div>

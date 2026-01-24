@@ -91,10 +91,10 @@ export default function ProgramDetails({ slug }: ProgramDetailsProps) {
       });
 
       if (res.success) {
-        toast.success('Registration submitted successfully! Wait for approval.');
+        toast.success('Registration submitted successfully! Redirecting to dashboard...');
         setShowRegisterModal(false);
-        // Refresh or show success state
-        router.push('/karate/programs'); // or stay and show status
+        // Redirect to dashboard to see registration status
+        router.push('/dashboard');
       } else {
         setRegistrationError(res.error || 'Failed to register');
         toast.error(res.error || 'Failed to register');
@@ -107,8 +107,18 @@ export default function ProgramDetails({ slug }: ProgramDetailsProps) {
     }
   };
 
-  if (loading) return <div className="p-12 text-center">Loading program...</div>;
-  if (!program) return <div className="p-12 text-center">Program not found.</div>;
+  if (loading) return (
+    <div className="flex items-center justify-center py-24">
+      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+    </div>
+  );
+  
+  if (!program) return (
+    <div className="py-24 text-center">
+      <h2 className="text-xl font-semibold text-slate-900 dark:text-slate-100 mb-2">Program not found</h2>
+      <p className="text-slate-600 dark:text-slate-400">The program you&apos;re looking for doesn&apos;t exist or has been removed.</p>
+    </div>
+  );
 
   const isRegistrationOpen = program.isRegistrationOpen && 
     (!program.registrationDeadline || new Date(program.registrationDeadline) > new Date());
@@ -116,55 +126,55 @@ export default function ProgramDetails({ slug }: ProgramDetailsProps) {
   const isFull = program.maxParticipants && (program.currentParticipants || 0) >= program.maxParticipants;
 
   return (
-    <div className="bg-gray-50 min-h-screen py-10">
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div className="py-8 pb-16">
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
         
-        <div className="bg-white rounded-2xl shadow-sm overflow-hidden border">
+        <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-lg overflow-hidden border border-slate-200 dark:border-slate-700">
            {/* Banner */}
-           <div className="h-48 bg-gray-200 w-full relative">
-              {/* If bannerUrl exists, show it. Otherwise pattern/color */}
-              <div className="absolute inset-0 bg-gradient-to-r from-blue-600 to-indigo-600 opacity-90"></div>
+           <div className="h-56 w-full relative overflow-hidden">
+              <div className="absolute inset-0 bg-gradient-to-br from-primary via-primary/90 to-primary/70"></div>
+              <div className="absolute inset-0 bg-[url('/hero/pattern.svg')] opacity-10"></div>
               <div className="absolute bottom-0 left-0 p-8 text-white">
-                 <span className="bg-white/20 px-3 py-1 rounded-full text-xs font-semibold backdrop-blur-sm">
+                 <span className="bg-white/20 px-3 py-1.5 rounded-full text-xs font-semibold backdrop-blur-sm uppercase tracking-wide">
                    {program.type.replace('_', ' ')}
                  </span>
-                 <h1 className="mt-4 text-3xl font-bold">{program.title}</h1>
+                 <h1 className="mt-4 text-3xl md:text-4xl font-bold">{program.title}</h1>
               </div>
            </div>
 
-           <div className="p-8">
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+           <div className="p-6 md:p-8">
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                  {/* Main Content */}
-                 <div className="md:col-span-2 space-y-6">
-                    <div className="prose max-w-none text-gray-600">
-                      <p className="whitespace-pre-wrap">{program.description}</p>
+                 <div className="lg:col-span-2 space-y-6">
+                    <div className="prose prose-slate dark:prose-invert max-w-none">
+                      <p className="whitespace-pre-wrap text-slate-600 dark:text-slate-300 leading-relaxed">{program.description}</p>
                     </div>
 
-                    <div className="border-t pt-6">
-                       <h3 className="font-semibold text-gray-900 mb-4">Schedule</h3>
-                       <div className="space-y-3">
-                          <div className="flex items-center text-gray-600">
-                             <CalendarIcon className="h-5 w-5 mr-3 text-gray-400" />
+                    <div className="border-t border-slate-200 dark:border-slate-700 pt-6">
+                       <h3 className="font-semibold text-slate-900 dark:text-slate-100 mb-4">Schedule & Location</h3>
+                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                          <div className="flex items-start gap-3 p-4 rounded-xl bg-slate-50 dark:bg-slate-900/50">
+                             <CalendarIcon className="h-5 w-5 text-primary flex-shrink-0 mt-0.5" />
                              <div>
-                               <p className="font-medium">Starts</p>
-                               <p className="text-sm">{format(new Date(program.startDate), 'PPP p')}</p>
+                               <p className="font-medium text-slate-900 dark:text-slate-100">Starts</p>
+                               <p className="text-sm text-slate-600 dark:text-slate-400">{format(new Date(program.startDate), 'PPP p')}</p>
                              </div>
                           </div>
                           {program.endDate && (
-                             <div className="flex items-center text-gray-600">
-                               <CalendarIcon className="h-5 w-5 mr-3 text-gray-400" />
+                             <div className="flex items-start gap-3 p-4 rounded-xl bg-slate-50 dark:bg-slate-900/50">
+                               <CalendarIcon className="h-5 w-5 text-primary flex-shrink-0 mt-0.5" />
                                <div>
-                                 <p className="font-medium">Ends</p>
-                                 <p className="text-sm">{format(new Date(program.endDate), 'PPP p')}</p>
+                                 <p className="font-medium text-slate-900 dark:text-slate-100">Ends</p>
+                                 <p className="text-sm text-slate-600 dark:text-slate-400">{format(new Date(program.endDate), 'PPP p')}</p>
                                </div>
                             </div>
                           )}
                           {program.location && (
-                             <div className="flex items-center text-gray-600">
-                               <MapPinIcon className="h-5 w-5 mr-3 text-gray-400" />
+                             <div className="flex items-start gap-3 p-4 rounded-xl bg-slate-50 dark:bg-slate-900/50 sm:col-span-2">
+                               <MapPinIcon className="h-5 w-5 text-primary flex-shrink-0 mt-0.5" />
                                <div>
-                                 <p className="font-medium">Location</p>
-                                 <p className="text-sm">{program.location}</p>
+                                 <p className="font-medium text-slate-900 dark:text-slate-100">Location</p>
+                                 <p className="text-sm text-slate-600 dark:text-slate-400">{program.location}</p>
                                </div>
                             </div>
                           )}
@@ -173,27 +183,30 @@ export default function ProgramDetails({ slug }: ProgramDetailsProps) {
                  </div>
 
                  {/* Sidebar / Actions */}
-                 <div className="md:col-span-1 space-y-6">
-                    <div className="bg-gray-50 rounded-xl p-6 border">
-                       <h3 className="text-lg font-semibold text-gray-900">Registration</h3>
+                 <div className="lg:col-span-1">
+                    <div className="sticky top-24 bg-slate-50 dark:bg-slate-900/50 rounded-xl p-6 border border-slate-200 dark:border-slate-700">
+                       <h3 className="text-lg font-semibold text-slate-900 dark:text-slate-100">Registration</h3>
                        
-                       <div className="mt-4 space-y-2">
-                          <div className="flex justify-between items-center text-sm">
-                             <span className="text-gray-500">Fee</span>
-                             <span className="font-bold text-gray-900 text-lg">৳{program.fee}</span>
+                       <div className="mt-4 space-y-3">
+                          <div className="flex justify-between items-center">
+                             <span className="text-slate-500 dark:text-slate-400">Fee</span>
+                             <span className="font-bold text-slate-900 dark:text-slate-100 text-xl">৳{program.fee}</span>
                           </div>
-                          <div className="flex justify-between items-center text-sm">
-                             <span className="text-gray-500">Status</span>
+                          <div className="flex justify-between items-center">
+                             <span className="text-slate-500 dark:text-slate-400">Status</span>
                              {isRegistrationOpen && !isFull ? (
-                               <span className="text-green-600 font-medium">Open</span>
+                               <span className="text-green-600 dark:text-green-400 font-medium flex items-center gap-1">
+                                 <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
+                                 Open
+                               </span>
                              ) : (
-                               <span className="text-red-600 font-medium">Closed</span>
+                               <span className="text-red-600 dark:text-red-400 font-medium">Closed</span>
                              )}
                           </div>
                           {program.maxParticipants && (
-                             <div className="flex justify-between items-center text-sm">
-                               <span className="text-gray-500">Capacity</span>
-                               <span>{(program.currentParticipants || 0)} / {program.maxParticipants}</span>
+                             <div className="flex justify-between items-center">
+                               <span className="text-slate-500 dark:text-slate-400">Seats</span>
+                               <span className="text-slate-900 dark:text-slate-100">{(program.currentParticipants || 0)} / {program.maxParticipants}</span>
                              </div>
                           )}
                        </div>
@@ -202,12 +215,12 @@ export default function ProgramDetails({ slug }: ProgramDetailsProps) {
                           {isRegistrationOpen && !isFull ? (
                              <button
                                onClick={handleRegisterClick}
-                               className="w-full bg-blue-600 text-white rounded-lg py-3 px-4 font-semibold hover:bg-blue-700 transition shadow-sm"
+                               className="w-full bg-primary text-white rounded-xl py-3 px-4 font-semibold hover:opacity-90 transition shadow-sm"
                              >
                                Register Now
                              </button>
                           ) : (
-                             <button disabled className="w-full bg-gray-300 text-gray-500 rounded-lg py-3 px-4 font-semibold cursor-not-allowed">
+                             <button disabled className="w-full bg-slate-300 dark:bg-slate-600 text-slate-500 dark:text-slate-400 rounded-xl py-3 px-4 font-semibold cursor-not-allowed">
                                Registration Closed
                              </button>
                           )}
@@ -224,55 +237,50 @@ export default function ProgramDetails({ slug }: ProgramDetailsProps) {
         <div className="fixed inset-0 z-50 overflow-y-auto">
           <div className="flex items-center justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
              <div className="fixed inset-0 transition-opacity" onClick={() => setShowRegisterModal(false)}>
-               <div className="absolute inset-0 bg-gray-500 opacity-75"></div>
+               <div className="absolute inset-0 bg-black/60 backdrop-blur-sm"></div>
              </div>
 
-             <div className="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
-                <div className="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
-                   <h3 className="text-lg leading-6 font-medium text-gray-900" id="modal-title">
+             <div className="inline-block align-bottom bg-white dark:bg-slate-800 rounded-2xl text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full border border-slate-200 dark:border-slate-700">
+                <div className="px-6 pt-6 pb-6">
+                   <h3 className="text-xl font-bold text-slate-900 dark:text-slate-100" id="modal-title">
                      Register for {program.title}
                    </h3>
                    <div className="mt-4">
-                      <div className="bg-blue-50 border-l-4 border-blue-400 p-4 mb-4">
-                        <div className="flex">
-                          <div className="flex-shrink-0">
-                            <ExclamationCircleIcon className="h-5 w-5 text-blue-400" />
-                          </div>
-                          <div className="ml-3">
-                            <p className="text-sm text-blue-700">
-                              Please send <span className="font-bold">৳{program.fee}</span> to our Bkash Merchant Number: 
-                              <br/><span className="text-lg font-mono font-bold">017XXXXXXXX</span>
-                              <br/>Use Reference: <span className="font-mono">{session?.user?.name?.split(' ')[0]}-{program.id.substring(0,4)}</span>
-                            </p>
-                          </div>
-                        </div>
+                      <div className="bg-primary/10 border border-primary/20 rounded-xl p-4 mb-4">
+                        <p className="text-sm text-slate-700 dark:text-slate-300">
+                          Please send <span className="font-bold text-primary">৳{program.fee}</span> to our bKash Merchant Number: 
+                        </p>
+                        <p className="text-2xl font-mono font-bold text-primary mt-1">017XXXXXXXX</p>
+                        <p className="text-xs text-slate-500 dark:text-slate-400 mt-2">
+                          Use Reference: <code className="bg-slate-200 dark:bg-slate-700 px-1 rounded">{session?.user?.name?.split(' ')[0]}-{program.id.substring(0,4)}</code>
+                        </p>
                       </div>
 
                       {registrationError && (
-                         <div className="bg-red-50 border-l-4 border-red-400 p-4 mb-4 text-red-700 text-sm">
+                         <div className="bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-800 rounded-xl p-4 mb-4 text-red-700 dark:text-red-300 text-sm">
                            {registrationError}
                          </div>
                       )}
 
                       <form onSubmit={(e) => { e.preventDefault(); submitRegistration(); }} className="space-y-4">
                          <div>
-                            <label className="block text-sm font-medium text-gray-700">Transaction ID</label>
+                            <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Transaction ID</label>
                             <input 
                               type="text" 
                               required 
                               value={transactionId}
                               onChange={e => setTransactionId(e.target.value)}
                               placeholder="e.g. 9JKS82..."
-                              className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm" 
+                              className="w-full border border-slate-300 dark:border-slate-600 rounded-lg py-2.5 px-3 bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent" 
                             />
                          </div>
 
                          <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-2">Payment Proof (Optional)</label>
+                            <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Payment Proof (Optional)</label>
                             {paymentProofUrl ? (
-                               <div className="flex items-center space-x-2 text-green-600 bg-green-50 p-2 rounded">
+                               <div className="flex items-center space-x-2 text-green-600 dark:text-green-400 bg-green-50 dark:bg-green-900/30 p-3 rounded-lg">
                                  <CheckCircleIcon className="h-5 w-5" />
-                                 <span className="text-sm">Proof Uploaded</span>
+                                 <span className="text-sm font-medium">Proof Uploaded</span>
                                </div>
                             ) : (
                               <CldUploadWidget 
@@ -287,10 +295,10 @@ export default function ProgramDetails({ slug }: ProgramDetailsProps) {
                                 {({ open }) => (
                                   <button 
                                     type="button" 
-                                    className="inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                                    className="inline-flex items-center px-4 py-2.5 border border-slate-300 dark:border-slate-600 text-sm font-medium rounded-lg text-slate-700 dark:text-slate-200 bg-white dark:bg-slate-900 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors"
                                     onClick={() => open()}
                                   >
-                                    <PhotoIcon className="-ml-1 mr-2 h-5 w-5 text-gray-400" />
+                                    <PhotoIcon className="-ml-1 mr-2 h-5 w-5 text-slate-400" />
                                     Upload Screenshot
                                   </button>
                                 )}
@@ -298,20 +306,20 @@ export default function ProgramDetails({ slug }: ProgramDetailsProps) {
                             )}
                          </div>
 
-                         <div className="mt-5 sm:mt-6 sm:grid sm:grid-flow-row-dense sm:grid-cols-2 sm:gap-3">
-                            <button
-                              type="submit"
-                              disabled={submitting}
-                              className="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-blue-600 text-base font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:col-start-2 sm:text-sm disabled:opacity-50"
-                            >
-                              {submitting ? 'Submitting...' : 'Confirm Registration'}
-                            </button>
+                         <div className="pt-4 flex flex-col-reverse sm:flex-row gap-3">
                             <button
                               type="button"
                               onClick={() => setShowRegisterModal(false)}
-                              className="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:mt-0 sm:col-start-1 sm:text-sm"
+                              className="flex-1 py-2.5 px-4 rounded-lg border border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-200 font-medium hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors"
                             >
                               Cancel
+                            </button>
+                            <button
+                              type="submit"
+                              disabled={submitting}
+                              className="flex-1 py-2.5 px-4 rounded-lg bg-primary text-white font-medium hover:opacity-90 transition-opacity disabled:opacity-50"
+                            >
+                              {submitting ? 'Submitting...' : 'Confirm Registration'}
                             </button>
                           </div>
                       </form>

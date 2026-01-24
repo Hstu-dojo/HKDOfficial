@@ -9,7 +9,9 @@ import {
   courses,
   members,
   registrations,
-  monthlyFees
+  monthlyFees,
+  programs,
+  programRegistrations
 } from "@/db/schemas/karate";
 import { user as userSchema } from "@/db/schemas/auth";
 import { eq, desc } from "drizzle-orm";
@@ -45,6 +47,19 @@ export interface DashboardPayment {
   courseName: string | null;
 }
 
+export interface DashboardProgramRegistration {
+  id: string;
+  programId: string;
+  programTitle: string | null;
+  programSlug: string | null;
+  programType: string | null;
+  programDate: Date | null;
+  feeAmount: number;
+  status: string;
+  transactionId: string | null;
+  registeredAt: Date | null;
+}
+
 export interface DashboardData {
     user: {
         name: string | null;
@@ -56,6 +71,7 @@ export interface DashboardData {
     applications: DashboardApplication[];
     enrollments: DashboardEnrollment[];
     payments: DashboardPayment[];
+    programRegistrations: DashboardProgramRegistration[];
 }
 
 export async function getUserDashboardData(): Promise<DashboardData | { error: string }> {
@@ -163,6 +179,24 @@ export async function getUserDashboardData(): Promise<DashboardData | { error: s
     feeStatus = feesData as DashboardPayment[];
   }
 
+  // 6. Get Program Registrations (Belt Tests, Competitions, etc.)
+  const programRegs = await db.select({
+      id: programRegistrations.id,
+      programId: programRegistrations.programId,
+      programTitle: programs.title,
+      programSlug: programs.slug,
+      programType: programs.type,
+      programDate: programs.startDate,
+      feeAmount: programRegistrations.feeAmount,
+      status: programRegistrations.status,
+      transactionId: programRegistrations.transactionId,
+      registeredAt: programRegistrations.createdAt
+  })
+  .from(programRegistrations)
+  .leftJoin(programs, eq(programRegistrations.programId, programs.id))
+  .where(eq(programRegistrations.userId, publicUser.id))
+  .orderBy(desc(programRegistrations.createdAt));
+
   return {
     user: {
         name: publicUser.userName || publicUser.email,
@@ -173,6 +207,7 @@ export async function getUserDashboardData(): Promise<DashboardData | { error: s
     },
     applications: applications as DashboardApplication[],
     enrollments,
-    payments: feeStatus
+    payments: feeStatus,
+    programRegistrations: programRegs as DashboardProgramRegistration[]
   };
 }

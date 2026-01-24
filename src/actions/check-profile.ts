@@ -31,13 +31,17 @@ export async function checkUserProfileStatus(userId: string) {
 
   if (registration) {
       // If approved, they should have a member record. If not, something is sync-broken.
-      // If pending, they are not yet a member.
+      // If pending or approved, allow them to register for programs
+      if (registration.status === 'approved' || registration.status === 'pending') {
+        return { isComplete: true, status: registration.status };
+      }
+      // Rejected or other statuses
       return { 
           isComplete: false, 
-          message: `Membership status: ${registration.status}`, 
+          message: `Your membership application was ${registration.status}`, 
           status: registration.status 
       };
   }
 
-  return { isComplete: false, message: "No member profile found" };
+  return { isComplete: false, message: "Please complete your membership registration first" };
 }
