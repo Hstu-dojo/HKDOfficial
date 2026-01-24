@@ -23,8 +23,9 @@ const withPWA = require("@ducanh2912/next-pwa").default({
 
 const redirects = async () => {
   return [
-    // Add your redirects here
-    // { source: "/", destination: "/blog", permanent: false },
+    // Redirect /profile to /dashboard/profile
+    { source: "/profile", destination: "/dashboard/profile", permanent: true },
+    { source: "/:locale/profile", destination: "/:locale/dashboard/profile", permanent: true },
   ];
 };
 

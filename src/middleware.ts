@@ -15,6 +15,22 @@ const middlewares = {
   "/admin": [withLocaleMiddleware, withAdminMiddleware],
   "/admin/:path*": [withLocaleMiddleware, withAdminMiddleware],
   
+  // Dashboard routes - require authentication
+  "/dashboard": [withLocaleMiddleware, withAuthMiddleware],
+  "/dashboard/:path*": [withLocaleMiddleware, withAuthMiddleware],
+  
+  // Karate routes - public
+  "/karate/courses": withLocaleMiddleware,
+  "/karate/courses/:path*": withLocaleMiddleware,
+  "/karate/programs": withLocaleMiddleware,
+  "/karate/programs/:path*": withLocaleMiddleware,
+  
+  // Also support direct /courses and /programs routes
+  "/courses": withLocaleMiddleware,
+  "/courses/:path*": withLocaleMiddleware,
+  "/programs": withLocaleMiddleware,
+  "/programs/:path*": withLocaleMiddleware,
+  
   // Protected routes - require authentication
   "/apply/:path*": [withLocaleMiddleware, withAuthMiddleware],
   "/profile": [withLocaleMiddleware, withAuthMiddleware],
