@@ -57,9 +57,11 @@ const FormSchema = z.object({
 
 import { submitOnboarding } from "@/actions/onboarding-actions";
 import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 
-export function EnrollForm({ className, initialData }: { className?: string, initialData?: any }) {
+export function EnrollForm({ className, initialData, isEditMode = false }: { className?: string, initialData?: any, isEditMode?: boolean }) {
   const router = useRouter();
+  
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: initialData || {
@@ -88,6 +90,13 @@ export function EnrollForm({ className, initialData }: { className?: string, ini
     },
   });
 
+  // Reset form values when initialData changes (for edit mode)
+  useEffect(() => {
+    if (initialData) {
+      form.reset(initialData);
+    }
+  }, [initialData, form]);
+
   async function onSubmit(data: z.infer<typeof FormSchema>) {
     try {
       toast({
@@ -102,8 +111,14 @@ export function EnrollForm({ className, initialData }: { className?: string, ini
               title: "Success!",
               description: result.message,
           });
-          // Redirect to profile or dashboard
-          router.push("/profile");
+          // Refresh to get updated server data, then redirect
+          router.refresh();
+          // Redirect based on mode
+          if (isEditMode) {
+            router.push("/onboarding"); // Go back to status view after edit
+          } else {
+            router.push("/dashboard"); // New registrations go to dashboard
+          }
       } else {
           toast({
               title: "Submission Failed",

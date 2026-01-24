@@ -111,6 +111,7 @@ export default async function OnboardingPage({
             <EnrollForm 
               className="shadow-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 rounded-2xl" 
               initialData={existing ? data : undefined}
+              isEditMode={isEditMode}
             />
           </div>
         </MaxWidthWrapper>
