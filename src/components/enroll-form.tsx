@@ -123,13 +123,7 @@ export function EnrollForm({ className }: { className?: string }) {
   return (
     <MaxWidthWrapper>
       <Card className={cn("relative bottom-36 w-full", className)}>
-        <CardHeader>
-          <CardTitle>Karate Dojo new membership</CardTitle>
-          <CardDescription>
-            Fill out the form below to register as a new member.
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
+        <CardContent className="pt-6">
           <Form {...form}>
             <form
               onSubmit={form.handleSubmit(onSubmit)}
