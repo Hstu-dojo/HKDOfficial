@@ -2,7 +2,7 @@
 
 import { db } from "@/lib/connect-db";
 import { programs, programRegistrations } from "@/db/schemas/karate";
-import { user } from "@/db/schemas/auth";
+import { user, account } from "@/db/schemas/auth";
 import { revalidatePath } from "next/cache";
 import { eq, desc } from "drizzle-orm";
 import { NewProgram, NewProgramRegistration } from "@/db/schemas/karate/programs";
@@ -126,13 +126,47 @@ export async function getProgramRegistrations(programId?: string) {
       where: whereClause,
       with: {
         program: true,
-        user: true,
+        user: {
+          with: {
+            account: true, // Include full profile details
+          }
+        },
       },
       orderBy: [desc(programRegistrations.createdAt)],
     });
     return { success: true, data: registrations };
   } catch (error) {
     console.error("Error fetching registrations:", error);
+    return { success: false, error: "Failed to fetch registrations" };
+  }
+}
+
+// Get registrations with full details for export
+export async function getProgramRegistrationsForExport(programId?: string, statusFilter?: string) {
+  try {
+    let whereClause = programId ? eq(programRegistrations.programId, programId) : undefined;
+    
+    const registrations = await db.query.programRegistrations.findMany({
+      where: whereClause,
+      with: {
+        program: true,
+        user: {
+          with: {
+            account: true,
+          }
+        },
+      },
+      orderBy: [desc(programRegistrations.createdAt)],
+    });
+    
+    // Filter by status if provided
+    const filteredRegistrations = statusFilter 
+      ? registrations.filter(r => r.status === statusFilter)
+      : registrations;
+    
+    return { success: true, data: filteredRegistrations };
+  } catch (error) {
+    console.error("Error fetching registrations for export:", error);
     return { success: false, error: "Failed to fetch registrations" };
   }
 }

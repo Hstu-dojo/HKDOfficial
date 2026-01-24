@@ -9,10 +9,12 @@ import {
   DocumentCheckIcon,
   EyeIcon,
   BanknotesIcon,
-  UserIcon
+  UserIcon,
+  ArrowDownTrayIcon
 } from '@heroicons/react/24/outline';
 import { toast } from 'sonner';
 import ApplicationDetailModal from './ApplicationDetailModal';
+import { format } from 'date-fns';
 
 interface Application {
   application: {
@@ -83,6 +85,7 @@ export default function EnrollmentsManagement() {
   const [loading, setLoading] = useState(true);
   const [statusFilter, setStatusFilter] = useState<string>('');
   const [selectedApplication, setSelectedApplication] = useState<Application | null>(null);
+  const [exporting, setExporting] = useState(false);
 
   const canVerify = hasPermission('ENROLLMENT', 'VERIFY');
   const canApprove = hasPermission('ENROLLMENT', 'APPROVE');
@@ -132,6 +135,37 @@ export default function EnrollmentsManagement() {
     }
   };
 
+  const handleExport = async (filterStatus?: string) => {
+    try {
+      setExporting(true);
+      const params = new URLSearchParams();
+      if (filterStatus) params.append('status', filterStatus);
+      
+      const response = await fetch(`/api/admin/enrollments/export?${params.toString()}`);
+      
+      if (!response.ok) {
+        throw new Error('Export failed');
+      }
+      
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `enrollment-applications-${filterStatus || 'all'}-${format(new Date(), 'yyyy-MM-dd')}.xlsx`;
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(a);
+      
+      toast.success('Export completed successfully');
+    } catch (error) {
+      console.error(error);
+      toast.error('Failed to export applications');
+    } finally {
+      setExporting(false);
+    }
+  };
+
   const formatCurrency = (amount: number, currency: string) => {
     return new Intl.NumberFormat('en-BD', {
       style: 'currency',
@@ -169,11 +203,58 @@ export default function EnrollmentsManagement() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div>
-        <h1 className="text-2xl font-bold text-gray-900">Enrollment Applications</h1>
-        <p className="mt-1 text-sm text-gray-500">
-          Review and manage student enrollment applications
-        </p>
+      <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-4">
+        <div>
+          <h1 className="text-2xl font-bold text-gray-900">Enrollment Applications</h1>
+          <p className="mt-1 text-sm text-gray-500">
+            Review and manage student enrollment applications
+          </p>
+        </div>
+        
+        {/* Export Dropdown */}
+        <div className="flex items-center gap-2">
+          <div className="relative group">
+            <button
+              disabled={exporting}
+              className="inline-flex items-center px-4 py-2 border border-gray-300 rounded-lg shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50"
+            >
+              <ArrowDownTrayIcon className="h-4 w-4 mr-2" />
+              {exporting ? 'Exporting...' : 'Export Excel'}
+            </button>
+            <div className="absolute right-0 mt-1 w-48 bg-white rounded-lg shadow-lg border opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-10">
+              <button
+                onClick={() => handleExport()}
+                className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-t-lg"
+              >
+                All Applications
+              </button>
+              <button
+                onClick={() => handleExport('approved')}
+                className="w-full text-left px-4 py-2 text-sm text-green-700 hover:bg-green-50"
+              >
+                Approved Only
+              </button>
+              <button
+                onClick={() => handleExport('pending_payment')}
+                className="w-full text-left px-4 py-2 text-sm text-yellow-700 hover:bg-yellow-50"
+              >
+                Pending Payment
+              </button>
+              <button
+                onClick={() => handleExport('payment_submitted')}
+                className="w-full text-left px-4 py-2 text-sm text-blue-700 hover:bg-blue-50"
+              >
+                Payment Submitted
+              </button>
+              <button
+                onClick={() => handleExport('rejected')}
+                className="w-full text-left px-4 py-2 text-sm text-red-700 hover:bg-red-50 rounded-b-lg"
+              >
+                Rejected Only
+              </button>
+            </div>
+          </div>
+        </div>
       </div>
 
       {/* Stats */}
