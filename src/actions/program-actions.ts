@@ -144,20 +144,83 @@ export async function getProgramRegistrations(programId?: string) {
 // Get registrations with full details for export
 export async function getProgramRegistrationsForExport(programId?: string, statusFilter?: string) {
   try {
-    let whereClause = programId ? eq(programRegistrations.programId, programId) : undefined;
+    // Use explicit SELECT with LEFT JOINs to ensure we get all data
+    const conditions = [];
+    if (programId) {
+      conditions.push(eq(programRegistrations.programId, programId));
+    }
     
-    const registrations = await db.query.programRegistrations.findMany({
-      where: whereClause,
-      with: {
-        program: true,
-        user: {
-          with: {
-            account: true,
-          }
+    const registrations = await db
+      .select({
+        // Registration data
+        id: programRegistrations.id,
+        registrationNumber: programRegistrations.registrationNumber,
+        programId: programRegistrations.programId,
+        userId: programRegistrations.userId,
+        feeAmount: programRegistrations.feeAmount,
+        currency: programRegistrations.currency,
+        paymentMethod: programRegistrations.paymentMethod,
+        transactionId: programRegistrations.transactionId,
+        paymentProofUrl: programRegistrations.paymentProofUrl,
+        paymentSubmittedAt: programRegistrations.paymentSubmittedAt,
+        status: programRegistrations.status,
+        verifiedBy: programRegistrations.verifiedBy,
+        verifiedAt: programRegistrations.verifiedAt,
+        rejectionReason: programRegistrations.rejectionReason,
+        notes: programRegistrations.notes,
+        createdAt: programRegistrations.createdAt,
+        updatedAt: programRegistrations.updatedAt,
+        // Program data
+        program: {
+          id: programs.id,
+          title: programs.title,
+          type: programs.type,
+          startDate: programs.startDate,
+          endDate: programs.endDate,
+          location: programs.location,
         },
-      },
-      orderBy: [desc(programRegistrations.createdAt)],
-    });
+        // User data
+        user: {
+          id: user.id,
+          email: user.email,
+          userName: user.userName,
+        },
+        // Account (profile) data - this is what contains father name, phone, etc.
+        account: {
+          name: account.name,
+          nameBangla: account.nameBangla,
+          fatherName: account.fatherName,
+          phone: account.phone,
+          address: account.address,
+          city: account.city,
+          state: account.state,
+          country: account.country,
+          postalCode: account.postalCode,
+          dob: account.dob,
+          age: account.age,
+          sex: account.sex,
+          bloodGroup: account.bloodGroup,
+          height: account.height,
+          weight: account.weight,
+          occupation: account.occupation,
+          institute: account.institute,
+          faculty: account.faculty,
+          department: account.department,
+          session: account.session,
+          identityType: account.identityType,
+          identityNumber: account.identityNumber,
+          image: account.image,
+          signatureImage: account.signatureImage,
+          identityImage: account.identityImage,
+          bio: account.bio,
+        },
+      })
+      .from(programRegistrations)
+      .leftJoin(programs, eq(programRegistrations.programId, programs.id))
+      .leftJoin(user, eq(programRegistrations.userId, user.id))
+      .leftJoin(account, eq(user.id, account.userId))
+      .where(conditions.length > 0 ? conditions[0] : undefined)
+      .orderBy(desc(programRegistrations.createdAt));
     
     // Filter by status if provided
     const filteredRegistrations = statusFilter 

@@ -19,9 +19,10 @@ export async function GET(request: NextRequest) {
 
     // Prepare data for Excel
     const excelData = registrations.map((reg: any, index: number) => {
-      const account = reg.user?.account;
-      const user = reg.user;
-      const program = reg.program;
+      // Data is now flat from explicit joins (account, user, program are direct properties)
+      const acc = reg.account;
+      const usr = reg.user;
+      const prog = reg.program;
 
       return {
         'S/N': index + 1,
@@ -29,47 +30,47 @@ export async function GET(request: NextRequest) {
         'Status': reg.status?.replace('_', ' ').toUpperCase() || '-',
         
         // Participant Info
-        'Name (English)': account?.name || user?.userName || '-',
-        'Name (Bangla)': account?.nameBangla || '-',
-        'Father\'s Name': account?.fatherName || '-',
-        'Email': user?.email || '-',
-        'Phone': account?.phone || '-',
+        'Name (English)': acc?.name || usr?.userName || '-',
+        'Name (Bangla)': acc?.nameBangla || '-',
+        'Father\'s Name': acc?.fatherName || '-',
+        'Email': usr?.email || '-',
+        'Phone': acc?.phone || '-',
         
         // Personal Details
-        'Date of Birth': account?.dob ? format(new Date(account.dob), 'dd/MM/yyyy') : '-',
-        'Age': account?.age || '-',
-        'Gender': account?.sex || '-',
-        'Blood Group': account?.bloodGroup || '-',
-        'Height (cm)': account?.height || '-',
-        'Weight (kg)': account?.weight || '-',
-        'Occupation': account?.occupation || '-',
+        'Date of Birth': acc?.dob ? format(new Date(acc.dob), 'dd/MM/yyyy') : '-',
+        'Age': acc?.age || '-',
+        'Gender': acc?.sex || '-',
+        'Blood Group': acc?.bloodGroup || '-',
+        'Height (cm)': acc?.height || '-',
+        'Weight (kg)': acc?.weight || '-',
+        'Occupation': acc?.occupation || '-',
         
         // Address
-        'Address': account?.address || '-',
-        'City': account?.city || '-',
-        'State': account?.state || '-',
-        'Country': account?.country || '-',
-        'Postal Code': account?.postalCode || '-',
+        'Address': acc?.address || '-',
+        'City': acc?.city || '-',
+        'State': acc?.state || '-',
+        'Country': acc?.country || '-',
+        'Postal Code': acc?.postalCode || '-',
         
         // Identity
-        'Identity Type': account?.identityType || '-',
-        'Identity Number': account?.identityNumber || '-',
+        'Identity Type': acc?.identityType || '-',
+        'Identity Number': acc?.identityNumber || '-',
         
         // Institution
-        'Institution': account?.institute || '-',
-        'Faculty': account?.faculty || '-',
-        'Department': account?.department || '-',
-        'Session': account?.session || '-',
+        'Institution': acc?.institute || '-',
+        'Faculty': acc?.faculty || '-',
+        'Department': acc?.department || '-',
+        'Session': acc?.session || '-',
         
         // Bio
-        'Bio': account?.bio || '-',
+        'Bio': acc?.bio || '-',
         
         // Program Info
-        'Program Name': program?.title || '-',
-        'Program Type': program?.type?.replace('_', ' ') || '-',
-        'Program Date': program?.startDate ? format(new Date(program.startDate), 'dd/MM/yyyy') : '-',
-        'Program End Date': program?.endDate ? format(new Date(program.endDate), 'dd/MM/yyyy') : '-',
-        'Location': program?.location || '-',
+        'Program Name': prog?.title || '-',
+        'Program Type': prog?.type?.replace('_', ' ') || '-',
+        'Program Date': prog?.startDate ? format(new Date(prog.startDate), 'dd/MM/yyyy') : '-',
+        'Program End Date': prog?.endDate ? format(new Date(prog.endDate), 'dd/MM/yyyy') : '-',
+        'Location': prog?.location || '-',
         
         // Payment Info
         'Fee Amount': reg.feeAmount || '-',
@@ -85,9 +86,9 @@ export async function GET(request: NextRequest) {
         'Notes': reg.notes || '-',
         
         // Profile Images (URLs)
-        'Profile Photo URL': account?.image || '-',
-        'Signature URL': account?.signatureImage || '-',
-        'ID Image URL': account?.identityImage || '-',
+        'Profile Photo URL': acc?.image || '-',
+        'Signature URL': acc?.signatureImage || '-',
+        'ID Image URL': acc?.identityImage || '-',
         'Payment Proof URL': reg.paymentProofUrl || '-',
       };
     });
