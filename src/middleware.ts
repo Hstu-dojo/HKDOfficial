@@ -11,13 +11,17 @@ const middlewares = {
   // "/pricing": withLocaleMiddleware,
   "/about": withLocaleMiddleware,
   
-  // Admin routes - require admin-level roles
+  // Admin routes - require admin-level roles (both with and without locale prefix)
   "/admin": [withLocaleMiddleware, withAdminMiddleware],
   "/admin/:path*": [withLocaleMiddleware, withAdminMiddleware],
+  "/:locale/admin": [withAdminMiddleware],
+  "/:locale/admin/:path*": [withAdminMiddleware],
   
   // Dashboard routes - require authentication
   "/dashboard": [withLocaleMiddleware, withAuthMiddleware],
   "/dashboard/:path*": [withLocaleMiddleware, withAuthMiddleware],
+  "/:locale/dashboard": [withAuthMiddleware],
+  "/:locale/dashboard/:path*": [withAuthMiddleware],
   
   // Karate routes - public
   "/karate/courses": withLocaleMiddleware,

@@ -44,67 +44,42 @@ export function AdminLayout({ children }: AdminLayoutProps) {
     }
   }, [status, router]);
 
-  // Loading states
-  if (status === 'loading') {
+  // Handle access denied redirect after RBAC fully loads
+  useEffect(() => {
+    if (!rbacLoading && status === 'authenticated' && !hasAdminAccess) {
+      // Optional: redirect to home after a delay, or just show access denied
+    }
+  }, [rbacLoading, status, hasAdminAccess]);
+
+  // CRITICAL: Show loading screen until BOTH session AND RBAC are fully loaded
+  // This prevents any flash of admin content for unauthorized users
+  if (status === 'loading' || rbacLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-background">
+      <div className="min-h-screen flex items-center justify-center bg-slate-50">
         <div className="text-center">
           <LoadingSpinner size="large" />
-          <p className="mt-4 text-muted-foreground">Loading admin panel...</p>
+          <p className="mt-4 text-slate-500">
+            {status === 'loading' ? 'Checking authentication...' : 'Verifying permissions...'}
+          </p>
         </div>
       </div>
     );
   }
 
-  // Not authenticated
+  // Not authenticated - redirect handled by useEffect
   if (status === 'unauthenticated') {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-background">
+      <div className="min-h-screen flex items-center justify-center bg-slate-50">
         <div className="text-center">
-          <h2 className="text-2xl font-bold text-foreground">Redirecting to login...</h2>
-        </div>
-      </div>
-    );
-  }
-
-  // RBAC still loading - show admin interface with limited access
-  if (rbacLoading) {
-    return (
-      <div className="flex h-screen bg-muted/40">
-        <div
-          className={`fixed inset-y-0 left-0 z-50 lg:static lg:inset-0 transform transition-transform duration-200 ease-in-out lg:transform-none ${
-            sidebarOpen ? 'translate-x-0' : '-translate-x-full'
-          } lg:translate-x-0 bg-background border-r`}
-        >
-          <AdminSidebar />
-        </div>
-
-        <div className="flex-1 flex flex-col min-w-0">
-          <AdminHeader
-            onToggleSidebar={() => setSidebarOpen(!sidebarOpen)}
-            sidebarOpen={sidebarOpen}
-          />
-          
-          <main className="flex-1 overflow-y-auto focus:outline-none">
-            <div className="py-6">
-              <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-8">
-                <div className="bg-primary/10 border border-primary/20 rounded-lg p-4 mb-6">
-                  <div className="flex items-center">
-                    <LoadingSpinner size="small" className="mr-3" />
-                    <p className="text-primary">Loading your permissions...</p>
-                  </div>
-                </div>
-                {children}
-              </div>
-            </div>
-          </main>
+          <LoadingSpinner size="large" />
+          <p className="mt-4 text-slate-500">Redirecting to login...</p>
         </div>
       </div>
     );
   }
 
   // No admin access after RBAC loaded
-  if (!rbacLoading && !hasAdminAccess) {
+  if (!hasAdminAccess) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
         <div className="max-w-lg w-full text-center p-8">
