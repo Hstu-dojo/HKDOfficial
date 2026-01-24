@@ -2,6 +2,7 @@
 
 import { db } from "@/lib/connect-db";
 import { programs, programRegistrations } from "@/db/schemas/karate";
+import { user } from "@/db/schemas/auth";
 import { revalidatePath } from "next/cache";
 import { eq, desc } from "drizzle-orm";
 import { NewProgram, NewProgramRegistration } from "@/db/schemas/karate/programs";
@@ -61,8 +62,20 @@ export async function getProgramById(id: string) {
 
 export async function registerForProgram(data: NewProgramRegistration) {
   try {
+    // 0. Resolve Public User ID from Auth ID (data.userId comes from session)
+    const publicUser = await db.query.user.findFirst({
+        where: eq(user.supabaseUserId, data.userId)
+    });
+
+    if (!publicUser) {
+        return { success: false, error: "User profile not found. Please try logging out and back in." };
+    }
+    
+    // Use the resolved public ID for checks and insertion
+    const publicUserId = publicUser.id;
+
     // 1. Check User Profile Status
-    const profileStatus = await checkUserProfileStatus(data.userId);
+    const profileStatus = await checkUserProfileStatus(publicUserId);
     if (!profileStatus.isComplete) {
        return { success: false, error: `Cannot register: ${profileStatus.message}. Please complete your member profile first.` };
     }
@@ -80,7 +93,10 @@ export async function registerForProgram(data: NewProgramRegistration) {
     }
 
     // 3. Create Registration
-    const [registration] = await db.insert(programRegistrations).values(data).returning({
+    const [registration] = await db.insert(programRegistrations).values({
+        ...data,
+        userId: publicUserId // Swap Auth ID for Public ID
+    }).returning({
       id: programRegistrations.id,
       status: programRegistrations.status,
     });
