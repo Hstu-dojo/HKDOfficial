@@ -58,11 +58,11 @@ const FormSchema = z.object({
 import { submitOnboarding } from "@/actions/onboarding-actions";
 import { useRouter } from "next/navigation";
 
-export function EnrollForm({ className }: { className?: string }) {
+export function EnrollForm({ className, initialData }: { className?: string, initialData?: any }) {
   const router = useRouter();
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
-    defaultValues: {
+    defaultValues: initialData || {
       username: "",
       fatherName: "",
       motherName: "",
