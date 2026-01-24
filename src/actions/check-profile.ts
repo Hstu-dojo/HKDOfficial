@@ -30,7 +30,13 @@ export async function checkUserProfileStatus(userId: string) {
   });
 
   if (registration) {
-    return { isComplete: false, message: "Registration pending approval", status: registration.status };
+      // If approved, they should have a member record. If not, something is sync-broken.
+      // If pending, they are not yet a member.
+      return { 
+          isComplete: false, 
+          message: `Membership status: ${registration.status}`, 
+          status: registration.status 
+      };
   }
 
   return { isComplete: false, message: "No member profile found" };

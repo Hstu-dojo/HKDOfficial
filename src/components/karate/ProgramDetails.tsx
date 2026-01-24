@@ -278,6 +278,11 @@ export default function ProgramDetails({ slug }: ProgramDetailsProps) {
                               <CldUploadWidget 
                                 uploadPreset={process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET || "gallery_uploads"}
                                 onSuccess={handleUploadSuccess}
+                                options={{
+                                    sources: ['local', 'url'],
+                                    maxFiles: 1,
+                                    resourceType: 'image'
+                                }}
                               >
                                 {({ open }) => (
                                   <button 
