@@ -63,10 +63,19 @@ export async function GET(request: NextRequest) {
           age: account.age,
           sex: account.sex,
           bloodGroup: account.bloodGroup,
+          height: account.height,
+          weight: account.weight,
           occupation: account.occupation,
           institute: account.institute,
+          faculty: account.faculty,
+          department: account.department,
+          session: account.session,
           identityType: account.identityType,
           identityNumber: account.identityNumber,
+          image: account.image,
+          signatureImage: account.signatureImage,
+          identityImage: account.identityImage,
+          bio: account.bio,
         }
       })
       .from(enrollmentApplications)
@@ -129,6 +138,14 @@ export async function GET(request: NextRequest) {
         'Profession': studentInfo?.profession || profile?.occupation || '-',
         'Education Qualification': studentInfo?.educationQualification || '-',
         'Institution': profile?.institute || '-',
+        'Faculty': profile?.faculty || '-',
+        'Department': profile?.department || '-',
+        'Session': profile?.session || '-',
+        
+        // Physical
+        'Height (cm)': profile?.height || '-',
+        'Weight (kg)': profile?.weight || '-',
+        'Bio': profile?.bio || '-',
         
         // Health & Experience
         'Has Medical Condition': studentInfo?.hasMedicalCondition ? 'Yes' : 'No',
@@ -164,6 +181,12 @@ export async function GET(request: NextRequest) {
         // Agreements
         'Agreed to Terms': studentInfo?.agreeToTerms ? 'Yes' : 'No',
         'Agreed to Waiver': studentInfo?.agreeToWaiver ? 'Yes' : 'No',
+        
+        // Profile Images (URLs)
+        'Profile Photo URL': profile?.image || '-',
+        'Signature URL': profile?.signatureImage || '-',
+        'ID Image URL': profile?.identityImage || '-',
+        'Payment Proof URL': app.application.paymentProofUrl || '-',
       };
     });
 
@@ -206,6 +229,12 @@ export async function GET(request: NextRequest) {
       { wch: 20 },  // Profession
       { wch: 25 },  // Education
       { wch: 30 },  // Institution
+      { wch: 20 },  // Faculty
+      { wch: 20 },  // Department
+      { wch: 15 },  // Session
+      { wch: 12 },  // Height
+      { wch: 12 },  // Weight
+      { wch: 30 },  // Bio
       { wch: 18 },  // Has Medical Condition
       { wch: 30 },  // Medical Details
       { wch: 30 },  // Previous Experience
@@ -223,6 +252,10 @@ export async function GET(request: NextRequest) {
       { wch: 30 },  // Review Notes
       { wch: 15 },  // Agreed to Terms
       { wch: 15 },  // Agreed to Waiver
+      { wch: 50 },  // Profile Photo URL
+      { wch: 50 },  // Signature URL
+      { wch: 50 },  // ID Image URL
+      { wch: 50 },  // Payment Proof URL
     ];
     worksheet['!cols'] = colWidths;
 

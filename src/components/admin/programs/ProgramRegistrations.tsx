@@ -16,10 +16,12 @@ import {
   CalendarIcon,
   IdentificationIcon,
   AcademicCapIcon,
-  XMarkIcon
+  XMarkIcon,
+  PencilSquareIcon,
+  TrashIcon
 } from '@heroicons/react/24/outline';
 import { toast } from 'sonner';
-import { getProgramRegistrations, updateRegistrationStatus } from '@/actions/program-actions';
+import { getProgramRegistrations, updateRegistrationStatus, updateRegistration, deleteRegistration } from '@/actions/program-actions';
 import { format } from 'date-fns';
 
 // Types
@@ -86,6 +88,13 @@ const STATUS_CONFIG: Record<string, { label: string; color: string; bgColor: str
   rejected: { label: 'Rejected', color: 'text-red-700', bgColor: 'bg-red-100' },
 };
 
+const STATUS_OPTIONS = [
+  { value: 'pending_payment', label: 'Pending Payment' },
+  { value: 'payment_submitted', label: 'Payment Submitted' },
+  { value: 'approved', label: 'Approved' },
+  { value: 'rejected', label: 'Rejected' },
+];
+
 export default function ProgramRegistrations() {
   const searchParams = useSearchParams();
   const programIdParam = searchParams?.get('programId');
@@ -95,10 +104,12 @@ export default function ProgramRegistrations() {
   const [loading, setLoading] = useState(true);
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [selectedRegistration, setSelectedRegistration] = useState<RegistrationWithProfile | null>(null);
+  const [editingRegistration, setEditingRegistration] = useState<RegistrationWithProfile | null>(null);
   const [statusFilter, setStatusFilter] = useState<string>('');
   const [exporting, setExporting] = useState(false);
 
   const canApprove = hasPermission('PROGRAM_REGISTRATION', 'APPROVE');
+  const canDelete = hasPermission('PROGRAM_REGISTRATION', 'DELETE');
   
   const fetchRegistrations = useCallback(async () => {
     try {
@@ -123,17 +134,52 @@ export default function ProgramRegistrations() {
     }
   }, [rbacLoading, fetchRegistrations]);
 
-  const handleStatusUpdate = async (id: string, status: 'approved' | 'rejected') => {
-    if (!confirm(`Are you sure you want to ${status} this registration?`)) return;
+  const handleStatusUpdate = async (id: string, status: 'approved' | 'rejected' | 'pending_payment' | 'payment_submitted') => {
+    if (!confirm(`Are you sure you want to change this registration status to ${status.replace('_', ' ')}?`)) return;
 
     try {
       const result = await updateRegistrationStatus(id, status);
       if (result.success) {
-        toast.success(`Registration ${status}`);
+        toast.success(`Registration status changed to ${status.replace('_', ' ')}`);
         fetchRegistrations();
         setSelectedRegistration(null);
       } else {
         toast.error('Failed to update status');
+      }
+    } catch (error) {
+      console.error(error);
+      toast.error('An error occurred');
+    }
+  };
+
+  const handleDelete = async (id: string) => {
+    if (!confirm('Are you sure you want to DELETE this registration? This action cannot be undone.')) return;
+
+    try {
+      const result = await deleteRegistration(id);
+      if (result.success) {
+        toast.success('Registration deleted successfully');
+        fetchRegistrations();
+        setSelectedRegistration(null);
+      } else {
+        toast.error(result.error || 'Failed to delete registration');
+      }
+    } catch (error) {
+      console.error(error);
+      toast.error('An error occurred while deleting');
+    }
+  };
+
+  const handleUpdateRegistration = async (id: string, data: { status?: string; transactionId?: string; paymentMethod?: string; notes?: string; rejectionReason?: string }) => {
+    try {
+      const result = await updateRegistration(id, data);
+      if (result.success) {
+        toast.success('Registration updated successfully');
+        fetchRegistrations();
+        setEditingRegistration(null);
+        setSelectedRegistration(null);
+      } else {
+        toast.error('Failed to update registration');
       }
     } catch (error) {
       console.error(error);
@@ -393,23 +439,43 @@ export default function ProgramRegistrations() {
                       >
                         <EyeIcon className="h-5 w-5" />
                       </button>
-                      {canApprove && reg.status === 'pending_payment' && (
+                      {canApprove && (
                         <>
                           <button
-                            onClick={() => handleStatusUpdate(reg.id, 'approved')}
-                            className="text-green-600 hover:text-green-900"
-                            title="Approve"
+                            onClick={() => setEditingRegistration(reg)}
+                            className="p-1 text-blue-600 hover:bg-blue-100 rounded"
+                            title="Edit Registration"
                           >
-                            <CheckCircleIcon className="h-5 w-5" />
+                            <PencilSquareIcon className="h-5 w-5" />
                           </button>
-                          <button
-                            onClick={() => handleStatusUpdate(reg.id, 'rejected')}
-                            className="text-red-600 hover:text-red-900"
-                            title="Reject"
-                          >
-                            <XCircleIcon className="h-5 w-5" />
-                          </button>
+                          {reg.status !== 'approved' && (
+                            <button
+                              onClick={() => handleStatusUpdate(reg.id, 'approved')}
+                              className="text-green-600 hover:text-green-900"
+                              title="Approve"
+                            >
+                              <CheckCircleIcon className="h-5 w-5" />
+                            </button>
+                          )}
+                          {reg.status !== 'rejected' && (
+                            <button
+                              onClick={() => handleStatusUpdate(reg.id, 'rejected')}
+                              className="text-red-600 hover:text-red-900"
+                              title="Reject"
+                            >
+                              <XCircleIcon className="h-5 w-5" />
+                            </button>
+                          )}
                         </>
+                      )}
+                      {canDelete && (
+                        <button
+                          onClick={() => handleDelete(reg.id)}
+                          className="p-1 text-red-600 hover:bg-red-100 rounded"
+                          title="Delete Registration"
+                        >
+                          <TrashIcon className="h-5 w-5" />
+                        </button>
                       )}
                     </div>
                   </td>
@@ -453,9 +519,152 @@ export default function ProgramRegistrations() {
           registration={selectedRegistration} 
           onClose={() => setSelectedRegistration(null)}
           onStatusUpdate={handleStatusUpdate}
+          onDelete={handleDelete}
+          onEdit={() => {
+            setEditingRegistration(selectedRegistration);
+            setSelectedRegistration(null);
+          }}
           canApprove={canApprove}
+          canDelete={canDelete}
         />
       )}
+
+      {/* Edit Registration Modal */}
+      {editingRegistration && (
+        <EditRegistrationModal
+          registration={editingRegistration}
+          onClose={() => setEditingRegistration(null)}
+          onSave={handleUpdateRegistration}
+        />
+      )}
+    </div>
+  );
+}
+
+// Edit Registration Modal Component
+function EditRegistrationModal({
+  registration,
+  onClose,
+  onSave,
+}: {
+  registration: RegistrationWithProfile;
+  onClose: () => void;
+  onSave: (id: string, data: { status?: string; transactionId?: string; paymentMethod?: string; notes?: string; rejectionReason?: string }) => void;
+}) {
+  const [formData, setFormData] = useState({
+    status: registration.status || 'pending_payment',
+    transactionId: registration.transactionId || '',
+    paymentMethod: registration.paymentMethod || '',
+    notes: registration.notes || '',
+    rejectionReason: registration.rejectionReason || '',
+  });
+  const [saving, setSaving] = useState(false);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setSaving(true);
+    await onSave(registration.id, formData);
+    setSaving(false);
+  };
+
+  return (
+    <div className="fixed inset-0 z-50 overflow-y-auto">
+      <div className="flex min-h-full items-center justify-center p-4">
+        <div className="fixed inset-0 bg-black bg-opacity-50" onClick={onClose} />
+        
+        <div className="relative bg-white rounded-xl shadow-xl max-w-lg w-full">
+          <div className="border-b px-6 py-4 flex justify-between items-center">
+            <h2 className="text-xl font-bold text-gray-900">Edit Registration</h2>
+            <button onClick={onClose} className="p-2 hover:bg-gray-100 rounded-full">
+              <XMarkIcon className="h-6 w-6" />
+            </button>
+          </div>
+
+          <form onSubmit={handleSubmit} className="p-6 space-y-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Status</label>
+              <select
+                value={formData.status}
+                onChange={(e) => setFormData({ ...formData, status: e.target.value })}
+                className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              >
+                <option value="pending_payment">Pending Payment</option>
+                <option value="payment_submitted">Payment Submitted</option>
+                <option value="approved">Approved</option>
+                <option value="rejected">Rejected</option>
+              </select>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Payment Method</label>
+              <select
+                value={formData.paymentMethod}
+                onChange={(e) => setFormData({ ...formData, paymentMethod: e.target.value })}
+                className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              >
+                <option value="">Select method</option>
+                <option value="bkash">bKash</option>
+                <option value="nagad">Nagad</option>
+                <option value="rocket">Rocket</option>
+                <option value="bank_transfer">Bank Transfer</option>
+                <option value="cash">Cash</option>
+              </select>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Transaction ID</label>
+              <input
+                type="text"
+                value={formData.transactionId}
+                onChange={(e) => setFormData({ ...formData, transactionId: e.target.value })}
+                className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                placeholder="Enter transaction ID"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Admin Notes</label>
+              <textarea
+                value={formData.notes}
+                onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
+                className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                rows={3}
+                placeholder="Add notes about this registration"
+              />
+            </div>
+
+            {formData.status === 'rejected' && (
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Rejection Reason</label>
+                <textarea
+                  value={formData.rejectionReason}
+                  onChange={(e) => setFormData({ ...formData, rejectionReason: e.target.value })}
+                  className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  rows={2}
+                  placeholder="Reason for rejection"
+                />
+              </div>
+            )}
+
+            <div className="flex gap-3 pt-4">
+              <button
+                type="button"
+                onClick={onClose}
+                className="flex-1 px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50"
+              >
+                Cancel
+              </button>
+              <button
+                type="submit"
+                disabled={saving}
+                className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50"
+              >
+                {saving ? 'Saving...' : 'Save Changes'}
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
     </div>
   );
 }
@@ -465,12 +674,18 @@ function RegistrationDetailModal({
   registration, 
   onClose, 
   onStatusUpdate,
-  canApprove 
+  onDelete,
+  onEdit,
+  canApprove,
+  canDelete
 }: { 
   registration: RegistrationWithProfile; 
   onClose: () => void;
-  onStatusUpdate: (id: string, status: 'approved' | 'rejected') => void;
+  onStatusUpdate: (id: string, status: 'approved' | 'rejected' | 'pending_payment' | 'payment_submitted') => void;
+  onDelete: (id: string) => void;
+  onEdit: () => void;
   canApprove: boolean;
+  canDelete: boolean;
 }) {
   const account = registration.user?.account;
   const user = registration.user;
@@ -498,29 +713,57 @@ function RegistrationDetailModal({
           <div className="p-6 space-y-6">
             {/* Status Banner */}
             <div className={`p-4 rounded-lg ${STATUS_CONFIG[registration.status]?.bgColor || 'bg-gray-100'}`}>
-              <div className="flex items-center justify-between">
+              <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div>
                   <p className="text-sm font-medium">Status</p>
                   <p className={`text-lg font-bold ${STATUS_CONFIG[registration.status]?.color || 'text-gray-700'}`}>
                     {STATUS_CONFIG[registration.status]?.label || registration.status}
                   </p>
                 </div>
-                {canApprove && registration.status === 'pending_payment' && (
-                  <div className="flex gap-2">
+                <div className="flex flex-wrap gap-2">
+                  {canApprove && (
+                    <>
+                      <button
+                        onClick={onEdit}
+                        className="px-3 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 flex items-center gap-2 text-sm"
+                      >
+                        <PencilSquareIcon className="h-4 w-4" /> Edit
+                      </button>
+                      {registration.status !== 'approved' && (
+                        <button
+                          onClick={() => onStatusUpdate(registration.id, 'approved')}
+                          className="px-3 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 flex items-center gap-2 text-sm"
+                        >
+                          <CheckCircleIcon className="h-4 w-4" /> Approve
+                        </button>
+                      )}
+                      {registration.status !== 'rejected' && (
+                        <button
+                          onClick={() => onStatusUpdate(registration.id, 'rejected')}
+                          className="px-3 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 flex items-center gap-2 text-sm"
+                        >
+                          <XCircleIcon className="h-4 w-4" /> Reject
+                        </button>
+                      )}
+                      {(registration.status === 'approved' || registration.status === 'rejected') && (
+                        <button
+                          onClick={() => onStatusUpdate(registration.id, 'pending_payment')}
+                          className="px-3 py-2 bg-yellow-500 text-white rounded-lg hover:bg-yellow-600 flex items-center gap-2 text-sm"
+                        >
+                          <ClockIcon className="h-4 w-4" /> Reset to Pending
+                        </button>
+                      )}
+                    </>
+                  )}
+                  {canDelete && (
                     <button
-                      onClick={() => onStatusUpdate(registration.id, 'approved')}
-                      className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 flex items-center gap-2"
+                      onClick={() => onDelete(registration.id)}
+                      className="px-3 py-2 bg-red-100 text-red-700 rounded-lg hover:bg-red-200 flex items-center gap-2 text-sm"
                     >
-                      <CheckCircleIcon className="h-5 w-5" /> Approve
+                      <TrashIcon className="h-4 w-4" /> Delete
                     </button>
-                    <button
-                      onClick={() => onStatusUpdate(registration.id, 'rejected')}
-                      className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 flex items-center gap-2"
-                    >
-                      <XCircleIcon className="h-5 w-5" /> Reject
-                    </button>
-                  </div>
-                )}
+                  )}
+                </div>
               </div>
             </div>
 

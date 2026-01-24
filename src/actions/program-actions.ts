@@ -171,7 +171,10 @@ export async function getProgramRegistrationsForExport(programId?: string, statu
   }
 }
 
-export async function updateRegistrationStatus(registrationId: string, status: 'approved' | 'rejected' | 'pending_payment') {
+export async function updateRegistrationStatus(
+  registrationId: string, 
+  status: 'approved' | 'rejected' | 'pending_payment' | 'payment_submitted'
+) {
   try {
     const [updated] = await db.update(programRegistrations)
       .set({ status: status as any, updatedAt: new Date() })
@@ -183,6 +186,64 @@ export async function updateRegistrationStatus(registrationId: string, status: '
   } catch (error) {
     console.error("Error updating registration:", error);
     return { success: false, error: "Failed to update registration" };
+  }
+}
+
+export async function updateRegistration(
+  registrationId: string, 
+  data: {
+    status?: string;
+    transactionId?: string;
+    paymentMethod?: string;
+    notes?: string;
+    rejectionReason?: string;
+  }
+) {
+  try {
+    const [updated] = await db.update(programRegistrations)
+      .set({ ...data, updatedAt: new Date() } as any)
+      .where(eq(programRegistrations.id, registrationId))
+      .returning();
+      
+    revalidatePath("/admin/programs/registrations");
+    return { success: true, data: updated };
+  } catch (error) {
+    console.error("Error updating registration:", error);
+    return { success: false, error: "Failed to update registration" };
+  }
+}
+
+export async function deleteRegistration(registrationId: string) {
+  try {
+    // First get the registration to update participant count
+    const registration = await db.query.programRegistrations.findFirst({
+      where: eq(programRegistrations.id, registrationId),
+    });
+    
+    if (!registration) {
+      return { success: false, error: "Registration not found" };
+    }
+    
+    // Delete the registration
+    await db.delete(programRegistrations)
+      .where(eq(programRegistrations.id, registrationId));
+    
+    // Update participant count
+    const program = await db.query.programs.findFirst({
+      where: eq(programs.id, registration.programId),
+    });
+    
+    if (program && program.currentParticipants && program.currentParticipants > 0) {
+      await db.update(programs)
+        .set({ currentParticipants: program.currentParticipants - 1 })
+        .where(eq(programs.id, registration.programId));
+    }
+      
+    revalidatePath("/admin/programs/registrations");
+    return { success: true };
+  } catch (error) {
+    console.error("Error deleting registration:", error);
+    return { success: false, error: "Failed to delete registration" };
   }
 }
 

@@ -31,15 +31,17 @@ export async function GET(request: NextRequest) {
         // Participant Info
         'Name (English)': account?.name || user?.userName || '-',
         'Name (Bangla)': account?.nameBangla || '-',
+        'Father\'s Name': account?.fatherName || '-',
         'Email': user?.email || '-',
         'Phone': account?.phone || '-',
-        'Father\'s Name': account?.fatherName || '-',
         
         // Personal Details
         'Date of Birth': account?.dob ? format(new Date(account.dob), 'dd/MM/yyyy') : '-',
         'Age': account?.age || '-',
         'Gender': account?.sex || '-',
         'Blood Group': account?.bloodGroup || '-',
+        'Height (cm)': account?.height || '-',
+        'Weight (kg)': account?.weight || '-',
         'Occupation': account?.occupation || '-',
         
         // Address
@@ -55,11 +57,18 @@ export async function GET(request: NextRequest) {
         
         // Institution
         'Institution': account?.institute || '-',
+        'Faculty': account?.faculty || '-',
+        'Department': account?.department || '-',
+        'Session': account?.session || '-',
+        
+        // Bio
+        'Bio': account?.bio || '-',
         
         // Program Info
         'Program Name': program?.title || '-',
         'Program Type': program?.type?.replace('_', ' ') || '-',
         'Program Date': program?.startDate ? format(new Date(program.startDate), 'dd/MM/yyyy') : '-',
+        'Program End Date': program?.endDate ? format(new Date(program.endDate), 'dd/MM/yyyy') : '-',
         'Location': program?.location || '-',
         
         // Payment Info
@@ -74,6 +83,12 @@ export async function GET(request: NextRequest) {
         'Verified At': reg.verifiedAt ? format(new Date(reg.verifiedAt), 'dd/MM/yyyy HH:mm') : '-',
         'Rejection Reason': reg.rejectionReason || '-',
         'Notes': reg.notes || '-',
+        
+        // Profile Images (URLs)
+        'Profile Photo URL': account?.image || '-',
+        'Signature URL': account?.signatureImage || '-',
+        'ID Image URL': account?.identityImage || '-',
+        'Payment Proof URL': reg.paymentProofUrl || '-',
       };
     });
 
@@ -88,13 +103,15 @@ export async function GET(request: NextRequest) {
       { wch: 18 },  // Status
       { wch: 25 },  // Name (English)
       { wch: 25 },  // Name (Bangla)
+      { wch: 25 },  // Father's Name
       { wch: 30 },  // Email
       { wch: 15 },  // Phone
-      { wch: 25 },  // Father's Name
       { wch: 12 },  // DOB
       { wch: 6 },   // Age
       { wch: 10 },  // Gender
       { wch: 12 },  // Blood Group
+      { wch: 12 },  // Height
+      { wch: 12 },  // Weight
       { wch: 15 },  // Occupation
       { wch: 40 },  // Address
       { wch: 15 },  // City
@@ -104,9 +121,14 @@ export async function GET(request: NextRequest) {
       { wch: 15 },  // Identity Type
       { wch: 20 },  // Identity Number
       { wch: 30 },  // Institution
+      { wch: 20 },  // Faculty
+      { wch: 20 },  // Department
+      { wch: 15 },  // Session
+      { wch: 30 },  // Bio
       { wch: 30 },  // Program Name
       { wch: 18 },  // Program Type
       { wch: 12 },  // Program Date
+      { wch: 12 },  // Program End Date
       { wch: 30 },  // Location
       { wch: 12 },  // Fee Amount
       { wch: 10 },  // Currency
@@ -117,6 +139,10 @@ export async function GET(request: NextRequest) {
       { wch: 18 },  // Verified At
       { wch: 30 },  // Rejection Reason
       { wch: 30 },  // Notes
+      { wch: 50 },  // Profile Photo URL
+      { wch: 50 },  // Signature URL
+      { wch: 50 },  // ID Image URL
+      { wch: 50 },  // Payment Proof URL
     ];
     worksheet['!cols'] = colWidths;
 
