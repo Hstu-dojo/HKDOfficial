@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import Link from "next/link";
-import { useSelectedLayoutSegment } from "next/navigation";
+import { useSelectedLayoutSegment, usePathname } from "next/navigation";
 import SiteLogo from "./site-logo";
 import { cn } from "@/lib/utils";
 import { useCurrentLocale } from "@/locales/client";
@@ -20,6 +20,24 @@ interface MobileNavProps {
   triggerIcon?: string;
 }
 
+// Helper to get the href for a nav item
+const getItemHref = (item: NavItem, locale: string, currentPath: string): string => {
+  // If this is a locale switcher item, switch the locale in the current path
+  if (item.locale) {
+    // Get the path without locale prefix
+    const pathWithoutLocale = currentPath.replace(/^\/[a-z]{2}(?=\/|$)/, '') || '/';
+    return `/${item.locale}${pathWithoutLocale}`;
+  }
+  
+  // If skipLocale is true, return the href as-is
+  if (item.skipLocale && item.href) {
+    return item.href;
+  }
+  
+  // Default: prefix with locale
+  return item.href ? `/${locale}${item.href}` : '#';
+};
+
 export function MobileNav({
   mainNavItems,
   triggerIcon = "default",
@@ -27,6 +45,7 @@ export function MobileNav({
   const segment = useSelectedLayoutSegment();
   const [isOpen, setIsOpen] = React.useState(false);
   const locale = useCurrentLocale();
+  const pathname = usePathname();
 
   return (
     <Sheet open={isOpen} onOpenChange={setIsOpen}>
@@ -97,11 +116,11 @@ export function MobileNav({
                       </AccordionTrigger>
                       <AccordionContent>
                         <div className="flex flex-col space-y-2">
-                          {item.items?.map((subItem, index) =>
-                            subItem.href ? (
+                          {item.items?.map((subItem, subIndex) =>
+                            subItem.href || subItem.locale ? (
                               <MobileLink
-                                key={index}
-                                href={`/${locale}${subItem.href}`}
+                                key={subIndex}
+                                href={getItemHref(subItem, locale, pathname)}
                                 segment={String(segment)}
                                 setIsOpen={setIsOpen}
                                 disabled={subItem.disabled}
@@ -110,10 +129,10 @@ export function MobileNav({
                               </MobileLink>
                             ) : (
                               <div
-                                key={index}
+                                key={subIndex}
                                 className="text-muted-foreground transition-colors"
                               >
-                                {item.title}
+                                {subItem.title}
                               </div>
                             ),
                           )}
@@ -124,8 +143,9 @@ export function MobileNav({
                     item.href && (
                       <div>
                         <Link
-                          href={`/${locale}${item.href}`}
+                          href={getItemHref(item, locale, pathname)}
                           className="block border-b py-4 text-sm transition-colors hover:text-primary focus:text-primary"
+                          onClick={() => setIsOpen(false)}
                         >
                           {item.title}
                         </Link>

@@ -3,7 +3,8 @@
 import * as React from "react";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
-import { useCurrentLocale } from "@/locales/client";
+import { useCurrentLocale, useChangeLocale } from "@/locales/client";
+import { usePathname } from "next/navigation";
 
 import {
   NavigationMenu,
@@ -20,8 +21,28 @@ interface MainNavProps {
   items?: MainNavItem[];
 }
 
+// Helper to get the href for a nav item
+const getItemHref = (item: NavItem, locale: string, currentPath: string): string => {
+  // If this is a locale switcher item, switch the locale in the current path
+  if (item.locale) {
+    // Get the path without locale prefix
+    const pathWithoutLocale = currentPath.replace(/^\/[a-z]{2}(?=\/|$)/, '') || '/';
+    return `/${item.locale}${pathWithoutLocale}`;
+  }
+  
+  // If skipLocale is true, return the href as-is
+  if (item.skipLocale && item.href) {
+    return item.href;
+  }
+  
+  // Default: prefix with locale
+  return item.href ? `/${locale}${item.href}` : '#';
+};
+
 export default function MainNav({ items }: MainNavProps) {
   const locale = useCurrentLocale();
+  const pathname = usePathname();
+  
   return (
     <>
       <NavigationMenu className="hidden lg:block">
@@ -33,9 +54,7 @@ export default function MainNav({ items }: MainNavProps) {
                   <NavigationMenuTrigger>{item.title}</NavigationMenuTrigger>
                 ) : (
                   item.href && (
-                    <Link href={`/${locale}${item.href}`}>
-                      {/* @next-codemod-error This Link previously used the now removed `legacyBehavior` prop, and has a child that might not be an anchor. The codemod bailed out of lifting the child props to the Link. Check that the child component does not render an anchor, and potentially move the props manually to Link. */
-                      }
+                    <Link href={getItemHref(item, locale, pathname)}>
                       <NavigationMenuLink
                         className={navigationMenuTriggerStyle()}
                       >
@@ -50,7 +69,7 @@ export default function MainNav({ items }: MainNavProps) {
                       {item?.items.map((subItem) => (
                         <ListItem
                           key={subItem.title}
-                          href={`/${locale}${subItem.href}`}
+                          href={getItemHref(subItem, locale, pathname)}
                           title={subItem.title}
                         ></ListItem>
                       ))}

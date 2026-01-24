@@ -83,6 +83,7 @@ export const mainNav = [
       {
         title: "Docs",
         href: "/docs",
+        skipLocale: true,
         items: [],
       },
       {
@@ -125,15 +126,16 @@ export const mainNav = [
   // },
   {
     title: "English / বাংলা",
+    isLocaleSwitcher: true,
     items: [
       {
         title: "English",
-        href: "/en",
+        locale: "en",
         items: [],
       },
       {
         title: "বাংলা",
-        href: "/bn",
+        locale: "bn",
         items: [],
       },
     ],
@@ -141,6 +143,7 @@ export const mainNav = [
   {
     title: "Blog",
     href: "/blog",
+    skipLocale: true,
   },
 
   {

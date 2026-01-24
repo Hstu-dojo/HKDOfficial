@@ -5,6 +5,9 @@ interface NavItem {
   external?: boolean;
   label?: string;
   description?: string;
+  skipLocale?: boolean;
+  locale?: string;
+  isLocaleSwitcher?: boolean;
 }
 
 interface NavItemWithChildren extends NavItem {

@@ -5,10 +5,7 @@ import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 import {
   HomeIcon,
-  UserCircleIcon,
   AcademicCapIcon,
-  CurrencyBangladeshiIcon,
-  TrophyIcon,
   Cog6ToothIcon,
   ChevronLeftIcon,
   ChevronRightIcon,
@@ -16,6 +13,7 @@ import {
   XMarkIcon,
 } from "@heroicons/react/24/outline";
 import { useState, useEffect } from "react";
+import { useCurrentLocale } from "@/locales/client";
 
 const navItems = [
   {
@@ -30,16 +28,6 @@ const navItems = [
     icon: AcademicCapIcon,
   },
   {
-    title: "Program Registrations",
-    href: "/dashboard/programs",
-    icon: TrophyIcon,
-  },
-  {
-    title: "Payments",
-    href: "/dashboard/payments",
-    icon: CurrencyBangladeshiIcon,
-  },
-  {
     title: "Account Settings",
     href: "/dashboard/profile",
     icon: Cog6ToothIcon,
@@ -48,6 +36,7 @@ const navItems = [
 
 export default function DashboardSidebar() {
   const pathname = usePathname();
+  const locale = useCurrentLocale();
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [isMobileOpen, setIsMobileOpen] = useState(false);
 
@@ -81,7 +70,7 @@ export default function DashboardSidebar() {
         return (
           <Link
             key={item.href}
-            href={item.href}
+            href={`/${locale}${item.href}`}
             className={cn(
               "flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-200",
               active
