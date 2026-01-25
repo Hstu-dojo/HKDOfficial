@@ -19,11 +19,23 @@ export async function GET(request: NextRequest) {
 
     // Prepare data for Excel
     const excelData = registrations.map((reg: any, index: number) => {
-      // Data is now flat from explicit joins (account, user, program, member are direct properties)
+      // Data is now flat from explicit joins (account, user, program, member, onboardingRegistration)
       const acc = reg.account;
       const usr = reg.user;
       const prog = reg.program;
       const mem = reg.member; // Member data for more complete info
+      const onboard = reg.onboardingRegistration; // Onboarding registration data
+      
+      // Parse notes JSON from onboarding registration - contains full form data
+      // Field names from EnrollForm: username, fatherName, motherName, address, zipCode, phone, email, dob, age, height, weight, sex, bloodGroup, nationality, religion, nid, occupation, institute, dept, session, motive
+      let formData: any = {};
+      if (onboard?.notes) {
+        try {
+          formData = typeof onboard.notes === 'string' ? JSON.parse(onboard.notes) : onboard.notes;
+        } catch (e) {
+          console.error('Failed to parse onboarding notes:', e);
+        }
+      }
 
       return {
         'S/N': index + 1,
@@ -31,57 +43,62 @@ export async function GET(request: NextRequest) {
         'Member Number': mem?.memberNumber || '-',
         'Status': reg.status?.replace('_', ' ').toUpperCase() || '-',
         
-        // Participant Info - prefer member data, fallback to account
-        'Name (English)': mem?.fullNameEnglish || acc?.name || usr?.userName || '-',
+        // Participant Info - check formData first (from onboarding), then member, then account
+        'Name (English)': formData?.username || mem?.fullNameEnglish || acc?.name || usr?.userName || '-',
         'Name (Bangla)': mem?.fullNameBangla || acc?.nameBangla || '-',
-        'Father\'s Name': mem?.fatherName || acc?.fatherName || '-',
+        'Father\'s Name': formData?.fatherName || mem?.fatherName || acc?.fatherName || '-',
         'Father\'s Name (Bangla)': mem?.fatherNameBangla || '-',
-        'Mother\'s Name': mem?.motherName || '-',
+        'Mother\'s Name': formData?.motherName || mem?.motherName || '-',
         'Mother\'s Name (Bangla)': mem?.motherNameBangla || '-',
         
-        // Contact
-        'Email': usr?.email || '-',
-        'Phone': mem?.phoneNumber || acc?.phone || '-',
-        'Emergency Contact': mem?.emergencyContact || '-',
-        'Emergency Phone': mem?.emergencyPhone || '-',
+        // Contact - formData first
+        'Email': formData?.email || usr?.email || onboard?.email || '-',
+        'Phone': formData?.phone || mem?.phoneNumber || onboard?.phoneNumber || acc?.phone || '-',
+        'Emergency Contact': mem?.emergencyContact || onboard?.emergencyContact || '-',
+        'Emergency Phone': mem?.emergencyPhone || onboard?.emergencyPhone || '-',
         
         // Personal Details
-        'Date of Birth': mem?.dateOfBirth 
-          ? format(new Date(mem.dateOfBirth), 'dd/MM/yyyy') 
-          : acc?.dob ? format(new Date(acc.dob), 'dd/MM/yyyy') : '-',
-        'Age': acc?.age || '-',
-        'Gender': mem?.gender || acc?.sex || '-',
-        'Blood Group': mem?.bloodGroup || acc?.bloodGroup || '-',
-        'Religion': mem?.religion || '-',
-        'Nationality': mem?.nationality || '-',
-        'Height (cm)': acc?.height || '-',
-        'Weight (kg)': acc?.weight || '-',
+        'Date of Birth': formData?.dob 
+          ? format(new Date(formData.dob), 'dd/MM/yyyy')
+          : mem?.dateOfBirth 
+            ? format(new Date(mem.dateOfBirth), 'dd/MM/yyyy') 
+            : onboard?.dateOfBirth
+              ? format(new Date(onboard.dateOfBirth), 'dd/MM/yyyy')
+              : acc?.dob ? format(new Date(acc.dob), 'dd/MM/yyyy') : '-',
+        'Age': formData?.age || acc?.age || '-',
+        'Gender': formData?.sex || mem?.gender || acc?.sex || '-',
+        'Blood Group': formData?.bloodGroup || mem?.bloodGroup || acc?.bloodGroup || '-',
+        'Religion': formData?.religion || mem?.religion || '-',
+        'Nationality': formData?.nationality || mem?.nationality || '-',
+        'Height (cm)': formData?.height || acc?.height || '-',
+        'Weight (kg)': formData?.weight || acc?.weight || '-',
         'Belt Rank': mem?.beltRank || '-',
         
         // Address
-        'Present Address': mem?.presentAddress || acc?.address || '-',
+        'Address': formData?.address || mem?.presentAddress || acc?.address || '-',
+        'Zip/Postal Code': formData?.zipCode || acc?.postalCode || '-',
         'Permanent Address': mem?.permanentAddress || '-',
         'City': acc?.city || '-',
         'State': acc?.state || '-',
         'Country': acc?.country || '-',
-        'Postal Code': acc?.postalCode || '-',
         
         // Identity
-        'NID': mem?.nid || '-',
+        'NID': formData?.nid || mem?.nid || '-',
         'Birth Certificate No': mem?.birthCertificateNo || '-',
         'Passport No': mem?.passportNo || '-',
         'Identity Type': acc?.identityType || '-',
         'Identity Number': acc?.identityNumber || '-',
         
         // Professional/Educational
-        'Profession': mem?.profession || acc?.occupation || '-',
+        'Occupation': formData?.occupation || mem?.profession || acc?.occupation || '-',
         'Education Qualification': mem?.educationQualification || '-',
-        'Institution': acc?.institute || '-',
+        'Institution': formData?.institute || acc?.institute || '-',
+        'Department': formData?.dept || acc?.department || '-',
+        'Session': formData?.session || acc?.session || '-',
         'Faculty': acc?.faculty || '-',
-        'Department': acc?.department || '-',
-        'Session': acc?.session || '-',
         
-        // Bio
+        // Motive/Bio
+        'Motive': formData?.motive || '-',
         'Bio': acc?.bio || '-',
         
         // Program Info
@@ -116,7 +133,7 @@ export async function GET(request: NextRequest) {
     const workbook = XLSX.utils.book_new();
     const worksheet = XLSX.utils.json_to_sheet(excelData);
 
-    // Set column widths to match the new columns
+    // Set column widths to match the columns in excelData
     const colWidths = [
       { wch: 5 },   // S/N
       { wch: 18 },  // Registration Number
@@ -141,34 +158,24 @@ export async function GET(request: NextRequest) {
       { wch: 12 },  // Height
       { wch: 12 },  // Weight
       { wch: 12 },  // Belt Rank
-      { wch: 40 },  // Present Address
+      { wch: 40 },  // Address
+      { wch: 15 },  // Zip/Postal Code
       { wch: 40 },  // Permanent Address
       { wch: 15 },  // City
       { wch: 15 },  // State
       { wch: 15 },  // Country
-      { wch: 12 },  // Postal Code
       { wch: 20 },  // NID
       { wch: 20 },  // Birth Certificate No
       { wch: 20 },  // Passport No
       { wch: 15 },  // Identity Type
       { wch: 20 },  // Identity Number
-      { wch: 20 },  // Profession
+      { wch: 20 },  // Occupation
       { wch: 25 },  // Education Qualification
       { wch: 30 },  // Institution
-      { wch: 20 },  // Faculty
       { wch: 20 },  // Department
       { wch: 15 },  // Session
-      { wch: 30 },  // Bio
-      { wch: 30 },  // Program Name
-      { wch: 18 },  // Program Type
-      { wch: 12 },  // Program Date
-      { wch: 12 },  // Program End Date
-      { wch: 30 },  // Location
-      { wch: 12 },  // Fee Amount
-      { wch: 10 },  // Currency
-      { wch: 15 },  // Payment Method
-      { wch: 25 },  // Transaction ID
-      { wch: 18 },  // Payment Submitted
+      { wch: 20 },  // Faculty
+      { wch: 40 },  // Motive
       { wch: 18 },  // Registered At
       { wch: 18 },  // Verified At
       { wch: 30 },  // Rejection Reason

@@ -1,7 +1,7 @@
 'use server';
 
 import { db } from "@/lib/connect-db";
-import { programs, programRegistrations, members } from "@/db/schemas/karate";
+import { programs, programRegistrations, members, registrations } from "@/db/schemas/karate";
 import { user, account } from "@/db/schemas/auth";
 import { revalidatePath } from "next/cache";
 import { eq, desc } from "drizzle-orm";
@@ -150,7 +150,7 @@ export async function getProgramRegistrationsForExport(programId?: string, statu
       conditions.push(eq(programRegistrations.programId, programId));
     }
     
-    const registrations = await db
+    const regs = await db
       .select({
         // Registration data
         id: programRegistrations.id,
@@ -241,19 +241,31 @@ export async function getProgramRegistrationsForExport(programId?: string, statu
           beltRank: members.beltRank,
           memberNumber: members.memberNumber,
         },
+        // Onboarding registration data - contains form data in notes JSON field
+        onboardingRegistration: {
+          firstName: registrations.firstName,
+          lastName: registrations.lastName,
+          email: registrations.email,
+          phoneNumber: registrations.phoneNumber,
+          dateOfBirth: registrations.dateOfBirth,
+          emergencyContact: registrations.emergencyContact,
+          emergencyPhone: registrations.emergencyPhone,
+          notes: registrations.notes, // Contains full form data as JSON
+        },
       })
       .from(programRegistrations)
       .leftJoin(programs, eq(programRegistrations.programId, programs.id))
       .leftJoin(user, eq(programRegistrations.userId, user.id))
       .leftJoin(account, eq(user.id, account.userId))
       .leftJoin(members, eq(user.id, members.userId))
+      .leftJoin(registrations, eq(user.id, registrations.userId))
       .where(conditions.length > 0 ? conditions[0] : undefined)
       .orderBy(desc(programRegistrations.createdAt));
     
     // Filter by status if provided
     const filteredRegistrations = statusFilter 
-      ? registrations.filter(r => r.status === statusFilter)
-      : registrations;
+      ? regs.filter(r => r.status === statusFilter)
+      : regs;
     
     return { success: true, data: filteredRegistrations };
   } catch (error) {
