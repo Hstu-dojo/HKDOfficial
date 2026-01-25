@@ -19,44 +19,63 @@ export async function GET(request: NextRequest) {
 
     // Prepare data for Excel
     const excelData = registrations.map((reg: any, index: number) => {
-      // Data is now flat from explicit joins (account, user, program are direct properties)
+      // Data is now flat from explicit joins (account, user, program, member are direct properties)
       const acc = reg.account;
       const usr = reg.user;
       const prog = reg.program;
+      const mem = reg.member; // Member data for more complete info
 
       return {
         'S/N': index + 1,
         'Registration Number': reg.registrationNumber || '-',
+        'Member Number': mem?.memberNumber || '-',
         'Status': reg.status?.replace('_', ' ').toUpperCase() || '-',
         
-        // Participant Info
-        'Name (English)': acc?.name || usr?.userName || '-',
-        'Name (Bangla)': acc?.nameBangla || '-',
-        'Father\'s Name': acc?.fatherName || '-',
+        // Participant Info - prefer member data, fallback to account
+        'Name (English)': mem?.fullNameEnglish || acc?.name || usr?.userName || '-',
+        'Name (Bangla)': mem?.fullNameBangla || acc?.nameBangla || '-',
+        'Father\'s Name': mem?.fatherName || acc?.fatherName || '-',
+        'Father\'s Name (Bangla)': mem?.fatherNameBangla || '-',
+        'Mother\'s Name': mem?.motherName || '-',
+        'Mother\'s Name (Bangla)': mem?.motherNameBangla || '-',
+        
+        // Contact
         'Email': usr?.email || '-',
-        'Phone': acc?.phone || '-',
+        'Phone': mem?.phoneNumber || acc?.phone || '-',
+        'Emergency Contact': mem?.emergencyContact || '-',
+        'Emergency Phone': mem?.emergencyPhone || '-',
         
         // Personal Details
-        'Date of Birth': acc?.dob ? format(new Date(acc.dob), 'dd/MM/yyyy') : '-',
+        'Date of Birth': mem?.dateOfBirth 
+          ? format(new Date(mem.dateOfBirth), 'dd/MM/yyyy') 
+          : acc?.dob ? format(new Date(acc.dob), 'dd/MM/yyyy') : '-',
         'Age': acc?.age || '-',
-        'Gender': acc?.sex || '-',
-        'Blood Group': acc?.bloodGroup || '-',
+        'Gender': mem?.gender || acc?.sex || '-',
+        'Blood Group': mem?.bloodGroup || acc?.bloodGroup || '-',
+        'Religion': mem?.religion || '-',
+        'Nationality': mem?.nationality || '-',
         'Height (cm)': acc?.height || '-',
         'Weight (kg)': acc?.weight || '-',
-        'Occupation': acc?.occupation || '-',
+        'Belt Rank': mem?.beltRank || '-',
         
         // Address
-        'Address': acc?.address || '-',
+        'Present Address': mem?.presentAddress || acc?.address || '-',
+        'Permanent Address': mem?.permanentAddress || '-',
         'City': acc?.city || '-',
         'State': acc?.state || '-',
         'Country': acc?.country || '-',
         'Postal Code': acc?.postalCode || '-',
         
         // Identity
+        'NID': mem?.nid || '-',
+        'Birth Certificate No': mem?.birthCertificateNo || '-',
+        'Passport No': mem?.passportNo || '-',
         'Identity Type': acc?.identityType || '-',
         'Identity Number': acc?.identityNumber || '-',
         
-        // Institution
+        // Professional/Educational
+        'Profession': mem?.profession || acc?.occupation || '-',
+        'Education Qualification': mem?.educationQualification || '-',
         'Institution': acc?.institute || '-',
         'Faculty': acc?.faculty || '-',
         'Department': acc?.department || '-',
@@ -86,7 +105,7 @@ export async function GET(request: NextRequest) {
         'Notes': reg.notes || '-',
         
         // Profile Images (URLs)
-        'Profile Photo URL': acc?.image || '-',
+        'Profile Photo URL': mem?.picture || acc?.image || '-',
         'Signature URL': acc?.signatureImage || '-',
         'ID Image URL': acc?.identityImage || '-',
         'Payment Proof URL': reg.paymentProofUrl || '-',
@@ -97,30 +116,44 @@ export async function GET(request: NextRequest) {
     const workbook = XLSX.utils.book_new();
     const worksheet = XLSX.utils.json_to_sheet(excelData);
 
-    // Set column widths
+    // Set column widths to match the new columns
     const colWidths = [
       { wch: 5 },   // S/N
       { wch: 18 },  // Registration Number
+      { wch: 15 },  // Member Number
       { wch: 18 },  // Status
       { wch: 25 },  // Name (English)
       { wch: 25 },  // Name (Bangla)
       { wch: 25 },  // Father's Name
+      { wch: 25 },  // Father's Name (Bangla)
+      { wch: 25 },  // Mother's Name
+      { wch: 25 },  // Mother's Name (Bangla)
       { wch: 30 },  // Email
       { wch: 15 },  // Phone
+      { wch: 25 },  // Emergency Contact
+      { wch: 15 },  // Emergency Phone
       { wch: 12 },  // DOB
       { wch: 6 },   // Age
       { wch: 10 },  // Gender
       { wch: 12 },  // Blood Group
+      { wch: 15 },  // Religion
+      { wch: 15 },  // Nationality
       { wch: 12 },  // Height
       { wch: 12 },  // Weight
-      { wch: 15 },  // Occupation
-      { wch: 40 },  // Address
+      { wch: 12 },  // Belt Rank
+      { wch: 40 },  // Present Address
+      { wch: 40 },  // Permanent Address
       { wch: 15 },  // City
       { wch: 15 },  // State
       { wch: 15 },  // Country
       { wch: 12 },  // Postal Code
+      { wch: 20 },  // NID
+      { wch: 20 },  // Birth Certificate No
+      { wch: 20 },  // Passport No
       { wch: 15 },  // Identity Type
       { wch: 20 },  // Identity Number
+      { wch: 20 },  // Profession
+      { wch: 25 },  // Education Qualification
       { wch: 30 },  // Institution
       { wch: 20 },  // Faculty
       { wch: 20 },  // Department

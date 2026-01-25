@@ -1,7 +1,7 @@
 'use server';
 
 import { db } from "@/lib/connect-db";
-import { programs, programRegistrations } from "@/db/schemas/karate";
+import { programs, programRegistrations, members } from "@/db/schemas/karate";
 import { user, account } from "@/db/schemas/auth";
 import { revalidatePath } from "next/cache";
 import { eq, desc } from "drizzle-orm";
@@ -185,7 +185,7 @@ export async function getProgramRegistrationsForExport(programId?: string, statu
           email: user.email,
           userName: user.userName,
         },
-        // Account (profile) data - this is what contains father name, phone, etc.
+        // Account (profile) data - basic profile info
         account: {
           name: account.name,
           nameBangla: account.nameBangla,
@@ -214,11 +214,39 @@ export async function getProgramRegistrationsForExport(programId?: string, statu
           identityImage: account.identityImage,
           bio: account.bio,
         },
+        // Member data - more detailed info from approved members
+        member: {
+          fullNameEnglish: members.fullNameEnglish,
+          fullNameBangla: members.fullNameBangla,
+          fatherName: members.fatherName,
+          fatherNameBangla: members.fatherNameBangla,
+          motherName: members.motherName,
+          motherNameBangla: members.motherNameBangla,
+          dateOfBirth: members.dateOfBirth,
+          gender: members.gender,
+          bloodGroup: members.bloodGroup,
+          religion: members.religion,
+          nationality: members.nationality,
+          phoneNumber: members.phoneNumber,
+          presentAddress: members.presentAddress,
+          permanentAddress: members.permanentAddress,
+          nid: members.nid,
+          birthCertificateNo: members.birthCertificateNo,
+          passportNo: members.passportNo,
+          profession: members.profession,
+          educationQualification: members.educationQualification,
+          emergencyContact: members.emergencyContact,
+          emergencyPhone: members.emergencyPhone,
+          picture: members.picture,
+          beltRank: members.beltRank,
+          memberNumber: members.memberNumber,
+        },
       })
       .from(programRegistrations)
       .leftJoin(programs, eq(programRegistrations.programId, programs.id))
       .leftJoin(user, eq(programRegistrations.userId, user.id))
       .leftJoin(account, eq(user.id, account.userId))
+      .leftJoin(members, eq(user.id, members.userId))
       .where(conditions.length > 0 ? conditions[0] : undefined)
       .orderBy(desc(programRegistrations.createdAt));
     

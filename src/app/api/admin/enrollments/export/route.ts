@@ -37,7 +37,31 @@ export async function GET(request: NextRequest) {
     // Fetch applications with user and account data
     const applications = await db
       .select({
-        application: enrollmentApplications,
+        // Application fields - explicitly select all needed fields including studentInfo
+        application: {
+          id: enrollmentApplications.id,
+          applicationNumber: enrollmentApplications.applicationNumber,
+          userId: enrollmentApplications.userId,
+          courseId: enrollmentApplications.courseId,
+          studentInfo: enrollmentApplications.studentInfo,
+          admissionFeeAmount: enrollmentApplications.admissionFeeAmount,
+          currency: enrollmentApplications.currency,
+          paymentMethod: enrollmentApplications.paymentMethod,
+          transactionId: enrollmentApplications.transactionId,
+          paymentProofUrl: enrollmentApplications.paymentProofUrl,
+          paymentSubmittedAt: enrollmentApplications.paymentSubmittedAt,
+          status: enrollmentApplications.status,
+          paymentVerifiedBy: enrollmentApplications.paymentVerifiedBy,
+          paymentVerifiedAt: enrollmentApplications.paymentVerifiedAt,
+          paymentVerificationNotes: enrollmentApplications.paymentVerificationNotes,
+          reviewedBy: enrollmentApplications.reviewedBy,
+          reviewedAt: enrollmentApplications.reviewedAt,
+          reviewNotes: enrollmentApplications.reviewNotes,
+          rejectionReason: enrollmentApplications.rejectionReason,
+          memberId: enrollmentApplications.memberId,
+          createdAt: enrollmentApplications.createdAt,
+          updatedAt: enrollmentApplications.updatedAt,
+        },
         course: {
           id: courses.id,
           name: courses.name,
@@ -182,9 +206,9 @@ export async function GET(request: NextRequest) {
         'Agreed to Terms': studentInfo?.agreeToTerms ? 'Yes' : 'No',
         'Agreed to Waiver': studentInfo?.agreeToWaiver ? 'Yes' : 'No',
         
-        // Profile Images (URLs)
-        'Profile Photo URL': profile?.image || '-',
-        'Signature URL': profile?.signatureImage || '-',
+        // Profile Images (URLs) - check studentInfo first, then profile
+        'Profile Photo URL': studentInfo?.profilePhotoUrl || profile?.image || '-',
+        'Signature URL': studentInfo?.signatureUrl || profile?.signatureImage || '-',
         'ID Image URL': profile?.identityImage || '-',
         'Payment Proof URL': app.application.paymentProofUrl || '-',
       };
