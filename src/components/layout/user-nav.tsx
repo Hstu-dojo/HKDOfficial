@@ -74,17 +74,17 @@ export function UserNav() {
         className={cn(
           "inline-flex items-center gap-2 px-4 py-2 rounded-lg",
           "text-sm font-semibold",
-          // Glass effect with transparency
-          "bg-white/70 dark:bg-white/10",
-          "backdrop-blur-md",
-          "border border-slate-200/50 dark:border-white/20",
-          "shadow-sm",
+          // Glass effect for both modes
+          "bg-white/60 dark:bg-slate-800/60",
+          "backdrop-blur-lg",
+          "border border-white/40 dark:border-slate-600/40",
+          "shadow-lg shadow-black/5 dark:shadow-black/20",
           // Hover states
-          "hover:bg-white/90 dark:hover:bg-white/20",
-          "hover:border-slate-300/50 dark:hover:border-white/30",
-          "hover:shadow-md",
+          "hover:bg-white/80 dark:hover:bg-slate-700/70",
+          "hover:border-white/60 dark:hover:border-slate-500/50",
+          "hover:shadow-xl",
           // Text colors
-          "text-slate-800 dark:text-white",
+          "text-slate-800 dark:text-slate-100",
           "transition-all duration-200"
         )}
       >
@@ -107,17 +107,17 @@ export function UserNav() {
           className={cn(
             "inline-flex items-center gap-2 px-3 py-2 rounded-lg",
             "text-sm font-medium",
-            // Glass effect with transparency
-            "bg-white/70 dark:bg-white/10",
-            "backdrop-blur-md",
-            "border border-slate-200/50 dark:border-white/20",
-            "shadow-sm",
+            // Glass effect for both modes
+            "bg-white/60 dark:bg-slate-800/60",
+            "backdrop-blur-lg",
+            "border border-white/40 dark:border-slate-600/40",
+            "shadow-lg shadow-black/5 dark:shadow-black/20",
             // Hover states
-            "hover:bg-white/90 dark:hover:bg-white/20",
-            "hover:border-slate-300/50 dark:hover:border-white/30",
-            "hover:shadow-md",
+            "hover:bg-white/80 dark:hover:bg-slate-700/70",
+            "hover:border-white/60 dark:hover:border-slate-500/50",
+            "hover:shadow-xl",
             // Text colors
-            "text-slate-800 dark:text-white",
+            "text-slate-800 dark:text-slate-100",
             "transition-all duration-200",
             "focus:outline-none focus:ring-2 focus:ring-primary/50"
           )}
@@ -127,14 +127,24 @@ export function UserNav() {
             {userInitial}
           </div>
           <span className="hidden sm:inline max-w-[100px] truncate">{userName}</span>
-          <ChevronDownIcon className="h-4 w-4 text-slate-500 dark:text-slate-300" />
+          <ChevronDownIcon className="h-4 w-4 text-slate-500 dark:text-slate-400" />
         </button>
       </DropdownMenuTrigger>
 
-      <DropdownMenuContent align="end" className="w-56">
+      <DropdownMenuContent 
+        align="end" 
+        className={cn(
+          "w-56",
+          // Glass effect for dropdown
+          "bg-white/90 dark:bg-slate-800/95",
+          "backdrop-blur-xl",
+          "border border-slate-200/60 dark:border-slate-700/60",
+          "shadow-xl shadow-black/10 dark:shadow-black/30"
+        )}
+      >
         {/* User info header */}
-        <div className="px-3 py-2 border-b border-slate-100 dark:border-slate-700">
-          <p className="text-sm font-medium text-slate-900 dark:text-white truncate">
+        <div className="px-3 py-2 border-b border-slate-200/60 dark:border-slate-700/60">
+          <p className="text-sm font-medium text-slate-900 dark:text-slate-100 truncate">
             {userName}
           </p>
           <p className="text-xs text-slate-500 dark:text-slate-400 truncate">
