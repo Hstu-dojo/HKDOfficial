@@ -105,10 +105,10 @@ const Footer = () => {
                 <li>
                   <span>Email: </span>
                   <a
-                    href="mailto:hstu.dojo@gmail.com"
+                    href="mailto:hstukarate@gmail.com"
                     className="hover:text-primary"
                   >
-                    hstu.dojo@gmail.com
+                    hstukarate@gmail.com
                   </a>
                 </li>
               </ul>

@@ -90,8 +90,8 @@ const SectionFAQ = () => {
               </Accordion>
               <span className="mt-14 inline-block text-lg">
                 Any Question?{" "}
-                <a href="mailto:hstu.dojo@gmail.com" className="text-primary">
-                  hstu.dojo@gmail.com
+                <a href="mailto:hstukarate@gmail.com" className="text-primary">
+                  hstukarate@gmail.com
                 </a>
               </span>
             </motion.div>
