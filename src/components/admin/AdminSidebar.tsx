@@ -18,6 +18,7 @@ import {
   TicketIcon,
   BookOpenIcon,
   BanknotesIcon,
+  CreditCardIcon,
 } from '@heroicons/react/24/outline';
 import { cn } from '@/lib/utils';
 
@@ -108,6 +109,16 @@ const navigation: NavItem[] = [
     requiredPermission: {
       resource: 'PAYMENT',
       action: 'READ',
+    },
+  },
+  {
+    name: 'Payment Settings',
+    href: '/admin/payment-settings',
+    icon: CreditCardIcon,
+    description: 'Configure bKash, Nagad accounts',
+    requiredPermission: {
+      resource: 'PAYMENT',
+      action: 'MANAGE',
     },
   },
   {

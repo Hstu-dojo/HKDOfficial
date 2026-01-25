@@ -34,6 +34,15 @@ export default function ProgramDetails({ slug }: ProgramDetailsProps) {
   const [paymentProofUrl, setPaymentProofUrl] = useState('');
   const [uploadingProof, setUploadingProof] = useState(false);
   const [registrationError, setRegistrationError] = useState('');
+  
+  // Payment Account State
+  const [paymentAccount, setPaymentAccount] = useState<{
+    name: string;
+    methodType: string;
+    accountNumber: string;
+    accountName?: string | null;
+    instructions?: string | null;
+  } | null>(null);
 
   useEffect(() => {
     async function fetchData() {
@@ -41,6 +50,15 @@ export default function ProgramDetails({ slug }: ProgramDetailsProps) {
         const res = await getProgramBySlug(slug);
         if (res.success && res.data) {
           setProgram(res.data);
+          
+          // Fetch payment account for this program
+          const paymentRes = await fetch(`/api/payment-accounts?scope=program&scopeId=${res.data.id}`);
+          if (paymentRes.ok) {
+            const paymentData = await paymentRes.json();
+            if (paymentData.primaryAccount) {
+              setPaymentAccount(paymentData.primaryAccount);
+            }
+          }
         } else {
           toast.error("Program not found");
         }
@@ -87,7 +105,7 @@ export default function ProgramDetails({ slug }: ProgramDetailsProps) {
          transactionId: transactionId,
          paymentProofUrl: paymentProofUrl || null,
          status: 'pending_payment', // Default
-         paymentMethod: 'bkash', // Assuming default for now
+         paymentMethod: paymentAccount?.methodType || 'bkash', // Use selected payment method
       });
 
       if (res.success) {
@@ -248,9 +266,21 @@ export default function ProgramDetails({ slug }: ProgramDetailsProps) {
                    <div className="mt-4">
                       <div className="bg-primary/10 border border-primary/20 rounded-xl p-4 mb-4">
                         <p className="text-sm text-slate-700 dark:text-slate-300">
-                          Please send <span className="font-bold text-primary">৳{program.fee}</span> to our Nagad Number: 
+                          Please send <span className="font-bold text-primary">৳{program.fee}</span> to our {paymentAccount?.methodType?.toUpperCase() || 'Nagad'} Number: 
                         </p>
-                        <p className="text-2xl font-mono font-bold text-primary mt-1">01777-300309</p>
+                        <p className="text-2xl font-mono font-bold text-primary mt-1">
+                          {paymentAccount?.accountNumber || '01777-300309'}
+                        </p>
+                        {paymentAccount?.accountName && (
+                          <p className="text-sm text-slate-600 dark:text-slate-400 mt-1">
+                            Account: {paymentAccount.accountName}
+                          </p>
+                        )}
+                        {paymentAccount?.instructions && (
+                          <p className="text-xs text-slate-500 dark:text-slate-400 mt-2">
+                            {paymentAccount.instructions}
+                          </p>
+                        )}
                         <p className="text-xs text-slate-500 dark:text-slate-400 mt-2">
                           Use Reference: <code className="bg-slate-200 dark:bg-slate-700 px-1 rounded">{session?.user?.name?.split(' ')[0]}-{program.id.substring(0,4)}</code>
                         </p>

@@ -102,6 +102,59 @@ export const paymentSettings = pgTable("payment_settings", {
   updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow().notNull(),
 });
 
+// Payment Method Enum
+export const paymentMethodTypeEnum = pgEnum('payment_method_type', [
+  'bkash',
+  'nagad',
+  'rocket',
+  'upay',
+  'bank_transfer',
+  'cash',
+]);
+
+// Payment Scope Enum - what does this payment account apply to
+export const paymentScopeEnum = pgEnum('payment_scope', [
+  'default',           // Default for everything
+  'program',           // Specific program
+  'course',            // Specific course
+  'enrollment',        // Enrollment fees
+  'monthly_fee',       // Monthly fees
+  'event',             // Events
+]);
+
+// Payment Accounts - admin configurable payment accounts with scopes
+export const paymentAccounts = pgTable("payment_accounts", {
+  id: text("id").primaryKey().default(sql`gen_random_uuid()`),
+  
+  // Account details
+  name: text("name").notNull(), // e.g., "Main bKash Account", "HKD Nagad"
+  methodType: paymentMethodTypeEnum("method_type").notNull(), // bkash, nagad, etc.
+  accountNumber: text("account_number").notNull(), // The phone/account number
+  accountName: text("account_name"), // Name shown on the account (optional)
+  
+  // Additional info
+  qrCodeUrl: text("qr_code_url"), // URL to QR code image
+  instructions: text("instructions"), // Instructions for payment
+  
+  // Scope - what this account is used for
+  scope: paymentScopeEnum("scope").notNull().default('default'),
+  scopeId: text("scope_id"), // ID of the program/course if scope is specific
+  scopeName: text("scope_name"), // Name of the program/course for display
+  
+  // Priority - if multiple accounts exist for same scope, use highest priority
+  priority: integer("priority").notNull().default(0),
+  
+  // Status
+  isActive: boolean("is_active").notNull().default(true),
+  isDefault: boolean("is_default").notNull().default(false), // Is this the default for its scope
+  
+  // Metadata
+  createdBy: text("created_by").references(() => user.id),
+  updatedBy: text("updated_by").references(() => user.id),
+  createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
+  updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow().notNull(),
+});
+
 // Type exports
 export type MonthlyFee = typeof monthlyFees.$inferSelect;
 export type NewMonthlyFee = typeof monthlyFees.$inferInsert;
@@ -109,3 +162,5 @@ export type PaymentReminder = typeof paymentReminders.$inferSelect;
 export type NewPaymentReminder = typeof paymentReminders.$inferInsert;
 export type PaymentSetting = typeof paymentSettings.$inferSelect;
 export type NewPaymentSetting = typeof paymentSettings.$inferInsert;
+export type PaymentAccount = typeof paymentAccounts.$inferSelect;
+export type NewPaymentAccount = typeof paymentAccounts.$inferInsert;
