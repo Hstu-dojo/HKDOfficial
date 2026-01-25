@@ -139,11 +139,6 @@ export const mainNav = [
     href: "/blog",
     skipLocale: true,
   },
-
-  {
-    title: "User",
-    href: "/profile",
-  },
 ] satisfies MainNavItem[];
 
 export const footerNav = [

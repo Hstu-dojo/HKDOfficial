@@ -11,6 +11,7 @@ import { useSession } from "@/hooks/useSessionCompat";
 import { useAuth } from "@/context/AuthContext";
 import MaxWidthWrapper from "../maxWidthWrapper";
 import { useI18n, useCurrentLocale } from "@/locales/client";
+import { UserNav } from "./user-nav";
 
 import { OnboardingAlert } from "./onboarding-alert";
 
@@ -58,7 +59,8 @@ const Header = () => {
               <DarkModeSwitch />
               <MobileNav mainNavItems={mainNav} />
 
-              <div className="hidden lg:ml-auto lg:inline-block">
+              <div className="hidden lg:ml-auto lg:flex lg:items-center lg:gap-4">
+                <UserNav />
                 <a
                   href="tel:+8801777-300309"
                   className="inline-block rounded-md bg-gradient-to-l from-primary to-tertiary px-4 py-2.5 text-center font-bold text-white"

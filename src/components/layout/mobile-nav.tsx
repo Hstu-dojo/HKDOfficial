@@ -2,10 +2,13 @@
 
 import * as React from "react";
 import Link from "next/link";
-import { useSelectedLayoutSegment, usePathname } from "next/navigation";
+import { useSelectedLayoutSegment, usePathname, useRouter } from "next/navigation";
 import SiteLogo from "./site-logo";
 import { cn } from "@/lib/utils";
-import { useCurrentLocale } from "@/locales/client";
+import { useCurrentLocale, useI18n } from "@/locales/client";
+import { useSession } from "@/hooks/useSessionCompat";
+import { useAuth } from "@/context/AuthContext";
+import { getOnboardingStatus } from "@/actions/onboarding-actions";
 import {
   Accordion,
   AccordionContent,
@@ -14,6 +17,12 @@ import {
 } from "@/components/ui/accordion";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { 
+  UserCircleIcon, 
+  ArrowRightOnRectangleIcon,
+  ClipboardDocumentListIcon,
+  Squares2X2Icon
+} from "@heroicons/react/24/outline";
 
 interface MobileNavProps {
   mainNavItems?: MainNavItem[];
@@ -46,6 +55,42 @@ export function MobileNav({
   const [isOpen, setIsOpen] = React.useState(false);
   const locale = useCurrentLocale();
   const pathname = usePathname();
+  const router = useRouter();
+  const t = useI18n();
+  
+  const { data: session, status } = useSession();
+  const { signOut } = useAuth();
+  const [needsOnboarding, setNeedsOnboarding] = React.useState(false);
+
+  React.useEffect(() => {
+    const checkOnboardingStatus = async () => {
+      if (session?.user) {
+        try {
+          const result = await getOnboardingStatus();
+          setNeedsOnboarding(!result.existing);
+        } catch (error) {
+          console.error("Failed to check onboarding status", error);
+        }
+      }
+    };
+
+    if (status === 'authenticated' && session?.user) {
+      checkOnboardingStatus();
+    }
+  }, [session, status]);
+
+  const handleSignOut = async () => {
+    setIsOpen(false);
+    await signOut();
+    router.push(`/${locale}`);
+    router.refresh();
+  };
+
+  const isLoggedIn = status === 'authenticated' && session?.user;
+  const userName = session?.user?.user_metadata?.full_name || 
+                   session?.user?.user_metadata?.name ||
+                   session?.user?.email?.split('@')[0] || 
+                   'User';
 
   return (
     <Sheet open={isOpen} onOpenChange={setIsOpen}>
@@ -155,6 +200,79 @@ export function MobileNav({
                 </React.Fragment>
               ))}
             </Accordion>
+
+            {/* User Section */}
+            <div className="mt-6 border-t pt-6">
+              {isLoggedIn ? (
+                <div className="space-y-1">
+                  {/* User info */}
+                  <div className="flex items-center gap-3 pb-4 border-b border-slate-100 dark:border-slate-700">
+                    <div className="h-10 w-10 rounded-full bg-gradient-to-br from-primary to-tertiary flex items-center justify-center text-white font-bold">
+                      {session?.user?.email?.charAt(0).toUpperCase() || 'U'}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-medium text-slate-900 dark:text-white truncate">
+                        {userName}
+                      </p>
+                      <p className="text-xs text-slate-500 dark:text-slate-400 truncate">
+                        {session?.user?.email}
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Dashboard link */}
+                  <Link
+                    href={`/${locale}/dashboard`}
+                    className="flex items-center gap-3 py-3 text-sm transition-colors hover:text-primary"
+                    onClick={() => setIsOpen(false)}
+                  >
+                    <Squares2X2Icon className="h-5 w-5" />
+                    {t('header.dashboard') || 'Dashboard'}
+                  </Link>
+
+                  {/* Profile link */}
+                  <Link
+                    href={`/${locale}/dashboard/profile`}
+                    className="flex items-center gap-3 py-3 text-sm transition-colors hover:text-primary"
+                    onClick={() => setIsOpen(false)}
+                  >
+                    <UserCircleIcon className="h-5 w-5" />
+                    {t('header.profile') || 'Profile'}
+                  </Link>
+
+                  {/* Onboarding link - only if needed */}
+                  {needsOnboarding && (
+                    <Link
+                      href={`/${locale}/onboarding`}
+                      className="flex items-center gap-3 py-3 text-sm text-amber-600 dark:text-amber-400 transition-colors hover:text-amber-700"
+                      onClick={() => setIsOpen(false)}
+                    >
+                      <ClipboardDocumentListIcon className="h-5 w-5" />
+                      {t('header.completeProfile') || 'Complete Profile'}
+                      <span className="ml-auto flex h-2 w-2 rounded-full bg-amber-500" />
+                    </Link>
+                  )}
+
+                  {/* Logout button */}
+                  <button
+                    onClick={handleSignOut}
+                    className="flex w-full items-center gap-3 py-3 text-sm text-red-600 dark:text-red-400 transition-colors hover:text-red-700"
+                  >
+                    <ArrowRightOnRectangleIcon className="h-5 w-5" />
+                    {t('header.logout') || 'Logout'}
+                  </button>
+                </div>
+              ) : (
+                <Link
+                  href={`/${locale}/login`}
+                  className="flex items-center justify-center gap-2 w-full py-3 px-4 rounded-lg bg-gradient-to-r from-primary to-tertiary text-white font-semibold text-sm"
+                  onClick={() => setIsOpen(false)}
+                >
+                  <ArrowRightOnRectangleIcon className="h-5 w-5" />
+                  {t('header.login') || 'Login'}
+                </Link>
+              )}
+            </div>
           </div>
         </ScrollArea>
       </SheetContent>
