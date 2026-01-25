@@ -16,6 +16,7 @@ import {
   AcademicCapIcon,
   DocumentChartBarIcon,
   TicketIcon,
+  BookOpenIcon,
 } from '@heroicons/react/24/outline';
 import { cn } from '@/lib/utils';
 
@@ -133,6 +134,13 @@ const navigation: NavItem[] = [
     href: '/admin/emails',
     icon: MapIcon,
     description: 'Email templates and logs',
+    requiredRole: 'ADMIN',
+  },
+  {
+    name: 'Documentation',
+    href: '/docs',
+    icon: BookOpenIcon,
+    description: 'Developer & API docs',
     requiredRole: 'ADMIN',
   },
   {

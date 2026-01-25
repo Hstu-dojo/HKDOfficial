@@ -81,12 +81,6 @@ export const mainNav = [
         items: [],
       },
       {
-        title: "Docs",
-        href: "/docs",
-        skipLocale: true,
-        items: [],
-      },
-      {
         title: "Developer",
         href: "/dev",
         items: [],
