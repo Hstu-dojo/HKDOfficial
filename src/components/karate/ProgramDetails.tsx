@@ -248,7 +248,7 @@ export default function ProgramDetails({ slug }: ProgramDetailsProps) {
                    <div className="mt-4">
                       <div className="bg-primary/10 border border-primary/20 rounded-xl p-4 mb-4">
                         <p className="text-sm text-slate-700 dark:text-slate-300">
-                          Please send <span className="font-bold text-primary">৳{program.fee}</span> to our bKash Merchant Number: 
+                          Please send <span className="font-bold text-primary">৳{program.fee}</span> to our Nagad Number: 
                         </p>
                         <p className="text-2xl font-mono font-bold text-primary mt-1">01777-300309</p>
                         <p className="text-xs text-slate-500 dark:text-slate-400 mt-2">
