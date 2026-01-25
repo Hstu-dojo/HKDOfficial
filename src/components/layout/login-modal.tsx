@@ -1,6 +1,7 @@
 "use client";
 
 import { usePathname, useRouter } from "next/navigation";
+import { useState } from "react";
 import {
   Dialog,
   DialogContent,
@@ -14,11 +15,23 @@ import { BackgroundBeams } from "../ui/background-beams";
 export default function LoginModal({ callbackUrl }: any) {
   const router = useRouter();
   const pathname = usePathname();
+  const [isClosing, setIsClosing] = useState(false);
 
-  const IsOpen = pathname?.includes("/login");
+  const IsOpen = pathname?.includes("/login") && !isClosing;
+
+  const handleLoginSuccess = () => {
+    // Mark as closing to prevent re-render issues
+    setIsClosing(true);
+  };
+
+  const handleOpenChange = (open: boolean) => {
+    if (!open && !isClosing) {
+      router.back();
+    }
+  };
 
   return (
-    <Dialog open={IsOpen} onOpenChange={() => router.back()}>
+    <Dialog open={IsOpen} onOpenChange={handleOpenChange}>
       <BackgroundBeams />
       <DialogContent className="w-full max-w-[400px] rounded-md">
         <DialogHeader>
@@ -28,7 +41,10 @@ export default function LoginModal({ callbackUrl }: any) {
             </h2>
           </DialogTitle>
         </DialogHeader>
-        <UserAuthForm callbackUrl={callbackUrl?.toString()} />
+        <UserAuthForm 
+          callbackUrl={callbackUrl?.toString()} 
+          onLoginSuccess={handleLoginSuccess}
+        />
       </DialogContent>
     </Dialog>
   );

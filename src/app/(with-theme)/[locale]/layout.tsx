@@ -3,8 +3,9 @@ import { Roboto } from "next/font/google";
 import { Toaster } from "sonner";
 import { siteConfig } from "@/config/site";
 import BackToTop from "@/components/back-to-top";
-import React from "react";
+import React, { Suspense } from "react";
 import { I18nProviderClient } from "@/locales/client";
+import { VerificationHandler } from "@/components/layout/verification-handler";
 
 const roboto = Roboto({
   subsets: ["latin"],
@@ -74,6 +75,9 @@ export default async function RootLayout({
       className={`${roboto.className} dark:bg-slate-850 dark:text-slate-200`}
     >
       <I18nProviderClient locale={locale}>
+        <Suspense fallback={null}>
+          <VerificationHandler />
+        </Suspense>
         {children}
         {loginDialogue}
 

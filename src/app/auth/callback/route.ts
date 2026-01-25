@@ -87,9 +87,10 @@ export async function GET(request: Request) {
       }
     }
 
-    // Redirect to login page with success message
-    const successUrl = new URL('/en/login', requestUrl.origin)
+    // Redirect to home page with verified flag - the login page/modal will show success message
+    const successUrl = new URL('/en', requestUrl.origin)
     successUrl.searchParams.set('verified', 'true')
+    successUrl.searchParams.set('showLogin', 'true')
     return NextResponse.redirect(successUrl)
   }
 

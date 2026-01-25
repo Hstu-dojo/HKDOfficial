@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import { toast } from "sonner";
 import { useSession } from "@/hooks/useSessionCompat";
 import { createClient } from "@/lib/supabase/client";
@@ -15,17 +15,20 @@ import { useI18n } from "@/locales/client";
 export interface UserAuthFormProps
   extends React.HTMLAttributes<HTMLDivElement> {
   callbackUrl?: string;
+  onLoginSuccess?: () => void;
 }
 
 export function UserAuthForm({
   className,
   callbackUrl,
+  onLoginSuccess,
   ...props
 }: UserAuthFormProps) {
-  // console.log(callbackUrl);
   const [isLoading, setIsLoading] = React.useState<boolean>(false);
-  const { data: session } = useSession();
+  const [loginSuccess, setLoginSuccess] = React.useState(false);
+  const { data: session, status } = useSession();
   const router = useRouter();
+  const pathname = usePathname();
   const t = useI18n();
   
   // Show success message if redirected after email verification
@@ -40,11 +43,21 @@ export function UserAuthForm({
     }
   }, []);
   
-  React.useLayoutEffect(() => {
-    if (session?.user?.email) {
-      router.push("/");
+  // Handle redirect after login success and session update
+  React.useEffect(() => {
+    // Only redirect if login was successful and we have a session
+    if (loginSuccess && status === 'authenticated' && session?.user?.email) {
+      const destination = callbackUrl || "/en";
+      // If we're in a modal (pathname includes /login), replace the URL
+      if (pathname?.includes('/login')) {
+        // Use replace to avoid adding to history stack
+        window.location.href = destination;
+      } else {
+        router.push(destination);
+      }
     }
-  }, [callbackUrl, router, session?.user?.email]);
+  }, [loginSuccess, status, session?.user?.email, callbackUrl, pathname, router]);
+
   async function onSubmit(event: React.SyntheticEvent) {
     event.preventDefault();
     setIsLoading(true);
@@ -64,6 +77,7 @@ export function UserAuthForm({
 
       if (error) {
         console.error('Supabase Auth Error:', error);
+        setIsLoading(false);
         
         // Handle email not confirmed error with resend option
         if (error.message === 'Email not confirmed') {
@@ -96,7 +110,10 @@ export function UserAuthForm({
         } else {
           toast.error(error.message || "Invalid credentials or user not found");
         }
-      } else if (data.user) {
+        return;
+      }
+      
+      if (data.user) {
         toast.success("Welcome back!");
         
         // Check if email is verified
@@ -104,11 +121,19 @@ export function UserAuthForm({
           router.push(
             `/en/onboarding/verify-email?callbackUrl=${callbackUrl || "/en"}`,
           );
-        } else {
-          router.push(callbackUrl || "/en/profile");
+          setIsLoading(false);
+          return;
         }
+        
+        // Mark login as successful - the useEffect will handle redirect
+        setLoginSuccess(true);
+        
+        // Call the onLoginSuccess callback if provided (for modal to close)
+        onLoginSuccess?.();
+        
+        // Refresh router to update session state
+        router.refresh();
       }
-      setIsLoading(false);
     } catch (error) {
       console.error(error);
       toast.error("Something went wrong");
