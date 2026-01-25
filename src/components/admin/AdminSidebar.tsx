@@ -17,6 +17,7 @@ import {
   DocumentChartBarIcon,
   TicketIcon,
   BookOpenIcon,
+  BanknotesIcon,
 } from '@heroicons/react/24/outline';
 import { cn } from '@/lib/utils';
 
@@ -96,6 +97,16 @@ const navigation: NavItem[] = [
     description: 'Manage programs, belt tests, and events',
     requiredPermission: {
       resource: 'PROGRAM',
+      action: 'READ',
+    },
+  },
+  {
+    name: 'Monthly Fees',
+    href: '/admin/monthly-fees',
+    icon: BanknotesIcon,
+    description: 'Manage student fee payments',
+    requiredPermission: {
+      resource: 'PAYMENT',
       action: 'READ',
     },
   },

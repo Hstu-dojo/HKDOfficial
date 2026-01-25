@@ -57,19 +57,6 @@ export async function POST(request: Request) {
       );
     }
 
-    // Check if user already has this role
-    const existingAssignment = await db
-      .select()
-      .from(userRole)
-      .where(and(eq(userRole.userId, localUserId), eq(userRole.roleId, roleId)));
-
-    if (existingAssignment.length > 0) {
-      return NextResponse.json(
-        { error: 'User already has this role' },
-        { status: 400 }
-      );
-    }
-
     // Get current user's ID for assignedBy field using email
     const currentUser = await db
       .select()
@@ -83,13 +70,43 @@ export async function POST(request: Request) {
       );
     }
 
-    // Assign role to user
-    const assignment = await db.insert(userRole).values({
-      userId: localUserId,
-      roleId,
-      assignedBy: currentUser[0].id,
-      isActive: true,
-    }).returning();
+    // Check if user already has this role (active or inactive)
+    const existingAssignment = await db
+      .select()
+      .from(userRole)
+      .where(and(eq(userRole.userId, localUserId), eq(userRole.roleId, roleId)));
+
+    let assignment;
+    
+    if (existingAssignment.length > 0) {
+      // If assignment exists but is inactive, reactivate it
+      if (!existingAssignment[0].isActive) {
+        const updated = await db
+          .update(userRole)
+          .set({ 
+            isActive: true, 
+            assignedBy: currentUser[0].id,
+            assignedAt: new Date()
+          })
+          .where(eq(userRole.id, existingAssignment[0].id))
+          .returning();
+        assignment = updated;
+      } else {
+        // Already has active role
+        return NextResponse.json(
+          { error: 'User already has this role' },
+          { status: 400 }
+        );
+      }
+    } else {
+      // Create new assignment
+      assignment = await db.insert(userRole).values({
+        userId: localUserId,
+        roleId,
+        assignedBy: currentUser[0].id,
+        isActive: true,
+      }).returning();
+    }
 
     return NextResponse.json({
       message: 'Role assigned successfully',

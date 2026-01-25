@@ -250,7 +250,7 @@ export default function ProgramDetails({ slug }: ProgramDetailsProps) {
                         <p className="text-sm text-slate-700 dark:text-slate-300">
                           Please send <span className="font-bold text-primary">৳{program.fee}</span> to our bKash Merchant Number: 
                         </p>
-                        <p className="text-2xl font-mono font-bold text-primary mt-1">017XXXXXXXX</p>
+                        <p className="text-2xl font-mono font-bold text-primary mt-1">01777-300309</p>
                         <p className="text-xs text-slate-500 dark:text-slate-400 mt-2">
                           Use Reference: <code className="bg-slate-200 dark:bg-slate-700 px-1 rounded">{session?.user?.name?.split(' ')[0]}-{program.id.substring(0,4)}</code>
                         </p>

@@ -88,6 +88,11 @@ export function useRBAC() {
   const hasPermission = useCallback((resource: ResourceType, action: ActionType): boolean => {
     if (!permissions) return false;
     
+    // SUPER_ADMIN has all permissions
+    if (permissions.roles.some(r => r.name === 'SUPER_ADMIN')) {
+      return true;
+    }
+    
     return permissions.permissions.some(
       (perm) => perm.resource === resource && (perm.action === action || perm.action === 'MANAGE')
     );
