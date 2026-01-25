@@ -401,8 +401,30 @@ export async function seedRBACData() {
       }
     }
     
-    // Assign permissions to roles
+    // SUPER_ADMIN gets ALL permissions automatically
+    const superAdminRoleId = createdRoles["SUPER_ADMIN"];
+    if (superAdminRoleId) {
+      console.log("\n=== Assigning ALL permissions to SUPER_ADMIN ===");
+      const allPermissionIds = Object.values(createdPermissions);
+      
+      for (const permId of allPermissionIds) {
+        // Check if assignment already exists
+        const existingAssignment = await db.select()
+          .from(rolePermission)
+          .where(and(eq(rolePermission.roleId, superAdminRoleId), eq(rolePermission.permissionId, permId)))
+          .limit(1);
+        
+        if (existingAssignment.length === 0) {
+          await assignPermissionToRole(superAdminRoleId, permId);
+        }
+      }
+      console.log(`SUPER_ADMIN now has ${allPermissionIds.length} permissions (ALL permissions)`);
+    }
+    
+    // Assign permissions to other roles (except SUPER_ADMIN which already has all)
     for (const [roleName, permissionNames] of Object.entries(rolePermissionMappings)) {
+      if (roleName === "SUPER_ADMIN") continue; // Skip, already handled above
+      
       const roleId = createdRoles[roleName];
       
       if (roleId) {
@@ -425,7 +447,7 @@ export async function seedRBACData() {
       }
     }
     
-    console.log("RBAC data seeding completed successfully!");
+    console.log("\nRBAC data seeding completed successfully!");
     
   } catch (error) {
     console.error("Error seeding RBAC data:", error);
