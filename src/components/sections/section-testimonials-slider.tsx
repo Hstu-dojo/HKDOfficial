@@ -9,37 +9,41 @@ import "swiper/css";
 import "swiper/css/navigation";
 import MaxWidthWrapper from "../maxWidthWrapper";
 
+// Cloudinary cloud name for HKD images
+const cloudName = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME || "dksn30eyz";
+const baseUrl = `https://res.cloudinary.com/${cloudName}/image/upload`;
+
 export const testimonials = [
   {
-    name: "Md. hasan",
+    name: "Md. Hasan",
     affiliation: "HSTU Student",
     comment:
-      "“Joining the HSTU Karate Dojo has been an incredible experience. The training is top-notch and the sensei is very supportive.”",
-    image: "https://i.pravatar.cc/300",
+      ""Joining the HSTU Karate Dojo has been an incredible experience. The training is top-notch and the sensei is very supportive."",
+    image: `${baseUrl}/c_fill,w_300,h_300,g_face,q_auto/grading2/l9adzchxqhnzqbgupmfk.jpg`,
     rating: 5,
   },
   {
-    name: "Loveraj acharya",
+    name: "Loveraj Acharya",
     affiliation: "HSTU Faculty",
     comment:
-      "“The dojo provides a great environment for learning and personal growth. I highly recommend it to anyone interested in martial arts.”",
-    image: "https://i.pravatar.cc/300",
+      ""The dojo provides a great environment for learning and personal growth. I highly recommend it to anyone interested in martial arts."",
+    image: `${baseUrl}/c_fill,w_300,h_300,g_face,q_auto/grading2/l9jeluxj13rikrtvhwru.jpg`,
     rating: 4,
   },
   {
-    name: "Md. hasan",
+    name: "Rafiq Ahmed",
     affiliation: "HSTU Alumni",
     comment:
-      "“The discipline and skills I've gained from the HSTU Karate Dojo have been invaluable. It's a fantastic community.”",
-    image: "https://i.pravatar.cc/300",
+      ""The discipline and skills I've gained from the HSTU Karate Dojo have been invaluable. It's a fantastic community."",
+    image: `${baseUrl}/c_fill,w_300,h_300,g_face,q_auto/grading2/lw8lymwdopixc8ewwaas.jpg`,
     rating: 5,
   },
   {
-    name: "Shahriar",
+    name: "Shahriar Hossain",
     affiliation: "HSTU Staff",
     comment:
-      "“I appreciate the structured training sessions and the opportunity to compete in championships. The dojo has been a great addition to my routine.”",
-    image: "https://i.pravatar.cc/300",
+      ""I appreciate the structured training sessions and the opportunity to compete in championships. The dojo has been a great addition to my routine."",
+    image: `${baseUrl}/c_fill,w_300,h_300,g_face,q_auto/grading2/maruwxebvpbal909b94c.jpg`,
     rating: 5,
   },
 ];
