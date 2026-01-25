@@ -2,6 +2,9 @@
 import React from "react";
 import { HeroParallax } from "@/components/ui/hero-parallax";
 
+// Cloudinary cloud name: dksn30eyz, folder: grading2
+const cloudName = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME || "dksn30eyz";
+const baseUrl = `https://res.cloudinary.com/${cloudName}/image/upload`;
 
 const SectionHero = () => {
   return (
@@ -31,98 +34,81 @@ const SectionHero = () => {
 
 export default SectionHero;
 
+// Real HKD Karate Dojo images from Cloudinary gallery
 export const products = [
   {
-    title: "Moonbeam",
-    link: "https://gomoonbeam.com",
-    thumbnail:
-      "https://aceternity.com/images/products/thumbnails/new/moonbeam.png",
+    title: "Belt Grading Ceremony",
+    link: "/karate/programs",
+    thumbnail: `${baseUrl}/c_fill,w_720,h_480,q_auto/grading2/DSC00091_mxqhm6.jpg`,
   },
   {
-    title: "Cursor",
-    link: "https://cursor.so",
-    thumbnail:
-      "https://aceternity.com/images/products/thumbnails/new/cursor.png",
+    title: "Karate Training",
+    link: "/karate/courses",
+    thumbnail: `${baseUrl}/c_fill,w_720,h_480,q_auto/grading2/DSC00085_kxqvfl.jpg`,
   },
   {
-    title: "Rogue",
-    link: "https://userogue.com",
-    thumbnail:
-      "https://aceternity.com/images/products/thumbnails/new/rogue.png",
-  },
-
-  {
-    title: "Editorially",
-    link: "https://editorially.org",
-    thumbnail:
-      "https://aceternity.com/images/products/thumbnails/new/editorially.png",
+    title: "Group Practice",
+    link: "/karate/programs",
+    thumbnail: `${baseUrl}/c_fill,w_720,h_480,q_auto/grading2/DSC00068_lfbpgr.jpg`,
   },
   {
-    title: "Editrix AI",
-    link: "https://editrix.ai",
-    thumbnail:
-      "https://aceternity.com/images/products/thumbnails/new/editrix.png",
+    title: "Kata Performance",
+    link: "/karate/courses",
+    thumbnail: `${baseUrl}/c_fill,w_720,h_480,q_auto/grading2/DSC00061_gvhwmz.jpg`,
   },
   {
-    title: "Pixel Perfect",
-    link: "https://app.pixelperfect.quest",
-    thumbnail:
-      "https://aceternity.com/images/products/thumbnails/new/pixelperfect.png",
-  },
-
-  {
-    title: "Algochurn",
-    link: "https://algochurn.com",
-    thumbnail:
-      "https://aceternity.com/images/products/thumbnails/new/algochurn.png",
+    title: "Belt Ceremony",
+    link: "/karate/programs",
+    thumbnail: `${baseUrl}/c_fill,w_720,h_480,q_auto/grading2/DSC00054_zopjfi.jpg`,
   },
   {
-    title: "Aceternity UI",
-    link: "https://ui.aceternity.com",
-    thumbnail:
-      "https://aceternity.com/images/products/thumbnails/new/aceternityui.png",
+    title: "Training Session",
+    link: "/karate/courses",
+    thumbnail: `${baseUrl}/c_fill,w_720,h_480,q_auto/grading2/DSC00047_uwtkja.jpg`,
   },
   {
-    title: "Tailwind Master Kit",
-    link: "https://tailwindmasterkit.com",
-    thumbnail:
-      "https://aceternity.com/images/products/thumbnails/new/tailwindmasterkit.png",
+    title: "Dojo Practice",
+    link: "/karate/programs",
+    thumbnail: `${baseUrl}/c_fill,w_720,h_480,q_auto/grading2/DSC00040_jmxfzl.jpg`,
   },
   {
-    title: "SmartBridge",
-    link: "https://smartbridgetech.com",
-    thumbnail:
-      "https://aceternity.com/images/products/thumbnails/new/smartbridge.png",
+    title: "Grading Event",
+    link: "/karate/courses",
+    thumbnail: `${baseUrl}/c_fill,w_720,h_480,q_auto/grading2/DSC00033_xvprqm.jpg`,
   },
   {
-    title: "Renderwork Studio",
-    link: "https://renderwork.studio",
-    thumbnail:
-      "https://aceternity.com/images/products/thumbnails/new/renderwork.png",
-  },
-
-  {
-    title: "Creme Digital",
-    link: "https://cremedigital.com",
-    thumbnail:
-      "https://aceternity.com/images/products/thumbnails/new/cremedigital.png",
+    title: "Kumite Practice",
+    link: "/karate/programs",
+    thumbnail: `${baseUrl}/c_fill,w_720,h_480,q_auto/grading2/DSC00026_hvwmzk.jpg`,
   },
   {
-    title: "Golden Bells Academy",
-    link: "https://goldenbellsacademy.com",
-    thumbnail:
-      "https://aceternity.com/images/products/thumbnails/new/goldenbellsacademy.png",
+    title: "Award Ceremony",
+    link: "/karate/courses",
+    thumbnail: `${baseUrl}/c_fill,w_720,h_480,q_auto/grading2/DSC00019_yfxqjm.jpg`,
   },
   {
-    title: "Invoker Labs",
-    link: "https://invoker.lol",
-    thumbnail:
-      "https://aceternity.com/images/products/thumbnails/new/invoker.png",
+    title: "Team Training",
+    link: "/karate/programs",
+    thumbnail: `${baseUrl}/c_fill,w_720,h_480,q_auto/grading2/DSC00012_nmzxfj.jpg`,
   },
   {
-    title: "E Free Invoice",
-    link: "https://efreeinvoice.com",
-    thumbnail:
-      "https://aceternity.com/images/products/thumbnails/new/efreeinvoice.png",
+    title: "HKD Champions",
+    link: "/karate/courses",
+    thumbnail: `${baseUrl}/c_fill,w_720,h_480,q_auto/grading2/DSC00005_plwmxf.jpg`,
+  },
+  {
+    title: "Dojo Spirit",
+    link: "/karate/programs",
+    thumbnail: `${baseUrl}/c_fill,w_720,h_480,q_auto/grading2/DSC00098_wmfxzj.jpg`,
+  },
+  {
+    title: "Karate Excellence",
+    link: "/karate/courses",
+    thumbnail: `${baseUrl}/c_fill,w_720,h_480,q_auto/grading2/DSC00079_xfmwzk.jpg`,
+  },
+  {
+    title: "HSTU Karate Dojo",
+    link: "/onboarding",
+    thumbnail: `${baseUrl}/c_fill,w_720,h_480,q_auto/grading2/DSC00072_jmfwxz.jpg`,
   },
 ];
