@@ -146,6 +146,7 @@ export async function getUserPermissionsWithFallback(userId: string): Promise<Us
 
 /**
  * Check if a user has a specific permission
+ * Uses fallback to check user.defaultRole if no userRole assignments exist
  */
 export async function hasPermission(
   userId: string,
@@ -153,7 +154,7 @@ export async function hasPermission(
   action: ActionType
 ): Promise<boolean> {
   try {
-    const userPermissions = await getUserPermissions(userId);
+    const userPermissions = await getUserPermissionsWithFallback(userId);
     
     return userPermissions.permissions.some(
       (p) => p.resource === resource && (p.action === action || p.action === "MANAGE")
@@ -166,10 +167,11 @@ export async function hasPermission(
 
 /**
  * Check if a user has a specific role
+ * Uses fallback to check user.defaultRole if no userRole assignments exist
  */
 export async function hasRole(userId: string, roleName: string): Promise<boolean> {
   try {
-    const userPermissions = await getUserPermissions(userId);
+    const userPermissions = await getUserPermissionsWithFallback(userId);
     return userPermissions.roles.some((r) => r.name === roleName);
   } catch (error) {
     console.error("Error checking role:", error);

@@ -61,7 +61,7 @@ export async function POST(request: Request) {
     const existingAssignment = await db
       .select()
       .from(userRole)
-      .where(and(eq(userRole.userId, userId), eq(userRole.roleId, roleId)));
+      .where(and(eq(userRole.userId, localUserId), eq(userRole.roleId, roleId)));
 
     if (existingAssignment.length > 0) {
       return NextResponse.json(
@@ -85,7 +85,7 @@ export async function POST(request: Request) {
 
     // Assign role to user
     const assignment = await db.insert(userRole).values({
-      userId,
+      userId: localUserId,
       roleId,
       assignedBy: currentUser[0].id,
       isActive: true,

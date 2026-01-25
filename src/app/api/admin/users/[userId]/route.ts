@@ -67,6 +67,49 @@ export const PUT = protectApiRoute("USER", "UPDATE", async (request, context) =>
       delete updateData.password;
     }
 
+    // If defaultRole is being updated, also sync to userRole table
+    if (updateData.defaultRole) {
+      const newRoleName = updateData.defaultRole;
+      
+      // Find the role in the role table
+      const roleRecord = await db
+        .select()
+        .from(role)
+        .where(eq(role.name, newRoleName))
+        .limit(1);
+
+      if (roleRecord.length > 0) {
+        // Deactivate all existing roles for this user
+        await db
+          .update(userRole)
+          .set({ isActive: false })
+          .where(eq(userRole.userId, userId));
+
+        // Check if user already has this specific role (even if inactive)
+        const existingRole = await db
+          .select()
+          .from(userRole)
+          .where(and(eq(userRole.userId, userId), eq(userRole.roleId, roleRecord[0].id)))
+          .limit(1);
+
+        if (existingRole.length > 0) {
+          // Reactivate existing role assignment
+          await db
+            .update(userRole)
+            .set({ isActive: true })
+            .where(and(eq(userRole.userId, userId), eq(userRole.roleId, roleRecord[0].id)));
+        } else {
+          // Create new role assignment
+          await db.insert(userRole).values({
+            userId,
+            roleId: roleRecord[0].id,
+            assignedBy: context.userId,
+            isActive: true,
+          });
+        }
+      }
+    }
+
     // Update user
     const updatedUser = await db
       .update(user)
