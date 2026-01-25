@@ -12,6 +12,7 @@ import {
 } from '@heroicons/react/24/outline';
 import { format } from 'date-fns';
 import { getUserDashboardData } from '@/actions/dashboard-actions';
+import { ProfileCompletionCard } from '@/components/dashboard/profile-completion-card';
 
 export const metadata = {
   title: 'My Dashboard | HKD Dojo',
@@ -68,6 +69,11 @@ export default async function DashboardPage() {
           ) : null}
         </div>
       </div>
+
+      {/* Profile Completion Alert - only show if profile is incomplete */}
+      {!user.profileComplete && (
+        <ProfileCompletionCard />
+      )}
 
       {/* Main Content Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">

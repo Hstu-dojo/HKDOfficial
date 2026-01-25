@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { getPublicPrograms } from '@/actions/program-actions';
 import { format } from 'date-fns';
 import { CalendarIcon, MapPinIcon, TicketIcon } from '@heroicons/react/24/outline';
+import { ProfileCompletionBanner } from '@/components/layout/profile-completion-banner';
 
 export default function ProgramList() {
   const [programs, setPrograms] = useState<any[]>([]);
@@ -45,6 +46,12 @@ export default function ProgramList() {
             Join our special training sessions, belt tests, and competitions.
           </p>
         </div>
+        
+        {/* Profile Completion Banner */}
+        <div className="mt-8">
+          <ProfileCompletionBanner variant="inline" />
+        </div>
+        
         <div className="mx-auto mt-16 grid max-w-2xl grid-cols-1 gap-x-8 gap-y-20 lg:mx-0 lg:max-w-none lg:grid-cols-3">
           {programs.length === 0 ? (
             <div className="col-span-full text-center py-12">

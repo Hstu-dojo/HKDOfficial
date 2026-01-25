@@ -11,6 +11,7 @@ import {
   CheckCircleIcon,
   AcademicCapIcon,
 } from '@heroicons/react/24/outline';
+import { ProfileCompletionBanner } from '@/components/layout/profile-completion-banner';
 
 interface Course {
   id: string;
@@ -117,7 +118,12 @@ export default function KarateCoursesPage() {
         </div>
       </div>
 
-      {/* Courses Grid */}
+      {/* Profile Completion Banner */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-8">
+        <ProfileCompletionBanner variant="inline" />
+      </div>
+
+      {/* Courses Grid */
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
         {courses.length === 0 ? (
           <div className="text-center py-16 bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700">

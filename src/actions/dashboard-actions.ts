@@ -67,6 +67,7 @@ export interface DashboardData {
         image: string | null;
         memberId?: string | null;
         registrationStatus?: string | null;
+        profileComplete: boolean;
     };
     applications: DashboardApplication[];
     enrollments: DashboardEnrollment[];
@@ -203,7 +204,8 @@ export async function getUserDashboardData(): Promise<DashboardData | { error: s
         email: publicUser.email || "",
         image: publicUser.userAvatar,
         memberId: member?.memberNumber,
-        registrationStatus: registration?.status
+        registrationStatus: registration?.status,
+        profileComplete: !!registration
     },
     applications: applications as DashboardApplication[],
     enrollments,
