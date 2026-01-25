@@ -185,13 +185,13 @@ export function AdminSidebar({ className }: AdminSidebarProps) {
   }
 
   return (
-    <div className={cn("w-64 bg-white border-r border-slate-200 min-h-screen flex flex-col", className)}>
+    <div className={cn("w-64 bg-white border-r border-slate-200 h-full flex flex-col", className)}>
       <div className="flex flex-col h-full">
-        <div className="flex items-center justify-center h-16 px-4 border-b border-slate-200 bg-white">
+        <div className="flex items-center justify-center h-16 px-4 border-b border-slate-200 bg-white flex-shrink-0">
           <h1 className="text-xl font-bold text-slate-900">Admin Panel</h1>
         </div>
         
-        <nav className="flex-1 px-4 py-6 space-y-1">
+        <nav className="flex-1 px-4 py-6 space-y-1 overflow-y-auto custom-scrollbar">
           {visibleNavigation.map((item) => {
             const isActive =
               pathname === item.href ||
