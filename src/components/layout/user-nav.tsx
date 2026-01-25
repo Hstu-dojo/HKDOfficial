@@ -72,11 +72,20 @@ export function UserNav() {
       <Link
         href={`/${locale}/login`}
         className={cn(
-          "inline-flex items-center gap-2 px-4 py-2 rounded-md",
+          "inline-flex items-center gap-2 px-4 py-2 rounded-lg",
           "text-sm font-semibold",
-          "bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700",
-          "text-slate-900 dark:text-white",
-          "transition-colors"
+          // Glass effect with transparency
+          "bg-white/70 dark:bg-white/10",
+          "backdrop-blur-md",
+          "border border-slate-200/50 dark:border-white/20",
+          "shadow-sm",
+          // Hover states
+          "hover:bg-white/90 dark:hover:bg-white/20",
+          "hover:border-slate-300/50 dark:hover:border-white/30",
+          "hover:shadow-md",
+          // Text colors
+          "text-slate-800 dark:text-white",
+          "transition-all duration-200"
         )}
       >
         <ArrowRightOnRectangleIcon className="h-4 w-4" />
@@ -96,20 +105,29 @@ export function UserNav() {
       <DropdownMenuTrigger asChild>
         <button
           className={cn(
-            "inline-flex items-center gap-2 px-3 py-2 rounded-md",
+            "inline-flex items-center gap-2 px-3 py-2 rounded-lg",
             "text-sm font-medium",
-            "bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700",
-            "text-slate-900 dark:text-white",
-            "transition-colors",
+            // Glass effect with transparency
+            "bg-white/70 dark:bg-white/10",
+            "backdrop-blur-md",
+            "border border-slate-200/50 dark:border-white/20",
+            "shadow-sm",
+            // Hover states
+            "hover:bg-white/90 dark:hover:bg-white/20",
+            "hover:border-slate-300/50 dark:hover:border-white/30",
+            "hover:shadow-md",
+            // Text colors
+            "text-slate-800 dark:text-white",
+            "transition-all duration-200",
             "focus:outline-none focus:ring-2 focus:ring-primary/50"
           )}
         >
           {/* Avatar */}
-          <div className="h-7 w-7 rounded-full bg-gradient-to-br from-primary to-tertiary flex items-center justify-center text-white text-xs font-bold">
+          <div className="h-7 w-7 rounded-full bg-gradient-to-br from-primary to-tertiary flex items-center justify-center text-white text-xs font-bold shadow-sm">
             {userInitial}
           </div>
           <span className="hidden sm:inline max-w-[100px] truncate">{userName}</span>
-          <ChevronDownIcon className="h-4 w-4 text-slate-500" />
+          <ChevronDownIcon className="h-4 w-4 text-slate-500 dark:text-slate-300" />
         </button>
       </DropdownMenuTrigger>
 
