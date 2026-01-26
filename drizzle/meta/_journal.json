@@ -43,6 +43,13 @@
       "when": 1769381147085,
       "tag": "0005_large_taskmaster",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1769436580911,
+      "tag": "0006_elite_tarot",
+      "breakpoints": true
     }
   ]
 }
