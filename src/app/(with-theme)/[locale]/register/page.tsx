@@ -6,7 +6,7 @@ import { cn } from "@/lib/utils";
 import { buttonVariants } from "@/components/ui/button";
 import { RegisterForm } from "@/components/auth/register-form";
 import { BackgroundBeams } from "@/components/ui/background-beams";
-import { getI18n } from "@/locales/server";
+import { getI18n, getCurrentLocale } from "@/locales/server";
 
 export const metadata: Metadata = {
   title: "Register",
@@ -15,6 +15,7 @@ export const metadata: Metadata = {
 
 export default async function AuthenticationPage() {
   const t = await getI18n();
+  const locale = await getCurrentLocale();
   return (
     <>
       <Link href="/">
@@ -26,7 +27,7 @@ export default async function AuthenticationPage() {
             width={36}
             height={36}
           />
-          <span className="hidden lg:flex">HSTU Dojo</span>
+          <span className="hidden lg:flex">{t('header.brand')}</span>
         </div>
       </Link>
       <div className="container relative  grid h-[800px] flex-col items-center justify-center lg:max-w-none lg:grid-cols-2 lg:px-0">
@@ -43,32 +44,32 @@ export default async function AuthenticationPage() {
             </div>
             <RegisterForm />
             <p className="px-8 text-center text-sm text-muted-foreground">
-              {t('auth.login.termsPrefix')}{" "}
+              {t("auth.login.termsPrefix")}{" "}
               <Link
-                href="/terms"
+                href={`/${locale}/terms`}
                 className="underline underline-offset-4 hover:text-primary"
               >
-                {t('auth.login.termsOfService')}
+                {t("auth.login.termsOfService")}
               </Link>{" "}
-              {t('auth.login.and')}{" "}
+              {t("auth.login.and")}{" "}
               <Link
-                href="/privacy"
+                href={`/${locale}/privacy`}
                 className="underline underline-offset-4 hover:text-primary"
               >
-                {t('auth.login.privacyPolicy')}
+                {t("auth.login.privacyPolicy")}
               </Link>
               .
             </p>
           </div>
         </div>
         <Link
-          href="/login"
+          href={`/${locale}/login`}
           className={cn(
             buttonVariants({ variant: "ghost" }),
             "absolute left-4 top-4 md:left-8 md:top-8",
           )}
         >
-          {t('header.login')}
+          {t("header.login")}
         </Link>
         <div className="relative hidden h-full flex-col bg-muted p-10 text-white dark:border-r lg:flex">
           <div className="absolute inset-0 bg-secondary">
@@ -92,11 +93,9 @@ export default async function AuthenticationPage() {
           <div className="relative z-20 mt-auto">
             <blockquote className="space-y-2">
               <p className="text-lg">
-                &ldquo;This library has saved me countless hours of work and
-                helped me deliver stunning designs to my clients faster than
-                ever before.&rdquo;
+                &ldquo;{t("auth.login.quote")}&rdquo;
               </p>
-              <footer className="text-sm">Hasan</footer>
+              <footer className="text-sm">{t("auth.login.quoteAuthor")}</footer>
             </blockquote>
           </div>
         </div>

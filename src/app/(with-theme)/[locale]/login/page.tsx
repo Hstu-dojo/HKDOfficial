@@ -9,7 +9,7 @@ import {
   UserAuthFormProps,
 } from "@/components/auth/user-auth-form";
 import { BackgroundBeams } from "@/components/ui/background-beams";
-import { getI18n } from "@/locales/server";
+import { getI18n, getCurrentLocale } from "@/locales/server";
 interface ExtendedUserAuthFormProps extends UserAuthFormProps {
   callbackUrl: string;
 }
@@ -27,6 +27,7 @@ export default async function AuthenticationPage({ searchParams }: PageProps) {
   const resolvedSearchParams = await searchParams;
   const callbackUrl = resolvedSearchParams?.callbackUrl;
   const t = await getI18n();
+  const locale = await getCurrentLocale();
   
   return (
     <>
@@ -39,12 +40,12 @@ export default async function AuthenticationPage({ searchParams }: PageProps) {
             width={36}
             height={36}
           />
-          <span className="hidden lg:flex">HSTU Dojo</span>
+          <span className="hidden lg:flex">{t('header.brand')}</span>
         </div>
       </Link>
       <div className="container relative  grid h-[800px] flex-col items-center justify-center lg:max-w-none lg:grid-cols-2 lg:px-0">
         <Link
-          href="/register"
+          href={`/${locale}/register`}
           className={cn(
             buttonVariants({ variant: "ghost" }),
             "absolute right-4 top-4 md:right-8 md:top-8",
@@ -75,11 +76,9 @@ export default async function AuthenticationPage({ searchParams }: PageProps) {
           <div className="relative z-20 mt-auto">
             <blockquote className="space-y-2">
               <p className="text-lg">
-                &ldquo;This library has saved me countless hours of work and
-                helped me deliver stunning designs to my clients faster than
-                ever before.&rdquo;
+                &ldquo;{t("auth.login.quote")}&rdquo;
               </p>
-              <footer className="text-sm">Hasan</footer>
+              <footer className="text-sm">{t("auth.login.quoteAuthor")}</footer>
             </blockquote>
           </div>
         </div>

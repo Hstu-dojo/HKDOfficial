@@ -1,6 +1,7 @@
 export default {
   // Header & Navigation
   header: {
+    brand: "HSTU Dojo",
     changelog: "Changelog",
     about: "About",
     login: "Login",
@@ -32,6 +33,11 @@ export default {
       name: "Name",
       email: "Email",
       subscribe: "Subscribe",
+      alreadySubscribed: "You are already subscribed to our newsletter.",
+      somethingWrong: "Something went wrong! Please try again later.",
+      success: "Success!",
+      subscribed: "You are now subscribed to our newsletter.",
+      subscribing: "Subscribing...",
     },
     joinDojo: "Are you ready to join our dojo? Discover the path to excellence in karate.",
   },
@@ -155,6 +161,14 @@ export default {
       termsOfService: "Terms of Service",
       and: "and",
       privacyPolicy: "Privacy Policy",
+      emailVerified: "Email verified successfully! 🎉",
+      signInPrompt: "You can now sign in with your credentials.",
+      welcomeBack: "Welcome back!",
+      invalidCredentials: "Invalid credentials or user not found",
+      somethingWrong: "Something went wrong",
+      failedResend: "Failed to resend email",
+      quote: "This library has saved me countless hours of work and helped me deliver stunning designs to my clients faster than ever before.",
+      quoteAuthor: "Hasan",
     },
     register: {
       title: "Create an account",

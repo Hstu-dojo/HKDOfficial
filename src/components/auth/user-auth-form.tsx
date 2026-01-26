@@ -11,7 +11,7 @@ import { toast } from "sonner";
 import { useSession } from "@/hooks/useSessionCompat";
 import { createClient } from "@/lib/supabase/client";
 import { SocialLoginButtons } from "@/components/auth/social-login-buttons";
-import { useI18n } from "@/locales/client";
+import { useI18n, useCurrentLocale } from "@/locales/client";
 export interface UserAuthFormProps
   extends React.HTMLAttributes<HTMLDivElement> {
   callbackUrl?: string;
@@ -30,13 +30,14 @@ export function UserAuthForm({
   const router = useRouter();
   const pathname = usePathname();
   const t = useI18n();
+  const locale = useCurrentLocale();
   
   // Show success message if redirected after email verification
   React.useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     if (params.get('verified') === 'true') {
-      toast.success("Email verified successfully! 🎉", {
-        description: "You can now sign in with your credentials.",
+      toast.success(t("auth.login.emailVerified"), {
+        description: t("auth.login.signInPrompt"),
       });
       // Clean up URL
       window.history.replaceState({}, '', window.location.pathname);
@@ -47,7 +48,7 @@ export function UserAuthForm({
   React.useEffect(() => {
     // Only redirect if login was successful and we have a session
     if (loginSuccess && status === 'authenticated' && session?.user?.email) {
-      const destination = callbackUrl || "/en";
+      const destination = callbackUrl || `/${locale}`;
       // If we're in a modal (pathname includes /login), replace the URL
       if (pathname?.includes('/login')) {
         // Use replace to avoid adding to history stack
@@ -99,27 +100,27 @@ export function UserAuthForm({
                   if (resendResponse.ok) {
                     toast.success(resendResult.message);
                   } else {
-                    toast.error(resendResult.error || "Failed to resend email");
+                    toast.error(resendResult.error || t("auth.login.failedResend"));
                   }
                 } catch (error) {
-                  toast.error("Failed to resend email");
+                  toast.error(t("auth.login.failedResend"));
                 }
               },
             },
           });
         } else {
-          toast.error(error.message || "Invalid credentials or user not found");
+          toast.error(error.message || t("auth.login.invalidCredentials"));
         }
         return;
       }
       
       if (data.user) {
-        toast.success("Welcome back!");
+        toast.success(t("auth.login.welcomeBack"));
         
         // Check if email is verified
         if (!data.user.email_confirmed_at) {
           router.push(
-            `/en/onboarding/verify-email?callbackUrl=${callbackUrl || "/en"}`,
+            `/${locale}/onboarding/verify-email?callbackUrl=${callbackUrl || `/${locale}`}`,
           );
           setIsLoading(false);
           return;
@@ -136,7 +137,7 @@ export function UserAuthForm({
       }
     } catch (error) {
       console.error(error);
-      toast.error("Something went wrong");
+      toast.error(t("auth.login.somethingWrong"));
       setIsLoading(false);
     }
   }
@@ -187,18 +188,18 @@ export function UserAuthForm({
       </form>
       <div className="flex-rol relative bottom-4 flex flex-wrap items-center justify-between">
         <small>
-          {t('auth.login.newUser')}{" "}
-          <Link className="hover:underline" href="/register">
-            {t('auth.login.registerLink')}
+          {t("auth.login.newUser")}{" "}
+          <Link className="hover:underline" href={`/${locale}/register`}>
+            {t("auth.login.registerLink")}
           </Link>
         </small>
         <small>
-          <Link className="hover:underline" href="/en/forget">
-            {t('auth.login.forgetPassword')}
+          <Link className="hover:underline" href={`/${locale}/forget`}>
+            {t("auth.login.forgetPassword")}
           </Link>
         </small>
       </div>
-      <SocialLoginButtons redirectTo={callbackUrl || '/en/profile'} />
+      <SocialLoginButtons redirectTo={callbackUrl || `/${locale}/profile`} />
     </div>
   );
 }

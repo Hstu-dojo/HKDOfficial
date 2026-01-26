@@ -11,6 +11,7 @@ import Image from "next/image";
 import NewsletterForm from "../forms/newsletter-form";
 import HeroTriangle from "@/components/hero-triangle";
 import MaxWidthWrapper from "../maxWidthWrapper";
+import { useScopedI18n } from "@/locales/client";
 
 export const HeroParallax = ({
   products,
@@ -116,15 +117,14 @@ export const HeroParallax = ({
 };
 
 export const Header = () => {
+  const t = useScopedI18n("hero");
   return (
     <div className="relative left-0 top-0 mx-20 w-full max-w-7xl py-20 md:pb-40 md:pt-20">
       <h1 className="text-headings text-2xl font-bold md:text-7xl">
-        Welcome to HSTU <br /> Karate Dojo
+        {t("welcomeTitle")}
       </h1>
       <p className="mt-8 max-w-lg text-base text-slate-700 dark:text-slate-300 md:text-lg">
-        Discover the art of karate at Hajee Mohammad Dahesh Science & Technology
-        University. Join us for rigorous training, community engagement, and
-        competitive success.
+        {t("welcomeSubtitle")}
       </p>
     </div>
   );

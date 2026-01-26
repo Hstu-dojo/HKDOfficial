@@ -16,10 +16,12 @@ import { Input } from "@/components/ui/input";
 import { useTransition } from "react";
 import { NewsletterFormSchema } from "@/lib/schema";
 import { Spinner } from "../icons/icons";
+import { useScopedI18n } from "@/locales/client";
 
 export type FormInputs = z.infer<typeof NewsletterFormSchema>;
 
 const NewsletterForm = () => {
+  const t = useScopedI18n("hero.newsletter");
   const [isPending, startTransition] = useTransition();
 
   const form = useForm<FormInputs>({
@@ -46,29 +48,29 @@ const NewsletterForm = () => {
       if (!res.ok) {
         switch (res.status) {
           case 400:
-            toast.error("You are already subscribed to our newsletter.");
+            toast.error(t("alreadySubscribed"));
             break;
 
           case 500:
-            toast.error("Something went wrong. Please try again later.");
+            toast.error(t("somethingWrong"));
 
             break;
 
           default:
-            toast.error("Something went wrong. Please try again later.");
+            toast.error(t("somethingWrong"));
             break;
         }
         return;
       }
 
-      toast.success("You have been subscribed to our newsletter.");
+      toast.success(t("subscribed"));
       form.reset();
     });
   }
 
   return (
     <div className="z-10 mx-20 rounded-md bg-muted px-8 py-10 shadow-lg dark:bg-slate-800 dark:shadow-slate-850/20 md:px-16 md:pb-5">
-      <h2 className="mb-8 text-lg">Stay Updated with HSTU Karate Dojo</h2>
+      <h2 className="mb-8 text-lg">{t("title")}</h2>
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(onSubmit)}
@@ -83,7 +85,7 @@ const NewsletterForm = () => {
                   <FormControl>
                     <Input
                       className="material-input rounded-none border-0 border-b-[1px] border-slate-300 bg-transparent px-0 dark:border-slate-600 dark:bg-transparent"
-                      placeholder="Name"
+                      placeholder={t("name")}
                       required
                       {...field}
                     />
@@ -104,7 +106,7 @@ const NewsletterForm = () => {
                     <Input
                       className="material-input rounded-none border-0 border-b-[1px] border-slate-300 bg-transparent px-0 dark:border-slate-600 dark:bg-transparent"
                       type="email"
-                      placeholder="Email"
+                      placeholder={t("email")}
                       required
                       {...field}
                     />
@@ -119,10 +121,10 @@ const NewsletterForm = () => {
             {isPending ? (
               <>
                 <Spinner className="mr-2 h-5 w-5 animate-spin" />
-                <span>Subscribe</span>
+                <span>{t("subscribing")}</span>
               </>
             ) : (
-              <span>Subscribe</span>
+              <span>{t("subscribe")}</span>
             )}
           </Button>
         </form>
