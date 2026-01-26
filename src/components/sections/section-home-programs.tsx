@@ -5,6 +5,20 @@ import MaxWidthWrapper from "../maxWidthWrapper";
 import Link from "next/link";
 import { useCurrentLocale, useScopedI18n } from "@/locales/client";
 
+const fadeInAnimationVariants = {
+  initial: {
+    opacity: 0,
+    y: 60,
+  },
+  animate: (index: number) => ({
+    opacity: 1,
+    y: 0,
+    transition: {
+      delay: 0.05 * index,
+    },
+  }),
+};
+
 const SectionHomePrograms = () => {
     const locale = useCurrentLocale();
     const t = useScopedI18n("homepage.programs");
