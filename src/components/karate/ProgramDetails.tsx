@@ -314,7 +314,7 @@ export default function ProgramDetails({ slug }: ProgramDetailsProps) {
                                </div>
                             ) : (
                               <CldUploadWidget 
-                                uploadPreset={process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET || "gallery_uploads"}
+                                uploadPreset={process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET || "yddebkab"}
                                 onSuccess={handleUploadSuccess}
                                 options={{
                                     sources: ['local', 'url'],

@@ -33,7 +33,7 @@ export function GalleryUploadButton({
   const [uploadedImages, setUploadedImages] = useState<CloudinaryUploadResult[]>([]);
   const { toast } = useToast();
 
-  const uploadPreset = process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET || "gallery_uploads";
+  const uploadPreset = process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET || "yddebkab";
   const baseFolder = process.env.NEXT_PUBLIC_CLOUDINARY_FOLDER || "hkd-gallery";
   const folder = cloudinaryFolder || baseFolder;
 
