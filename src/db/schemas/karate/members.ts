@@ -2,6 +2,7 @@ import { pgTable, text, boolean, timestamp } from "drizzle-orm/pg-core";
 import { sql } from "drizzle-orm";
 import { beltRankEnum, registrationStatusEnum } from "../enums";
 import { user } from "../auth";
+import { partners } from "../partner";
 
 // Members table - detailed member profiles extending user information
 export const members = pgTable("members", {
@@ -40,6 +41,9 @@ export const members = pgTable("members", {
   // Dojo Information
   beltRank: beltRankEnum("belt_rank").notNull().default('white'),
   picture: text("picture"),
+  
+  // Partner/Venue Information
+  partnerId: text("partner_id").references(() => partners.id, { onDelete: 'set null' }),
   
   // Emergency Contact
   emergencyContact: text("emergency_contact"),
