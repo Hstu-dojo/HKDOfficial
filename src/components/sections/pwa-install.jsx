@@ -2,8 +2,11 @@
 "use client";
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
+import { useScopedI18n } from "@/locales/client";
+
 const PwaInstall = () => {
   const [deferredPrompt, setDeferredPrompt] = useState(null);
+  const t = useScopedI18n("homepage.finalCta");
 
   useEffect(() => {
     const handleBeforeInstallPrompt = (event) => {
@@ -60,7 +63,7 @@ const PwaInstall = () => {
       style={{ display: deferredPrompt ? "block" : "none" }}
       onClick={handleInstallClick}
     >
-      <span className="mx-3 font-medium">Get App</span>
+      <span className="mx-3 font-medium">{t("getApp")}</span>
     </Button>
   );
 };

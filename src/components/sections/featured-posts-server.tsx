@@ -1,10 +1,12 @@
 import { ProjectPayload } from "../../../sanity/lib/sanity_types";
 import { loadFeaturedProjects } from "../../../sanity/loader/loadQuery";
 import FeaturedPostsClient from "./featured-posts-client";
+import { getScopedI18n } from "@/locales/server";
 
 export const revalidate = 60; // Revalidate every 60 seconds
 
 const FeaturedPostsServer = async () => {
+  const t = await getScopedI18n("homepage.featuredPosts");
   let featuredPosts: ProjectPayload[] = [];
   
   try {
@@ -17,13 +19,13 @@ const FeaturedPostsServer = async () => {
         <div className="container mx-auto px-4">
           <div className="text-center">
             <span className="inline-block px-4 py-2 bg-blue-100 text-blue-600 dark:bg-blue-900/50 dark:text-blue-300 rounded-full text-sm font-medium mb-4">
-              ✨ Featured Content
+              {t("title")}
             </span>
             <h2 className="text-3xl md:text-4xl font-bold text-gray-800 dark:text-white mb-4">
-              Featured Posts
+              {t("subtitle")}
             </h2>
             <p className="text-gray-600 dark:text-gray-300">
-              Featured posts are currently being loaded...
+              {t("description")}
             </p>
           </div>
         </div>

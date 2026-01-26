@@ -10,26 +10,25 @@ import {
 } from "@/components/ui/accordion";
 import MaxWidthWrapper from "../maxWidthWrapper";
 import { Helmet } from "react-helmet";
-
-const accordionItems = [
-  {
-    title: "What is HSTU Karate Dojo?",
-    content:
-      "HSTU Karate Dojo is the official karate club of Hajee Mohammad Danesh Science & Technology University, established in 2022 to provide martial arts training to the university community.",
-  },
-  {
-    title: "Who can join the dojo?",
-    content:
-      "All students, faculty, and staff of HSTU are welcome to join the dojo, regardless of their prior experience in karate.",
-  },
-  {
-    title: "What types of activities does the dojo offer?",
-    content:
-      "The dojo offers rigorous training sessions, participation in intra-university and inter-university championships, workshops, seminars, and community engagement activities.",
-  },
-];
+import { useScopedI18n } from "@/locales/client";
 
 const SectionFAQ = () => {
+    const t = useScopedI18n("homepage.faq");
+    const accordionItems = [
+      {
+        title: t('q1'),
+        content: t('a1'),
+      },
+      {
+        title: t('q2'),
+        content: t('a2'),
+      },
+      {
+        title: t('q3'),
+        content: t('a3'),
+      },
+    ];
+
   return (
     <section className="relative overflow-hidden py-24 dark:bg-slate-900 lg:py-32">
       <MaxWidthWrapper className="container">
@@ -43,10 +42,9 @@ const SectionFAQ = () => {
                 delay: 0.5,
               }}
             >
-              <h2>Frequently Asked Questions</h2>
+              <h2>{t('title')}</h2>
               <p className="mb-8 text-lg">
-                Find answers to the most commonly asked questions about HSTU
-                Karate Dojo and learn more about our activities and membership.
+                {t('subtitle')}
               </p>
               <Accordion
                 type="single"
@@ -89,7 +87,7 @@ const SectionFAQ = () => {
                 </AccordionItem> */}
               </Accordion>
               <span className="mt-14 inline-block text-lg">
-                Any Question?{" "}
+                {t('anyQuestion')}{" "}
                 <a href="mailto:hstukarate@gmail.com" className="text-primary">
                   hstukarate@gmail.com
                 </a>

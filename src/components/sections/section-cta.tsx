@@ -3,8 +3,10 @@ import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import PwaInstall from "@/components/sections/pwa-install";
 import MaxWidthWrapper from "../maxWidthWrapper";
+import { useScopedI18n } from "@/locales/client";
 
 const SectionCTA = () => {
+    const t = useScopedI18n("homepage.finalCta");
   return (
     <MaxWidthWrapper>
       <motion.div
@@ -19,11 +21,11 @@ const SectionCTA = () => {
           <div className="mx-auto max-w-6xl">
             <div className="rounded-md bg-muted px-6 py-24 text-center shadow-lg dark:bg-slate-800 dark:shadow-slate-850/20">
               <h2 className="mb-8">
-                Karate is not just about fighting, it&apos;s a lifestyle!
+                {t("title")}
               </h2>
               <div className="flex w-full flex-col items-center justify-center gap-2 md:flex-row lg:gap-3">
                 <PwaInstall />
-                <Button size="lg">Let’s Join You</Button>
+                <Button size="lg">{t("joinYou")}</Button>
               </div>
             </div>
           </div>

@@ -5,25 +5,27 @@ import Link from "next/link";
 import Image from "next/image";
 import { urlForImage } from "../../../sanity/lib/utils";
 import { ProjectPayload } from "../../../sanity/lib/sanity_types";
+import { useScopedI18n } from "@/locales/client";
 
 interface FeaturedPostsClientProps {
   featuredPosts: ProjectPayload[];
 }
 
 const FeaturedPostsClient: React.FC<FeaturedPostsClientProps> = ({ featuredPosts }) => {
+  const t = useScopedI18n("homepage.featuredPosts");
   return (
     <section className="py-16 bg-gradient-to-br from-gray-50 to-white dark:from-gray-900 dark:to-gray-800">
       <div className="container mx-auto px-4">
         {/* Section Header */}
         <div className="text-center mb-12">
           <span className="inline-block px-4 py-2 bg-blue-100 text-blue-600 dark:bg-blue-900/50 dark:text-blue-300 rounded-full text-sm font-medium mb-4">
-            ✨ Featured Content
+            {t("title")}
           </span>
           <h2 className="text-3xl md:text-4xl font-bold text-gray-800 dark:text-white mb-4">
-            Featured Posts
+            {t("subtitle")}
           </h2>
           <p className="text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
-            Discover our most popular and engaging content, handpicked just for you
+            {t("description")}
           </p>
           <div className="w-20 h-1 bg-gradient-to-r from-blue-500 to-purple-500 mx-auto mt-6 rounded-full"></div>
         </div>
@@ -41,7 +43,7 @@ const FeaturedPostsClient: React.FC<FeaturedPostsClientProps> = ({ featuredPosts
               {index === 0 && (
                 <div className="absolute top-4 left-4 z-10">
                   <span className="bg-gradient-to-r from-yellow-400 to-orange-500 px-3 py-1 rounded-full text-xs font-bold shadow-lg">
-                    🌟 TOP FEATURED
+                    {t("topFeatured")}
                   </span>
                 </div>
               )}
@@ -120,7 +122,7 @@ const FeaturedPostsClient: React.FC<FeaturedPostsClientProps> = ({ featuredPosts
                     href={`/blog/post/${post.slug}`}
                     className="inline-flex items-center space-x-1 text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 font-medium text-sm group-hover:translate-x-1 transition-transform duration-200"
                   >
-                    <span>Read More</span>
+                    <span>{t("readMore")}</span>
                     <svg
                       className="w-4 h-4"
                       fill="none"
@@ -147,7 +149,7 @@ const FeaturedPostsClient: React.FC<FeaturedPostsClientProps> = ({ featuredPosts
             href="/blog"
             className="inline-flex items-center space-x-2 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 dark:from-blue-500 dark:to-purple-500 dark:hover:from-blue-600 dark:hover:to-purple-600 text-white px-8 py-3 rounded-full font-medium transition-all duration-200 transform hover:scale-105 shadow-lg hover:shadow-xl dark:shadow-gray-900/50"
           >
-            <span>View All Posts</span>
+            <span>{t("viewAll")}</span>
             <svg
               className="w-5 h-5"
               fill="none"

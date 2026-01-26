@@ -44,6 +44,22 @@ export default {
 
   // Homepage Sections
   homepage: {
+    programs: {
+      title: "Discover Our Programs",
+      titleSpan: "Programs",
+      training: {
+        title: "Training Courses",
+        description: "Structured curriculum from White Belt to Black Belt. Master the art of Shotokan Karate.",
+      },
+      events: {
+        title: "Programs & Events",
+        description: "Participate in workshops, seminars, and championships. Test your skills in the arena.",
+      },
+      join: {
+        title: "Join HKD",
+        description: "Become a member of the HSTU Karate Dojo family. Start your journey today.",
+      },
+    },
     iconBoxes: {
       training: {
         title: "Training Programs",
@@ -103,9 +119,12 @@ export default {
     faq: {
       title: "Frequently Asked Questions",
       subtitle: "Find answers to the most commonly asked questions about HSTU Karate Dojo and learn more about our activities and membership.",
-      question1: "What is HSTU Karate Dojo?",
-      question2: "Who can join the dojo?",
-      question3: "What types of activities does the dojo offer?",
+      q1: "What is HSTU Karate Dojo?",
+      a1: "HSTU Karate Dojo is the official karate club of Hajee Mohammad Danesh Science & Technology University, established in 2022 to provide martial arts training to the university community.",
+      q2: "Who can join the dojo?",
+      a2: "All students, faculty, and staff of HSTU are welcome to join the dojo, regardless of their prior experience in karate.",
+      q3: "What types of activities does the dojo offer?",
+      a3: "The dojo offers rigorous training sessions, participation in intra-university and inter-university championships, workshops, seminars, and community engagement activities.",
       anyQuestion: "Any Question?",
     },
     stats: {

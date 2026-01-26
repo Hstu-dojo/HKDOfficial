@@ -8,10 +8,21 @@ import { TypingText, TitleText } from "./components/CustomTexts";
 import ExploreCard from "./components/ExploreCard";
 import { exploreWorlds } from "./exploreWorlds";
 import MaxWidthWrapper from "@/components/maxWidthWrapper";
-// import TypewriterEffectComponent from "@/components/blogs/shared/TypewriterEffectComponent";
+import { useScopedI18n } from "@/locales/client";
+
+// Map IDs to translation keys
+const warriorKeys = {
+  "warrior-1": "viper",
+  "warrior-2": "mantis",
+  "warrior-3": "monk",
+  "warrior-4": "tigress",
+  "warrior-5": "crane",
+};
 
 const Furious5 = () => {
   const [active, setActive] = useState("world-2");
+  const t = useScopedI18n("homepage.furious5");
+
   return (
     <MaxWidthWrapper>
       <section className={`${styles.paddings}`} id="explore">
@@ -26,21 +37,21 @@ const Furious5 = () => {
           <TitleText
             title={
               <>
-                Choose the world you want <br className="hidden md:block" /> to
-                explore
+                {t("title").split(" ").slice(0, 4).join(" ")} <br className="hidden md:block" /> {t("title").split(" ").slice(4).join(" ")}
               </>
             }
             textStyles="text-center"
           />
           {/* <div className="mt-20 lg:mt-28 mb-10 text-center"><TypewriterEffectComponent text={"Start your new amazing journey with us"} /></div> */}
 
-          <TypingText title="| Meet Furious Five" textStyles="text-center" />
+          <TypingText title={`| ${t("subtitle")}`} textStyles="text-center" />
 
           <div className="mt-[50px] flex min-h-[400px] flex-col gap-5 lg:flex-row">
             {exploreWorlds.map((world, index) => (
               <ExploreCard
                 key={world.id}
                 {...world}
+                title={t(warriorKeys[world.id])}
                 index={index}
                 active={active}
                 handleClick={setActive}

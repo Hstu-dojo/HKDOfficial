@@ -1,8 +1,10 @@
 import MaxWidthWrapper from "../maxWidthWrapper";
 import SectionTitle from "./section-title";
 import Image from "next/image";
+import { getScopedI18n } from "@/locales/server";
 
-const SectionPartners = () => {
+const SectionPartners = async () => {
+    const t = await getScopedI18n("homepage.partners");
   return (
     <section className="relative bg-white pb-56 pt-24 before:absolute before:inset-0 before:bg-gradient-to-t before:from-tertiary before:to-secondary before:opacity-70">
       <Image
@@ -13,12 +15,12 @@ const SectionPartners = () => {
       />
       <MaxWidthWrapper className="container relative">
         <SectionTitle
-          subtitle="Connecting with our esteemed partners to elevate our dojo."
+          subtitle={t("description")}
           sectionClasses="mx-auto max-w-xl text-center mb-12"
           titleClasses="mb-3 text-center text-white"
           subtitleClasses="text-md font-medium text-white"
         >
-          Proud Partners of HSTU Karate Dojo
+          {t("subtitle")}
         </SectionTitle>
         <div className="flex flex-wrap justify-center">
           <Image
