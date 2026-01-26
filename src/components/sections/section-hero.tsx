@@ -14,26 +14,30 @@ const SectionHero = () => {
     <div className="relative overflow-hidden">
       <HeroParallax products={products} />
       {/* See More Button */}
-      <div className="absolute bottom-8 right-8 z-50">
-        <Link
-          href="/gallery"
-          className="group inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-amber-500 to-orange-600 px-6 py-3 text-sm font-semibold text-white shadow-lg transition-all duration-300 hover:scale-105 hover:shadow-xl hover:from-amber-600 hover:to-orange-700"
-        >
-          See More
-          <svg
-            className="h-4 w-4 transition-transform group-hover:translate-x-1"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M17 8l4 4m0 0l-4 4m4-4H3"
-            />
-          </svg>
-        </Link>
+      <div className="absolute bottom-8 left-0 right-0 z-50">
+        <div className="container mx-auto max-w-6xl px-4">
+          <div className="flex justify-end">
+            <Link
+              href="/gallery"
+              className="group inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-amber-500 to-orange-600 px-6 py-3 text-sm font-semibold text-white shadow-lg transition-all duration-300 hover:scale-105 hover:shadow-xl hover:from-amber-600 hover:to-orange-700"
+            >
+              See More
+              <svg
+                className="h-4 w-4 transition-transform group-hover:translate-x-1"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M17 8l4 4m0 0l-4 4m4-4H3"
+                />
+              </svg>
+            </Link>
+          </div>
+        </div>
       </div>
     </div>
   );
