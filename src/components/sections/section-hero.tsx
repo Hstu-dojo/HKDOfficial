@@ -14,8 +14,18 @@ const cloudName = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME || "dksn30eyz";
 const cinematicEffect = "c_fill,w_720,h_480,q_auto,e_vignette:30,e_contrast:10,e_vibrance:20,e_sharpen:80";
 const baseUrl = `https://res.cloudinary.com/${cloudName}/image/upload/${cinematicEffect}`;
 
+// All images from favourite folder - updated fallback list
 const fallbackProducts = [
-  { title: "HKD Karate 1", thumbnail: `${baseUrl}/favourite/IMG_1937_sendde.jpg` },
+  { title: "HKD Moment 1", thumbnail: `${baseUrl}/favourite/1762661158686_exjfut.jpg` },
+  { title: "HKD Moment 2", thumbnail: `${baseUrl}/favourite/1769317491047_xkymix.jpg` },
+  { title: "HKD Moment 3", thumbnail: `${baseUrl}/favourite/1769317492753_cx7f84.jpg` },
+  { title: "HKD Moment 4", thumbnail: `${baseUrl}/favourite/20250905_125038_bzghpl.jpg` },
+  { title: "HKD Moment 5", thumbnail: `${baseUrl}/favourite/IMG_1937_sendde.jpg` },
+  { title: "HKD Moment 6", thumbnail: `${baseUrl}/favourite/IMG_20251108_215737_zxprcw.jpg` },
+  { title: "HKD Moment 7", thumbnail: `${baseUrl}/favourite/IMG_20251108_221125_hfljw3.jpg` },
+  { title: "HKD Moment 8", thumbnail: `${baseUrl}/favourite/IMG-20250822-WA0053_qiobdp.jpg` },
+  { title: "HKD Moment 9", thumbnail: `${baseUrl}/favourite/IMG20241102150243_01_mujqjl.jpg` },
+  { title: "HKD Moment 10", thumbnail: `${baseUrl}/favourite/IMG20241102210222_yg3tws.jpg` },
 ];
 
 const SectionHero = () => {
@@ -35,22 +45,17 @@ const SectionHero = () => {
             thumbnail: img.thumbnail,
           }));
 
-          // Ensure we have at least 10 products for good parallax effect
-          // If less than 10, repeat the images
-          let finalProducts = [...fetchedProducts];
-          while (finalProducts.length < 10 && fetchedProducts.length > 0) {
-            finalProducts = [...finalProducts, ...fetchedProducts].slice(0, Math.max(10, fetchedProducts.length * 2));
-          }
-
-          setProducts(finalProducts.slice(0, 15)); // Max 15 for performance
+          // Use fetched products directly - no duplication needed
+          // The parallax uses first 5 for row 1, next 5 for row 2
+          setProducts(fetchedProducts);
         } else {
-          // Use fallback if no images returned
-          setProducts([...fallbackProducts, ...fallbackProducts].slice(0, 10));
+          // Use fallback if no images returned - already has 10 unique images
+          setProducts(fallbackProducts);
         }
       } catch (error) {
         console.error("Failed to fetch images:", error);
-        // Use fallback on error
-        setProducts([...fallbackProducts, ...fallbackProducts].slice(0, 10));
+        // Use fallback on error - already has 10 unique images
+        setProducts(fallbackProducts);
       } finally {
         setLoading(false);
       }
