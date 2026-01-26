@@ -51,6 +51,14 @@ const middlewares = {
   "/contact": withLocaleMiddleware,
   "/posts": withLocaleMiddleware,
   "/posts/:path*": withLocaleMiddleware,
+  
+  // Public routes with locale prefix (for client-side navigation)
+  "/:locale/login": withLocaleMiddleware,
+  "/:locale/register": withLocaleMiddleware,
+  "/:locale/contact": withLocaleMiddleware,
+  "/:locale/dev": withLocaleMiddleware,
+  "/:locale/posts": withLocaleMiddleware,
+  "/:locale/posts/:path*": withLocaleMiddleware,
 
   // Docs routes - require admin-level roles
   "/docs": [withAdminMiddleware],
