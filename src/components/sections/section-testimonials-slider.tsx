@@ -11,7 +11,9 @@ import MaxWidthWrapper from "../maxWidthWrapper";
 
 // Cloudinary cloud name for HKD images
 const cloudName = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME || "dksn30eyz";
-const baseUrl = `https://res.cloudinary.com/${cloudName}/image/upload`;
+// Cinematic effect for testimonial avatars
+const cinematicEffect = "c_fill,w_300,h_300,g_face,q_auto,e_vignette:20,e_contrast:10,e_vibrance:15";
+const baseUrl = `https://res.cloudinary.com/${cloudName}/image/upload/${cinematicEffect}`;
 
 export const testimonials = [
   {
@@ -19,7 +21,7 @@ export const testimonials = [
     affiliation: "HSTU Student",
     comment:
       "Joining the HSTU Karate Dojo has been an incredible experience. The training is top-notch and the sensei is very supportive.",
-    image: `${baseUrl}/c_fill,w_300,h_300,g_face,q_auto/grading2/l9adzchxqhnzqbgupmfk.jpg`,
+    image: `${baseUrl}/favourite/IMG_1937_sendde.jpg`,
     rating: 5,
   },
   {
@@ -27,7 +29,7 @@ export const testimonials = [
     affiliation: "HSTU Faculty",
     comment:
       "The dojo provides a great environment for learning and personal growth. I highly recommend it to anyone interested in martial arts.",
-    image: `${baseUrl}/c_fill,w_300,h_300,g_face,q_auto/grading2/l9jeluxj13rikrtvhwru.jpg`,
+    image: `${baseUrl}/favourite/IMG_20251108_215737_zxprcw.jpg`,
     rating: 4,
   },
   {
@@ -35,7 +37,7 @@ export const testimonials = [
     affiliation: "HSTU Alumni",
     comment:
       "The discipline and skills I have gained from the HSTU Karate Dojo have been invaluable. It is a fantastic community.",
-    image: `${baseUrl}/c_fill,w_300,h_300,g_face,q_auto/grading2/lw8lymwdopixc8ewwaas.jpg`,
+    image: `${baseUrl}/favourite/IMG_20251108_221125_hfljw3.jpg`,
     rating: 5,
   },
   {
@@ -43,7 +45,7 @@ export const testimonials = [
     affiliation: "HSTU Staff",
     comment:
       "I appreciate the structured training sessions and the opportunity to compete in championships. The dojo has been a great addition to my routine.",
-    image: `${baseUrl}/c_fill,w_300,h_300,g_face,q_auto/grading2/maruwxebvpbal909b94c.jpg`,
+    image: `${baseUrl}/favourite/IMG-20250822-WA0053_qiobdp.jpg`,
     rating: 5,
   },
 ];

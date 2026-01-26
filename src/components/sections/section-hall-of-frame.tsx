@@ -6,7 +6,9 @@ import TypewriterEffectComponent from "../blogs/shared/TypewriterEffectComponent
 
 // Cloudinary cloud name for HKD images
 const cloudName = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME || "dksn30eyz";
-const baseUrl = `https://res.cloudinary.com/${cloudName}/image/upload`;
+// Cinematic effect for portraits: face detection, subtle vignette, contrast, warmth
+const cinematicEffect = "c_fill,w_300,h_300,g_face,q_auto,e_vignette:20,e_contrast:10,e_vibrance:15";
+const baseUrl = `https://res.cloudinary.com/${cloudName}/image/upload/${cinematicEffect}`;
 
 export function HallOfFrame() {
   const [isPlaying, setIsPlaying] = useState(false);
@@ -45,119 +47,119 @@ export function HallOfFrame() {
   );
 }
 
-// HKD Hall of Fame members with Cloudinary images
+// HKD Hall of Fame members with Cloudinary images from favourite folder
 export const users = [
   {
     name: "Sensei Abdullah",
     designation: "Chief Instructor, HKD",
-    image: `${baseUrl}/c_fill,w_300,h_300,g_face,q_auto/grading2/agvcuaaft5ztob4nmwxr.jpg`,
+    image: `${baseUrl}/favourite/IMG_1937_sendde.jpg`,
     badge: "Black Belt",
   },
   {
     name: "Sensei Rahman",
     designation: "Assistant Instructor",
-    image: `${baseUrl}/c_fill,w_300,h_300,g_face,q_auto/grading2/ap6my94brr1rwrgpmwgr.jpg`,
+    image: `${baseUrl}/favourite/IMG_20251108_215737_zxprcw.jpg`,
     badge: "Black Belt",
   },
   {
     name: "Karim Ahmed",
     designation: "Senior Member",
-    image: `${baseUrl}/c_fill,w_300,h_300,g_face,q_auto/grading2/auxq34xmb8hga8zu0ald.jpg`,
+    image: `${baseUrl}/favourite/IMG_20251108_221125_hfljw3.jpg`,
     badge: "Brown Belt",
   },
   {
     name: "Fatima Begum",
     designation: "Women's Champion",
-    image: `${baseUrl}/c_fill,w_300,h_300,g_face,q_auto/grading2/bwmsrj8zfsudzppwyjul.jpg`,
+    image: `${baseUrl}/favourite/IMG-20250822-WA0053_qiobdp.jpg`,
     badge: "Purple Belt",
   },
   {
     name: "Mohammad Ali",
     designation: "Tournament Winner",
-    image: `${baseUrl}/c_fill,w_300,h_300,g_face,q_auto/grading2/cfbkuwsrmdq11yrp234o.jpg`,
+    image: `${baseUrl}/favourite/IMG20241102210222_yg3tws.jpg`,
     badge: "Green Belt",
   },
   {
     name: "Aisha Khan",
     designation: "Rising Star",
-    image: `${baseUrl}/c_fill,w_300,h_300,g_face,q_auto/grading2/egrgtxni5tnbkjuhchfi.jpg`,
+    image: `${baseUrl}/favourite/IMG_1937_sendde.jpg`,
     badge: "Blue Belt",
   },
   {
     name: "Rafiq Uddin",
     designation: "Kata Specialist",
-    image: `${baseUrl}/c_fill,w_300,h_300,g_face,q_auto/grading2/emfesmumm7lhwhzjqvss.jpg`,
+    image: `${baseUrl}/favourite/IMG_20251108_215737_zxprcw.jpg`,
     badge: "Orange Belt",
   },
   {
     name: "Nasreen Akter",
     designation: "Dedicated Practitioner",
-    image: `${baseUrl}/c_fill,w_300,h_300,g_face,q_auto/grading2/enhusdstm6vbct2nf1ui.jpg`,
+    image: `${baseUrl}/favourite/IMG_20251108_221125_hfljw3.jpg`,
   },
   {
     name: "Sharif Hossain",
     designation: "Kumite Champion",
-    image: `${baseUrl}/c_fill,w_300,h_300,g_face,q_auto/grading2/f6hohamgvwlkm02bx4ud.jpg`,
+    image: `${baseUrl}/favourite/IMG-20250822-WA0053_qiobdp.jpg`,
     badge: "Gold Medal",
   },
   {
     name: "Rubina Islam",
     designation: "Training Excellence",
-    image: `${baseUrl}/c_fill,w_300,h_300,g_face,q_auto/grading2/f6xn63bun5v5i6adjv0w.jpg`,
+    image: `${baseUrl}/favourite/IMG20241102210222_yg3tws.jpg`,
     badge: "Yellow Belt",
   },
   {
     name: "Tanvir Hassan",
     designation: "Youth Division",
-    image: `${baseUrl}/c_fill,w_300,h_300,g_face,q_auto/grading2/fklenqcvdkgnvh31iybc.jpg`,
+    image: `${baseUrl}/favourite/IMG_1937_sendde.jpg`,
   },
   {
     name: "Sabrina Jahan",
     designation: "Women's Division",
-    image: `${baseUrl}/c_fill,w_300,h_300,g_face,q_auto/grading2/gkks4zjo44ukeaucl4is.jpg`,
+    image: `${baseUrl}/favourite/IMG_20251108_215737_zxprcw.jpg`,
   },
   {
     name: "Imran Khan",
     designation: "Senior Division",
-    image: `${baseUrl}/c_fill,w_300,h_300,g_face,q_auto/grading2/hb4h197fytyo5wbytjet.jpg`,
+    image: `${baseUrl}/favourite/IMG_20251108_221125_hfljw3.jpg`,
     badge: "White Belt",
   },
   {
     name: "Nadia Sultana",
     designation: "Consistent Performer",
-    image: `${baseUrl}/c_fill,w_300,h_300,g_face,q_auto/grading2/hsjpyxz9wc2js7ssr4kn.jpg`,
+    image: `${baseUrl}/favourite/IMG-20250822-WA0053_qiobdp.jpg`,
     badge: "Member",
   },
   {
     name: "Arif Mahmud",
     designation: "Tournament Participant",
-    image: `${baseUrl}/c_fill,w_300,h_300,g_face,q_auto/grading2/iqmosohzq68gnyeuzooy.jpg`,
+    image: `${baseUrl}/favourite/IMG20241102210222_yg3tws.jpg`,
   },
   {
     name: "Shirin Akhter",
     designation: "Dedicated Member",
-    image: `${baseUrl}/c_fill,w_300,h_300,g_face,q_auto/grading2/iuenpihfqkuzchihjxg9.jpg`,
+    image: `${baseUrl}/favourite/IMG_1937_sendde.jpg`,
   },
   {
     name: "Jamal Uddin",
     designation: "Training Assistant",
-    image: `${baseUrl}/c_fill,w_300,h_300,g_face,q_auto/grading2/jvrhlrhyfxcts3ommgtg.jpg`,
+    image: `${baseUrl}/favourite/IMG_20251108_215737_zxprcw.jpg`,
   },
   {
     name: "Maliha Rahman",
     designation: "Rising Champion",
-    image: `${baseUrl}/c_fill,w_300,h_300,g_face,q_auto/grading2/kfyujcmy5sf6psxpmdb9.jpg`,
+    image: `${baseUrl}/favourite/IMG_20251108_221125_hfljw3.jpg`,
   },
   {
     name: "Farhan Ahmed",
     designation: "Youth Talent",
-    image: `${baseUrl}/c_fill,w_300,h_300,g_face,q_auto/grading2/kpvvo9bfmfh3u7avavim.jpg`,
+    image: `${baseUrl}/favourite/IMG-20250822-WA0053_qiobdp.jpg`,
     badge: "Future Star",
   },
   {
     name: "Tamanna Akter",
     designation: "Spirit Award",
-    image: `${baseUrl}/c_fill,w_300,h_300,g_face,q_auto/grading2/l56zevqjpp15uxwvcwht.jpg`,
+    image: `${baseUrl}/favourite/IMG20241102210222_yg3tws.jpg`,
     badge: "HKD Spirit",
   },
 ];

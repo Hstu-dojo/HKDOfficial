@@ -8,7 +8,6 @@ import {
   MotionValue,
 } from "framer-motion";
 import Image from "next/image";
-import Link from "next/link";
 import NewsletterForm from "../forms/newsletter-form";
 import HeroTriangle from "@/components/hero-triangle";
 import MaxWidthWrapper from "../maxWidthWrapper";
@@ -18,7 +17,6 @@ export const HeroParallax = ({
 }: {
   products: {
     title: string;
-    link: string;
     thumbnail: string;
   }[];
 }) => {
@@ -138,7 +136,6 @@ export const ProductCard = ({
 }: {
   product: {
     title: string;
-    link: string;
     thumbnail: string;
   };
   translate: MotionValue<number>;
@@ -152,22 +149,19 @@ export const ProductCard = ({
         y: -20,
       }}
       key={product.title}
-      className="group/product relative h-96 w-[30rem] flex-shrink-0"
+      className="group/product relative h-96 w-[30rem] flex-shrink-0 cursor-default"
     >
-      <Link
-        href={product.link}
-        className="group-hover/product:shadow-2xl block "
-      >
+      <div className="block">
         <Image
           src={product.thumbnail}
           height="600"
           width="600"
-          className="absolute inset-0 h-full w-full object-cover object-left-top"
+          className="absolute inset-0 h-full w-full rounded-lg object-cover object-center shadow-lg"
           alt={product.title}
         />
-      </Link>
-      <div className="pointer-events-none absolute inset-0 h-full w-full bg-black opacity-0 group-hover/product:opacity-80"></div>
-      <h2 className="absolute bottom-4 left-4 text-white opacity-0 group-hover/product:opacity-100">
+      </div>
+      <div className="pointer-events-none absolute inset-0 h-full w-full rounded-lg bg-black opacity-0 transition-opacity duration-300 group-hover/product:opacity-60"></div>
+      <h2 className="absolute bottom-4 left-4 text-lg font-semibold text-white opacity-0 transition-opacity duration-300 group-hover/product:opacity-100">
         {product.title}
       </h2>
     </motion.div>

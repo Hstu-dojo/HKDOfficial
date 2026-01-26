@@ -1,103 +1,90 @@
 "use client";
 import React from "react";
+import Link from "next/link";
 import { HeroParallax } from "@/components/ui/hero-parallax";
 
-// Cloudinary cloud name: dksn30eyz, folder: grading2
+// Cloudinary cloud name: dksn30eyz, folder: favourite
 const cloudName = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME || "dksn30eyz";
-const baseUrl = `https://res.cloudinary.com/${cloudName}/image/upload`;
+// Cinematic effect: vignette, slight contrast boost, warmth, and sharpening
+const cinematicEffect = "c_fill,w_720,h_480,q_auto,e_vignette:30,e_contrast:10,e_vibrance:20,e_sharpen:80";
+const baseUrl = `https://res.cloudinary.com/${cloudName}/image/upload/${cinematicEffect}`;
 
 const SectionHero = () => {
   return (
     <div className="relative overflow-hidden">
-      {/* <HeroTriangle />
-      <section className="pb-16 pt-32 md:pt-40 lg:pb-40 lg:pt-60">
-        <div className="container max-w-6xl">
-          <div className="flex">
-            <div className="lg:w-[45%]">
-              <h1 className="text-headings max-w-xs text-3xl lg:text-4xl">
-                Welcome to HSTU Karate Dojo
-              </h1>
-              <p className="mb-12 text-lg text-slate-700 dark:text-slate-300">
-                Discover the art of karate at Hajee Mohammad Dahesh Science &
-                Technology University. Join us for rigorous training, community
-                engagement, and competitive success.
-              </p>
-            </div>
-          </div>
-          </div>
-          <NewsletterForm />
-      </section> */}
       <HeroParallax products={products} />
+      {/* See More Button */}
+      <div className="absolute bottom-8 right-8 z-50">
+        <Link
+          href="/gallery"
+          className="group inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-amber-500 to-orange-600 px-6 py-3 text-sm font-semibold text-white shadow-lg transition-all duration-300 hover:scale-105 hover:shadow-xl hover:from-amber-600 hover:to-orange-700"
+        >
+          See More
+          <svg
+            className="h-4 w-4 transition-transform group-hover:translate-x-1"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M17 8l4 4m0 0l-4 4m4-4H3"
+            />
+          </svg>
+        </Link>
+      </div>
     </div>
   );
 };
 
 export default SectionHero;
 
-// Real HKD Karate Dojo images from Cloudinary gallery
+// Real HKD Karate Dojo images from Cloudinary favourite folder with cinematic effects
+// Images are repeated to fill 10 slots for the parallax effect
 export const products = [
   {
-    title: "Belt Grading Ceremony",
-    link: "/karate/programs",
-    thumbnail: `${baseUrl}/c_fill,w_720,h_480,q_auto/grading2/agvcuaaft5ztob4nmwxr.jpg`,
+    title: "HKD Moment 1",
+    thumbnail: `${baseUrl}/favourite/IMG_1937_sendde.jpg`,
   },
   {
-    title: "Karate Training",
-    link: "/karate/courses",
-    thumbnail: `${baseUrl}/c_fill,w_720,h_480,q_auto/grading2/ap6my94brr1rwrgpmwgr.jpg`,
+    title: "HKD Moment 2",
+    thumbnail: `${baseUrl}/favourite/IMG_20251108_215737_zxprcw.jpg`,
   },
   {
-    title: "Group Practice",
-    link: "/karate/programs",
-    thumbnail: `${baseUrl}/c_fill,w_720,h_480,q_auto/grading2/auxq34xmb8hga8zu0ald.jpg`,
+    title: "HKD Moment 3",
+    thumbnail: `${baseUrl}/favourite/IMG_20251108_221125_hfljw3.jpg`,
   },
   {
-    title: "Kata Performance",
-    link: "/karate/courses",
-    thumbnail: `${baseUrl}/c_fill,w_720,h_480,q_auto/grading2/bwmsrj8zfsudzppwyjul.jpg`,
+    title: "HKD Moment 4",
+    thumbnail: `${baseUrl}/favourite/IMG-20250822-WA0053_qiobdp.jpg`,
   },
   {
-    title: "Belt Ceremony",
-    link: "/karate/programs",
-    thumbnail: `${baseUrl}/c_fill,w_720,h_480,q_auto/grading2/cfbkuwsrmdq11yrp234o.jpg`,
+    title: "HKD Moment 5",
+    thumbnail: `${baseUrl}/favourite/IMG20241102210222_yg3tws.jpg`,
   },
   {
-    title: "Training Session",
-    link: "/karate/courses",
-    thumbnail: `${baseUrl}/c_fill,w_720,h_480,q_auto/grading2/egrgtxni5tnbkjuhchfi.jpg`,
+    title: "HKD Moment 6",
+    thumbnail: `${baseUrl}/favourite/IMG_1937_sendde.jpg`,
   },
   {
-    title: "Dojo Practice",
-    link: "/karate/programs",
-    thumbnail: `${baseUrl}/c_fill,w_720,h_480,q_auto/grading2/emfesmumm7lhwhzjqvss.jpg`,
+    title: "HKD Moment 7",
+    thumbnail: `${baseUrl}/favourite/IMG_20251108_215737_zxprcw.jpg`,
   },
   {
-    title: "Grading Event",
-    link: "/karate/courses",
-    thumbnail: `${baseUrl}/c_fill,w_720,h_480,q_auto/grading2/enhusdstm6vbct2nf1ui.jpg`,
+    title: "HKD Moment 8",
+    thumbnail: `${baseUrl}/favourite/IMG_20251108_221125_hfljw3.jpg`,
   },
   {
-    title: "Kumite Practice",
-    link: "/karate/programs",
-    thumbnail: `${baseUrl}/c_fill,w_720,h_480,q_auto/grading2/f6hohamgvwlkm02bx4ud.jpg`,
+    title: "HKD Moment 9",
+    thumbnail: `${baseUrl}/favourite/IMG-20250822-WA0053_qiobdp.jpg`,
   },
   {
-    title: "Award Ceremony",
-    link: "/karate/courses",
-    thumbnail: `${baseUrl}/c_fill,w_720,h_480,q_auto/grading2/f6xn63bun5v5i6adjv0w.jpg`,
+    title: "HKD Moment 10",
+    thumbnail: `${baseUrl}/favourite/IMG20241102210222_yg3tws.jpg`,
   },
-  {
-    title: "Team Training",
-    link: "/karate/programs",
-    thumbnail: `${baseUrl}/c_fill,w_720,h_480,q_auto/grading2/fklenqcvdkgnvh31iybc.jpg`,
-  },
-  {
-    title: "HKD Champions",
-    link: "/karate/courses",
-    thumbnail: `${baseUrl}/c_fill,w_720,h_480,q_auto/grading2/gkks4zjo44ukeaucl4is.jpg`,
-  },
-  {
-    title: "Dojo Spirit",
+];
     link: "/karate/programs",
     thumbnail: `${baseUrl}/c_fill,w_720,h_480,q_auto/grading2/hb4h197fytyo5wbytjet.jpg`,
   },
