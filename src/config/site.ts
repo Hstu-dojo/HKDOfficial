@@ -42,8 +42,8 @@ export const siteConfig = {
     "Technical proficiency in karate",
     "Karate physical fitness",
   ],
-  url: "https://karate.paradox-bd.com/",
-  ogImage: "https://karate.paradox-bd.com/og-image.png",
+  url: "https://www.hstuma.com/",
+  ogImage: "https://www.hstuma.com/og-image.png",
 };
 
 export const mainNav = [

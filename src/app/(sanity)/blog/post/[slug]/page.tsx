@@ -55,7 +55,7 @@ export default async function ProjectSlugRoute({ params }: Props) {
   }
 
   const project = initial.data;
-  const BASE_URL = process.env.SITE_URL || process.env.NEXT_PUBLIC_SITE_URL || "https://karate.paradox-bd.com";
+  const BASE_URL = process.env.SITE_URL || process.env.NEXT_PUBLIC_SITE_URL || "https://www.hstuma.com";
   
   // Generate NewsArticle structured data for Google News
   const structuredData = {

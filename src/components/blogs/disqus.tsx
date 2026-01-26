@@ -15,7 +15,7 @@ function Disqus({ id }: { id: string }) {
     *  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables    */
     
     var disqus_config = function () {
-    // this.page.url = 'https://karate.paradox-bd.com';  // Replace PAGE_URL with your page's canonical URL variable
+    // this.page.url = 'https://www.hstuma.com';  // Replace PAGE_URL with your page's canonical URL variable
     this.page.identifier = '12345' ; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
     };
     

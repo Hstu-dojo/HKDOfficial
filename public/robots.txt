@@ -13,10 +13,10 @@ Disallow: /sub-path-1
 Disallow: /path-2
 
 # Host
-Host: https://karate.paradox-bd.com
+Host: https://www.hstuma.com
 
 # Sitemaps
-Sitemap: https://karate.paradox-bd.com/sitemap.xml
-Sitemap: https://karate.paradox-bd.com/blog/sitemap.xml
-Sitemap: https://karate.paradox-bd.com/google-news-sitemap.xml
-Sitemap: https://karate.paradox-bd.com/feed.xml
+Sitemap: https://www.hstuma.com/sitemap.xml
+Sitemap: https://www.hstuma.com/blog/sitemap.xml
+Sitemap: https://www.hstuma.com/google-news-sitemap.xml
+Sitemap: https://www.hstuma.com/feed.xml

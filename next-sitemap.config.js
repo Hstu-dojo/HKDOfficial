@@ -1,5 +1,5 @@
 module.exports = {
-  siteUrl: process.env.SITE_URL || "https://karate.paradox-bd.com",
+  siteUrl: process.env.SITE_URL || "https://www.hstuma.com",
   changefreq: "daily",
   priority: 0.7,
   sitemapSize: 5000,
@@ -7,11 +7,11 @@ module.exports = {
   exclude: ["/protected-page", "/awesome/secret-page", "/docs"],
   // alternateRefs: [
   //   {
-  //     href: `https://karate.paradox-bd.com/en`,
+  //     href: `https://www.hstuma.com/en`,
   //     hreflang: "en",
   //   },
   //   {
-  //     href: `https://karate.paradox-bd.com/fr`,
+  //     href: `https://www.hstuma.com/fr`,
   //     hreflang: "fr",
   //   },
   // ],

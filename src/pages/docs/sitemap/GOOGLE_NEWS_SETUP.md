@@ -37,9 +37,9 @@ This helps Google News properly index and display your articles.
 - `src/app/(sanity)/feed.xml/route.js` - RSS feed
 
 **Available URLs:**
-- Blog Sitemap: `https://karate.paradox-bd.com/blog/sitemap.xml`
-- RSS Feed: `https://karate.paradox-bd.com/feed.xml`
-- Main Sitemap: `https://karate.paradox-bd.com/sitemap.xml`
+- Blog Sitemap: `https://www.hstuma.com/blog/sitemap.xml`
+- RSS Feed: `https://www.hstuma.com/feed.xml`
+- Main Sitemap: `https://www.hstuma.com/sitemap.xml`
 
 ## 📝 How to Submit to Google News
 
@@ -52,7 +52,7 @@ This helps Google News properly index and display your articles.
 1. Click **"Add Publication"** or manage your existing one
 2. Enter your publication details:
    - **Publication Name:** HSTU Karate Dojo Blog
-   - **Website URL:** `https://karate.paradox-bd.com`
+   - **Website URL:** `https://www.hstuma.com`
    - **Language:** English (en)
    - **Country:** Your primary country
 
@@ -67,8 +67,8 @@ You'll need to verify you own the website. Choose one method:
 ### Step 4: Configure Content Settings
 1. **Content Type:** News and magazine articles
 2. **Update Frequency:** Select how often you publish
-3. **RSS Feed URL:** `https://karate.paradox-bd.com/feed.xml`
-4. **Sitemap URL:** `https://karate.paradox-bd.com/blog/sitemap.xml`
+3. **RSS Feed URL:** `https://www.hstuma.com/feed.xml`
+4. **Sitemap URL:** `https://www.hstuma.com/blog/sitemap.xml`
 
 ### Step 5: Set Up Sections (Optional)
 Create sections for better organization:
@@ -87,7 +87,7 @@ etc.
 
 ### Add Your Property
 1. Go to [Google Search Console](https://search.google.com/search-console)
-2. Add property: `https://karate.paradox-bd.com`
+2. Add property: `https://www.hstuma.com`
 3. Verify ownership (similar to Publisher Center)
 
 ### Submit Sitemaps
@@ -132,7 +132,7 @@ Check the **Google News** performance report to see:
 ### 1. Test Structured Data
 Use Google's Rich Results Test:
 1. Go to [Rich Results Test](https://search.google.com/test/rich-results)
-2. Enter a blog post URL: `https://karate.paradox-bd.com/blog/post/[your-slug]`
+2. Enter a blog post URL: `https://www.hstuma.com/blog/post/[your-slug]`
 3. Check for NewsArticle schema validation
 
 ### 2. Verify SWG Script
@@ -143,13 +143,13 @@ Use Google's Rich Results Test:
 
 ### 3. Check Sitemaps
 Visit these URLs in your browser:
-- `https://karate.paradox-bd.com/blog/sitemap.xml`
-- `https://karate.paradox-bd.com/feed.xml`
+- `https://www.hstuma.com/blog/sitemap.xml`
+- `https://www.hstuma.com/feed.xml`
 
 Verify they load and contain your blog posts.
 
 ### 4. Robots.txt Validation
-Check: `https://karate.paradox-bd.com/robots.txt`
+Check: `https://www.hstuma.com/robots.txt`
 Should list all your sitemaps.
 
 ## 📊 Monitoring & Analytics

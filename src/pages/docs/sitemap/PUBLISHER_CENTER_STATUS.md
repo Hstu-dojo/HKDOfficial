@@ -3,10 +3,10 @@
 ## Current Status: **COMPLETE & ACTIVE** 🎉
 
 ### What You've Already Done:
-✅ Added sitemap: `https://karate.paradox-bd.com/blog/sitemap.xml` - **Verified**  
-✅ Added RSS feed: `https://karate.paradox-bd.com/feed.xml` - **Verified**  
+✅ Added sitemap: `https://www.hstuma.com/blog/sitemap.xml` - **Verified**  
+✅ Added RSS feed: `https://www.hstuma.com/feed.xml` - **Verified**  
 ✅ Verified domain: `karate.paradox-bd.com` - **Verified**  
-✅ Added Google News sitemap: `https://karate.paradox-bd.com/google-news-sitemap.xml` - **New!**
+✅ Added Google News sitemap: `https://www.hstuma.com/google-news-sitemap.xml` - **New!**
 
 ---
 
@@ -27,7 +27,7 @@
 ### 1. **Add the New Google News Sitemap** (Recommended)
 Go back to Publisher Center → Content Sources and add:
 ```
-https://karate.paradox-bd.com/google-news-sitemap.xml
+https://www.hstuma.com/google-news-sitemap.xml
 ```
 
 **Why?** This special sitemap:
@@ -98,7 +98,7 @@ pnpm build
 **Format Example:**
 ```xml
 <url>
-  <loc>https://karate.paradox-bd.com/blog/post/your-article</loc>
+  <loc>https://www.hstuma.com/blog/post/your-article</loc>
   <news:news>
     <news:publication>
       <news:name>HSTU Karate Dojo</news:name>

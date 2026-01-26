@@ -22,7 +22,7 @@ export async function GET() {
       return postDate >= twoDaysAgo;
     });
 
-    const BASE_URL = process.env.SITE_URL || process.env.NEXT_PUBLIC_SITE_URL || "https://karate.paradox-bd.com";
+    const BASE_URL = process.env.SITE_URL || process.env.NEXT_PUBLIC_SITE_URL || "https://www.hstuma.com";
     const PUBLICATION_NAME = "HSTU Karate Dojo";
     const PUBLICATION_LANGUAGE = "en";
 

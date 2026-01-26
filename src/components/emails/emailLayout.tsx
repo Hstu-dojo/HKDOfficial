@@ -61,7 +61,7 @@ export default function EmailLayout({
             </Link>
             , Inc. View our{" "}
             <Link
-              href="https://karate.paradox-bd.com/privacy"
+              href="https://www.hstuma.com/privacy"
               target="_blank"
               style={link}
             >
