@@ -123,6 +123,9 @@ export async function submitOnboarding(formData: any) {
           ...formData
       };
 
+      // Extract partner_id from formData
+      const partnerId = formData.partnerId || null;
+
       if (existing) {
         // Update existing registration
         await db.update(registrations)

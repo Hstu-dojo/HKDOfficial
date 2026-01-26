@@ -52,15 +52,17 @@ const FormSchema = z.object({
   dept: z.string().min(2, { message: "Department name must be at least 2 characters." }),
   session: z.string().min(4, { message: "Session must be at least 4 characters." }),
   motive: z.string().min(10, { message: "Motive must be at least 10 characters." }),
+  partnerId: z.string().optional(), // Venue/Partner selection
   agreement: z.boolean().refine(val => val === true, { message: "You must agree to the terms." }),
 });
 
 import { submitOnboarding } from "@/actions/onboarding-actions";
 import { useRouter } from "next/navigation";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 export function EnrollForm({ className, initialData, isEditMode = false }: { className?: string, initialData?: any, isEditMode?: boolean }) {
   const router = useRouter();
+  const [partners, setPartners] = useState<Array<{ id: string; name: string; location: string }>>([]);
   
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
@@ -86,9 +88,26 @@ export function EnrollForm({ className, initialData, isEditMode = false }: { cla
       dept: "",
       session: "",
       motive: "",
+      partnerId: undefined,
       agreement: false,
     },
   });
+
+  // Fetch partners on mount
+  useEffect(() => {
+    async function fetchPartners() {
+      try {
+        const response = await fetch('/api/partners');
+        if (response.ok) {
+          const data = await response.json();
+          setPartners(data);
+        }
+      } catch (error) {
+        console.error('Failed to fetch partners:', error);
+      }
+    }
+    fetchPartners();
+  }, []);
 
   // Reset form values when initialData changes (for edit mode)
   useEffect(() => {
@@ -484,6 +503,36 @@ export function EnrollForm({ className, initialData, isEditMode = false }: { cla
                           {...field}
                         />
                       </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="partnerId"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Training Venue</FormLabel>
+                      <Select
+                        onValueChange={field.onChange}
+                        defaultValue={field.value}
+                      >
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select training venue" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          {partners.map((partner) => (
+                            <SelectItem key={partner.id} value={partner.id}>
+                              {partner.name} - {partner.location}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      <FormDescription>
+                        Select your preferred training location
+                      </FormDescription>
                       <FormMessage />
                     </FormItem>
                   )}
