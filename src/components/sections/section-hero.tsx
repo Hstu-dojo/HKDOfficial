@@ -16,10 +16,6 @@ const baseUrl = `https://res.cloudinary.com/${cloudName}/image/upload/${cinemati
 
 const fallbackProducts = [
   { title: "HKD Karate 1", thumbnail: `${baseUrl}/favourite/IMG_1937_sendde.jpg` },
-  { title: "HKD Karate 2", thumbnail: `${baseUrl}/favourite/IMG_20251108_215737_zxprcw.jpg` },
-  { title: "HKD Karate 3", thumbnail: `${baseUrl}/favourite/IMG_20251108_221125_hfljw3.jpg` },
-  { title: "HKD Karate 4", thumbnail: `${baseUrl}/favourite/IMG-20250822-WA0053_qiobdp.jpg` },
-  { title: "HKD Karate 5", thumbnail: `${baseUrl}/favourite/IMG20241102210222_yg3tws.jpg` },
 ];
 
 const SectionHero = () => {
