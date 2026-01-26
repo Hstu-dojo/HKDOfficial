@@ -2,6 +2,7 @@ import { pgTable, text, integer, boolean, timestamp, jsonb } from "drizzle-orm/p
 import { sql } from "drizzle-orm";
 import { beltRankEnum } from "../enums";
 import { user } from "../auth";
+import { partners } from "../partner";
 
 // Course Packages - defines different karate training packages
 export const courses = pgTable("courses", {
@@ -31,6 +32,9 @@ export const courses = pgTable("courses", {
   
   // Features included
   features: jsonb("features").$type<string[]>(), // e.g., ["Uniform included", "Belt test fee included"]
+  
+  // Partner/Venue - if set, course is exclusive to that partner
+  partnerId: text("partner_id").references(() => partners.id, { onDelete: 'set null' }),
   
   // Media
   thumbnailUrl: text("thumbnail_url"),

@@ -37,12 +37,12 @@
 
 ## 3. Onboarding Flow Updates
 
-- [ ] **Update Onboarding UI** (`src/app/(onboarding)/...`):
+- [x] **Update Onboarding UI** (`src/app/(onboarding)/...`):
     - Fetch list of active Partners.
     - Add "Select Venue" dropdown (Default: "HSTU Campus").
-- [ ] **Update Server Action** (`src/actions/check-profile.ts` or similar):
+- [x] **Update Server Action** (`src/actions/check-profile.ts` or similar):
     - Accept `partner_id` in the payload.
-    - Save `partner_id` to the `members` (or `account`) table.
+    - Save `partner_id` to the registration notes (to be used when creating member).
 
 ## 4. Partner Profile Page (Public)
 

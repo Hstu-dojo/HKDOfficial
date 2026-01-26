@@ -10,6 +10,7 @@ const defaultRoles = [
   { name: "ADMIN", description: "Administrator with management access" },
   { name: "MODERATOR", description: "Moderator with limited management access" },
   { name: "INSTRUCTOR", description: "Instructor with course management access" },
+  { name: "PARTNER", description: "Partner organization with student management access" },
   { name: "STUDENT", description: "Student with learning access" },
   { name: "USER", description: "Regular user with basic access" },
   { name: "MEMBER", description: "Regular member with basic access" },
@@ -180,7 +181,23 @@ const defaultPermissions: Array<{
   { name: "delete_program_registration", resource: "PROGRAM_REGISTRATION", action: "DELETE", description: "Delete program registrations" },
   { name: "manage_program_registration", resource: "PROGRAM_REGISTRATION", action: "MANAGE", description: "Manage program registrations" },
   { name: "approve_program_registration", resource: "PROGRAM_REGISTRATION", action: "APPROVE", description: "Approve program registrations" },
-  { name: "verify_program_registration", resource: "PROGRAM_REGISTRATION", action: "VERIFY", description: "Verify program payments" },];
+  { name: "verify_program_registration", resource: "PROGRAM_REGISTRATION", action: "VERIFY", description: "Verify program payments" },
+
+  // Partner permissions
+  { name: "create_partner", resource: "PARTNER", action: "CREATE", description: "Create new partners" },
+  { name: "read_partner", resource: "PARTNER", action: "READ", description: "View partners" },
+  { name: "update_partner", resource: "PARTNER", action: "UPDATE", description: "Update partners" },
+  { name: "delete_partner", resource: "PARTNER", action: "DELETE", description: "Delete partners" },
+  { name: "manage_partner", resource: "PARTNER", action: "MANAGE", description: "Full partner management" },
+
+  // Partner Bill permissions
+  { name: "create_partner_bill", resource: "PARTNER_BILL", action: "CREATE", description: "Create partner bills" },
+  { name: "read_partner_bill", resource: "PARTNER_BILL", action: "READ", description: "View partner bills" },
+  { name: "update_partner_bill", resource: "PARTNER_BILL", action: "UPDATE", description: "Update partner bills" },
+  { name: "delete_partner_bill", resource: "PARTNER_BILL", action: "DELETE", description: "Delete partner bills" },
+  { name: "manage_partner_bill", resource: "PARTNER_BILL", action: "MANAGE", description: "Full partner bill management" },
+  { name: "verify_partner_bill", resource: "PARTNER_BILL", action: "VERIFY", description: "Verify partner bill payments" },
+];
 
 // Role-Permission mappings
 const rolePermissionMappings: { [key: string]: string[] } = {
@@ -215,6 +232,10 @@ const rolePermissionMappings: { [key: string]: string[] } = {
     "create_program", "read_program", "update_program", "delete_program", "manage_program",
     // Program Registration permissions
     "create_program_registration", "read_program_registration", "update_program_registration", "delete_program_registration", "manage_program_registration", "approve_program_registration", "verify_program_registration",
+    // Partner permissions
+    "create_partner", "read_partner", "update_partner", "delete_partner", "manage_partner",
+    // Partner Bill permissions
+    "create_partner_bill", "read_partner_bill", "update_partner_bill", "delete_partner_bill", "manage_partner_bill", "verify_partner_bill",
   ],
   ADMIN: [
     // Most permissions except system-level ones
@@ -247,6 +268,10 @@ const rolePermissionMappings: { [key: string]: string[] } = {
     "create_program", "read_program", "update_program", "delete_program", "manage_program", 
     // Program Registration permissions for admin
     "read_program_registration", "update_program_registration", "delete_program_registration", "manage_program_registration", "approve_program_registration", "verify_program_registration",
+    // Partner permissions for admin
+    "create_partner", "read_partner", "update_partner", "delete_partner", "manage_partner",
+    // Partner Bill permissions for admin
+    "create_partner_bill", "read_partner_bill", "update_partner_bill", "delete_partner_bill", "manage_partner_bill", "verify_partner_bill",
   ],
   MODERATOR: [
     // Content moderation permissions
@@ -293,6 +318,29 @@ const rolePermissionMappings: { [key: string]: string[] } = {
     "create_schedule", "read_schedule", "update_schedule",
     // Monthly fee view
     "read_monthly_fee",
+  ],
+  PARTNER: [
+    // Partner-specific permissions - can manage their students and view bills
+    "read_user",
+    "read_account",
+    // Member management for their students
+    "create_member", "read_member", "update_member",
+    // Course viewing
+    "read_course",
+    // Class management for their venue
+    "read_class",
+    // Billing
+    "read_partner_bill",
+    "read_payment",
+    // Schedule
+    "read_schedule",
+    // Enrollment for their students
+    "read_enrollment", "create_enrollment",
+    // Basic content access
+    "read_gallery",
+    "read_event",
+    "read_announcement",
+    "read_blog",
   ],
   STUDENT: [
     // Basic read permissions
@@ -374,7 +422,8 @@ export async function seedRBACData() {
       "USER", "ACCOUNT", "SESSION", "PROVIDER", "ROLE", "PERMISSION",
       "COURSE", "BLOG", "MEDIA", "CLASS", "EQUIPMENT", "MEMBER", "BILL", "PAYMENT",
       "GALLERY", "EVENT", "ANNOUNCEMENT", "CERTIFICATE", "REPORT",
-      "ENROLLMENT", "MONTHLY_FEE", "SCHEDULE", "PROGRAM", "PROGRAM_REGISTRATION"
+      "ENROLLMENT", "MONTHLY_FEE", "SCHEDULE", "PROGRAM", "PROGRAM_REGISTRATION",
+      "PARTNER", "PARTNER_BILL"
     ] as const;
 
     for (const permData of defaultPermissions) {

@@ -13,6 +13,7 @@
     "db:drop": "drizzle-kit drop",
     "db:introspect": "drizzle-kit introspect",
     "db:seed-rbac": "tsx scripts/seed-rbac.ts",
+    "db:seed-default-partner": "tsx scripts/seed-default-partner.ts",
     "db:assign-super-admin": "tsx scripts/assign-super-admin.ts",
     "db:test-permissions": "tsx scripts/test-permissions.ts",
     "db:verify-rbac": "tsx scripts/verify-rbac.ts",

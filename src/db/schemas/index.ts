@@ -6,6 +6,7 @@ export * from './auth';
 export * from './karate';
 export * from './billing';
 export * from './content';
+export * from './partner';
 
 // Export all relations
 export * from './relations';
