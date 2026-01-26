@@ -52,7 +52,7 @@ export function ProfileCompletionBanner({
         href="/onboarding"
         className={cn(
           "inline-flex items-center gap-1.5 text-sm font-medium",
-          "text-amber-600 dark:text-amber-400 hover:text-amber-700 dark:hover:text-amber-300",
+          "text-violet-600 dark:text-cyan-400 hover:text-violet-700 dark:hover:text-cyan-300",
           "transition-colors",
           className
         )}
@@ -68,19 +68,19 @@ export function ProfileCompletionBanner({
     return (
       <div className={cn(
         "relative overflow-hidden rounded-2xl",
-        "bg-gradient-to-br from-amber-50 via-white to-orange-50",
-        "dark:from-amber-900/20 dark:via-slate-800 dark:to-orange-900/20",
-        "border border-amber-200/60 dark:border-amber-500/30",
+        "bg-gradient-to-br from-violet-50 via-white to-cyan-50",
+        "dark:from-violet-900/20 dark:via-slate-800 dark:to-cyan-900/20",
+        "border border-violet-200/60 dark:border-cyan-500/30",
         "shadow-sm",
         className
       )}>
         {/* Decorative elements */}
-        <div className="absolute -top-12 -right-12 w-40 h-40 bg-gradient-to-br from-amber-400/10 to-orange-400/10 dark:from-amber-500/5 dark:to-orange-500/5 rounded-full blur-2xl" />
+        <div className="absolute -top-12 -right-12 w-40 h-40 bg-gradient-to-br from-violet-400/10 to-cyan-400/10 dark:from-violet-500/5 dark:to-cyan-500/5 rounded-full blur-2xl" />
         
         <div className="relative p-5">
           <div className="flex items-start gap-4">
             {/* Icon */}
-            <div className="flex-shrink-0 p-3 rounded-xl bg-gradient-to-br from-amber-400 to-orange-500 shadow-lg shadow-amber-500/20 dark:shadow-amber-500/10">
+            <div className="flex-shrink-0 p-3 rounded-xl bg-gradient-to-br from-violet-500 to-cyan-500 shadow-lg shadow-violet-500/20 dark:shadow-cyan-500/10">
               <UserCircleIcon className="h-6 w-6 text-white" />
             </div>
 
@@ -98,9 +98,9 @@ export function ProfileCompletionBanner({
                 href="/onboarding"
                 className={cn(
                   "mt-4 inline-flex items-center gap-2 px-4 py-2 rounded-lg",
-                  "bg-gradient-to-r from-amber-500 to-orange-500",
+                  "bg-gradient-to-r from-violet-600 to-cyan-500",
                   "text-white text-sm font-semibold",
-                  "hover:from-amber-600 hover:to-orange-600",
+                  "hover:from-violet-700 hover:to-cyan-600",
                   "shadow-sm hover:shadow-md",
                   "transition-all duration-200",
                   "group"
@@ -120,16 +120,16 @@ export function ProfileCompletionBanner({
   return (
     <div className={cn(
       "relative overflow-hidden rounded-xl",
-      "bg-gradient-to-r from-amber-50 via-yellow-50 to-orange-50",
-      "dark:from-amber-900/30 dark:via-yellow-900/20 dark:to-orange-900/30",
-      "border border-amber-200/60 dark:border-amber-600/30",
+      "bg-gradient-to-r from-violet-50 via-indigo-50 to-cyan-50",
+      "dark:from-violet-900/30 dark:via-indigo-900/20 dark:to-cyan-900/30",
+      "border border-violet-200/60 dark:border-cyan-600/30",
       className
     )}>
       <div className="relative px-4 py-3 sm:px-6 sm:py-4">
         <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-4">
           {/* Icon */}
-          <div className="flex-shrink-0 p-2 rounded-lg bg-amber-100 dark:bg-amber-500/20">
-            <ExclamationTriangleIcon className="h-5 w-5 text-amber-600 dark:text-amber-400" />
+          <div className="flex-shrink-0 p-2 rounded-lg bg-violet-100 dark:bg-violet-500/20">
+            <ExclamationTriangleIcon className="h-5 w-5 text-violet-600 dark:text-cyan-400" />
           </div>
 
           {/* Text */}
@@ -147,8 +147,8 @@ export function ProfileCompletionBanner({
             href="/onboarding"
             className={cn(
               "flex-shrink-0 inline-flex items-center gap-1.5 px-4 py-2 rounded-lg",
-              "bg-amber-500 hover:bg-amber-600",
-              "dark:bg-amber-500 dark:hover:bg-amber-400",
+              "bg-gradient-to-r from-violet-600 to-cyan-500 hover:from-violet-700 hover:to-cyan-600",
+              "dark:from-violet-600 dark:to-cyan-500 dark:hover:from-violet-500 dark:hover:to-cyan-400",
               "text-white text-sm font-semibold",
               "transition-colors",
               "group"

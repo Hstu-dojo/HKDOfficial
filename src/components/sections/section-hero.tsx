@@ -1,25 +1,90 @@
 "use client";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { HeroParallax } from "@/components/ui/hero-parallax";
 
-// Cloudinary cloud name: dksn30eyz, folder: favourite
+interface CloudinaryImage {
+  id: string;
+  title: string;
+  thumbnail: string;
+}
+
+// Fallback images in case API fails (using Cloudinary URLs with cinematic effects)
 const cloudName = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME || "dksn30eyz";
-// Cinematic effect: vignette, slight contrast boost, warmth, and sharpening
 const cinematicEffect = "c_fill,w_720,h_480,q_auto,e_vignette:30,e_contrast:10,e_vibrance:20,e_sharpen:80";
 const baseUrl = `https://res.cloudinary.com/${cloudName}/image/upload/${cinematicEffect}`;
 
+const fallbackProducts = [
+  { title: "HKD Karate 1", thumbnail: `${baseUrl}/favourite/IMG_1937_sendde.jpg` },
+  { title: "HKD Karate 2", thumbnail: `${baseUrl}/favourite/IMG_20251108_215737_zxprcw.jpg` },
+  { title: "HKD Karate 3", thumbnail: `${baseUrl}/favourite/IMG_20251108_221125_hfljw3.jpg` },
+  { title: "HKD Karate 4", thumbnail: `${baseUrl}/favourite/IMG-20250822-WA0053_qiobdp.jpg` },
+  { title: "HKD Karate 5", thumbnail: `${baseUrl}/favourite/IMG20241102210222_yg3tws.jpg` },
+];
+
 const SectionHero = () => {
+  const [products, setProducts] = useState<{ title: string; thumbnail: string }[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchImages = async () => {
+      try {
+        const response = await fetch("/api/cloudinary/favourite");
+        const data = await response.json();
+
+        if (data.images && data.images.length > 0) {
+          // Transform API response to products format
+          const fetchedProducts = data.images.map((img: CloudinaryImage) => ({
+            title: img.title,
+            thumbnail: img.thumbnail,
+          }));
+
+          // Ensure we have at least 10 products for good parallax effect
+          // If less than 10, repeat the images
+          let finalProducts = [...fetchedProducts];
+          while (finalProducts.length < 10 && fetchedProducts.length > 0) {
+            finalProducts = [...finalProducts, ...fetchedProducts].slice(0, Math.max(10, fetchedProducts.length * 2));
+          }
+
+          setProducts(finalProducts.slice(0, 15)); // Max 15 for performance
+        } else {
+          // Use fallback if no images returned
+          setProducts([...fallbackProducts, ...fallbackProducts].slice(0, 10));
+        }
+      } catch (error) {
+        console.error("Failed to fetch images:", error);
+        // Use fallback on error
+        setProducts([...fallbackProducts, ...fallbackProducts].slice(0, 10));
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchImages();
+  }, []);
+
+  // Show loading skeleton while fetching
+  if (loading) {
+    return (
+      <div className="relative overflow-hidden min-h-[600px] flex items-center justify-center">
+        <div className="animate-pulse flex flex-col items-center gap-4">
+          <div className="h-8 w-48 bg-slate-200 dark:bg-slate-700 rounded"></div>
+          <div className="h-4 w-64 bg-slate-200 dark:bg-slate-700 rounded"></div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="relative overflow-hidden">
       <HeroParallax products={products} />
       {/* See More Button */}
-      <div className="absolute bottom-8 left-0 right-0 z-50">
-        <div className="container mx-auto max-w-6xl px-4">
+      <div className="">
+        <div className="container mx-auto max-w-7xl">
           <div className="flex justify-end">
             <Link
               href="/gallery"
-              className="group inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-amber-500 to-orange-600 px-6 py-3 text-sm font-semibold text-white shadow-lg transition-all duration-300 hover:scale-105 hover:shadow-xl hover:from-amber-600 hover:to-orange-700"
+              className="group inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-violet-600 to-cyan-500 px-6 py-3 text-sm font-semibold text-white shadow-lg transition-all duration-300 hover:scale-105 hover:shadow-xl hover:from-violet-700 hover:to-cyan-600"
             >
               See More
               <svg
@@ -44,48 +109,3 @@ const SectionHero = () => {
 };
 
 export default SectionHero;
-
-// Real HKD Karate Dojo images from Cloudinary favourite folder with cinematic effects
-// Images are repeated to fill 10 slots for the parallax effect
-export const products = [
-  {
-    title: "HKD Moment 1",
-    thumbnail: `${baseUrl}/favourite/IMG_1937_sendde.jpg`,
-  },
-  {
-    title: "HKD Moment 2",
-    thumbnail: `${baseUrl}/favourite/IMG_20251108_215737_zxprcw.jpg`,
-  },
-  {
-    title: "HKD Moment 3",
-    thumbnail: `${baseUrl}/favourite/IMG_20251108_221125_hfljw3.jpg`,
-  },
-  {
-    title: "HKD Moment 4",
-    thumbnail: `${baseUrl}/favourite/IMG-20250822-WA0053_qiobdp.jpg`,
-  },
-  {
-    title: "HKD Moment 5",
-    thumbnail: `${baseUrl}/favourite/IMG20241102210222_yg3tws.jpg`,
-  },
-  {
-    title: "HKD Moment 6",
-    thumbnail: `${baseUrl}/favourite/IMG_1937_sendde.jpg`,
-  },
-  {
-    title: "HKD Moment 7",
-    thumbnail: `${baseUrl}/favourite/IMG_20251108_215737_zxprcw.jpg`,
-  },
-  {
-    title: "HKD Moment 8",
-    thumbnail: `${baseUrl}/favourite/IMG_20251108_221125_hfljw3.jpg`,
-  },
-  {
-    title: "HKD Moment 9",
-    thumbnail: `${baseUrl}/favourite/IMG-20250822-WA0053_qiobdp.jpg`,
-  },
-  {
-    title: "HKD Moment 10",
-    thumbnail: `${baseUrl}/favourite/IMG20241102210222_yg3tws.jpg`,
-  },
-];
