@@ -85,17 +85,3 @@ export const products = [
     thumbnail: `${baseUrl}/favourite/IMG20241102210222_yg3tws.jpg`,
   },
 ];
-    link: "/karate/programs",
-    thumbnail: `${baseUrl}/c_fill,w_720,h_480,q_auto/grading2/hb4h197fytyo5wbytjet.jpg`,
-  },
-  {
-    title: "Karate Excellence",
-    link: "/karate/courses",
-    thumbnail: `${baseUrl}/c_fill,w_720,h_480,q_auto/grading2/hsjpyxz9wc2js7ssr4kn.jpg`,
-  },
-  {
-    title: "HSTU Karate Dojo",
-    link: "/onboarding",
-    thumbnail: `${baseUrl}/c_fill,w_720,h_480,q_auto/grading2/iqmosohzq68gnyeuzooy.jpg`,
-  },
-];
