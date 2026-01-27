@@ -7,34 +7,35 @@ const middlewares = {
   // define your middlewares here...
   // first internationalization, then auth middleware!
   "/": withLocaleMiddleware,
+  "/:locale/": withLocaleMiddleware,
   // "/services": withLocaleMiddleware,
   // "/pricing": withLocaleMiddleware,
   "/about": withLocaleMiddleware,
-  
+
   // Admin routes - require admin-level roles (both with and without locale prefix)
   "/admin": [withLocaleMiddleware, withAdminMiddleware],
   "/admin/:path*": [withLocaleMiddleware, withAdminMiddleware],
   "/:locale/admin": [withAdminMiddleware],
   "/:locale/admin/:path*": [withAdminMiddleware],
-  
+
   // Dashboard routes - require authentication
   "/dashboard": [withLocaleMiddleware, withAuthMiddleware],
   "/dashboard/:path*": [withLocaleMiddleware, withAuthMiddleware],
   "/:locale/dashboard": [withAuthMiddleware],
   "/:locale/dashboard/:path*": [withAuthMiddleware],
-  
+
   // Karate routes - public
   "/karate/courses": withLocaleMiddleware,
   "/karate/courses/:path*": withLocaleMiddleware,
   "/karate/programs": withLocaleMiddleware,
   "/karate/programs/:path*": withLocaleMiddleware,
-  
+
   // Also support direct /courses and /programs routes
   "/courses": withLocaleMiddleware,
   "/courses/:path*": withLocaleMiddleware,
   "/programs": withLocaleMiddleware,
   "/programs/:path*": withLocaleMiddleware,
-  
+
   // Protected routes - require authentication
   "/apply/:path*": [withLocaleMiddleware, withAuthMiddleware],
   "/profile": [withLocaleMiddleware, withAuthMiddleware],
@@ -43,7 +44,7 @@ const middlewares = {
   "/onboarding/:path*": [withLocaleMiddleware, withAuthMiddleware],
   "/[slug]/onboarding": [withLocaleMiddleware, withAuthMiddleware],
   "/[slug]/onboarding/:path*": [withLocaleMiddleware, withAuthMiddleware],
-  
+
   // Public routes
   "/dev": withLocaleMiddleware,
   "/login": withLocaleMiddleware,
@@ -51,7 +52,7 @@ const middlewares = {
   "/contact": withLocaleMiddleware,
   "/posts": withLocaleMiddleware,
   "/posts/:path*": withLocaleMiddleware,
-  
+
   // Public routes with locale prefix (for client-side navigation)
   "/:locale/login": withLocaleMiddleware,
   "/:locale/register": withLocaleMiddleware,
