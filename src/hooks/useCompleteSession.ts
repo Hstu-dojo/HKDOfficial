@@ -1,7 +1,7 @@
 'use client';
 
 import { useSession } from '@/hooks/useSessionCompat';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 
 interface CompleteUser {
   id: string;
@@ -19,31 +19,47 @@ interface CompleteSession {
 }
 
 /**
- * Hook that waits for complete session data including user ID and role
- * Solves the issue of incremental session loading in NextAuth
+ * Hook that waits for complete session data including user ID and role.
+ * Stabilized: once a complete session is established for a given user,
+ * subsequent token refreshes won't trigger loading states or retry loops.
  */
 export function useCompleteSession() {
   const { data: session, status } = useSession();
   const [completeSession, setCompleteSession] = useState<CompleteSession | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [retryCount, setRetryCount] = useState(0);
+  // Track the user ID we've already resolved, to skip re-processing on token refreshes
+  const resolvedUserIdRef = useRef<string | null>(null);
 
   useEffect(() => {
     if (status === 'loading') {
-      setIsLoading(true);
+      // Only show loading if we haven't resolved a user yet
+      if (!resolvedUserIdRef.current) {
+        setIsLoading(true);
+      }
       return;
     }
 
     if (status === 'unauthenticated') {
+      resolvedUserIdRef.current = null;
       setCompleteSession(null);
       setIsLoading(false);
       setRetryCount(0);
       return;
     }
 
+    // If we already resolved this user, don't re-enter the loading/retry flow
+    if (
+      resolvedUserIdRef.current &&
+      session?.user?.id === resolvedUserIdRef.current
+    ) {
+      return;
+    }
+
     // Check if session has all required data
     if (session?.user?.id && session?.user?.email) {
       // Session is complete
+      resolvedUserIdRef.current = session.user.id;
       setCompleteSession(session as CompleteSession);
       setIsLoading(false);
       setRetryCount(0);
@@ -58,6 +74,7 @@ export function useCompleteSession() {
       // Either no session or max retries reached
       if (session?.user?.email) {
         console.warn('Session loaded without complete data after retries, proceeding anyway');
+        resolvedUserIdRef.current = session?.user?.id ?? null;
         setCompleteSession(session as CompleteSession);
       }
       setIsLoading(false);

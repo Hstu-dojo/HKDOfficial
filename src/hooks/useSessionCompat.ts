@@ -1,14 +1,22 @@
 'use client'
 
 import { useAuth } from '@/context/AuthContext'
-import { useMemo } from 'react'
+import { useMemo, useRef } from 'react'
 
 /**
  * Compatibility hook that provides session data in NextAuth format
- * This makes migration easier for existing components
+ * This makes migration easier for existing components.
+ * 
+ * Stabilized: uses user ID as the cache key instead of the full user/session
+ * objects, preventing unnecessary downstream re-renders on token refresh.
  */
 export function useSession() {
   const { user, session, loading } = useAuth()
+  // Cache the formatted session to maintain reference stability
+  const cachedRef = useRef<{
+    userId: string | undefined
+    result: { data: any; status: 'loading' | 'authenticated' | 'unauthenticated' }
+  } | null>(null)
 
   const sessionData = useMemo(() => {
     if (loading) {
@@ -16,7 +24,14 @@ export function useSession() {
     }
 
     if (!user || !session) {
+      cachedRef.current = null
       return { data: null, status: 'unauthenticated' as const }
+    }
+
+    // If the user ID hasn't changed, return the cached result
+    // This prevents new object references on token refreshes
+    if (cachedRef.current && cachedRef.current.userId === user.id) {
+      return cachedRef.current.result
     }
 
     // Format user data to match NextAuth structure
@@ -32,10 +47,15 @@ export function useSession() {
       expires: session.expires_at ? new Date(session.expires_at * 1000).toISOString() : '',
     }
 
-    return {
+    const result = {
       data: formattedSession,
       status: 'authenticated' as const
     }
+
+    // Cache for next render
+    cachedRef.current = { userId: user.id, result }
+
+    return result
   }, [user, session, loading])
 
   return sessionData

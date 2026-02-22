@@ -1,7 +1,7 @@
 'use client';
 
 import { useCompleteSession } from './useCompleteSession';
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import type { ResourceType, ActionType } from '@/lib/rbac/types';
 
 interface UserPermissions {
@@ -24,31 +24,53 @@ export function useRBAC() {
   const [localUserId, setLocalUserId] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
+  // Track the user ID we've already fetched RBAC data for,
+  // so we don't re-fetch on token refreshes or session reference changes.
+  const lastFetchedUserIdRef = useRef<string | null>(null);
+
+  // Derive a stable user ID to use as the effect dependency
+  // instead of the entire session object (which changes on every token refresh)
+  const userId = session?.user?.id ?? null;
+
   // Fetch RBAC data using the Supabase user ID via header
   // This avoids cookie issues that can occur with getRBACContext
   useEffect(() => {
     if (status === 'loading' || !hasCompleteData) {
-      setLoading(true);
+      // Only show loading if we don't already have cached data for this user
+      if (!lastFetchedUserIdRef.current || lastFetchedUserIdRef.current !== userId) {
+        setLoading(true);
+      }
       return;
     }
     
-    if (!session?.user?.id) {
+    if (!userId) {
+      lastFetchedUserIdRef.current = null;
       setLocalUserId(null);
       setPermissions(null);
       setLoading(false);
       return;
     }
 
+    // Skip re-fetch if we already have RBAC data for this exact user
+    if (lastFetchedUserIdRef.current === userId && permissions !== null) {
+      setLoading(false);
+      return;
+    }
+
     async function fetchRBACData() {
       try {
-        setLoading(true);
-        console.log('[useRBAC] Fetching RBAC data for Supabase ID:', session!.user!.id);
+        // Don't show loading spinner if we already have cached permissions
+        // (allows background refresh without UI flash)
+        if (!lastFetchedUserIdRef.current) {
+          setLoading(true);
+        }
+        console.log('[useRBAC] Fetching RBAC data for Supabase ID:', userId);
         
         // Use the dedicated API endpoint that accepts Supabase ID via header
         const response = await fetch('/api/auth/get-user-rbac', {
           method: 'GET',
           headers: {
-            'x-supabase-user-id': session!.user!.id,
+            'x-supabase-user-id': userId!,
           },
         });
 
@@ -56,6 +78,7 @@ export function useRBAC() {
           const data = await response.json();
           console.log('[useRBAC] Got RBAC data:', data);
           
+          lastFetchedUserIdRef.current = userId;
           setLocalUserId(data.localUserId);
           setPermissions({
             roles: data.roles || [],
@@ -83,7 +106,8 @@ export function useRBAC() {
     }
 
     fetchRBACData();
-  }, [session, status, hasCompleteData]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [userId, status, hasCompleteData]);
 
   const hasPermission = useCallback((resource: ResourceType, action: ActionType): boolean => {
     if (!permissions) return false;
