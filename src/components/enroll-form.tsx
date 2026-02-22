@@ -197,15 +197,16 @@ export function EnrollForm({ className, initialData, isEditMode = false }: { cla
 
   return (
     <MaxWidthWrapper>
-      <Card className={cn("relative bottom-36 w-full", className)}>
+      <Card className={cn("w-full", className)}>
         <CardContent className="pt-6">
           <Form {...form}>
             <form
               onSubmit={form.handleSubmit(onSubmit)}
-              className="grid grid-cols-1 gap-6 md:grid-cols-2"
+              className="grid grid-cols-1 gap-x-6 gap-y-4 md:grid-cols-2"
             >
-              {/* user's name */}
+              {/* ========== LEFT COLUMN ========== */}
               <div className="space-y-4">
+                {/* — Personal Info — */}
                 <FormField
                   control={form.control}
                   name="username"
@@ -238,6 +239,8 @@ export function EnrollForm({ className, initialData, isEditMode = false }: { cla
                     </FormItem>
                   )}
                 />
+
+                {/* — Family — */}
                 <FormField
                   control={form.control}
                   name="fatherName"
@@ -245,10 +248,7 @@ export function EnrollForm({ className, initialData, isEditMode = false }: { cla
                     <FormItem>
                       <FormLabel>Father&apos;s Name</FormLabel>
                       <FormControl>
-                        <Input
-                          placeholder="Enter your father's name"
-                          {...field}
-                        />
+                        <Input placeholder="Enter your father's name" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -261,10 +261,7 @@ export function EnrollForm({ className, initialData, isEditMode = false }: { cla
                     <FormItem>
                       <FormLabel>Father&apos;s Occupation</FormLabel>
                       <FormControl>
-                        <Input
-                          placeholder="Enter your father's occupation"
-                          {...field}
-                        />
+                        <Input placeholder="Enter your father's occupation" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -277,10 +274,7 @@ export function EnrollForm({ className, initialData, isEditMode = false }: { cla
                     <FormItem>
                       <FormLabel>Mother&apos;s Name</FormLabel>
                       <FormControl>
-                        <Input
-                          placeholder="Enter your mother's name"
-                          {...field}
-                        />
+                        <Input placeholder="Enter your mother's name" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -293,15 +287,14 @@ export function EnrollForm({ className, initialData, isEditMode = false }: { cla
                     <FormItem>
                       <FormLabel>Mother&apos;s Occupation</FormLabel>
                       <FormControl>
-                        <Input
-                          placeholder="Enter your mother's occupation"
-                          {...field}
-                        />
+                        <Input placeholder="Enter your mother's occupation" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
                   )}
                 />
+
+                {/* — Address — */}
                 <FormField
                   control={form.control}
                   name="address"
@@ -342,6 +335,7 @@ export function EnrollForm({ className, initialData, isEditMode = false }: { cla
                   )}
                 />
 
+                {/* — Contact — */}
                 <FormField
                   control={form.control}
                   name="phone"
@@ -349,10 +343,7 @@ export function EnrollForm({ className, initialData, isEditMode = false }: { cla
                     <FormItem>
                       <FormLabel>Phone Number</FormLabel>
                       <FormControl>
-                        <Input
-                          placeholder="Enter your phone number"
-                          {...field}
-                        />
+                        <Input placeholder="Enter your phone number" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -384,6 +375,8 @@ export function EnrollForm({ className, initialData, isEditMode = false }: { cla
                     </FormItem>
                   )}
                 />
+
+                {/* — Physical — */}
                 <FormField
                   control={form.control}
                   name="age"
@@ -395,9 +388,7 @@ export function EnrollForm({ className, initialData, isEditMode = false }: { cla
                           type="number"
                           placeholder="Enter your age"
                           {...field}
-                          onChange={(e) =>
-                            field.onChange(Number(e.target.value))
-                          }
+                          onChange={(e) => field.onChange(Number(e.target.value))}
                         />
                       </FormControl>
                       <FormMessage />
@@ -415,9 +406,7 @@ export function EnrollForm({ className, initialData, isEditMode = false }: { cla
                           type="number"
                           placeholder="Enter your height"
                           {...field}
-                          onChange={(e) =>
-                            field.onChange(Number(e.target.value))
-                          }
+                          onChange={(e) => field.onChange(Number(e.target.value))}
                         />
                       </FormControl>
                       <FormMessage />
@@ -435,9 +424,7 @@ export function EnrollForm({ className, initialData, isEditMode = false }: { cla
                           type="number"
                           placeholder="Enter your weight"
                           {...field}
-                          onChange={(e) =>
-                            field.onChange(Number(e.target.value))
-                          }
+                          onChange={(e) => field.onChange(Number(e.target.value))}
                         />
                       </FormControl>
                       <FormMessage />
@@ -460,7 +447,62 @@ export function EnrollForm({ className, initialData, isEditMode = false }: { cla
                     </FormItem>
                   )}
                 />
+
+                {/* — Activities & Motive — */}
+                <div className="rounded-md border p-4 space-y-4">
+                  <h4 className="text-sm font-medium">Activities & Motive</h4>
+                  <FormField
+                    control={form.control}
+                    name="activitiesShort"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Activities — Short (Optional)</FormLabel>
+                        <FormControl>
+                          <Input placeholder="e.g., Football, Reading" maxLength={20} {...field} />
+                        </FormControl>
+                        <FormDescription>
+                          Max 20 characters — brief summary.
+                        </FormDescription>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="activitiesDetail"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Activities — Detailed (Optional)</FormLabel>
+                        <FormControl>
+                          <Textarea placeholder="Describe your activities, hobbies, and interests..." maxLength={200} {...field} />
+                        </FormControl>
+                        <FormDescription>
+                          Max 200 characters.
+                        </FormDescription>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="motive"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Motive for Training</FormLabel>
+                        <FormControl>
+                          <Textarea
+                            placeholder="Why do you want to learn karate? Describe your motivation and goals..."
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
               </div>
+
+              {/* ========== RIGHT COLUMN ========== */}
               <div className="space-y-4">
                 <FormField
                   control={form.control}
@@ -483,10 +525,6 @@ export function EnrollForm({ className, initialData, isEditMode = false }: { cla
                           <SelectItem value="Other">Other</SelectItem>
                         </SelectContent>
                       </Select>
-                      {/* <FormDescription>
-                        You can manage email addresses in your{" "}
-                        <Link href="/examples/forms">email settings</Link>.
-                      </FormDescription> */}
                       <FormMessage />
                     </FormItem>
                   )}
@@ -517,10 +555,6 @@ export function EnrollForm({ className, initialData, isEditMode = false }: { cla
                           <SelectItem value="O-">O-</SelectItem>
                         </SelectContent>
                       </Select>
-                      {/* <FormDescription>
-                        You can manage email addresses in your{" "}
-                        <Link href="/examples/forms">email settings</Link>.
-                      </FormDescription> */}
                       <FormMessage />
                     </FormItem>
                   )}
@@ -532,10 +566,7 @@ export function EnrollForm({ className, initialData, isEditMode = false }: { cla
                     <FormItem>
                       <FormLabel>Nationality</FormLabel>
                       <FormControl>
-                        <Input
-                          placeholder="Enter your nationality"
-                          {...field}
-                        />
+                        <Input placeholder="Enter your nationality" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -561,15 +592,14 @@ export function EnrollForm({ className, initialData, isEditMode = false }: { cla
                     <FormItem>
                       <FormLabel>NID / Birth Cert. / Passport No.</FormLabel>
                       <FormControl>
-                        <Input
-                          placeholder="Enter your ID number"
-                          {...field}
-                        />
+                        <Input placeholder="Enter your ID number" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
                   )}
                 />
+
+                {/* — Academic / Work — */}
                 <FormField
                   control={form.control}
                   name="occupation"
@@ -655,17 +685,14 @@ export function EnrollForm({ className, initialData, isEditMode = false }: { cla
                     <FormItem>
                       <FormLabel>Session (Optional)</FormLabel>
                       <FormControl>
-                        <Input
-                          placeholder="e.g., 2021-22"
-                          {...field}
-                        />
+                        <Input placeholder="e.g., 2021-22" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
                   )}
                 />
 
-                {/* Emergency Contact Section */}
+                {/* — Emergency Contact — */}
                 <div className="rounded-md border p-4 space-y-4">
                   <h4 className="text-sm font-medium">Emergency Contact</h4>
                   <FormField
@@ -708,6 +735,8 @@ export function EnrollForm({ className, initialData, isEditMode = false }: { cla
                     )}
                   />
                 </div>
+
+                {/* — Venue — */}
                 <FormField
                   control={form.control}
                   name="partnerId"
@@ -738,58 +767,8 @@ export function EnrollForm({ className, initialData, isEditMode = false }: { cla
                     </FormItem>
                   )}
                 />
-                {/* Activities & Motive Section */}
-                <div className="rounded-md border p-4 space-y-4">
-                  <h4 className="text-sm font-medium">Activities & Motive</h4>
-                  <FormField
-                    control={form.control}
-                    name="activitiesShort"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Activities — Short (Optional)</FormLabel>
-                        <FormControl>
-                          <Input placeholder="e.g., Football, Reading" maxLength={20} {...field} />
-                        </FormControl>
-                        <FormDescription>
-                          Max 20 characters — brief summary.
-                        </FormDescription>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={form.control}
-                    name="activitiesDetail"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Activities — Detailed (Optional)</FormLabel>
-                        <FormControl>
-                          <Textarea placeholder="Describe your activities, hobbies, and interests..." maxLength={200} {...field} />
-                        </FormControl>
-                        <FormDescription>
-                          Max 200 characters.
-                        </FormDescription>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={form.control}
-                    name="motive"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Motive for Training</FormLabel>
-                        <FormControl>
-                          <Textarea
-                            placeholder="Why do you want to learn karate? Describe your motivation and goals..."
-                            {...field}
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </div>
+
+                {/* — Agreement & Submit — */}
                 <FormField
                   control={form.control}
                   name="agreement"
@@ -823,7 +802,6 @@ export function EnrollForm({ className, initialData, isEditMode = false }: { cla
             </form>
           </Form>
         </CardContent>
-        {/* <CardFooter></CardFooter> */}
       </Card>
     </MaxWidthWrapper>
   );
