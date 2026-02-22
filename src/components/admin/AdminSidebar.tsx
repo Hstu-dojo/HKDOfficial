@@ -19,6 +19,7 @@ import {
   BookOpenIcon,
   BanknotesIcon,
   CreditCardIcon,
+  ClipboardDocumentListIcon,
 } from '@heroicons/react/24/outline';
 import { cn } from '@/lib/utils';
 
@@ -58,6 +59,16 @@ const navigation: NavItem[] = [
     description: 'Manage users and accounts',
     requiredPermission: {
       resource: 'USER',
+      action: 'READ',
+    },
+  },
+  {
+    name: 'Registrations',
+    href: '/admin/registrations',
+    icon: ClipboardDocumentListIcon,
+    description: 'View and manage member registrations',
+    requiredPermission: {
+      resource: 'MEMBER',
       action: 'READ',
     },
   },
