@@ -96,23 +96,10 @@ export default async function OnboardingPage({
       <Header />
       <main className="relative min-h-screen">
         <AuroraBd />
-        {/* Sticky heading bar */}
-        <div className="sticky top-0 z-30 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md border-b border-slate-200 dark:border-slate-700 shadow-sm">
-          <MaxWidthWrapper>
-            <div className="py-3 text-center">
-              <h1 className="text-lg font-bold dark:text-white md:text-2xl">
-                One more step to your dream DOJO.
-              </h1>
-              <p className="text-xs font-light text-slate-600 dark:text-neutral-300 md:text-sm">
-                Fill following info cautiously.
-              </p>
-            </div>
-          </MaxWidthWrapper>
-        </div>
         <MaxWidthWrapper>
-          <div className="pt-6 pb-16 relative z-10">
+          <div className="pt-32 pb-16 relative z-10">
             {isEditMode && (
-              <div className="max-w-2xl mx-auto mb-4">
+              <div className="max-w-2xl mx-auto mb-6">
                 <Link 
                   href="/onboarding" 
                   className="inline-flex items-center gap-2 text-sm text-slate-600 dark:text-slate-400 hover:text-primary transition-colors"
