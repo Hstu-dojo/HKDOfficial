@@ -135,8 +135,8 @@ export async function submitOnboarding(formData: any) {
             firstName: firstName,
             lastName: lastName,
             phoneNumber: formData.phone,
-            emergencyContact: "Not Provided",
-            emergencyPhone: formData.phone,
+            emergencyContact: formData.emergencyContact || "Not Provided",
+            emergencyPhone: formData.emergencyPhone || formData.phone,
             notes: JSON.stringify(extraData),
             status: 'pending', 
             updatedAt: new Date()
@@ -151,8 +151,8 @@ export async function submitOnboarding(formData: any) {
             firstName: firstName,
             lastName: lastName,
             phoneNumber: formData.phone,
-            emergencyContact: "Not Provided", // TODO: Add field to form
-            emergencyPhone: formData.phone, // TODO: Add field to form
+            emergencyContact: formData.emergencyContact || "Not Provided",
+            emergencyPhone: formData.emergencyPhone || formData.phone,
             notes: JSON.stringify(extraData),
             status: 'pending'
         });
