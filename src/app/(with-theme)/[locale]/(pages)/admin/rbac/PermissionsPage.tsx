@@ -135,7 +135,7 @@ export default function PermissionsPage() {
       </div>
 
       {error && (
-        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
+        <div className="bg-red-100 dark:bg-red-900/30 border border-red-400 text-red-700 px-4 py-3 rounded">
           {error}
         </div>
       )}
@@ -249,7 +249,7 @@ export default function PermissionsPage() {
                   <td className="border p-2">{role.description || "-"}</td>
                   <td className="border p-2">
                     <span className={`px-2 py-1 rounded text-xs ${
-                      role.isActive ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"
+                      role.isActive ? "bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300" : "bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-300"
                     }`}>
                       {role.isActive ? "Active" : "Inactive"}
                     </span>
@@ -282,18 +282,18 @@ export default function PermissionsPage() {
                 <tr key={permission.id} className="hover:bg-opacity-50">
                   <td className="border p-2 font-medium">{permission.name}</td>
                   <td className="border p-2">
-                    <span className="px-2 py-1 bg-blue-100 text-blue-800 rounded text-xs">
+                    <span className="px-2 py-1 bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-300 rounded text-xs">
                       {permission.resource}
                     </span>
                   </td>
                   <td className="border p-2">
                     <span className={`px-2 py-1 rounded text-xs ${
-                      permission.action === "MANAGE" ? "bg-purple-100 text-purple-800" :
-                      permission.action === "CREATE" ? "bg-green-100 text-green-800" :
-                      permission.action === "READ" ? "bg-gray-100 text-gray-800" :
-                      permission.action === "UPDATE" ? "bg-yellow-100 text-yellow-800" :
-                      permission.action === "DELETE" ? "bg-red-100 text-red-800" :
-                      "bg-gray-100 text-gray-800"
+                      permission.action === "MANAGE" ? "bg-purple-100 dark:bg-purple-900/30 text-purple-800" :
+                      permission.action === "CREATE" ? "bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300" :
+                      permission.action === "READ" ? "bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200" :
+                      permission.action === "UPDATE" ? "bg-yellow-100 dark:bg-yellow-900/30 text-yellow-800 dark:text-yellow-300" :
+                      permission.action === "DELETE" ? "bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-300" :
+                      "bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200"
                     }`}>
                       {permission.action}
                     </span>

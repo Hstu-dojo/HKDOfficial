@@ -71,12 +71,12 @@ interface Application {
 }
 
 const STATUS_CONFIG: Record<string, { label: string; color: string; icon: React.ComponentType<{ className?: string }> }> = {
-  pending_payment: { label: 'Pending Payment', color: 'bg-yellow-100 text-yellow-700', icon: ClockIcon },
-  payment_submitted: { label: 'Payment Submitted', color: 'bg-blue-100 text-blue-700', icon: BanknotesIcon },
-  payment_verified: { label: 'Payment Verified', color: 'bg-indigo-100 text-indigo-700', icon: DocumentCheckIcon },
-  approved: { label: 'Approved', color: 'bg-green-100 text-green-700', icon: CheckCircleIcon },
-  rejected: { label: 'Rejected', color: 'bg-red-100 text-red-700', icon: XCircleIcon },
-  cancelled: { label: 'Cancelled', color: 'bg-gray-100 text-gray-700', icon: XCircleIcon },
+  pending_payment: { label: 'Pending Payment', color: 'bg-yellow-100 dark:bg-yellow-900/30 text-yellow-700', icon: ClockIcon },
+  payment_submitted: { label: 'Payment Submitted', color: 'bg-blue-100 dark:bg-blue-900/30 text-blue-700', icon: BanknotesIcon },
+  payment_verified: { label: 'Payment Verified', color: 'bg-indigo-100 dark:bg-indigo-900/30 text-indigo-700', icon: DocumentCheckIcon },
+  approved: { label: 'Approved', color: 'bg-green-100 dark:bg-green-900/30 text-green-700', icon: CheckCircleIcon },
+  rejected: { label: 'Rejected', color: 'bg-red-100 dark:bg-red-900/30 text-red-700', icon: XCircleIcon },
+  cancelled: { label: 'Cancelled', color: 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300', icon: XCircleIcon },
 };
 
 export default function EnrollmentsManagement() {
@@ -205,8 +205,8 @@ export default function EnrollmentsManagement() {
       {/* Header */}
       <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Enrollment Applications</h1>
-          <p className="mt-1 text-sm text-gray-500">
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Enrollment Applications</h1>
+          <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
             Review and manage student enrollment applications
           </p>
         </div>
@@ -216,27 +216,27 @@ export default function EnrollmentsManagement() {
           <div className="relative group">
             <button
               disabled={exporting}
-              className="inline-flex items-center px-4 py-2 border border-gray-300 rounded-lg shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50"
+              className="inline-flex items-center px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg shadow-sm text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 disabled:opacity-50"
             >
               <ArrowDownTrayIcon className="h-4 w-4 mr-2" />
               {exporting ? 'Exporting...' : 'Export Excel'}
             </button>
-            <div className="absolute right-0 mt-1 w-48 bg-white rounded-lg shadow-lg border opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-10">
+            <div className="absolute right-0 mt-1 w-48 bg-white dark:bg-gray-800 rounded-lg shadow-lg border opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-10">
               <button
                 onClick={() => handleExport()}
-                className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-t-lg"
+                className="w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-600 rounded-t-lg"
               >
                 All Applications
               </button>
               <button
                 onClick={() => handleExport('approved')}
-                className="w-full text-left px-4 py-2 text-sm text-green-700 hover:bg-green-50"
+                className="w-full text-left px-4 py-2 text-sm text-green-700 hover:bg-green-50 dark:hover:bg-green-900/20"
               >
                 Approved Only
               </button>
               <button
                 onClick={() => handleExport('pending_payment')}
-                className="w-full text-left px-4 py-2 text-sm text-yellow-700 hover:bg-yellow-50"
+                className="w-full text-left px-4 py-2 text-sm text-yellow-700 hover:bg-yellow-50 dark:bg-yellow-900/20"
               >
                 Pending Payment
               </button>
@@ -248,7 +248,7 @@ export default function EnrollmentsManagement() {
               </button>
               <button
                 onClick={() => handleExport('rejected')}
-                className="w-full text-left px-4 py-2 text-sm text-red-700 hover:bg-red-50 rounded-b-lg"
+                className="w-full text-left px-4 py-2 text-sm text-red-700 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-b-lg"
               >
                 Rejected Only
               </button>
@@ -265,7 +265,7 @@ export default function EnrollmentsManagement() {
             statusFilter === '' ? 'ring-2 ring-blue-500 border-blue-500' : ''
           }`}
         >
-          <p className="text-sm text-gray-500">All</p>
+          <p className="text-sm text-gray-500 dark:text-gray-400">All</p>
           <p className="text-2xl font-semibold">{stats.total}</p>
         </button>
         <button
@@ -274,7 +274,7 @@ export default function EnrollmentsManagement() {
             statusFilter === 'pending_payment' ? 'ring-2 ring-yellow-500 border-yellow-500' : ''
           }`}
         >
-          <p className="text-sm text-gray-500">Pending Payment</p>
+          <p className="text-sm text-gray-500 dark:text-gray-400">Pending Payment</p>
           <p className="text-2xl font-semibold text-yellow-600">{stats.pending_payment}</p>
         </button>
         <button
@@ -283,7 +283,7 @@ export default function EnrollmentsManagement() {
             statusFilter === 'payment_submitted' ? 'ring-2 ring-blue-500 border-blue-500' : ''
           }`}
         >
-          <p className="text-sm text-gray-500">Payment Submitted</p>
+          <p className="text-sm text-gray-500 dark:text-gray-400">Payment Submitted</p>
           <p className="text-2xl font-semibold text-blue-600">{stats.payment_submitted}</p>
         </button>
         <button
@@ -292,7 +292,7 @@ export default function EnrollmentsManagement() {
             statusFilter === 'payment_verified' ? 'ring-2 ring-indigo-500 border-indigo-500' : ''
           }`}
         >
-          <p className="text-sm text-gray-500">Payment Verified</p>
+          <p className="text-sm text-gray-500 dark:text-gray-400">Payment Verified</p>
           <p className="text-2xl font-semibold text-indigo-600">{stats.payment_verified}</p>
         </button>
         <button
@@ -301,8 +301,8 @@ export default function EnrollmentsManagement() {
             statusFilter === 'approved' ? 'ring-2 ring-green-500 border-green-500' : ''
           }`}
         >
-          <p className="text-sm text-gray-500">Approved</p>
-          <p className="text-2xl font-semibold text-green-600">{stats.approved}</p>
+          <p className="text-sm text-gray-500 dark:text-gray-400">Approved</p>
+          <p className="text-2xl font-semibold text-green-600 dark:text-green-400">{stats.approved}</p>
         </button>
         <button
           onClick={() => setStatusFilter('rejected')}
@@ -310,61 +310,61 @@ export default function EnrollmentsManagement() {
             statusFilter === 'rejected' ? 'ring-2 ring-red-500 border-red-500' : ''
           }`}
         >
-          <p className="text-sm text-gray-500">Rejected</p>
-          <p className="text-2xl font-semibold text-red-600">{stats.rejected}</p>
+          <p className="text-sm text-gray-500 dark:text-gray-400">Rejected</p>
+          <p className="text-2xl font-semibold text-red-600 dark:text-red-400">{stats.rejected}</p>
         </button>
       </div>
 
       {/* Applications Table */}
-      <div className="bg-white rounded-lg shadow-sm border overflow-hidden">
+      <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border overflow-hidden">
         {loading ? (
           <div className="flex justify-center items-center py-12">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
           </div>
         ) : applications.length === 0 ? (
           <div className="text-center py-12">
-            <UserIcon className="h-12 w-12 mx-auto text-gray-400" />
-            <h3 className="mt-2 text-sm font-medium text-gray-900">No applications</h3>
-            <p className="mt-1 text-sm text-gray-500">
+            <UserIcon className="h-12 w-12 mx-auto text-gray-400 dark:text-gray-500" />
+            <h3 className="mt-2 text-sm font-medium text-gray-900 dark:text-gray-100">No applications</h3>
+            <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
               {statusFilter ? `No ${statusFilter.replace('_', ' ')} applications found.` : 'No enrollment applications yet.'}
             </p>
           </div>
         ) : (
-          <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-50">
+          <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+            <thead className="bg-gray-50 dark:bg-gray-800/50">
               <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                   Application
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                   Student
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                   Course
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                   Fee
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                   Status
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                   Date
                 </th>
-                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                   Actions
                 </th>
               </tr>
             </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
+            <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
               {applications.map((app) => {
                 const status = STATUS_CONFIG[app.application.status];
                 const StatusIcon = status?.icon || ClockIcon;
                 
                 return (
-                  <tr key={app.application.id} className="hover:bg-gray-50">
+                  <tr key={app.application.id} className="hover:bg-gray-50 dark:hover:bg-gray-700">
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm font-medium text-gray-900">
+                      <div className="text-sm font-medium text-gray-900 dark:text-gray-100">
                         {app.application.applicationNumber}
                       </div>
                     </td>
@@ -377,25 +377,25 @@ export default function EnrollmentsManagement() {
                             className="h-8 w-8 rounded-full object-cover"
                           />
                         ) : (
-                          <div className="h-8 w-8 rounded-full bg-gray-200 flex items-center justify-center">
-                            <UserIcon className="h-4 w-4 text-gray-500" />
+                          <div className="h-8 w-8 rounded-full bg-gray-200 dark:bg-gray-600 flex items-center justify-center">
+                            <UserIcon className="h-4 w-4 text-gray-500 dark:text-gray-400" />
                           </div>
                         )}
                         <div className="ml-3">
-                          <div className="text-sm font-medium text-gray-900">
+                          <div className="text-sm font-medium text-gray-900 dark:text-gray-100">
                             {app.application.studentInfo.fullNameEnglish}
                           </div>
-                          <div className="text-sm text-gray-500">
+                          <div className="text-sm text-gray-500 dark:text-gray-400">
                             {app.application.studentInfo.email}
                           </div>
                         </div>
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm text-gray-900">{app.course?.name || 'Unknown'}</div>
+                      <div className="text-sm text-gray-900 dark:text-gray-100">{app.course?.name || 'Unknown'}</div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm text-gray-900">
+                      <div className="text-sm text-gray-900 dark:text-gray-100">
                         {formatCurrency(app.application.admissionFeeAmount, app.application.currency)}
                       </div>
                     </td>
@@ -405,14 +405,14 @@ export default function EnrollmentsManagement() {
                         {status?.label || app.application.status}
                       </span>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
                       {formatDate(app.application.createdAt)}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                       <div className="flex justify-end gap-2">
                         <button
                           onClick={() => setSelectedApplication(app)}
-                          className="p-1 text-gray-600 hover:bg-gray-100 rounded"
+                          className="p-1 text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-600 rounded"
                           title="View Details"
                         >
                           <EyeIcon className="h-5 w-5" />
@@ -420,7 +420,7 @@ export default function EnrollmentsManagement() {
                         {app.application.status === 'payment_submitted' && canVerify && (
                           <button
                             onClick={() => handleAction(app.application.id, 'verify_payment')}
-                            className="px-2 py-1 text-xs bg-blue-100 text-blue-700 rounded hover:bg-blue-200"
+                            className="px-2 py-1 text-xs bg-blue-100 dark:bg-blue-900/30 text-blue-700 rounded hover:bg-blue-200"
                           >
                             Verify
                           </button>
@@ -429,7 +429,7 @@ export default function EnrollmentsManagement() {
                           <>
                             <button
                               onClick={() => handleAction(app.application.id, 'approve')}
-                              className="px-2 py-1 text-xs bg-green-100 text-green-700 rounded hover:bg-green-200"
+                              className="px-2 py-1 text-xs bg-green-100 dark:bg-green-900/30 text-green-700 rounded hover:bg-green-200"
                             >
                               Approve
                             </button>
@@ -440,7 +440,7 @@ export default function EnrollmentsManagement() {
                                   handleAction(app.application.id, 'reject', { rejectionReason: reason });
                                 }
                               }}
-                              className="px-2 py-1 text-xs bg-red-100 text-red-700 rounded hover:bg-red-200"
+                              className="px-2 py-1 text-xs bg-red-100 dark:bg-red-900/30 text-red-700 rounded hover:bg-red-200"
                             >
                               Reject
                             </button>

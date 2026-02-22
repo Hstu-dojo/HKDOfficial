@@ -55,10 +55,10 @@ export function AdminLayout({ children }: AdminLayoutProps) {
   // This prevents any flash of admin content for unauthorized users
   if (status === 'loading' || rbacLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-slate-50">
+      <div className="min-h-screen flex items-center justify-center bg-slate-50 dark:bg-slate-900">
         <div className="text-center">
           <LoadingSpinner size="large" />
-          <p className="mt-4 text-slate-500">
+          <p className="mt-4 text-slate-500 dark:text-slate-400">
             {status === 'loading' ? 'Checking authentication...' : 'Verifying permissions...'}
           </p>
         </div>
@@ -69,10 +69,10 @@ export function AdminLayout({ children }: AdminLayoutProps) {
   // Not authenticated - redirect handled by useEffect
   if (status === 'unauthenticated') {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-slate-50">
+      <div className="min-h-screen flex items-center justify-center bg-slate-50 dark:bg-slate-900">
         <div className="text-center">
           <LoadingSpinner size="large" />
-          <p className="mt-4 text-slate-500">Redirecting to login...</p>
+          <p className="mt-4 text-slate-500 dark:text-slate-400">Redirecting to login...</p>
         </div>
       </div>
     );
@@ -140,7 +140,7 @@ export function AdminLayout({ children }: AdminLayoutProps) {
 
   // Authenticated and has admin access
   return (
-    <div className="flex h-screen bg-slate-50 text-slate-900 [&_h1]:text-slate-900 [&_h1]:dark:text-slate-900 [&_h2]:text-slate-900 [&_h2]:dark:text-slate-900 [&_h3]:text-slate-900 [&_h3]:dark:text-slate-900 [&_h4]:text-slate-900 [&_h4]:dark:text-slate-900">
+    <div className="flex h-screen bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-slate-100">
       {/* Mobile sidebar overlay */}
       {sidebarOpen && (
         <div className="fixed inset-0 z-40 lg:hidden">
@@ -155,7 +155,7 @@ export function AdminLayout({ children }: AdminLayoutProps) {
       <div
         className={`fixed inset-y-0 left-0 z-50 lg:static lg:inset-0 transform transition-transform duration-200 ease-in-out lg:transform-none ${
           sidebarOpen ? 'translate-x-0' : '-translate-x-full'
-        } lg:translate-x-0 bg-white border-r border-slate-200 shadow-sm`}
+        } lg:translate-x-0 bg-white dark:bg-gray-800 border-r border-slate-200 dark:border-slate-700 shadow-sm`}
       >
         <AdminSidebar />
       </div>

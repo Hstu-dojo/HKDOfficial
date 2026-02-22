@@ -209,11 +209,11 @@ export default function RolePermissionsManagement() {
   }, {} as Record<string, Permission[]>);
 
   const actionColors: Record<string, string> = {
-    CREATE: "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400",
-    READ: "bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400",
-    UPDATE: "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400",
-    DELETE: "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400",
-    MANAGE: "bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-400",
+    CREATE: "bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300 dark:bg-green-900/30 dark:text-green-400",
+    READ: "bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-300 dark:bg-blue-900/30 dark:text-blue-400",
+    UPDATE: "bg-yellow-100 dark:bg-yellow-900/30 text-yellow-800 dark:text-yellow-300 dark:bg-yellow-900/30 dark:text-yellow-400",
+    DELETE: "bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-300 dark:bg-red-900/30 dark:text-red-400",
+    MANAGE: "bg-purple-100 dark:bg-purple-900/30 text-purple-800 dark:bg-purple-900/30 dark:text-purple-400",
   };
 
   if (loading) {
@@ -235,7 +235,7 @@ export default function RolePermissionsManagement() {
       </div>
 
       {error && (
-        <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg">
+        <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-700 px-4 py-3 rounded-lg">
           {error}
         </div>
       )}
@@ -255,7 +255,7 @@ export default function RolePermissionsManagement() {
                   selectedRole?.id === role.id ? "bg-blue-50 dark:bg-blue-900/20" : ""
                 }`}
               >
-                <ShieldCheckIcon className="h-5 w-5 text-green-600" />
+                <ShieldCheckIcon className="h-5 w-5 text-green-600 dark:text-green-400" />
                 <div className="flex-1">
                   <p className="font-medium">{role.name}</p>
                   {role.description && (
@@ -265,7 +265,7 @@ export default function RolePermissionsManagement() {
                   )}
                 </div>
                 {rolePermissions[role.id] && (
-                  <span className="text-xs text-gray-500 bg-gray-100 dark:bg-gray-700 px-2 py-1 rounded">
+                  <span className="text-xs text-gray-500 dark:text-gray-400 bg-gray-100 dark:bg-gray-700 px-2 py-1 rounded">
                     {rolePermissions[role.id].length} perms
                   </span>
                 )}
@@ -280,7 +280,7 @@ export default function RolePermissionsManagement() {
             <>
               <div className="p-4 border-b flex items-center justify-between">
                 <div className="flex items-center gap-3">
-                  <ShieldCheckIcon className="h-6 w-6 text-green-600" />
+                  <ShieldCheckIcon className="h-6 w-6 text-green-600 dark:text-green-400" />
                   <div>
                     <h3 className="font-semibold">{selectedRole.name}</h3>
                     <p className="text-sm text-gray-500 dark:text-gray-400">
@@ -299,7 +299,7 @@ export default function RolePermissionsManagement() {
 
               {/* Assign Permission Form */}
               {!bulkMode && (
-                <div className="p-4 border-b bg-gray-50 dark:bg-gray-700/50">
+                <div className="p-4 border-b bg-gray-50 dark:bg-gray-800/50 dark:bg-gray-700/50">
                   <form onSubmit={handleAssignPermission} className="flex gap-2">
                     <select
                       value={selectedPermissionId}
@@ -344,7 +344,7 @@ export default function RolePermissionsManagement() {
                   <div className="max-h-[200px] overflow-y-auto space-y-2">
                     {Object.entries(groupedAvailable).map(([resource, perms]) => (
                       <div key={resource} className="space-y-1">
-                        <p className="text-xs font-semibold text-gray-500 uppercase">{resource}</p>
+                        <p className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase">{resource}</p>
                         <div className="flex flex-wrap gap-1">
                           {perms.map((p) => (
                             <button
@@ -383,8 +383,8 @@ export default function RolePermissionsManagement() {
                         return acc;
                       }, {} as Record<string, Permission[]>)
                     ).map(([resource, perms]) => (
-                      <div key={resource} className="bg-gray-50 dark:bg-gray-700/50 rounded-lg p-3">
-                        <h5 className="text-sm font-semibold text-gray-600 dark:text-gray-300 mb-2">
+                      <div key={resource} className="bg-gray-50 dark:bg-gray-800/50 dark:bg-gray-700/50 rounded-lg p-3">
+                        <h5 className="text-sm font-semibold text-gray-600 dark:text-gray-400 dark:text-gray-300 mb-2">
                           {resource}
                         </h5>
                         <div className="flex flex-wrap gap-2">
@@ -399,7 +399,7 @@ export default function RolePermissionsManagement() {
                                 onClick={() =>
                                   handleRemovePermission(selectedRole.id, permission.id, permission.name)
                                 }
-                                className="ml-1 hover:text-red-600 transition-colors"
+                                className="ml-1 hover:text-red-600 dark:text-red-400 transition-colors"
                               >
                                 <TrashIcon className="h-3 w-3" />
                               </button>
@@ -410,14 +410,14 @@ export default function RolePermissionsManagement() {
                     ))}
                   </div>
                 ) : (
-                  <p className="text-gray-500 text-center py-4">
+                  <p className="text-gray-500 dark:text-gray-400 text-center py-4">
                     No permissions assigned to this role
                   </p>
                 )}
               </div>
             </>
           ) : (
-            <div className="flex flex-col items-center justify-center py-12 text-gray-500">
+            <div className="flex flex-col items-center justify-center py-12 text-gray-500 dark:text-gray-400">
               <ShieldCheckIcon className="h-12 w-12 mb-3 opacity-50" />
               <p>Select a role to manage its permissions</p>
             </div>

@@ -144,7 +144,7 @@ export default function AdminCreationPage() {
       <div className="flex items-center justify-center min-h-[400px]">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
-          <p className="mt-4 text-gray-600">Loading admin management...</p>
+          <p className="mt-4 text-gray-600 dark:text-gray-400">Loading admin management...</p>
         </div>
       </div>
     );
@@ -154,7 +154,7 @@ export default function AdminCreationPage() {
     <div className="max-w-6xl mx-auto p-6 space-y-8">
       <div className="flex items-center space-x-3">
         <Shield className="h-8 w-8 text-blue-600" />
-        <h1 className="text-3xl font-bold text-gray-900">Admin User Management</h1>
+        <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">Admin User Management</h1>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
@@ -281,7 +281,7 @@ export default function AdminCreationPage() {
             
             <div className="p-4 border rounded-lg">
               <h3 className="font-semibold text-lg mb-2">Total Roles</h3>
-              <p className="text-3xl font-bold text-green-600">{roles.length}</p>
+              <p className="text-3xl font-bold text-green-600 dark:text-green-400">{roles.length}</p>
             </div>
             
             <div className="p-4 border rounded-lg">
@@ -304,15 +304,15 @@ export default function AdminCreationPage() {
             {users.slice(0, 5).map((user) => (
               <div key={user.id} className="flex items-center justify-between p-3 border rounded-lg">
                 <div className="flex items-center space-x-3">
-                  <User className="h-8 w-8 text-gray-400" />
+                  <User className="h-8 w-8 text-gray-400 dark:text-gray-500" />
                   <div>
                     <p className="font-medium">{user.userName}</p>
-                    <p className="text-sm text-gray-500">{user.email}</p>
+                    <p className="text-sm text-gray-500 dark:text-gray-400">{user.email}</p>
                   </div>
                 </div>
                 <div className="text-right">
-                  <p className="text-sm text-gray-500">Role: {user.defaultRole}</p>
-                  <p className="text-xs text-gray-400">
+                  <p className="text-sm text-gray-500 dark:text-gray-400">Role: {user.defaultRole}</p>
+                  <p className="text-xs text-gray-400 dark:text-gray-500">
                     {user.emailVerified ? '✅ Verified' : '❌ Not verified'}
                   </p>
                 </div>

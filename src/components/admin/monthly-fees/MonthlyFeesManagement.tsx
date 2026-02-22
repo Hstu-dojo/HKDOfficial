@@ -49,13 +49,13 @@ interface MonthlyFee {
 }
 
 const STATUS_CONFIG: Record<string, { label: string; color: string; icon: React.ComponentType<{ className?: string }> }> = {
-  pending: { label: 'Pending', color: 'bg-gray-100 text-gray-700', icon: ClockIcon },
-  due: { label: 'Due', color: 'bg-yellow-100 text-yellow-700', icon: ClockIcon },
-  payment_submitted: { label: 'Payment Submitted', color: 'bg-blue-100 text-blue-700', icon: BanknotesIcon },
-  paid: { label: 'Paid', color: 'bg-green-100 text-green-700', icon: CheckCircleIcon },
-  overdue: { label: 'Overdue', color: 'bg-red-100 text-red-700', icon: ExclamationTriangleIcon },
-  waived: { label: 'Waived', color: 'bg-purple-100 text-purple-700', icon: CheckCircleIcon },
-  partial: { label: 'Partial', color: 'bg-orange-100 text-orange-700', icon: BanknotesIcon },
+  pending: { label: 'Pending', color: 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300', icon: ClockIcon },
+  due: { label: 'Due', color: 'bg-yellow-100 dark:bg-yellow-900/30 text-yellow-700', icon: ClockIcon },
+  payment_submitted: { label: 'Payment Submitted', color: 'bg-blue-100 dark:bg-blue-900/30 text-blue-700', icon: BanknotesIcon },
+  paid: { label: 'Paid', color: 'bg-green-100 dark:bg-green-900/30 text-green-700', icon: CheckCircleIcon },
+  overdue: { label: 'Overdue', color: 'bg-red-100 dark:bg-red-900/30 text-red-700', icon: ExclamationTriangleIcon },
+  waived: { label: 'Waived', color: 'bg-purple-100 dark:bg-purple-900/30 text-purple-700', icon: CheckCircleIcon },
+  partial: { label: 'Partial', color: 'bg-orange-100 dark:bg-orange-900/30 text-orange-700', icon: BanknotesIcon },
 };
 
 export default function MonthlyFeesManagement() {
@@ -226,8 +226,8 @@ export default function MonthlyFeesManagement() {
       {/* Header */}
       <div className="flex justify-between items-start">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Monthly Fees</h1>
-          <p className="mt-1 text-sm text-gray-500">
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Monthly Fees</h1>
+          <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
             Track and manage student monthly payments
           </p>
         </div>
@@ -242,44 +242,44 @@ export default function MonthlyFeesManagement() {
 
       {/* Stats */}
       <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
-        <div className="bg-white p-4 rounded-lg border">
-          <p className="text-sm text-gray-500">Total Bills</p>
+        <div className="bg-white dark:bg-gray-800 p-4 rounded-lg border">
+          <p className="text-sm text-gray-500 dark:text-gray-400">Total Bills</p>
           <p className="text-2xl font-semibold">{stats.total}</p>
         </div>
-        <div className="bg-white p-4 rounded-lg border">
-          <p className="text-sm text-gray-500">Pending/Due</p>
+        <div className="bg-white dark:bg-gray-800 p-4 rounded-lg border">
+          <p className="text-sm text-gray-500 dark:text-gray-400">Pending/Due</p>
           <p className="text-2xl font-semibold text-yellow-600">{stats.pending}</p>
         </div>
-        <div className="bg-white p-4 rounded-lg border">
-          <p className="text-sm text-gray-500">Awaiting Verification</p>
+        <div className="bg-white dark:bg-gray-800 p-4 rounded-lg border">
+          <p className="text-sm text-gray-500 dark:text-gray-400">Awaiting Verification</p>
           <p className="text-2xl font-semibold text-blue-600">{stats.payment_submitted}</p>
         </div>
-        <div className="bg-white p-4 rounded-lg border">
-          <p className="text-sm text-gray-500">Paid</p>
-          <p className="text-2xl font-semibold text-green-600">{stats.paid}</p>
+        <div className="bg-white dark:bg-gray-800 p-4 rounded-lg border">
+          <p className="text-sm text-gray-500 dark:text-gray-400">Paid</p>
+          <p className="text-2xl font-semibold text-green-600 dark:text-green-400">{stats.paid}</p>
         </div>
-        <div className="bg-white p-4 rounded-lg border">
-          <p className="text-sm text-gray-500">Overdue</p>
-          <p className="text-2xl font-semibold text-red-600">{stats.overdue}</p>
+        <div className="bg-white dark:bg-gray-800 p-4 rounded-lg border">
+          <p className="text-sm text-gray-500 dark:text-gray-400">Overdue</p>
+          <p className="text-2xl font-semibold text-red-600 dark:text-red-400">{stats.overdue}</p>
         </div>
-        <div className="bg-white p-4 rounded-lg border">
-          <p className="text-sm text-gray-500">Collected</p>
-          <p className="text-2xl font-semibold text-green-600">
+        <div className="bg-white dark:bg-gray-800 p-4 rounded-lg border">
+          <p className="text-sm text-gray-500 dark:text-gray-400">Collected</p>
+          <p className="text-2xl font-semibold text-green-600 dark:text-green-400">
             {formatCurrency(stats.collectedAmount, 'BDT')}
           </p>
         </div>
       </div>
 
       {/* Filters */}
-      <div className="bg-white p-4 rounded-lg border flex flex-wrap gap-4">
+      <div className="bg-white dark:bg-gray-800 p-4 rounded-lg border flex flex-wrap gap-4">
         <div className="flex items-center gap-2">
-          <FunnelIcon className="h-5 w-5 text-gray-400" />
-          <span className="text-sm font-medium text-gray-700">Filters:</span>
+          <FunnelIcon className="h-5 w-5 text-gray-400 dark:text-gray-500" />
+          <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Filters:</span>
         </div>
         
         <div className="flex-1 min-w-[200px]">
           <div className="relative">
-            <MagnifyingGlassIcon className="h-5 w-5 absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+            <MagnifyingGlassIcon className="h-5 w-5 absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 dark:text-gray-500" />
             <input
               type="text"
               placeholder="Search by name or email..."
@@ -314,48 +314,48 @@ export default function MonthlyFeesManagement() {
       </div>
 
       {/* Fees Table */}
-      <div className="bg-white rounded-lg shadow-sm border overflow-hidden">
+      <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border overflow-hidden">
         {loading ? (
           <div className="flex justify-center items-center py-12">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
           </div>
         ) : filteredFees.length === 0 ? (
           <div className="text-center py-12">
-            <BanknotesIcon className="h-12 w-12 mx-auto text-gray-400" />
-            <h3 className="mt-2 text-sm font-medium text-gray-900">No monthly fees found</h3>
-            <p className="mt-1 text-sm text-gray-500">
+            <BanknotesIcon className="h-12 w-12 mx-auto text-gray-400 dark:text-gray-500" />
+            <h3 className="mt-2 text-sm font-medium text-gray-900 dark:text-gray-100">No monthly fees found</h3>
+            <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
               Try adjusting your filters or generate fees for a new month.
             </p>
           </div>
         ) : (
           <div className="overflow-x-auto">
-            <table className="min-w-full divide-y divide-gray-200">
-              <thead className="bg-gray-50">
+            <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+              <thead className="bg-gray-50 dark:bg-gray-800/50">
                 <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                     Student
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                     Course
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                     Month
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                     Amount
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                     Due Date
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                     Status
                   </th>
-                  <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                     Actions
                   </th>
                 </tr>
               </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
+              <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
                 {filteredFees.map((item) => {
                   const status = STATUS_CONFIG[item.fee.status];
                   const StatusIcon = status?.icon || ClockIcon;
@@ -363,42 +363,42 @@ export default function MonthlyFeesManagement() {
                     !['paid', 'waived'].includes(item.fee.status);
 
                   return (
-                    <tr key={item.fee.id} className={`hover:bg-gray-50 ${isOverdue ? 'bg-red-50' : ''}`}>
+                    <tr key={item.fee.id} className={`hover:bg-gray-50 dark:hover:bg-gray-700 ${isOverdue ? 'bg-red-50 dark:bg-red-900/20' : ''}`}>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="flex items-center">
-                          <div className="h-8 w-8 rounded-full bg-gray-200 flex items-center justify-center">
-                            <UserIcon className="h-4 w-4 text-gray-500" />
+                          <div className="h-8 w-8 rounded-full bg-gray-200 dark:bg-gray-600 flex items-center justify-center">
+                            <UserIcon className="h-4 w-4 text-gray-500 dark:text-gray-400" />
                           </div>
                           <div className="ml-3">
-                            <div className="text-sm font-medium text-gray-900">
+                            <div className="text-sm font-medium text-gray-900 dark:text-gray-100">
                               {item.member?.fullNameEnglish || 'Unknown'}
                             </div>
-                            <div className="text-xs text-gray-500">
+                            <div className="text-xs text-gray-500 dark:text-gray-400">
                               {item.member?.email}
                             </div>
                           </div>
                         </div>
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">
                         {item.course?.name || 'Unknown'}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="flex items-center text-sm text-gray-900">
-                          <CalendarIcon className="h-4 w-4 mr-1 text-gray-400" />
+                        <div className="flex items-center text-sm text-gray-900 dark:text-gray-100">
+                          <CalendarIcon className="h-4 w-4 mr-1 text-gray-400 dark:text-gray-500" />
                           {formatMonth(item.fee.billingMonth)}
                         </div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="text-sm font-medium text-gray-900">
+                        <div className="text-sm font-medium text-gray-900 dark:text-gray-100">
                           {formatCurrency(item.fee.amount, item.fee.currency)}
                         </div>
                         {(item.fee.amountPaid ?? 0) > 0 && (item.fee.amountPaid ?? 0) < item.fee.amount && (
-                          <div className="text-xs text-green-600">
+                          <div className="text-xs text-green-600 dark:text-green-400">
                             Paid: {formatCurrency(item.fee.amountPaid ?? 0, item.fee.currency)}
                           </div>
                         )}
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
                         {formatDate(item.fee.dueDate)}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
@@ -412,7 +412,7 @@ export default function MonthlyFeesManagement() {
                           {item.fee.status === 'payment_submitted' && canVerify && (
                             <button
                               onClick={() => handleVerifyPayment(item.fee.id)}
-                              className="px-2 py-1 text-xs bg-green-100 text-green-700 rounded hover:bg-green-200"
+                              className="px-2 py-1 text-xs bg-green-100 dark:bg-green-900/30 text-green-700 rounded hover:bg-green-200"
                             >
                               Verify
                             </button>
@@ -420,7 +420,7 @@ export default function MonthlyFeesManagement() {
                           {['pending', 'due', 'overdue'].includes(item.fee.status) && canVerify && (
                             <button
                               onClick={() => handleWaiveFee(item.fee.id)}
-                              className="px-2 py-1 text-xs bg-purple-100 text-purple-700 rounded hover:bg-purple-200"
+                              className="px-2 py-1 text-xs bg-purple-100 dark:bg-purple-900/30 text-purple-700 rounded hover:bg-purple-200"
                             >
                               Waive
                             </button>

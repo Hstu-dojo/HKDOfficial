@@ -80,12 +80,12 @@ interface Props {
 }
 
 const STATUS_CONFIG: Record<string, { label: string; color: string; bgColor: string }> = {
-  pending_payment: { label: 'Pending Payment', color: 'text-yellow-700', bgColor: 'bg-yellow-100' },
-  payment_submitted: { label: 'Payment Submitted', color: 'text-blue-700', bgColor: 'bg-blue-100' },
-  payment_verified: { label: 'Payment Verified', color: 'text-indigo-700', bgColor: 'bg-indigo-100' },
-  approved: { label: 'Approved', color: 'text-green-700', bgColor: 'bg-green-100' },
-  rejected: { label: 'Rejected', color: 'text-red-700', bgColor: 'bg-red-100' },
-  cancelled: { label: 'Cancelled', color: 'text-gray-700', bgColor: 'bg-gray-100' },
+  pending_payment: { label: 'Pending Payment', color: 'text-yellow-700', bgColor: 'bg-yellow-100 dark:bg-yellow-900/30' },
+  payment_submitted: { label: 'Payment Submitted', color: 'text-blue-700', bgColor: 'bg-blue-100 dark:bg-blue-900/30' },
+  payment_verified: { label: 'Payment Verified', color: 'text-indigo-700', bgColor: 'bg-indigo-100 dark:bg-indigo-900/30' },
+  approved: { label: 'Approved', color: 'text-green-700', bgColor: 'bg-green-100 dark:bg-green-900/30' },
+  rejected: { label: 'Rejected', color: 'text-red-700', bgColor: 'bg-red-100 dark:bg-red-900/30' },
+  cancelled: { label: 'Cancelled', color: 'text-gray-700 dark:text-gray-300', bgColor: 'bg-gray-100 dark:bg-gray-700' },
 };
 
 export default function ApplicationDetailModal({
@@ -150,11 +150,11 @@ export default function ApplicationDetailModal({
               leaveFrom="opacity-100 scale-100"
               leaveTo="opacity-0 scale-95"
             >
-              <Dialog.Panel className="w-full max-w-3xl transform overflow-hidden rounded-2xl bg-white shadow-xl transition-all">
+              <Dialog.Panel className="w-full max-w-3xl transform overflow-hidden rounded-2xl bg-white dark:bg-gray-800 shadow-xl transition-all">
                 {/* Header */}
-                <div className="bg-gray-50 px-6 py-4 border-b flex items-center justify-between">
+                <div className="bg-gray-50 dark:bg-gray-800/50 px-6 py-4 border-b flex items-center justify-between">
                   <div>
-                    <Dialog.Title className="text-lg font-semibold text-gray-900">
+                    <Dialog.Title className="text-lg font-semibold text-gray-900 dark:text-gray-100">
                       Application #{app.applicationNumber}
                     </Dialog.Title>
                     <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${status?.bgColor} ${status?.color}`}>
@@ -163,7 +163,7 @@ export default function ApplicationDetailModal({
                   </div>
                   <button
                     onClick={onClose}
-                    className="text-gray-400 hover:text-gray-500"
+                    className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200"
                   >
                     <XMarkIcon className="h-6 w-6" />
                   </button>
@@ -171,8 +171,8 @@ export default function ApplicationDetailModal({
 
                 <div className="px-6 py-4 max-h-[70vh] overflow-y-auto space-y-6">
                   {/* Student Info */}
-                  <div className="bg-gray-50 rounded-lg p-4">
-                    <h3 className="text-sm font-semibold text-gray-900 mb-4 flex items-center">
+                  <div className="bg-gray-50 dark:bg-gray-800/50 rounded-lg p-4">
+                    <h3 className="text-sm font-semibold text-gray-900 dark:text-gray-100 mb-4 flex items-center">
                       <UserIcon className="h-5 w-5 mr-2" />
                       Student Information
                     </h3>
@@ -184,54 +184,54 @@ export default function ApplicationDetailModal({
                           className="h-24 w-24 rounded-lg object-cover border"
                         />
                       ) : (
-                        <div className="h-24 w-24 rounded-lg bg-gray-200 flex items-center justify-center">
-                          <UserIcon className="h-12 w-12 text-gray-400" />
+                        <div className="h-24 w-24 rounded-lg bg-gray-200 dark:bg-gray-600 flex items-center justify-center">
+                          <UserIcon className="h-12 w-12 text-gray-400 dark:text-gray-500" />
                         </div>
                       )}
                       <div className="flex-1 grid grid-cols-2 gap-4 text-sm">
                         <div>
-                          <label className="text-gray-500">Full Name (English)</label>
+                          <label className="text-gray-500 dark:text-gray-400">Full Name (English)</label>
                           <p className="font-medium">{app.studentInfo.fullNameEnglish}</p>
                         </div>
                         {app.studentInfo.fullNameBangla && (
                           <div>
-                            <label className="text-gray-500">Full Name (Bangla)</label>
+                            <label className="text-gray-500 dark:text-gray-400">Full Name (Bangla)</label>
                             <p className="font-medium">{app.studentInfo.fullNameBangla}</p>
                           </div>
                         )}
                         {app.studentInfo.fatherName && (
                           <div>
-                            <label className="text-gray-500">Father&apos;s Name</label>
+                            <label className="text-gray-500 dark:text-gray-400">Father&apos;s Name</label>
                             <p className="font-medium">{app.studentInfo.fatherName}</p>
                           </div>
                         )}
                         {app.studentInfo.motherName && (
                           <div>
-                            <label className="text-gray-500">Mother&apos;s Name</label>
+                            <label className="text-gray-500 dark:text-gray-400">Mother&apos;s Name</label>
                             <p className="font-medium">{app.studentInfo.motherName}</p>
                           </div>
                         )}
                         {app.studentInfo.dateOfBirth && (
                           <div>
-                            <label className="text-gray-500">Date of Birth</label>
+                            <label className="text-gray-500 dark:text-gray-400">Date of Birth</label>
                             <p className="font-medium">{app.studentInfo.dateOfBirth}</p>
                           </div>
                         )}
                         {app.studentInfo.gender && (
                           <div>
-                            <label className="text-gray-500">Gender</label>
+                            <label className="text-gray-500 dark:text-gray-400">Gender</label>
                             <p className="font-medium capitalize">{app.studentInfo.gender}</p>
                           </div>
                         )}
                         {app.studentInfo.bloodGroup && (
                           <div>
-                            <label className="text-gray-500">Blood Group</label>
+                            <label className="text-gray-500 dark:text-gray-400">Blood Group</label>
                             <p className="font-medium">{app.studentInfo.bloodGroup}</p>
                           </div>
                         )}
                         {app.studentInfo.nationalIdNumber && (
                           <div>
-                            <label className="text-gray-500">NID Number</label>
+                            <label className="text-gray-500 dark:text-gray-400">NID Number</label>
                             <p className="font-medium">{app.studentInfo.nationalIdNumber}</p>
                           </div>
                         )}
@@ -240,18 +240,18 @@ export default function ApplicationDetailModal({
                   </div>
 
                   {/* Contact Info */}
-                  <div className="bg-gray-50 rounded-lg p-4">
-                    <h3 className="text-sm font-semibold text-gray-900 mb-4 flex items-center">
+                  <div className="bg-gray-50 dark:bg-gray-800/50 rounded-lg p-4">
+                    <h3 className="text-sm font-semibold text-gray-900 dark:text-gray-100 mb-4 flex items-center">
                       <PhoneIcon className="h-5 w-5 mr-2" />
                       Contact Information
                     </h3>
                     <div className="grid grid-cols-2 gap-4 text-sm">
                       <div className="flex items-center gap-2">
-                        <EnvelopeIcon className="h-4 w-4 text-gray-400" />
+                        <EnvelopeIcon className="h-4 w-4 text-gray-400 dark:text-gray-500" />
                         <span>{app.studentInfo.email}</span>
                       </div>
                       <div className="flex items-center gap-2">
-                        <PhoneIcon className="h-4 w-4 text-gray-400" />
+                        <PhoneIcon className="h-4 w-4 text-gray-400 dark:text-gray-500" />
                         <span>{app.studentInfo.phoneNumber}</span>
                       </div>
                       {app.studentInfo.emergencyContact && (
@@ -262,7 +262,7 @@ export default function ApplicationDetailModal({
                       )}
                       {app.studentInfo.address && (
                         <div className="col-span-2 flex items-start gap-2">
-                          <MapPinIcon className="h-4 w-4 text-gray-400 mt-1" />
+                          <MapPinIcon className="h-4 w-4 text-gray-400 dark:text-gray-500 mt-1" />
                           <span>{app.studentInfo.address}</span>
                         </div>
                       )}
@@ -271,54 +271,54 @@ export default function ApplicationDetailModal({
 
                   {/* Course & Payment Info */}
                   <div className="grid grid-cols-2 gap-4">
-                    <div className="bg-gray-50 rounded-lg p-4">
-                      <h3 className="text-sm font-semibold text-gray-900 mb-4 flex items-center">
+                    <div className="bg-gray-50 dark:bg-gray-800/50 rounded-lg p-4">
+                      <h3 className="text-sm font-semibold text-gray-900 dark:text-gray-100 mb-4 flex items-center">
                         <IdentificationIcon className="h-5 w-5 mr-2" />
                         Course Details
                       </h3>
                       <div className="space-y-2 text-sm">
                         <div>
-                          <label className="text-gray-500">Course</label>
+                          <label className="text-gray-500 dark:text-gray-400">Course</label>
                           <p className="font-medium">{course?.name || 'Unknown'}</p>
                         </div>
                         <div>
-                          <label className="text-gray-500">Admission Fee</label>
+                          <label className="text-gray-500 dark:text-gray-400">Admission Fee</label>
                           <p className="font-medium">{formatCurrency(app.admissionFeeAmount, app.currency)}</p>
                         </div>
                         {course && (
                           <div>
-                            <label className="text-gray-500">Monthly Fee</label>
+                            <label className="text-gray-500 dark:text-gray-400">Monthly Fee</label>
                             <p className="font-medium">{formatCurrency(course.monthlyFee, app.currency)}</p>
                           </div>
                         )}
                       </div>
                     </div>
 
-                    <div className="bg-gray-50 rounded-lg p-4">
-                      <h3 className="text-sm font-semibold text-gray-900 mb-4 flex items-center">
+                    <div className="bg-gray-50 dark:bg-gray-800/50 rounded-lg p-4">
+                      <h3 className="text-sm font-semibold text-gray-900 dark:text-gray-100 mb-4 flex items-center">
                         <BanknotesIcon className="h-5 w-5 mr-2" />
                         Payment Details
                       </h3>
                       <div className="space-y-2 text-sm">
                         <div>
-                          <label className="text-gray-500">Payment Method</label>
+                          <label className="text-gray-500 dark:text-gray-400">Payment Method</label>
                           <p className="font-medium">{app.paymentMethod || 'Not submitted'}</p>
                         </div>
                         {app.transactionId && (
                           <div>
-                            <label className="text-gray-500">Transaction ID</label>
+                            <label className="text-gray-500 dark:text-gray-400">Transaction ID</label>
                             <p className="font-medium font-mono">{app.transactionId}</p>
                           </div>
                         )}
                         {app.paymentSubmittedAt && (
                           <div>
-                            <label className="text-gray-500">Payment Submitted</label>
+                            <label className="text-gray-500 dark:text-gray-400">Payment Submitted</label>
                             <p className="font-medium">{formatDateTime(app.paymentSubmittedAt)}</p>
                           </div>
                         )}
                         {app.paymentVerifiedAt && (
                           <div>
-                            <label className="text-gray-500">Payment Verified</label>
+                            <label className="text-gray-500 dark:text-gray-400">Payment Verified</label>
                             <p className="font-medium">{formatDateTime(app.paymentVerifiedAt)}</p>
                           </div>
                         )}
@@ -328,8 +328,8 @@ export default function ApplicationDetailModal({
 
                   {/* Payment Proof */}
                   {app.paymentProofUrl && (
-                    <div className="bg-gray-50 rounded-lg p-4">
-                      <h3 className="text-sm font-semibold text-gray-900 mb-4 flex items-center">
+                    <div className="bg-gray-50 dark:bg-gray-800/50 rounded-lg p-4">
+                      <h3 className="text-sm font-semibold text-gray-900 dark:text-gray-100 mb-4 flex items-center">
                         <DocumentCheckIcon className="h-5 w-5 mr-2" />
                         Payment Proof
                       </h3>
@@ -345,24 +345,24 @@ export default function ApplicationDetailModal({
                           className="rounded-lg border shadow-sm max-h-64 object-contain"
                         />
                       </a>
-                      <p className="text-xs text-gray-500 mt-2">Click to view full image</p>
+                      <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">Click to view full image</p>
                     </div>
                   )}
 
                   {/* Additional Info */}
                   {(app.studentInfo.previousMartialArtsExperience || app.studentInfo.medicalConditions) && (
-                    <div className="bg-gray-50 rounded-lg p-4">
-                      <h3 className="text-sm font-semibold text-gray-900 mb-4">Additional Information</h3>
+                    <div className="bg-gray-50 dark:bg-gray-800/50 rounded-lg p-4">
+                      <h3 className="text-sm font-semibold text-gray-900 dark:text-gray-100 mb-4">Additional Information</h3>
                       <div className="space-y-3 text-sm">
                         {app.studentInfo.previousMartialArtsExperience && (
                           <div>
-                            <label className="text-gray-500">Previous Martial Arts Experience</label>
+                            <label className="text-gray-500 dark:text-gray-400">Previous Martial Arts Experience</label>
                             <p className="font-medium">{app.studentInfo.previousMartialArtsExperience}</p>
                           </div>
                         )}
                         {app.studentInfo.medicalConditions && (
                           <div>
-                            <label className="text-gray-500">Medical Conditions</label>
+                            <label className="text-gray-500 dark:text-gray-400">Medical Conditions</label>
                             <p className="font-medium text-orange-600">{app.studentInfo.medicalConditions}</p>
                           </div>
                         )}
@@ -371,14 +371,14 @@ export default function ApplicationDetailModal({
                   )}
 
                   {/* Timeline */}
-                  <div className="bg-gray-50 rounded-lg p-4">
-                    <h3 className="text-sm font-semibold text-gray-900 mb-4 flex items-center">
+                  <div className="bg-gray-50 dark:bg-gray-800/50 rounded-lg p-4">
+                    <h3 className="text-sm font-semibold text-gray-900 dark:text-gray-100 mb-4 flex items-center">
                       <ClockIcon className="h-5 w-5 mr-2" />
                       Timeline
                     </h3>
                     <div className="space-y-3 text-sm">
                       <div className="flex items-center gap-3">
-                        <CalendarIcon className="h-4 w-4 text-gray-400" />
+                        <CalendarIcon className="h-4 w-4 text-gray-400 dark:text-gray-500" />
                         <span>Applied: {formatDateTime(app.createdAt)}</span>
                       </div>
                       {app.paymentSubmittedAt && (
@@ -410,18 +410,18 @@ export default function ApplicationDetailModal({
 
                   {/* Rejection Reason */}
                   {app.rejectionReason && (
-                    <div className="bg-red-50 rounded-lg p-4 border border-red-200">
+                    <div className="bg-red-50 dark:bg-red-900/20 rounded-lg p-4 border border-red-200 dark:border-red-800">
                       <h3 className="text-sm font-semibold text-red-700 mb-2">Rejection Reason</h3>
-                      <p className="text-sm text-red-600">{app.rejectionReason}</p>
+                      <p className="text-sm text-red-600 dark:text-red-400">{app.rejectionReason}</p>
                     </div>
                   )}
                 </div>
 
                 {/* Action Buttons */}
-                <div className="bg-gray-50 px-6 py-4 border-t flex justify-end gap-3">
+                <div className="bg-gray-50 dark:bg-gray-800/50 px-6 py-4 border-t flex justify-end gap-3">
                   <button
                     onClick={onClose}
-                    className="px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-200 rounded-lg"
+                    className="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-lg"
                   >
                     Close
                   </button>

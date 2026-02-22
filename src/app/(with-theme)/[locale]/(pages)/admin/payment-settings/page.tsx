@@ -54,11 +54,11 @@ const methodIcons: Record<string, React.ComponentType<{ className?: string }>> =
 
 const methodColors: Record<string, string> = {
   bkash: "bg-pink-100 text-pink-800 dark:bg-pink-900/30 dark:text-pink-400",
-  nagad: "bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-400",
-  rocket: "bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-400",
-  upay: "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400",
-  bank_transfer: "bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400",
-  cash: "bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300",
+  nagad: "bg-orange-100 dark:bg-orange-900/30 text-orange-800 dark:text-orange-300 dark:bg-orange-900/30 dark:text-orange-400",
+  rocket: "bg-purple-100 dark:bg-purple-900/30 text-purple-800 dark:bg-purple-900/30 dark:text-purple-400",
+  upay: "bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300 dark:bg-green-900/30 dark:text-green-400",
+  bank_transfer: "bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-300 dark:bg-blue-900/30 dark:text-blue-400",
+  cash: "bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200 dark:bg-gray-700 dark:text-gray-300",
 };
 
 const scopeLabels: Record<string, string> = {
@@ -257,7 +257,7 @@ export default function PaymentSettingsPage() {
   if (loading) {
     return (
       <div className="flex items-center justify-center py-12">
-        <ArrowPathIcon className="h-8 w-8 animate-spin text-gray-400" />
+        <ArrowPathIcon className="h-8 w-8 animate-spin text-gray-400 dark:text-gray-500" />
       </div>
     );
   }
@@ -268,7 +268,7 @@ export default function PaymentSettingsPage() {
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold flex items-center gap-2">
-            <BanknotesIcon className="h-7 w-7 text-green-600" />
+            <BanknotesIcon className="h-7 w-7 text-green-600 dark:text-green-400" />
             Payment Settings
           </h1>
           <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
@@ -313,7 +313,7 @@ export default function PaymentSettingsPage() {
               <h2 className="text-xl font-semibold">
                 {editingAccount ? "Edit Payment Account" : "Add Payment Account"}
               </h2>
-              <button onClick={resetForm} className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full">
+              <button onClick={resetForm} className="p-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:bg-gray-700 rounded-full">
                 <XMarkIcon className="h-5 w-5" />
               </button>
             </div>
@@ -460,7 +460,7 @@ export default function PaymentSettingsPage() {
                     className="w-full px-3 py-2 border rounded-lg bg-transparent"
                     min={0}
                   />
-                  <p className="text-xs text-gray-500 mt-1">Higher = shown first</p>
+                  <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">Higher = shown first</p>
                 </div>
 
                 <div className="flex items-center gap-2 pt-6">
@@ -512,9 +512,9 @@ export default function PaymentSettingsPage() {
       {/* Accounts List */}
       {filteredAccounts.length === 0 ? (
         <div className="text-center py-12 bg-gray-50 dark:bg-gray-800/50 rounded-lg">
-          <BanknotesIcon className="h-12 w-12 mx-auto text-gray-400" />
+          <BanknotesIcon className="h-12 w-12 mx-auto text-gray-400 dark:text-gray-500" />
           <h3 className="mt-4 text-lg font-medium">No payment accounts found</h3>
-          <p className="mt-2 text-sm text-gray-500">
+          <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">
             Add your first payment account to start accepting payments.
           </p>
           <Button onClick={() => setShowForm(true)} className="mt-4 gap-2">
@@ -545,7 +545,7 @@ export default function PaymentSettingsPage() {
                   </div>
                   <div className="flex items-center gap-1">
                     {account.isDefault && (
-                      <span className="text-xs bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400 px-2 py-0.5 rounded">
+                      <span className="text-xs bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300 dark:bg-green-900/30 dark:text-green-400 px-2 py-0.5 rounded">
                         Default
                       </span>
                     )}
@@ -578,7 +578,7 @@ export default function PaymentSettingsPage() {
                   <button
                     onClick={() => handleToggleActive(account)}
                     className={`text-xs flex items-center gap-1 ${
-                      account.isActive ? "text-green-600" : "text-gray-400"
+                      account.isActive ? "text-green-600 dark:text-green-400" : "text-gray-400 dark:text-gray-500"
                     }`}
                   >
                     <CheckCircleIcon className="h-4 w-4" />
@@ -587,17 +587,17 @@ export default function PaymentSettingsPage() {
                   <div className="flex gap-2">
                     <button
                       onClick={() => handleEdit(account)}
-                      className="p-1.5 hover:bg-gray-100 dark:hover:bg-gray-700 rounded"
+                      className="p-1.5 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:bg-gray-700 rounded"
                       title="Edit"
                     >
                       <PencilIcon className="h-4 w-4 text-blue-600" />
                     </button>
                     <button
                       onClick={() => handleDelete(account.id)}
-                      className="p-1.5 hover:bg-gray-100 dark:hover:bg-gray-700 rounded"
+                      className="p-1.5 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:bg-gray-700 rounded"
                       title="Delete"
                     >
-                      <TrashIcon className="h-4 w-4 text-red-600" />
+                      <TrashIcon className="h-4 w-4 text-red-600 dark:text-red-400" />
                     </button>
                   </div>
                 </div>

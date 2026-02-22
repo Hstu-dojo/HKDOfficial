@@ -183,7 +183,7 @@ export default function RolesManagement() {
       </div>
 
       {error && (
-        <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg dark:bg-red-900/20 dark:border-red-800 dark:text-red-400">
+        <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-700 px-4 py-3 rounded-lg dark:bg-red-900/20 dark:border-red-800 dark:text-red-400">
           {error}
         </div>
       )}
@@ -205,7 +205,7 @@ export default function RolesManagement() {
                   required
                   className="uppercase"
                 />
-                <p className="text-xs text-gray-500 mt-1">Use UPPER_SNAKE_CASE for consistency</p>
+                <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">Use UPPER_SNAKE_CASE for consistency</p>
               </div>
               <div>
                 <label className="block text-sm font-medium mb-1">Description</label>
@@ -239,7 +239,7 @@ export default function RolesManagement() {
       <div className="bg-white dark:bg-gray-800 rounded-lg border overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full">
-            <thead className="bg-gray-50 dark:bg-gray-700">
+            <thead className="bg-gray-50 dark:bg-gray-800/50 dark:bg-gray-700">
               <tr>
                 <th className="px-4 py-3 text-left text-sm font-semibold">Role Name</th>
                 <th className="px-4 py-3 text-left text-sm font-semibold">Description</th>
@@ -262,8 +262,8 @@ export default function RolesManagement() {
                       onClick={() => handleToggleActive(role)}
                       className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium cursor-pointer transition-colors ${
                         role.isActive
-                          ? "bg-green-100 text-green-800 hover:bg-green-200 dark:bg-green-900/30 dark:text-green-400"
-                          : "bg-red-100 text-red-800 hover:bg-red-200 dark:bg-red-900/30 dark:text-red-400"
+                          ? "bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300 hover:bg-green-200 dark:bg-green-900/30 dark:text-green-400"
+                          : "bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-300 hover:bg-red-200 dark:bg-red-900/30 dark:text-red-400"
                       }`}
                     >
                       {role.isActive ? (
@@ -296,7 +296,7 @@ export default function RolesManagement() {
                         size="sm"
                         variant="ghost"
                         onClick={() => handleDelete(role.id, role.name)}
-                        className="h-8 w-8 p-0 text-red-600 hover:text-red-700 hover:bg-red-50"
+                        className="h-8 w-8 p-0 text-red-600 dark:text-red-400 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-900/20"
                       >
                         <TrashIcon className="h-4 w-4" />
                       </Button>
@@ -306,7 +306,7 @@ export default function RolesManagement() {
               ))}
               {roles.length === 0 && (
                 <tr>
-                  <td colSpan={5} className="px-4 py-8 text-center text-gray-500">
+                  <td colSpan={5} className="px-4 py-8 text-center text-gray-500 dark:text-gray-400">
                     No roles found. Create your first role to get started.
                   </td>
                 </tr>

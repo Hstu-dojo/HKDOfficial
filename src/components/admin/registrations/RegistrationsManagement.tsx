@@ -53,9 +53,9 @@ interface Registration {
 }
 
 const STATUS_CONFIG: Record<string, { label: string; color: string; bg: string; icon: typeof ClockIcon }> = {
-  pending: { label: 'Pending', color: 'text-yellow-700', bg: 'bg-yellow-100', icon: ClockIcon },
-  approved: { label: 'Approved', color: 'text-green-700', bg: 'bg-green-100', icon: CheckCircleIcon },
-  rejected: { label: 'Rejected', color: 'text-red-700', bg: 'bg-red-100', icon: XCircleIcon },
+  pending: { label: 'Pending', color: 'text-yellow-700', bg: 'bg-yellow-100 dark:bg-yellow-900/30', icon: ClockIcon },
+  approved: { label: 'Approved', color: 'text-green-700', bg: 'bg-green-100 dark:bg-green-900/30', icon: CheckCircleIcon },
+  rejected: { label: 'Rejected', color: 'text-red-700', bg: 'bg-red-100 dark:bg-red-900/30', icon: XCircleIcon },
 };
 
 // ─── Field Definitions (mirrors enroll-form.tsx) ─────────────────────────────
@@ -260,9 +260,9 @@ export default function RegistrationsManagement() {
   if (!canRead) {
     return (
       <div className="p-6">
-        <div className="rounded-lg border border-red-200 bg-red-50 p-4">
-          <h3 className="font-medium text-red-800">Access Denied</h3>
-          <p className="mt-1 text-sm text-red-600">
+        <div className="rounded-lg border border-red-200 dark:border-red-800 bg-red-50 dark:bg-red-900/20 p-4">
+          <h3 className="font-medium text-red-800 dark:text-red-300">Access Denied</h3>
+          <p className="mt-1 text-sm text-red-600 dark:text-red-400">
             You don&apos;t have permission to view member registrations.
           </p>
         </div>
@@ -285,7 +285,7 @@ export default function RegistrationsManagement() {
         <h1 className="text-2xl font-semibold text-gray-900 dark:text-white">
           Member Registrations
         </h1>
-        <p className="mt-1 text-sm text-gray-500">
+        <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
           View and manage member onboarding registrations
         </p>
       </div>
@@ -293,10 +293,10 @@ export default function RegistrationsManagement() {
       {/* Stats */}
       <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
         {[
-          { label: 'Total', value: stats.total, color: 'bg-blue-100 text-blue-800' },
-          { label: 'Pending', value: stats.pending, color: 'bg-yellow-100 text-yellow-800' },
-          { label: 'Approved', value: stats.approved, color: 'bg-green-100 text-green-800' },
-          { label: 'Rejected', value: stats.rejected, color: 'bg-red-100 text-red-800' },
+          { label: 'Total', value: stats.total, color: 'bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-300' },
+          { label: 'Pending', value: stats.pending, color: 'bg-yellow-100 dark:bg-yellow-900/30 text-yellow-800 dark:text-yellow-300' },
+          { label: 'Approved', value: stats.approved, color: 'bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300' },
+          { label: 'Rejected', value: stats.rejected, color: 'bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-300' },
         ].map((stat) => (
           <div key={stat.label} className="rounded-lg border bg-white dark:bg-gray-800 p-4">
             <p className="text-sm text-gray-500 dark:text-gray-400">{stat.label}</p>
@@ -310,7 +310,7 @@ export default function RegistrationsManagement() {
       {/* Filters */}
       <div className="flex flex-col gap-4 sm:flex-row">
         <div className="relative flex-1">
-          <MagnifyingGlassIcon className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
+          <MagnifyingGlassIcon className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400 dark:text-gray-500" />
           <input
             type="text"
             placeholder="Search by name, email, phone..."
@@ -320,7 +320,7 @@ export default function RegistrationsManagement() {
           />
         </div>
         <div className="flex items-center gap-2">
-          <FunnelIcon className="h-4 w-4 text-gray-400" />
+          <FunnelIcon className="h-4 w-4 text-gray-400 dark:text-gray-500" />
           <select
             className="rounded-lg border px-3 py-2 text-sm dark:bg-gray-800 dark:border-gray-600 dark:text-white"
             value={statusFilter}
@@ -359,7 +359,7 @@ export default function RegistrationsManagement() {
           <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
             {registrations.length === 0 ? (
               <tr>
-                <td colSpan={5} className="px-4 py-8 text-center text-sm text-gray-500">
+                <td colSpan={5} className="px-4 py-8 text-center text-sm text-gray-500 dark:text-gray-400">
                   No registrations found.
                 </td>
               </tr>
@@ -383,14 +383,14 @@ export default function RegistrationsManagement() {
                               className="h-9 w-9 rounded-full object-cover"
                             />
                           ) : (
-                            <UserIcon className="h-5 w-5 text-gray-500" />
+                            <UserIcon className="h-5 w-5 text-gray-500 dark:text-gray-400" />
                           )}
                         </div>
                         <div>
                           <p className="font-medium text-gray-900 dark:text-white">
                             {reg.firstName} {reg.lastName}
                           </p>
-                          <p className="text-xs text-gray-500">
+                          <p className="text-xs text-gray-500 dark:text-gray-400">
                             {reg.parsedNotes?.usernameBn || ''}
                           </p>
                         </div>
@@ -398,7 +398,7 @@ export default function RegistrationsManagement() {
                     </td>
                     <td className="px-4 py-3">
                       <p className="text-sm text-gray-700 dark:text-gray-300">{reg.email}</p>
-                      <p className="text-xs text-gray-500">{reg.phoneNumber}</p>
+                      <p className="text-xs text-gray-500 dark:text-gray-400">{reg.phoneNumber}</p>
                     </td>
                     <td className="px-4 py-3">
                       <span className={`inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-medium ${statusCfg.bg} ${statusCfg.color}`}>
@@ -406,7 +406,7 @@ export default function RegistrationsManagement() {
                         {statusCfg.label}
                       </span>
                     </td>
-                    <td className="px-4 py-3 text-sm text-gray-500">
+                    <td className="px-4 py-3 text-sm text-gray-500 dark:text-gray-400">
                       {new Date(reg.createdAt).toLocaleDateString()}
                     </td>
                     <td className="px-4 py-3 text-right">
@@ -416,23 +416,23 @@ export default function RegistrationsManagement() {
                           className="rounded p-1 hover:bg-gray-100 dark:hover:bg-gray-600"
                           title="View details"
                         >
-                          <EyeIcon className="h-4 w-4 text-gray-500" />
+                          <EyeIcon className="h-4 w-4 text-gray-500 dark:text-gray-400" />
                         </button>
                         {canApprove && reg.status === 'pending' && (
                           <>
                             <button
                               onClick={() => handleStatusChange(reg.id, 'approved')}
-                              className="rounded p-1 hover:bg-green-100 dark:hover:bg-green-900"
+                              className="rounded p-1 hover:bg-green-100 dark:hover:bg-green-900/20"
                               title="Approve"
                             >
-                              <CheckCircleIcon className="h-4 w-4 text-green-600" />
+                              <CheckCircleIcon className="h-4 w-4 text-green-600 dark:text-green-400" />
                             </button>
                             <button
                               onClick={() => handleStatusChange(reg.id, 'rejected')}
-                              className="rounded p-1 hover:bg-red-100 dark:hover:bg-red-900"
+                              className="rounded p-1 hover:bg-red-100 dark:hover:bg-red-900/20"
                               title="Reject"
                             >
-                              <XCircleIcon className="h-4 w-4 text-red-600" />
+                              <XCircleIcon className="h-4 w-4 text-red-600 dark:text-red-400" />
                             </button>
                           </>
                         )}
@@ -513,7 +513,7 @@ function DetailModal({
 
   return (
     <div className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-black/50 p-4 pt-12">
-      <div className="w-full max-w-4xl rounded-xl bg-white shadow-2xl dark:bg-gray-800">
+      <div className="w-full max-w-4xl rounded-xl bg-white dark:bg-gray-800 shadow-2xl">
         {/* Header */}
         <div className="flex items-center justify-between border-b p-5 dark:border-gray-700">
           <div className="flex items-center gap-3">
@@ -525,7 +525,7 @@ function DetailModal({
                   className="h-10 w-10 rounded-full object-cover"
                 />
               ) : (
-                <UserIcon className="h-6 w-6 text-gray-500" />
+                <UserIcon className="h-6 w-6 text-gray-500 dark:text-gray-400" />
               )}
             </div>
             <div>
@@ -537,7 +537,7 @@ function DetailModal({
                   <StatusIcon className="h-3 w-3" />
                   {statusCfg.label}
                 </span>
-                <span className="text-xs text-gray-500">
+                <span className="text-xs text-gray-500 dark:text-gray-400">
                   Submitted {new Date(registration.createdAt).toLocaleDateString()}
                 </span>
               </div>
@@ -547,7 +547,7 @@ function DetailModal({
             {!isEditing && canUpdate && (
               <button
                 onClick={onEdit}
-                className="inline-flex items-center gap-1 rounded-lg bg-blue-50 px-3 py-1.5 text-sm font-medium text-blue-700 hover:bg-blue-100 dark:bg-blue-900/30 dark:text-blue-300"
+                className="inline-flex items-center gap-1 rounded-lg bg-blue-50 dark:bg-blue-900/20 px-3 py-1.5 text-sm font-medium text-blue-700 dark:text-blue-300 hover:bg-blue-100 dark:hover:bg-blue-900/30"
               >
                 <PencilIcon className="h-4 w-4" /> Edit
               </button>
@@ -556,7 +556,7 @@ function DetailModal({
               <>
                 <button
                   onClick={onCancelEdit}
-                  className="rounded-lg px-3 py-1.5 text-sm font-medium text-gray-600 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700"
+                  className="rounded-lg px-3 py-1.5 text-sm font-medium text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
                 >
                   Cancel
                 </button>
@@ -573,7 +573,7 @@ function DetailModal({
               onClick={onClose}
               className="rounded-lg p-1.5 hover:bg-gray-100 dark:hover:bg-gray-700"
             >
-              <XMarkIcon className="h-5 w-5 text-gray-500" />
+              <XMarkIcon className="h-5 w-5 text-gray-500 dark:text-gray-400" />
             </button>
           </div>
         </div>
@@ -582,10 +582,10 @@ function DetailModal({
         <div className="max-h-[70vh] overflow-y-auto p-5 space-y-6">
           {/* Status actions */}
           {canApprove && registration.status === 'pending' && (
-            <div className="flex gap-3 rounded-lg border border-yellow-200 bg-yellow-50 p-4 dark:border-yellow-800 dark:bg-yellow-900/20">
+            <div className="flex gap-3 rounded-lg border border-yellow-200 dark:border-yellow-700 bg-yellow-50 dark:bg-yellow-900/20 p-4">
               <ClockIcon className="h-5 w-5 text-yellow-600 mt-0.5" />
               <div className="flex-1">
-                <p className="text-sm font-medium text-yellow-800 dark:text-yellow-200">
+                <p className="text-sm font-medium text-yellow-800 dark:text-yellow-300">
                   This registration is pending review.
                 </p>
                 <div className="mt-2 flex gap-2">
@@ -615,7 +615,7 @@ function DetailModal({
             return (
               <div key={section.title} className="space-y-3">
                 <div className="flex items-center gap-2">
-                  <SectionIcon className="h-5 w-5 text-gray-400" />
+                  <SectionIcon className="h-5 w-5 text-gray-400 dark:text-gray-500" />
                   <h3 className="text-sm font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400">
                     {section.title}
                   </h3>
@@ -705,30 +705,30 @@ function DetailModal({
             </h3>
             <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
               <div className="rounded-lg border bg-gray-50 dark:bg-gray-900 dark:border-gray-700 p-3">
-                <p className="text-xs text-gray-500">Registration ID</p>
+                <p className="text-xs text-gray-500 dark:text-gray-400">Registration ID</p>
                 <p className="text-xs font-mono text-gray-700 dark:text-gray-300 mt-1">{registration.id}</p>
               </div>
               <div className="rounded-lg border bg-gray-50 dark:bg-gray-900 dark:border-gray-700 p-3">
-                <p className="text-xs text-gray-500">User Account</p>
+                <p className="text-xs text-gray-500 dark:text-gray-400">User Account</p>
                 <p className="text-sm font-medium text-gray-900 dark:text-white mt-1">
                   {registration.user?.userName || 'N/A'} ({registration.user?.email || 'N/A'})
                 </p>
               </div>
               <div className="rounded-lg border bg-gray-50 dark:bg-gray-900 dark:border-gray-700 p-3">
-                <p className="text-xs text-gray-500">Created At</p>
+                <p className="text-xs text-gray-500 dark:text-gray-400">Created At</p>
                 <p className="text-sm text-gray-700 dark:text-gray-300 mt-1">
                   {new Date(registration.createdAt).toLocaleString()}
                 </p>
               </div>
               <div className="rounded-lg border bg-gray-50 dark:bg-gray-900 dark:border-gray-700 p-3">
-                <p className="text-xs text-gray-500">Last Updated</p>
+                <p className="text-xs text-gray-500 dark:text-gray-400">Last Updated</p>
                 <p className="text-sm text-gray-700 dark:text-gray-300 mt-1">
                   {new Date(registration.updatedAt).toLocaleString()}
                 </p>
               </div>
               {registration.reviewedAt && (
                 <div className="rounded-lg border bg-gray-50 dark:bg-gray-900 dark:border-gray-700 p-3">
-                  <p className="text-xs text-gray-500">Reviewed At</p>
+                  <p className="text-xs text-gray-500 dark:text-gray-400">Reviewed At</p>
                   <p className="text-sm text-gray-700 dark:text-gray-300 mt-1">
                     {new Date(registration.reviewedAt).toLocaleString()}
                   </p>

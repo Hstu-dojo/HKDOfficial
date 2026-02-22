@@ -26,22 +26,22 @@ interface StatCardProps {
 
 function StatCard({ title, value, description, icon: Icon, href, trend }: StatCardProps) {
   const content = (
-    <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200 hover:shadow-md transition-shadow">
+    <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 hover:shadow-md transition-shadow">
       <div className="flex items-center">
         <div className="flex-shrink-0">
           <Icon className="h-8 w-8 text-blue-600" />
         </div>
         <div className="ml-4 flex-1">
-          <p className="text-sm font-medium text-gray-600">{title}</p>
-          <p className="text-2xl font-semibold text-gray-900">{value}</p>
+          <p className="text-sm font-medium text-gray-600 dark:text-gray-400">{title}</p>
+          <p className="text-2xl font-semibold text-gray-900 dark:text-gray-100">{value}</p>
           {trend && (
-            <p className={`text-sm ${trend.isPositive ? 'text-green-600' : 'text-red-600'}`}>
+            <p className={`text-sm ${trend.isPositive ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}`}>
               {trend.isPositive ? '↗' : '↘'} {trend.value}
             </p>
           )}
         </div>
       </div>
-      <p className="mt-2 text-sm text-gray-500">{description}</p>
+      <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">{description}</p>
     </div>
   );
 
@@ -59,14 +59,14 @@ interface QuickActionProps {
 function QuickAction({ title, description, href, icon: Icon, color }: QuickActionProps) {
   return (
     <Link href={href}>
-      <div className="bg-white p-4 rounded-lg shadow-sm border border-gray-200 hover:shadow-md transition-shadow">
+      <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 hover:shadow-md transition-shadow">
         <div className="flex items-center">
           <div className={`flex-shrink-0 p-3 rounded-lg ${color}`}>
             <Icon className="h-6 w-6 text-white" />
           </div>
           <div className="ml-4">
-            <h3 className="text-sm font-medium text-gray-900">{title}</h3>
-            <p className="text-sm text-gray-500">{description}</p>
+            <h3 className="text-sm font-medium text-gray-900 dark:text-gray-100">{title}</h3>
+            <p className="text-sm text-gray-500 dark:text-gray-400">{description}</p>
           </div>
         </div>
       </div>
@@ -167,10 +167,10 @@ export default function AdminDashboard({ dashboardData }: AdminDashboardProps) {
     <div className="space-y-8">
       {/* Header */}
       <div>
-        <h1 className="text-3xl font-bold text-gray-900">
+        <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">
           Welcome back, {session?.user?.name || 'Admin'}!
         </h1>
-        <p className="mt-2 text-gray-600">
+        <p className="mt-2 text-gray-600 dark:text-gray-400">
           Here&apos;s an overview of your admin dashboard and quick actions.
         </p>
       </div>
@@ -185,7 +185,7 @@ export default function AdminDashboard({ dashboardData }: AdminDashboardProps) {
       {/* Quick Actions */}
       {quickActions.length > 0 && (
         <div>
-          <h2 className="text-xl font-semibold text-gray-900 mb-4">Quick Actions</h2>
+          <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-4">Quick Actions</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {quickActions.map((action) => (
               <QuickAction key={action.title} {...action} />
@@ -195,38 +195,38 @@ export default function AdminDashboard({ dashboardData }: AdminDashboardProps) {
       )}
 
       {/* Recent Activity */}
-      <div className="bg-white rounded-lg shadow-sm border border-gray-200">
+      <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
         <div className="p-6">
-          <h2 className="text-xl font-semibold text-gray-900 mb-4">Recent Activity</h2>
+          <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-4">Recent Activity</h2>
           <div className="space-y-4">
             {dashboardData.recentActivity.length === 0 ? (
-              <p className="text-gray-500 text-sm">No recent activity.</p>
+              <p className="text-gray-500 dark:text-gray-400 text-sm">No recent activity.</p>
             ) : (
               dashboardData.recentActivity.map((activity) => {
                 let Icon = ShieldCheckIcon;
-                let colorClass = "text-gray-600";
-                let bgClass = "bg-gray-50";
+                let colorClass = "text-gray-600 dark:text-gray-400";
+                let bgClass = "bg-gray-50 dark:bg-gray-800/50";
 
                 switch (activity.type) {
                   case 'USER':
                     Icon = UserGroupIcon;
                     colorClass = "text-blue-600";
-                    bgClass = "bg-blue-50";
+                    bgClass = "bg-blue-50 dark:bg-blue-900/20";
                     break;
                   case 'COURSE':
                     Icon = DocumentTextIcon;
                     colorClass = "text-indigo-600";
-                    bgClass = "bg-indigo-50";
+                    bgClass = "bg-indigo-50 dark:bg-indigo-900/20";
                     break;
                   case 'MEDIA':
                     Icon = PhotoIcon;
                     colorClass = "text-emerald-600";
-                    bgClass = "bg-emerald-50";
+                    bgClass = "bg-emerald-50 dark:bg-emerald-900/20";
                     break;
                   case 'CLASS':
                     Icon = CalendarIcon;
                     colorClass = "text-purple-600";
-                    bgClass = "bg-purple-50";
+                    bgClass = "bg-purple-50 dark:bg-purple-900/20";
                     break;
                 }
 
@@ -236,8 +236,8 @@ export default function AdminDashboard({ dashboardData }: AdminDashboardProps) {
                       <Icon className={`h-8 w-8 ${colorClass}`} />
                     </div>
                     <div className="ml-4">
-                      <p className="text-sm font-medium text-gray-900">{activity.message}</p>
-                      <p className="text-sm text-gray-500">
+                      <p className="text-sm font-medium text-gray-900 dark:text-gray-100">{activity.message}</p>
+                      <p className="text-sm text-gray-500 dark:text-gray-400">
                         {new Date(activity.timestamp).toLocaleString()}
                       </p>
                     </div>

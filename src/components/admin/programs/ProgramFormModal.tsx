@@ -132,15 +132,15 @@ export default function ProgramFormModal({ isOpen, onClose, onSuccess, initialDa
   return (
     <div className="fixed inset-0 z-50 overflow-y-auto">
       <div className="flex min-h-screen items-center justify-center px-4 pt-4 pb-20 text-center sm:block sm:p-0">
-        <div className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" onClick={onClose} />
+        <div className="fixed inset-0 bg-gray-500/75 dark:bg-gray-900/80 transition-opacity" onClick={onClose} />
 
-        <div className="inline-block transform overflow-hidden rounded-lg bg-white text-left align-bottom shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-2xl sm:align-middle">
-          <div className="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+        <div className="inline-block transform overflow-hidden rounded-lg bg-white dark:bg-gray-800 text-left align-bottom shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-2xl sm:align-middle">
+          <div className="bg-white dark:bg-gray-800 px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
             <div className="flex items-center justify-between mb-5">
-              <h3 className="text-lg font-medium leading-6 text-gray-900">
+              <h3 className="text-lg font-medium leading-6 text-gray-900 dark:text-gray-100">
                 {initialData ? 'Edit Program' : 'Create New Program'}
               </h3>
-              <button onClick={onClose} className="text-gray-400 hover:text-gray-500">
+              <button onClick={onClose} className="text-gray-400 dark:text-gray-500 hover:text-gray-500 dark:hover:text-gray-300">
                 <XMarkIcon className="h-6 w-6" />
               </button>
             </div>
@@ -148,22 +148,22 @@ export default function ProgramFormModal({ isOpen, onClose, onSuccess, initialDa
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="col-span-2">
-                  <label className="block text-sm font-medium text-gray-700">Title</label>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Title</label>
                   <input
                     type="text"
                     required
                     value={formData.title}
                     onChange={handleTitleChange}
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm border p-2"
+                    className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm border p-2"
                   />
                 </div>
 
                 <div className="col-span-1">
-                  <label className="block text-sm font-medium text-gray-700">Type</label>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Type</label>
                   <select
                     value={formData.type}
                     onChange={(e) => setFormData(prev => ({ ...prev, type: e.target.value }))}
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm border p-2"
+                    className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm border p-2"
                   >
                     {PROGRAM_TYPES.map(type => (
                       <option key={type.value} value={type.value}>{type.label}</option>
@@ -172,72 +172,72 @@ export default function ProgramFormModal({ isOpen, onClose, onSuccess, initialDa
                 </div>
 
                 <div className="col-span-1">
-                  <label className="block text-sm font-medium text-gray-700">Slug</label>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Slug</label>
                   <input
                     type="text"
                     required
                     value={formData.slug}
                     onChange={(e) => setFormData(prev => ({ ...prev, slug: e.target.value }))}
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm border p-2 bg-gray-50"
+                    className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm border p-2 bg-gray-50 dark:bg-gray-800/50"
                   />
                 </div>
 
                 <div className="col-span-2">
-                   <label className="block text-sm font-medium text-gray-700">Description</label>
+                   <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Description</label>
                    <textarea
                      rows={3}
                      value={formData.description}
                      onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
-                     className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm border p-2"
+                     className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm border p-2"
                    />
                 </div>
 
                 <div className="col-span-1">
-                  <label className="block text-sm font-medium text-gray-700">Start Date & Time</label>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Start Date & Time</label>
                   <input
                     type="datetime-local"
                     required
                     value={formData.startDate}
                     onChange={(e) => setFormData(prev => ({ ...prev, startDate: e.target.value }))}
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm border p-2"
+                    className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm border p-2"
                   />
                 </div>
 
                 <div className="col-span-1">
-                  <label className="block text-sm font-medium text-gray-700">End Date & Time</label>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">End Date & Time</label>
                   <input
                     type="datetime-local"
                     value={formData.endDate}
                     onChange={(e) => setFormData(prev => ({ ...prev, endDate: e.target.value }))}
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm border p-2"
+                    className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm border p-2"
                   />
                 </div>
                 
                  <div className="col-span-1">
-                  <label className="block text-sm font-medium text-gray-700">Registration Deadline</label>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Registration Deadline</label>
                   <input
                     type="datetime-local"
                     value={formData.registrationDeadline}
                     onChange={(e) => setFormData(prev => ({ ...prev, registrationDeadline: e.target.value }))}
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm border p-2"
+                    className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm border p-2"
                   />
                 </div>
 
                  <div className="col-span-1">
-                  <label className="block text-sm font-medium text-gray-700">Location</label>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Location</label>
                   <input
                     type="text"
                     value={formData.location}
                     onChange={(e) => setFormData(prev => ({ ...prev, location: e.target.value }))}
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm border p-2"
+                    className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm border p-2"
                   />
                 </div>
 
                 <div className="col-span-1">
-                  <label className="block text-sm font-medium text-gray-700">Fee (BDT)</label>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Fee (BDT)</label>
                   <div className="relative mt-1 rounded-md shadow-sm">
                     <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-                      <span className="text-gray-500 sm:text-sm">৳</span>
+                      <span className="text-gray-500 dark:text-gray-400 sm:text-sm">৳</span>
                     </div>
                     <input
                       type="number"
@@ -245,22 +245,22 @@ export default function ProgramFormModal({ isOpen, onClose, onSuccess, initialDa
                       min="0"
                       value={formData.fee}
                       onChange={(e) => setFormData(prev => ({ ...prev, fee: parseFloat(e.target.value) }))}
-                      className="block w-full rounded-md border-gray-300 pl-7 focus:border-blue-500 focus:ring-blue-500 sm:text-sm border p-2"
+                      className="block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white pl-7 focus:border-blue-500 focus:ring-blue-500 sm:text-sm border p-2"
                     />
                   </div>
                 </div>
 
                 <div className="col-span-1">
-                  <label className="block text-sm font-medium text-gray-700">Max Participants</label>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Max Participants</label>
                   <input
                     type="number"
                     min="0"
                     placeholder="0 for unlimited"
                     value={formData.maxParticipants}
                     onChange={(e) => setFormData(prev => ({ ...prev, maxParticipants: parseInt(e.target.value) }))}
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm border p-2"
+                    className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm border p-2"
                   />
-                  <p className="text-xs text-gray-500 mt-1">Set to 0 for no limit</p>
+                  <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">Set to 0 for no limit</p>
                 </div>
                 
                  <div className="col-span-full border-t pt-4">
@@ -270,13 +270,13 @@ export default function ProgramFormModal({ isOpen, onClose, onSuccess, initialDa
                       type="checkbox"
                       checked={formData.isRegistrationOpen}
                       onChange={(e) => setFormData(prev => ({ ...prev, isRegistrationOpen: e.target.checked }))}
-                      className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                      className="h-4 w-4 rounded border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white text-blue-600 focus:ring-blue-500"
                     />
-                    <label htmlFor="isRegistrationOpen" className="ml-2 block text-sm text-gray-900">
+                    <label htmlFor="isRegistrationOpen" className="ml-2 block text-sm text-gray-900 dark:text-gray-100">
                       Open for Registration
                     </label>
                   </div>
-                   <p className="text-xs text-gray-500 mt-1 ml-6">
+                   <p className="text-xs text-gray-500 dark:text-gray-400 mt-1 ml-6">
                     If unchecked, users will not see the &quot;Register&quot; button.
                    </p>
                 </div>
@@ -295,7 +295,7 @@ export default function ProgramFormModal({ isOpen, onClose, onSuccess, initialDa
                   type="button"
                   onClick={onClose}
                   disabled={loading}
-                  className="mt-3 inline-flex w-full justify-center rounded-md border border-gray-300 bg-white px-4 py-2 text-base font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 sm:col-start-1 sm:mt-0 sm:text-sm"
+                  className="mt-3 inline-flex w-full justify-center rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 px-4 py-2 text-base font-medium text-gray-700 dark:text-gray-300 shadow-sm hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 sm:col-start-1 sm:mt-0 sm:text-sm"
                 >
                   Cancel
                 </button>

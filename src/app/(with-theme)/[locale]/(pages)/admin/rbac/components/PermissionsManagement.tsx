@@ -185,11 +185,11 @@ export default function PermissionsManagement() {
   }, {} as Record<string, Permission[]>);
 
   const actionColors: Record<string, string> = {
-    CREATE: "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400",
-    READ: "bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400",
-    UPDATE: "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400",
-    DELETE: "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400",
-    MANAGE: "bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-400",
+    CREATE: "bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300 dark:bg-green-900/30 dark:text-green-400",
+    READ: "bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-300 dark:bg-blue-900/30 dark:text-blue-400",
+    UPDATE: "bg-yellow-100 dark:bg-yellow-900/30 text-yellow-800 dark:text-yellow-300 dark:bg-yellow-900/30 dark:text-yellow-400",
+    DELETE: "bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-300 dark:bg-red-900/30 dark:text-red-400",
+    MANAGE: "bg-purple-100 dark:bg-purple-900/30 text-purple-800 dark:bg-purple-900/30 dark:text-purple-400",
   };
 
   if (loading) {
@@ -219,7 +219,7 @@ export default function PermissionsManagement() {
       </div>
 
       {error && (
-        <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg">
+        <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-700 px-4 py-3 rounded-lg">
           {error}
         </div>
       )}
@@ -327,12 +327,12 @@ export default function PermissionsManagement() {
       <div className="space-y-4">
         {Object.entries(groupedPermissions).map(([resource, perms]) => (
           <div key={resource} className="bg-white dark:bg-gray-800 rounded-lg border overflow-hidden">
-            <div className="bg-gray-50 dark:bg-gray-700 px-4 py-3 border-b">
+            <div className="bg-gray-50 dark:bg-gray-800/50 dark:bg-gray-700 px-4 py-3 border-b">
               <h3 className="font-semibold flex items-center gap-2">
-                <span className="px-2 py-1 bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400 rounded text-sm">
+                <span className="px-2 py-1 bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-300 dark:bg-blue-900/30 dark:text-blue-400 rounded text-sm">
                   {resource}
                 </span>
-                <span className="text-sm font-normal text-gray-500">
+                <span className="text-sm font-normal text-gray-500 dark:text-gray-400">
                   ({perms.length} permissions)
                 </span>
               </h3>
@@ -369,7 +369,7 @@ export default function PermissionsManagement() {
                       size="sm"
                       variant="ghost"
                       onClick={() => handleDelete(permission.id, permission.name)}
-                      className="h-8 w-8 p-0 text-red-600 hover:text-red-700 hover:bg-red-50"
+                      className="h-8 w-8 p-0 text-red-600 dark:text-red-400 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-900/20"
                     >
                       <TrashIcon className="h-4 w-4" />
                     </Button>
@@ -380,7 +380,7 @@ export default function PermissionsManagement() {
           </div>
         ))}
         {Object.keys(groupedPermissions).length === 0 && (
-          <div className="text-center py-8 text-gray-500 bg-white dark:bg-gray-800 rounded-lg border">
+          <div className="text-center py-8 text-gray-500 dark:text-gray-400 bg-white dark:bg-gray-800 rounded-lg border">
             No permissions found. Create your first permission to get started.
           </div>
         )}

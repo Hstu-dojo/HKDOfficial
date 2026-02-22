@@ -180,7 +180,7 @@ export default function UserRolesManagement() {
       </div>
 
       {error && (
-        <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg">
+        <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-700 px-4 py-3 rounded-lg">
           {error}
         </div>
       )}
@@ -191,7 +191,7 @@ export default function UserRolesManagement() {
           <div className="p-4 border-b">
             <h3 className="font-semibold mb-3">Select User</h3>
             <div className="relative">
-              <MagnifyingGlassIcon className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+              <MagnifyingGlassIcon className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400 dark:text-gray-500" />
               <Input
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
@@ -209,11 +209,11 @@ export default function UserRolesManagement() {
                   selectedUser?.id === user.id ? "bg-blue-50 dark:bg-blue-900/20" : ""
                 }`}
               >
-                <div className="h-10 w-10 rounded-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center overflow-hidden">
+                <div className="h-10 w-10 rounded-full bg-gray-200 dark:bg-gray-600 dark:bg-gray-700 flex items-center justify-center overflow-hidden">
                   {user.userAvatar ? (
                     <img src={user.userAvatar} alt="" className="h-full w-full object-cover" />
                   ) : (
-                    <UserIcon className="h-5 w-5 text-gray-500" />
+                    <UserIcon className="h-5 w-5 text-gray-500 dark:text-gray-400" />
                   )}
                 </div>
                 <div className="flex-1 min-w-0">
@@ -222,14 +222,14 @@ export default function UserRolesManagement() {
                 </div>
                 {user.roles && user.roles.length > 0 && (
                   <div className="flex items-center gap-1">
-                    <ShieldCheckIcon className="h-4 w-4 text-green-600" />
-                    <span className="text-xs text-gray-500">{user.roles.length}</span>
+                    <ShieldCheckIcon className="h-4 w-4 text-green-600 dark:text-green-400" />
+                    <span className="text-xs text-gray-500 dark:text-gray-400">{user.roles.length}</span>
                   </div>
                 )}
               </button>
             ))}
             {filteredUsers.length === 0 && (
-              <div className="px-4 py-8 text-center text-gray-500">
+              <div className="px-4 py-8 text-center text-gray-500 dark:text-gray-400">
                 No users found
               </div>
             )}
@@ -242,11 +242,11 @@ export default function UserRolesManagement() {
             <>
               <div className="p-4 border-b">
                 <div className="flex items-center gap-3">
-                  <div className="h-12 w-12 rounded-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center overflow-hidden">
+                  <div className="h-12 w-12 rounded-full bg-gray-200 dark:bg-gray-600 dark:bg-gray-700 flex items-center justify-center overflow-hidden">
                     {selectedUser.userAvatar ? (
                       <img src={selectedUser.userAvatar} alt="" className="h-full w-full object-cover" />
                     ) : (
-                      <UserIcon className="h-6 w-6 text-gray-500" />
+                      <UserIcon className="h-6 w-6 text-gray-500 dark:text-gray-400" />
                     )}
                   </div>
                   <div>
@@ -257,7 +257,7 @@ export default function UserRolesManagement() {
               </div>
 
               {/* Assign Role Form */}
-              <div className="p-4 border-b bg-gray-50 dark:bg-gray-700/50">
+              <div className="p-4 border-b bg-gray-50 dark:bg-gray-800/50 dark:bg-gray-700/50">
                 <form onSubmit={handleAssignRole} className="flex gap-2">
                   <select
                     value={selectedRoleId}
@@ -278,7 +278,7 @@ export default function UserRolesManagement() {
                   </Button>
                 </form>
                 {availableRoles.length === 0 && (
-                  <p className="text-sm text-gray-500 mt-2">
+                  <p className="text-sm text-gray-500 dark:text-gray-400 mt-2">
                     All available roles have been assigned to this user.
                   </p>
                 )}
@@ -292,10 +292,10 @@ export default function UserRolesManagement() {
                     {selectedUser.roles.map((role) => (
                       <div
                         key={role.id}
-                        className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700/50 rounded-lg"
+                        className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-800/50 dark:bg-gray-700/50 rounded-lg"
                       >
                         <div className="flex items-center gap-3">
-                          <ShieldCheckIcon className="h-5 w-5 text-green-600" />
+                          <ShieldCheckIcon className="h-5 w-5 text-green-600 dark:text-green-400" />
                           <div>
                             <span className="font-medium">{role.name}</span>
                             {role.description && (
@@ -309,7 +309,7 @@ export default function UserRolesManagement() {
                           size="sm"
                           variant="ghost"
                           onClick={() => handleRemoveRole(selectedUser.id, role.id, role.name)}
-                          className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                          className="text-red-600 dark:text-red-400 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-900/20"
                         >
                           <TrashIcon className="h-4 w-4" />
                         </Button>
@@ -317,14 +317,14 @@ export default function UserRolesManagement() {
                     ))}
                   </div>
                 ) : (
-                  <p className="text-gray-500 text-center py-4">
+                  <p className="text-gray-500 dark:text-gray-400 text-center py-4">
                     No roles assigned to this user
                   </p>
                 )}
               </div>
             </>
           ) : (
-            <div className="flex flex-col items-center justify-center py-12 text-gray-500">
+            <div className="flex flex-col items-center justify-center py-12 text-gray-500 dark:text-gray-400">
               <UserIcon className="h-12 w-12 mb-3 opacity-50" />
               <p>Select a user to manage their roles</p>
             </div>

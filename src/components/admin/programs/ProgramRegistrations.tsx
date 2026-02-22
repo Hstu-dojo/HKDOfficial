@@ -82,10 +82,10 @@ interface RegistrationWithProfile {
 }
 
 const STATUS_CONFIG: Record<string, { label: string; color: string; bgColor: string }> = {
-  pending_payment: { label: 'Pending Payment', color: 'text-yellow-700', bgColor: 'bg-yellow-100' },
-  payment_submitted: { label: 'Payment Submitted', color: 'text-blue-700', bgColor: 'bg-blue-100' },
-  approved: { label: 'Approved', color: 'text-green-700', bgColor: 'bg-green-100' },
-  rejected: { label: 'Rejected', color: 'text-red-700', bgColor: 'bg-red-100' },
+  pending_payment: { label: 'Pending Payment', color: 'text-yellow-700', bgColor: 'bg-yellow-100 dark:bg-yellow-900/30' },
+  payment_submitted: { label: 'Payment Submitted', color: 'text-blue-700', bgColor: 'bg-blue-100 dark:bg-blue-900/30' },
+  approved: { label: 'Approved', color: 'text-green-700', bgColor: 'bg-green-100 dark:bg-green-900/30' },
+  rejected: { label: 'Rejected', color: 'text-red-700', bgColor: 'bg-red-100 dark:bg-red-900/30' },
 };
 
 const STATUS_OPTIONS = [
@@ -254,8 +254,8 @@ export default function ProgramRegistrations() {
       {/* Header */}
       <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Program Registrations</h1>
-          <p className="mt-1 text-sm text-gray-500">
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Program Registrations</h1>
+          <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
              {programIdParam 
                ? `Viewing registrations for selected program` 
                : 'Viewing all program registrations'}
@@ -267,33 +267,33 @@ export default function ProgramRegistrations() {
           <div className="relative group">
             <button
               disabled={exporting}
-              className="inline-flex items-center px-4 py-2 border border-gray-300 rounded-lg shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50"
+              className="inline-flex items-center px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg shadow-sm text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 disabled:opacity-50"
             >
               <ArrowDownTrayIcon className="h-4 w-4 mr-2" />
               {exporting ? 'Exporting...' : 'Export Excel'}
             </button>
-            <div className="absolute right-0 mt-1 w-48 bg-white rounded-lg shadow-lg border opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-10">
+            <div className="absolute right-0 mt-1 w-48 bg-white dark:bg-gray-800 rounded-lg shadow-lg border opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-10">
               <button
                 onClick={() => handleExport()}
-                className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-t-lg"
+                className="w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-600 rounded-t-lg"
               >
                 All Registrations
               </button>
               <button
                 onClick={() => handleExport('approved')}
-                className="w-full text-left px-4 py-2 text-sm text-green-700 hover:bg-green-50"
+                className="w-full text-left px-4 py-2 text-sm text-green-700 hover:bg-green-50 dark:hover:bg-green-900/20"
               >
                 Approved Only
               </button>
               <button
                 onClick={() => handleExport('pending_payment')}
-                className="w-full text-left px-4 py-2 text-sm text-yellow-700 hover:bg-yellow-50"
+                className="w-full text-left px-4 py-2 text-sm text-yellow-700 hover:bg-yellow-50 dark:bg-yellow-900/20"
               >
                 Pending Only
               </button>
               <button
                 onClick={() => handleExport('rejected')}
-                className="w-full text-left px-4 py-2 text-sm text-red-700 hover:bg-red-50 rounded-b-lg"
+                className="w-full text-left px-4 py-2 text-sm text-red-700 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-b-lg"
               >
                 Rejected Only
               </button>
@@ -310,7 +310,7 @@ export default function ProgramRegistrations() {
             statusFilter === '' ? 'ring-2 ring-blue-500 border-blue-500' : 'hover:border-gray-300'
           }`}
         >
-          <p className="text-sm text-gray-500">All</p>
+          <p className="text-sm text-gray-500 dark:text-gray-400">All</p>
           <p className="text-2xl font-semibold">{stats.total}</p>
         </button>
         <button
@@ -319,7 +319,7 @@ export default function ProgramRegistrations() {
             statusFilter === 'pending_payment' ? 'ring-2 ring-yellow-500 border-yellow-500' : 'hover:border-gray-300'
           }`}
         >
-          <p className="text-sm text-gray-500">Pending</p>
+          <p className="text-sm text-gray-500 dark:text-gray-400">Pending</p>
           <p className="text-2xl font-semibold text-yellow-600">{stats.pending_payment}</p>
         </button>
         <button
@@ -328,7 +328,7 @@ export default function ProgramRegistrations() {
             statusFilter === 'payment_submitted' ? 'ring-2 ring-blue-500 border-blue-500' : 'hover:border-gray-300'
           }`}
         >
-          <p className="text-sm text-gray-500">Submitted</p>
+          <p className="text-sm text-gray-500 dark:text-gray-400">Submitted</p>
           <p className="text-2xl font-semibold text-blue-600">{stats.payment_submitted}</p>
         </button>
         <button
@@ -337,8 +337,8 @@ export default function ProgramRegistrations() {
             statusFilter === 'approved' ? 'ring-2 ring-green-500 border-green-500' : 'hover:border-gray-300'
           }`}
         >
-          <p className="text-sm text-gray-500">Approved</p>
-          <p className="text-2xl font-semibold text-green-600">{stats.approved}</p>
+          <p className="text-sm text-gray-500 dark:text-gray-400">Approved</p>
+          <p className="text-2xl font-semibold text-green-600 dark:text-green-400">{stats.approved}</p>
         </button>
         <button
           onClick={() => setStatusFilter('rejected')}
@@ -346,29 +346,29 @@ export default function ProgramRegistrations() {
             statusFilter === 'rejected' ? 'ring-2 ring-red-500 border-red-500' : 'hover:border-gray-300'
           }`}
         >
-          <p className="text-sm text-gray-500">Rejected</p>
-          <p className="text-2xl font-semibold text-red-600">{stats.rejected}</p>
+          <p className="text-sm text-gray-500 dark:text-gray-400">Rejected</p>
+          <p className="text-2xl font-semibold text-red-600 dark:text-red-400">{stats.rejected}</p>
         </button>
       </div>
 
       {/* Registrations Table */}
-      <div className="bg-white shadow overflow-hidden rounded-lg border">
+      <div className="bg-white dark:bg-gray-800 shadow overflow-hidden rounded-lg border">
         <div className="overflow-x-auto">
-          <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-50">
+          <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+            <thead className="bg-gray-50 dark:bg-gray-800/50">
               <tr>
-                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Participant</th>
-                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Contact</th>
-                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Program</th>
-                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Registration</th>
-                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Payment</th>
-                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Participant</th>
+                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Contact</th>
+                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Program</th>
+                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Registration</th>
+                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Payment</th>
+                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Status</th>
                 <th scope="col" className="relative px-6 py-3"><span className="sr-only">Actions</span></th>
               </tr>
             </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
+            <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
               {filteredRegistrations.map((reg) => (
-                <tr key={reg.id} className="hover:bg-gray-50">
+                <tr key={reg.id} className="hover:bg-gray-50 dark:hover:bg-gray-700">
                   <td className="px-6 py-4">
                     <div className="flex items-center">
                        <div className="flex-shrink-0 h-10 w-10">
@@ -379,48 +379,48 @@ export default function ProgramRegistrations() {
                              alt="" 
                            />
                          ) : (
-                           <div className="h-10 w-10 rounded-full bg-gray-200 flex items-center justify-center">
-                             <UserIcon className="h-5 w-5 text-gray-500" />
+                           <div className="h-10 w-10 rounded-full bg-gray-200 dark:bg-gray-600 flex items-center justify-center">
+                             <UserIcon className="h-5 w-5 text-gray-500 dark:text-gray-400" />
                            </div>
                          )}
                        </div>
                        <div className="ml-3">
-                         <div className="text-sm font-medium text-gray-900">
+                         <div className="text-sm font-medium text-gray-900 dark:text-gray-100">
                            {reg.user?.account?.name || reg.user?.userName || 'Unknown'}
                          </div>
                          {reg.user?.account?.nameBangla && (
-                           <div className="text-sm text-gray-500">{reg.user.account.nameBangla}</div>
+                           <div className="text-sm text-gray-500 dark:text-gray-400">{reg.user.account.nameBangla}</div>
                          )}
-                         <div className="text-xs text-gray-400">{reg.user?.email}</div>
+                         <div className="text-xs text-gray-400 dark:text-gray-500">{reg.user?.email}</div>
                        </div>
                     </div>
                   </td>
                   <td className="px-6 py-4">
-                    <div className="text-sm text-gray-900">{reg.user?.account?.phone || 'N/A'}</div>
-                    <div className="text-xs text-gray-500">{reg.user?.account?.city || ''}</div>
+                    <div className="text-sm text-gray-900 dark:text-gray-100">{reg.user?.account?.phone || 'N/A'}</div>
+                    <div className="text-xs text-gray-500 dark:text-gray-400">{reg.user?.account?.city || ''}</div>
                   </td>
                   <td className="px-6 py-4">
-                    <div className="text-sm font-medium text-gray-900">{reg.program?.title}</div>
-                    <div className="text-xs text-gray-500">
+                    <div className="text-sm font-medium text-gray-900 dark:text-gray-100">{reg.program?.title}</div>
+                    <div className="text-xs text-gray-500 dark:text-gray-400">
                       {reg.program?.type?.replace('_', ' ')}
                       {reg.program?.startDate && ` • ${format(new Date(reg.program.startDate), 'MMM d, yyyy')}`}
                     </div>
                   </td>
                   <td className="px-6 py-4">
-                    <div className="text-sm text-gray-900">{reg.registrationNumber || '-'}</div>
-                    <div className="text-xs text-gray-500">
+                    <div className="text-sm text-gray-900 dark:text-gray-100">{reg.registrationNumber || '-'}</div>
+                    <div className="text-xs text-gray-500 dark:text-gray-400">
                       {format(new Date(reg.createdAt), 'MMM d, yyyy h:mm a')}
                     </div>
                   </td>
                   <td className="px-6 py-4">
-                    <div className="text-sm font-medium text-gray-900">{reg.feeAmount} {reg.currency}</div>
+                    <div className="text-sm font-medium text-gray-900 dark:text-gray-100">{reg.feeAmount} {reg.currency}</div>
                     {reg.transactionId && (
-                      <div className="text-xs text-gray-500 font-mono">Trx: {reg.transactionId}</div>
+                      <div className="text-xs text-gray-500 dark:text-gray-400 font-mono">Trx: {reg.transactionId}</div>
                     )}
                     {reg.paymentProofUrl && (
                       <button 
                         onClick={() => setSelectedImage(reg.paymentProofUrl!)}
-                        className="mt-1 flex items-center text-xs text-blue-600 hover:text-blue-800"
+                        className="mt-1 flex items-center text-xs text-blue-600 hover:text-blue-800 dark:text-blue-300"
                       >
                         <PhotoIcon className="h-3 w-3 mr-1" />
                         View Proof
@@ -434,7 +434,7 @@ export default function ProgramRegistrations() {
                     <div className="flex justify-end space-x-2">
                       <button
                         onClick={() => setSelectedRegistration(reg)}
-                        className="p-1 text-gray-600 hover:bg-gray-100 rounded"
+                        className="p-1 text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-600 rounded"
                         title="View Details"
                       >
                         <EyeIcon className="h-5 w-5" />
@@ -443,7 +443,7 @@ export default function ProgramRegistrations() {
                         <>
                           <button
                             onClick={() => setEditingRegistration(reg)}
-                            className="p-1 text-blue-600 hover:bg-blue-100 rounded"
+                            className="p-1 text-blue-600 hover:bg-blue-100 dark:hover:bg-blue-900/20 rounded"
                             title="Edit Registration"
                           >
                             <PencilSquareIcon className="h-5 w-5" />
@@ -451,7 +451,7 @@ export default function ProgramRegistrations() {
                           {reg.status !== 'approved' && (
                             <button
                               onClick={() => handleStatusUpdate(reg.id, 'approved')}
-                              className="text-green-600 hover:text-green-900"
+                              className="text-green-600 dark:text-green-400 hover:text-green-900"
                               title="Approve"
                             >
                               <CheckCircleIcon className="h-5 w-5" />
@@ -460,7 +460,7 @@ export default function ProgramRegistrations() {
                           {reg.status !== 'rejected' && (
                             <button
                               onClick={() => handleStatusUpdate(reg.id, 'rejected')}
-                              className="text-red-600 hover:text-red-900"
+                              className="text-red-600 dark:text-red-400 hover:text-red-900"
                               title="Reject"
                             >
                               <XCircleIcon className="h-5 w-5" />
@@ -471,7 +471,7 @@ export default function ProgramRegistrations() {
                       {canDelete && (
                         <button
                           onClick={() => handleDelete(reg.id)}
-                          className="p-1 text-red-600 hover:bg-red-100 rounded"
+                          className="p-1 text-red-600 dark:text-red-400 hover:bg-red-100 dark:hover:bg-red-900/20 rounded"
                           title="Delete Registration"
                         >
                           <TrashIcon className="h-5 w-5" />
@@ -484,8 +484,8 @@ export default function ProgramRegistrations() {
               
               {filteredRegistrations.length === 0 && (
                 <tr>
-                  <td colSpan={7} className="px-6 py-12 text-center text-gray-500">
-                    <UserIcon className="h-12 w-12 mx-auto text-gray-400 mb-2" />
+                  <td colSpan={7} className="px-6 py-12 text-center text-gray-500 dark:text-gray-400">
+                    <UserIcon className="h-12 w-12 mx-auto text-gray-400 dark:text-gray-500 mb-2" />
                     <p>No registrations found.</p>
                   </td>
                 </tr>
@@ -572,17 +572,17 @@ function EditRegistrationModal({
       <div className="flex min-h-full items-center justify-center p-4">
         <div className="fixed inset-0 bg-black bg-opacity-50" onClick={onClose} />
         
-        <div className="relative bg-white rounded-xl shadow-xl max-w-lg w-full">
+        <div className="relative bg-white dark:bg-gray-800 rounded-xl shadow-xl max-w-lg w-full">
           <div className="border-b px-6 py-4 flex justify-between items-center">
-            <h2 className="text-xl font-bold text-gray-900">Edit Registration</h2>
-            <button onClick={onClose} className="p-2 hover:bg-gray-100 rounded-full">
+            <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100">Edit Registration</h2>
+            <button onClick={onClose} className="p-2 hover:bg-gray-100 dark:hover:bg-gray-600 rounded-full">
               <XMarkIcon className="h-6 w-6" />
             </button>
           </div>
 
           <form onSubmit={handleSubmit} className="p-6 space-y-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Status</label>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Status</label>
               <select
                 value={formData.status}
                 onChange={(e) => setFormData({ ...formData, status: e.target.value })}
@@ -596,7 +596,7 @@ function EditRegistrationModal({
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Payment Method</label>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Payment Method</label>
               <select
                 value={formData.paymentMethod}
                 onChange={(e) => setFormData({ ...formData, paymentMethod: e.target.value })}
@@ -612,7 +612,7 @@ function EditRegistrationModal({
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Transaction ID</label>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Transaction ID</label>
               <input
                 type="text"
                 value={formData.transactionId}
@@ -623,7 +623,7 @@ function EditRegistrationModal({
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Admin Notes</label>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Admin Notes</label>
               <textarea
                 value={formData.notes}
                 onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
@@ -635,7 +635,7 @@ function EditRegistrationModal({
 
             {formData.status === 'rejected' && (
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Rejection Reason</label>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Rejection Reason</label>
                 <textarea
                   value={formData.rejectionReason}
                   onChange={(e) => setFormData({ ...formData, rejectionReason: e.target.value })}
@@ -650,7 +650,7 @@ function EditRegistrationModal({
               <button
                 type="button"
                 onClick={onClose}
-                className="flex-1 px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50"
+                className="flex-1 px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700"
               >
                 Cancel
               </button>
@@ -696,27 +696,27 @@ function RegistrationDetailModal({
       <div className="flex min-h-full items-center justify-center p-4">
         <div className="fixed inset-0 bg-black bg-opacity-50" onClick={onClose} />
         
-        <div className="relative bg-white rounded-xl shadow-xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+        <div className="relative bg-white dark:bg-gray-800 rounded-xl shadow-xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
           {/* Header */}
-          <div className="sticky top-0 bg-white border-b px-6 py-4 flex justify-between items-center z-10">
+          <div className="sticky top-0 bg-white dark:bg-gray-800 border-b px-6 py-4 flex justify-between items-center z-10">
             <div>
-              <h2 className="text-xl font-bold text-gray-900">Registration Details</h2>
-              <p className="text-sm text-gray-500">
+              <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100">Registration Details</h2>
+              <p className="text-sm text-gray-500 dark:text-gray-400">
                 {registration.registrationNumber || `ID: ${registration.id.slice(0, 8)}...`}
               </p>
             </div>
-            <button onClick={onClose} className="p-2 hover:bg-gray-100 rounded-full">
+            <button onClick={onClose} className="p-2 hover:bg-gray-100 dark:hover:bg-gray-600 rounded-full">
               <XMarkIcon className="h-6 w-6" />
             </button>
           </div>
 
           <div className="p-6 space-y-6">
             {/* Status Banner */}
-            <div className={`p-4 rounded-lg ${STATUS_CONFIG[registration.status]?.bgColor || 'bg-gray-100'}`}>
+            <div className={`p-4 rounded-lg ${STATUS_CONFIG[registration.status]?.bgColor || 'bg-gray-100 dark:bg-gray-700'}`}>
               <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div>
                   <p className="text-sm font-medium">Status</p>
-                  <p className={`text-lg font-bold ${STATUS_CONFIG[registration.status]?.color || 'text-gray-700'}`}>
+                  <p className={`text-lg font-bold ${STATUS_CONFIG[registration.status]?.color || 'text-gray-700 dark:text-gray-300'}`}>
                     {STATUS_CONFIG[registration.status]?.label || registration.status}
                   </p>
                 </div>
@@ -758,7 +758,7 @@ function RegistrationDetailModal({
                   {canDelete && (
                     <button
                       onClick={() => onDelete(registration.id)}
-                      className="px-3 py-2 bg-red-100 text-red-700 rounded-lg hover:bg-red-200 flex items-center gap-2 text-sm"
+                      className="px-3 py-2 bg-red-100 dark:bg-red-900/30 text-red-700 rounded-lg hover:bg-red-200 flex items-center gap-2 text-sm"
                     >
                       <TrashIcon className="h-4 w-4" /> Delete
                     </button>
@@ -770,7 +770,7 @@ function RegistrationDetailModal({
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {/* Participant Info */}
               <div className="space-y-4">
-                <h3 className="text-lg font-semibold text-gray-900 border-b pb-2 flex items-center gap-2">
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 border-b pb-2 flex items-center gap-2">
                   <UserIcon className="h-5 w-5" /> Participant Information
                 </h3>
                 
@@ -782,14 +782,14 @@ function RegistrationDetailModal({
                       className="h-20 w-20 rounded-lg object-cover"
                     />
                   ) : (
-                    <div className="h-20 w-20 rounded-lg bg-gray-200 flex items-center justify-center">
-                      <UserIcon className="h-8 w-8 text-gray-400" />
+                    <div className="h-20 w-20 rounded-lg bg-gray-200 dark:bg-gray-600 flex items-center justify-center">
+                      <UserIcon className="h-8 w-8 text-gray-400 dark:text-gray-500" />
                     </div>
                   )}
                   <div>
-                    <p className="font-semibold text-gray-900">{account?.name || user?.userName || 'N/A'}</p>
-                    {account?.nameBangla && <p className="text-gray-600">{account.nameBangla}</p>}
-                    <p className="text-sm text-gray-500">{user?.email}</p>
+                    <p className="font-semibold text-gray-900 dark:text-gray-100">{account?.name || user?.userName || 'N/A'}</p>
+                    {account?.nameBangla && <p className="text-gray-600 dark:text-gray-400">{account.nameBangla}</p>}
+                    <p className="text-sm text-gray-500 dark:text-gray-400">{user?.email}</p>
                   </div>
                 </div>
 
@@ -804,10 +804,10 @@ function RegistrationDetailModal({
 
                 {account?.address && (
                   <div className="text-sm">
-                    <div className="flex items-center gap-1 text-gray-500 mb-1">
+                    <div className="flex items-center gap-1 text-gray-500 dark:text-gray-400 mb-1">
                       <MapPinIcon className="h-4 w-4" /> Address
                     </div>
-                    <p className="text-gray-900">
+                    <p className="text-gray-900 dark:text-gray-100">
                       {account.address}
                       {account.city && `, ${account.city}`}
                       {account.state && `, ${account.state}`}
@@ -819,10 +819,10 @@ function RegistrationDetailModal({
 
                 {(account?.identityType || account?.identityNumber) && (
                   <div className="text-sm">
-                    <div className="flex items-center gap-1 text-gray-500 mb-1">
+                    <div className="flex items-center gap-1 text-gray-500 dark:text-gray-400 mb-1">
                       <IdentificationIcon className="h-4 w-4" /> Identity
                     </div>
-                    <p className="text-gray-900">
+                    <p className="text-gray-900 dark:text-gray-100">
                       {account?.identityType}: {account?.identityNumber}
                     </p>
                   </div>
@@ -830,54 +830,54 @@ function RegistrationDetailModal({
 
                 {account?.institute && (
                   <div className="text-sm">
-                    <div className="flex items-center gap-1 text-gray-500 mb-1">
+                    <div className="flex items-center gap-1 text-gray-500 dark:text-gray-400 mb-1">
                       <AcademicCapIcon className="h-4 w-4" /> Institution
                     </div>
-                    <p className="text-gray-900">{account.institute}</p>
+                    <p className="text-gray-900 dark:text-gray-100">{account.institute}</p>
                   </div>
                 )}
               </div>
 
               {/* Program & Payment Info */}
               <div className="space-y-4">
-                <h3 className="text-lg font-semibold text-gray-900 border-b pb-2">Program Details</h3>
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 border-b pb-2">Program Details</h3>
                 
-                <div className="bg-gray-50 p-4 rounded-lg">
-                  <p className="font-semibold text-gray-900">{program?.title}</p>
-                  <p className="text-sm text-gray-500">{program?.type?.replace('_', ' ')}</p>
+                <div className="bg-gray-50 dark:bg-gray-800/50 p-4 rounded-lg">
+                  <p className="font-semibold text-gray-900 dark:text-gray-100">{program?.title}</p>
+                  <p className="text-sm text-gray-500 dark:text-gray-400">{program?.type?.replace('_', ' ')}</p>
                   {program?.startDate && (
-                    <p className="text-sm text-gray-600 mt-1">
+                    <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
                       Date: {format(new Date(program.startDate), 'MMMM d, yyyy')}
                       {program?.endDate && ` - ${format(new Date(program.endDate), 'MMMM d, yyyy')}`}
                     </p>
                   )}
                   {program?.location && (
-                    <p className="text-sm text-gray-600">Location: {program.location}</p>
+                    <p className="text-sm text-gray-600 dark:text-gray-400">Location: {program.location}</p>
                   )}
                 </div>
 
-                <h3 className="text-lg font-semibold text-gray-900 border-b pb-2">Payment Information</h3>
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 border-b pb-2">Payment Information</h3>
                 
                 <div className="space-y-3 text-sm">
                   <div className="flex justify-between">
-                    <span className="text-gray-500">Fee Amount</span>
+                    <span className="text-gray-500 dark:text-gray-400">Fee Amount</span>
                     <span className="font-semibold">{registration.feeAmount} {registration.currency}</span>
                   </div>
                   {registration.paymentMethod && (
                     <div className="flex justify-between">
-                      <span className="text-gray-500">Payment Method</span>
+                      <span className="text-gray-500 dark:text-gray-400">Payment Method</span>
                       <span className="capitalize">{registration.paymentMethod}</span>
                     </div>
                   )}
                   {registration.transactionId && (
                     <div className="flex justify-between">
-                      <span className="text-gray-500">Transaction ID</span>
-                      <span className="font-mono text-xs bg-gray-100 px-2 py-1 rounded">{registration.transactionId}</span>
+                      <span className="text-gray-500 dark:text-gray-400">Transaction ID</span>
+                      <span className="font-mono text-xs bg-gray-100 dark:bg-gray-700 px-2 py-1 rounded">{registration.transactionId}</span>
                     </div>
                   )}
                   {registration.paymentSubmittedAt && (
                     <div className="flex justify-between">
-                      <span className="text-gray-500">Payment Submitted</span>
+                      <span className="text-gray-500 dark:text-gray-400">Payment Submitted</span>
                       <span>{format(new Date(registration.paymentSubmittedAt), 'MMM d, yyyy h:mm a')}</span>
                     </div>
                   )}
@@ -885,7 +885,7 @@ function RegistrationDetailModal({
 
                 {registration.paymentProofUrl && (
                   <div>
-                    <p className="text-sm text-gray-500 mb-2">Payment Proof</p>
+                    <p className="text-sm text-gray-500 dark:text-gray-400 mb-2">Payment Proof</p>
                     <img 
                       src={registration.paymentProofUrl} 
                       alt="Payment Proof" 
@@ -895,28 +895,28 @@ function RegistrationDetailModal({
                   </div>
                 )}
 
-                <h3 className="text-lg font-semibold text-gray-900 border-b pb-2">Registration Timeline</h3>
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 border-b pb-2">Registration Timeline</h3>
                 <div className="space-y-2 text-sm">
                   <div className="flex justify-between">
-                    <span className="text-gray-500">Registered At</span>
+                    <span className="text-gray-500 dark:text-gray-400">Registered At</span>
                     <span>{format(new Date(registration.createdAt), 'MMM d, yyyy h:mm a')}</span>
                   </div>
                   {registration.verifiedAt && (
                     <div className="flex justify-between">
-                      <span className="text-gray-500">Verified At</span>
+                      <span className="text-gray-500 dark:text-gray-400">Verified At</span>
                       <span>{format(new Date(registration.verifiedAt), 'MMM d, yyyy h:mm a')}</span>
                     </div>
                   )}
                   {registration.rejectionReason && (
-                    <div className="mt-2 p-3 bg-red-50 rounded-lg">
-                      <p className="text-sm font-medium text-red-800">Rejection Reason</p>
-                      <p className="text-sm text-red-600">{registration.rejectionReason}</p>
+                    <div className="mt-2 p-3 bg-red-50 dark:bg-red-900/20 rounded-lg">
+                      <p className="text-sm font-medium text-red-800 dark:text-red-300">Rejection Reason</p>
+                      <p className="text-sm text-red-600 dark:text-red-400">{registration.rejectionReason}</p>
                     </div>
                   )}
                   {registration.notes && (
-                    <div className="mt-2 p-3 bg-gray-50 rounded-lg">
-                      <p className="text-sm font-medium text-gray-700">Notes</p>
-                      <p className="text-sm text-gray-600">{registration.notes}</p>
+                    <div className="mt-2 p-3 bg-gray-50 dark:bg-gray-800/50 rounded-lg">
+                      <p className="text-sm font-medium text-gray-700 dark:text-gray-300">Notes</p>
+                      <p className="text-sm text-gray-600 dark:text-gray-400">{registration.notes}</p>
                     </div>
                   )}
                 </div>
@@ -941,11 +941,11 @@ function DetailItem({
   if (!value) return null;
   return (
     <div>
-      <div className="flex items-center gap-1 text-gray-500">
+      <div className="flex items-center gap-1 text-gray-500 dark:text-gray-400">
         {Icon && <Icon className="h-3 w-3" />}
         <span className="text-xs">{label}</span>
       </div>
-      <p className="text-gray-900">{value}</p>
+      <p className="text-gray-900 dark:text-gray-100">{value}</p>
     </div>
   );
 }

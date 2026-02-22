@@ -32,13 +32,13 @@ export function AdminHeader({ onToggleSidebar, sidebarOpen }: AdminHeaderProps) 
   if (hasRole('INSTRUCTOR')) userRoles.push('Instructor');
 
   return (
-    <header className="bg-white shadow-sm border-b border-slate-200 sticky top-0 z-30">
+    <header className="bg-white dark:bg-gray-800 shadow-sm border-b border-slate-200 dark:border-slate-700 sticky top-0 z-30">
       <div className="flex items-center justify-between h-16 px-4 md:px-6">
         {/* Left side - Toggle and breadcrumb */}
         <div className="flex items-center space-x-3">
           <button
             onClick={onToggleSidebar}
-            className="p-2 rounded-md text-slate-500 hover:text-slate-700 hover:bg-slate-100 lg:hidden transition-colors"
+            className="p-2 rounded-md text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700 lg:hidden transition-colors"
             aria-label="Toggle sidebar"
           >
             {sidebarOpen ? (
@@ -49,11 +49,11 @@ export function AdminHeader({ onToggleSidebar, sidebarOpen }: AdminHeaderProps) 
           </button>
           
           <div className="flex items-center space-x-3">
-            <h1 className="text-lg md:text-xl font-semibold text-slate-900 flex items-center">
+            <h1 className="text-lg md:text-xl font-semibold text-slate-900 dark:text-slate-100 flex items-center">
               Admin Dashboard
             </h1>
             {userRoles.length > 0 && (
-              <span className="hidden sm:inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800 border border-blue-200">
+              <span className="hidden sm:inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-300 border border-blue-200 dark:border-blue-700">
                 {userRoles.join(', ')}
               </span>
             )}
@@ -64,7 +64,7 @@ export function AdminHeader({ onToggleSidebar, sidebarOpen }: AdminHeaderProps) 
         <div className="flex items-center space-x-2 md:space-x-3">
           {/* Quick actions */}
           <Link href="/" className="hidden sm:block">
-            <Button variant="outline" size="sm" className="text-slate-700 border-slate-300 hover:bg-slate-50">
+            <Button variant="outline" size="sm" className="text-slate-700 dark:text-slate-300 border-slate-300 dark:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-700">
               View Site
             </Button>
           </Link>
@@ -73,19 +73,19 @@ export function AdminHeader({ onToggleSidebar, sidebarOpen }: AdminHeaderProps) 
           <div className="relative">
             <button
               onClick={() => setShowUserMenu(!showUserMenu)}
-              className="flex items-center space-x-2 text-sm text-slate-700 hover:text-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-500 focus:ring-offset-2 rounded-lg px-2 py-1.5 transition-colors"
+              className="flex items-center space-x-2 text-sm text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-slate-100 focus:outline-none focus:ring-2 focus:ring-slate-500 focus:ring-offset-2 rounded-lg px-2 py-1.5 transition-colors"
               aria-label="User menu"
             >
               {session?.user?.image ? (
                 <Image
-                  className="h-8 w-8 rounded-full border border-slate-200"
+                  className="h-8 w-8 rounded-full border border-slate-200 dark:border-slate-700"
                   src={session.user.image}
                   alt={session.user.name || 'User'}
                   width={32}
                   height={32}
                 />
               ) : (
-                <UserCircleIcon className="h-8 w-8 text-slate-400" />
+                <UserCircleIcon className="h-8 w-8 text-slate-400 dark:text-slate-500" />
               )}
               <span className="hidden md:block font-medium">
                 {session?.user?.name || 'Admin'}
@@ -101,19 +101,19 @@ export function AdminHeader({ onToggleSidebar, sidebarOpen }: AdminHeaderProps) 
                 />
                 
                 {/* Menu */}
-                <div className="absolute right-0 mt-2 w-56 bg-white rounded-lg shadow-lg ring-1 ring-black ring-opacity-5 z-50">
+                <div className="absolute right-0 mt-2 w-56 bg-white dark:bg-gray-800 rounded-lg shadow-lg ring-1 ring-black ring-opacity-5 z-50">
                   <div className="py-1">
-                    <div className="px-4 py-3 text-sm text-gray-700 border-b border-gray-200">
+                    <div className="px-4 py-3 text-sm text-gray-700 dark:text-gray-300 border-b border-gray-200 dark:border-gray-700">
                       <div className="font-medium">{session?.user?.name}</div>
-                      <div className="text-gray-500 truncate">{session?.user?.email}</div>
+                      <div className="text-gray-500 dark:text-gray-400 truncate">{session?.user?.email}</div>
                     </div>
                     
                     <Link
                       href="/profile"
-                      className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
+                      className="flex items-center px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
                       onClick={() => setShowUserMenu(false)}
                     >
-                      <UserCircleIcon className="h-4 w-4 mr-2 text-gray-400" />
+                      <UserCircleIcon className="h-4 w-4 mr-2 text-gray-400 dark:text-gray-500" />
                       Profile Settings
                     </Link>
                     
@@ -123,7 +123,7 @@ export function AdminHeader({ onToggleSidebar, sidebarOpen }: AdminHeaderProps) 
                         await signOut();
                         window.location.href = '/';
                       }}
-                      className="flex items-center w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors"
+                      className="flex items-center w-full text-left px-4 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors"
                     >
                       <ArrowRightOnRectangleIcon className="h-4 w-4 mr-2" />
                       Sign Out

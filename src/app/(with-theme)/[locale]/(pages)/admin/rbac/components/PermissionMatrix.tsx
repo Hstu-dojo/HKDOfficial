@@ -252,7 +252,7 @@ export default function PermissionMatrix() {
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <h2 className="text-xl font-semibold flex items-center gap-2">
-            <ShieldCheckIcon className="h-6 w-6 text-green-600" />
+            <ShieldCheckIcon className="h-6 w-6 text-green-600 dark:text-green-400" />
             Role-Permission Matrix
           </h2>
           <p className="text-sm text-gray-500 dark:text-gray-400">
@@ -321,9 +321,9 @@ export default function PermissionMatrix() {
       {/* Matrix Table */}
       <div className="overflow-x-auto border rounded-lg">
         <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-          <thead className="bg-gray-50 dark:bg-gray-800">
+          <thead className="bg-gray-50 dark:bg-gray-800/50 dark:bg-gray-800">
             <tr>
-              <th className="sticky left-0 z-10 bg-gray-50 dark:bg-gray-800 px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider min-w-[200px]">
+              <th className="sticky left-0 z-10 bg-gray-50 dark:bg-gray-800/50 dark:bg-gray-800 px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider min-w-[200px]">
                 Role
               </th>
               {filteredResources.map((resource) => {
@@ -354,15 +354,15 @@ export default function PermissionMatrix() {
               </th>
             </tr>
           </thead>
-          <tbody className="bg-white dark:bg-gray-900 divide-y divide-gray-200 dark:divide-gray-700">
+          <tbody className="bg-white dark:bg-gray-800 dark:bg-gray-900 divide-y divide-gray-200 dark:divide-gray-700">
             {matrixData.roles
               .filter((r) => r.isActive)
               .map((role) => (
-                <tr key={role.id} className="hover:bg-gray-50 dark:hover:bg-gray-800/50">
-                  <td className="sticky left-0 z-10 bg-white dark:bg-gray-900 px-4 py-3 whitespace-nowrap border-r border-gray-200 dark:border-gray-700">
+                <tr key={role.id} className="hover:bg-gray-50 dark:hover:bg-gray-700 dark:hover:bg-gray-800/50">
+                  <td className="sticky left-0 z-10 bg-white dark:bg-gray-800 dark:bg-gray-900 px-4 py-3 whitespace-nowrap border-r border-gray-200 dark:border-gray-700">
                     <div className="flex items-center gap-2">
                       <ShieldCheckIcon
-                        className={`h-5 w-5 ${role.name === "SUPER_ADMIN" ? "text-yellow-500" : "text-green-600"}`}
+                        className={`h-5 w-5 ${role.name === "SUPER_ADMIN" ? "text-yellow-500" : "text-green-600 dark:text-green-400"}`}
                       />
                       <div>
                         <div className="font-medium text-sm">{role.name}</div>
@@ -388,19 +388,19 @@ export default function PermissionMatrix() {
                             disabled={isUpdating || updating === `all-${role.id}`}
                             className={`w-6 h-6 rounded flex items-center justify-center transition-all ${
                               isUpdating
-                                ? "bg-gray-200 dark:bg-gray-700"
+                                ? "bg-gray-200 dark:bg-gray-600 dark:bg-gray-700"
                                 : hasPermission
                                 ? "bg-green-100 dark:bg-green-900/30 hover:bg-green-200 dark:hover:bg-green-800/50"
-                                : "bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700"
+                                : "bg-gray-100 dark:bg-gray-700 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-600 dark:hover:bg-gray-700"
                             }`}
                             title={`${hasPermission ? "Remove" : "Grant"} ${permission.name}`}
                           >
                             {isUpdating ? (
-                              <ArrowPathIcon className="h-4 w-4 animate-spin text-gray-500" />
+                              <ArrowPathIcon className="h-4 w-4 animate-spin text-gray-500 dark:text-gray-400" />
                             ) : hasPermission ? (
-                              <CheckCircleSolid className="h-4 w-4 text-green-600" />
+                              <CheckCircleSolid className="h-4 w-4 text-green-600 dark:text-green-400" />
                             ) : (
-                              <XMarkIcon className="h-4 w-4 text-gray-400" />
+                              <XMarkIcon className="h-4 w-4 text-gray-400 dark:text-gray-500" />
                             )}
                           </button>
                         </td>
@@ -443,7 +443,7 @@ export default function PermissionMatrix() {
               <div className="flex items-center justify-between mb-3">
                 <div className="flex items-center gap-2">
                   <ShieldCheckIcon
-                    className={`h-5 w-5 ${role.name === "SUPER_ADMIN" ? "text-yellow-500" : "text-green-600"}`}
+                    className={`h-5 w-5 ${role.name === "SUPER_ADMIN" ? "text-yellow-500" : "text-green-600 dark:text-green-400"}`}
                   />
                   <span className="font-semibold">{role.name}</span>
                 </div>

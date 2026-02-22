@@ -108,8 +108,8 @@ export default function ProgramsManagement() {
       {/* Header */}
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Program Management</h1>
-          <p className="mt-1 text-sm text-gray-500">
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Program Management</h1>
+          <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
             Create and manage belt tests, competitions, and special events.
           </p>
         </div>
@@ -130,33 +130,33 @@ export default function ProgramsManagement() {
       {/* Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {programs.map((program) => (
-          <div key={program.id} className="bg-white rounded-lg border shadow-sm hover:shadow-md transition duration-200">
+          <div key={program.id} className="bg-white dark:bg-gray-800 rounded-lg border shadow-sm hover:shadow-md transition duration-200">
             <div className="p-5">
               <div className="flex justify-between items-start">
                 <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium 
-                  ${program.isRegistrationOpen ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
+                  ${program.isRegistrationOpen ? 'bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300' : 'bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-300'}`}>
                   {program.isRegistrationOpen ? 'Open' : 'Closed'}
                 </span>
-                <span className="inline-flex items-center text-xs font-medium text-gray-500 uppercase tracking-wide">
+                <span className="inline-flex items-center text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide">
                   {program.type.replace('_', ' ')}
                 </span>
               </div>
 
-              <h3 className="mt-3 text-lg font-semibold text-gray-900 line-clamp-1">{program.title}</h3>
+              <h3 className="mt-3 text-lg font-semibold text-gray-900 dark:text-gray-100 line-clamp-1">{program.title}</h3>
               
               <div className="mt-4 space-y-2">
                 
                  {/* Date */}
-                 <div className="flex items-center text-sm text-gray-600">
-                  <CalendarDaysIcon className="h-4 w-4 mr-2 text-gray-400" />
+                 <div className="flex items-center text-sm text-gray-600 dark:text-gray-400">
+                  <CalendarDaysIcon className="h-4 w-4 mr-2 text-gray-400 dark:text-gray-500" />
                   <span>
                     {program.startDate ? format(new Date(program.startDate), 'MMM d, yyyy') : 'TBA'}
                   </span>
                 </div>
 
                 {/* Participants */}
-                <div className="flex items-center text-sm text-gray-600">
-                  <UserGroupIcon className="h-4 w-4 mr-2 text-gray-400" />
+                <div className="flex items-center text-sm text-gray-600 dark:text-gray-400">
+                  <UserGroupIcon className="h-4 w-4 mr-2 text-gray-400 dark:text-gray-500" />
                   <span>
                     {program.currentParticipants || 0} 
                     {program.maxParticipants ? ` / ${program.maxParticipants}` : ''} Participants
@@ -164,8 +164,8 @@ export default function ProgramsManagement() {
                 </div>
 
                 {/* Fee */}
-                <div className="flex items-center text-sm text-gray-600">
-                  <CurrencyBangladeshiIcon className="h-4 w-4 mr-2 text-gray-400" />
+                <div className="flex items-center text-sm text-gray-600 dark:text-gray-400">
+                  <CurrencyBangladeshiIcon className="h-4 w-4 mr-2 text-gray-400 dark:text-gray-500" />
                   <span>{formatCurrency(program.fee)}</span>
                 </div>
               </div>
@@ -175,7 +175,7 @@ export default function ProgramsManagement() {
                  {/* Link to view registrations - we will create this page next */}
                  <a 
                    href={`/admin/programs/registrations?programId=${program.id}`}
-                   className="inline-flex items-center px-3 py-1.5 border border-gray-300 shadow-sm text-xs font-medium rounded text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                   className="inline-flex items-center px-3 py-1.5 border border-gray-300 dark:border-gray-600 shadow-sm text-xs font-medium rounded text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
                  >
                     Registrations
                  </a>
@@ -195,10 +195,10 @@ export default function ProgramsManagement() {
         ))}
 
         {programs.length === 0 && (
-          <div className="col-span-full text-center py-12 bg-gray-50 rounded-lg border-2 border-dashed border-gray-300">
-            <TagIcon className="mx-auto h-12 w-12 text-gray-400" />
-            <h3 className="mt-2 text-sm font-medium text-gray-900">No programs</h3>
-            <p className="mt-1 text-sm text-gray-500">Get started by creating a new program.</p>
+          <div className="col-span-full text-center py-12 bg-gray-50 dark:bg-gray-800/50 rounded-lg border-2 border-dashed border-gray-300 dark:border-gray-600">
+            <TagIcon className="mx-auto h-12 w-12 text-gray-400 dark:text-gray-500" />
+            <h3 className="mt-2 text-sm font-medium text-gray-900 dark:text-gray-100">No programs</h3>
+            <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">Get started by creating a new program.</p>
             {canCreate && (
               <div className="mt-6">
                 <button

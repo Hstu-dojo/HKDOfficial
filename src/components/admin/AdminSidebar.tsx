@@ -213,11 +213,11 @@ export function AdminSidebar({ className }: AdminSidebarProps) {
 
   if (loading) {
     return (
-      <div className={cn("w-64 bg-white border-r border-slate-200 min-h-screen", className)}>
+      <div className={cn("w-64 bg-white dark:bg-gray-800 border-r border-slate-200 dark:border-slate-700 min-h-screen", className)}>
         <div className="p-6">
           <div className="animate-pulse space-y-4">
             {[...Array(6)].map((_, i) => (
-              <div key={i} className="h-10 bg-slate-100 rounded"></div>
+              <div key={i} className="h-10 bg-slate-100 dark:bg-slate-700 rounded"></div>
             ))}
           </div>
         </div>
@@ -226,10 +226,10 @@ export function AdminSidebar({ className }: AdminSidebarProps) {
   }
 
   return (
-    <div className={cn("w-64 bg-white border-r border-slate-200 h-full flex flex-col", className)}>
+    <div className={cn("w-64 bg-white dark:bg-gray-800 border-r border-slate-200 dark:border-slate-700 h-full flex flex-col", className)}>
       <div className="flex flex-col h-full">
-        <div className="flex items-center justify-center h-16 px-4 border-b border-slate-200 bg-white flex-shrink-0">
-          <h1 className="text-xl font-bold text-slate-900">Admin Panel</h1>
+        <div className="flex items-center justify-center h-16 px-4 border-b border-slate-200 dark:border-slate-700 bg-white dark:bg-gray-800 flex-shrink-0">
+          <h1 className="text-xl font-bold text-slate-900 dark:text-slate-100">Admin Panel</h1>
         </div>
         
         <nav className="flex-1 px-4 py-6 space-y-1 overflow-y-auto custom-scrollbar">
@@ -245,21 +245,21 @@ export function AdminSidebar({ className }: AdminSidebarProps) {
                 className={cn(
                   "group flex items-center px-3 py-2.5 text-sm font-medium rounded-lg transition-all duration-200 mb-1",
                   isActive
-                    ? "bg-slate-900 text-white shadow-md"
-                    : "text-slate-600 hover:bg-slate-100 hover:text-slate-900"
+                    ? "bg-slate-900 dark:bg-blue-600 text-white shadow-md"
+                    : "text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700 hover:text-slate-900 dark:hover:text-slate-100"
                 )}
               >
                 <item.icon
                   className={cn(
                     "mr-3 h-5 w-5 flex-shrink-0 transition-colors",
-                    isActive ? "text-white" : "text-slate-400 group-hover:text-slate-600"
+                    isActive ? "text-white" : "text-slate-400 dark:text-slate-500 group-hover:text-slate-600 dark:group-hover:text-slate-300"
                   )}
                 />
                 <div className="flex-1">
                   <div className={cn("text-sm", isActive && "font-semibold")}>{item.name}</div>
                   {item.description && (
                     <div className={cn("text-xs mt-0.5", 
-                      isActive ? "text-slate-300" : "text-slate-400 group-hover:text-slate-500"
+                      isActive ? "text-slate-300 dark:text-slate-400" : "text-slate-400 dark:text-slate-500 group-hover:text-slate-500 dark:group-hover:text-slate-400"
                     )}>
                       {item.description}
                     </div>
@@ -271,16 +271,16 @@ export function AdminSidebar({ className }: AdminSidebarProps) {
         </nav>
         
         {/* User info at bottom */}
-        <div className="p-4 border-t border-slate-200 bg-slate-50">
+        <div className="p-4 border-t border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900">
           <div className="flex items-center">
             <div className="flex-shrink-0">
-              <div className="h-8 w-8 rounded-full bg-slate-200 flex items-center justify-center border border-slate-300">
-                <UserGroupIcon className="h-4 w-4 text-slate-500" />
+              <div className="h-8 w-8 rounded-full bg-slate-200 dark:bg-slate-700 flex items-center justify-center border border-slate-300 dark:border-slate-600">
+                <UserGroupIcon className="h-4 w-4 text-slate-500 dark:text-slate-400" />
               </div>
             </div>
             <div className="ml-3">
-              <p className="text-sm font-medium text-slate-900">Admin User</p>
-              <p className="text-xs text-slate-500">Management Panel</p>
+              <p className="text-sm font-medium text-slate-900 dark:text-slate-100">Admin User</p>
+              <p className="text-xs text-slate-500 dark:text-slate-400">Management Panel</p>
             </div>
           </div>
         </div>

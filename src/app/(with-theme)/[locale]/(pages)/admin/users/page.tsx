@@ -261,9 +261,9 @@ export default function UsersPage() {
   if (!canRead) {
     return (
       <div className="p-6">
-        <div className="rounded-lg border border-red-200 bg-red-50 p-4">
-          <h3 className="font-medium text-red-800">Access Denied</h3>
-          <p className="mt-1 text-sm text-red-600">
+        <div className="rounded-lg border border-red-200 dark:border-red-800 bg-red-50 dark:bg-red-900/20 p-4">
+          <h3 className="font-medium text-red-800 dark:text-red-300">Access Denied</h3>
+          <p className="mt-1 text-sm text-red-600 dark:text-red-400">
             You don&apos;t have permission to view users.
           </p>
         </div>
@@ -286,10 +286,10 @@ export default function UsersPage() {
       {/* Header */}
       <div className="sm:flex sm:items-center">
         <div className="sm:flex-auto">
-          <h1 className="text-2xl font-semibold text-gray-900">
+          <h1 className="text-2xl font-semibold text-gray-900 dark:text-gray-100">
             User Management
           </h1>
-          <p className="mt-2 text-sm text-gray-700">
+          <p className="mt-2 text-sm text-gray-700 dark:text-gray-300">
             Manage user accounts, roles, and permissions
           </p>
         </div>
@@ -317,14 +317,14 @@ export default function UsersPage() {
       </div>
 
       {/* Filters */}
-      <div className="shadow mt-6 rounded-lg bg-white p-4">
+      <div className="shadow mt-6 rounded-lg bg-white dark:bg-gray-800 p-4">
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
           <div>
-            <label className="mb-1 block text-sm font-medium text-gray-700">
+            <label className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">
               Search
             </label>
             <div className="relative">
-              <MagnifyingGlassIcon className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 transform text-gray-400" />
+              <MagnifyingGlassIcon className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 transform text-gray-400 dark:text-gray-500" />
               <input
                 type="text"
                 placeholder="Search users..."
@@ -332,12 +332,12 @@ export default function UsersPage() {
                 onChange={(e) =>
                   setFilters((prev) => ({ ...prev, search: e.target.value }))
                 }
-                className="block w-full rounded-md border-gray-300 pl-10 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+                className="block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white pl-10 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
               />
             </div>
           </div>
           <div>
-            <label className="mb-1 block text-sm font-medium text-gray-700">
+            <label className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">
               Role
             </label>
             <select
@@ -345,7 +345,7 @@ export default function UsersPage() {
               onChange={(e) =>
                 setFilters((prev) => ({ ...prev, role: e.target.value }))
               }
-              className="block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+              className="block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
             >
               <option value="">All Roles</option>
               <option value="SUPER_ADMIN">Super Admin</option>
@@ -357,7 +357,7 @@ export default function UsersPage() {
             </select>
           </div>
           <div>
-            <label className="mb-1 block text-sm font-medium text-gray-700">
+            <label className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">
               Status
             </label>
             <select
@@ -365,7 +365,7 @@ export default function UsersPage() {
               onChange={(e) =>
                 setFilters((prev) => ({ ...prev, status: e.target.value }))
               }
-              className="block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+              className="block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
             >
               <option value="">All Status</option>
               <option value="verified">Verified</option>
@@ -376,11 +376,11 @@ export default function UsersPage() {
       </div>
 
       {error && (
-        <div className="mt-6 rounded-lg border border-red-200 bg-red-50 p-4">
-          <p className="text-red-800">{error}</p>
+        <div className="mt-6 rounded-lg border border-red-200 dark:border-red-800 bg-red-50 dark:bg-red-900/20 p-4">
+          <p className="text-red-800 dark:text-red-300">{error}</p>
           <button
             onClick={fetchUsers}
-            className="mt-2 text-sm text-red-600 underline hover:text-red-500"
+            className="mt-2 text-sm text-red-600 dark:text-red-400 underline hover:text-red-500"
           >
             Try again
           </button>
@@ -388,28 +388,28 @@ export default function UsersPage() {
       )}
 
       {/* Users Table */}
-      <div className="shadow mt-6 overflow-hidden rounded-lg bg-white">
+      <div className="shadow mt-6 overflow-hidden rounded-lg bg-white dark:bg-gray-800">
         <div className="px-4 py-5 sm:p-6">
           <div className="mb-4 flex items-center justify-between">
-            <h3 className="text-lg font-medium text-gray-900">
+            <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100">
               Users ({filteredUsers.length})
             </h3>
           </div>
 
           <div className="overflow-x-auto">
-            <table className="min-w-full divide-y divide-gray-200">
-              <thead className="bg-gray-50">
+            <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+              <thead className="bg-gray-50 dark:bg-gray-800/50">
                 <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+                  <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">
                     User
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+                  <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">
                     Role
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+                  <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">
                     Status
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+                  <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">
                     Created
                   </th>
                   <th className="relative px-6 py-3">
@@ -417,9 +417,9 @@ export default function UsersPage() {
                   </th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-gray-200 bg-white">
+              <tbody className="divide-y divide-gray-200 dark:divide-gray-700 bg-white dark:bg-gray-800">
                 {filteredUsers.map((user) => (
-                  <tr key={user.id} className="hover:bg-gray-50">
+                  <tr key={user.id} className="hover:bg-gray-50 dark:hover:bg-gray-700">
                     <td className="whitespace-nowrap px-6 py-4">
                       <div className="flex items-center">
                         <div className="h-10 w-10 flex-shrink-0">
@@ -432,16 +432,16 @@ export default function UsersPage() {
                               height={40}
                             />
                           ) : (
-                            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gray-200">
-                              <UserIcon className="h-5 w-5 text-gray-500" />
+                            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gray-200 dark:bg-gray-600">
+                              <UserIcon className="h-5 w-5 text-gray-500 dark:text-gray-400" />
                             </div>
                           )}
                         </div>
                         <div className="ml-4">
-                          <div className="text-sm font-medium text-gray-900">
+                          <div className="text-sm font-medium text-gray-900 dark:text-gray-100">
                             {user.userName}
                           </div>
-                          <div className="text-sm text-gray-500">
+                          <div className="text-sm text-gray-500 dark:text-gray-400">
                             {user.email}
                           </div>
                         </div>
@@ -449,11 +449,11 @@ export default function UsersPage() {
                     </td>
                     <td className="whitespace-nowrap px-6 py-4">
                       <div className="flex flex-col">
-                        <span className="mb-1 inline-flex rounded-full bg-blue-100 px-2 py-1 text-xs font-semibold text-blue-800">
+                        <span className="mb-1 inline-flex rounded-full bg-blue-100 dark:bg-blue-900/30 px-2 py-1 text-xs font-semibold text-blue-800 dark:text-blue-300">
                           {user.defaultRole}
                         </span>
                         {user.roles.length > 1 && (
-                          <span className="text-xs text-gray-500">
+                          <span className="text-xs text-gray-500 dark:text-gray-400">
                             +{user.roles.length - 1} more
                           </span>
                         )}
@@ -463,14 +463,14 @@ export default function UsersPage() {
                       <span
                         className={`inline-flex rounded-full px-2 py-1 text-xs font-semibold ${
                           user.emailVerified
-                            ? "bg-green-100 text-green-800"
-                            : "bg-yellow-100 text-yellow-800"
+                            ? "bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300"
+                            : "bg-yellow-100 dark:bg-yellow-900/30 text-yellow-800 dark:text-yellow-300"
                         }`}
                       >
                         {user.emailVerified ? "Verified" : "Unverified"}
                       </span>
                     </td>
-                    <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-500">
+                    <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-500 dark:text-gray-400">
                       {new Date(user.createdAt).toLocaleDateString()}
                     </td>
                     <td className="whitespace-nowrap px-6 py-4 text-right text-sm font-medium">
@@ -506,7 +506,7 @@ export default function UsersPage() {
                         {canDelete && (
                           <button
                             onClick={() => handleDeleteUser(user.id)}
-                            className="text-red-600 hover:text-red-500"
+                            className="text-red-600 dark:text-red-400 hover:text-red-500"
                           >
                             <TrashIcon className="h-4 w-4" />
                           </button>
@@ -520,11 +520,11 @@ export default function UsersPage() {
 
             {filteredUsers.length === 0 && (
               <div className="py-12 text-center">
-                <UserIcon className="mx-auto h-12 w-12 text-gray-400" />
-                <h3 className="mt-2 text-sm font-medium text-gray-900">
+                <UserIcon className="mx-auto h-12 w-12 text-gray-400 dark:text-gray-500" />
+                <h3 className="mt-2 text-sm font-medium text-gray-900 dark:text-gray-100">
                   No users found
                 </h3>
-                <p className="mt-1 text-sm text-gray-500">
+                <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
                   {filters.search || filters.role || filters.status
                     ? "Try adjusting your search filters."
                     : "Get started by adding a new user."}
@@ -537,16 +537,16 @@ export default function UsersPage() {
 
       {/* User Edit Modal */}
       {showUserModal && (
-        <div className="fixed inset-0 z-50 h-full w-full overflow-y-auto bg-gray-600 bg-opacity-50">
-          <div className="relative top-20 mx-auto w-96 rounded-md border bg-white p-5 shadow-lg">
+        <div className="fixed inset-0 z-50 h-full w-full overflow-y-auto bg-gray-600/50 dark:bg-gray-900/70">
+          <div className="relative top-20 mx-auto w-96 rounded-md border bg-white dark:bg-gray-800 p-5 shadow-lg">
             <div className="mt-3">
-              <h3 className="mb-4 text-lg font-medium text-gray-900">
+              <h3 className="mb-4 text-lg font-medium text-gray-900 dark:text-gray-100">
                 {selectedUser ? "Edit User" : "Add New User"}
               </h3>
 
               <div className="space-y-4">
                 <div>
-                  <label className="mb-1 block text-sm font-medium text-gray-700">
+                  <label className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">
                     Username
                   </label>
                   <input
@@ -558,12 +558,12 @@ export default function UsersPage() {
                         userName: e.target.value,
                       }))
                     }
-                    className="block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+                    className="block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
                   />
                 </div>
 
                 <div>
-                  <label className="mb-1 block text-sm font-medium text-gray-700">
+                  <label className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">
                     Email
                   </label>
                   <input
@@ -575,12 +575,12 @@ export default function UsersPage() {
                         email: e.target.value,
                       }))
                     }
-                    className="block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+                    className="block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
                   />
                 </div>
 
                 <div>
-                  <label className="mb-1 block text-sm font-medium text-gray-700">
+                  <label className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">
                     Default Role
                   </label>
                   <select
@@ -591,7 +591,7 @@ export default function UsersPage() {
                         defaultRole: e.target.value,
                       }))
                     }
-                    className="block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+                    className="block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
                   >
                     <option value="SUPER_ADMIN">Super Admin</option>
                     <option value="ADMIN">Admin</option>
@@ -613,11 +613,11 @@ export default function UsersPage() {
                         emailVerified: e.target.checked,
                       }))
                     }
-                    className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                    className="h-4 w-4 rounded border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white text-blue-600 focus:ring-blue-500"
                   />
                   <label
                     htmlFor="email-verified"
-                    className="ml-2 block text-sm text-gray-900"
+                    className="ml-2 block text-sm text-gray-900 dark:text-gray-100"
                   >
                     Email Verified
                   </label>
@@ -631,7 +631,7 @@ export default function UsersPage() {
                     setSelectedUser(null);
                     setEditingUser({});
                   }}
-                  className="rounded-md bg-gray-100 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-200"
+                  className="rounded-md bg-gray-100 dark:bg-gray-700 px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600"
                 >
                   Cancel
                 </button>
@@ -655,16 +655,16 @@ export default function UsersPage() {
 
       {/* Role Management Modal */}
       {showRoleModal && selectedUser && (
-        <div className="fixed inset-0 z-50 h-full w-full overflow-y-auto bg-gray-600 bg-opacity-50">
-          <div className="relative top-20 mx-auto w-96 rounded-md border bg-white p-5 shadow-lg">
+        <div className="fixed inset-0 z-50 h-full w-full overflow-y-auto bg-gray-600/50 dark:bg-gray-900/70">
+          <div className="relative top-20 mx-auto w-96 rounded-md border bg-white dark:bg-gray-800 p-5 shadow-lg">
             <div className="mt-3">
-              <h3 className="mb-4 text-lg font-medium text-gray-900">
+              <h3 className="mb-4 text-lg font-medium text-gray-900 dark:text-gray-100">
                 Change Role for {selectedUser.userName}
               </h3>
 
               <div className="space-y-4">
                 <div>
-                  <label className="mb-1 block text-sm font-medium text-gray-700">
+                  <label className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">
                     Current Role:{" "}
                     <span className="font-semibold">
                       {selectedUser.defaultRole}
@@ -673,13 +673,13 @@ export default function UsersPage() {
                 </div>
 
                 <div>
-                  <label className="mb-1 block text-sm font-medium text-gray-700">
+                  <label className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">
                     New Role
                   </label>
                   <select
                     id="new-role"
                     defaultValue={selectedUser.defaultRole}
-                    className="block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+                    className="block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
                   >
                     <option value="SUPER_ADMIN">Super Admin</option>
                     <option value="ADMIN">Admin</option>
@@ -697,7 +697,7 @@ export default function UsersPage() {
                     setShowRoleModal(false);
                     setSelectedUser(null);
                   }}
-                  className="rounded-md bg-gray-100 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-200"
+                  className="rounded-md bg-gray-100 dark:bg-gray-700 px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600"
                 >
                   Cancel
                 </button>
