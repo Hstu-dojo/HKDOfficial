@@ -11,7 +11,7 @@ import { checkUserProfileStatus } from "./check-profile";
 export async function createProgram(data: NewProgram) {
   try {
     const [newProgram] = await db.insert(programs).values(data).returning();
-    revalidatePath("/programs");
+    revalidatePath("/karate/programs");
     revalidatePath("/admin/programs");
     return { success: true, data: newProgram };
   } catch (error) {
@@ -27,7 +27,8 @@ export async function updateProgram(id: string, data: Partial<NewProgram>) {
       .set({ ...data, updatedAt: new Date() })
       .where(eq(programs.id, id))
       .returning();
-    revalidatePath(`/programs/${updatedProgram.slug}`);
+    revalidatePath(`/karate/programs/${updatedProgram.slug}`);
+    revalidatePath("/karate/programs");
     revalidatePath("/admin/programs");
     return { success: true, data: updatedProgram };
   } catch (error) {
@@ -107,7 +108,8 @@ export async function registerForProgram(data: NewProgramRegistration) {
       .set({ currentParticipants: (program.currentParticipants || 0) + 1 })
       .where(eq(programs.id, data.programId));
 
-    revalidatePath(`/programs/${program.slug}`);
+    revalidatePath(`/karate/programs/${program.slug}`);
+    revalidatePath("/karate/programs");
     revalidatePath(`/admin/programs/registrations`);
     return { success: true, data: registration };
   } catch (error: any) {

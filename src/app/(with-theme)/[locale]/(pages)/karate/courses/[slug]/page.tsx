@@ -21,6 +21,9 @@ export const metadata = {
   title: 'Course Details | HKD Dojo',
 };
 
+// ISR: revalidate every 120 seconds
+export const revalidate = 120;
+
 const dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 
 export default async function CourseDetailsPage({ params }: { params: Promise<{ slug: string }> }) {

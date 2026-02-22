@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useSession } from '@/hooks/useSessionCompat';
 import { useRouter } from 'next/navigation';
-import { getProgramBySlug, registerForProgram } from '@/actions/program-actions';
+import { registerForProgram } from '@/actions/program-actions';
 import { CldUploadWidget } from 'next-cloudinary';
 import { format } from 'date-fns';
 import { 
@@ -19,13 +19,13 @@ import { toast } from 'sonner';
 
 interface ProgramDetailsProps {
   slug: string;
+  initialProgram: any;
 }
 
-export default function ProgramDetails({ slug }: ProgramDetailsProps) {
+export default function ProgramDetails({ slug, initialProgram }: ProgramDetailsProps) {
   const router = useRouter();
   const { data: session, status } = useSession();
-  const [program, setProgram] = useState<any | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [program] = useState<any>(initialProgram);
   
   // Registration State
   const [showRegisterModal, setShowRegisterModal] = useState(false);
@@ -44,32 +44,24 @@ export default function ProgramDetails({ slug }: ProgramDetailsProps) {
     instructions?: string | null;
   } | null>(null);
 
+  // Fetch payment account only (program data is pre-fetched server-side)
   useEffect(() => {
-    async function fetchData() {
+    async function fetchPaymentAccount() {
+      if (!program?.id) return;
       try {
-        const res = await getProgramBySlug(slug);
-        if (res.success && res.data) {
-          setProgram(res.data);
-          
-          // Fetch payment account for this program
-          const paymentRes = await fetch(`/api/payment-accounts?scope=program&scopeId=${res.data.id}`);
-          if (paymentRes.ok) {
-            const paymentData = await paymentRes.json();
-            if (paymentData.primaryAccount) {
-              setPaymentAccount(paymentData.primaryAccount);
-            }
+        const paymentRes = await fetch(`/api/payment-accounts?scope=program&scopeId=${program.id}`);
+        if (paymentRes.ok) {
+          const paymentData = await paymentRes.json();
+          if (paymentData.primaryAccount) {
+            setPaymentAccount(paymentData.primaryAccount);
           }
-        } else {
-          toast.error("Program not found");
         }
       } catch (error) {
-        console.error(error);
-      } finally {
-        setLoading(false);
+        console.error('Error fetching payment account:', error);
       }
     }
-    fetchData();
-  }, [slug]);
+    fetchPaymentAccount();
+  }, [program?.id]);
 
   const handleRegisterClick = () => {
     if (status === 'unauthenticated') {
@@ -124,19 +116,6 @@ export default function ProgramDetails({ slug }: ProgramDetailsProps) {
       setSubmitting(false);
     }
   };
-
-  if (loading) return (
-    <div className="flex items-center justify-center py-24">
-      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
-    </div>
-  );
-  
-  if (!program) return (
-    <div className="py-24 text-center">
-      <h2 className="text-xl font-semibold text-slate-900 dark:text-slate-100 mb-2">Program not found</h2>
-      <p className="text-slate-600 dark:text-slate-400">The program you&apos;re looking for doesn&apos;t exist or has been removed.</p>
-    </div>
-  );
 
   const isRegistrationOpen = program.isRegistrationOpen && 
     (!program.registrationDeadline || new Date(program.registrationDeadline) > new Date());

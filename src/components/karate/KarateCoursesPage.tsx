@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import {
@@ -54,31 +54,12 @@ const BELT_COLORS: Record<string, string> = {
 
 const DAY_NAMES = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 
-import { getPublicCourses } from '@/actions/course-actions';
+interface KarateCoursesPageProps {
+  initialCourses: Course[];
+}
 
-// ... (keep interface Course)
-
-export default function KarateCoursesPage() {
-  const [courses, setCourses] = useState<Course[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    const fetchCourses = async () => {
-      try {
-        const res = await getPublicCourses();
-        if (res.success && res.data) {
-           // @ts-ignore - types might slightly mismatch but structure is compatible
-           setCourses(res.data);
-        }
-      } catch (error) {
-        console.error('Error fetching courses:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchCourses();
-  }, []);
+export default function KarateCoursesPage({ initialCourses }: KarateCoursesPageProps) {
+  const [courses] = useState<Course[]>(initialCourses);
 
   const formatCurrency = (amount: number, currency: string) => {
     return new Intl.NumberFormat('en-BD', {
@@ -95,14 +76,6 @@ export default function KarateCoursesPage() {
     const hour12 = h % 12 || 12;
     return `${hour12}:${minutes} ${ampm}`;
   };
-
-  if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
-      </div>
-    );
-  }
 
   return (
     <div className="min-h-screen bg-transparent">

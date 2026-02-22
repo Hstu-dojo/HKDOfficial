@@ -1,6 +1,12 @@
 import CourseApplicationForm from '@/components/karate/CourseApplicationForm';
 import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
+import { db } from '@/lib/connect-db';
+import { courses, courseSchedules } from '@/db/schemas/karate/courses';
+import { eq } from 'drizzle-orm';
+
+// ISR: revalidate every 120 seconds
+export const revalidate = 120;
 
 interface PageProps {
   params: Promise<{
@@ -10,16 +16,34 @@ interface PageProps {
 }
 
 async function getCourse(slug: string) {
-  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
-  const response = await fetch(`${baseUrl}/api/courses/${slug}`, {
-    cache: 'no-store',
-  });
-  
-  if (!response.ok) {
+  try {
+    const course = await db.query.courses.findFirst({
+      where: eq(courses.id, slug),
+    });
+
+    if (!course) return null;
+
+    const schedules = await db.select().from(courseSchedules).where(eq(courseSchedules.courseId, course.id));
+
+    return {
+      ...course,
+      slug: course.id,
+      imageUrl: course.thumbnailUrl,
+      shortDescription: course.description,
+      beltLevelFrom: course.minimumBelt,
+      beltLevelTo: course.targetBelt,
+      durationMonths: course.duration,
+      schedules: schedules.map(s => ({
+        dayOfWeek: s.dayOfWeek,
+        startTime: s.startTime,
+        endTime: s.endTime,
+        location: s.location,
+      })),
+    };
+  } catch (error) {
+    console.error("Error fetching course:", error);
     return null;
   }
-  
-  return response.json();
 }
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {

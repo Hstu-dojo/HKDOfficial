@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { revalidatePath } from "next/cache";
 import { db } from "@/lib/connect-db";
 import { courses, courseSchedules, courseInstructors } from "@/db/schema";
 import { eq, desc, and, sql } from "drizzle-orm";
@@ -270,5 +271,8 @@ export async function POST(request: NextRequest) {
       { error: "Failed to create course" },
       { status: 500 }
     );
+  } finally {
+    // Bust ISR cache for public course pages
+    revalidatePath("/karate/courses");
   }
 }

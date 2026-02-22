@@ -1,41 +1,17 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import Link from 'next/link';
-import { getPublicPrograms } from '@/actions/program-actions';
 import { format } from 'date-fns';
 import { CalendarIcon, MapPinIcon, TicketIcon } from '@heroicons/react/24/outline';
 import { ProfileCompletionBanner } from '@/components/layout/profile-completion-banner';
 
-export default function ProgramList() {
-  const [programs, setPrograms] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
+interface ProgramListProps {
+  initialPrograms: any[];
+}
 
-  useEffect(() => {
-    async function fetchData() {
-      try {
-        const res = await getPublicPrograms();
-        if (res.success && res.data) {
-          setPrograms(res.data);
-        }
-      } catch (error) {
-        console.error(error);
-      } finally {
-        setLoading(false);
-      }
-    }
-    fetchData();
-  }, []);
-
-  if (loading) {
-    return (
-       <div className="py-24">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto"></div>
-        </div>
-      </div>
-    );
-  }
+export default function ProgramList({ initialPrograms }: ProgramListProps) {
+  const [programs] = useState<any[]>(initialPrograms);
 
   return (
     <div className="py-8">

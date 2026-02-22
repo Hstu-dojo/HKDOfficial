@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { revalidatePath } from "next/cache";
 import { db } from "@/lib/connect-db";
 import { courses, courseSchedules, courseInstructors, courseEnrollments } from "@/db/schema";
 import { eq, and, sql } from "drizzle-orm";
@@ -249,6 +250,9 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
       { error: "Failed to update course" },
       { status: 500 }
     );
+  } finally {
+    // Bust ISR cache for public course pages
+    revalidatePath("/karate/courses");
   }
 }
 
@@ -335,5 +339,8 @@ export async function DELETE(request: NextRequest, { params }: RouteParams) {
       { error: "Failed to delete course" },
       { status: 500 }
     );
+  } finally {
+    // Bust ISR cache for public course pages
+    revalidatePath("/karate/courses");
   }
 }
