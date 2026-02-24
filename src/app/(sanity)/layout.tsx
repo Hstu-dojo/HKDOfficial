@@ -1,3 +1,4 @@
+import "../globals.css";
 import React from "react";
 import { IBM_Plex_Mono, Inter, PT_Serif } from "next/font/google";
 import { ThemeProvider } from "@/context/ThemeProvider";
