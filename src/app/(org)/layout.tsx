@@ -1,5 +1,4 @@
 import React from "react";
-import type { Metadata, Viewport } from "next";
 import { Bebas_Neue, JetBrains_Mono } from "next/font/google";
 
 import "@/styles/org-globals.css";
@@ -15,27 +14,22 @@ const jetbrainsMono = JetBrains_Mono({
   variable: "--font-jetbrains",
 });
 
-export const metadata: Metadata = {
-  title: {
-    default: "Partner Organization | HKD",
-    template: "%s | HKD Partner",
-  },
-};
-
-export const viewport: Viewport = {
-  themeColor: "#080808",
-};
-
-export default function OrgRootLayout({
+export default function OrgLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" data-theme="brutalist" className={`${bebasNeue.variable} ${jetbrainsMono.variable}`}>
-      <body className="font-body antialiased overflow-x-hidden bg-[hsl(0_0%_3%)] text-[hsl(0_0%_95%)]">
-        {children}
-      </body>
-    </html>
+    <div
+      data-theme="brutalist"
+      className={`${bebasNeue.variable} ${jetbrainsMono.variable} font-body antialiased overflow-x-hidden`}
+      style={{
+        backgroundColor: "hsl(0 0% 3%)",
+        color: "hsl(0 0% 95%)",
+        minHeight: "100vh",
+      }}
+    >
+      {children}
+    </div>
   );
 }
