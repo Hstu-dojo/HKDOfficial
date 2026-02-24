@@ -30,13 +30,11 @@ export async function GET() {
         id: a.id,
         name: a.name,
         email: a.email,
-        role: a.role || 'staff',
         phone: a.phone,
         isActive: a.isActive,
         isCurrentUser: a.id === partnerUser.id,
         createdAt: a.createdAt,
       })),
-      currentUserRole: partnerUser.role,
     })
   } catch (err) {
     console.error('[PartnerPortal] Admins GET error:', err)
@@ -48,36 +46,15 @@ export async function POST(request: Request) {
   const { user: partnerUser, error } = await requirePayloadPartnerUser()
   if (error) return error
 
-  // Only owners and admins can add new admins
-  if (partnerUser.role !== 'owner' && partnerUser.role !== 'admin') {
-    return NextResponse.json(
-      { error: 'Only owners and admins can add new admins' },
-      { status: 403 }
-    )
-  }
-
   try {
     const body = await request.json()
-    const { name, email, password, role, phone } = body
+    const { name, email, password, phone } = body
 
     if (!name || !email || !password) {
       return NextResponse.json(
         { error: 'Name, email, and password are required' },
         { status: 400 }
       )
-    }
-
-    // Enforce role hierarchy: admins cannot create owners
-    let assignedRole = role || 'staff'
-    if (partnerUser.role === 'admin' && assignedRole === 'owner') {
-      return NextResponse.json(
-        { error: 'Only owners can assign the owner role' },
-        { status: 403 }
-      )
-    }
-
-    if (!['owner', 'admin', 'staff'].includes(assignedRole)) {
-      assignedRole = 'staff'
     }
 
     const payload = await getPayload({ config: configPromise })
@@ -105,7 +82,7 @@ export async function POST(request: Request) {
         partnerId: partnerUser.partnerId,
         partnerName: partnerUser.partnerName,
         partnerSlug: partnerUser.partnerSlug,
-        role: assignedRole,
+        role: 'admin',
         phone: phone || '',
         isActive: true,
       },
@@ -117,7 +94,6 @@ export async function POST(request: Request) {
           id: newAdmin.id,
           name: newAdmin.name,
           email: (newAdmin as any).email,
-          role: (newAdmin as any).role,
         },
         message: `Admin "${name}" added to your organization`,
       },
@@ -133,17 +109,9 @@ export async function PATCH(request: Request) {
   const { user: partnerUser, error } = await requirePayloadPartnerUser()
   if (error) return error
 
-  // Only owners and admins can manage other admins
-  if (partnerUser.role !== 'owner' && partnerUser.role !== 'admin') {
-    return NextResponse.json(
-      { error: 'Only owners and admins can manage admins' },
-      { status: 403 }
-    )
-  }
-
   try {
     const body = await request.json()
-    const { id, isActive, role } = body
+    const { id, isActive } = body
 
     if (!id) {
       return NextResponse.json({ error: 'Admin ID is required' }, { status: 400 })
@@ -169,33 +137,10 @@ export async function PATCH(request: Request) {
       return NextResponse.json({ error: 'Admin not found in your organization' }, { status: 404 })
     }
 
-    // Enforce role hierarchy
-    const targetRole = (target as any).role || 'staff'
-
-    // Admins cannot modify owners
-    if (partnerUser.role === 'admin' && targetRole === 'owner') {
-      return NextResponse.json(
-        { error: 'Admins cannot modify owner accounts' },
-        { status: 403 }
-      )
-    }
-
-    // Admins cannot promote to owner
-    if (partnerUser.role === 'admin' && role === 'owner') {
-      return NextResponse.json(
-        { error: 'Only owners can assign the owner role' },
-        { status: 403 }
-      )
-    }
-
     const updates: Record<string, unknown> = {}
 
     if (typeof isActive === 'boolean') {
       updates.isActive = isActive
-    }
-
-    if (role && ['owner', 'admin', 'staff'].includes(role)) {
-      updates.role = role
     }
 
     if (Object.keys(updates).length === 0) {
@@ -212,7 +157,6 @@ export async function PATCH(request: Request) {
       admin: {
         id: updated.id,
         name: updated.name,
-        role: (updated as any).role,
         isActive: (updated as any).isActive,
       },
       message: 'Admin updated successfully',

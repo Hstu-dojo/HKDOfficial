@@ -105,6 +105,31 @@ export default function PartnerDashboard() {
           description="Manage your organization profile"
           href="/partner-admin/profile"
         />
+        <NavCard
+          title="Page Settings"
+          description="Customize your public homepage appearance"
+          href="/partner-admin/page-settings"
+        />
+        <NavCard
+          title="Pending Students"
+          description="Review and approve student registrations"
+          href="/partner-admin/pending-students"
+        />
+        <NavCard
+          title="Monthly Status"
+          description="Track member activity status each month"
+          href="/partner-admin/monthly-status"
+        />
+        <NavCard
+          title="Branch Transfers"
+          description="Review incoming student transfer requests"
+          href="/partner-admin/branch-requests"
+        />
+        <NavCard
+          title="Admin Management"
+          description="Manage portal administrators"
+          href="/partner-admin/admin-management"
+        />
       </div>
     </div>
   )

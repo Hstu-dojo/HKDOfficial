@@ -24,23 +24,17 @@ export const PartnerAdmins: CollectionConfig = {
   access: {
     // Only logged-in partner admins can access the admin panel
     admin: ({ req }) => !!req.user,
-    // Partner admins can read their own record + owners/admins can see co-admins in same org
+    // Any partner admin can see all admins in their org
     read: ({ req }) => {
       if (!req.user) return false
       const user = req.user as Record<string, unknown>
-      if (user.role === 'owner' || user.role === 'admin') {
-        return { partnerId: { equals: user.partnerId } }
-      }
-      return { id: { equals: req.user.id } }
+      return { partnerId: { equals: user.partnerId } }
     },
-    // Partner admins can update their own record; owners can update any admin in same org
+    // Any partner admin can update admins in their org
     update: ({ req }) => {
       if (!req.user) return false
       const user = req.user as Record<string, unknown>
-      if (user.role === 'owner') {
-        return { partnerId: { equals: user.partnerId } }
-      }
-      return { id: { equals: req.user.id } }
+      return { partnerId: { equals: user.partnerId } }
     },
     // Only Payload API (from main admin or partner-portal invite) can create partner admins
     create: () => false,
@@ -84,17 +78,10 @@ export const PartnerAdmins: CollectionConfig = {
     },
     {
       name: 'role',
-      type: 'select',
-      required: true,
-      defaultValue: 'staff',
-      label: 'Admin Role',
-      options: [
-        { label: 'Owner', value: 'owner' },
-        { label: 'Admin', value: 'admin' },
-        { label: 'Staff', value: 'staff' },
-      ],
+      type: 'text',
+      defaultValue: 'admin',
       admin: {
-        description: 'Owner: full control. Admin: can manage most things. Staff: read + limited actions.',
+        hidden: true,
       },
     },
     {

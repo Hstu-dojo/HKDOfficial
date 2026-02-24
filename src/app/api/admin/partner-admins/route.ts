@@ -35,7 +35,6 @@ export const GET = protectApiRoute('PARTNER', 'READ', async (request: Request, c
         id: a.id,
         name: a.name,
         email: a.email,
-        role: a.role || 'staff',
         phone: a.phone,
         isActive: a.isActive,
         createdAt: a.createdAt,
@@ -59,8 +58,8 @@ export const POST = protectApiRoute('PARTNER', 'CREATE', async (request: Request
       )
     }
 
-    const validRoles = ['owner', 'admin', 'staff']
-    const adminRole = validRoles.includes(role) ? role : 'staff'
+    const validRoles = ['admin']
+    const adminRole = 'admin'
 
     // Verify partner exists
     const [partner] = await db
@@ -139,10 +138,6 @@ export const PATCH = protectApiRoute('PARTNER', 'UPDATE', async (request: Reques
       updates.isActive = isActive
     }
 
-    if (role && ['owner', 'admin', 'staff'].includes(role)) {
-      updates.role = role
-    }
-
     if (Object.keys(updates).length === 0) {
       return NextResponse.json({ error: 'No valid fields to update' }, { status: 400 })
     }
@@ -157,7 +152,6 @@ export const PATCH = protectApiRoute('PARTNER', 'UPDATE', async (request: Reques
       admin: {
         id: updated.id,
         name: updated.name,
-        role: (updated as any).role,
         isActive: (updated as any).isActive,
       },
       message: 'Partner admin updated successfully',

@@ -67,6 +67,31 @@ export default buildConfig({
           path: '/profile',
           exact: true,
         },
+        pageSettings: {
+          Component: '/src/payload/views/PageSettingsView',
+          path: '/page-settings',
+          exact: true,
+        },
+        pendingStudents: {
+          Component: '/src/payload/views/PendingStudentsView',
+          path: '/pending-students',
+          exact: true,
+        },
+        monthlyStatus: {
+          Component: '/src/payload/views/MonthlyStatusView',
+          path: '/monthly-status',
+          exact: true,
+        },
+        branchRequests: {
+          Component: '/src/payload/views/BranchRequestsView',
+          path: '/branch-requests',
+          exact: true,
+        },
+        adminManagement: {
+          Component: '/src/payload/views/AdminManagementView',
+          path: '/admin-management',
+          exact: true,
+        },
       },
     },
   },

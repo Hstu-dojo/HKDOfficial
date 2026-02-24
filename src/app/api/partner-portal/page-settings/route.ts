@@ -68,14 +68,6 @@ export async function PATCH(request: Request) {
   const { user: partnerUser, error } = await requirePayloadPartnerUser()
   if (error) return error
 
-  // Only owners and admins can edit page settings
-  if (partnerUser.role !== 'owner' && partnerUser.role !== 'admin') {
-    return NextResponse.json(
-      { error: 'Only owners and admins can update page settings' },
-      { status: 403 }
-    )
-  }
-
   try {
     const body = await request.json()
 
