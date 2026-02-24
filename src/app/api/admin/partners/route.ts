@@ -109,6 +109,7 @@ export const POST = protectApiRoute('PARTNER', 'CREATE', async (request: Request
           partnerId: newPartner.id,
           partnerName: newPartner.name,
           partnerSlug: newPartner.slug,
+          role: 'owner',
           phone: contactPhone || '',
           isActive: true,
         },

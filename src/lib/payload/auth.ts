@@ -15,6 +15,7 @@ export interface PayloadPartnerUser {
   partnerId: string
   partnerName: string
   partnerSlug: string
+  role: 'owner' | 'admin' | 'staff'
   isActive: boolean
 }
 
@@ -48,6 +49,7 @@ export async function getPayloadPartnerUser(): Promise<PayloadPartnerUser | null
       partnerId: String(partnerUser.partnerId),
       partnerName: String(partnerUser.partnerName || ''),
       partnerSlug: String(partnerUser.partnerSlug || ''),
+      role: (partnerUser.role as 'owner' | 'admin' | 'staff') || 'staff',
       isActive: Boolean(partnerUser.isActive),
     }
   } catch (error) {
