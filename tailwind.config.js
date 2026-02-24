@@ -43,6 +43,10 @@ module.exports = {
       "7xl": ["4rem", { lineHeight: "normal" }],
     },
     extend: {
+      fontFamily: {
+        display: ["var(--font-bebas)", "Impact", "sans-serif"],
+        body: ["var(--font-jetbrains)", "monospace"],
+      },
       zIndex: {
         60: 60,
         70: 70,
@@ -68,18 +72,18 @@ module.exports = {
         },
         yellow: "#fbc02d",
         green: "#44d88d",
-        border: "#E8ECED",
-        input: "#E8ECED",
-        ring: "hsl(222.2 84% 4.9%)",
-        background: "#ffffff",
-        foreground: "#333b69",
+        border: "hsl(var(--border, 192 12% 92%))",
+        input: "hsl(var(--input, 192 12% 92%))",
+        ring: "hsl(var(--ring, 222.2 84% 4.9%))",
+        background: "hsl(var(--background, 0 0% 100%))",
+        foreground: "hsl(var(--foreground, 231 35% 31%))",
         primary: {
-          DEFAULT: "#0097B2",
-          foreground: "#ffffff",
+          DEFAULT: "hsl(var(--primary, 189 100% 35%))",
+          foreground: "hsl(var(--primary-foreground, 0 0% 100%))",
         },
         secondary: {
-          DEFAULT: "#5E17EB",
-          foreground: "#ffffff",
+          DEFAULT: "hsl(var(--secondary, 260 84% 51%))",
+          foreground: "hsl(var(--secondary-foreground, 0 0% 100%))",
         },
         tertiary: {
           DEFAULT: "#0CC0DF",
@@ -88,20 +92,24 @@ module.exports = {
           DEFAULT: "#fa6262",
         },
         destructive: {
-          DEFAULT: "hsl(0 84.2% 60.2%)",
-          foreground: "hsl(210 40% 98%)",
+          DEFAULT: "hsl(var(--destructive, 0 84.2% 60.2%))",
+          foreground: "hsl(var(--destructive-foreground, 210 40% 98%))",
         },
         muted: {
-          DEFAULT: "#f7f9fa",
-          foreground: "#6a798c",
+          DEFAULT: "hsl(var(--muted, 200 23% 97%))",
+          foreground: "hsl(var(--muted-foreground, 214 14% 48%))",
+        },
+        accent: {
+          DEFAULT: "hsl(var(--accent, 0 100% 50%))",
+          foreground: "hsl(var(--accent-foreground, 0 0% 100%))",
         },
         popover: {
-          DEFAULT: "hsl(0 0% 100%)",
-          foreground: "hsl(224 71.4% 4.1%)",
+          DEFAULT: "hsl(var(--popover, 0 0% 100%))",
+          foreground: "hsl(var(--popover-foreground, 224 71.4% 4.1%))",
         },
         card: {
-          DEFAULT: "hsl(0 0% 100%)",
-          foreground: "hsl(222.2 84% 4.9%)",
+          DEFAULT: "hsl(var(--card, 0 0% 100%))",
+          foreground: "hsl(var(--card-foreground, 222.2 84% 4.9%))",
         },
       },
       transitionTimingFunction: {

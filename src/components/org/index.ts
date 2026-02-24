@@ -1,9 +1,8 @@
 export { default as OrgHero } from "./OrgHero";
-export { default as OrgStats } from "./OrgStats";
-export { default as OrgAbout } from "./OrgAbout";
-export { default as OrgFeatures } from "./OrgFeatures";
-export { default as OrgCourseShowcase } from "./OrgCourseShowcase";
 export { default as OrgGallery } from "./OrgGallery";
-export { default as OrgSchedulePreview } from "./OrgSchedulePreview";
-export { default as OrgCTA } from "./OrgCTA";
-export { default as OrgContactBar } from "./OrgContactBar";
+export { default as OrgMarquee } from "./OrgMarquee";
+export { default as OrgProgramGrid } from "./OrgProgramGrid";
+export { default as OrgSplitFeature } from "./OrgSplitFeature";
+export { default as OrgScheduleBlock } from "./OrgScheduleBlock";
+export { default as OrgCtaBlock } from "./OrgCtaBlock";
+export { default as OrgFooter } from "./OrgFooter";
