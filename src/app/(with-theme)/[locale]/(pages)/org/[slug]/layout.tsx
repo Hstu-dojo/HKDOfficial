@@ -2,8 +2,6 @@ import { notFound } from 'next/navigation';
 import { db } from '@/lib/connect-db';
 import { partners, partnerPageSettings } from '@/db/schema';
 import { eq } from 'drizzle-orm';
-import Header from '@/components/layout/header';
-import Footer from '@/components/layout/footer';
 
 interface OrgLayoutProps {
   children: React.ReactNode;
@@ -42,8 +40,7 @@ export default async function OrgLayout({ children, params }: OrgLayoutProps) {
 
   return (
     <>
-      <Header />
-      {/* Organization sub-nav */}
+      {/* Organization sub-nav — standalone, no main site Header/Footer */}
       <nav className="sticky top-0 z-40 border-b border-slate-200 bg-white/80 backdrop-blur-md dark:border-slate-700 dark:bg-slate-900/80">
         <div className="mx-auto flex max-w-7xl items-center gap-1 overflow-x-auto px-4 py-0 text-sm sm:gap-2">
           <a
@@ -72,7 +69,6 @@ export default async function OrgLayout({ children, params }: OrgLayoutProps) {
         </div>
       </nav>
       <main className="min-h-screen">{children}</main>
-      <Footer />
     </>
   );
 }
