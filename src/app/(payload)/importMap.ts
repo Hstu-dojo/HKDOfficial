@@ -5,6 +5,11 @@ import { default as EnrollmentsView_view } from '../../payload/views/Enrollments
 import { default as BillsView_view } from '../../payload/views/BillsView'
 import { default as SchedulesView_view } from '../../payload/views/SchedulesView'
 import { default as ProfileView_view } from '../../payload/views/ProfileView'
+import { default as PageSettingsView_view } from '../../payload/views/PageSettingsView'
+import { default as PendingStudentsView_view } from '../../payload/views/PendingStudentsView'
+import { default as MonthlyStatusView_view } from '../../payload/views/MonthlyStatusView'
+import { default as BranchRequestsView_view } from '../../payload/views/BranchRequestsView'
+import { default as AdminManagementView_view } from '../../payload/views/AdminManagementView'
 
 export const importMap = {
   "/src/payload/views/PartnerDashboard#default": PartnerDashboard_view,
@@ -13,4 +18,9 @@ export const importMap = {
   "/src/payload/views/BillsView#default": BillsView_view,
   "/src/payload/views/SchedulesView#default": SchedulesView_view,
   "/src/payload/views/ProfileView#default": ProfileView_view,
+  "/src/payload/views/PageSettingsView#default": PageSettingsView_view,
+  "/src/payload/views/PendingStudentsView#default": PendingStudentsView_view,
+  "/src/payload/views/MonthlyStatusView#default": MonthlyStatusView_view,
+  "/src/payload/views/BranchRequestsView#default": BranchRequestsView_view,
+  "/src/payload/views/AdminManagementView#default": AdminManagementView_view,
 }
