@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 
 interface OrgSplitFeatureProps {
+  aboutTitle?: string | null;
   aboutText?: string | null;
   missionStatement?: string | null;
   memberCount: number;
@@ -16,16 +17,12 @@ interface OrgSplitFeatureProps {
 }
 
 export default function OrgSplitFeature({
+  aboutTitle,
   aboutText,
   missionStatement,
   memberCount,
   courseCount,
   yearEstablished,
-  founderName,
-  founderTitle,
-  founderBio,
-  founderImageUrl,
-  showFounder,
 }: OrgSplitFeatureProps) {
   const [visible, setVisible] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
@@ -58,10 +55,29 @@ export default function OrgSplitFeature({
     stats.push({ value: "∞", label: "Potential", suffix: "" });
   }
 
+  // Parse title for accent word - if title contains a word in *asterisks*, make it accent colored
+  const renderTitle = (title: string) => {
+    const match = title.match(/^(.+?)\s+(\S+)$/);
+    if (match) {
+      return (
+        <>
+          {match[1]} <span className="text-accent">{match[2]}</span>
+        </>
+      );
+    }
+    return title;
+  };
+
+  const displayTitle = aboutTitle || "We Don't Do Easy.";
+  const displayText =
+    missionStatement ||
+    aboutText ||
+    "This is not a gym. It's a proving ground. Every rep is a question: how much do you want it? Every workout is an answer. We strip away the noise, the vanity, the comfort. What remains is raw human potential.";
+
   return (
     <section ref={ref} className="relative">
       <div className="grid grid-cols-1 md:grid-cols-2">
-        {/* Left: Manifesto / About */}
+        {/* Left: Manifesto */}
         <div className="relative bg-secondary flex flex-col justify-center px-4 md:px-12 lg:px-16 py-5 md:py-24">
           <div
             className="absolute top-0 right-0 w-16 md:w-20 h-full diagonal-stripes opacity-20 hidden md:block"
@@ -70,50 +86,17 @@ export default function OrgSplitFeature({
 
           <div className={visible ? "brutal-reveal" : "opacity-0"}>
             <span className="font-body text-[8px] md:text-[10px] text-accent tracking-[0.2em] md:tracking-[0.3em] uppercase block mb-2 md:mb-8">
-              {showFounder && founderName ? "[Founder]" : "[About Us]"}
+              [Manifesto]
             </span>
-
-            {showFounder && founderName ? (
-              <>
-                <h2 className="font-display text-[9vw] sm:text-4xl md:text-7xl lg:text-8xl tracking-tighter text-foreground leading-[0.85] uppercase whitespace-nowrap mb-2 md:mb-4">
-                  {founderName}
-                </h2>
-                {founderTitle && (
-                  <span className="font-body text-[8px] md:text-xs text-accent tracking-[0.15em] uppercase block mb-2 md:mb-8">
-                    {founderTitle}
-                  </span>
-                )}
-                <div className="w-8 md:w-16 h-[2px] bg-accent mb-2 md:mb-8" />
-                <p className="font-body text-[9px] md:text-sm text-muted-foreground leading-relaxed max-w-md">
-                  {founderBio || aboutText || "Dedicated to excellence and the pursuit of mastery."}
-                </p>
-              </>
-            ) : (
-              <>
-                <h2 className="font-display text-[9vw] sm:text-4xl md:text-7xl lg:text-8xl tracking-tighter text-foreground leading-[0.85] uppercase whitespace-nowrap mb-2 md:mb-8">
-                  Our <span className="text-accent">Mission</span>.
-                </h2>
-                <div className="w-8 md:w-16 h-[2px] bg-accent mb-2 md:mb-8" />
-                <p className="font-body text-[9px] md:text-sm text-muted-foreground leading-relaxed max-w-md">
-                  {missionStatement || aboutText || "Building discipline, strength, and character through dedicated training."}
-                </p>
-              </>
-            )}
+            {/* Single line on mobile */}
+            <h2 className="font-display text-[9vw] sm:text-4xl md:text-7xl lg:text-8xl tracking-tighter text-foreground leading-[0.85] uppercase whitespace-nowrap mb-2 md:mb-8">
+              {renderTitle(displayTitle)}
+            </h2>
+            <div className="w-8 md:w-16 h-[2px] bg-accent mb-2 md:mb-8" />
+            <p className="font-body text-[9px] md:text-sm text-muted-foreground leading-relaxed max-w-md">
+              {displayText}
+            </p>
           </div>
-
-          {/* Founder image (mobile only if available) */}
-          {showFounder && founderImageUrl && (
-            <div className="mt-4 md:hidden">
-              <div className="relative w-24 h-24 overflow-hidden">
-                <img
-                  src={founderImageUrl}
-                  alt={founderName || "Founder"}
-                  className="w-full h-full object-cover grayscale"
-                />
-                <div className="absolute bottom-0 left-0 w-full h-[2px] bg-accent" />
-              </div>
-            </div>
-          )}
         </div>
 
         {/* Right: Stats grid */}
@@ -141,7 +124,10 @@ export default function OrgSplitFeature({
               </div>
             ))}
           </div>
-          <div className="absolute bottom-0 right-0 w-6 h-6 md:w-16 md:h-16 bg-accent" aria-hidden="true" />
+          <div
+            className="absolute bottom-0 right-0 w-6 h-6 md:w-16 md:h-16 bg-accent"
+            aria-hidden="true"
+          />
         </div>
       </div>
     </section>

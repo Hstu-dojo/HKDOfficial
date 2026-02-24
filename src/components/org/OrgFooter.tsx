@@ -46,7 +46,7 @@ export default function OrgFooter({
           className={`flex whitespace-nowrap transition-opacity duration-700 ${visible ? "opacity-100" : "opacity-0"}`}
         >
           <div className="flex animate-marquee-footer shrink-0">
-            {Array.from({ length: 6 }).map((_, i) => (
+            {Array.from({ length: 4 }).map((_, i) => (
               <span
                 key={`a-${i}`}
                 className="font-display text-[10vw] md:text-[7vw] tracking-tighter uppercase footer-stroke-text"
@@ -56,7 +56,7 @@ export default function OrgFooter({
             ))}
           </div>
           <div className="flex animate-marquee-footer shrink-0" aria-hidden="true">
-            {Array.from({ length: 6 }).map((_, i) => (
+            {Array.from({ length: 4 }).map((_, i) => (
               <span
                 key={`b-${i}`}
                 className="font-display text-[10vw] md:text-[7vw] tracking-tighter uppercase footer-stroke-text"
@@ -85,12 +85,18 @@ export default function OrgFooter({
             )}
           </div>
 
-          {/* Quick Links */}
+          {/* Navigate */}
           <div>
             <span className="font-body text-[9px] md:text-[10px] text-accent tracking-[0.25em] md:tracking-[0.3em] uppercase block mb-2.5 md:mb-4">
               Navigate
             </span>
             <nav className="flex flex-col gap-2 md:gap-3">
+              <a
+                href="/"
+                className="font-body text-[10px] md:text-xs text-muted-foreground hover:text-accent transition-colors tracking-[0.08em] md:tracking-[0.1em] py-0.5 min-h-[32px] flex items-center"
+              >
+                Home
+              </a>
               {["Programs", "Schedule", "Gallery", "Contact"].map((link) => (
                 <a
                   key={link}
@@ -122,7 +128,7 @@ export default function OrgFooter({
             </div>
           </div>
 
-          {/* Social / Info */}
+          {/* Social / Follow */}
           <div>
             <span className="font-body text-[9px] md:text-[10px] text-accent tracking-[0.25em] md:tracking-[0.3em] uppercase block mb-2.5 md:mb-4">
               Follow

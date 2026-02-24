@@ -28,7 +28,6 @@ export default function OrgGallery({ images, orgName }: OrgGalleryProps) {
     return () => observer.disconnect();
   }, []);
 
-  // Take up to 4 images
   const displayImages = images.slice(0, 4);
 
   if (displayImages.length === 0) return null;
@@ -53,7 +52,7 @@ export default function OrgGallery({ images, orgName }: OrgGalleryProps) {
           <div className="flex items-center gap-2 md:gap-4">
             <div className="w-5 md:w-8 h-[2px] bg-accent" />
             <span className="font-body text-[8px] md:text-[10px] text-accent tracking-[0.2em] md:tracking-[0.4em] uppercase">
-              Gallery
+              The Work Speaks
             </span>
           </div>
           <span className="font-body text-[7px] md:text-[10px] text-muted-foreground tracking-[0.15em] hidden md:block">
@@ -64,8 +63,16 @@ export default function OrgGallery({ images, orgName }: OrgGalleryProps) {
 
       {/* Image Grid */}
       <div className="px-4 md:px-8 lg:px-12 pb-6 md:pb-20 max-w-[1400px] mx-auto w-full">
-        {/* Desktop: up to 4-column staggered */}
-        <div className={`hidden md:grid gap-3 ${displayImages.length >= 4 ? "grid-cols-4" : displayImages.length === 3 ? "grid-cols-3" : "grid-cols-2"}`}>
+        {/* Desktop: 4-column staggered */}
+        <div
+          className={`hidden md:grid gap-3 ${
+            displayImages.length >= 4
+              ? "grid-cols-4"
+              : displayImages.length === 3
+                ? "grid-cols-3"
+                : "grid-cols-2"
+          }`}
+        >
           {displayImages.map((src, i) => {
             const offsets = [0, 48, 16, 64];
             const aspects = ["aspect-[3/4]", "aspect-[4/5]", "aspect-[3/4]", "aspect-[4/5]"];
@@ -87,7 +94,7 @@ export default function OrgGallery({ images, orgName }: OrgGalleryProps) {
                 >
                   <div className={`relative overflow-hidden ${aspects[i % 4]}`}>
                     <Image
-                      src={src}
+                      src={src || "/placeholder.svg"}
                       alt={`${orgName} gallery image ${i + 1}`}
                       fill
                       className="object-cover grayscale group-hover:grayscale-0 transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-105"
@@ -114,7 +121,11 @@ export default function OrgGallery({ images, orgName }: OrgGalleryProps) {
                         className="text-accent"
                         aria-hidden="true"
                       >
-                        <path d="M1 11L11 1M11 1H3M11 1V9" stroke="currentColor" strokeWidth="1.5" />
+                        <path
+                          d="M1 11L11 1M11 1H3M11 1V9"
+                          stroke="currentColor"
+                          strokeWidth="1.5"
+                        />
                       </svg>
                     </div>
                   </div>
@@ -124,7 +135,7 @@ export default function OrgGallery({ images, orgName }: OrgGalleryProps) {
           })}
         </div>
 
-        {/* Mobile: 2-column tight */}
+        {/* Mobile: 2-column tight, equal height, no stagger offset */}
         <div className="grid grid-cols-2 gap-1.5 md:hidden">
           {displayImages.map((src, i) => (
             <div key={`mobile-${src}-${i}`} className="relative">
@@ -138,7 +149,7 @@ export default function OrgGallery({ images, orgName }: OrgGalleryProps) {
               >
                 <div className="relative overflow-hidden aspect-[3/4]">
                   <Image
-                    src={src}
+                    src={src || "/placeholder.svg"}
                     alt={`${orgName} gallery image ${i + 1}`}
                     fill
                     className="object-cover grayscale"

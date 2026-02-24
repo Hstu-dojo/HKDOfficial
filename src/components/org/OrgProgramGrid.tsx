@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
+import Image from "next/image";
 
 interface Course {
   id: string;
@@ -16,7 +17,11 @@ interface OrgProgramGridProps {
   heroImageUrl?: string | null;
 }
 
-export default function OrgProgramGrid({ courses, orgName, heroImageUrl }: OrgProgramGridProps) {
+export default function OrgProgramGrid({
+  courses,
+  orgName,
+  heroImageUrl,
+}: OrgProgramGridProps) {
   const [hoveredId, setHoveredId] = useState<string | null>(null);
   const sectionRef = useRef<HTMLDivElement>(null);
   const [visible, setVisible] = useState(false);
@@ -57,7 +62,7 @@ export default function OrgProgramGrid({ courses, orgName, heroImageUrl }: OrgPr
                   className={`block text-[13vw] sm:text-[10vw] md:text-8xl lg:text-9xl whitespace-nowrap ${visible ? "anim-shutter-up" : "opacity-0"}`}
                   style={{ animationDelay: "0.2s" }}
                 >
-                  Our Programs<span className="text-accent">.</span>
+                  Train Hard<span className="text-accent">.</span>
                 </span>
               </h2>
             </div>
@@ -67,36 +72,46 @@ export default function OrgProgramGrid({ courses, orgName, heroImageUrl }: OrgPr
               style={{ animationDelay: "0.6s" }}
             >
               <p className="font-body text-[9px] md:text-xs text-foreground/50 max-w-[260px] md:max-w-xs leading-relaxed mb-2 md:mb-5">
-                Explore the programs offered at {orgName}. Each one is coached, structured, and
-                designed for growth.
+                Four distinct tracks. One standard: intensity. Every program is coached, programmed, and capped for quality.
               </p>
               <div className="flex items-center gap-3 md:gap-6">
-                <div className="flex items-baseline gap-1">
-                  <span className="font-display text-base md:text-2xl text-accent leading-none">
-                    {String(courses.length).padStart(2, "0")}
-                  </span>
-                  <span className="font-body text-[6px] md:text-[9px] text-foreground/35 tracking-[0.1em] uppercase">
-                    Programs
-                  </span>
-                </div>
+                {[
+                  { v: String(courses.length).padStart(2, "0"), l: "Programs" },
+                  { v: String(courses.length * 3), l: "Daily Classes" },
+                ].map((s) => (
+                  <div key={s.l} className="flex items-baseline gap-1">
+                    <span className="font-display text-base md:text-2xl text-accent leading-none">
+                      {s.v}
+                    </span>
+                    <span className="font-body text-[6px] md:text-[9px] text-foreground/35 tracking-[0.1em] uppercase">
+                      {s.l}
+                    </span>
+                  </div>
+                ))}
               </div>
             </div>
           </div>
 
-          {/* Right: Hero Image if available */}
+          {/* Right: Image */}
           {heroImageUrl && (
             <div
               className={`relative lg:pl-8 ${visible ? "anim-wipe-right" : "opacity-0"}`}
               style={{ animationDelay: "0.4s" }}
             >
               <div className="relative aspect-[16/9] overflow-hidden">
-                <img
+                <Image
                   src={heroImageUrl}
                   alt={`${orgName} training`}
-                  className="object-cover w-full h-full grayscale hover:grayscale-0 transition-all duration-700"
+                  fill
+                  className="object-cover grayscale hover:grayscale-0 transition-all duration-700"
                 />
                 <div className="absolute top-0 left-0 w-3 h-3 md:w-6 md:h-6 border-t-2 border-l-2 border-accent" />
                 <div className="absolute bottom-0 right-0 w-3 h-3 md:w-6 md:h-6 border-b-2 border-r-2 border-accent" />
+                <div className="absolute bottom-2 left-2 bg-background/90 px-1.5 py-0.5 md:px-2 md:py-1">
+                  <span className="font-body text-[6px] md:text-[9px] text-foreground/60 tracking-[0.12em] md:tracking-[0.2em] uppercase">
+                    {courses.length} Programs / Week
+                  </span>
+                </div>
               </div>
               <div
                 className={`h-[2px] bg-accent mt-1 md:mt-2 ${visible ? "line-expand" : "w-0"}`}
@@ -155,7 +170,7 @@ export default function OrgProgramGrid({ courses, orgName, heroImageUrl }: OrgPr
                 {/* Meta */}
                 <div className="flex items-center gap-2 md:gap-6 shrink-0">
                   {course.fee != null && course.fee > 0 && (
-                    <div>
+                    <div className="hidden sm:block">
                       <span className="font-body text-[6px] md:text-[10px] text-foreground/35 block tracking-[0.08em] md:tracking-[0.2em] uppercase mb-0.5">
                         Fee
                       </span>

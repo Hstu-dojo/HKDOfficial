@@ -95,14 +95,11 @@ export default function OrgHero({
     .slice(0, 2)
     .toUpperCase();
 
-  // Split name into words for headline
-  const nameWords = name.split(/\s+/).slice(0, 3);
-
   if (!go) return <section className="min-h-screen bg-background" />;
 
   return (
     <section className="relative h-[100svh] flex flex-col overflow-hidden bg-background select-none">
-      {/* Background image */}
+      {/* ── Background image ── */}
       {heroImageUrl && (
         <div className="absolute inset-0 anim-cut-in" style={d(100)} aria-hidden="true">
           <Image
@@ -112,10 +109,12 @@ export default function OrgHero({
             priority
             className="object-cover object-[65%_15%] sm:object-[70%_20%] md:object-center"
           />
+          {/* Mobile: heavier bottom gradient so text pops, lighter top so image breathes */}
           <div className="absolute inset-0 bg-gradient-to-t from-background via-background/70 to-transparent md:hidden" />
-          <div className="absolute inset-0 bg-background/20 md:hidden" />
-          <div className="absolute inset-0 bg-gradient-to-t from-background/80 via-background/50 to-background/20 hidden md:block" />
-          <div className="absolute inset-0 bg-gradient-to-r from-background/80 via-background/40 to-transparent hidden md:block" />
+          <div className="absolute inset-0 bg-background/30 md:hidden" />
+          {/* Desktop: side + bottom gradients — stronger to ensure text readability */}
+          <div className="absolute inset-0 bg-gradient-to-t from-background/90 via-background/60 to-background/30 hidden md:block" />
+          <div className="absolute inset-0 bg-gradient-to-r from-background/90 via-background/50 to-transparent hidden md:block" />
         </div>
       )}
 
@@ -135,7 +134,7 @@ export default function OrgHero({
         />
       ))}
 
-      {/* NAV */}
+      {/* ── NAV ── */}
       <nav
         className="relative z-20 flex items-center justify-between px-4 md:px-8 lg:px-12 py-3 md:py-6 anim-cut-in"
         style={d(100)}
@@ -169,12 +168,20 @@ export default function OrgHero({
         </div>
 
         <div className="hidden lg:flex items-center gap-10">
+          <a
+            href="/"
+            className="group relative font-body text-[11px] tracking-[0.25em] text-foreground/50 hover:text-foreground transition-colors uppercase anim-cut-in"
+            style={d(200)}
+          >
+            Home
+            <span className="absolute -bottom-1 left-0 w-0 h-[1px] bg-accent transition-all duration-300 group-hover:w-full" />
+          </a>
           {navLinks.map((link, i) => (
             <a
               key={link.label}
               href={link.href}
               className="group relative font-body text-[11px] tracking-[0.25em] text-foreground/50 hover:text-foreground transition-colors uppercase anim-cut-in"
-              style={d(200 + i * 60)}
+              style={d(260 + i * 60)}
             >
               {link.label}
               <span className="absolute -bottom-1 left-0 w-0 h-[1px] bg-accent transition-all duration-300 group-hover:w-full" />
@@ -219,7 +226,7 @@ export default function OrgHero({
         </div>
       </nav>
 
-      {/* Mobile menu overlay */}
+      {/* ── Mobile menu overlay ── */}
       <div
         className={`lg:hidden fixed inset-0 z-50 bg-background/95 backdrop-blur-sm flex flex-col items-center justify-center gap-6 transition-all duration-300 ${
           menuOpen ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
@@ -233,6 +240,13 @@ export default function OrgHero({
           <span className="w-5 h-[1.5px] bg-foreground block rotate-45 absolute" />
           <span className="w-5 h-[1.5px] bg-foreground block -rotate-45 absolute" />
         </button>
+        <a
+          href="/"
+          onClick={() => setMenuOpen(false)}
+          className="font-display text-4xl tracking-tighter text-foreground uppercase hover:text-accent transition-colors min-h-[48px] flex items-center"
+        >
+          Home
+        </a>
         {navLinks.map((link) => (
           <a
             key={link.label}
@@ -245,7 +259,7 @@ export default function OrgHero({
         ))}
       </div>
 
-      {/* CONTENT */}
+      {/* ── CONTENT ── */}
       <div className="relative z-10 flex-1 flex flex-col justify-center px-4 md:px-8 lg:px-12 md:justify-end md:pb-8">
         <div className="max-w-[1400px] mx-auto w-full text-center md:text-left">
           {/* Tagline */}
@@ -260,23 +274,19 @@ export default function OrgHero({
             <div className="h-[1.5px] w-5 bg-accent md:hidden" />
           </div>
 
-          {/* Headline */}
+          {/* Headline — show org name as a single line, natural wrapping */}
           <div className="relative mb-2 md:mb-0">
-            {nameWords.map((word, i) => (
-              <div key={word} className="overflow-hidden">
-                <h1
-                  className={`font-display leading-[0.85] tracking-[-0.04em] uppercase anim-shutter-up ${
-                    i === 1 ? "text-accent" : "text-foreground"
-                  } text-[15vw] sm:text-[14vw] md:text-[13vw] lg:text-[10vw]`}
-                  style={d(400 + i * 120)}
-                >
-                  {word}
-                </h1>
-              </div>
-            ))}
+            <div className="overflow-hidden">
+              <h1
+                className="font-display leading-[0.85] tracking-[-0.04em] uppercase anim-shutter-up text-foreground text-[13vw] sm:text-[12vw] md:text-[11vw] lg:text-[9vw]"
+                style={d(400)}
+              >
+                {name}
+              </h1>
+            </div>
           </div>
 
-          {/* Announcement / copy */}
+          {/* Copy */}
           <p
             className="font-body text-[8px] sm:text-[10px] md:text-[13px] text-foreground/60 max-w-[240px] sm:max-w-xs md:max-w-md mx-auto md:mx-0 leading-relaxed anim-cut-in"
             style={d(800)}

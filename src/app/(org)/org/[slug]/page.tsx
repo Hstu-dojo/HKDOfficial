@@ -146,6 +146,7 @@ export default async function OrgPage({ params }: OrgPageProps) {
 
       {/* Split feature: about / stats */}
       <OrgSplitFeature
+        aboutTitle={settings?.aboutTitle}
         aboutText={settings?.aboutText ?? partner.description}
         missionStatement={settings?.missionStatement}
         memberCount={memberCount}
@@ -168,6 +169,9 @@ export default async function OrgPage({ params }: OrgPageProps) {
         ctaText={settings?.ctaText}
         ctaLink={settings?.ctaLink}
         orgName={partner.name}
+        email={partner.contactEmail}
+        phone={partner.contactPhone}
+        location={partner.location}
       />
 
       {/* Footer */}
