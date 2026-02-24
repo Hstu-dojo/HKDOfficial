@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import Link from "next/link";
 
 interface OrgFooterProps {
   name: string;
@@ -91,12 +92,12 @@ export default function OrgFooter({
               Navigate
             </span>
             <nav className="flex flex-col gap-2 md:gap-3">
-              <a
+              <Link
                 href="/"
                 className="font-body text-[10px] md:text-xs text-muted-foreground hover:text-accent transition-colors tracking-[0.08em] md:tracking-[0.1em] py-0.5 min-h-[32px] flex items-center"
               >
                 Home
-              </a>
+              </Link>
               {["Programs", "Schedule", "Gallery", "Contact"].map((link) => (
                 <a
                   key={link}

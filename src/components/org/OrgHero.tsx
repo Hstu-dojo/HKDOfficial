@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState, useRef } from "react";
 import Image from "next/image";
+import Link from "next/link";
 
 function Counter({
   target,
@@ -168,14 +169,14 @@ export default function OrgHero({
         </div>
 
         <div className="hidden lg:flex items-center gap-10">
-          <a
+          <Link
             href="/"
             className="group relative font-body text-[11px] tracking-[0.25em] text-foreground/50 hover:text-foreground transition-colors uppercase anim-cut-in"
             style={d(200)}
           >
             Home
             <span className="absolute -bottom-1 left-0 w-0 h-[1px] bg-accent transition-all duration-300 group-hover:w-full" />
-          </a>
+          </Link>
           {navLinks.map((link, i) => (
             <a
               key={link.label}
@@ -240,13 +241,13 @@ export default function OrgHero({
           <span className="w-5 h-[1.5px] bg-foreground block rotate-45 absolute" />
           <span className="w-5 h-[1.5px] bg-foreground block -rotate-45 absolute" />
         </button>
-        <a
+        <Link
           href="/"
           onClick={() => setMenuOpen(false)}
           className="font-display text-4xl tracking-tighter text-foreground uppercase hover:text-accent transition-colors min-h-[48px] flex items-center"
         >
           Home
-        </a>
+        </Link>
         {navLinks.map((link) => (
           <a
             key={link.label}
