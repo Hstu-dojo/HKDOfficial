@@ -1,27 +1,33 @@
 import { WP_REST_BASE_URL } from "@/config/site";
 
 export async function getPosts(limit?: string, page?: string, type?: string) {
-  const queryParams = new URLSearchParams({
-    _embed: "1",
-  });
+  try {
+    const queryParams = new URLSearchParams({
+      _embed: "1",
+    });
 
-  if (limit) {
-    queryParams.append("per_page", limit);
+    if (limit) {
+      queryParams.append("per_page", limit);
+    }
+
+    if (page) {
+      queryParams.append("page", page);
+    }
+
+    const res = await fetch(`${WP_REST_BASE_URL}/${type}?${queryParams}`, {
+      next: { revalidate: 60 },
+    });
+
+    if (!res.ok) {
+      console.error(`WordPress API error: ${res.status} ${res.statusText}`);
+      return [];
+    }
+
+    return res.json();
+  } catch (error) {
+    console.error("WordPress API unreachable:", (error as Error).message);
+    return [];
   }
-
-  if (page) {
-    queryParams.append("page", page);
-  }
-
-  const res = await fetch(`${WP_REST_BASE_URL}/${type}?${queryParams}`, {
-    next: { revalidate: 60 },
-  });
-
-  if (!res.ok) {
-    throw new Error("Failed to fetch posts");
-  }
-
-  return res.json();
 }
 
 export async function getPost(slug: string, type: string) {
@@ -33,25 +39,37 @@ export async function getPost(slug: string, type: string) {
 }
 
 export async function getPostsSearchResults(searchTerm: string) {
-  const res = await fetch(
-    `${WP_REST_BASE_URL}/posts?search=${searchTerm}&_embed`,
-  );
+  try {
+    const res = await fetch(
+      `${WP_REST_BASE_URL}/posts?search=${searchTerm}&_embed`,
+    );
 
-  if (!res.ok) {
-    throw new Error("Failed to fetch posts");
+    if (!res.ok) {
+      console.error(`WordPress API error: ${res.status} ${res.statusText}`);
+      return [];
+    }
+
+    return res.json();
+  } catch (error) {
+    console.error("WordPress API unreachable:", (error as Error).message);
+    return [];
   }
-
-  return res.json();
 }
 
 export async function getProjectsSearchResults(searchTerm: string) {
-  const res = await fetch(
-    `${WP_REST_BASE_URL}/projects?search=${searchTerm}&_embed`,
-  );
+  try {
+    const res = await fetch(
+      `${WP_REST_BASE_URL}/projects?search=${searchTerm}&_embed`,
+    );
 
-  if (!res.ok) {
-    throw new Error("Failed to fetch posts");
+    if (!res.ok) {
+      console.error(`WordPress API error: ${res.status} ${res.statusText}`);
+      return [];
+    }
+
+    return res.json();
+  } catch (error) {
+    console.error("WordPress API unreachable:", (error as Error).message);
+    return [];
   }
-
-  return res.json();
 }

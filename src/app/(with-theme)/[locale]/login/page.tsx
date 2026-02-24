@@ -59,11 +59,9 @@ export default async function AuthenticationPage({ searchParams }: PageProps) {
             <Image
               src="/image/kata.JPG"
               alt="Hero"
-              layout="fill"
-              objectFit="cover"
-              objectPosition="center"
+              fill
               // add gradient overlay
-              className="absolute inset-0"
+              className="absolute inset-0 object-cover object-center"
               style={{
                 mixBlendMode: "multiply",
                 filter: "grayscale(1) contrast(1.2) opacity(0.6)",

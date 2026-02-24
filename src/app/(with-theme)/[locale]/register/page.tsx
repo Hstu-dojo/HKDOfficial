@@ -76,11 +76,9 @@ export default async function AuthenticationPage() {
             <Image
               src="/image/punch.JPG"
               alt="Hero"
-              layout="fill"
-              objectFit="cover"
-              objectPosition="center"
+              fill
               // add gradient overlay
-              className="absolute inset-0"
+              className="absolute inset-0 object-cover object-center"
               style={{
                 mixBlendMode: "multiply",
                 filter: "grayscale(1) contrast(1.2) opacity(0.6)",

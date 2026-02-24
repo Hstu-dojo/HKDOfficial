@@ -23,6 +23,7 @@ const IconBox = ({
           alt={title || ""}
           width={72}
           height={72}
+          unoptimized={typeof icon === 'string' && icon.endsWith('.gif')}
           className="mb-6 inline-block rounded"
         />
       ) : null}

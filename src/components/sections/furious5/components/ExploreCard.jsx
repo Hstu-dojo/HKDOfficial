@@ -19,7 +19,6 @@ const ExploreCard = ({ id, imgUrl, title, index, active, handleClick }) => (
       height={700}
       width={500}
       alt="planet-04"
-      objectPosition="top"
       className={`pointer-events-none absolute h-full w-full rounded-[24px] object-cover object-top ${
         active === id ? "" : " opacity-60 filter"
       }`}

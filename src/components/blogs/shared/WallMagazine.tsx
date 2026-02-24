@@ -248,6 +248,7 @@ const SkeletonThree = () => {
           src="/image/kick.gif"
           width={400}
           height={300}
+          unoptimized
           alt="kick gif"
         />
       </motion.div>

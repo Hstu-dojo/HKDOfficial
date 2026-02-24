@@ -39,6 +39,7 @@ const SectionBenefits = () => {
                 alt="karate competition"
                 width={320}
                 height={320}
+                unoptimized
                 className="rounded-xl"
               />
               <Dialog>
