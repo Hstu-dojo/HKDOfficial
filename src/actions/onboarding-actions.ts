@@ -123,11 +123,12 @@ export async function submitOnboarding(formData: any) {
           ...formData
       };
 
-      // Extract partner_id from formData
+      // Extract partnerId from form data (required on first registration)
       const partnerId = formData.partnerId || null;
 
       if (existing) {
-        // Update existing registration
+        // Update existing registration — partnerId is NOT updatable here
+        // (branch change must go through the dedicated request flow)
         await db.update(registrations)
           .set({
             dateOfBirth: new Date(formData.dob),
@@ -143,7 +144,7 @@ export async function submitOnboarding(formData: any) {
           })
           .where(eq(registrations.id, existing.id));
       } else {
-        // Create new registration
+        // Create new registration — include partnerId (venue selection)
         await db.insert(registrations).values({
             userId: publicUser.id,
             dateOfBirth: new Date(formData.dob),
@@ -153,6 +154,7 @@ export async function submitOnboarding(formData: any) {
             phoneNumber: formData.phone,
             emergencyContact: formData.emergencyContact || "Not Provided",
             emergencyPhone: formData.emergencyPhone || formData.phone,
+            partnerId: partnerId,
             notes: JSON.stringify(extraData),
             status: 'pending'
         });

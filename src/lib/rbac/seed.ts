@@ -10,7 +10,6 @@ const defaultRoles = [
   { name: "ADMIN", description: "Administrator with management access" },
   { name: "MODERATOR", description: "Moderator with limited management access" },
   { name: "INSTRUCTOR", description: "Instructor with course management access" },
-  { name: "PARTNER", description: "Partner organization with student management access" },
   { name: "STUDENT", description: "Student with learning access" },
   { name: "USER", description: "Regular user with basic access" },
   { name: "MEMBER", description: "Regular member with basic access" },
@@ -318,29 +317,6 @@ const rolePermissionMappings: { [key: string]: string[] } = {
     "create_schedule", "read_schedule", "update_schedule",
     // Monthly fee view
     "read_monthly_fee",
-  ],
-  PARTNER: [
-    // Partner-specific permissions - can manage their students and view bills
-    "read_user",
-    "read_account",
-    // Member management for their students
-    "create_member", "read_member", "update_member",
-    // Course viewing
-    "read_course",
-    // Class management for their venue
-    "read_class",
-    // Billing
-    "read_partner_bill",
-    "read_payment",
-    // Schedule
-    "read_schedule",
-    // Enrollment for their students
-    "read_enrollment", "create_enrollment",
-    // Basic content access
-    "read_gallery",
-    "read_event",
-    "read_announcement",
-    "read_blog",
   ],
   STUDENT: [
     // Basic read permissions

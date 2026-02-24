@@ -2,7 +2,20 @@ import type { CollectionConfig } from 'payload'
 
 export const PartnerAdmins: CollectionConfig = {
   slug: 'partner-admins',
-  auth: true,
+  auth: {
+    // Reject inactive partner-admins at login time
+    verify: false,
+    tokenExpiration: 60 * 60 * 24, // 24h
+  },
+  hooks: {
+    afterLogin: [
+      async ({ user }) => {
+        if (!user.isActive) {
+          throw new Error('Your account has been deactivated. Please contact your administrator.')
+        }
+      },
+    ],
+  },
   admin: {
     useAsTitle: 'name',
     description: 'Partner organization administrators',

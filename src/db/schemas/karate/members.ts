@@ -1,4 +1,4 @@
-import { pgTable, text, boolean, timestamp } from "drizzle-orm/pg-core";
+import { pgTable, text, boolean, timestamp, integer, uniqueIndex } from "drizzle-orm/pg-core";
 import { sql } from "drizzle-orm";
 import { beltRankEnum, registrationStatusEnum } from "../enums";
 import { user } from "../auth";
@@ -69,10 +69,43 @@ export const registrations = pgTable("registrations", {
   dateOfBirth: timestamp("date_of_birth", { withTimezone: true }).notNull(),
   emergencyContact: text("emergency_contact").notNull(),
   emergencyPhone: text("emergency_phone").notNull(),
+  partnerId: text("partner_id").references(() => partners.id, { onDelete: 'set null' }),
   status: registrationStatusEnum("status").notNull().default('pending'),
   notes: text("notes"),
   reviewedBy: text("reviewed_by").references(() => user.id),
   reviewedAt: timestamp("reviewed_at", { withTimezone: true }),
+  createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
+  updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow().notNull(),
+});
+
+// Member monthly activity status — tracks which months a member is active (for billing)
+export const memberMonthlyStatus = pgTable("member_monthly_status", {
+  id: text("id").primaryKey().default(sql`gen_random_uuid()`),
+  memberId: text("member_id").notNull().references(() => members.id, { onDelete: 'cascade' }),
+  partnerId: text("partner_id").notNull().references(() => partners.id, { onDelete: 'cascade' }),
+  month: integer("month").notNull(),  // 1-12
+  year: integer("year").notNull(),    // e.g., 2026
+  isActive: boolean("is_active").notNull().default(true),
+  markedBy: text("marked_by"),        // partner admin who set the status
+  notes: text("notes"),
+  createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
+  updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow().notNull(),
+}, (table) => ({
+  memberMonthYearIdx: uniqueIndex("member_month_year_idx").on(table.memberId, table.month, table.year),
+}));
+
+// Branch change requests — student requests transfer to a different partner/venue
+export const branchChangeRequests = pgTable("branch_change_requests", {
+  id: text("id").primaryKey().default(sql`gen_random_uuid()`),
+  memberId: text("member_id").notNull().references(() => members.id, { onDelete: 'cascade' }),
+  userId: text("user_id").notNull().references(() => user.id, { onDelete: 'cascade' }),
+  fromPartnerId: text("from_partner_id").references(() => partners.id, { onDelete: 'set null' }),
+  toPartnerId: text("to_partner_id").notNull().references(() => partners.id, { onDelete: 'cascade' }),
+  reason: text("reason"),
+  status: text("status").notNull().default('pending'), // pending, approved, rejected
+  reviewedBy: text("reviewed_by"),    // partner admin who approved/rejected
+  reviewedAt: timestamp("reviewed_at", { withTimezone: true }),
+  reviewNotes: text("review_notes"),
   createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
   updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow().notNull(),
 });
@@ -82,3 +115,7 @@ export type Member = typeof members.$inferSelect;
 export type NewMember = typeof members.$inferInsert;
 export type Registration = typeof registrations.$inferSelect;
 export type NewRegistration = typeof registrations.$inferInsert;
+export type MemberMonthlyStatus = typeof memberMonthlyStatus.$inferSelect;
+export type NewMemberMonthlyStatus = typeof memberMonthlyStatus.$inferInsert;
+export type BranchChangeRequest = typeof branchChangeRequests.$inferSelect;
+export type NewBranchChangeRequest = typeof branchChangeRequests.$inferInsert;

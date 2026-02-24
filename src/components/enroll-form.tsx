@@ -80,7 +80,7 @@ const FormSchema = z.object({
   motive: z.string().min(10, { message: "Motive must be at least 10 characters." }),
 
   // === Venue & Agreement ===
-  partnerId: z.string().optional(),
+  partnerId: z.string().min(1, { message: "Please select a training venue." }),
   agreement: z.boolean().refine(val => val === true, { message: "You must agree to the terms." }),
 });
 
@@ -90,7 +90,7 @@ import { useEffect, useState } from "react";
 
 export function EnrollForm({ className, initialData, isEditMode = false }: { className?: string, initialData?: any, isEditMode?: boolean }) {
   const router = useRouter();
-  const [partners, setPartners] = useState<Array<{ id: string; name: string; location: string }>>([]);
+  const [partners, setPartners] = useState<Array<{ id: string; name: string; location: string | null }>>([]);
   
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
@@ -129,12 +129,12 @@ export function EnrollForm({ className, initialData, isEditMode = false }: { cla
       activitiesShort: "",
       activitiesDetail: "",
       motive: "",
-      partnerId: undefined,
+      partnerId: "",
       agreement: false,
     },
   });
 
-  // Fetch partners on mount
+  // Fetch active partners/venues for the dropdown
   useEffect(() => {
     async function fetchPartners() {
       try {
@@ -708,31 +708,36 @@ export function EnrollForm({ className, initialData, isEditMode = false }: { cla
                     )}
                   />
                 </div>
+                {/* Training Venue Selection */}
                 <FormField
                   control={form.control}
                   name="partnerId"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Training Venue</FormLabel>
+                      <FormLabel>Training Venue *</FormLabel>
                       <Select
                         onValueChange={field.onChange}
                         defaultValue={field.value}
+                        value={field.value}
+                        disabled={isEditMode && !!initialData?.partnerId}
                       >
                         <FormControl>
                           <SelectTrigger>
-                            <SelectValue placeholder="Select training venue" />
+                            <SelectValue placeholder="Select your training venue" />
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
                           {partners.map((partner) => (
                             <SelectItem key={partner.id} value={partner.id}>
-                              {partner.name} - {partner.location}
+                              {partner.name}{partner.location ? ` — ${partner.location}` : ''}
                             </SelectItem>
                           ))}
                         </SelectContent>
                       </Select>
                       <FormDescription>
-                        Select your preferred training location
+                        {isEditMode && initialData?.partnerId
+                          ? "Venue cannot be changed here. Use \"Request Branch Change\" from your dashboard."
+                          : "Select the partner venue where you will train."}
                       </FormDescription>
                       <FormMessage />
                     </FormItem>

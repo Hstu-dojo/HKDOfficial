@@ -57,15 +57,6 @@ export async function POST(request: Request) {
       );
     }
 
-    // PARTNER role isolation: prevent manual assignment/removal
-    // PARTNER role is managed exclusively through the partner admin API
-    if (roleExists[0].name === 'PARTNER') {
-      return NextResponse.json(
-        { error: 'PARTNER role cannot be assigned manually. Use the Partner Management panel to create partner accounts.' },
-        { status: 403 }
-      );
-    }
-
     // Get current user's ID for assignedBy field using email
     const currentUser = await db
       .select()

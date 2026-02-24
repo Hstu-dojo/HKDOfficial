@@ -5,6 +5,31 @@ import { lexicalEditor } from '@payloadcms/richtext-lexical'
 import { PartnerAdmins } from '@/payload/collections/PartnerAdmins'
 
 export default buildConfig({
+  // Seed a system placeholder so Payload never shows "create-first-user".
+  // Real partner-admin accounts are created exclusively by super-admins
+  // via the main admin dashboard at /admin/partners.
+  onInit: async (payload) => {
+    const existing = await payload.find({
+      collection: 'partner-admins',
+      limit: 1,
+    })
+    if (existing.totalDocs === 0) {
+      await payload.create({
+        collection: 'partner-admins',
+        data: {
+          email: 'system@hkd.internal',
+          password: process.env.PAYLOAD_SECRET || 'system-placeholder-not-for-login',
+          name: 'System (do not use)',
+          partnerId: '__system__',
+          partnerName: 'System',
+          partnerSlug: '__system__',
+          isActive: false,          // inactive — cannot log in
+        },
+      })
+      payload.logger.info('Seeded system partner-admin placeholder to bypass create-first-user')
+    }
+  },
+
   // Use partner-admins as the auth collection
   admin: {
     user: PartnerAdmins.slug,

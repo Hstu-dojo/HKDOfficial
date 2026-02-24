@@ -11,13 +11,15 @@ import {
   courses, courseSchedules, courseInstructors,
   enrollmentApplications, courseEnrollments,
   monthlyFees, paymentReminders, paymentSettings,
-  programs, programRegistrations
+  programs, programRegistrations,
+  memberMonthlyStatus, branchChangeRequests
 } from "./karate";
 import { billableItems, bills, payments } from "./billing";
 import { 
   blogs, notices, photoGroups, photos, systemSettings,
   galleryFolders, galleryImages 
 } from "./content";
+import { partners, partnerBills } from "./partner";
 
 // Auth Relations
 export const userRelations = relations(user, ({ one, many }) => ({
@@ -122,12 +124,18 @@ export const membersRelations = relations(members, ({ one, many }) => ({
     fields: [members.userId],
     references: [user.id],
   }),
+  partner: one(partners, {
+    fields: [members.partnerId],
+    references: [partners.id],
+  }),
   enrollments: many(enrollments),
   attendance: many(attendance),
   equipmentCheckouts: many(equipmentCheckouts),
   beltProgressions: many(beltProgressions),
   bills: many(bills),
   payments: many(payments),
+  monthlyStatuses: many(memberMonthlyStatus),
+  branchChangeRequests: many(branchChangeRequests),
 }));
 
 export const classesRelations = relations(classes, ({ one, many }) => ({
@@ -201,6 +209,10 @@ export const registrationsRelations = relations(registrations, ({ one }) => ({
   user: one(user, {
     fields: [registrations.userId],
     references: [user.id],
+  }),
+  partner: one(partners, {
+    fields: [registrations.partnerId],
+    references: [partners.id],
   }),
   reviewer: one(user, {
     fields: [registrations.reviewedBy],
@@ -287,6 +299,10 @@ export const coursesRelations = relations(courses, ({ one, many }) => ({
   creator: one(user, {
     fields: [courses.createdBy],
     references: [user.id],
+  }),
+  partner: one(partners, {
+    fields: [courses.partnerId],
+    references: [partners.id],
   }),
   schedules: many(courseSchedules),
   instructors: many(courseInstructors),
@@ -450,5 +466,64 @@ export const programRegistrationsRelations = relations(programRegistrations, ({ 
     fields: [programRegistrations.verifiedBy],
     references: [user.id],
     relationName: "verifiedBy",
+  }),
+}));
+
+// Partner Relations
+export const partnersRelations = relations(partners, ({ many }) => ({
+  members: many(members),
+  courses: many(courses),
+  bills: many(partnerBills),
+  registrations: many(registrations),
+  monthlyStatuses: many(memberMonthlyStatus),
+  branchChangeRequestsTo: many(branchChangeRequests, { relationName: "toPartner" }),
+}));
+
+export const partnerBillsRelations = relations(partnerBills, ({ one }) => ({
+  partner: one(partners, {
+    fields: [partnerBills.partnerId],
+    references: [partners.id],
+  }),
+  generatedByUser: one(user, {
+    fields: [partnerBills.generatedBy],
+    references: [user.id],
+    relationName: "billGenerator",
+  }),
+  verifiedByUser: one(user, {
+    fields: [partnerBills.verifiedBy],
+    references: [user.id],
+    relationName: "billVerifier",
+  }),
+}));
+
+export const memberMonthlyStatusRelations = relations(memberMonthlyStatus, ({ one }) => ({
+  member: one(members, {
+    fields: [memberMonthlyStatus.memberId],
+    references: [members.id],
+  }),
+  partner: one(partners, {
+    fields: [memberMonthlyStatus.partnerId],
+    references: [partners.id],
+  }),
+}));
+
+export const branchChangeRequestsRelations = relations(branchChangeRequests, ({ one }) => ({
+  member: one(members, {
+    fields: [branchChangeRequests.memberId],
+    references: [members.id],
+  }),
+  user: one(user, {
+    fields: [branchChangeRequests.userId],
+    references: [user.id],
+  }),
+  fromPartner: one(partners, {
+    fields: [branchChangeRequests.fromPartnerId],
+    references: [partners.id],
+    relationName: "fromPartner",
+  }),
+  toPartner: one(partners, {
+    fields: [branchChangeRequests.toPartnerId],
+    references: [partners.id],
+    relationName: "toPartner",
   }),
 }));
