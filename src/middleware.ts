@@ -53,6 +53,12 @@ const middlewares = {
   "/posts": withLocaleMiddleware,
   "/posts/:path*": withLocaleMiddleware,
 
+  // Partner org public pages
+  "/org/:slug": withLocaleMiddleware,
+  "/org/:slug/:path*": withLocaleMiddleware,
+  "/:locale/org/:slug": withLocaleMiddleware,
+  "/:locale/org/:slug/:path*": withLocaleMiddleware,
+
   // Public routes with locale prefix (for client-side navigation)
   "/:locale/login": withLocaleMiddleware,
   "/:locale/register": withLocaleMiddleware,
@@ -80,6 +86,6 @@ export const config = {
    * 6. Static files (e.g. /favicon.ico, /sitemap.xml, /robots.txt, etc.)
    */
   matcher: [
-    "/((?!api|auth|static|.*\\..*|_next|favicon.ico|sitemap.xml|robots.txt).*)",
+    "/((?!api|payload-api|partner-admin|auth|static|.*\\..*|_next|favicon.ico|sitemap.xml|robots.txt).*)",
   ],
 };

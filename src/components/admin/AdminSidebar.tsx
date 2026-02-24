@@ -20,6 +20,7 @@ import {
   BanknotesIcon,
   CreditCardIcon,
   ClipboardDocumentListIcon,
+  BuildingOffice2Icon,
 } from '@heroicons/react/24/outline';
 import { cn } from '@/lib/utils';
 
@@ -175,6 +176,16 @@ const navigation: NavItem[] = [
     icon: BookOpenIcon,
     description: 'Developer & API docs',
     requiredRole: 'ADMIN',
+  },
+  {
+    name: 'Partners',
+    href: '/admin/partners',
+    icon: BuildingOffice2Icon,
+    description: 'Manage partner organizations',
+    requiredPermission: {
+      resource: 'PARTNER',
+      action: 'READ',
+    },
   },
   {
     name: 'System Settings',

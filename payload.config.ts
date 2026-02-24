@@ -1,0 +1,92 @@
+import sharp from 'sharp'
+import { buildConfig } from 'payload'
+import { postgresAdapter } from '@payloadcms/db-postgres'
+import { lexicalEditor } from '@payloadcms/richtext-lexical'
+import { PartnerAdmins } from '@/payload/collections/PartnerAdmins'
+
+export default buildConfig({
+  // Use partner-admins as the auth collection
+  admin: {
+    user: PartnerAdmins.slug,
+    meta: {
+      titleSuffix: ' — Partner Portal',
+    },
+    avatar: 'default',
+    components: {
+      views: {
+        dashboard: {
+          Component: '/src/payload/views/PartnerDashboard',
+        },
+        members: {
+          Component: '/src/payload/views/MembersView',
+          path: '/members',
+          exact: true,
+        },
+        enrollments: {
+          Component: '/src/payload/views/EnrollmentsView',
+          path: '/enrollments',
+          exact: true,
+        },
+        bills: {
+          Component: '/src/payload/views/BillsView',
+          path: '/bills',
+          exact: true,
+        },
+        schedules: {
+          Component: '/src/payload/views/SchedulesView',
+          path: '/schedules',
+          exact: true,
+        },
+        profile: {
+          Component: '/src/payload/views/ProfileView',
+          path: '/profile',
+          exact: true,
+        },
+      },
+    },
+  },
+
+  // Payload routes — avoid conflicts with existing /admin and /api
+  routes: {
+    admin: '/partner-admin',
+    api: '/payload-api',
+  },
+
+  collections: [PartnerAdmins],
+
+  // Use a separate PostgreSQL schema to isolate Payload tables
+  db: postgresAdapter({
+    pool: {
+      // Strip sslmode from connection string — pg 8.x treats "require" as "verify-full"
+      // which rejects Supabase's self-signed certs. We handle SSL explicitly below.
+      connectionString: (() => {
+        const raw = process.env.DATABASE_URL || ''
+        const [base, qs] = raw.split('?')
+        if (!qs) return raw
+        const filtered = qs.split('&').filter((p) => !p.startsWith('sslmode=')).join('&')
+        return filtered ? `${base}?${filtered}` : base
+      })(),
+      ssl: {
+        rejectUnauthorized: false,
+      },
+    },
+    schemaName: 'payload',
+    push: process.env.NODE_ENV === 'development',
+  }),
+
+  editor: lexicalEditor(),
+
+  secret: process.env.PAYLOAD_SECRET || 'CHANGE-ME-payload-secret-key-min-32-chars',
+
+  sharp,
+
+  typescript: {
+    outputFile: 'src/payload/payload-types.ts',
+  },
+
+  // Disable Payload's built-in email (we use Resend in the main app)
+  email: undefined,
+
+  // Telemetry opt-out
+  telemetry: false,
+})
