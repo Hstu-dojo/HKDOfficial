@@ -50,6 +50,13 @@
       "when": 1769436580911,
       "tag": "0006_elite_tarot",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1771946997529,
+      "tag": "0007_new_omega_sentinel",
+      "breakpoints": true
     }
   ]
 }

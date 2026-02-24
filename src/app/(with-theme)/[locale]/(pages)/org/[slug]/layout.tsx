@@ -1,6 +1,6 @@
 import { notFound } from 'next/navigation';
 import { db } from '@/lib/connect-db';
-import { partners } from '@/db/schema';
+import { partners, partnerPageSettings } from '@/db/schema';
 import { eq } from 'drizzle-orm';
 import Header from '@/components/layout/header';
 import Footer from '@/components/layout/footer';
@@ -25,46 +25,52 @@ export default async function OrgLayout({ children, params }: OrgLayoutProps) {
     notFound();
   }
 
+  // Optional: grab accent colour for the nav accent
+  const settings = await db.query.partnerPageSettings.findFirst({
+    where: eq(partnerPageSettings.partnerId, partner.id),
+  });
+  const accent = settings?.accentColor || undefined;
+
+  const navLinks = [
+    { label: 'Overview', href: `/org/${slug}` },
+    { label: 'Courses', href: `/org/${slug}/courses` },
+    { label: 'Schedules', href: `/org/${slug}/schedules` },
+    ...(partner.contactEmail || partner.contactPhone
+      ? [{ label: 'Contact', href: `/org/${slug}/contact` }]
+      : []),
+  ];
+
   return (
     <>
       <Header />
       {/* Organization sub-nav */}
-      <div className="border-b bg-white dark:border-gray-700 dark:bg-slate-900">
-        <div className="mx-auto flex max-w-7xl items-center gap-6 overflow-x-auto px-4 py-3 text-sm">
+      <nav className="sticky top-0 z-40 border-b border-slate-200 bg-white/80 backdrop-blur-md dark:border-slate-700 dark:bg-slate-900/80">
+        <div className="mx-auto flex max-w-7xl items-center gap-1 overflow-x-auto px-4 py-0 text-sm sm:gap-2">
           <a
             href={`/org/${slug}`}
-            className="font-semibold text-slate-900 dark:text-slate-100"
+            className="mr-3 flex-shrink-0 py-3 text-base font-bold text-slate-900 dark:text-white"
+            style={accent ? { color: accent } : undefined}
           >
-            {partner.name}
+            {settings?.logoUrl ? (
+              <span className="flex items-center gap-2">
+                <img src={settings.logoUrl} alt="" className="h-6 w-6 rounded" />
+                {partner.name}
+              </span>
+            ) : (
+              partner.name
+            )}
           </a>
-          <a
-            href={`/org/${slug}`}
-            className="text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-200"
-          >
-            Overview
-          </a>
-          <a
-            href={`/org/${slug}/courses`}
-            className="text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-200"
-          >
-            Courses
-          </a>
-          <a
-            href={`/org/${slug}/schedules`}
-            className="text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-200"
-          >
-            Schedules
-          </a>
-          {(partner.contactEmail || partner.contactPhone) && (
+          {navLinks.map((link) => (
             <a
-              href={`/org/${slug}/contact`}
-              className="text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-200"
+              key={link.href}
+              href={link.href}
+              className="relative flex-shrink-0 px-3 py-3 font-medium text-slate-500 transition-colors hover:text-slate-900 dark:text-slate-400 dark:hover:text-white"
             >
-              Contact
+              {link.label}
             </a>
-          )}
+          ))}
         </div>
-      </div>
+      </nav>
       <main className="min-h-screen">{children}</main>
       <Footer />
     </>

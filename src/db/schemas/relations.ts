@@ -19,7 +19,7 @@ import {
   blogs, notices, photoGroups, photos, systemSettings,
   galleryFolders, galleryImages 
 } from "./content";
-import { partners, partnerBills } from "./partner";
+import { partners, partnerBills, partnerPageSettings } from "./partner";
 
 // Auth Relations
 export const userRelations = relations(user, ({ one, many }) => ({
@@ -470,13 +470,17 @@ export const programRegistrationsRelations = relations(programRegistrations, ({ 
 }));
 
 // Partner Relations
-export const partnersRelations = relations(partners, ({ many }) => ({
+export const partnersRelations = relations(partners, ({ one, many }) => ({
   members: many(members),
   courses: many(courses),
   bills: many(partnerBills),
   registrations: many(registrations),
   monthlyStatuses: many(memberMonthlyStatus),
   branchChangeRequestsTo: many(branchChangeRequests, { relationName: "toPartner" }),
+  pageSettings: one(partnerPageSettings, {
+    fields: [partners.id],
+    references: [partnerPageSettings.partnerId],
+  }),
 }));
 
 export const partnerBillsRelations = relations(partnerBills, ({ one }) => ({
@@ -493,6 +497,13 @@ export const partnerBillsRelations = relations(partnerBills, ({ one }) => ({
     fields: [partnerBills.verifiedBy],
     references: [user.id],
     relationName: "billVerifier",
+  }),
+}));
+
+export const partnerPageSettingsRelations = relations(partnerPageSettings, ({ one }) => ({
+  partner: one(partners, {
+    fields: [partnerPageSettings.partnerId],
+    references: [partners.id],
   }),
 }));
 

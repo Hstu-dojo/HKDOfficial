@@ -1,0 +1,9 @@
+export { default as OrgHero } from "./OrgHero";
+export { default as OrgStats } from "./OrgStats";
+export { default as OrgAbout } from "./OrgAbout";
+export { default as OrgFeatures } from "./OrgFeatures";
+export { default as OrgCourseShowcase } from "./OrgCourseShowcase";
+export { default as OrgGallery } from "./OrgGallery";
+export { default as OrgSchedulePreview } from "./OrgSchedulePreview";
+export { default as OrgCTA } from "./OrgCTA";
+export { default as OrgContactBar } from "./OrgContactBar";
