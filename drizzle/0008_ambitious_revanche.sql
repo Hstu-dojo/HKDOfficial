@@ -1,0 +1,1 @@
+ALTER TABLE "partner_page_settings" ADD COLUMN "default_schedule_day" integer;

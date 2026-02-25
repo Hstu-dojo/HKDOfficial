@@ -94,6 +94,7 @@ export const partnerPageSettings = pgTable("partner_page_settings", {
   // Misc
   yearEstablished: integer("year_established"),
   announcement: text("announcement"),          // Optional banner text
+  defaultScheduleDay: integer("default_schedule_day"), // 0-6 (Sun-Sat), which day tab opens by default
 
   createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
   updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow().notNull(),

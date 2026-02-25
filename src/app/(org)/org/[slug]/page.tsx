@@ -1,6 +1,7 @@
 import { db } from "@/lib/connect-db";
-import { partners, courses, courseSchedules, members, partnerPageSettings } from "@/db/schema";
-import { eq, and, count } from "drizzle-orm";
+import { partners, courses, courseSchedules, courseInstructors, members, partnerPageSettings } from "@/db/schema";
+import { user } from "@/db/schemas/auth";
+import { eq, and, count, inArray } from "drizzle-orm";
 import { notFound } from "next/navigation";
 import {
   OrgHero,
@@ -61,10 +62,38 @@ export default async function OrgPage({ params }: OrgPageProps) {
 
   // Fetch schedules for courses
   const courseIds = partnerCourses.map((c) => c.id);
-  let scheduleItems: { courseName: string; dayName: string; startTime: string; endTime: string }[] =
+  let scheduleItems: { courseName: string; dayName: string; startTime: string; endTime: string; location?: string | null; instructorName?: string | null }[] =
     [];
   if (courseIds.length > 0) {
-    const allSchedules = await db.query.courseSchedules.findMany();
+    const allSchedules = await db.query.courseSchedules.findMany({
+      where: eq(courseSchedules.isActive, true),
+    });
+
+    // Fetch primary instructors for each course
+    const instructorRows = await db
+      .select({
+        courseId: courseInstructors.courseId,
+        name: user.userName,
+        isPrimary: courseInstructors.isPrimary,
+      })
+      .from(courseInstructors)
+      .leftJoin(user, eq(courseInstructors.instructorId, user.id))
+      .where(inArray(courseInstructors.courseId, courseIds));
+
+    // Build a map: courseId -> primary instructor name
+    const instructorMap = new Map<string, string>();
+    for (const row of instructorRows) {
+      if (row.isPrimary && row.name) {
+        instructorMap.set(row.courseId, row.name);
+      }
+    }
+    // Fall back to any instructor if no primary found
+    for (const row of instructorRows) {
+      if (!instructorMap.has(row.courseId) && row.name) {
+        instructorMap.set(row.courseId, row.name);
+      }
+    }
+
     scheduleItems = allSchedules
       .filter((s: any) => courseIds.includes(s.courseId))
       .map((s: any) => {
@@ -74,6 +103,8 @@ export default async function OrgPage({ params }: OrgPageProps) {
           dayName: DAY_NAMES[s.dayOfWeek] ?? `Day ${s.dayOfWeek}`,
           startTime: s.startTime ?? "",
           endTime: s.endTime ?? "",
+          location: s.location ?? null,
+          instructorName: instructorMap.get(s.courseId) ?? null,
         };
       })
       .sort((a, b) => DAY_NAMES.indexOf(a.dayName) - DAY_NAMES.indexOf(b.dayName));
@@ -161,7 +192,11 @@ export default async function OrgPage({ params }: OrgPageProps) {
 
       {/* Schedule */}
       {settings?.showSchedule !== false && (
-        <OrgScheduleBlock schedules={scheduleItems} orgName={partner.name} />
+        <OrgScheduleBlock
+          schedules={scheduleItems}
+          orgName={partner.name}
+          defaultDay={settings?.defaultScheduleDay}
+        />
       )}
 
       {/* CTA */}

@@ -9,7 +9,7 @@
     "db:generate": "drizzle-kit generate",
     "db:studio": "drizzle-kit studio --host 0.0.0.0",
     "db:migrate": "drizzle-kit migrate",
-    "db:push": "drizzle-kit push",
+    "db:push": "NODE_TLS_REJECT_UNAUTHORIZED=0 npx drizzle-kit push",
     "db:drop": "drizzle-kit drop",
     "db:introspect": "drizzle-kit introspect",
     "db:seed-rbac": "tsx scripts/seed-rbac.ts",

@@ -62,6 +62,7 @@ const ALLOWED_FIELDS = new Set([
   'ctaLink',
   'yearEstablished',
   'announcement',
+  'defaultScheduleDay',
 ])
 
 export async function PATCH(request: Request) {
