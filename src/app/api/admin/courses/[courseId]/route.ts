@@ -157,6 +157,7 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
       isEnrollmentOpen,
       schedules,
       instructorIds,
+      partnerId,
     } = body;
 
     // Update course
@@ -183,6 +184,7 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
         bkashQrCodeUrl: bkashQrCodeUrl !== undefined ? bkashQrCodeUrl : existingCourse.bkashQrCodeUrl,
         isActive: isActive !== undefined ? isActive : existingCourse.isActive,
         isEnrollmentOpen: isEnrollmentOpen !== undefined ? isEnrollmentOpen : existingCourse.isEnrollmentOpen,
+        partnerId: partnerId !== undefined ? (partnerId || null) : existingCourse.partnerId,
         updatedAt: new Date(),
       })
       .where(eq(courses.id, courseId))

@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { revalidatePath } from "next/cache";
 import { db } from "@/lib/connect-db";
-import { courses, courseSchedules, courseInstructors } from "@/db/schema";
+import { courses, courseSchedules, courseInstructors, partners } from "@/db/schema";
 import { eq, desc, and, sql } from "drizzle-orm";
 import { hasPermission } from "@/lib/rbac/permissions";
 import { getRBACContext } from "@/lib/rbac/middleware";
@@ -49,6 +49,7 @@ export async function GET(request: NextRequest) {
     const searchParams = request.nextUrl.searchParams;
     const activeFilter = searchParams.get("active");
     const enrollmentFilter = searchParams.get("enrollmentOpen");
+    const partnerFilter = searchParams.get("partnerId");
 
     let query = db.select().from(courses).orderBy(desc(courses.createdAt));
 
@@ -59,6 +60,9 @@ export async function GET(request: NextRequest) {
     }
     if (enrollmentFilter !== null) {
       conditions.push(eq(courses.isEnrollmentOpen, enrollmentFilter === "true"));
+    }
+    if (partnerFilter) {
+      conditions.push(eq(courses.partnerId, partnerFilter));
     }
 
     if (conditions.length > 0) {
@@ -184,6 +188,7 @@ export async function POST(request: NextRequest) {
       isEnrollmentOpen,
       schedules,
       instructorIds,
+      partnerId,
     } = body;
 
     // Validation
@@ -192,6 +197,14 @@ export async function POST(request: NextRequest) {
         { error: "Name, duration, and monthly fee are required" },
         { status: 400 }
       );
+    }
+
+    // Validate partner if provided
+    if (partnerId) {
+      const [partner] = await db.select({ id: partners.id }).from(partners).where(eq(partners.id, partnerId));
+      if (!partner) {
+        return NextResponse.json({ error: "Partner not found" }, { status: 400 });
+      }
     }
 
     // Create course
@@ -218,6 +231,7 @@ export async function POST(request: NextRequest) {
         bkashQrCodeUrl,
         isActive: isActive ?? true,
         isEnrollmentOpen: isEnrollmentOpen ?? true,
+        partnerId: partnerId || null,
         createdBy: context.userId,
       })
       .returning();

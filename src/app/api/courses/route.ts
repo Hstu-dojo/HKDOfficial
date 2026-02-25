@@ -24,11 +24,16 @@ export async function GET(request: NextRequest) {
   try {
     const searchParams = request.nextUrl.searchParams;
     const enrollmentFilter = searchParams.get("enrollmentOpen");
+    const partnerFilter = searchParams.get("partnerId");
 
     const conditions = [eq(courses.isActive, true)];
     
     if (enrollmentFilter !== null) {
       conditions.push(eq(courses.isEnrollmentOpen, enrollmentFilter === "true"));
+    }
+
+    if (partnerFilter) {
+      conditions.push(eq(courses.partnerId, partnerFilter));
     }
 
     const allCourses = await db
@@ -54,6 +59,7 @@ export async function GET(request: NextRequest) {
         isEnrollmentOpen: courses.isEnrollmentOpen,
         bkashNumber: courses.bkashNumber,
         bkashQrCodeUrl: courses.bkashQrCodeUrl,
+        partnerId: courses.partnerId,
       })
       .from(courses)
       .where(and(...conditions))

@@ -31,7 +31,7 @@ export default async function RootLayout({
   return (
     <body
       lang="en"
-      className={`${mono.variable} ${sans.variable} ${serif.variable}`}
+      className={`app-theme ${mono.variable} ${sans.variable} ${serif.variable}`}
     >
       <ThemeProvider attribute="class" forcedTheme="light">
         {children}

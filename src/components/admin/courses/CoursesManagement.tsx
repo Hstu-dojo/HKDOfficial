@@ -16,8 +16,14 @@ import {
 import { toast } from 'sonner';
 import CourseFormModal from './CourseFormModal';
 
+interface Partner {
+  id: string;
+  name: string;
+}
+
 interface Course {
   id: string;
+  partnerId?: string;
   name: string;
   nameBangla?: string;
   description?: string;
@@ -66,6 +72,8 @@ const BELT_COLORS: Record<string, string> = {
 export default function CoursesManagement() {
   const { hasPermission, loading: rbacLoading } = useRBAC();
   const [courses, setCourses] = useState<Course[]>([]);
+  const [partners, setPartners] = useState<Partner[]>([]);
+  const [partnerFilter, setPartnerFilter] = useState<string>('');
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
   const [editingCourse, setEditingCourse] = useState<Course | null>(null);
@@ -78,7 +86,10 @@ export default function CoursesManagement() {
   const fetchCourses = async () => {
     try {
       setLoading(true);
-      const response = await fetch('/api/admin/courses');
+      const url = partnerFilter
+        ? `/api/admin/courses?partnerId=${partnerFilter}`
+        : '/api/admin/courses';
+      const response = await fetch(url);
       if (!response.ok) throw new Error('Failed to fetch courses');
       const data = await response.json();
       setCourses(data);
@@ -93,8 +104,20 @@ export default function CoursesManagement() {
   useEffect(() => {
     if (!rbacLoading) {
       fetchCourses();
+      fetch('/api/admin/partners')
+        .then((res) => res.json())
+        .then((data) => {
+          if (data.partners) setPartners(data.partners);
+        })
+        .catch(() => {});
     }
   }, [rbacLoading]);
+
+  useEffect(() => {
+    if (!rbacLoading) {
+      fetchCourses();
+    }
+  }, [partnerFilter]);
 
   const handleDelete = async (courseId: string) => {
     if (!confirm('Are you sure you want to delete this course?')) return;
@@ -173,6 +196,23 @@ export default function CoursesManagement() {
         )}
       </div>
 
+      {/* Partner Filter */}
+      {partners.length > 0 && (
+        <div className="flex items-center gap-3">
+          <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Filter by Partner:</label>
+          <select
+            value={partnerFilter}
+            onChange={(e) => setPartnerFilter(e.target.value)}
+            className="px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-800"
+          >
+            <option value="">All Partners</option>
+            {partners.map((p) => (
+              <option key={p.id} value={p.id}>{p.name}</option>
+            ))}
+          </select>
+        </div>
+      )}
+
       {/* Stats */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-sm border">
@@ -218,6 +258,14 @@ export default function CoursesManagement() {
                   {course.nameBangla && (
                     <p className="text-sm text-gray-500 dark:text-gray-400">{course.nameBangla}</p>
                   )}
+                  {course.partnerId && (() => {
+                    const partner = partners.find(p => p.id === course.partnerId);
+                    return partner ? (
+                      <span className="inline-block mt-1 px-2 py-0.5 text-xs bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300 rounded">
+                        {partner.name}
+                      </span>
+                    ) : null;
+                  })()}
                 </div>
                 <div className="flex gap-1">
                   {course.isActive ? (

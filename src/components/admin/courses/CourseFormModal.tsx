@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { XMarkIcon, PlusIcon, TrashIcon } from '@heroicons/react/24/outline';
 import { toast } from 'sonner';
 
@@ -11,8 +11,14 @@ interface Schedule {
   location: string;
 }
 
+interface Partner {
+  id: string;
+  name: string;
+}
+
 interface Course {
   id?: string;
+  partnerId?: string;
   name: string;
   nameBangla?: string;
   description?: string;
@@ -66,7 +72,9 @@ const BELT_RANKS = [
 
 export default function CourseFormModal({ course, onClose, onSaved }: CourseFormModalProps) {
   const [loading, setSaving] = useState(false);
+  const [partners, setPartners] = useState<Partner[]>([]);
   const [formData, setFormData] = useState<Course>({
+    partnerId: course?.partnerId || '',
     name: course?.name || '',
     nameBangla: course?.nameBangla || '',
     description: course?.description || '',
@@ -91,6 +99,15 @@ export default function CourseFormModal({ course, onClose, onSaved }: CourseForm
   });
 
   const [newFeature, setNewFeature] = useState('');
+
+  useEffect(() => {
+    fetch('/api/admin/partners')
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.partners) setPartners(data.partners);
+      })
+      .catch(() => {});
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -193,6 +210,31 @@ export default function CourseFormModal({ course, onClose, onSaved }: CourseForm
           </div>
 
           <div className="p-6 space-y-6">
+            {/* Partner Assignment */}
+            <div className="space-y-4">
+              <h3 className="font-semibold text-gray-900 dark:text-gray-100 border-b pb-2">Partner Assignment</h3>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                  Assign to Partner
+                </label>
+                <select
+                  value={formData.partnerId || ''}
+                  onChange={(e) => setFormData({ ...formData, partnerId: e.target.value })}
+                  className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
+                >
+                  <option value="">No partner (global course)</option>
+                  {partners.map((partner) => (
+                    <option key={partner.id} value={partner.id}>
+                      {partner.name}
+                    </option>
+                  ))}
+                </select>
+                <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                  Assign this course to a specific partner. Students enrolled with that partner will see this course.
+                </p>
+              </div>
+            </div>
+
             {/* Basic Information */}
             <div className="space-y-4">
               <h3 className="font-semibold text-gray-900 dark:text-gray-100 border-b pb-2">Basic Information</h3>
