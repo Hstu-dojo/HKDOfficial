@@ -1,13 +1,12 @@
 "use client";
 
-import { useEffect, useState, useRef } from "react";
+import { useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
 import MaxWidthWrapper from "../maxWidthWrapper";
-import { useCurrentLocale } from "@/locales/client";
 
-interface BranchData {
+export interface BranchData {
   id: string;
   name: string;
   slug: string;
@@ -30,53 +29,33 @@ const fadeUp = {
   }),
 };
 
-const SectionBranches = () => {
-  const [branches, setBranches] = useState<BranchData[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [hoveredId, setHoveredId] = useState<string | null>(null);
-  const sectionRef = useRef<HTMLDivElement>(null);
+interface SectionBranchesProps {
+  branches: BranchData[];
+}
+
+const SectionBranches = ({ branches }: SectionBranchesProps) => {
   const [visible, setVisible] = useState(false);
-  const locale = useCurrentLocale();
 
-  useEffect(() => {
-    fetch("/api/partners")
-      .then((r) => r.json())
-      .then((data) => {
-        if (Array.isArray(data)) setBranches(data);
-      })
-      .catch(() => {})
-      .finally(() => setLoading(false));
-  }, []);
-
-  useEffect(() => {
-    if (!sectionRef.current) return;
-    const obs = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) setVisible(true);
-      },
-      { threshold: 0.15 }
-    );
-    obs.observe(sectionRef.current);
-    return () => obs.disconnect();
-  }, []);
-
-  if (loading) {
-    return (
-      <section className="py-24 bg-white dark:bg-slate-900">
-        <MaxWidthWrapper className="container">
-          <div className="flex justify-center">
-            <div className="h-8 w-8 border-2 border-primary border-t-transparent rounded-full animate-spin" />
-          </div>
-        </MaxWidthWrapper>
-      </section>
-    );
-  }
+  // Intersection observer via callback ref
+  const observerRef = useRef<IntersectionObserver | null>(null);
+  const setRef = (node: HTMLDivElement | null) => {
+    if (observerRef.current) observerRef.current.disconnect();
+    if (node) {
+      observerRef.current = new IntersectionObserver(
+        ([entry]) => {
+          if (entry.isIntersecting) setVisible(true);
+        },
+        { threshold: 0.1 }
+      );
+      observerRef.current.observe(node);
+    }
+  };
 
   if (branches.length === 0) return null;
 
   return (
     <section
-      ref={sectionRef}
+      ref={setRef}
       id="branches"
       className="relative py-20 lg:py-32 bg-gradient-to-b from-white via-slate-50/80 to-white dark:from-slate-900 dark:via-slate-800/50 dark:to-slate-900 overflow-hidden"
     >
@@ -130,8 +109,7 @@ const SectionBranches = () => {
                 initial="initial"
                 animate={visible ? "animate" : "initial"}
                 custom={i}
-                onMouseEnter={() => setHoveredId(branch.id)}
-                onMouseLeave={() => setHoveredId(null)}
+
               >
                 <Link href={`/org/${branch.slug}`}>
                   <div className="group relative bg-white dark:bg-slate-800 rounded-xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-500 border border-slate-100 dark:border-slate-700/50 hover:border-primary/30 dark:hover:border-primary/30 h-full">

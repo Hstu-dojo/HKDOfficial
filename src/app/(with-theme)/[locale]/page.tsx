@@ -14,6 +14,11 @@ import SectionBenefits from "@/components/sections/section-benefits";
 import SectionFAQ from "@/components/sections/section-faq";
 import FeaturedPostsServer from "@/components/sections/featured-posts-server";
 import SectionBranches from "@/components/sections/section-branches";
+import type { BranchData } from "@/components/sections/section-branches";
+import { db } from "@/lib/connect-db";
+import { partners, partnerPageSettings } from "@/db/schemas/partner";
+import { members, courses } from "@/db/schema";
+import { eq, asc, and, count, sql } from "drizzle-orm";
 // import SectionIconBoxesLayout2 from "@/components/sections/section-icon-boxes-layout-2";
 
 // Enable ISR with revalidation every 60 seconds
@@ -73,8 +78,61 @@ async function getHeroImages(): Promise<{ title: string; thumbnail: string }[]> 
   }
 }
 
+// Fetch branches (partner orgs) server-side for ISR — cached & revalidated with the page
+async function getBranches(): Promise<BranchData[]> {
+  try {
+    const activePartners = await db
+      .select({
+        id: partners.id,
+        name: partners.name,
+        location: partners.location,
+        slug: partners.slug,
+        description: partners.description,
+        logoUrl: partnerPageSettings.logoUrl,
+        heroImageUrl: partnerPageSettings.heroImageUrl,
+        heroTagline: partnerPageSettings.heroTagline,
+        yearEstablished: partnerPageSettings.yearEstablished,
+      })
+      .from(partners)
+      .leftJoin(partnerPageSettings, eq(partnerPageSettings.partnerId, partners.id))
+      .where(eq(partners.isActive, true))
+      .orderBy(asc(partners.name));
+
+    const partnerIds = activePartners.map((p) => p.id);
+
+    const [memberCounts, courseCounts] = await Promise.all([
+      partnerIds.length > 0
+        ? db
+            .select({ partnerId: members.partnerId, count: count() })
+            .from(members)
+            .where(and(eq(members.isActive, true), sql`${members.partnerId} = ANY(${partnerIds})`))
+            .groupBy(members.partnerId)
+        : Promise.resolve([]),
+      partnerIds.length > 0
+        ? db
+            .select({ partnerId: courses.partnerId, count: count() })
+            .from(courses)
+            .where(and(eq(courses.isActive, true), sql`${courses.partnerId} = ANY(${partnerIds})`))
+            .groupBy(courses.partnerId)
+        : Promise.resolve([]),
+    ]);
+
+    const memberMap = new Map(memberCounts.map((m) => [m.partnerId, m.count]));
+    const courseMap = new Map(courseCounts.map((c) => [c.partnerId, c.count]));
+
+    return activePartners.map((p) => ({
+      ...p,
+      memberCount: memberMap.get(p.id) ?? 0,
+      courseCount: courseMap.get(p.id) ?? 0,
+    }));
+  } catch (err) {
+    console.error("[Branches] Failed to fetch:", err);
+    return [];
+  }
+}
+
 export default async function Home() {
-  const heroImages = await getHeroImages();
+  const [heroImages, branches] = await Promise.all([getHeroImages(), getBranches()]);
 
   return (
     <>
@@ -83,6 +141,7 @@ export default async function Home() {
         <SectionHero initialProducts={heroImages} />
         <SectionHomePrograms />
         <SectionBenefits />
+        <SectionBranches branches={branches} />
         <SectionPromo />
         {/* <SectionIconBoxesLayout2 /> */}
         <FeaturedPostsServer />
@@ -92,7 +151,6 @@ export default async function Home() {
         {/* <SectionTestimonialsSliderLayout2 /> */}
 
         <Furious5 />
-        <SectionBranches />
         <SectionPartners />
         <SectionCTA />
         <ChatPlugin />
