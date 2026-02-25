@@ -12,6 +12,7 @@ import { default as BranchRequestsView_view } from '../../payload/views/BranchRe
 import { default as AdminManagementView_view } from '../../payload/views/AdminManagementView'
 import { default as Logo_component } from '../../payload/components/Logo'
 import { default as Icon_component } from '../../payload/components/Icon'
+import { default as PartnerNavLinks_component } from '../../payload/components/PartnerNavLinks'
 
 export const importMap = {
   "/src/payload/views/PartnerDashboard#default": PartnerDashboard_view,
@@ -27,4 +28,5 @@ export const importMap = {
   "/src/payload/views/AdminManagementView#default": AdminManagementView_view,
   "/src/payload/components/Logo#default": Logo_component,
   "/src/payload/components/Icon#default": Icon_component,
+  "/src/payload/components/PartnerNavLinks#default": PartnerNavLinks_component,
 }

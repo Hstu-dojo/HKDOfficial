@@ -16,7 +16,7 @@ export default async function MembersView(props: AdminViewServerProps) {
       permissions={permissions}
       req={req}
       searchParams={searchParams}
-      user={req.user}
+      user={req.user ?? undefined}
       visibleEntities={visibleEntities}
     >
       <MembersViewClient />

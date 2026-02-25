@@ -11,6 +11,7 @@ import { default as default_branchrequests } from '../../../../src/payload/views
 import { default as default_adminmanagement } from '../../../../src/payload/views/AdminManagementView'
 import { default as default_logo } from '../../../../src/payload/components/Logo'
 import { default as default_icon } from '../../../../src/payload/components/Icon'
+import { default as default_partnernavlinks } from '../../../../src/payload/components/PartnerNavLinks'
 import { CollectionCards as CollectionCards_f9c02e79a4aed9a3924487c0cd4cafb1 } from '@payloadcms/next/rsc'
 
 export const importMap = {
@@ -27,5 +28,6 @@ export const importMap = {
   "/src/payload/views/AdminManagementView#default": default_adminmanagement,
   "/src/payload/components/Logo#default": default_logo,
   "/src/payload/components/Icon#default": default_icon,
+  "/src/payload/components/PartnerNavLinks#default": default_partnernavlinks,
   "@payloadcms/next/rsc#CollectionCards": CollectionCards_f9c02e79a4aed9a3924487c0cd4cafb1
 }

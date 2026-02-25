@@ -43,6 +43,7 @@ export default buildConfig({
         Logo: '/src/payload/components/Logo',
         Icon: '/src/payload/components/Icon',
       },
+      afterNavLinks: ['/src/payload/components/PartnerNavLinks'],
       views: {
         dashboard: {
           Component: '/src/payload/views/PartnerDashboard',
