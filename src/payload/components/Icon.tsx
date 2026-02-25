@@ -9,7 +9,7 @@ export default function Icon() {
     <img
       src="/logo.png"
       alt="HKD"
-      style={{ height: 28, width: 'auto',  objectFit: 'cover' }}
+      style={{ height: 28, width: 'auto',  objectFit: 'contain' }}
     />
   )
 }

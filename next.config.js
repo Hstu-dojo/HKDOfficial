@@ -27,9 +27,33 @@ const redirects = async () => {
     // Redirect /profile to /dashboard/profile
     { source: "/profile", destination: "/dashboard/profile", permanent: true },
     { source: "/:locale/profile", destination: "/:locale/dashboard/profile", permanent: true },
-    // Fix: Next.js intercepting route pattern leaking into partner-admin URLs
-    { source: "/partner-admin/\\(.\\)login", destination: "/partner-admin", permanent: false },
   ];
+};
+
+const rewrites = async () => {
+  return {
+    beforeFiles: [
+      // Fix: Next.js intercepting route pattern (.)login leaking into partner-admin URLs.
+      // Rewrite to the normal partner-admin catch-all so Payload handles it properly.
+      // Handle both encoded (%28.%29) and unencoded escaped forms.
+      {
+        source: "/partner-admin/%28.%29login",
+        destination: "/partner-admin",
+      },
+      {
+        source: "/partner-admin/%28.%29login/:path*",
+        destination: "/partner-admin",
+      },
+      {
+        source: "/partner-admin/\\(.\\)login",
+        destination: "/partner-admin",
+      },
+      {
+        source: "/partner-admin/\\(.\\)login/:path*",
+        destination: "/partner-admin",
+      },
+    ],
+  };
 };
 
 const nextConfig = {
@@ -68,6 +92,7 @@ const nextConfig = {
     ],
   },
   redirects,
+  rewrites,
 };
 // module.exports = removeImports(withPWA(nextConfig));
 

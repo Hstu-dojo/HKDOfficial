@@ -1,7 +1,42 @@
 import { createNEMO } from "@rescale/nemo";
+import { NextResponse } from "next/server";
+import type { NextRequest } from "next/server";
 import { withLocaleMiddleware } from "./middlewares/internationalization";
 import { withAuthMiddleware } from "./middlewares/authentication";
 import { withAdminMiddleware } from "./middlewares/admin";
+
+/**
+ * Intercept the (.)login pattern that leaks from the @loginDialogue
+ * intercepting route into partner-admin URLs. Redirect cleanly to /partner-admin.
+ */
+function withPartnerAdminFix(request: NextRequest) {
+  const pathname = request.nextUrl.pathname;
+
+  // Catch /partner-admin/(.)login or any encoded variant
+  if (
+    pathname.includes('(.)login') ||
+    pathname.includes('%28.%29login')
+  ) {
+    const url = request.nextUrl.clone();
+    url.pathname = '/partner-admin';
+    url.search = ''; // strip ?redirect= too
+    return NextResponse.redirect(url);
+  }
+
+  // Strip the (.)login from the redirect query parameter
+  const redirectParam = request.nextUrl.searchParams.get('redirect');
+  if (
+    pathname.startsWith('/partner-admin') &&
+    redirectParam &&
+    (redirectParam.includes('(.)login') || redirectParam.includes('%28.%29login'))
+  ) {
+    const url = request.nextUrl.clone();
+    url.searchParams.set('redirect', '/partner-admin');
+    return NextResponse.redirect(url);
+  }
+
+  return NextResponse.next();
+}
 
 const middlewares = {
   // define your middlewares here...
@@ -69,7 +104,24 @@ const middlewares = {
 };
 
 // Create middlewares helper
-export const middleware = createNEMO(middlewares);
+const nemoMiddleware = createNEMO(middlewares);
+
+export async function middleware(request: NextRequest) {
+  // Always run the partner-admin fix first for any matched route
+  const pathname = request.nextUrl.pathname;
+
+  if (pathname.startsWith('/partner-admin')) {
+    const fixResult = withPartnerAdminFix(request);
+    if (fixResult.status === 307 || fixResult.status === 308) {
+      return fixResult; // redirect was triggered
+    }
+    // For normal /partner-admin routes, let Payload handle them (no NEMO processing)
+    return NextResponse.next();
+  }
+
+  // All other routes go through NEMO middleware chain
+  return nemoMiddleware(request, {} as any);
+}
 
 export const config = {
   /*
@@ -80,8 +132,10 @@ export const config = {
    * 4. /_static (inside /public)
    * 5. /_vercel (Vercel internals)
    * 6. Static files (e.g. /favicon.ico, /sitemap.xml, /robots.txt, etc.)
+   * Note: partner-admin is NOW included so we can fix the (.)login redirect,
+   *       but normal partner-admin routes pass through untouched.
    */
   matcher: [
-    "/((?!api|payload-api|partner-admin|org|auth|static|.*\\..*|_next|favicon.ico|sitemap.xml|robots.txt).*)",
+    "/((?!api|payload-api|org|auth|static|.*\\..*|_next|favicon.ico|sitemap.xml|robots.txt).*)",
   ],
 };
