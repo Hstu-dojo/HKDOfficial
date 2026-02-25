@@ -3,7 +3,7 @@
 @tailwind utilities;
 
 @layer base {
-  .app-theme {
+  :root {
     --radius: 0.5rem;
     --background: 0 0% 100%;
     --foreground: 231 35% 31%;
@@ -26,43 +26,48 @@
     --ring: 222.2 84% 4.9%;
   }
 
-  .app-theme * {
+  * {
     @apply border-border dark:border-slate-800;
   }
 
-  .app-theme address {
+  address {
     font-style: normal;
   }
 
-  .app-theme {
+  body {
     @apply bg-background text-muted-foreground;
   }
 
-  .app-theme blockquote p {
+  blockquote p {
     @apply !m-0;
   }
 
-  .app-theme blockquote cite {
+  blockquote cite {
     @apply text-xs;
   }
 
-  .app-theme :is(h1, h2, h3, h4, h5, h6) {
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
     @apply mb-6 font-bold leading-normal -tracking-[0.01em] text-foreground dark:text-white;
   }
 
-  .app-theme h1 {
+  h1 {
     @apply text-3xl sm:text-4xl;
   }
 
-  .app-theme h2 {
+  h2 {
     @apply text-2xl sm:text-3xl;
   }
 
-  .app-theme h3 {
+  h3 {
     @apply text-xl;
   }
 
-  .app-theme h4 {
+  h4 {
     @apply text-md;
   }
 }

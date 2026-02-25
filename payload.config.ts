@@ -37,6 +37,7 @@ export default buildConfig({
       titleSuffix: ' — Partner Portal',
     },
     avatar: 'default',
+    theme: 'light',
     components: {
       views: {
         dashboard: {
