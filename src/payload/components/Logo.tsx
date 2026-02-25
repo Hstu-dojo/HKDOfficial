@@ -8,9 +8,9 @@ export default function Logo() {
     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
-        src="/logo.svg"
+        src="/logo.png"
         alt="HKD"
-        style={{ height: 50, width: 'auto' }}
+        style={{ height: 80, width: 'auto' }}
       />
     </div>
   )

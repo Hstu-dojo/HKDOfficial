@@ -205,7 +205,7 @@ export default function OrgHero({
             style={d(350)}
           >
             <span className="relative z-10">{ctaText || "Join Now"}</span>
-            <span className="absolute inset-0 bg-foreground translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-[cubic-bezier(0.22,1,0.36,1)]" />
+            <span className="absolute inset-0 bg-foreground translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-[cubic-bezier(0.22_1_0.36_1)]" />
           </a>
           <button
             onClick={() => setMenuOpen(!menuOpen)}
@@ -307,7 +307,7 @@ export default function OrgHero({
               <span className="relative z-10 group-hover:text-accent-foreground transition-colors duration-300">
                 View Programs
               </span>
-              <span className="absolute inset-0 bg-accent translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-[cubic-bezier(0.22,1,0.36,1)]" />
+              <span className="absolute inset-0 bg-accent translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-[cubic-bezier(0.22_1_0.36_1)]" />
             </a>
             <a
               href="#schedule"
