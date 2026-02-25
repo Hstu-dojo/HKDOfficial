@@ -10,6 +10,8 @@ import { default as PendingStudentsView_view } from '../../payload/views/Pending
 import { default as MonthlyStatusView_view } from '../../payload/views/MonthlyStatusView'
 import { default as BranchRequestsView_view } from '../../payload/views/BranchRequestsView'
 import { default as AdminManagementView_view } from '../../payload/views/AdminManagementView'
+import { default as Logo_component } from '../../payload/components/Logo'
+import { default as Icon_component } from '../../payload/components/Icon'
 
 export const importMap = {
   "/src/payload/views/PartnerDashboard#default": PartnerDashboard_view,
@@ -23,4 +25,6 @@ export const importMap = {
   "/src/payload/views/MonthlyStatusView#default": MonthlyStatusView_view,
   "/src/payload/views/BranchRequestsView#default": BranchRequestsView_view,
   "/src/payload/views/AdminManagementView#default": AdminManagementView_view,
+  "/src/payload/components/Logo#default": Logo_component,
+  "/src/payload/components/Icon#default": Icon_component,
 }

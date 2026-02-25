@@ -27,6 +27,8 @@ const redirects = async () => {
     // Redirect /profile to /dashboard/profile
     { source: "/profile", destination: "/dashboard/profile", permanent: true },
     { source: "/:locale/profile", destination: "/:locale/dashboard/profile", permanent: true },
+    // Fix: Next.js intercepting route pattern leaking into partner-admin URLs
+    { source: "/partner-admin/\\(.\\)login", destination: "/partner-admin", permanent: false },
   ];
 };
 

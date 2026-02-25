@@ -39,6 +39,10 @@ export default buildConfig({
     avatar: 'default',
     theme: 'light',
     components: {
+      graphics: {
+        Logo: '/src/payload/components/Logo',
+        Icon: '/src/payload/components/Icon',
+      },
       views: {
         dashboard: {
           Component: '/src/payload/views/PartnerDashboard',
