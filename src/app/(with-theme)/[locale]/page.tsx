@@ -13,6 +13,7 @@ import ChatPlugin from "@/components/chat";
 import SectionBenefits from "@/components/sections/section-benefits";
 import SectionFAQ from "@/components/sections/section-faq";
 import FeaturedPostsServer from "@/components/sections/featured-posts-server";
+import SectionBranches from "@/components/sections/section-branches";
 // import SectionIconBoxesLayout2 from "@/components/sections/section-icon-boxes-layout-2";
 
 // Enable ISR with revalidation every 60 seconds
@@ -91,6 +92,7 @@ export default async function Home() {
         {/* <SectionTestimonialsSliderLayout2 /> */}
 
         <Furious5 />
+        <SectionBranches />
         <SectionPartners />
         <SectionCTA />
         <ChatPlugin />
