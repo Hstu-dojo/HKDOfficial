@@ -136,6 +136,7 @@ export default function PartnersManagement() {
           body: JSON.stringify({
             id: editingPartner.id,
             name: form.name,
+            slug: form.slug,
             description: form.description,
             location: form.location,
             contactEmail: form.contactEmail,
@@ -420,9 +421,8 @@ export default function PartnersManagement() {
                     type="text"
                     required
                     value={form.slug}
-                    onChange={(e) => setForm((p) => ({ ...p, slug: e.target.value }))}
-                    readOnly={!!editingPartner}
-                    className="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2 text-sm dark:border-gray-600 dark:bg-gray-700 dark:text-white disabled:opacity-50"
+                    onChange={(e) => setForm((p) => ({ ...p, slug: slugify(e.target.value) }))}
+                    className="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2 text-sm dark:border-gray-600 dark:bg-gray-700 dark:text-white"
                     placeholder="hkd-dhaka-branch"
                   />
                   <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">

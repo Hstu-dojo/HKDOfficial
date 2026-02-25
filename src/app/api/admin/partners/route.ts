@@ -156,7 +156,7 @@ export const PATCH = protectApiRoute('PARTNER', 'UPDATE', async (request: Reques
     }
 
     // Only allow specific field updates
-    const allowedFields = ['name', 'description', 'location', 'contactEmail', 'contactPhone', 'isActive']
+    const allowedFields = ['name', 'slug', 'description', 'location', 'contactEmail', 'contactPhone', 'isActive']
     const safeUpdates: Record<string, unknown> = {}
 
     for (const field of allowedFields) {
@@ -199,6 +199,30 @@ export const PATCH = protectApiRoute('PARTNER', 'UPDATE', async (request: Reques
         }
       } catch (payloadErr) {
         console.error('[AdminPartners] Failed to deactivate Payload users:', payloadErr)
+      }
+    }
+
+    // If name or slug changed, sync to Payload partner-admins
+    if ('name' in safeUpdates || 'slug' in safeUpdates) {
+      try {
+        const payload = await getPayload({ config: configPromise })
+        const admins = await payload.find({
+          collection: 'partner-admins',
+          where: { partnerId: { equals: id } },
+        })
+
+        for (const admin of admins.docs) {
+          const syncData: Record<string, unknown> = {}
+          if ('name' in safeUpdates) syncData.partnerName = safeUpdates.name
+          if ('slug' in safeUpdates) syncData.partnerSlug = safeUpdates.slug
+          await payload.update({
+            collection: 'partner-admins',
+            id: admin.id,
+            data: syncData,
+          })
+        }
+      } catch (payloadErr) {
+        console.error('[AdminPartners] Failed to sync name/slug to Payload users:', payloadErr)
       }
     }
 
