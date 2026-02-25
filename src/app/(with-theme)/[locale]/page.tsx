@@ -21,6 +21,11 @@ import { members, courses } from "@/db/schema";
 import { eq, asc, and, count, sql } from "drizzle-orm";
 // import SectionIconBoxesLayout2 from "@/components/sections/section-icon-boxes-layout-2";
 
+// Pre-build locale pages at build time so first visit from external links (Facebook etc.) works instantly
+export function generateStaticParams() {
+  return [{ locale: 'en' }, { locale: 'bn' }];
+}
+
 // Enable ISR with revalidation every 60 seconds
 export const revalidate = 60;
 

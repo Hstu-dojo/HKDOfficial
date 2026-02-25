@@ -42,7 +42,7 @@ const middlewares = {
   // define your middlewares here...
   // first internationalization, then auth middleware!
   "/": withLocaleMiddleware,
-  "/:locale/": withLocaleMiddleware,
+  "/:locale": withLocaleMiddleware,
   // "/services": withLocaleMiddleware,
   // "/pricing": withLocaleMiddleware,
   "/about": withLocaleMiddleware,
