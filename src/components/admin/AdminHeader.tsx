@@ -34,11 +34,11 @@ export function AdminHeader({ onToggleSidebar, sidebarOpen }: AdminHeaderProps) 
   return (
     <header className="bg-white dark:bg-gray-800 shadow-sm border-b border-slate-200 dark:border-slate-700 sticky top-0 z-30">
       <div className="flex items-center justify-between h-16 px-4 md:px-6">
-        {/* Left side - Toggle and breadcrumb */}
-        <div className="flex items-center space-x-3">
+        {/* Left side - Toggle and title */}
+        <div className="flex items-center gap-3 min-w-0">
           <button
             onClick={onToggleSidebar}
-            className="p-2 rounded-md text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700 lg:hidden transition-colors"
+            className="p-2 rounded-md text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700 lg:hidden transition-colors shrink-0"
             aria-label="Toggle sidebar"
           >
             {sidebarOpen ? (
@@ -48,16 +48,14 @@ export function AdminHeader({ onToggleSidebar, sidebarOpen }: AdminHeaderProps) 
             )}
           </button>
           
-          <div className="flex items-center space-x-3">
-            <h1 className="text-lg md:text-xl font-semibold text-slate-900 dark:text-slate-100 flex items-center">
-              Admin Dashboard
-            </h1>
-            {userRoles.length > 0 && (
-              <span className="hidden sm:inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-300 border border-blue-200 dark:border-blue-700">
-                {userRoles.join(', ')}
-              </span>
-            )}
-          </div>
+          <h1 className="text-lg md:text-xl font-semibold text-slate-900 dark:text-slate-100 truncate">
+            Admin Dashboard
+          </h1>
+          {userRoles.length > 0 && (
+            <span className="hidden sm:inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-300 border border-blue-200 dark:border-blue-700 shrink-0 whitespace-nowrap">
+              {userRoles.join(', ')}
+            </span>
+          )}
         </div>
 
         {/* Right side - Actions and user menu */}
