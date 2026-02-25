@@ -81,11 +81,6 @@ export const mainNav = [
         items: [],
       },
       {
-        title: "Branches",
-        href: "/#branches",
-        items: [],
-      },
-      {
         title: "Developer",
         href: "/dev",
         items: [],

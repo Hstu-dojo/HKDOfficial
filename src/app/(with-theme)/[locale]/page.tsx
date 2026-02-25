@@ -18,7 +18,7 @@ import type { BranchData } from "@/components/sections/section-branches";
 import { db } from "@/lib/connect-db";
 import { partners, partnerPageSettings } from "@/db/schemas/partner";
 import { members, courses } from "@/db/schema";
-import { eq, asc, and, count, sql } from "drizzle-orm";
+import { eq, asc, and, count, inArray } from "drizzle-orm";
 // import SectionIconBoxesLayout2 from "@/components/sections/section-icon-boxes-layout-2";
 
 // Pre-build locale pages at build time so first visit from external links (Facebook etc.) works instantly
@@ -110,14 +110,14 @@ async function getBranches(): Promise<BranchData[]> {
         ? db
             .select({ partnerId: members.partnerId, count: count() })
             .from(members)
-            .where(and(eq(members.isActive, true), sql`${members.partnerId} = ANY(${partnerIds})`))
+            .where(and(eq(members.isActive, true), inArray(members.partnerId, partnerIds)))
             .groupBy(members.partnerId)
         : Promise.resolve([]),
       partnerIds.length > 0
         ? db
             .select({ partnerId: courses.partnerId, count: count() })
             .from(courses)
-            .where(and(eq(courses.isActive, true), sql`${courses.partnerId} = ANY(${partnerIds})`))
+            .where(and(eq(courses.isActive, true), inArray(courses.partnerId, partnerIds)))
             .groupBy(courses.partnerId)
         : Promise.resolve([]),
     ]);
@@ -145,9 +145,9 @@ export default async function Home() {
       <main className="relative">
         <SectionHero initialProducts={heroImages} />
         <SectionHomePrograms />
-        <SectionBenefits />
         <SectionBranches branches={branches} />
         <SectionPromo />
+        <SectionBenefits />
         {/* <SectionIconBoxesLayout2 /> */}
         <FeaturedPostsServer />
         {/* <SectionBlog /> */}
