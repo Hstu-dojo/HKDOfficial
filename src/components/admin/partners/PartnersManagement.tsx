@@ -14,6 +14,9 @@ import {
   CheckCircleIcon,
   XCircleIcon,
   ArrowTopRightOnSquareIcon,
+  ShieldCheckIcon,
+  TrashIcon,
+  UserPlusIcon,
 } from '@heroicons/react/24/outline'
 
 interface Partner {
@@ -28,6 +31,16 @@ interface Partner {
   createdAt: string
   updatedAt: string
   memberCount: number
+}
+
+interface PartnerAdmin {
+  id: string
+  name: string
+  email: string
+  phone: string | null
+  isActive: boolean
+  createdAt: string
+  updatedAt: string
 }
 
 function slugify(text: string): string {
@@ -46,6 +59,23 @@ export default function PartnersManagement() {
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState('')
   const [success, setSuccess] = useState('')
+
+  // Admin management state
+  const [showAdminModal, setShowAdminModal] = useState(false)
+  const [adminPartner, setAdminPartner] = useState<Partner | null>(null)
+  const [partnerAdmins, setPartnerAdmins] = useState<PartnerAdmin[]>([])
+  const [loadingAdmins, setLoadingAdmins] = useState(false)
+  const [adminError, setAdminError] = useState('')
+  const [adminSuccess, setAdminSuccess] = useState('')
+  const [savingAdmin, setSavingAdmin] = useState(false)
+  const [deletingAdminId, setDeletingAdminId] = useState<string | null>(null)
+  const [showAddAdmin, setShowAddAdmin] = useState(false)
+  const [adminForm, setAdminForm] = useState({
+    name: '',
+    email: '',
+    password: '',
+    phone: '',
+  })
 
   // Form state
   const [form, setForm] = useState({
@@ -76,6 +106,96 @@ export default function PartnersManagement() {
   useEffect(() => {
     fetchPartners()
   }, [fetchPartners])
+
+  // ── Admin account management ──
+  const fetchAdmins = useCallback(async (partnerId: string) => {
+    setLoadingAdmins(true)
+    setAdminError('')
+    try {
+      const res = await fetch(`/api/admin/partners/admins?partnerId=${partnerId}`)
+      if (!res.ok) throw new Error('Failed to fetch admins')
+      const data = await res.json()
+      setPartnerAdmins(data.admins)
+    } catch {
+      setAdminError('Failed to load admin accounts')
+    } finally {
+      setLoadingAdmins(false)
+    }
+  }, [])
+
+  const openAdminModal = (partner: Partner) => {
+    setAdminPartner(partner)
+    setShowAdminModal(true)
+    setShowAddAdmin(false)
+    setAdminError('')
+    setAdminSuccess('')
+    setAdminForm({ name: '', email: '', password: '', phone: '' })
+    fetchAdmins(partner.id)
+  }
+
+  const handleAddAdmin = async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!adminPartner) return
+    setSavingAdmin(true)
+    setAdminError('')
+    setAdminSuccess('')
+
+    try {
+      const res = await fetch('/api/admin/partners/admins', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          partnerId: adminPartner.id,
+          name: adminForm.name,
+          email: adminForm.email,
+          password: adminForm.password,
+          phone: adminForm.phone,
+        }),
+      })
+
+      const data = await res.json()
+      if (!res.ok) throw new Error(data.error || 'Failed to create admin')
+
+      setAdminSuccess(data.message || 'Admin account created')
+      setAdminForm({ name: '', email: '', password: '', phone: '' })
+      setShowAddAdmin(false)
+      fetchAdmins(adminPartner.id)
+    } catch (err: any) {
+      setAdminError(err.message || 'Failed to create admin')
+    } finally {
+      setSavingAdmin(false)
+    }
+  }
+
+  const handleDeleteAdmin = async (adminId: string) => {
+    if (!adminPartner) return
+    if (!confirm('Are you sure you want to permanently delete this admin account? They will lose all access.')) return
+
+    setDeletingAdminId(adminId)
+    setAdminError('')
+    setAdminSuccess('')
+
+    try {
+      const res = await fetch('/api/admin/partners/admins', {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          adminId,
+          partnerId: adminPartner.id,
+        }),
+      })
+
+      const data = await res.json()
+      if (!res.ok) throw new Error(data.error || 'Failed to delete admin')
+
+      setAdminSuccess('Admin account deleted')
+      fetchAdmins(adminPartner.id)
+    } catch (err: any) {
+      setAdminError(err.message || 'Failed to delete admin')
+    } finally {
+      setDeletingAdminId(null)
+    }
+  }
 
   const openCreateModal = () => {
     setEditingPartner(null)
@@ -349,6 +469,13 @@ export default function PartnersManagement() {
                     </>
                   )}
                 </button>
+                <button
+                  onClick={() => openAdminModal(partner)}
+                  className="inline-flex items-center gap-1 rounded px-2 py-1 text-xs font-medium text-purple-600 hover:bg-purple-50 dark:text-purple-400 dark:hover:bg-purple-900/20"
+                >
+                  <ShieldCheckIcon className="h-3.5 w-3.5" />
+                  Admins
+                </button>
                 <a
                   href={`/org/${partner.slug}`}
                   target="_blank"
@@ -555,6 +682,202 @@ export default function PartnersManagement() {
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* Admin Accounts Modal */}
+      {showAdminModal && adminPartner && (
+        <div className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-black/50 p-4 pt-12">
+          <div className="w-full max-w-2xl rounded-xl bg-white shadow-2xl dark:bg-gray-800">
+            {/* Modal Header */}
+            <div className="flex items-center justify-between border-b p-5 dark:border-gray-700">
+              <div>
+                <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+                  Admin Accounts
+                </h2>
+                <p className="mt-0.5 text-sm text-gray-500 dark:text-gray-400">
+                  {adminPartner.name} — manage who can access /partner-admin
+                </p>
+              </div>
+              <button
+                onClick={() => setShowAdminModal(false)}
+                className="text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300"
+              >
+                <XMarkIcon className="h-6 w-6" />
+              </button>
+            </div>
+
+            <div className="p-5 space-y-4">
+              {adminError && (
+                <div className="rounded-lg bg-red-50 p-3 text-sm text-red-700 dark:bg-red-900/20 dark:text-red-400">
+                  {adminError}
+                </div>
+              )}
+              {adminSuccess && (
+                <div className="rounded-lg bg-green-50 p-3 text-sm text-green-700 dark:bg-green-900/20 dark:text-green-400">
+                  {adminSuccess}
+                </div>
+              )}
+
+              {/* Existing admins list */}
+              {loadingAdmins ? (
+                <div className="flex items-center justify-center py-8">
+                  <div className="h-6 w-6 animate-spin rounded-full border-b-2 border-blue-600" />
+                </div>
+              ) : partnerAdmins.length === 0 ? (
+                <div className="py-6 text-center text-sm text-gray-500 dark:text-gray-400">
+                  No admin accounts found for this partner.
+                </div>
+              ) : (
+                <div className="divide-y divide-gray-100 dark:divide-gray-700 rounded-lg border border-gray-200 dark:border-gray-700">
+                  {partnerAdmins.map((admin) => (
+                    <div
+                      key={admin.id}
+                      className="flex items-center justify-between gap-4 px-4 py-3"
+                    >
+                      <div className="min-w-0 flex-1">
+                        <div className="flex items-center gap-2">
+                          <p className="truncate text-sm font-medium text-gray-900 dark:text-gray-100">
+                            {admin.name}
+                          </p>
+                          <span
+                            className={`inline-flex rounded-full px-1.5 py-0.5 text-[10px] font-medium ${
+                              admin.isActive
+                                ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400'
+                                : 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400'
+                            }`}
+                          >
+                            {admin.isActive ? 'Active' : 'Inactive'}
+                          </span>
+                        </div>
+                        <div className="mt-0.5 flex items-center gap-3 text-xs text-gray-500 dark:text-gray-400">
+                          <span className="flex items-center gap-1">
+                            <EnvelopeIcon className="h-3 w-3" />
+                            {admin.email}
+                          </span>
+                          {admin.phone && (
+                            <span className="flex items-center gap-1">
+                              <PhoneIcon className="h-3 w-3" />
+                              {admin.phone}
+                            </span>
+                          )}
+                        </div>
+                        <p className="mt-0.5 text-[10px] text-gray-400 dark:text-gray-500">
+                          Created {new Date(admin.createdAt).toLocaleDateString()}
+                        </p>
+                      </div>
+                      <button
+                        onClick={() => handleDeleteAdmin(admin.id)}
+                        disabled={deletingAdminId === admin.id}
+                        className="shrink-0 rounded p-1.5 text-red-500 hover:bg-red-50 disabled:opacity-50 dark:text-red-400 dark:hover:bg-red-900/20"
+                        title="Delete admin account"
+                      >
+                        {deletingAdminId === admin.id ? (
+                          <div className="h-4 w-4 animate-spin rounded-full border-b-2 border-red-500" />
+                        ) : (
+                          <TrashIcon className="h-4 w-4" />
+                        )}
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              {/* Add new admin toggle / form */}
+              {!showAddAdmin ? (
+                <button
+                  onClick={() => {
+                    setShowAddAdmin(true)
+                    setAdminError('')
+                    setAdminSuccess('')
+                  }}
+                  className="inline-flex items-center gap-2 rounded-lg bg-purple-600 px-4 py-2 text-sm font-medium text-white hover:bg-purple-700"
+                >
+                  <UserPlusIcon className="h-4 w-4" />
+                  Add New Admin
+                </button>
+              ) : (
+                <form onSubmit={handleAddAdmin} className="space-y-3 rounded-lg border border-purple-200 bg-purple-50/50 p-4 dark:border-purple-800 dark:bg-purple-900/10">
+                  <h4 className="text-sm font-semibold text-gray-900 dark:text-gray-100">
+                    New Admin Account
+                  </h4>
+
+                  <div className="grid gap-3 sm:grid-cols-2">
+                    <div>
+                      <label className="block text-xs font-medium text-gray-700 dark:text-gray-300">
+                        Name
+                      </label>
+                      <input
+                        type="text"
+                        value={adminForm.name}
+                        onChange={(e) => setAdminForm((p) => ({ ...p, name: e.target.value }))}
+                        className="mt-1 w-full rounded-lg border border-gray-300 px-3 py-1.5 text-sm dark:border-gray-600 dark:bg-gray-700 dark:text-white"
+                        placeholder="Admin's full name"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs font-medium text-gray-700 dark:text-gray-300">
+                        Phone
+                      </label>
+                      <input
+                        type="tel"
+                        value={adminForm.phone}
+                        onChange={(e) => setAdminForm((p) => ({ ...p, phone: e.target.value }))}
+                        className="mt-1 w-full rounded-lg border border-gray-300 px-3 py-1.5 text-sm dark:border-gray-600 dark:bg-gray-700 dark:text-white"
+                        placeholder="Optional"
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-medium text-gray-700 dark:text-gray-300">
+                      Email <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="email"
+                      required
+                      value={adminForm.email}
+                      onChange={(e) => setAdminForm((p) => ({ ...p, email: e.target.value }))}
+                      className="mt-1 w-full rounded-lg border border-gray-300 px-3 py-1.5 text-sm dark:border-gray-600 dark:bg-gray-700 dark:text-white"
+                      placeholder="admin@example.com"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-medium text-gray-700 dark:text-gray-300">
+                      Password <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="password"
+                      required
+                      minLength={8}
+                      value={adminForm.password}
+                      onChange={(e) => setAdminForm((p) => ({ ...p, password: e.target.value }))}
+                      className="mt-1 w-full rounded-lg border border-gray-300 px-3 py-1.5 text-sm dark:border-gray-600 dark:bg-gray-700 dark:text-white"
+                      placeholder="Min 8 characters"
+                    />
+                  </div>
+
+                  <div className="flex items-center gap-2">
+                    <button
+                      type="submit"
+                      disabled={savingAdmin}
+                      className="rounded-lg bg-purple-600 px-4 py-1.5 text-sm font-medium text-white hover:bg-purple-700 disabled:opacity-50"
+                    >
+                      {savingAdmin ? 'Creating...' : 'Create Admin'}
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setShowAddAdmin(false)}
+                      className="rounded-lg bg-gray-100 px-4 py-1.5 text-sm font-medium text-gray-700 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600"
+                    >
+                      Cancel
+                    </button>
+                  </div>
+                </form>
+              )}
+            </div>
           </div>
         </div>
       )}
