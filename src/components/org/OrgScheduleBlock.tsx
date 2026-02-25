@@ -90,7 +90,7 @@ export default function OrgScheduleBlock({
     >
       {/* Giant background number */}
       <div
-        className="absolute top-6 md:top-8 right-2 md:right-12 font-display text-[25vw] md:text-[18vw] leading-none text-foreground/[0.02] tracking-tighter select-none pointer-events-none"
+        className="absolute top-6 md:top-8 right-2 md:right-12 font-display text-[25vw] md:text-[18vw] leading-none text-foreground/[0.03] tracking-tighter select-none pointer-events-none"
         aria-hidden="true"
       >
         {String(totalClasses).padStart(2, "0")}

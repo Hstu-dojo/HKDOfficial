@@ -43,7 +43,7 @@ export default function OrgCtaBlock({
         className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none select-none"
         aria-hidden="true"
       >
-        <span className="font-display text-[40vw] md:text-[35vw] text-foreground/[0.02] leading-none">
+        <span className="font-display text-[40vw] md:text-[35vw] text-foreground/[0.03] leading-none">
           01
         </span>
       </div>
