@@ -419,7 +419,7 @@ export default function CourseEnrollmentWizard({
           <button
             onClick={handleDownloadPdf}
             disabled={isGenerating}
-            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-accent text-accent-foreground font-medium hover:bg-accent/90 transition-colors disabled:opacity-50"
+            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-primary text-primary-foreground font-medium hover:bg-primary/90 transition-colors disabled:opacity-50"
           >
             {isGenerating ? (
               <Loader2 className="h-4 w-4 animate-spin" />
@@ -480,7 +480,7 @@ export default function CourseEnrollmentWizard({
         </div>
         <div className="h-1.5 rounded-full bg-muted overflow-hidden">
           <motion.div
-            className="h-full bg-accent rounded-full"
+            className="h-full bg-primary rounded-full"
             initial={false}
             animate={{ width: `${overallCompletion}%` }}
             transition={{ duration: 0.4 }}
@@ -506,7 +506,7 @@ export default function CourseEnrollmentWizard({
               className={cn(
                 'flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition-colors border',
                 isCurrent
-                  ? 'bg-accent text-accent-foreground border-accent'
+                  ? 'bg-primary text-primary-foreground border-primary'
                   : isDone
                     ? 'bg-green-100 dark:bg-green-900/20 text-green-700 dark:text-green-400 border-green-300 dark:border-green-800'
                     : 'bg-muted/50 text-muted-foreground border-transparent hover:bg-muted'
@@ -624,7 +624,7 @@ export default function CourseEnrollmentWizard({
             {currentSectionId !== 'review' ? (
               <button
                 onClick={handleNext}
-                className="inline-flex items-center gap-1 px-5 py-2 rounded-lg bg-accent text-accent-foreground text-sm font-medium hover:bg-accent/90 transition-colors"
+                className="inline-flex items-center gap-1 px-5 py-2 rounded-lg bg-primary text-primary-foreground text-sm font-medium hover:bg-primary/90 transition-colors"
               >
                 Next <ChevronRight className="h-4 w-4" />
               </button>
@@ -663,7 +663,7 @@ function SectionHeading({ sectionId }: { sectionId: string }) {
 
   return (
     <div className="flex items-center gap-2 mb-1">
-      <Icon className="h-5 w-5 text-accent" />
+      <Icon className="h-5 w-5 text-primary" />
       <div>
         <h2 className="text-lg font-semibold">{section.title}</h2>
         {section.titleBn && (
@@ -820,9 +820,9 @@ function PaymentStep({
   return (
     <div className="space-y-6 mt-4">
       {/* Fee summary */}
-      <div className="rounded-lg bg-accent/10 p-4">
+      <div className="rounded-lg bg-primary/10 p-4">
         <h3 className="font-semibold mb-2">Admission Fee</h3>
-        <p className="text-2xl font-bold text-accent">
+        <p className="text-2xl font-bold text-primary">
           {formatCurrency(course.admissionFee)}
         </p>
         <p className="text-sm text-muted-foreground mt-1">
@@ -1036,7 +1036,7 @@ function ReviewStep({
           <dt className="text-muted-foreground">Course:</dt>
           <dd className="font-medium">{course.name}</dd>
           <dt className="text-muted-foreground">Admission Fee:</dt>
-          <dd className="font-medium text-accent">
+          <dd className="font-medium text-primary">
             {formatCurrency(course.admissionFee)}
           </dd>
           <dt className="text-muted-foreground">Method:</dt>

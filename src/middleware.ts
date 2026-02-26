@@ -59,8 +59,13 @@ const middlewares = {
   "/:locale/dashboard": [withAuthMiddleware],
   "/:locale/dashboard/:path*": [withAuthMiddleware],
 
-  // Karate routes - public
+  // Karate routes - public listing, auth-required for apply
   "/karate/courses": withLocaleMiddleware,
+  "/karate/courses/:slug": withLocaleMiddleware,
+  "/karate/courses/:slug/apply": [withLocaleMiddleware, withAuthMiddleware],
+  "/karate/courses/:slug/apply/:path*": [withLocaleMiddleware, withAuthMiddleware],
+  "/:locale/karate/courses/:slug/apply": [withAuthMiddleware],
+  "/:locale/karate/courses/:slug/apply/:path*": [withAuthMiddleware],
   "/karate/courses/:path*": withLocaleMiddleware,
   "/karate/programs": withLocaleMiddleware,
   "/karate/programs/:path*": withLocaleMiddleware,

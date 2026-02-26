@@ -1,6 +1,9 @@
 import CourseEnrollmentWizard from '@/components/karate/CourseEnrollmentWizard';
+import Header from '@/components/layout/header';
+import Footer from '@/components/layout/footer';
+import MaxWidthWrapper from '@/components/maxWidthWrapper';
 import { Metadata } from 'next';
-import { notFound } from 'next/navigation';
+import { notFound, redirect } from 'next/navigation';
 import { db } from '@/lib/connect-db';
 import { courses, courseSchedules } from '@/db/schemas/karate/courses';
 import { members, registrations } from '@/db/schemas/karate/members';
@@ -74,11 +77,12 @@ async function getCourse(slug: string) {
 
 /** Fetch the signed-in user's onboarding data + existing partnerId */
 async function getUserOnboardingData(): Promise<{
+  isAuthenticated: boolean;
   onboardingData: Record<string, unknown> | null;
   existingPartnerId: string | null;
   userEmail: string;
 }> {
-  const fallback = { onboardingData: null, existingPartnerId: null, userEmail: '' };
+  const fallback = { isAuthenticated: false, onboardingData: null, existingPartnerId: null, userEmail: '' };
   try {
     const supabase = await createClient();
     const { data: { user: authUser } } = await supabase.auth.getUser();
@@ -87,7 +91,7 @@ async function getUserOnboardingData(): Promise<{
     const publicUser = await db.query.user.findFirst({
       where: eq(userSchema.supabaseUserId, authUser.id),
     });
-    if (!publicUser) return { ...fallback, userEmail: authUser.email ?? '' };
+    if (!publicUser) return { isAuthenticated: true, onboardingData: null, existingPartnerId: null, userEmail: authUser.email ?? '' };
 
     // Get onboarding registration
     const reg = await db.query.registrations.findFirst({
@@ -118,6 +122,7 @@ async function getUserOnboardingData(): Promise<{
       .limit(1);
 
     return {
+      isAuthenticated: true,
       onboardingData,
       existingPartnerId: memberRow[0]?.partnerId ?? null,
       userEmail: authUser.email ?? '',
@@ -144,7 +149,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 }
 
 export default async function CourseApplicationPage({ params }: PageProps) {
-  const { slug } = await params;
+  const { locale, slug } = await params;
   const course = await getCourse(slug);
   
   if (!course) {
@@ -153,25 +158,42 @@ export default async function CourseApplicationPage({ params }: PageProps) {
   
   if (!course.isEnrollmentOpen) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
-        <div className="text-center">
-          <h1 className="text-2xl font-bold text-gray-900">Enrollment Closed</h1>
-          <p className="mt-2 text-gray-600">This course is not currently accepting applications.</p>
-        </div>
-      </div>
+      <>
+        <Header />
+        <main className="min-h-screen flex items-center justify-center pt-24 pb-16 bg-slate-50 dark:bg-slate-900">
+          <div className="text-center">
+            <h1 className="text-2xl font-bold">Enrollment Closed</h1>
+            <p className="mt-2 text-muted-foreground">This course is not currently accepting applications.</p>
+          </div>
+        </main>
+        <Footer />
+      </>
     );
   }
 
-  const { onboardingData, existingPartnerId, userEmail } = await getUserOnboardingData();
+  // Auth check — redirect unauthenticated users to login
+  const { isAuthenticated, onboardingData, existingPartnerId, userEmail } = await getUserOnboardingData();
+  
+  if (!isAuthenticated) {
+    redirect(`/login?callbackUrl=/${locale}/karate/courses/${slug}/apply`);
+  }
   
   return (
-    <CourseEnrollmentWizard
-      course={course}
-      onboardingData={onboardingData}
-      partnerName={course.partnerName}
-      partnerLocation={course.partnerLocation}
-      existingPartnerId={existingPartnerId}
-      userEmail={userEmail}
-    />
+    <>
+      <Header />
+      <main className="relative pt-24 pb-16 min-h-screen bg-slate-50 dark:bg-slate-900">
+        <MaxWidthWrapper>
+          <CourseEnrollmentWizard
+            course={course}
+            onboardingData={onboardingData}
+            partnerName={course.partnerName}
+            partnerLocation={course.partnerLocation}
+            existingPartnerId={existingPartnerId}
+            userEmail={userEmail}
+          />
+        </MaxWidthWrapper>
+      </main>
+      <Footer />
+    </>
   );
 }
