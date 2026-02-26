@@ -16,6 +16,7 @@ export default {
     signOut: "বের হয়ে যান",
     blog: "ব্লগ",
     user: "ব্যবহারকারী",
+    completeProfile: "প্রোফাইল সম্পূর্ণ করুন",
     programs: "প্রোগ্রামসমূহ",
     courses: "কোর্সসমূহ",
     gallery: "গ্যালারি",

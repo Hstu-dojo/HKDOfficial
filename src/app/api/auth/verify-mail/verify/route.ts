@@ -4,7 +4,7 @@ import { db } from "@/lib/connect-db";
 import { user, verificationToken } from "@/db/schema";
 import { eq, and, gte, lt, desc } from "drizzle-orm";
 
-export const POST = async (req: NextRequest, res: NextResponse) => {
+export const POST = async (req: NextRequest) => {
   const data = await req.json();
 
   const email = data["email"];

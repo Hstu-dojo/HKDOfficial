@@ -54,7 +54,7 @@ export function MobileNav({
   const segment = useSelectedLayoutSegment();
   const [isOpen, setIsOpen] = React.useState(false);
   const locale = useCurrentLocale();
-  const pathname = usePathname();
+  const pathname = usePathname() ?? '/';
   const router = useRouter();
   const t = useI18n();
   

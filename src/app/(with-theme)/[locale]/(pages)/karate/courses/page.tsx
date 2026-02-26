@@ -57,11 +57,13 @@ async function getCourses(partnerId?: string | null) {
       return {
         ...course,
         slug: course.id,
+        description: course.description ?? undefined,
         imageUrl: course.thumbnailUrl,
-        shortDescription: course.description,
+        shortDescription: course.description ?? '',
         beltLevelFrom: course.minimumBelt,
         beltLevelTo: course.targetBelt,
         durationMonths: course.duration,
+        currentEnrollment: course.currentStudents ?? 0,
         schedules: schedules.map(s => ({
           dayOfWeek: s.dayOfWeek,
           startTime: s.startTime,

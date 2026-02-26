@@ -413,7 +413,7 @@ export async function getAllUsersWithRoles(): Promise<any[]> {
   try {
     const users = await db.query.user.findMany({
       with: {
-        userRoles: {
+        roles: {
           with: {
             role: true
           }

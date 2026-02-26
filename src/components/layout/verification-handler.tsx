@@ -9,8 +9,8 @@ export function VerificationHandler() {
   const searchParams = useSearchParams();
 
   useEffect(() => {
-    const verified = searchParams.get('verified');
-    const showLogin = searchParams.get('showLogin');
+    const verified = searchParams?.get('verified');
+    const showLogin = searchParams?.get('showLogin');
 
     if (verified === 'true') {
       // Show success toast

@@ -9,7 +9,7 @@ import { eq } from "drizzle-orm";
 import accountVerify from "@/actions/emailSend/accountVerify";
 import { handleCors, handleOptions } from "@/lib/cors";
 
-export const POST = async (req: NextRequest, res: NextResponse) => {
+export const POST = async (req: NextRequest) => {
   const id = uid(5);
   // console.log(id);
   const data = await req.json();

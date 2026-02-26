@@ -6,7 +6,7 @@ import { user, verificationToken } from "@/db/schema";
 import { eq, and, gte, lt, desc } from "drizzle-orm";
 import accountVerify from "@/actions/emailSend/accountVerify";
 
-export const POST = async (req: NextRequest, res: NextResponse) => {
+export const POST = async (req: NextRequest) => {
   const id = uid(5);
   const data = await req.json();
 

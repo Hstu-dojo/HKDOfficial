@@ -28,8 +28,9 @@ async function getCourse(slug: string) {
     return {
       ...course,
       slug: course.id,
+      description: course.description ?? undefined,
       imageUrl: course.thumbnailUrl,
-      shortDescription: course.description,
+      shortDescription: course.description ?? '',
       beltLevelFrom: course.minimumBelt,
       beltLevelTo: course.targetBelt,
       durationMonths: course.duration,

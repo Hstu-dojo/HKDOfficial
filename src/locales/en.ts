@@ -16,6 +16,7 @@ export default {
     signOut: "Sign Out",
     blog: "Blog",
     user: "User",
+    completeProfile: "Complete Profile",
   },
   
   // Hero Section

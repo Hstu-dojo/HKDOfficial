@@ -1,4 +1,4 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/connect-db";
 import { paymentAccounts } from "@/db/schema";
 import { eq, and } from "drizzle-orm";
@@ -8,9 +8,9 @@ import type { RBACContext } from "@/lib/rbac/types";
 type RouteContext = { params: Promise<{ accountId: string }> };
 
 // GET /api/admin/payment-accounts/[accountId] - Get a specific payment account
-export const GET = (request: Request, routeContext: RouteContext) => 
+export const GET = (request: NextRequest, routeContext: RouteContext) => 
   protectApiRoute("PAYMENT", "READ", async (
-    _req: Request,
+    _req: NextRequest,
     rbacContext: RBACContext
   ) => {
     try {
@@ -34,9 +34,9 @@ export const GET = (request: Request, routeContext: RouteContext) =>
   })(request);
 
 // PUT /api/admin/payment-accounts/[accountId] - Update a payment account
-export const PUT = (request: Request, routeContext: RouteContext) => 
+export const PUT = (request: NextRequest, routeContext: RouteContext) => 
   protectApiRoute("PAYMENT", "UPDATE", async (
-    req: Request,
+    req: NextRequest,
     rbacContext: RBACContext
   ) => {
     try {
@@ -110,9 +110,9 @@ export const PUT = (request: Request, routeContext: RouteContext) =>
   })(request);
 
 // DELETE /api/admin/payment-accounts/[accountId] - Delete a payment account
-export const DELETE = (request: Request, routeContext: RouteContext) => 
+export const DELETE = (request: NextRequest, routeContext: RouteContext) => 
   protectApiRoute("PAYMENT", "DELETE", async (
-    _req: Request,
+    _req: NextRequest,
     _rbacContext: RBACContext
   ) => {
     try {
