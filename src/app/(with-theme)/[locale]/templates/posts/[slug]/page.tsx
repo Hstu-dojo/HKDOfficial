@@ -16,14 +16,13 @@ import { faEnvelope } from "@fortawesome/free-solid-svg-icons";
 import SocialIcon from "@/components/social-icon";
 
 type Params = {
-  params: {
+  params: Promise<{
     slug: string;
-  };
+  }>;
 };
 
-export async function generateMetadata({
-  params: { slug },
-}: Params): Promise<Metadata> {
+export async function generateMetadata({ params }: Params): Promise<Metadata> {
+  const { slug } = await params;
   const post = await getPost(slug, "posts");
 
   return {
@@ -32,7 +31,8 @@ export async function generateMetadata({
   };
 }
 
-export default async function PostPage({ params: { slug } }: Params) {
+export default async function PostPage({ params }: Params) {
+  const { slug } = await params;
   const post = await getPost(slug, "posts");
   const postURL =
     new URL(process.env.NEXT_PUBLIC_APP_URL as string) + `posts/${slug}`;

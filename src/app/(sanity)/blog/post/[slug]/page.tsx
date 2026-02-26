@@ -14,7 +14,7 @@ const ProjectPreview = dynamic(
 );
 
 type Props = {
-  params: { slug: string };
+  params: Promise<{ slug: string }>;
 };
 
 export async function generateMetadata(

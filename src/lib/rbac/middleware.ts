@@ -1,4 +1,4 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { createClient } from '@/lib/supabase/server';
 import { hasPermission, hasRole } from "./permissions";
 import type { ResourceType, ActionType, RBACContext } from "./types";
@@ -148,14 +148,19 @@ export async function userHasRole(roleName: string): Promise<boolean> {
 }
 
 /**
- * Higher-order function for API route protection
+ * Higher-order function for API route protection.
+ * Returns a Next.js 15 compatible route handler that accepts an optional
+ * route context (e.g. `{ params: Promise<{ id: string }> }` for dynamic segments).
  */
 export function protectApiRoute(
   resource: ResourceType,
   action: ActionType,
-  handler: (request: Request, context: RBACContext) => Promise<NextResponse>
+  handler: (request: NextRequest, context: RBACContext) => Promise<NextResponse>
 ) {
-  return async function (request: Request) {
+  return async function (
+    request: NextRequest,
+    _routeContext?: { params?: Promise<Record<string, string | string[]>> }
+  ): Promise<NextResponse> {
     const context = await getRBACContext();
     
     if (!context) {
