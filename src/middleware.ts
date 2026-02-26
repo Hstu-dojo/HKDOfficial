@@ -45,8 +45,12 @@ const middlewares = {
   // and incorrectly applies locale rewriting to them.
   "/": withLocaleMiddleware,
   "/about": withLocaleMiddleware,
+  "/gallery": withLocaleMiddleware,
+  "/pricing": withLocaleMiddleware,
+  "/services": withLocaleMiddleware,
+  "/services/:path*": withLocaleMiddleware,
 
-  // Admin routes - require admin-level roles (both with and without locale prefix)
+  // Admin routes — require admin-level roles (both with and without locale prefix)
   "/admin": [withLocaleMiddleware, withAdminMiddleware],
   "/admin/:path*": [withLocaleMiddleware, withAdminMiddleware],
   "/:locale/admin": [withAdminMiddleware],
@@ -91,16 +95,38 @@ const middlewares = {
   "/contact": withLocaleMiddleware,
   "/posts": withLocaleMiddleware,
   "/posts/:path*": withLocaleMiddleware,
+  "/search": withLocaleMiddleware,
+  "/forget": withLocaleMiddleware,
+  "/reset-password": withLocaleMiddleware,
+  "/avatar": withLocaleMiddleware,
+  "/auth-debug": withLocaleMiddleware,
+  "/auth-debug/:path*": withLocaleMiddleware,
 
-  // Partner org public pages — served outside (with-theme), no locale needed
-
-  // Public routes with locale prefix (for client-side navigation)
+  // Locale-prefixed routes (for client-side navigation after locale is set)
+  "/:locale/about": withLocaleMiddleware,
+  "/:locale/gallery": withLocaleMiddleware,
+  "/:locale/pricing": withLocaleMiddleware,
+  "/:locale/services": withLocaleMiddleware,
+  "/:locale/services/:path*": withLocaleMiddleware,
   "/:locale/login": withLocaleMiddleware,
   "/:locale/register": withLocaleMiddleware,
   "/:locale/contact": withLocaleMiddleware,
   "/:locale/dev": withLocaleMiddleware,
   "/:locale/posts": withLocaleMiddleware,
   "/:locale/posts/:path*": withLocaleMiddleware,
+  "/:locale/search": withLocaleMiddleware,
+  "/:locale/forget": withLocaleMiddleware,
+  "/:locale/reset-password": withLocaleMiddleware,
+  "/:locale/avatar": withLocaleMiddleware,
+  "/:locale/karate/courses": withLocaleMiddleware,
+  "/:locale/karate/courses/:slug": withLocaleMiddleware,
+  "/:locale/karate/courses/:path*": withLocaleMiddleware,
+  "/:locale/karate/programs": withLocaleMiddleware,
+  "/:locale/karate/programs/:path*": withLocaleMiddleware,
+  "/:locale/courses": withLocaleMiddleware,
+  "/:locale/courses/:path*": withLocaleMiddleware,
+  "/:locale/programs": withLocaleMiddleware,
+  "/:locale/programs/:path*": withLocaleMiddleware,
 
   // Docs routes — admin-only, NO locale rewriting (served by Nextra / Pages Router)
   "/docs": withAdminMiddleware,
@@ -142,6 +168,6 @@ export const config = {
   matcher: [
     // NOTE: /docs is intentionally NOT excluded — it needs withAdminMiddleware.
     // Routes like /blog, /unauthorized, /studio etc. need no middleware at all.
-    "/((?!api|payload-api|org|auth|static|blog|unauthorized|studio|notice|gallery|p|.*\\..*|_next|favicon.ico|sitemap.xml|robots.txt).*)",
+    "/((?!api|payload-api|org|auth|static|blog|unauthorized|studio|notice|p|.*\\..*|_next|favicon.ico|sitemap.xml|robots.txt).*)",
   ],
 };

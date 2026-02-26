@@ -119,7 +119,7 @@ export const mainNav = [
   //   ],
   // },
   {
-    title: "English / বাংলা",
+    title: "EN / বাং / ने",
     isLocaleSwitcher: true,
     items: [
       {
@@ -130,6 +130,11 @@ export const mainNav = [
       {
         title: "বাংলা",
         locale: "bn",
+        items: [],
+      },
+      {
+        title: "नेपाली",
+        locale: "ne",
         items: [],
       },
     ],
