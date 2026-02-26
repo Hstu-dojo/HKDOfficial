@@ -6,14 +6,13 @@ import { Metadata } from "next";
 import SectionQuotation from "@/components/sections/section-quotation";
 
 type Params = {
-  params: {
+  params: Promise<{
     slug: string;
-  };
+  }>;
 };
 
-export async function generateMetadata({
-  params: { slug },
-}: Params): Promise<Metadata> {
+export async function generateMetadata({ params }: Params): Promise<Metadata> {
+  const { slug } = await params;
   const post = await getPost(slug, "projects");
 
   return {
@@ -22,7 +21,8 @@ export async function generateMetadata({
   };
 }
 
-export default async function ProjectPage({ params: { slug } }: Params) {
+export default async function ProjectPage({ params }: Params) {
+  const { slug } = await params;
   const post = await getPost(slug, "projects");
   if (!post) return "No content found";
 

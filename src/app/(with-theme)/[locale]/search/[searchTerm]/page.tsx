@@ -7,12 +7,13 @@ import {
 } from "@/lib/wordpress";
 
 type Props = {
-  params: {
+  params: Promise<{
     searchTerm: string;
-  };
+  }>;
 };
 
-export default async function SearchResults({ params: { searchTerm } }: Props) {
+export default async function SearchResults({ params }: Props) {
+  const { searchTerm } = await params;
   const postsSearchData: Promise<Post[]> = getPostsSearchResults(searchTerm);
   const projectsSearchData: Promise<Post[]> =
     getProjectsSearchResults(searchTerm);
