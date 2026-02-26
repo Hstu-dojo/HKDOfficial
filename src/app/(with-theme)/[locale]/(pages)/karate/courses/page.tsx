@@ -6,8 +6,10 @@ import MaxWidthWrapper from "@/components/maxWidthWrapper";
 import { db } from "@/lib/connect-db";
 import { courses, courseSchedules } from "@/db/schemas/karate/courses";
 import { members } from "@/db/schemas/karate/members";
+import { enrollmentApplications, courseEnrollments } from "@/db/schemas/karate/enrollments";
 import { partners } from "@/db/schemas/partner";
-import { eq, and } from "drizzle-orm";
+import { user as userSchema } from "@/db/schemas/auth";
+import { eq, and, ne } from "drizzle-orm";
 import { createClient } from "@/lib/supabase/server";
 
 export const metadata: Metadata = {
@@ -40,6 +42,37 @@ async function getUserPartnerId(): Promise<{ partnerId: string | null; partnerNa
     return { partnerId: pid, partnerName: partner[0]?.name || null };
   } catch {
     return { partnerId: null, partnerName: null };
+  }
+}
+
+/** Get the set of courseIds the current user has active applications/enrollments for */
+async function getUserEnrolledCourseIds(): Promise<string[]> {
+  try {
+    const supabase = await createClient();
+    const { data: { user: authUser } } = await supabase.auth.getUser();
+    if (!authUser) return [];
+
+    const publicUser = await db.query.user.findFirst({
+      where: eq(userSchema.supabaseUserId, authUser.id),
+    });
+    if (!publicUser) return [];
+
+    // Get courseIds from active (non-rejected/cancelled) applications
+    const apps = await db
+      .select({ courseId: enrollmentApplications.courseId })
+      .from(enrollmentApplications)
+      .where(
+        and(
+          eq(enrollmentApplications.userId, publicUser.id),
+          ne(enrollmentApplications.status, 'rejected'),
+          ne(enrollmentApplications.status, 'cancelled'),
+        )
+      );
+
+    const ids = new Set(apps.map(a => a.courseId));
+    return Array.from(ids);
+  } catch {
+    return [];
   }
 }
 
@@ -92,7 +125,10 @@ async function getCourses(partnerId?: string | null) {
 
 export default async function CoursesPage() {
   const { partnerId, partnerName } = await getUserPartnerId();
-  const coursesData = await getCourses(partnerId);
+  const [coursesData, enrolledCourseIds] = await Promise.all([
+    getCourses(partnerId),
+    getUserEnrolledCourseIds(),
+  ]);
 
   return (
     <>
@@ -107,7 +143,7 @@ export default async function CoursesPage() {
                 </p>
               </div>
             )}
-            <KarateCoursesPage initialCourses={coursesData} />
+            <KarateCoursesPage initialCourses={coursesData} enrolledCourseIds={enrolledCourseIds} />
         </MaxWidthWrapper>
       </main>
       <Footer />

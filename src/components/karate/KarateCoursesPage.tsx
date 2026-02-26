@@ -58,10 +58,12 @@ const fadeUp = {
 
 interface KarateCoursesPageProps {
   initialCourses: Course[];
+  enrolledCourseIds?: string[];
 }
 
-export default function KarateCoursesPage({ initialCourses }: KarateCoursesPageProps) {
+export default function KarateCoursesPage({ initialCourses, enrolledCourseIds = [] }: KarateCoursesPageProps) {
   const [courses] = useState<Course[]>(initialCourses);
+  const enrolledSet = new Set(enrolledCourseIds);
   const [visible, setVisible] = useState(false);
   const observerRef = useRef<IntersectionObserver | null>(null);
 
@@ -321,15 +323,24 @@ export default function KarateCoursesPage({ initialCourses }: KarateCoursesPageP
                           </div>
 
                           {course.isEnrollmentOpen ? (
-                            <Link
-                              href={`/karate/courses/${course.slug}/apply`}
-                              className="flex items-center justify-center gap-2 w-full text-center px-4 py-3 bg-gradient-to-r from-primary to-tertiary text-white font-semibold rounded-lg hover:opacity-90 transition-all duration-300 shadow-sm hover:shadow-md text-sm"
-                            >
-                              Apply Now
-                              <svg className="w-4 h-4 transition-transform group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
-                                <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
-                              </svg>
-                            </Link>
+                            enrolledSet.has(course.id) ? (
+                              <div className="flex items-center justify-center gap-2 w-full text-center px-4 py-3 bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-400 font-semibold rounded-lg border border-green-200 dark:border-green-800/50 text-sm">
+                                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+                                  <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                </svg>
+                                Already Applied
+                              </div>
+                            ) : (
+                              <Link
+                                href={`/karate/courses/${course.slug}/apply`}
+                                className="flex items-center justify-center gap-2 w-full text-center px-4 py-3 bg-gradient-to-r from-primary to-tertiary text-white font-semibold rounded-lg hover:opacity-90 transition-all duration-300 shadow-sm hover:shadow-md text-sm"
+                              >
+                                Apply Now
+                                <svg className="w-4 h-4 transition-transform group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+                                  <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+                                </svg>
+                              </Link>
+                            )
                           ) : (
                             <button
                               disabled

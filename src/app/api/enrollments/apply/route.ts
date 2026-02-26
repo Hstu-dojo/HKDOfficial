@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/connect-db';
-import { enrollmentApplications, courses } from '@/db/schema';
+import { enrollmentApplications, courses, registrations, members } from '@/db/schema';
 import { eq, and } from 'drizzle-orm';
+import { user as userSchema } from '@/db/schemas/auth';
 import { getLocalUserId } from '@/lib/rbac/middleware';
 import { createClient } from '@/lib/supabase/server';
 
@@ -30,7 +31,7 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json();
-    const { courseId, studentInfo } = body;
+    const { courseId, studentInfo, onboardingData } = body;
 
     // Validate required fields
     if (!courseId || !studentInfo) {
@@ -65,27 +66,127 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Check for existing pending application
-    const existingApplication = await db
-      .select()
+    // -----------------------------------------------------------------------
+    // Duplicate prevention: block if user already has a non-rejected/cancelled
+    // application for this same course
+    // -----------------------------------------------------------------------
+    const rejectedStatuses = ['rejected', 'cancelled'] as const;
+    const existingApplications = await db
+      .select({ id: enrollmentApplications.id, status: enrollmentApplications.status })
       .from(enrollmentApplications)
       .where(
         and(
           eq(enrollmentApplications.userId, localUserId),
           eq(enrollmentApplications.courseId, courseId),
-          eq(enrollmentApplications.status, 'pending_payment')
         )
-      )
-      .limit(1);
+      );
 
-    if (existingApplication.length > 0) {
+    const activeApp = existingApplications.find(
+      (a) => !rejectedStatuses.includes(a.status as typeof rejectedStatuses[number])
+    );
+
+    if (activeApp) {
       return NextResponse.json(
-        { 
-          error: 'You already have a pending application for this course',
-          applicationId: existingApplication[0].id 
+        {
+          error: 'You already have an active application for this course',
+          applicationId: activeApp.id,
         },
         { status: 400 }
       );
+    }
+
+    // -----------------------------------------------------------------------
+    // Cross-partner blocking: if user belongs to partner A, they cannot enrol
+    // in a course owned by partner B (but can enrol in global courses with
+    // partnerId = null).
+    // -----------------------------------------------------------------------
+    const coursePartnerId = course[0].partnerId;
+
+    if (coursePartnerId) {
+      // Check user's current partner affiliation via members table
+      const memberRow = await db
+        .select({ partnerId: members.partnerId })
+        .from(members)
+        .where(eq(members.userId, localUserId))
+        .limit(1);
+
+      const userPartnerId = memberRow[0]?.partnerId ?? null;
+
+      if (userPartnerId && userPartnerId !== coursePartnerId) {
+        return NextResponse.json(
+          { error: 'You cannot enrol in a course from a different partner. Please contact support if you wish to transfer.' },
+          { status: 403 }
+        );
+      }
+    }
+
+    // -----------------------------------------------------------------------
+    // Auto-onboard: upsert into registrations table so the user is considered
+    // "onboarded" after completing the enrollment wizard.
+    // -----------------------------------------------------------------------
+    if (onboardingData && typeof onboardingData === 'object') {
+      try {
+        const fullName = (onboardingData as Record<string,string>).username || '';
+        const nameParts = fullName.split(' ');
+        const firstName = nameParts[0] || 'Unknown';
+        const lastName = nameParts.slice(1).join(' ') || '.';
+
+        const existingReg = await db.query.registrations.findFirst({
+          where: eq(registrations.userId, localUserId),
+        });
+
+        const regPartnerId = coursePartnerId ?? null;
+
+        if (existingReg) {
+          await db.update(registrations)
+            .set({
+              dateOfBirth: (onboardingData as Record<string,string>).dob
+                ? new Date((onboardingData as Record<string,string>).dob)
+                : existingReg.dateOfBirth,
+              email: (onboardingData as Record<string,string>).email || existingReg.email,
+              firstName,
+              lastName,
+              phoneNumber: (onboardingData as Record<string,string>).phone || existingReg.phoneNumber,
+              emergencyContact: (onboardingData as Record<string,string>).emergencyContact || existingReg.emergencyContact,
+              emergencyPhone: (onboardingData as Record<string,string>).emergencyPhone || existingReg.emergencyPhone,
+              notes: JSON.stringify(onboardingData),
+              status: 'pending',
+              updatedAt: new Date(),
+            })
+            .where(eq(registrations.id, existingReg.id));
+        } else {
+          await db.insert(registrations).values({
+            userId: localUserId,
+            dateOfBirth: (onboardingData as Record<string,string>).dob
+              ? new Date((onboardingData as Record<string,string>).dob)
+              : new Date('2000-01-01'),
+            email: (onboardingData as Record<string,string>).email || session.user.email || '',
+            firstName,
+            lastName,
+            phoneNumber: (onboardingData as Record<string,string>).phone || '',
+            emergencyContact: (onboardingData as Record<string,string>).emergencyContact || 'Not Provided',
+            emergencyPhone: (onboardingData as Record<string,string>).emergencyPhone || '',
+            partnerId: regPartnerId,
+            notes: JSON.stringify(onboardingData),
+            status: 'pending',
+          });
+        }
+
+        // Update public user profile name for dashboard consistency
+        if (fullName) {
+          const publicUser = await db.query.user.findFirst({
+            where: eq(userSchema.id, localUserId),
+          });
+          if (publicUser && fullName !== publicUser.userName) {
+            await db.update(userSchema)
+              .set({ userName: fullName })
+              .where(eq(userSchema.id, localUserId));
+          }
+        }
+      } catch (onboardErr) {
+        // Non-fatal — enrollment should still proceed even if onboard upsert fails
+        console.error('Auto-onboard upsert failed (non-fatal):', onboardErr);
+      }
     }
 
     // Generate application number

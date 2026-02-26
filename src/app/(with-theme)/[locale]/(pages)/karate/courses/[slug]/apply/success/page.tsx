@@ -1,14 +1,20 @@
 import Link from 'next/link';
-import { CheckCircleIcon, ClockIcon, EnvelopeIcon } from '@heroicons/react/24/outline';
+import { CheckCircleIcon, ClockIcon, EnvelopeIcon, DocumentArrowDownIcon } from '@heroicons/react/24/outline';
+import SuccessPdfDownload from '@/components/karate/SuccessPdfDownload';
 
 interface PageProps {
   searchParams: Promise<{
     applicationId?: string;
   }>;
+  params: Promise<{
+    locale: string;
+    slug: string;
+  }>;
 }
 
-export default async function ApplicationSuccessPage({ searchParams }: PageProps) {
+export default async function ApplicationSuccessPage({ searchParams, params }: PageProps) {
   const { applicationId } = await searchParams;
+  const { slug } = await params;
 
   return (
     <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
@@ -32,6 +38,9 @@ export default async function ApplicationSuccessPage({ searchParams }: PageProps
           <p className="text-gray-600 mb-6">
             Thank you for applying! Your application and payment have been submitted for review.
           </p>
+
+          {/* PDF Download */}
+          <SuccessPdfDownload courseId={slug} />
 
           {/* Timeline */}
           <div className="bg-gray-50 rounded-lg p-6 text-left mb-6">
