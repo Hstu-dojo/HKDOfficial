@@ -457,7 +457,7 @@ export default function CourseEnrollmentWizard({
   // ---------------------------------------------------------------------------
 
   return (
-    <div ref={scrollRef} className="max-w-4xl mx-auto space-y-6">
+    <div ref={scrollRef} className="max-w-4xl mx-auto space-y-6 pt-6">
       {/* Course header */}
       <div className="flex items-center justify-between">
         <div>
@@ -524,7 +524,7 @@ export default function CourseEnrollmentWizard({
       </div>
 
       {/* Form content (animated) */}
-      <div className="bg-card rounded-xl border shadow-sm overflow-hidden">
+      <div className="bg-card rounded-xl border border-border shadow-sm overflow-hidden">
         <AnimatePresence mode="wait" custom={direction}>
           <motion.div
             key={currentSectionId}
@@ -600,7 +600,7 @@ export default function CourseEnrollmentWizard({
         </AnimatePresence>
 
         {/* Navigation */}
-        <div className="flex items-center justify-between p-6 pt-0 border-t mt-4">
+        <div className="flex items-center justify-between p-6 pt-4 border-t border-border mt-4">
           <div className="flex items-center gap-2">
             <button
               onClick={handlePrev}
@@ -624,7 +624,7 @@ export default function CourseEnrollmentWizard({
             {currentSectionId !== 'review' ? (
               <button
                 onClick={handleNext}
-                className="inline-flex items-center gap-1 px-5 py-2 rounded-lg bg-primary text-primary-foreground text-sm font-medium hover:bg-primary/90 transition-colors"
+                className="inline-flex items-center gap-1 px-5 py-2.5 rounded-lg bg-primary text-primary-foreground text-sm font-medium hover:bg-primary/90 transition-colors"
               >
                 Next <ChevronRight className="h-4 w-4" />
               </button>
@@ -632,15 +632,15 @@ export default function CourseEnrollmentWizard({
               <button
                 onClick={handleSubmit}
                 disabled={submitting}
-                className="inline-flex items-center gap-2 px-6 py-2.5 rounded-lg bg-green-600 text-white text-sm font-semibold hover:bg-green-700 transition-colors disabled:opacity-50"
+                className="inline-flex items-center gap-2 px-8 py-3 rounded-lg bg-green-600 text-white text-base font-bold hover:bg-green-500 shadow-lg shadow-green-600/30 ring-2 ring-green-500/20 transition-all disabled:opacity-50 disabled:shadow-none"
               >
                 {submitting ? (
                   <>
-                    <Loader2 className="h-4 w-4 animate-spin" /> Submitting…
+                    <Loader2 className="h-5 w-5 animate-spin" /> Submitting…
                   </>
                 ) : (
                   <>
-                    <CheckCircle className="h-4 w-4" /> Submit Application
+                    <CheckCircle className="h-5 w-5" /> Submit Application
                   </>
                 )}
               </button>

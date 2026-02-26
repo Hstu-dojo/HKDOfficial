@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/connect-db';
-import { enrollmentApplications, courses, registrations, members } from '@/db/schema';
+import { enrollmentApplications, courses, registrations } from '@/db/schema';
 import { eq, and } from 'drizzle-orm';
 import { user as userSchema } from '@/db/schemas/auth';
 import { getLocalUserId } from '@/lib/rbac/middleware';
@@ -96,31 +96,6 @@ export async function POST(request: NextRequest) {
     }
 
     // -----------------------------------------------------------------------
-    // Cross-partner blocking: if user belongs to partner A, they cannot enrol
-    // in a course owned by partner B (but can enrol in global courses with
-    // partnerId = null).
-    // -----------------------------------------------------------------------
-    const coursePartnerId = course[0].partnerId;
-
-    if (coursePartnerId) {
-      // Check user's current partner affiliation via members table
-      const memberRow = await db
-        .select({ partnerId: members.partnerId })
-        .from(members)
-        .where(eq(members.userId, localUserId))
-        .limit(1);
-
-      const userPartnerId = memberRow[0]?.partnerId ?? null;
-
-      if (userPartnerId && userPartnerId !== coursePartnerId) {
-        return NextResponse.json(
-          { error: 'You cannot enrol in a course from a different partner. Please contact support if you wish to transfer.' },
-          { status: 403 }
-        );
-      }
-    }
-
-    // -----------------------------------------------------------------------
     // Auto-onboard: upsert into registrations table so the user is considered
     // "onboarded" after completing the enrollment wizard.
     // -----------------------------------------------------------------------
@@ -135,7 +110,7 @@ export async function POST(request: NextRequest) {
           where: eq(registrations.userId, localUserId),
         });
 
-        const regPartnerId = coursePartnerId ?? null;
+        const regPartnerId = course[0].partnerId ?? null;
 
         if (existingReg) {
           await db.update(registrations)

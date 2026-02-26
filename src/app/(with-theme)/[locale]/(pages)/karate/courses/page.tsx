@@ -5,9 +5,7 @@ import Footer from "@/components/layout/footer";
 import MaxWidthWrapper from "@/components/maxWidthWrapper";
 import { db } from "@/lib/connect-db";
 import { courses, courseSchedules } from "@/db/schemas/karate/courses";
-import { members } from "@/db/schemas/karate/members";
-import { enrollmentApplications, courseEnrollments } from "@/db/schemas/karate/enrollments";
-import { partners } from "@/db/schemas/partner";
+import { enrollmentApplications } from "@/db/schemas/karate/enrollments";
 import { user as userSchema } from "@/db/schemas/auth";
 import { eq, and, ne } from "drizzle-orm";
 import { createClient } from "@/lib/supabase/server";
@@ -19,31 +17,6 @@ export const metadata: Metadata = {
 
 // ISR: revalidate every 120 seconds
 export const revalidate = 120;
-
-async function getUserPartnerId(): Promise<{ partnerId: string | null; partnerName: string | null }> {
-  try {
-    const supabase = await createClient();
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) return { partnerId: null, partnerName: null };
-
-    const member = await db.select({ partnerId: members.partnerId })
-      .from(members)
-      .where(eq(members.userId, user.id))
-      .limit(1);
-
-    const pid = member[0]?.partnerId || null;
-    if (!pid) return { partnerId: null, partnerName: null };
-
-    const partner = await db.select({ name: partners.name })
-      .from(partners)
-      .where(eq(partners.id, pid))
-      .limit(1);
-
-    return { partnerId: pid, partnerName: partner[0]?.name || null };
-  } catch {
-    return { partnerId: null, partnerName: null };
-  }
-}
 
 /** Get the set of courseIds the current user has active applications/enrollments for */
 async function getUserEnrolledCourseIds(): Promise<string[]> {
@@ -76,14 +49,9 @@ async function getUserEnrolledCourseIds(): Promise<string[]> {
   }
 }
 
-async function getCourses(partnerId?: string | null) {
+async function getCourses() {
   try {
-    const conditions = [eq(courses.isActive, true)];
-    if (partnerId) {
-      conditions.push(eq(courses.partnerId, partnerId));
-    }
-
-    const activeCourses = await db.select().from(courses).where(and(...conditions));
+    const activeCourses = await db.select().from(courses).where(eq(courses.isActive, true));
 
     const coursesWithSchedules = await Promise.all(activeCourses.map(async (course) => {
       const schedules = await db.select().from(courseSchedules).where(eq(courseSchedules.courseId, course.id));
@@ -124,9 +92,8 @@ async function getCourses(partnerId?: string | null) {
 }
 
 export default async function CoursesPage() {
-  const { partnerId, partnerName } = await getUserPartnerId();
   const [coursesData, enrolledCourseIds] = await Promise.all([
-    getCourses(partnerId),
+    getCourses(),
     getUserEnrolledCourseIds(),
   ]);
 
@@ -135,14 +102,6 @@ export default async function CoursesPage() {
       <Header />
       <main className="relative pt-24 pb-16 min-h-screen bg-slate-50 dark:bg-slate-900">
         <MaxWidthWrapper>
-            {partnerName && (
-              <div className="mb-8 inline-flex items-center gap-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700/50 rounded-lg px-4 py-2.5 shadow-sm">
-                <div className="w-2 h-2 rounded-full bg-primary animate-pulse" />
-                <p className="text-sm text-muted-foreground">
-                  Showing courses for <span className="font-semibold text-foreground">{partnerName}</span>
-                </p>
-              </div>
-            )}
             <KarateCoursesPage initialCourses={coursesData} enrolledCourseIds={enrolledCourseIds} />
         </MaxWidthWrapper>
       </main>
