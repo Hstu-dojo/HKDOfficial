@@ -23,7 +23,7 @@ export default async function ApplicationSuccessPage({ searchParams, params }: P
     <>
       <Header />
       <main className="min-h-screen pt-24 pb-16 bg-slate-50 dark:bg-slate-900 flex items-center justify-center p-4">
-        <MaxWidthWrapper className="max-w-md">
+        <MaxWidthWrapper className="max-w-2xl">
           <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-lg border border-slate-200 dark:border-slate-700/50 p-8 text-center">
             {/* Success Icon */}
             <div className="w-20 h-20 bg-green-100 dark:bg-green-900/30 rounded-full flex items-center justify-center mx-auto mb-6">
@@ -45,7 +45,7 @@ export default async function ApplicationSuccessPage({ searchParams, params }: P
             </p>
 
             {/* PDF Download */}
-            <SuccessPdfDownload courseId={slug} />
+            <SuccessPdfDownload courseId={slug} applicationId={applicationId} />
 
             {/* Timeline */}
             <div className="bg-slate-50 dark:bg-slate-900/50 rounded-lg p-6 text-left mb-6">

@@ -118,6 +118,7 @@ export default function CourseEnrollmentWizard({
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isGenerating, setIsGenerating] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+  const [submitPhase, setSubmitPhase] = useState<'idle' | 'uploading' | 'creating' | 'payment'>('idle');
   const [showSuccess, setShowSuccess] = useState(false);
   const [applicationId, setApplicationId] = useState<string | null>(null);
 
@@ -275,6 +276,7 @@ export default function CourseEnrollmentWizard({
       // ------------------------------------------------------------------
       // Step 0: Upload photo & signature to Cloudinary
       // ------------------------------------------------------------------
+      setSubmitPhase('uploading');
       let profilePhotoUrl: string | undefined;
       let signatureUrl: string | undefined;
 
@@ -311,11 +313,11 @@ export default function CourseEnrollmentWizard({
       }
 
       if (uploadPromises.length > 0) {
-        toast.info('Uploading images…');
         await Promise.all(uploadPromises);
       }
 
       // Build student info for the API
+      setSubmitPhase('creating');
       const studentInfo = {
         ...formData,
         hasPhoto: !!images.photo,
@@ -347,6 +349,7 @@ export default function CourseEnrollmentWizard({
       setApplicationId(appId);
 
       // Step 2: Submit payment
+      setSubmitPhase('payment');
       const payRes = await fetch(`/api/enrollments/${appId}/payment`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -372,6 +375,7 @@ export default function CourseEnrollmentWizard({
       );
     } finally {
       setSubmitting(false);
+      setSubmitPhase('idle');
     }
   }, [
     formData,
@@ -464,7 +468,7 @@ export default function CourseEnrollmentWizard({
           <button
             onClick={handleDownloadPdf}
             disabled={isGenerating}
-            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-primary text-primary-foreground font-medium hover:bg-primary/90 transition-colors disabled:opacity-50"
+            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-primary text-white font-medium hover:bg-primary/90 transition-colors disabled:opacity-50"
           >
             {isGenerating ? (
               <Loader2 className="h-4 w-4 animate-spin" />
@@ -671,7 +675,7 @@ export default function CourseEnrollmentWizard({
             {currentSectionId !== 'review' ? (
               <button
                 onClick={handleNext}
-                className="inline-flex items-center gap-1 px-5 py-2.5 rounded-lg bg-primary text-primary-foreground text-sm font-medium hover:bg-primary/90 transition-colors"
+                className="inline-flex items-center gap-1 px-5 py-2.5 rounded-lg bg-primary text-white text-sm font-medium hover:bg-primary/90 transition-colors"
               >
                 Next <ChevronRight className="h-4 w-4" />
               </button>
@@ -679,11 +683,18 @@ export default function CourseEnrollmentWizard({
               <button
                 onClick={handleSubmit}
                 disabled={submitting}
-                className="inline-flex items-center gap-2 px-8 py-3 rounded-lg bg-green-600 text-white text-base font-bold hover:bg-green-500 shadow-lg shadow-green-600/30 ring-2 ring-green-500/20 transition-all disabled:opacity-50 disabled:shadow-none"
+                className="inline-flex items-center gap-2 px-8 py-3 rounded-lg bg-green-600 text-white text-base font-bold hover:bg-green-500 shadow-lg shadow-green-600/30 ring-2 ring-green-500/20 transition-all disabled:opacity-60 disabled:cursor-not-allowed disabled:shadow-none"
               >
                 {submitting ? (
                   <>
-                    <Loader2 className="h-5 w-5 animate-spin" /> Submitting…
+                    <Loader2 className="h-5 w-5 animate-spin" />
+                    {submitPhase === 'uploading'
+                      ? 'Uploading images…'
+                      : submitPhase === 'creating'
+                        ? 'Creating application…'
+                        : submitPhase === 'payment'
+                          ? 'Submitting payment…'
+                          : 'Submitting…'}
                   </>
                 ) : (
                   <>

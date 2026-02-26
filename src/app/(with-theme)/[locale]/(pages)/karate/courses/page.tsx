@@ -18,21 +18,21 @@ export const metadata: Metadata = {
 // ISR: revalidate every 120 seconds
 export const revalidate = 120;
 
-/** Get the set of courseIds the current user has active applications/enrollments for */
-async function getUserEnrolledCourseIds(): Promise<string[]> {
+/** Get the set of courseIds the current user has active applications/enrollments for, with applicationIds */
+async function getUserEnrolledCourses(): Promise<{ courseIds: string[]; applicationMap: Record<string, string> }> {
   try {
     const supabase = await createClient();
     const { data: { user: authUser } } = await supabase.auth.getUser();
-    if (!authUser) return [];
+    if (!authUser) return { courseIds: [], applicationMap: {} };
 
     const publicUser = await db.query.user.findFirst({
       where: eq(userSchema.supabaseUserId, authUser.id),
     });
-    if (!publicUser) return [];
+    if (!publicUser) return { courseIds: [], applicationMap: {} };
 
-    // Get courseIds from active (non-rejected/cancelled) applications
+    // Get courseIds + applicationIds from active (non-rejected/cancelled) applications
     const apps = await db
-      .select({ courseId: enrollmentApplications.courseId })
+      .select({ id: enrollmentApplications.id, courseId: enrollmentApplications.courseId })
       .from(enrollmentApplications)
       .where(
         and(
@@ -42,10 +42,14 @@ async function getUserEnrolledCourseIds(): Promise<string[]> {
         )
       );
 
-    const ids = new Set(apps.map(a => a.courseId));
-    return Array.from(ids);
+    const courseIds = [...new Set(apps.map(a => a.courseId))];
+    const applicationMap: Record<string, string> = {};
+    for (const app of apps) {
+      applicationMap[app.courseId] = app.id;
+    }
+    return { courseIds, applicationMap };
   } catch {
-    return [];
+    return { courseIds: [], applicationMap: {} };
   }
 }
 
@@ -92,9 +96,9 @@ async function getCourses() {
 }
 
 export default async function CoursesPage() {
-  const [coursesData, enrolledCourseIds] = await Promise.all([
+  const [coursesData, enrolledData] = await Promise.all([
     getCourses(),
-    getUserEnrolledCourseIds(),
+    getUserEnrolledCourses(),
   ]);
 
   return (
@@ -102,7 +106,11 @@ export default async function CoursesPage() {
       <Header />
       <main className="relative pt-24 pb-16 min-h-screen bg-slate-50 dark:bg-slate-900">
         <MaxWidthWrapper>
-            <KarateCoursesPage initialCourses={coursesData} enrolledCourseIds={enrolledCourseIds} />
+            <KarateCoursesPage
+              initialCourses={coursesData}
+              enrolledCourseIds={enrolledData.courseIds}
+              enrolledApplicationMap={enrolledData.applicationMap}
+            />
         </MaxWidthWrapper>
       </main>
       <Footer />

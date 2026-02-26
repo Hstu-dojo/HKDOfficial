@@ -4,7 +4,13 @@ import { useRef, useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { motion, AnimatePresence } from 'framer-motion';
+import { Download, Loader2 } from 'lucide-react';
 import { ProfileCompletionBanner } from '@/components/layout/profile-completion-banner';
+import {
+  fillPdfForm,
+  downloadPdf,
+  loadFormFromLocalStorage,
+} from '@/lib/pdf/pdf-utils';
 
 interface Course {
   id: string;
@@ -59,11 +65,64 @@ const fadeUp = {
 interface KarateCoursesPageProps {
   initialCourses: Course[];
   enrolledCourseIds?: string[];
+  enrolledApplicationMap?: Record<string, string>;
 }
 
-export default function KarateCoursesPage({ initialCourses, enrolledCourseIds = [] }: KarateCoursesPageProps) {
+export default function KarateCoursesPage({ initialCourses, enrolledCourseIds = [], enrolledApplicationMap = {} }: KarateCoursesPageProps) {
   const [courses] = useState<Course[]>(initialCourses);
   const enrolledSet = new Set(enrolledCourseIds);
+  const [downloadingCourse, setDownloadingCourse] = useState<string | null>(null);
+
+  const handleDownloadPdf = async (courseId: string) => {
+    const applicationId = enrolledApplicationMap[courseId];
+    if (!applicationId) return;
+    setDownloadingCourse(courseId);
+    try {
+      // Try localStorage first
+      const saved = loadFormFromLocalStorage(courseId);
+      let formData = saved?.formData || {};
+      let images = saved?.images || {};
+
+      // If localStorage empty, fetch from API
+      if (Object.keys(formData).length === 0) {
+        const res = await fetch(`/api/enrollments/${applicationId}/form-data`);
+        if (!res.ok) throw new Error('Could not retrieve application data');
+        const data = await res.json();
+        formData = data.formData || {};
+
+        const fetchImageAsDataUrl = async (url: string): Promise<string> => {
+          const resp = await fetch(url);
+          const blob = await resp.blob();
+          return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onloadend = () => resolve(reader.result as string);
+            reader.onerror = reject;
+            reader.readAsDataURL(blob);
+          });
+        };
+
+        if (data.profilePhotoUrl) {
+          try { images = { ...images, photo: await fetchImageAsDataUrl(data.profilePhotoUrl) }; } catch { /* skip */ }
+        }
+        if (data.signatureUrl) {
+          try { images = { ...images, signature: await fetchImageAsDataUrl(data.signatureUrl) }; } catch { /* skip */ }
+        }
+      }
+
+      if (Object.keys(formData).length === 0) {
+        alert('Form data not found.');
+        return;
+      }
+
+      const pdfBytes = await fillPdfForm(formData, images);
+      downloadPdf(pdfBytes, `HKD-Registration-${courseId.slice(0, 8)}.pdf`);
+    } catch (err) {
+      console.error('PDF download failed:', err);
+      alert('Failed to generate PDF. Please try again.');
+    } finally {
+      setDownloadingCourse(null);
+    }
+  };
   const [visible, setVisible] = useState(false);
   const observerRef = useRef<IntersectionObserver | null>(null);
 
@@ -324,11 +383,27 @@ export default function KarateCoursesPage({ initialCourses, enrolledCourseIds = 
 
                           {course.isEnrollmentOpen ? (
                             enrolledSet.has(course.id) ? (
-                              <div className="flex items-center justify-center gap-2 w-full text-center px-4 py-3 bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-400 font-semibold rounded-lg border border-green-200 dark:border-green-800/50 text-sm">
-                                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
-                                  <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                </svg>
-                                Already Applied
+                              <div className="flex flex-col gap-2 w-full">
+                                <div className="flex items-center justify-center gap-2 w-full text-center px-4 py-3 bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-400 font-semibold rounded-lg border border-green-200 dark:border-green-800/50 text-sm">
+                                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+                                    <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                  </svg>
+                                  Already Applied
+                                </div>
+                                {enrolledApplicationMap[course.id] && (
+                                  <button
+                                    onClick={(e) => { e.preventDefault(); handleDownloadPdf(course.id); }}
+                                    disabled={downloadingCourse === course.id}
+                                    className="flex items-center justify-center gap-2 w-full px-4 py-2.5 border border-green-300 dark:border-green-700 text-green-700 dark:text-green-400 text-sm font-medium rounded-lg hover:bg-green-50 dark:hover:bg-green-900/30 transition-colors disabled:opacity-50"
+                                  >
+                                    {downloadingCourse === course.id ? (
+                                      <Loader2 className="w-4 h-4 animate-spin" />
+                                    ) : (
+                                      <Download className="w-4 h-4" />
+                                    )}
+                                    {downloadingCourse === course.id ? 'Generating…' : 'Download Form PDF'}
+                                  </button>
+                                )}
                               </div>
                             ) : (
                               <Link
