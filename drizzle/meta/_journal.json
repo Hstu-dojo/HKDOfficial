@@ -64,6 +64,13 @@
       "when": 1771989018563,
       "tag": "0008_ambitious_revanche",
       "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "7",
+      "when": 1772124883000,
+      "tag": "0009_profiles_migration",
+      "breakpoints": true
     }
   ]
 }

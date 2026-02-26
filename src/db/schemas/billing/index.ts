@@ -2,7 +2,7 @@ import { pgTable, text, integer, boolean, timestamp } from "drizzle-orm/pg-core"
 import { sql } from "drizzle-orm";
 import { billStatusEnum, paymentMethodEnum } from "../enums";
 import { user } from "../auth";
-import { members } from "../karate";
+import { profiles } from "../karate";
 
 // Billable items (fee types and amounts)
 export const billableItems = pgTable("billable_items", {
@@ -20,7 +20,7 @@ export const billableItems = pgTable("billable_items", {
 // Bills for members
 export const bills = pgTable("bills", {
   id: text("id").primaryKey().default(sql`gen_random_uuid()`),
-  memberId: text("member_id").notNull().references(() => members.id, { onDelete: 'cascade' }),
+  profileId: text("profile_id").notNull().references(() => profiles.id, { onDelete: 'cascade' }),
   billableItemId: text("billable_item_id").notNull().references(() => billableItems.id),
   amount: integer("amount").notNull(), // amount at time of bill creation
   currency: text("currency").notNull().default('BDT'),
@@ -36,7 +36,7 @@ export const bills = pgTable("bills", {
 export const payments = pgTable("payments", {
   id: text("id").primaryKey().default(sql`gen_random_uuid()`),
   billId: text("bill_id").notNull().references(() => bills.id, { onDelete: 'cascade' }),
-  memberId: text("member_id").notNull().references(() => members.id, { onDelete: 'cascade' }),
+  profileId: text("profile_id").notNull().references(() => profiles.id, { onDelete: 'cascade' }),
   amount: integer("amount").notNull(),
   currency: text("currency").notNull().default('BDT'),
   paymentMethod: paymentMethodEnum("payment_method").notNull(),

@@ -65,7 +65,7 @@ export interface DashboardData {
         name: string | null;
         email: string | null;
         image: string | null;
-        memberId?: string | null;
+        profileId?: string | null;
         registrationStatus?: string | null;
         profileComplete: boolean;
     };
@@ -154,7 +154,7 @@ export async function getUserDashboardData(): Promise<DashboardData | { error: s
     })
     .from(courseEnrollments)
     .leftJoin(courses, eq(courseEnrollments.courseId, courses.id))
-    .where(eq(courseEnrollments.memberId, member.id));
+    .where(eq(courseEnrollments.profileId, member.id));
     
     // Explicitly cast to ensure type compatibility
     enrollments = enrollmentsData as DashboardEnrollment[];
@@ -173,7 +173,7 @@ export async function getUserDashboardData(): Promise<DashboardData | { error: s
     .from(monthlyFees)
     .leftJoin(courseEnrollments, eq(monthlyFees.enrollmentId, courseEnrollments.id))
     .leftJoin(courses, eq(courseEnrollments.courseId, courses.id))
-    .where(eq(monthlyFees.memberId, member.id))
+    .where(eq(monthlyFees.profileId, member.id))
     .orderBy(desc(monthlyFees.dueDate))
     .limit(5); // Just get recent 5
 
@@ -203,7 +203,7 @@ export async function getUserDashboardData(): Promise<DashboardData | { error: s
         name: publicUser.userName || publicUser.email,
         email: publicUser.email || "",
         image: publicUser.userAvatar,
-        memberId: member?.memberNumber,
+        profileId: member?.memberNumber,
         registrationStatus: registration?.status,
         profileComplete: !!registration
     },

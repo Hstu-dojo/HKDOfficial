@@ -41,7 +41,7 @@ export async function GET(request: NextRequest) {
       .from(monthlyFees)
       .leftJoin(courseEnrollments, eq(monthlyFees.enrollmentId, courseEnrollments.id))
       .leftJoin(courses, eq(courseEnrollments.courseId, courses.id))
-      .where(eq(monthlyFees.memberId, memberRecord[0].id))
+      .where(eq(monthlyFees.profileId, memberRecord[0].id))
       .orderBy(desc(monthlyFees.billingMonth));
 
     // Transform to simpler format

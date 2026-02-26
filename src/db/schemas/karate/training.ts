@@ -2,7 +2,7 @@ import { pgTable, text, integer, boolean, timestamp } from "drizzle-orm/pg-core"
 import { sql } from "drizzle-orm";
 import { classTypeEnum, beltRankEnum, attendanceStatusEnum } from "../enums";
 import { user } from "../auth";
-import { members } from "./members";
+import { profiles } from "./members";
 
 // Classes table
 export const classes = pgTable("classes", {
@@ -25,7 +25,7 @@ export const classes = pgTable("classes", {
 export const enrollments = pgTable("enrollments", {
   id: text("id").primaryKey().default(sql`gen_random_uuid()`),
   classId: text("class_id").notNull().references(() => classes.id, { onDelete: 'cascade' }),
-  memberId: text("member_id").notNull().references(() => members.id, { onDelete: 'cascade' }),
+  profileId: text("profile_id").notNull().references(() => profiles.id, { onDelete: 'cascade' }),
   enrolledAt: timestamp("enrolled_at", { withTimezone: true }).defaultNow().notNull(),
 });
 
@@ -33,7 +33,7 @@ export const enrollments = pgTable("enrollments", {
 export const attendance = pgTable("attendance", {
   id: text("id").primaryKey().default(sql`gen_random_uuid()`),
   classId: text("class_id").notNull().references(() => classes.id, { onDelete: 'cascade' }),
-  memberId: text("member_id").notNull().references(() => members.id, { onDelete: 'cascade' }),
+  profileId: text("profile_id").notNull().references(() => profiles.id, { onDelete: 'cascade' }),
   date: timestamp("date", { withTimezone: true }).notNull(),
   status: attendanceStatusEnum("status").notNull().default('present'),
   notes: text("notes"),
@@ -43,7 +43,7 @@ export const attendance = pgTable("attendance", {
 // Belt progression history
 export const beltProgressions = pgTable("belt_progressions", {
   id: text("id").primaryKey().default(sql`gen_random_uuid()`),
-  memberId: text("member_id").notNull().references(() => members.id, { onDelete: 'cascade' }),
+  profileId: text("profile_id").notNull().references(() => profiles.id, { onDelete: 'cascade' }),
   fromBelt: beltRankEnum("from_belt").notNull(),
   toBelt: beltRankEnum("to_belt").notNull(),
   testDate: timestamp("test_date", { withTimezone: true }).notNull(),

@@ -4,7 +4,7 @@ import React, { useEffect, useState, useCallback } from 'react'
 
 interface BranchRequest {
   id: string
-  memberId: string
+  profileId: string
   memberName: string | null
   memberNumber: string | null
   memberPhone: string | null

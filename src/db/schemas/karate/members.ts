@@ -1,13 +1,14 @@
-import { pgTable, text, boolean, timestamp, integer, uniqueIndex } from "drizzle-orm/pg-core";
+import { pgTable, text, boolean, timestamp, integer, uniqueIndex, real } from "drizzle-orm/pg-core";
 import { sql } from "drizzle-orm";
-import { beltRankEnum, registrationStatusEnum } from "../enums";
+import { beltRankEnum, registrationStatusEnum, identityTypeEnum } from "../enums";
 import { user } from "../auth";
 import { partners } from "../partner";
 
-// Members table - detailed member profiles extending user information
-export const members = pgTable("members", {
+// Profiles table - partner-owned member profiles (first-class entity)
+// A profile can exist without a linked user account (partner-admin created)
+export const profiles = pgTable("profiles", {
   id: text("id").primaryKey().default(sql`gen_random_uuid()`),
-  userId: text("user_id").notNull().references(() => user.id, { onDelete: 'cascade' }),
+  userId: text("user_id").references(() => user.id, { onDelete: 'set null' }), // nullable — can exist without account
   memberNumber: text("member_number").notNull().unique(),
   
   // Personal Information
@@ -26,29 +27,49 @@ export const members = pgTable("members", {
   
   // Contact Information
   phoneNumber: text("phone_number"),
+  email: text("email"),
   presentAddress: text("present_address"),
   permanentAddress: text("permanent_address"),
+  city: text("city"),
+  state: text("state"),
+  country: text("country"),
+  postalCode: text("postal_code"),
   
   // Identity Documents
   nid: text("nid"),
   birthCertificateNo: text("birth_certificate_no"),
   passportNo: text("passport_no"),
+  identityType: identityTypeEnum("identity_type"),
+  identityNumber: text("identity_number"),
+  identityImage: text("identity_image"),
   
   // Professional/Educational
   profession: text("profession"),
   educationQualification: text("education_qualification"),
+  institute: text("institute"),
+  faculty: text("faculty"),
+  department: text("department"),
+  session: text("session"),
+  
+  // Physical
+  height: real("height"),
+  weight: real("weight"),
   
   // Dojo Information
   beltRank: beltRankEnum("belt_rank").notNull().default('white'),
   picture: text("picture"),
+  signatureImage: text("signature_image"),
   
-  // Partner/Venue Information
+  // Partner/Venue Information (owner)
   partnerId: text("partner_id").references(() => partners.id, { onDelete: 'set null' }),
   
   // Emergency Contact
   emergencyContact: text("emergency_contact"),
   emergencyPhone: text("emergency_phone"),
   
+  // Provenance
+  createdBy: text("created_by").references(() => user.id, { onDelete: 'set null' }), // partner-admin or system user who created
+
   // System fields
   joinDate: timestamp("join_date", { withTimezone: true }).defaultNow(),
   notes: text("notes"),
@@ -78,10 +99,10 @@ export const registrations = pgTable("registrations", {
   updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow().notNull(),
 });
 
-// Member monthly activity status — tracks which months a member is active (for billing)
-export const memberMonthlyStatus = pgTable("member_monthly_status", {
+// Profile monthly activity status — tracks which months a profile is active (for billing)
+export const profileMonthlyStatus = pgTable("profile_monthly_status", {
   id: text("id").primaryKey().default(sql`gen_random_uuid()`),
-  memberId: text("member_id").notNull().references(() => members.id, { onDelete: 'cascade' }),
+  profileId: text("profile_id").notNull().references(() => profiles.id, { onDelete: 'cascade' }),
   partnerId: text("partner_id").notNull().references(() => partners.id, { onDelete: 'cascade' }),
   month: integer("month").notNull(),  // 1-12
   year: integer("year").notNull(),    // e.g., 2026
@@ -91,14 +112,14 @@ export const memberMonthlyStatus = pgTable("member_monthly_status", {
   createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
   updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow().notNull(),
 }, (table) => ({
-  memberMonthYearIdx: uniqueIndex("member_month_year_idx").on(table.memberId, table.month, table.year),
+  profileMonthYearIdx: uniqueIndex("profile_month_year_idx").on(table.profileId, table.month, table.year),
 }));
 
-// Branch change requests — student requests transfer to a different partner/venue
+// Branch change requests — profile transfer to a different partner/venue
 export const branchChangeRequests = pgTable("branch_change_requests", {
   id: text("id").primaryKey().default(sql`gen_random_uuid()`),
-  memberId: text("member_id").notNull().references(() => members.id, { onDelete: 'cascade' }),
-  userId: text("user_id").notNull().references(() => user.id, { onDelete: 'cascade' }),
+  profileId: text("profile_id").notNull().references(() => profiles.id, { onDelete: 'cascade' }),
+  userId: text("user_id").references(() => user.id, { onDelete: 'set null' }), // nullable — may not have linked user
   fromPartnerId: text("from_partner_id").references(() => partners.id, { onDelete: 'set null' }),
   toPartnerId: text("to_partner_id").notNull().references(() => partners.id, { onDelete: 'cascade' }),
   reason: text("reason"),
@@ -110,12 +131,20 @@ export const branchChangeRequests = pgTable("branch_change_requests", {
   updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow().notNull(),
 });
 
+// Backward-compatible aliases
+export const members = profiles;
+export const memberMonthlyStatus = profileMonthlyStatus;
+
 // Type exports
-export type Member = typeof members.$inferSelect;
-export type NewMember = typeof members.$inferInsert;
+export type Profile = typeof profiles.$inferSelect;
+export type NewProfile = typeof profiles.$inferInsert;
+export type Member = Profile; // backward compat alias
+export type NewMember = NewProfile; // backward compat alias
 export type Registration = typeof registrations.$inferSelect;
 export type NewRegistration = typeof registrations.$inferInsert;
-export type MemberMonthlyStatus = typeof memberMonthlyStatus.$inferSelect;
-export type NewMemberMonthlyStatus = typeof memberMonthlyStatus.$inferInsert;
+export type ProfileMonthlyStatus = typeof profileMonthlyStatus.$inferSelect;
+export type NewProfileMonthlyStatus = typeof profileMonthlyStatus.$inferInsert;
+export type MemberMonthlyStatus = ProfileMonthlyStatus; // backward compat alias
+export type NewMemberMonthlyStatus = NewProfileMonthlyStatus; // backward compat alias
 export type BranchChangeRequest = typeof branchChangeRequests.$inferSelect;
 export type NewBranchChangeRequest = typeof branchChangeRequests.$inferInsert;

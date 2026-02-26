@@ -43,13 +43,13 @@ export async function GET(request: Request) {
           // Member info
           memberName: members.fullNameEnglish,
           memberNumber: members.memberNumber,
-          memberId: members.id,
+          profileId: members.id,
           // Course info
           courseName: courses.name,
           courseId: courses.id,
         })
         .from(courseEnrollments)
-        .innerJoin(members, eq(courseEnrollments.memberId, members.id))
+        .innerJoin(members, eq(courseEnrollments.profileId, members.id))
         .innerJoin(courses, eq(courseEnrollments.courseId, courses.id))
         .where(and(...conditions))
         .orderBy(desc(courseEnrollments.enrolledAt))
@@ -59,7 +59,7 @@ export async function GET(request: Request) {
       db
         .select({ total: count() })
         .from(courseEnrollments)
-        .innerJoin(members, eq(courseEnrollments.memberId, members.id))
+        .innerJoin(members, eq(courseEnrollments.profileId, members.id))
         .where(and(...conditions)),
     ])
 

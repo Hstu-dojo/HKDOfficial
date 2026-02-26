@@ -52,7 +52,7 @@ export async function POST(
       .where(
         and(
           eq(monthlyFees.id, feeId),
-          eq(monthlyFees.memberId, memberRecord[0].id)
+          eq(monthlyFees.profileId, memberRecord[0].id)
         )
       )
       .limit(1);

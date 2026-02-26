@@ -58,7 +58,7 @@ export async function GET(request: NextRequest) {
           reviewedAt: enrollmentApplications.reviewedAt,
           reviewNotes: enrollmentApplications.reviewNotes,
           rejectionReason: enrollmentApplications.rejectionReason,
-          memberId: enrollmentApplications.memberId,
+          profileId: enrollmentApplications.profileId,
           createdAt: enrollmentApplications.createdAt,
           updatedAt: enrollmentApplications.updatedAt,
         },

@@ -39,7 +39,7 @@ export async function GET(request: NextRequest) {
       })
       .from(courseEnrollments)
       .leftJoin(courses, eq(courseEnrollments.courseId, courses.id))
-      .where(eq(courseEnrollments.memberId, memberRecord[0].id))
+      .where(eq(courseEnrollments.profileId, memberRecord[0].id))
       .orderBy(courseEnrollments.createdAt);
 
     return NextResponse.json(enrollments);

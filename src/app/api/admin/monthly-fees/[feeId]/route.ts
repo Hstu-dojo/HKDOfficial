@@ -53,7 +53,7 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
         },
       })
       .from(monthlyFees)
-      .leftJoin(members, eq(monthlyFees.memberId, members.id))
+      .leftJoin(members, eq(monthlyFees.profileId, members.id))
       .where(eq(monthlyFees.id, feeId));
 
     if (!fee) {
@@ -148,7 +148,7 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
         },
       })
       .from(monthlyFees)
-      .leftJoin(members, eq(monthlyFees.memberId, members.id))
+      .leftJoin(members, eq(monthlyFees.profileId, members.id))
       .where(eq(monthlyFees.id, feeId));
 
     if (!fee) {

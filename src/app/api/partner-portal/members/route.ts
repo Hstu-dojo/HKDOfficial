@@ -112,11 +112,10 @@ export async function POST(request: Request) {
 
     const memberNumber = `${prefix}-${String((existingCount[0]?.total || 0) + 1).padStart(4, '0')}`
 
-    // First create a user record if email is provided
-    let userId: string
+    // If email is provided, try to link to existing user account
+    let userId: string | undefined = undefined
 
     if (email) {
-      // Check if user with this email already exists
       const existingUser = await db
         .select({ id: user.id })
         .from(user)
@@ -125,45 +124,20 @@ export async function POST(request: Request) {
 
       if (existingUser.length > 0) {
         userId = existingUser[0].id
-      } else {
-        // Create a basic user record (no Supabase auth — partner-managed student)
-        const [newUser] = await db
-          .insert(user)
-          .values({
-            email,
-            userName: `${fullNameEnglish.replace(/\s+/g, '-').toLowerCase()}-${Date.now()}`,
-            password: 'partner-managed-no-login',
-            userAvatar: '/image/avatar/default.png',
-            hasPassword: false,
-          })
-          .returning({ id: user.id })
-
-        userId = newUser.id
       }
-    } else {
-      // Create user without email (minimal record)
-      const [newUser] = await db
-        .insert(user)
-        .values({
-          email: `${memberNumber.toLowerCase()}@partner-managed.local`,
-          userName: `${memberNumber.toLowerCase()}-${Date.now()}`,
-          password: 'partner-managed-no-login',
-          userAvatar: '/image/avatar/default.png',
-          hasPassword: false,
-        })
-        .returning({ id: user.id })
-
-      userId = newUser.id
+      // If no user exists, profile is created without a linked account
+      // The user can be linked later via attach/detach APIs
     }
 
-    // Create the member record
-    const [newMember] = await db
+    // Create the profile record (no user account required)
+    const [newProfile] = await db
       .insert(members)
       .values({
-        userId,
+        userId: userId || null,
         memberNumber,
         fullNameEnglish,
         phoneNumber,
+        email: email || null,
         dateOfBirth: dateOfBirth ? new Date(dateOfBirth) : undefined,
         gender,
         bloodGroup,
@@ -175,7 +149,7 @@ export async function POST(request: Request) {
       })
       .returning()
 
-    return NextResponse.json({ member: newMember }, { status: 201 })
+    return NextResponse.json({ member: newProfile }, { status: 201 })
   } catch (err) {
     console.error('[PartnerPortal] Members POST error:', err)
     return NextResponse.json({ error: 'Failed to create member' }, { status: 500 })

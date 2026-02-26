@@ -37,7 +37,7 @@ interface Enrollment {
   enrollment: {
     id: string;
     enrollmentNumber: string;
-    memberId: string;
+    profileId: string;
     courseId: string;
     status: string;
     startDate: string;

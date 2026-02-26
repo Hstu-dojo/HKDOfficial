@@ -2,7 +2,7 @@ import { pgTable, text, integer, boolean, timestamp, jsonb } from "drizzle-orm/p
 import { sql } from "drizzle-orm";
 import { user } from "../auth";
 import { courses } from "./courses";
-import { members } from "./members";
+import { profiles } from "./members";
 import { pgEnum } from "drizzle-orm/pg-core";
 
 // Enrollment Application Status Enum
@@ -83,8 +83,8 @@ export const enrollmentApplications = pgTable("enrollment_applications", {
   reviewNotes: text("review_notes"),
   rejectionReason: text("rejection_reason"),
   
-  // If approved, link to member record
-  memberId: text("member_id").references(() => members.id),
+  // If approved, link to profile record
+  profileId: text("profile_id").references(() => profiles.id),
   
   // Timestamps
   createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
@@ -95,7 +95,7 @@ export const enrollmentApplications = pgTable("enrollment_applications", {
 export const courseEnrollments = pgTable("course_enrollments", {
   id: text("id").primaryKey().default(sql`gen_random_uuid()`),
   courseId: text("course_id").notNull().references(() => courses.id),
-  memberId: text("member_id").notNull().references(() => members.id, { onDelete: 'cascade' }),
+  profileId: text("profile_id").notNull().references(() => profiles.id, { onDelete: 'cascade' }),
   applicationId: text("application_id").references(() => enrollmentApplications.id),
   
   // Enrollment details

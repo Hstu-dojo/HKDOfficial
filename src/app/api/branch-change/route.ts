@@ -64,7 +64,7 @@ export async function GET() {
         createdAt: branchChangeRequests.createdAt,
       })
       .from(branchChangeRequests)
-      .where(eq(branchChangeRequests.memberId, auth.member.id))
+      .where(eq(branchChangeRequests.profileId, auth.member.id))
       .orderBy(desc(branchChangeRequests.createdAt))
 
     return NextResponse.json({ requests })
@@ -110,7 +110,7 @@ export async function POST(request: Request) {
       .from(branchChangeRequests)
       .where(
         and(
-          eq(branchChangeRequests.memberId, auth.member.id),
+          eq(branchChangeRequests.profileId, auth.member.id),
           eq(branchChangeRequests.status, 'pending')
         )
       )
@@ -126,7 +126,7 @@ export async function POST(request: Request) {
     const [newRequest] = await db
       .insert(branchChangeRequests)
       .values({
-        memberId: auth.member.id,
+        profileId: auth.member.id,
         userId: auth.user.id,
         fromPartnerId: auth.member.partnerId || null,
         toPartnerId,

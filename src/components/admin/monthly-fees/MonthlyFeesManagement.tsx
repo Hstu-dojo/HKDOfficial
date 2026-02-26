@@ -19,7 +19,7 @@ import { toast } from 'sonner';
 interface MonthlyFee {
   fee: {
     id: string;
-    memberId: string;
+    profileId: string;
     enrollmentId: string;
     billingMonth: string;
     billingYear: number;

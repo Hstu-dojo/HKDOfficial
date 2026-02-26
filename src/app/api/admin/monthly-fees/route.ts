@@ -64,7 +64,7 @@ export async function GET(request: NextRequest) {
         .where(eq(members.userId, context.userId));
 
       if (memberProfile) {
-        conditions.push(eq(monthlyFees.memberId, memberProfile.id));
+        conditions.push(eq(monthlyFees.profileId, memberProfile.id));
       } else {
         // User has no member profile, return empty
         return NextResponse.json([]);
@@ -76,7 +76,7 @@ export async function GET(request: NextRequest) {
     }
     
     if (memberIdFilter) {
-      conditions.push(eq(monthlyFees.memberId, memberIdFilter));
+      conditions.push(eq(monthlyFees.profileId, memberIdFilter));
     }
 
     if (billingMonthFilter) {
@@ -102,7 +102,7 @@ export async function GET(request: NextRequest) {
         },
       })
       .from(monthlyFees)
-      .leftJoin(members, eq(monthlyFees.memberId, members.id))
+      .leftJoin(members, eq(monthlyFees.profileId, members.id))
       .leftJoin(courseEnrollments, eq(monthlyFees.enrollmentId, courseEnrollments.id))
       .where(conditions.length > 0 ? and(...conditions) : undefined)
       .orderBy(desc(monthlyFees.dueDate));
@@ -219,7 +219,7 @@ export async function POST(request: NextRequest) {
         // Create new fee record
         await db.insert(monthlyFees).values({
           enrollmentId: enrollment.id,
-          memberId: enrollment.memberId,
+          profileId: enrollment.profileId,
           billingMonth,
           billingYear,
           amount: enrollment.monthlyFee,

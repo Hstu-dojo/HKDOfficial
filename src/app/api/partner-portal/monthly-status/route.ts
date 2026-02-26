@@ -18,7 +18,7 @@ export async function GET(request: Request) {
   const url = new URL(request.url)
   const month = parseInt(url.searchParams.get('month') || String(new Date().getMonth() + 1), 10)
   const year = parseInt(url.searchParams.get('year') || String(new Date().getFullYear()), 10)
-  const memberId = url.searchParams.get('memberId') // optional: filter by specific member
+  const profileIdParam = url.searchParams.get('profileId') || url.searchParams.get('memberId') // backward compat
 
   try {
     const conditions = [
@@ -27,14 +27,14 @@ export async function GET(request: Request) {
       eq(memberMonthlyStatus.year, year),
     ]
 
-    if (memberId) {
-      conditions.push(eq(memberMonthlyStatus.memberId, memberId))
+    if (profileIdParam) {
+      conditions.push(eq(memberMonthlyStatus.profileId, profileIdParam))
     }
 
     const statuses = await db
       .select({
         id: memberMonthlyStatus.id,
-        memberId: memberMonthlyStatus.memberId,
+        profileId: memberMonthlyStatus.profileId,
         memberName: members.fullNameEnglish,
         memberNumber: members.memberNumber,
         month: memberMonthlyStatus.month,
@@ -44,7 +44,7 @@ export async function GET(request: Request) {
         updatedAt: memberMonthlyStatus.updatedAt,
       })
       .from(memberMonthlyStatus)
-      .leftJoin(members, eq(memberMonthlyStatus.memberId, members.id))
+      .leftJoin(members, eq(memberMonthlyStatus.profileId, members.id))
       .where(and(...conditions))
 
     // Also get all members for this partner (to show who doesn't have a status yet)
@@ -58,14 +58,14 @@ export async function GET(request: Request) {
       .from(members)
       .where(eq(members.partnerId, partnerUser.partnerId))
 
-    // Build a map: memberId → monthlyStatus
-    const statusMap = new Map(statuses.map((s) => [s.memberId, s]))
+    // Build a map: profileId → monthlyStatus
+    const statusMap = new Map(statuses.map((s) => [s.profileId, s]))
 
     // Merge: members with their monthly status (default to the member's overall isActive)
     const merged = allMembers.map((m) => {
       const ms = statusMap.get(m.id)
       return {
-        memberId: m.id,
+        profileId: m.id,
         memberName: m.fullNameEnglish,
         memberNumber: m.memberNumber,
         month,
@@ -99,17 +99,18 @@ export async function POST(request: Request) {
 
   try {
     const body = await request.json()
-    const { memberId, month, year, isActive, notes } = body
+    const { profileId: bodyProfileId, memberId: bodyMemberId, month, year, isActive, notes } = body
+    const profileId = bodyProfileId || bodyMemberId // backward compat
 
-    if (!memberId || !month || !year) {
-      return NextResponse.json({ error: 'memberId, month, and year are required' }, { status: 400 })
+    if (!profileId || !month || !year) {
+      return NextResponse.json({ error: 'profileId, month, and year are required' }, { status: 400 })
     }
 
     // Verify member belongs to this partner
     const [member] = await db
       .select({ id: members.id })
       .from(members)
-      .where(and(eq(members.id, memberId), eq(members.partnerId, partnerUser.partnerId)))
+      .where(and(eq(members.id, profileId), eq(members.partnerId, partnerUser.partnerId)))
       .limit(1)
 
     if (!member) {
@@ -122,7 +123,7 @@ export async function POST(request: Request) {
       .from(memberMonthlyStatus)
       .where(
         and(
-          eq(memberMonthlyStatus.memberId, memberId),
+          eq(memberMonthlyStatus.profileId, profileId),
           eq(memberMonthlyStatus.month, month),
           eq(memberMonthlyStatus.year, year)
         )
@@ -141,7 +142,7 @@ export async function POST(request: Request) {
         .where(eq(memberMonthlyStatus.id, existing[0].id))
     } else {
       await db.insert(memberMonthlyStatus).values({
-        memberId,
+        profileId: profileId,
         partnerId: partnerUser.partnerId,
         month,
         year,
@@ -168,7 +169,7 @@ export async function PATCH(request: Request) {
   try {
     const body = await request.json()
     const { month, year, updates } = body
-    // updates: Array<{ memberId: string; isActive: boolean; notes?: string }>
+    // updates: Array<{ profileId: string; isActive: boolean; notes?: string }>
 
     if (!month || !year || !Array.isArray(updates) || updates.length === 0) {
       return NextResponse.json(
@@ -178,7 +179,7 @@ export async function PATCH(request: Request) {
     }
 
     // Verify all members belong to this partner
-    const memberIds = updates.map((u: any) => u.memberId)
+    const memberIds = updates.map((u: any) => u.profileId || u.memberId)
     const validMembers = await db
       .select({ id: members.id })
       .from(members)
@@ -188,14 +189,15 @@ export async function PATCH(request: Request) {
 
     let processed = 0
     for (const update of updates) {
-      if (!validIds.has(update.memberId)) continue
+      const updateProfileId = update.profileId || update.memberId
+      if (!validIds.has(updateProfileId)) continue
 
       const existing = await db
         .select({ id: memberMonthlyStatus.id })
         .from(memberMonthlyStatus)
         .where(
           and(
-            eq(memberMonthlyStatus.memberId, update.memberId),
+            eq(memberMonthlyStatus.profileId, updateProfileId),
             eq(memberMonthlyStatus.month, month),
             eq(memberMonthlyStatus.year, year)
           )
@@ -214,7 +216,7 @@ export async function PATCH(request: Request) {
           .where(eq(memberMonthlyStatus.id, existing[0].id))
       } else {
         await db.insert(memberMonthlyStatus).values({
-          memberId: update.memberId,
+          profileId: updateProfileId,
           partnerId: partnerUser.partnerId,
           month,
           year,

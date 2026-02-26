@@ -44,7 +44,7 @@ export async function POST(request: NextRequest) {
       })
       .from(courseEnrollments)
       .innerJoin(courses, eq(courseEnrollments.courseId, courses.id))
-      .innerJoin(members, eq(courseEnrollments.memberId, members.id))
+      .innerJoin(members, eq(courseEnrollments.profileId, members.id))
       .where(eq(courseEnrollments.isActive, true));
 
     if (activeEnrollments.length === 0) {
@@ -88,7 +88,7 @@ export async function POST(request: NextRequest) {
 
     // Generate fees with correct schema fields
     const feesToInsert = enrollmentsToGenerate.map((e) => ({
-      memberId: e.enrollment.memberId,
+      profileId: e.enrollment.profileId,
       enrollmentId: e.enrollment.id,
       billingMonth,
       billingYear: year,

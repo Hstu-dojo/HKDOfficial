@@ -2,7 +2,7 @@ import { pgTable, text, timestamp } from "drizzle-orm/pg-core";
 import { sql } from "drizzle-orm";
 import { equipmentStatusEnum } from "../enums";
 import { user } from "../auth";
-import { members } from "./members";
+import { profiles } from "./members";
 
 // Equipment inventory
 export const equipment = pgTable("equipment", {
@@ -23,7 +23,7 @@ export const equipment = pgTable("equipment", {
 export const equipmentCheckouts = pgTable("equipment_checkouts", {
   id: text("id").primaryKey().default(sql`gen_random_uuid()`),
   equipmentId: text("equipment_id").notNull().references(() => equipment.id, { onDelete: 'cascade' }),
-  memberId: text("member_id").notNull().references(() => members.id, { onDelete: 'cascade' }),
+  profileId: text("profile_id").notNull().references(() => profiles.id, { onDelete: 'cascade' }),
   checkedOutAt: timestamp("checked_out_at", { withTimezone: true }).defaultNow().notNull(),
   checkedOutBy: text("checked_out_by").notNull().references(() => user.id), // equipment manager
   dueDate: timestamp("due_date", { withTimezone: true }),

@@ -19,9 +19,9 @@ export async function checkUserProfileStatus(userId: string) {
 
   if (member) {
     if (member.isProfileComplete) {
-      return { isComplete: true, memberId: member.id };
+      return { isComplete: true, profileId: member.id };
     }
-    return { isComplete: false, message: "Profile incomplete", memberId: member.id };
+    return { isComplete: false, message: "Profile incomplete", profileId: member.id };
   }
 
   // Check if there is a pending registration

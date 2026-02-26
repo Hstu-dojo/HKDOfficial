@@ -35,7 +35,7 @@ export async function GET(request: Request) {
       db
         .select({
           id: branchChangeRequests.id,
-          memberId: branchChangeRequests.memberId,
+          profileId: branchChangeRequests.profileId,
           memberName: members.fullNameEnglish,
           memberNumber: members.memberNumber,
           memberPhone: members.phoneNumber,
@@ -48,7 +48,7 @@ export async function GET(request: Request) {
           createdAt: branchChangeRequests.createdAt,
         })
         .from(branchChangeRequests)
-        .leftJoin(members, eq(branchChangeRequests.memberId, members.id))
+        .leftJoin(members, eq(branchChangeRequests.profileId, members.id))
         .leftJoin(partners, eq(branchChangeRequests.fromPartnerId, partners.id))
         .where(and(...conditions))
         .orderBy(desc(branchChangeRequests.createdAt))
@@ -133,7 +133,7 @@ export async function PATCH(request: Request) {
           partnerId: partnerUser.partnerId,
           updatedAt: new Date(),
         })
-        .where(eq(members.id, req.memberId))
+        .where(eq(members.id, req.profileId))
     }
 
     return NextResponse.json({

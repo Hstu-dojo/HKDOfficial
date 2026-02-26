@@ -2,7 +2,7 @@ import { pgTable, text, integer, boolean, timestamp, jsonb } from "drizzle-orm/p
 import { sql } from "drizzle-orm";
 import { pgEnum } from "drizzle-orm/pg-core";
 import { user } from "../auth";
-import { members } from "./members";
+import { profiles } from "./members";
 import { courseEnrollments } from "./enrollments";
 
 // Monthly Fee Status Enum
@@ -22,7 +22,7 @@ export const monthlyFees = pgTable("monthly_fees", {
   
   // Link to enrollment
   enrollmentId: text("enrollment_id").notNull().references(() => courseEnrollments.id, { onDelete: 'cascade' }),
-  memberId: text("member_id").notNull().references(() => members.id, { onDelete: 'cascade' }),
+  profileId: text("profile_id").notNull().references(() => profiles.id, { onDelete: 'cascade' }),
   
   // Billing Period
   billingMonth: text("billing_month").notNull(), // Format: "2026-01" (YYYY-MM)
@@ -67,7 +67,7 @@ export const monthlyFees = pgTable("monthly_fees", {
 export const paymentReminders = pgTable("payment_reminders", {
   id: text("id").primaryKey().default(sql`gen_random_uuid()`),
   monthlyFeeId: text("monthly_fee_id").notNull().references(() => monthlyFees.id, { onDelete: 'cascade' }),
-  memberId: text("member_id").notNull().references(() => members.id, { onDelete: 'cascade' }),
+  profileId: text("profile_id").notNull().references(() => profiles.id, { onDelete: 'cascade' }),
   
   // Reminder Details
   reminderType: text("reminder_type").notNull(), // 'email', 'sms', 'push'

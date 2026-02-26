@@ -3,7 +3,7 @@
 import React, { useEffect, useState, useCallback } from 'react'
 
 interface MemberStatus {
-  memberId: string
+  profileId: string
   memberName: string | null
   memberNumber: string | null
   month: number
@@ -56,21 +56,21 @@ export default function MonthlyStatusView() {
     fetchData()
   }, [fetchData])
 
-  const toggleMember = async (memberId: string, currentActive: boolean) => {
-    setUpdating(memberId)
+  const toggleMember = async (profileId: string, currentActive: boolean) => {
+    setUpdating(profileId)
     setMessage('')
     try {
       const res = await fetch('/api/partner-portal/monthly-status', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ memberId, month, year, isActive: !currentActive }),
+        body: JSON.stringify({ profileId, month, year, isActive: !currentActive }),
       })
       const data = await res.json()
       if (!res.ok) throw new Error(data.error)
       // Update local state
       setMembers((prev) =>
         prev.map((m) =>
-          m.memberId === memberId
+          m.profileId === profileId
             ? { ...m, isActiveThisMonth: !currentActive, hasMonthlyRecord: true }
             : m
         )
@@ -91,7 +91,7 @@ export default function MonthlyStatusView() {
     setSavingAll(true)
     setMessage('')
     try {
-      const updates = members.map((m) => ({ memberId: m.memberId, isActive: true }))
+      const updates = members.map((m) => ({ profileId: m.profileId, isActive: true }))
       const res = await fetch('/api/partner-portal/monthly-status', {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
@@ -217,7 +217,7 @@ export default function MonthlyStatusView() {
             </thead>
             <tbody>
               {members.map((m) => (
-                <tr key={m.memberId} style={{ borderTop: '1px solid #e5e7eb' }}>
+                <tr key={m.profileId} style={{ borderTop: '1px solid #e5e7eb' }}>
                   <td style={tdStyle}>{m.memberName || 'Unknown'}</td>
                   <td style={{ ...tdStyle, color: '#6b7280', fontFamily: 'monospace', fontSize: '0.8125rem' }}>
                     {m.memberNumber || '—'}
@@ -244,8 +244,8 @@ export default function MonthlyStatusView() {
                   </td>
                   <td style={{ ...tdStyle, textAlign: 'center' }}>
                     <button
-                      onClick={() => toggleMember(m.memberId, m.isActiveThisMonth)}
-                      disabled={updating === m.memberId}
+                      onClick={() => toggleMember(m.profileId, m.isActiveThisMonth)}
+                      disabled={updating === m.profileId}
                       style={{
                         padding: '0.25rem 0.625rem',
                         border: '1px solid',
@@ -253,13 +253,13 @@ export default function MonthlyStatusView() {
                         borderRadius: '0.25rem',
                         backgroundColor: m.isActiveThisMonth ? '#fef2f2' : '#f0fdf4',
                         color: m.isActiveThisMonth ? '#dc2626' : '#16a34a',
-                        cursor: updating === m.memberId ? 'not-allowed' : 'pointer',
+                        cursor: updating === m.profileId ? 'not-allowed' : 'pointer',
                         fontSize: '0.75rem',
                         fontWeight: 500,
-                        opacity: updating === m.memberId ? 0.5 : 1,
+                        opacity: updating === m.profileId ? 0.5 : 1,
                       }}
                     >
-                      {updating === m.memberId
+                      {updating === m.profileId
                         ? '...'
                         : m.isActiveThisMonth
                           ? 'Set Inactive'

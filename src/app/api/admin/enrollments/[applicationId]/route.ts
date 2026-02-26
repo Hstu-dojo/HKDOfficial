@@ -334,7 +334,7 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
           .insert(courseEnrollments)
           .values({
             courseId: application.courseId,
-            memberId: memberProfile.id,
+            profileId: memberProfile.id,
             applicationId: application.id,
             startDate,
             expectedEndDate,
@@ -351,7 +351,7 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
 
         await db.insert(monthlyFees).values({
           enrollmentId: enrollment.id,
-          memberId: memberProfile.id,
+          profileId: memberProfile.id,
           billingMonth,
           billingYear: now.getFullYear(),
           amount: course.monthlyFee,
@@ -377,7 +377,7 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
             reviewedBy: context.userId,
             reviewedAt: new Date(),
             reviewNotes: notes,
-            memberId: memberProfile.id,
+            profileId: memberProfile.id,
             updatedAt: new Date(),
           })
           .where(eq(enrollmentApplications.id, applicationId))
@@ -385,7 +385,7 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
 
         return NextResponse.json({
           ...updated,
-          memberId: memberProfile.id,
+          profileId: memberProfile.id,
           enrollmentId: enrollment.id,
         });
       }

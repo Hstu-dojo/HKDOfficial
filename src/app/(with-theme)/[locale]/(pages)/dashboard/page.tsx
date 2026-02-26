@@ -58,9 +58,9 @@ export default async function DashboardPage() {
         <div className="text-center md:text-left flex-1">
           <h1 className="text-2xl font-bold text-slate-900 dark:text-slate-100">{user.name}</h1>
           <p className="text-slate-600 dark:text-slate-400">{user.email}</p>
-          {user.memberId ? (
+          {user.profileId ? (
             <div className="mt-2 inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-primary/10 text-primary border border-primary/20">
-              Member ID: {user.memberId}
+              Member ID: {user.profileId}
             </div>
           ) : user.registrationStatus ? (
             <div className="mt-2 inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800 border border-yellow-200 dark:bg-yellow-900/30 dark:text-yellow-400 dark:border-yellow-800">
