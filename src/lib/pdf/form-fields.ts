@@ -244,14 +244,16 @@ export const FORM_FIELDS: FormFieldDef[] = [
   {
     id: 'dojo_branch', pdfFieldId: 'text_24fdfi',
     label: 'Karate Dojo Branch', labelBn: 'কারাতে ডোজো শাখা',
-    placeholder: 'e.g., HSTU Main Branch',
+    placeholder: 'Auto-filled from course partner',
     type: 'text', required: true, maxLength: 100, section: 'branch',
+    readOnly: true,
   },
   {
     id: 'dojo_location', pdfFieldId: 'text_25csjw',
     label: 'Karate Dojo Location', labelBn: 'কারাতে ডোজো অবস্থান',
-    placeholder: 'e.g., HSTU Campus',
+    placeholder: 'Auto-filled from course partner',
     type: 'text', required: true, maxLength: 100, section: 'branch',
+    readOnly: true,
   },
   {
     id: 'signature_date', pdfFieldId: 'text_38egdr',
