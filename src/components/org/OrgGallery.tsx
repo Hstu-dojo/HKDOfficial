@@ -36,17 +36,18 @@ export default function OrgGallery({ images, orgName }: OrgGalleryProps) {
     <section ref={sectionRef} className="relative bg-background overflow-hidden">
       {/* Top accent line */}
       <div
-        className="absolute top-0 left-0 h-[2px] bg-accent transition-all duration-[1200ms] ease-[cubic-bezier(0.16_1_0.3_1)]"
-        style={{ width: isVisible ? "100%" : "0%" }}
+        className="absolute top-0 left-0 h-[2px] bg-accent transition-all"
+        style={{ width: isVisible ? "100%" : "0%", transitionDuration: '1200ms', transitionTimingFunction: 'cubic-bezier(0.16, 1, 0.3, 1)' }}
       />
 
       {/* Section label */}
       <div className="px-4 md:px-8 lg:px-12 pt-6 md:pt-16 pb-3 md:pb-8 max-w-[1400px] mx-auto w-full">
         <div
-          className="flex items-center justify-between transition-all duration-700 ease-[cubic-bezier(0.16_1_0.3_1)]"
+          className="flex items-center justify-between transition-all duration-700"
           style={{
             opacity: isVisible ? 1 : 0,
             transform: isVisible ? "translateX(0)" : "translateX(-30px)",
+            transitionTimingFunction: 'cubic-bezier(0.16, 1, 0.3, 1)',
           }}
         >
           <div className="flex items-center gap-2 md:gap-4">
@@ -83,13 +84,15 @@ export default function OrgGallery({ images, orgName }: OrgGalleryProps) {
                 style={{ marginTop: `${offsets[i % 4]}px` }}
               >
                 <div
-                  className="transition-all duration-[800ms] ease-[cubic-bezier(0.16_1_0.3_1)]"
+                  className="transition-all"
                   style={{
                     opacity: isVisible ? 1 : 0,
                     transform: isVisible
                       ? "translateY(0) skewY(0deg)"
                       : "translateY(60px) skewY(2deg)",
                     transitionDelay: `${i * 150}ms`,
+                    transitionDuration: '800ms',
+                    transitionTimingFunction: 'cubic-bezier(0.16, 1, 0.3, 1)',
                   }}
                 >
                   <div className={`relative overflow-hidden ${aspects[i % 4]}`}>
@@ -97,10 +100,11 @@ export default function OrgGallery({ images, orgName }: OrgGalleryProps) {
                       src={src || "/placeholder.svg"}
                       alt={`${orgName} gallery image ${i + 1}`}
                       fill
-                      className="object-cover grayscale group-hover:grayscale-0 transition-all duration-700 ease-[cubic-bezier(0.16_1_0.3_1)] group-hover:scale-105"
+                      className="object-cover grayscale group-hover:grayscale-0 transition-all duration-700 group-hover:scale-105"
+                    style={{ transitionTimingFunction: 'cubic-bezier(0.16, 1, 0.3, 1)' }}
                     />
                     <div className="absolute inset-0 bg-background/30 group-hover:bg-background/0 transition-colors duration-500" />
-                    <div className="absolute bottom-0 left-0 w-full h-[3px] bg-accent scale-x-0 group-hover:scale-x-100 transition-transform duration-500 ease-[cubic-bezier(0.16_1_0.3_1)] origin-left" />
+                    <div className="absolute bottom-0 left-0 w-full h-[3px] bg-accent scale-x-0 group-hover:scale-x-100 transition-transform duration-500 origin-left" style={{ transitionTimingFunction: 'cubic-bezier(0.16, 1, 0.3, 1)' }} />
                     <div className="absolute top-0 left-0 w-5 h-5 border-t-2 border-l-2 border-accent/0 group-hover:border-accent transition-colors duration-300" />
                     <div className="absolute bottom-0 right-0 w-5 h-5 border-b-2 border-r-2 border-accent/0 group-hover:border-accent transition-colors duration-300" />
                     <span className="absolute top-3 right-3 font-body text-[10px] text-foreground/30 group-hover:text-accent transition-colors duration-300 tracking-widest">
@@ -140,11 +144,13 @@ export default function OrgGallery({ images, orgName }: OrgGalleryProps) {
           {displayImages.map((src, i) => (
             <div key={`mobile-${src}-${i}`} className="relative">
               <div
-                className="transition-all duration-[600ms] ease-[cubic-bezier(0.16_1_0.3_1)]"
+                className="transition-all"
                 style={{
                   opacity: isVisible ? 1 : 0,
                   transform: isVisible ? "translateY(0)" : "translateY(30px)",
                   transitionDelay: `${i * 80}ms`,
+                  transitionDuration: '600ms',
+                  transitionTimingFunction: 'cubic-bezier(0.16, 1, 0.3, 1)',
                 }}
               >
                 <div className="relative overflow-hidden aspect-[3/4]">
