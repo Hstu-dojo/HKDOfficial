@@ -39,12 +39,11 @@ function withPartnerAdminFix(request: NextRequest) {
 }
 
 const middlewares = {
-  // define your middlewares here...
-  // first internationalization, then auth middleware!
+  // ── Locale-rewritten routes (i18n) ──────────────────────────
+  // IMPORTANT: Do NOT add a catch-all "/:locale" pattern here!
+  // It matches every single-segment path (/docs, /blog, /studio, etc.)
+  // and incorrectly applies locale rewriting to them.
   "/": withLocaleMiddleware,
-  "/:locale": withLocaleMiddleware,
-  // "/services": withLocaleMiddleware,
-  // "/pricing": withLocaleMiddleware,
   "/about": withLocaleMiddleware,
 
   // Admin routes - require admin-level roles (both with and without locale prefix)
@@ -103,9 +102,9 @@ const middlewares = {
   "/:locale/posts": withLocaleMiddleware,
   "/:locale/posts/:path*": withLocaleMiddleware,
 
-  // Docs routes - require admin-level roles
-  "/docs": [withAdminMiddleware],
-  "/docs/:path*": [withAdminMiddleware],
+  // Docs routes — admin-only, NO locale rewriting (served by Nextra / Pages Router)
+  "/docs": withAdminMiddleware,
+  "/docs/:path*": withAdminMiddleware,
 };
 
 // Create middlewares helper
@@ -141,6 +140,8 @@ export const config = {
    *       but normal partner-admin routes pass through untouched.
    */
   matcher: [
-    "/((?!api|payload-api|org|auth|static|.*\\..*|_next|favicon.ico|sitemap.xml|robots.txt).*)",
+    // NOTE: /docs is intentionally NOT excluded — it needs withAdminMiddleware.
+    // Routes like /blog, /unauthorized, /studio etc. need no middleware at all.
+    "/((?!api|payload-api|org|auth|static|blog|unauthorized|studio|notice|gallery|p|.*\\..*|_next|favicon.ico|sitemap.xml|robots.txt).*)",
   ],
 };
