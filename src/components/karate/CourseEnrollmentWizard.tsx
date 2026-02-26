@@ -272,11 +272,56 @@ export default function CourseEnrollmentWizard({
     setSubmitting(true);
 
     try {
+      // ------------------------------------------------------------------
+      // Step 0: Upload photo & signature to Cloudinary
+      // ------------------------------------------------------------------
+      let profilePhotoUrl: string | undefined;
+      let signatureUrl: string | undefined;
+
+      const uploadImage = async (dataUrl: string, type: 'photo' | 'signature') => {
+        const res = await fetch('/api/enrollments/upload-image', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ dataUrl, type, courseId: course.id }),
+        });
+        if (!res.ok) {
+          const err = await res.json();
+          throw new Error(err.error || `Failed to upload ${type}`);
+        }
+        const { secureUrl } = await res.json();
+        return secureUrl as string;
+      };
+
+      // Upload in parallel
+      const uploadPromises: Promise<void>[] = [];
+
+      if (images.photo) {
+        uploadPromises.push(
+          uploadImage(images.photo, 'photo').then((url) => {
+            profilePhotoUrl = url;
+          }),
+        );
+      }
+      if (images.signature) {
+        uploadPromises.push(
+          uploadImage(images.signature, 'signature').then((url) => {
+            signatureUrl = url;
+          }),
+        );
+      }
+
+      if (uploadPromises.length > 0) {
+        toast.info('Uploading images…');
+        await Promise.all(uploadPromises);
+      }
+
       // Build student info for the API
       const studentInfo = {
         ...formData,
         hasPhoto: !!images.photo,
         hasSignature: !!images.signature,
+        profilePhotoUrl,
+        signatureUrl,
       };
 
       // Build onboarding data
@@ -524,7 +569,8 @@ export default function CourseEnrollmentWizard({
       </div>
 
       {/* Form content (animated) */}
-      <div className="bg-card rounded-xl border border-border shadow-sm overflow-hidden">
+      <div className="bg-card rounded-xl border border-border shadow-sm">
+        <div className="overflow-hidden">
         <AnimatePresence mode="wait" custom={direction}>
           <motion.div
             key={currentSectionId}
@@ -598,6 +644,7 @@ export default function CourseEnrollmentWizard({
             )}
           </motion.div>
         </AnimatePresence>
+        </div>
 
         {/* Navigation */}
         <div className="flex items-center justify-between p-6 pt-4 border-t border-border mt-4">

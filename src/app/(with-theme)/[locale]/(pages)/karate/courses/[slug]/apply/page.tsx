@@ -6,10 +6,11 @@ import { Metadata } from 'next';
 import { notFound, redirect } from 'next/navigation';
 import { db } from '@/lib/connect-db';
 import { courses, courseSchedules } from '@/db/schemas/karate/courses';
+import { enrollmentApplications } from '@/db/schemas/karate/enrollments';
 import { members, registrations } from '@/db/schemas/karate/members';
 import { partners } from '@/db/schemas/partner';
 import { user as userSchema } from '@/db/schemas/auth';
-import { eq } from 'drizzle-orm';
+import { eq, and, ne } from 'drizzle-orm';
 import { createClient } from '@/lib/supabase/server';
 
 // ISR: revalidate every 120 seconds
@@ -176,6 +177,42 @@ export default async function CourseApplicationPage({ params }: PageProps) {
   
   if (!isAuthenticated) {
     redirect(`/login?callbackUrl=/${locale}/karate/courses/${slug}/apply`);
+  }
+
+  // Block re-editing: if user already has an active (non-rejected/cancelled)
+  // application for this course, redirect to the success page.
+  try {
+    const supabase = await createClient();
+    const { data: { user: authUser } } = await supabase.auth.getUser();
+    if (authUser) {
+      const publicUser = await db.query.user.findFirst({
+        where: eq(userSchema.supabaseUserId, authUser.id),
+      });
+      if (publicUser) {
+        const existingApp = await db
+          .select({ id: enrollmentApplications.id })
+          .from(enrollmentApplications)
+          .where(
+            and(
+              eq(enrollmentApplications.userId, publicUser.id),
+              eq(enrollmentApplications.courseId, slug),
+              ne(enrollmentApplications.status, 'rejected'),
+              ne(enrollmentApplications.status, 'cancelled'),
+            )
+          )
+          .limit(1);
+
+        if (existingApp.length > 0) {
+          redirect(`/${locale}/karate/courses/${slug}/apply/success?applicationId=${existingApp[0].id}`);
+        }
+      }
+    }
+  } catch (err: unknown) {
+    // redirect() throws a special error internally — always re-throw it
+    const digest = (err as { digest?: string })?.digest;
+    if (typeof digest === 'string' && digest.startsWith('NEXT_REDIRECT')) throw err;
+    // For other errors, swallow and let the form render
+    // (the API has its own duplicate check as a safety net)
   }
   
   return (
