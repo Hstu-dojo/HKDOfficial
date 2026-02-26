@@ -26,14 +26,18 @@ async function getCourse(slug: string) {
     const schedules = await db.select().from(courseSchedules).where(eq(courseSchedules.courseId, course.id));
 
     return {
-      ...course,
+      id: course.id,
+      name: course.name,
       slug: course.id,
-      description: course.description ?? undefined,
-      imageUrl: course.thumbnailUrl,
       shortDescription: course.description ?? '',
-      beltLevelFrom: course.minimumBelt,
-      beltLevelTo: course.targetBelt,
-      durationMonths: course.duration,
+      description: course.description ?? undefined,
+      monthlyFee: course.monthlyFee,
+      admissionFee: course.admissionFee,
+      currency: course.currency,
+      bkashNumber: course.bkashNumber ?? undefined,
+      bkashQrCodeUrl: course.bkashQrCodeUrl ?? undefined,
+      imageUrl: course.thumbnailUrl ?? undefined,
+      isEnrollmentOpen: course.isEnrollmentOpen,
       schedules: schedules.map(s => ({
         dayOfWeek: s.dayOfWeek,
         startTime: s.startTime,

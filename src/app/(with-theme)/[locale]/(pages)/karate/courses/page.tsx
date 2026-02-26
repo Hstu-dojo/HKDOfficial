@@ -55,21 +55,31 @@ async function getCourses(partnerId?: string | null) {
     const coursesWithSchedules = await Promise.all(activeCourses.map(async (course) => {
       const schedules = await db.select().from(courseSchedules).where(eq(courseSchedules.courseId, course.id));
       return {
-        ...course,
+        id: course.id,
+        name: course.name,
         slug: course.id,
-        description: course.description ?? undefined,
-        imageUrl: course.thumbnailUrl,
         shortDescription: course.description ?? '',
-        beltLevelFrom: course.minimumBelt,
-        beltLevelTo: course.targetBelt,
-        durationMonths: course.duration,
+        description: course.description ?? undefined,
+        targetAudience: undefined,
+        minAge: undefined,
+        maxAge: undefined,
+        beltLevelFrom: course.minimumBelt ?? undefined,
+        beltLevelTo: course.targetBelt ?? undefined,
+        durationMonths: course.duration ?? undefined,
+        monthlyFee: course.monthlyFee,
+        admissionFee: course.admissionFee,
+        currency: course.currency,
+        maxCapacity: course.maxStudents ?? undefined,
         currentEnrollment: course.currentStudents ?? 0,
+        features: course.features ?? undefined,
+        imageUrl: course.thumbnailUrl ?? undefined,
+        isEnrollmentOpen: course.isEnrollmentOpen,
         schedules: schedules.map(s => ({
           dayOfWeek: s.dayOfWeek,
           startTime: s.startTime,
           endTime: s.endTime,
-          location: s.location
-        }))
+          location: s.location ?? undefined,
+        })),
       };
     }));
 
