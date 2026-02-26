@@ -121,7 +121,12 @@ export const Header = () => {
   return (
     <div className="relative left-0 top-0 mx-20 w-full max-w-7xl py-20 md:pb-40 md:pt-20">
       <h1 className="text-headings text-2xl font-bold md:text-7xl">
-        {t("welcomeTitle")}
+        <span className="block text-base font-semibold tracking-widest uppercase text-primary md:text-2xl">
+          {t("welcomeLine1")}
+        </span>
+        <span className="block mt-1">
+          {t("welcomeLine2")}
+        </span>
       </h1>
       <p className="mt-8 max-w-lg text-base text-slate-700 dark:text-slate-300 md:text-lg">
         {t("welcomeSubtitle")}

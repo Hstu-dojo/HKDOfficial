@@ -27,7 +27,8 @@ export default {
     firstButton: "Get started",
     tools: "Built using Great Tools",
     on: "on",
-    welcomeTitle: "Welcome to HSTU Karate Dojo",
+    welcomeLine1: "Welcome to",
+    welcomeLine2: "HSTU Karate Dojo",
     welcomeSubtitle: "Discover the art of karate at Hajee Mohammad Danesh Science & Technology University. Join us for rigorous training, community engagement, and competitive success.",
     newsletter: {
       title: "Stay Updated with HSTU Karate Dojo",
