@@ -88,9 +88,10 @@ export default async function CoursesPage() {
       <main className="relative pt-24 pb-16 min-h-screen bg-slate-50 dark:bg-slate-900">
         <MaxWidthWrapper>
             {partnerName && (
-              <div className="mb-6 p-4 bg-purple-50 dark:bg-purple-900/20 border border-purple-200 dark:border-purple-800 rounded-lg">
-                <p className="text-purple-700 dark:text-purple-300 text-sm">
-                  Showing courses for <span className="font-semibold">{partnerName}</span>
+              <div className="mb-8 inline-flex items-center gap-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700/50 rounded-lg px-4 py-2.5 shadow-sm">
+                <div className="w-2 h-2 rounded-full bg-primary animate-pulse" />
+                <p className="text-sm text-muted-foreground">
+                  Showing courses for <span className="font-semibold text-foreground">{partnerName}</span>
                 </p>
               </div>
             )}
