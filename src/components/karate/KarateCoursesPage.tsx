@@ -383,8 +383,8 @@ export default function KarateCoursesPage({ initialCourses, enrolledCourseIds = 
 
                           {course.isEnrollmentOpen ? (
                             enrolledSet.has(course.id) ? (
-                              <div className="flex flex-col gap-2 w-full">
-                                <div className="flex items-center justify-center gap-2 w-full text-center px-4 py-3 bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-400 font-semibold rounded-lg border border-green-200 dark:border-green-800/50 text-sm">
+                              <div className="flex flex-row gap-2 w-full">
+                                <div className="flex items-center justify-center gap-2 w-full text-center p- bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-400 font-semibold rounded-lg border border-green-200 dark:border-green-800/50 text-sm">
                                   <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
                                     <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                                   </svg>
@@ -394,14 +394,13 @@ export default function KarateCoursesPage({ initialCourses, enrolledCourseIds = 
                                   <button
                                     onClick={(e) => { e.preventDefault(); handleDownloadPdf(course.id); }}
                                     disabled={downloadingCourse === course.id}
-                                    className="flex items-center justify-center gap-2 w-full px-4 py-2.5 border border-green-300 dark:border-green-700 text-green-700 dark:text-green-400 text-sm font-medium rounded-lg hover:bg-green-50 dark:hover:bg-green-900/30 transition-colors disabled:opacity-50"
+                                    className="flex items-center justify-center gap-2 w-full p-2 border border-green-300 dark:border-green-700 text-green-700 dark:text-green-400 text-sm font-medium rounded-lg hover:bg-green-50 dark:hover:bg-green-900/30 transition-colors disabled:opacity-50"
                                   >
                                     {downloadingCourse === course.id ? (
                                       <Loader2 className="w-4 h-4 animate-spin" />
                                     ) : (
                                       <Download className="w-4 h-4" />
                                     )}
-                                    {downloadingCourse === course.id ? 'Generating…' : 'Download Form PDF'}
                                   </button>
                                 )}
                               </div>
