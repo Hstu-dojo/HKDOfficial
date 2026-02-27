@@ -245,7 +245,7 @@ export default function KarateCoursesPage({ initialCourses, enrolledCourseIds = 
                             src={course.imageUrl}
                             alt={course.name}
                             fill
-                            className="object-cover transition-transform duration-700 group-hover:scale-110"
+                            className="object-contain transition-transform duration-700 group-hover:scale-110"
                           />
                         ) : (
                           <div className="absolute inset-0 bg-gradient-to-br from-primary/20 to-secondary/20 dark:from-primary/10 dark:to-secondary/10 flex items-center justify-center">
