@@ -1,7 +1,7 @@
 import { pgEnum } from "drizzle-orm/pg-core";
 
 // Auth and User Management Enums
-export const roletypeEnum = pgEnum("roletype", ["SUPER_ADMIN", "ADMIN", "MODERATOR", "INSTRUCTOR", "STUDENT", "USER", "MEMBER", "GUEST"]);
+export const roletypeEnum = pgEnum("roletype", ["ADMIN", "MODERATOR", "INSTRUCTOR", "MEMBER", "GUEST", "SUPER_ADMIN", "STUDENT", "USER"]);
 export const identityTypeEnum = pgEnum("identity_type", ["NID", "BIRTH_CERTIFICATE", "PASSPORT", "DRIVING_LICENSE"]);
 export const providerTypeEnum = pgEnum("provider_type", ["Google", "GitHub"]);
 
