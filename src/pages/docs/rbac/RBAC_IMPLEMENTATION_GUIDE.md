@@ -5,7 +5,7 @@ This guide explains how to implement Role-Based Access Control (RBAC) functional
 ## 🎯 Overview
 
 Our RBAC system consists of:
-- **Roles**: SUPER_ADMIN, ADMIN, MODERATOR, INSTRUCTOR, STUDENT, USER, MEMBER, GUEST
+- **Roles**: SUPER_ADMIN, ADMIN, MODERATOR, INSTRUCTOR, STUDENT, MEMBER, GUEST
 - **Resources**: USER, ACCOUNT, ROLE, PERMISSION, COURSE, BLOG, MEDIA, etc.
 - **Actions**: CREATE, READ, UPDATE, DELETE, MANAGE
 

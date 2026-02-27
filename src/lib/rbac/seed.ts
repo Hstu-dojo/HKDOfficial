@@ -11,7 +11,6 @@ const defaultRoles = [
   { name: "MODERATOR", description: "Moderator with limited management access" },
   { name: "INSTRUCTOR", description: "Instructor with course management access" },
   { name: "STUDENT", description: "Student with learning access" },
-  { name: "USER", description: "Regular user with basic access" },
   { name: "MEMBER", description: "Regular member with basic access" },
   { name: "GUEST", description: "Guest user with read-only access" },
 ];
@@ -196,6 +195,9 @@ const defaultPermissions: Array<{
   { name: "delete_partner_bill", resource: "PARTNER_BILL", action: "DELETE", description: "Delete partner bills" },
   { name: "manage_partner_bill", resource: "PARTNER_BILL", action: "MANAGE", description: "Full partner bill management" },
   { name: "verify_partner_bill", resource: "PARTNER_BILL", action: "VERIFY", description: "Verify partner bill payments" },
+
+  // Admin Panel access permission
+  { name: "access_admin_panel", resource: "ADMIN_PANEL", action: "ACCESS", description: "Access the admin dashboard" },
 ];
 
 // Role-Permission mappings
@@ -235,6 +237,8 @@ const rolePermissionMappings: { [key: string]: string[] } = {
     "create_partner", "read_partner", "update_partner", "delete_partner", "manage_partner",
     // Partner Bill permissions
     "create_partner_bill", "read_partner_bill", "update_partner_bill", "delete_partner_bill", "manage_partner_bill", "verify_partner_bill",
+    // Admin Panel access
+    "access_admin_panel",
   ],
   ADMIN: [
     // Most permissions except system-level ones
@@ -271,6 +275,8 @@ const rolePermissionMappings: { [key: string]: string[] } = {
     "create_partner", "read_partner", "update_partner", "delete_partner", "manage_partner",
     // Partner Bill permissions for admin
     "create_partner_bill", "read_partner_bill", "update_partner_bill", "delete_partner_bill", "manage_partner_bill", "verify_partner_bill",
+    // Admin Panel access
+    "access_admin_panel",
   ],
   MODERATOR: [
     // Content moderation permissions
@@ -292,6 +298,8 @@ const rolePermissionMappings: { [key: string]: string[] } = {
     "read_program",
     // Program Registration permissions for moderator
     "read_program_registration", "approve_program_registration", "verify_program_registration",
+    // Admin Panel access
+    "access_admin_panel",
   ],
   INSTRUCTOR: [
     // Teaching-related permissions
@@ -317,6 +325,8 @@ const rolePermissionMappings: { [key: string]: string[] } = {
     "create_schedule", "read_schedule", "update_schedule",
     // Monthly fee view
     "read_monthly_fee",
+    // Admin Panel access
+    "access_admin_panel",
   ],
   STUDENT: [
     // Basic read permissions
@@ -353,20 +363,6 @@ const rolePermissionMappings: { [key: string]: string[] } = {
     "read_enrollment",
     "read_schedule",
   ],
-  USER: [
-    // Minimal permissions
-    "read_blog",
-    // Basic karate info access
-    "read_class",
-    // Public gallery and announcements
-    "read_gallery",
-    "read_event",
-    "read_announcement",
-    // Can apply for enrollment
-    "create_enrollment",
-    "read_enrollment",
-    "read_schedule",
-  ],
 };
 
 export async function seedRBACData() {
@@ -399,7 +395,7 @@ export async function seedRBACData() {
       "COURSE", "BLOG", "MEDIA", "CLASS", "EQUIPMENT", "MEMBER", "BILL", "PAYMENT",
       "GALLERY", "EVENT", "ANNOUNCEMENT", "CERTIFICATE", "REPORT",
       "ENROLLMENT", "MONTHLY_FEE", "SCHEDULE", "PROGRAM", "PROGRAM_REGISTRATION",
-      "PARTNER", "PARTNER_BILL"
+      "PARTNER", "PARTNER_BILL", "ADMIN_PANEL"
     ] as const;
 
     for (const permData of defaultPermissions) {

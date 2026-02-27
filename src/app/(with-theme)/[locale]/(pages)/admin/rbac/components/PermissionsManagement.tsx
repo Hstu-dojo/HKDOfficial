@@ -13,6 +13,8 @@ interface Permission {
   resource: string;
   action: string;
   createdAt: string;
+  assignedRoleCount: number;
+  assignedRoles: string[];
 }
 
 const RESOURCES = [
@@ -20,10 +22,10 @@ const RESOURCES = [
   "COURSE", "BLOG", "MEDIA", "GALLERY", "CLASS", "EQUIPMENT",
   "MEMBER", "BILL", "PAYMENT", "EVENT", "ANNOUNCEMENT", "CERTIFICATE", "REPORT",
   "ENROLLMENT", "MONTHLY_FEE", "SCHEDULE", "PROGRAM", "PROGRAM_REGISTRATION",
-  "PARTNER", "PARTNER_BILL"
+  "PARTNER", "PARTNER_BILL", "ADMIN_PANEL"
 ];
 
-const ACTIONS = ["CREATE", "READ", "UPDATE", "DELETE", "MANAGE", "APPROVE", "VERIFY"];
+const ACTIONS = ["CREATE", "READ", "UPDATE", "DELETE", "MANAGE", "APPROVE", "VERIFY", "ACCESS"];
 
 export default function PermissionsManagement() {
   const [permissions, setPermissions] = useState<Permission[]>([]);
@@ -117,13 +119,22 @@ export default function PermissionsManagement() {
     }
   }
 
-  async function handleDelete(permissionId: string, permissionName: string) {
-    if (!confirm(`Are you sure you want to delete "${permissionName}"?`)) {
+  async function handleDelete(permission: Permission) {
+    if (permission.assignedRoleCount > 0) {
+      toast({
+        title: "Cannot delete",
+        description: `This permission is assigned to ${permission.assignedRoleCount} role(s): ${permission.assignedRoles.join(", ")}. Remove the assignment from the Permission Matrix first.`,
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (!confirm(`Are you sure you want to delete "${permission.name}"?`)) {
       return;
     }
 
     try {
-      const res = await fetch(`/api/rbac/permissions/${permissionId}`, {
+      const res = await fetch(`/api/rbac/permissions/${permission.id}`, {
         method: "DELETE",
       });
 
@@ -357,6 +368,14 @@ export default function PermissionsManagement() {
                         </p>
                       )}
                     </div>
+                    {permission.assignedRoleCount > 0 && (
+                      <span
+                        className="px-2 py-0.5 rounded-full text-xs bg-indigo-100 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-300 cursor-help"
+                        title={`Assigned to: ${permission.assignedRoles.join(", ")}`}
+                      >
+                        {permission.assignedRoleCount} role{permission.assignedRoleCount > 1 ? "s" : ""}
+                      </span>
+                    )}
                   </div>
                   <div className="flex items-center gap-2">
                     <Button
@@ -370,8 +389,14 @@ export default function PermissionsManagement() {
                     <Button
                       size="sm"
                       variant="ghost"
-                      onClick={() => handleDelete(permission.id, permission.name)}
-                      className="h-8 w-8 p-0 text-red-600 dark:text-red-400 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-900/20"
+                      onClick={() => handleDelete(permission)}
+                      disabled={permission.assignedRoleCount > 0}
+                      className={`h-8 w-8 p-0 ${
+                        permission.assignedRoleCount > 0
+                          ? "text-gray-300 dark:text-gray-600 cursor-not-allowed"
+                          : "text-red-600 dark:text-red-400 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-900/20"
+                      }`}
+                      title={permission.assignedRoleCount > 0 ? `Assigned to: ${permission.assignedRoles.join(", ")}` : "Delete permission"}
                     >
                       <TrashIcon className="h-4 w-4" />
                     </Button>

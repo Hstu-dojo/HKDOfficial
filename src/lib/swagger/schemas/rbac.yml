@@ -11,7 +11,7 @@ Role:
       description: Unique identifier for the role
     name:
       type: string
-      description: Role name (e.g., SUPER_ADMIN, ADMIN, MODERATOR, INSTRUCTOR, USER)
+      description: Role name (e.g., SUPER_ADMIN, ADMIN, MODERATOR, INSTRUCTOR, MEMBER)
     description:
       type: string
       nullable: true

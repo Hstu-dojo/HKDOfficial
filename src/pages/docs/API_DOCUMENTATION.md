@@ -370,7 +370,7 @@ All endpoints may return the following error responses:
   emailVerified: boolean;
   userName: string;
   userAvatar: string;
-  defaultRole: "SUPER_ADMIN" | "ADMIN" | "MODERATOR" | "INSTRUCTOR" | "STUDENT" | "USER" | "MEMBER" | "GUEST";
+  defaultRole: "SUPER_ADMIN" | "ADMIN" | "MODERATOR" | "INSTRUCTOR" | "STUDENT" | "MEMBER" | "GUEST";
   roleId?: string;
   createdAt: string;
   updatedAt: string;

@@ -5,6 +5,9 @@ import {
   updatePermission,
   deletePermission
 } from "@/lib/rbac/permissions";
+import { db } from "@/lib/connect-db";
+import { rolePermission, role } from "@/db/schema";
+import { eq } from "drizzle-orm";
 import type { ResourceType, ActionType } from "@/lib/rbac/types";
 
 // GET /api/rbac/permissions/[permissionId] - Get a specific permission
@@ -76,6 +79,21 @@ export const DELETE = protectApiRoute("PERMISSION", "DELETE", async (request, co
     
     if (!permissionId) {
       return NextResponse.json({ error: "Permission ID is required" }, { status: 400 });
+    }
+
+    // Check if this permission is assigned to any role
+    const assignments = await db
+      .select({ roleId: rolePermission.roleId, roleName: role.name })
+      .from(rolePermission)
+      .innerJoin(role, eq(rolePermission.roleId, role.id))
+      .where(eq(rolePermission.permissionId, permissionId));
+
+    if (assignments.length > 0) {
+      const roleNames = [...new Set(assignments.map(a => a.roleName))].join(", ");
+      return NextResponse.json(
+        { error: `Cannot delete: permission is assigned to ${assignments.length} role(s): ${roleNames}. Remove the assignment first.` },
+        { status: 409 }
+      );
     }
     
     const success = await deletePermission(permissionId);

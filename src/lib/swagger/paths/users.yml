@@ -31,7 +31,7 @@
         in: query
         schema:
           type: string
-          enum: [SUPER_ADMIN, ADMIN, MODERATOR, INSTRUCTOR, STUDENT, USER, MEMBER, GUEST]
+          enum: [SUPER_ADMIN, ADMIN, MODERATOR, INSTRUCTOR, STUDENT, MEMBER, GUEST]
         description: Filter by role
     responses:
       200:
@@ -152,7 +152,7 @@
                 description: Avatar URL
               defaultRole:
                 type: string
-                enum: [SUPER_ADMIN, ADMIN, MODERATOR, INSTRUCTOR, STUDENT, USER, MEMBER, GUEST]
+                enum: [SUPER_ADMIN, ADMIN, MODERATOR, INSTRUCTOR, STUDENT, MEMBER, GUEST]
                 description: Default role
     responses:
       200:

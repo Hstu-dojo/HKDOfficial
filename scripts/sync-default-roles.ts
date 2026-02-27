@@ -60,8 +60,8 @@ async function syncDefaultRoles() {
         
         // Check if there's a mapping (e.g., MEMBER -> USER)
         const roleMappings: Record<string, string> = {
-          'GUEST': 'USER',
-          'MEMBER': 'USER',
+          'GUEST': 'MEMBER',
+          'USER': 'MEMBER',
         };
         
         const mappedRole = roleMappings[u.defaultRole];

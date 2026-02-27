@@ -1,9 +1,8 @@
 import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs';
 import { cookies } from 'next/headers';
 import { redirect } from "next/navigation";
-import { getUserPermissions, hasRole } from "@/lib/rbac/permissions";
+import { getUserPermissionsWithFallback, hasRole } from "@/lib/rbac/permissions";
 import { getLocalUserId } from "@/lib/rbac/middleware";
-import { ADMIN_ROLES } from "@/lib/rbac/constants";
 
 interface AdminRouteGuardProps {
   children: React.ReactNode;
@@ -37,13 +36,13 @@ export async function AdminRouteGuard({
   }
 
   try {
-    // Check for basic admin access using local user ID
-    const roleChecks = await Promise.all(
-      ADMIN_ROLES.map((role) => hasRole(localUserId, role))
+    // Check for ADMIN_PANEL:ACCESS permission (controlled via permission matrix)
+    const userPerms = await getUserPermissionsWithFallback(localUserId);
+    const hasAdminAccess = userPerms.permissions.some(
+      (p) => p.resource === 'ADMIN_PANEL' && (p.action === 'ACCESS' || p.action === 'MANAGE')
     );
-    const isAdmin = roleChecks.some(Boolean);
 
-    if (!isAdmin) {
+    if (!hasAdminAccess) {
       redirect('/unauthorized');
     }
 
@@ -57,8 +56,7 @@ export async function AdminRouteGuard({
 
     // Check for specific permission if required
     if (requiredPermission) {
-      const userPermissions = await getUserPermissions(localUserId);
-      const hasRequiredPermission = userPermissions.permissions.some(
+      const hasRequiredPermission = userPerms.permissions.some(
         (p) => p.resource === requiredPermission.resource && 
                (p.action === requiredPermission.action || p.action === 'MANAGE')
       );

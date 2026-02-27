@@ -5,7 +5,12 @@
  * (middleware), server components, client hooks, and API routes alike.
  */
 
-/** Roles that grant access to the /admin dashboard. */
+/**
+ * Legacy list of roles that historically granted admin panel access.
+ * Admin panel access is now controlled by the ADMIN_PANEL:ACCESS permission
+ * in the permission matrix. This constant is kept for backward compatibility
+ * but is no longer used for access control decisions.
+ */
 export const ADMIN_ROLES = [
   'SUPER_ADMIN',
   'ADMIN',
@@ -22,7 +27,6 @@ export const ALL_ROLES = [
   'MODERATOR',
   'INSTRUCTOR',
   'STUDENT',
-  'USER',
   'MEMBER',
   'GUEST',
 ] as const;

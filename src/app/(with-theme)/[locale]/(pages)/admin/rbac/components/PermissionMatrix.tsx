@@ -6,7 +6,6 @@ import {
   XMarkIcon,
   ArrowPathIcon,
   ShieldCheckIcon,
-  KeyIcon,
   CheckCircleIcon,
 } from "@heroicons/react/24/outline";
 import { CheckCircleIcon as CheckCircleSolid } from "@heroicons/react/24/solid";
@@ -64,7 +63,6 @@ export default function PermissionMatrix() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [updating, setUpdating] = useState<string | null>(null);
-  const [seeding, setSeeding] = useState(false);
   const [selectedResource, setSelectedResource] = useState<string | null>(null);
   const { toast } = useToast();
 
@@ -150,38 +148,6 @@ export default function PermissionMatrix() {
     }
   }
 
-  async function handleSeedData() {
-    if (!confirm("This will reseed all RBAC data. SUPER_ADMIN will get all permissions. Continue?")) {
-      return;
-    }
-    
-    setSeeding(true);
-    try {
-      const res = await fetch("/api/rbac/seed", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-      });
-      
-      if (!res.ok) throw new Error("Failed to seed data");
-      
-      toast({
-        title: "Success",
-        description: "RBAC data seeded successfully. SUPER_ADMIN now has all permissions.",
-      });
-      
-      // Refresh matrix
-      await fetchMatrix();
-    } catch (err) {
-      toast({
-        title: "Error",
-        description: "Failed to seed RBAC data",
-        variant: "destructive",
-      });
-    } finally {
-      setSeeding(false);
-    }
-  }
-
   async function grantAllPermissions(roleId: string, roleName: string) {
     if (!matrixData) return;
     
@@ -264,25 +230,7 @@ export default function PermissionMatrix() {
             <ArrowPathIcon className={`h-4 w-4 mr-2 ${loading ? "animate-spin" : ""}`} />
             Refresh
           </Button>
-          <Button
-            variant="default"
-            size="sm"
-            onClick={handleSeedData}
-            disabled={seeding}
-            className="bg-green-600 hover:bg-green-700"
-          >
-            {seeding ? (
-              <>
-                <ArrowPathIcon className="h-4 w-4 mr-2 animate-spin" />
-                Seeding...
-              </>
-            ) : (
-              <>
-                <KeyIcon className="h-4 w-4 mr-2" />
-                Reseed RBAC Data
-              </>
-            )}
-          </Button>
+
         </div>
       </div>
 

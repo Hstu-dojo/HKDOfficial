@@ -60,7 +60,7 @@ export const swaggerSpec = {
           userAvatar: { type: "string" },
           defaultRole: { 
             type: "string", 
-            enum: ["SUPER_ADMIN", "ADMIN", "MODERATOR", "INSTRUCTOR", "STUDENT", "USER", "MEMBER", "GUEST"] 
+            enum: ["SUPER_ADMIN", "ADMIN", "MODERATOR", "INSTRUCTOR", "STUDENT", "MEMBER", "GUEST"] 
           },
           roleId: { type: "string", format: "uuid", nullable: true },
           createdAt: { type: "string", format: "date-time" },
@@ -77,7 +77,7 @@ export const swaggerSpec = {
           userAvatar: { type: "string" },
           defaultRole: { 
             type: "string", 
-            enum: ["SUPER_ADMIN", "ADMIN", "MODERATOR", "INSTRUCTOR", "STUDENT", "USER", "MEMBER", "GUEST"],
+            enum: ["SUPER_ADMIN", "ADMIN", "MODERATOR", "INSTRUCTOR", "STUDENT", "MEMBER", "GUEST"],
             default: "GUEST"
           }
         },

@@ -1,7 +1,7 @@
 import { pgEnum } from "drizzle-orm/pg-core";
 
 // Auth and User Management Enums
-export const roletypeEnum = pgEnum("roletype", ["ADMIN", "MODERATOR", "INSTRUCTOR", "MEMBER", "GUEST", "SUPER_ADMIN", "STUDENT", "USER"]);
+export const roletypeEnum = pgEnum("roletype", ["ADMIN", "MODERATOR", "INSTRUCTOR", "MEMBER", "GUEST", "SUPER_ADMIN", "STUDENT", "USER"]); // USER kept in enum (can't remove PG enum values) but USER role is not seeded
 export const identityTypeEnum = pgEnum("identity_type", ["NID", "BIRTH_CERTIFICATE", "PASSPORT", "DRIVING_LICENSE"]);
 export const providerTypeEnum = pgEnum("provider_type", ["Google", "GitHub"]);
 
@@ -11,9 +11,9 @@ export const resourceTypeEnum = pgEnum("resource_type", [
   "COURSE", "BLOG", "MEDIA", "CLASS", "EQUIPMENT", "MEMBER", "BILL", "PAYMENT",
   "GALLERY", "EVENT", "ANNOUNCEMENT", "CERTIFICATE", "REPORT",
   "ENROLLMENT", "MONTHLY_FEE", "SCHEDULE", "PROGRAM", "PROGRAM_REGISTRATION",
-  "PARTNER", "PARTNER_BILL"
+  "PARTNER", "PARTNER_BILL", "ADMIN_PANEL"
 ]);
-export const actionEnum = pgEnum("action", ["CREATE", "READ", "UPDATE", "DELETE", "MANAGE", "APPROVE", "VERIFY"]);
+export const actionEnum = pgEnum("action", ["CREATE", "READ", "UPDATE", "DELETE", "MANAGE", "APPROVE", "VERIFY", "ACCESS"]);
 
 // Karate-specific Enums
 export const beltRankEnum = pgEnum('belt_rank', ['white', 'yellow', 'orange', 'green', 'blue', 'red', 'brown', 'black']);

@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { useSession } from '@/hooks/useSessionCompat';
 import { useAuth } from '@/context/AuthContext';
 import { useRBAC } from '@/hooks/useRBAC';
-import { ADMIN_ROLES } from '@/lib/rbac/constants';
+import { ALL_ROLES } from '@/lib/rbac/constants';
 import Image from 'next/image';
 import { 
   Bars3Icon, 
@@ -31,8 +31,11 @@ export function AdminHeader({ onToggleSidebar, sidebarOpen }: AdminHeaderProps) 
     ADMIN: 'Admin',
     MODERATOR: 'Moderator',
     INSTRUCTOR: 'Instructor',
+    STUDENT: 'Student',
+    MEMBER: 'Member',
+    GUEST: 'Guest',
   };
-  const userRoles = ADMIN_ROLES.filter((r) => hasRole(r)).map((r) => ROLE_LABELS[r] ?? r);
+  const userRoles = ALL_ROLES.filter((r) => hasRole(r)).map((r) => ROLE_LABELS[r] ?? r);
 
   return (
     <header className="bg-white dark:bg-gray-800 shadow-sm border-b border-slate-200 dark:border-slate-700 sticky top-0 z-30">
