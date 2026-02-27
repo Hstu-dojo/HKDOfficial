@@ -30,7 +30,7 @@ export default async function AuthenticationPage() {
           <span className="hidden lg:flex">{t('header.brand')}</span>
         </div>
       </Link>
-      <div className="container relative  grid h-[800px] flex-col items-center justify-center lg:max-w-none lg:grid-cols-2 lg:px-0">
+      <div className="container relative grid min-h-screen flex-col items-center justify-center lg:max-w-none lg:grid-cols-2 lg:px-0">
         <BackgroundBeams />
         <div className="lg:p-8">
           <div className="mx-auto flex w-full flex-col justify-center space-y-6 sm:w-[350px]">

@@ -43,7 +43,7 @@ export default async function AuthenticationPage({ searchParams }: PageProps) {
           <span className="hidden lg:flex">{t('header.brand')}</span>
         </div>
       </Link>
-      <div className="container relative  grid h-[800px] flex-col items-center justify-center lg:max-w-none lg:grid-cols-2 lg:px-0">
+      <div className="container relative grid min-h-screen flex-col items-center justify-center lg:max-w-none lg:grid-cols-2 lg:px-0">
         <Link
           href={`/${locale}/register`}
           className={cn(
