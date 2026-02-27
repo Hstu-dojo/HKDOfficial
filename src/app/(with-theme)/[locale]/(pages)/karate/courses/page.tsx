@@ -19,20 +19,24 @@ export const metadata: Metadata = {
 export const revalidate = 120;
 
 /** Get the set of courseIds the current user has active applications/enrollments for, with applicationIds */
-async function getUserEnrolledCourses(): Promise<{ courseIds: string[]; applicationMap: Record<string, string> }> {
+async function getUserEnrolledCourses(): Promise<{ courseIds: string[]; applicationMap: Record<string, string>; applicationNumberMap: Record<string, string> }> {
   try {
     const supabase = await createClient();
     const { data: { user: authUser } } = await supabase.auth.getUser();
-    if (!authUser) return { courseIds: [], applicationMap: {} };
+    if (!authUser) return { courseIds: [], applicationMap: {}, applicationNumberMap: {} };
 
     const publicUser = await db.query.user.findFirst({
       where: eq(userSchema.supabaseUserId, authUser.id),
     });
-    if (!publicUser) return { courseIds: [], applicationMap: {} };
+    if (!publicUser) return { courseIds: [], applicationMap: {}, applicationNumberMap: {} };
 
-    // Get courseIds + applicationIds from active (non-rejected/cancelled) applications
+    // Get courseIds + applicationIds + applicationNumbers from active (non-rejected/cancelled) applications
     const apps = await db
-      .select({ id: enrollmentApplications.id, courseId: enrollmentApplications.courseId })
+      .select({
+        id: enrollmentApplications.id,
+        courseId: enrollmentApplications.courseId,
+        applicationNumber: enrollmentApplications.applicationNumber,
+      })
       .from(enrollmentApplications)
       .where(
         and(
@@ -44,12 +48,14 @@ async function getUserEnrolledCourses(): Promise<{ courseIds: string[]; applicat
 
     const courseIds = [...new Set(apps.map(a => a.courseId))];
     const applicationMap: Record<string, string> = {};
+    const applicationNumberMap: Record<string, string> = {};
     for (const app of apps) {
       applicationMap[app.courseId] = app.id;
+      applicationNumberMap[app.courseId] = app.applicationNumber;
     }
-    return { courseIds, applicationMap };
+    return { courseIds, applicationMap, applicationNumberMap };
   } catch {
-    return { courseIds: [], applicationMap: {} };
+    return { courseIds: [], applicationMap: {}, applicationNumberMap: {} };
   }
 }
 
@@ -110,6 +116,7 @@ export default async function CoursesPage() {
               initialCourses={coursesData}
               enrolledCourseIds={enrolledData.courseIds}
               enrolledApplicationMap={enrolledData.applicationMap}
+              applicationNumberMap={enrolledData.applicationNumberMap}
             />
         </MaxWidthWrapper>
       </main>

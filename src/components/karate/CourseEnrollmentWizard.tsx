@@ -345,8 +345,13 @@ export default function CourseEnrollmentWizard({
         throw new Error(err.error || 'Failed to create application');
       }
 
-      const { applicationId: appId } = await createRes.json();
+      const { applicationId: appId, applicationNumber: appNumber } = await createRes.json();
       setApplicationId(appId);
+
+      // Inject the registration number into formData so the PDF download includes it
+      if (appNumber) {
+        setFormData((prev) => ({ ...prev, registration_no: appNumber }));
+      }
 
       // Step 2: Submit payment
       setSubmitPhase('payment');

@@ -43,6 +43,7 @@ export async function GET(
         id: enrollmentApplications.id,
         userId: enrollmentApplications.userId,
         studentInfo: enrollmentApplications.studentInfo,
+        applicationNumber: enrollmentApplications.applicationNumber,
       })
       .from(enrollmentApplications)
       .where(eq(enrollmentApplications.id, applicationId))
@@ -65,6 +66,11 @@ export async function GET(
 
     // Remove non-form-field keys to get clean form data
     const { hasPhoto, hasSignature, profilePhotoUrl: _p, signatureUrl: _s, ...formData } = info;
+
+    // Inject the application number as the registration number on the PDF
+    if (app.applicationNumber) {
+      (formData as Record<string, unknown>).registration_no = app.applicationNumber;
+    }
 
     return NextResponse.json({
       formData,

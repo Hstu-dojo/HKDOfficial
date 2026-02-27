@@ -66,9 +66,10 @@ interface KarateCoursesPageProps {
   initialCourses: Course[];
   enrolledCourseIds?: string[];
   enrolledApplicationMap?: Record<string, string>;
+  applicationNumberMap?: Record<string, string>;
 }
 
-export default function KarateCoursesPage({ initialCourses, enrolledCourseIds = [], enrolledApplicationMap = {} }: KarateCoursesPageProps) {
+export default function KarateCoursesPage({ initialCourses, enrolledCourseIds = [], enrolledApplicationMap = {}, applicationNumberMap = {} }: KarateCoursesPageProps) {
   const [courses] = useState<Course[]>(initialCourses);
   const enrolledSet = new Set(enrolledCourseIds);
   const [downloadingCourse, setDownloadingCourse] = useState<string | null>(null);
@@ -112,6 +113,12 @@ export default function KarateCoursesPage({ initialCourses, enrolledCourseIds = 
       if (Object.keys(formData).length === 0) {
         alert('Form data not found.');
         return;
+      }
+
+      // Inject registration number (application number) into the form data
+      const regNo = applicationNumberMap[courseId];
+      if (regNo && !formData.registration_no) {
+        formData.registration_no = regNo;
       }
 
       const pdfBytes = await fillPdfForm(formData, images);
