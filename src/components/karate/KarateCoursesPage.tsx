@@ -394,7 +394,7 @@ export default function KarateCoursesPage({ initialCourses, enrolledCourseIds = 
                                   <button
                                     onClick={(e) => { e.preventDefault(); handleDownloadPdf(course.id); }}
                                     disabled={downloadingCourse === course.id}
-                                    className="flex items-center justify-center gap-2 w-full p-2 border border-green-300 dark:border-green-700 text-green-700 dark:text-green-400 text-sm font-medium rounded-lg hover:bg-green-50 dark:hover:bg-green-900/30 transition-colors disabled:opacity-50"
+                                    className="flex items-center justify-center gap-2 p-3 border border-green-300 dark:border-green-700 text-green-700 dark:text-green-400 text-sm font-medium rounded-lg hover:bg-green-50 dark:hover:bg-green-900/30 transition-colors disabled:opacity-50"
                                   >
                                     {downloadingCourse === course.id ? (
                                       <Loader2 className="w-4 h-4 animate-spin" />
