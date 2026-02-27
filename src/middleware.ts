@@ -43,7 +43,11 @@ const middlewares = {
   // IMPORTANT: Do NOT add a catch-all "/:locale" pattern here!
   // It matches every single-segment path (/docs, /blog, /studio, etc.)
   // and incorrectly applies locale rewriting to them.
+  // Instead, list each locale root explicitly:
   "/": withLocaleMiddleware,
+  "/en": withLocaleMiddleware,
+  "/bn": withLocaleMiddleware,
+  "/ne": withLocaleMiddleware,
   "/about": withLocaleMiddleware,
   "/gallery": withLocaleMiddleware,
   "/pricing": withLocaleMiddleware,
