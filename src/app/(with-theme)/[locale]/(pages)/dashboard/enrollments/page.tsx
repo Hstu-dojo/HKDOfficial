@@ -8,8 +8,6 @@ export const metadata: Metadata = {
 
 export default function StudentEnrollmentsPage() {
   return (
-    <div className="p-6 max-w-7xl mx-auto">
-      <StudentEnrollmentDashboard />
-    </div>
+    <StudentEnrollmentDashboard />
   );
 }
