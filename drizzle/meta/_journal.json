@@ -71,6 +71,13 @@
       "when": 1772124883000,
       "tag": "0009_profiles_migration",
       "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "7",
+      "when": 1772174887119,
+      "tag": "0010_wet_serpent_society",
+      "breakpoints": true
     }
   ]
 }

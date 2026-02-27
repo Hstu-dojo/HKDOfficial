@@ -1,8 +1,9 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { XMarkIcon, PlusIcon, TrashIcon } from '@heroicons/react/24/outline';
 import { toast } from 'sonner';
+import PaymentAccountSelector from '@/components/admin/shared/PaymentAccountSelector';
 
 interface Schedule {
   dayOfWeek: number;
@@ -99,6 +100,7 @@ export default function CourseFormModal({ course, onClose, onSaved }: CourseForm
   });
 
   const [newFeature, setNewFeature] = useState('');
+  const selectedPaymentAccountIdsRef = useRef<string[]>([]);
 
   useEffect(() => {
     fetch('/api/admin/partners')
@@ -144,6 +146,22 @@ export default function CourseFormModal({ course, onClose, onSaved }: CourseForm
       if (!response.ok) {
         const error = await response.json();
         throw new Error(error.error || 'Failed to save course');
+      }
+
+      const savedCourse = await response.json();
+      const savedCourseId = course?.id ?? savedCourse?.course?.id;
+
+      // Sync payment accounts for this course
+      if (savedCourseId) {
+        try {
+          await fetch(`/api/admin/courses/${savedCourseId}/payment-accounts`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ paymentAccountIds: selectedPaymentAccountIdsRef.current }),
+          });
+        } catch (e) {
+          console.error('Failed to sync payment accounts:', e);
+        }
       }
 
       toast.success(course?.id ? 'Course updated' : 'Course created');
@@ -432,36 +450,19 @@ export default function CourseFormModal({ course, onClose, onSaved }: CourseForm
               </div>
             </div>
 
-            {/* Payment Info */}
+            {/* Payment Accounts */}
             <div className="space-y-4">
-              <h3 className="font-semibold text-gray-900 dark:text-gray-100 border-b pb-2">Payment Information</h3>
-              
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                    bKash Number
-                  </label>
-                  <input
-                    type="text"
-                    value={formData.bkashNumber}
-                    onChange={(e) => setFormData({ ...formData, bkashNumber: e.target.value })}
-                    placeholder="01XXXXXXXXX"
-                    className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                    bKash QR Code URL
-                  </label>
-                  <input
-                    type="url"
-                    value={formData.bkashQrCodeUrl}
-                    onChange={(e) => setFormData({ ...formData, bkashQrCodeUrl: e.target.value })}
-                    placeholder="https://..."
-                    className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
-                  />
-                </div>
-              </div>
+              <h3 className="font-semibold text-gray-900 dark:text-gray-100 border-b pb-2">Payment Accounts</h3>
+              <p className="text-xs text-gray-500 dark:text-gray-400">
+                Select which payment accounts students should use for this course.
+                Manage accounts in{' '}
+                <a href="/en/admin/payment-settings" target="_blank" className="text-blue-600 hover:underline">Payment Settings</a>.
+              </p>
+              <PaymentAccountSelector
+                scope="course"
+                scopeId={course?.id}
+                onChange={(ids) => { selectedPaymentAccountIdsRef.current = ids; }}
+              />
             </div>
 
             {/* Schedule */}

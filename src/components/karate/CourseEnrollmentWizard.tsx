@@ -62,10 +62,10 @@ interface Course {
   monthlyFee: number;
   admissionFee: number;
   currency: string;
+  /** @deprecated Use payment_accounts API instead. Kept for backward compat. */
   bkashNumber?: string;
+  /** @deprecated Use payment_accounts API instead. Kept for backward compat. */
   bkashQrCodeUrl?: string;
-  nagadNumber?: string;
-  rocketNumber?: string;
   imageUrl?: string;
 }
 
@@ -858,6 +858,97 @@ function FormField({
 }
 
 // ---------------------------------------------------------------------------
+// Payment step – method-type styling
+// ---------------------------------------------------------------------------
+
+const PAYMENT_METHOD_STYLES: Record<
+  string,
+  { label: string; emoji: string; activeBorder: string; activeBg: string; instructionBg: string; instructionText: string; instructionHeading: string }
+> = {
+  bkash: {
+    label: 'bKash',
+    emoji: '🔴',
+    activeBorder: 'border-pink-500',
+    activeBg: 'bg-pink-50 dark:bg-pink-950/20',
+    instructionBg: 'bg-pink-50 dark:bg-pink-950/20',
+    instructionText: 'text-pink-800 dark:text-pink-300/80',
+    instructionHeading: 'text-pink-900 dark:text-pink-300',
+  },
+  nagad: {
+    label: 'Nagad',
+    emoji: '🟠',
+    activeBorder: 'border-orange-500',
+    activeBg: 'bg-orange-50 dark:bg-orange-950/20',
+    instructionBg: 'bg-orange-50 dark:bg-orange-950/20',
+    instructionText: 'text-orange-800 dark:text-orange-300/80',
+    instructionHeading: 'text-orange-900 dark:text-orange-300',
+  },
+  rocket: {
+    label: 'Rocket',
+    emoji: '🟣',
+    activeBorder: 'border-purple-500',
+    activeBg: 'bg-purple-50 dark:bg-purple-950/20',
+    instructionBg: 'bg-purple-50 dark:bg-purple-950/20',
+    instructionText: 'text-purple-800 dark:text-purple-300/80',
+    instructionHeading: 'text-purple-900 dark:text-purple-300',
+  },
+  upay: {
+    label: 'Upay',
+    emoji: '🟢',
+    activeBorder: 'border-green-500',
+    activeBg: 'bg-green-50 dark:bg-green-950/20',
+    instructionBg: 'bg-green-50 dark:bg-green-950/20',
+    instructionText: 'text-green-800 dark:text-green-300/80',
+    instructionHeading: 'text-green-900 dark:text-green-300',
+  },
+  bank_transfer: {
+    label: 'Bank Transfer',
+    emoji: '🏦',
+    activeBorder: 'border-blue-500',
+    activeBg: 'bg-blue-50 dark:bg-blue-950/20',
+    instructionBg: 'bg-blue-50 dark:bg-blue-950/20',
+    instructionText: 'text-blue-800 dark:text-blue-300/80',
+    instructionHeading: 'text-blue-900 dark:text-blue-300',
+  },
+  cash: {
+    label: 'Cash',
+    emoji: '💵',
+    activeBorder: 'border-gray-500',
+    activeBg: 'bg-gray-50 dark:bg-gray-800/50',
+    instructionBg: 'bg-gray-50 dark:bg-gray-800/50',
+    instructionText: 'text-gray-800 dark:text-gray-300/80',
+    instructionHeading: 'text-gray-900 dark:text-gray-300',
+  },
+};
+
+const getPaymentStyle = (type: string) =>
+  PAYMENT_METHOD_STYLES[type] ?? {
+    label: type,
+    emoji: '💳',
+    activeBorder: 'border-gray-500',
+    activeBg: 'bg-gray-50 dark:bg-gray-800/50',
+    instructionBg: 'bg-gray-50 dark:bg-gray-800/50',
+    instructionText: 'text-gray-700 dark:text-gray-300',
+    instructionHeading: 'text-gray-900 dark:text-gray-200',
+  };
+
+// ---------------------------------------------------------------------------
+// Payment account type from API
+// ---------------------------------------------------------------------------
+
+interface PaymentAccountInfo {
+  id: string;
+  name: string;
+  methodType: string;
+  accountNumber: string;
+  accountName: string | null;
+  qrCodeUrl: string | null;
+  instructions: string | null;
+  isDefault: boolean;
+  priority: number;
+}
+
+// ---------------------------------------------------------------------------
 // Payment step
 // ---------------------------------------------------------------------------
 
@@ -880,6 +971,94 @@ function PaymentStep({
   onPaymentProofUrlChange: (v: string) => void;
   formatCurrency: (n: number) => string;
 }) {
+  const [accounts, setAccounts] = useState<PaymentAccountInfo[]>([]);
+  const [loadingAccounts, setLoadingAccounts] = useState(true);
+
+  // Fetch payment accounts from API with fallback to legacy fields
+  useEffect(() => {
+    let cancelled = false;
+
+    async function fetchAccounts() {
+      try {
+        const res = await fetch(
+          `/api/payment-accounts?scope=course&scopeId=${course.id}`
+        );
+        if (res.ok) {
+          const data = await res.json();
+          if (!cancelled && data.accounts?.length > 0) {
+            setAccounts(data.accounts);
+            // Auto-select first account's method if nothing selected
+            if (!paymentMethod && data.accounts[0]) {
+              onPaymentMethodChange(data.accounts[0].methodType);
+            }
+            setLoadingAccounts(false);
+            return;
+          }
+        }
+      } catch {
+        // Fall through to legacy
+      }
+
+      // Fallback: build accounts from legacy course fields
+      if (!cancelled) {
+        const legacy: PaymentAccountInfo[] = [];
+        if (course.bkashNumber) {
+          legacy.push({
+            id: 'legacy-bkash',
+            name: 'bKash',
+            methodType: 'bkash',
+            accountNumber: course.bkashNumber,
+            accountName: null,
+            qrCodeUrl: course.bkashQrCodeUrl ?? null,
+            instructions: null,
+            isDefault: true,
+            priority: 0,
+          });
+        }
+        if (course.nagadNumber) {
+          legacy.push({
+            id: 'legacy-nagad',
+            name: 'Nagad',
+            methodType: 'nagad',
+            accountNumber: course.nagadNumber,
+            accountName: null,
+            qrCodeUrl: null,
+            instructions: null,
+            isDefault: false,
+            priority: 0,
+          });
+        }
+        if (course.rocketNumber) {
+          legacy.push({
+            id: 'legacy-rocket',
+            name: 'Rocket',
+            methodType: 'rocket',
+            accountNumber: course.rocketNumber,
+            accountName: null,
+            qrCodeUrl: null,
+            instructions: null,
+            isDefault: false,
+            priority: 0,
+          });
+        }
+        setAccounts(legacy);
+        if (!paymentMethod && legacy[0]) {
+          onPaymentMethodChange(legacy[0].methodType);
+        }
+        setLoadingAccounts(false);
+      }
+    }
+
+    fetchAccounts();
+    return () => { cancelled = true; };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [course.id]);
+
+  // Find the currently selected account
+  const selectedAccount = accounts.find(
+    (a) => a.methodType === paymentMethod
+  ) ?? accounts[0];
+
   return (
     <div className="space-y-6 mt-4">
       {/* Fee summary */}
@@ -894,92 +1073,101 @@ function PaymentStep({
       </div>
 
       {/* Payment method selector */}
-      <div>
-        <label className="block text-sm font-medium mb-2">
-          Payment Method <span className="text-destructive">*</span>
-        </label>
-        <div className="grid grid-cols-3 gap-3">
-          {course.bkashNumber && (
-            <button
-              type="button"
-              onClick={() => onPaymentMethodChange('bkash')}
-              className={cn(
-                'p-3 border-2 rounded-lg text-center transition-colors',
-                paymentMethod === 'bkash'
-                  ? 'border-pink-500 bg-pink-50 dark:bg-pink-950/20'
-                  : 'border-border hover:border-muted-foreground/50'
-              )}
-            >
-              <div className="text-xl mb-1">🔴</div>
-              <div className="text-xs font-medium">bKash</div>
-            </button>
-          )}
-          {course.nagadNumber && (
-            <button
-              type="button"
-              onClick={() => onPaymentMethodChange('nagad')}
-              className={cn(
-                'p-3 border-2 rounded-lg text-center transition-colors',
-                paymentMethod === 'nagad'
-                  ? 'border-orange-500 bg-orange-50 dark:bg-orange-950/20'
-                  : 'border-border hover:border-muted-foreground/50'
-              )}
-            >
-              <div className="text-xl mb-1">🟠</div>
-              <div className="text-xs font-medium">Nagad</div>
-            </button>
-          )}
-          {course.rocketNumber && (
-            <button
-              type="button"
-              onClick={() => onPaymentMethodChange('rocket')}
-              className={cn(
-                'p-3 border-2 rounded-lg text-center transition-colors',
-                paymentMethod === 'rocket'
-                  ? 'border-purple-500 bg-purple-50 dark:bg-purple-950/20'
-                  : 'border-border hover:border-muted-foreground/50'
-              )}
-            >
-              <div className="text-xl mb-1">🟣</div>
-              <div className="text-xs font-medium">Rocket</div>
-            </button>
-          )}
+      {loadingAccounts ? (
+        <div className="flex items-center gap-2 py-4 text-muted-foreground">
+          <Loader2 className="h-4 w-4 animate-spin" />
+          <span className="text-sm">Loading payment methods…</span>
         </div>
-      </div>
+      ) : accounts.length === 0 ? (
+        <div className="rounded-lg border border-dashed p-4 text-center text-sm text-muted-foreground">
+          <AlertCircle className="h-6 w-6 mx-auto mb-2 opacity-50" />
+          <p>No payment accounts configured for this course.</p>
+          <p className="mt-1 text-xs">Please contact the administrator.</p>
+        </div>
+      ) : (
+        <>
+          <div>
+            <label className="block text-sm font-medium mb-2">
+              Payment Method <span className="text-destructive">*</span>
+            </label>
+            <div className={cn(
+              'grid gap-3',
+              accounts.length <= 3 ? `grid-cols-${accounts.length}` : 'grid-cols-2 sm:grid-cols-3'
+            )}>
+              {accounts.map((account) => {
+                const style = getPaymentStyle(account.methodType);
+                const isActive = paymentMethod === account.methodType;
 
-      {/* bKash instructions */}
-      {paymentMethod === 'bkash' && course.bkashNumber && (
-        <div className="rounded-lg bg-pink-50 dark:bg-pink-950/20 p-4">
-          <h4 className="font-semibold mb-2 text-pink-900 dark:text-pink-300">
-            bKash Payment Instructions
-          </h4>
-          <ol className="list-decimal list-inside text-sm space-y-1 text-pink-800 dark:text-pink-300/80">
-            <li>Open bKash App</li>
-            <li>
-              Go to &quot;Send Money&quot; → Number:{' '}
-              <span className="font-mono font-bold">{course.bkashNumber}</span>
-            </li>
-            <li>Amount: {formatCurrency(course.admissionFee)}</li>
-            <li>Reference: Your Full Name</li>
-            <li>Note down the Transaction ID</li>
-          </ol>
-          {course.bkashQrCodeUrl && (
-            <div className="mt-3">
-              <p className="text-sm mb-1 text-pink-800 dark:text-pink-300/80">
-                Or scan the QR code:
-              </p>
-              <div className="bg-white p-2 rounded-lg inline-block">
-                <Image
-                  src={course.bkashQrCodeUrl}
-                  alt="bKash QR"
-                  width={160}
-                  height={160}
-                  className="rounded"
-                />
-              </div>
+                return (
+                  <button
+                    key={account.id}
+                    type="button"
+                    onClick={() => onPaymentMethodChange(account.methodType)}
+                    className={cn(
+                      'p-3 border-2 rounded-lg text-center transition-colors',
+                      isActive
+                        ? `${style.activeBorder} ${style.activeBg}`
+                        : 'border-border hover:border-muted-foreground/50'
+                    )}
+                  >
+                    <div className="text-xl mb-1">{style.emoji}</div>
+                    <div className="text-xs font-medium">{account.name || style.label}</div>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* Selected account instructions */}
+          {selectedAccount && (
+            <div className={cn('rounded-lg p-4', getPaymentStyle(selectedAccount.methodType).instructionBg)}>
+              <h4 className={cn('font-semibold mb-2', getPaymentStyle(selectedAccount.methodType).instructionHeading)}>
+                {getPaymentStyle(selectedAccount.methodType).label} Payment Instructions
+              </h4>
+              {selectedAccount.instructions ? (
+                <div className={cn('text-sm space-y-1', getPaymentStyle(selectedAccount.methodType).instructionText)}>
+                  {selectedAccount.instructions.split('\n').map((line, i) => (
+                    <p key={i}>{line}</p>
+                  ))}
+                </div>
+              ) : (
+                <ol className={cn('list-decimal list-inside text-sm space-y-1', getPaymentStyle(selectedAccount.methodType).instructionText)}>
+                  <li>
+                    Open {getPaymentStyle(selectedAccount.methodType).label} App
+                  </li>
+                  <li>
+                    Go to &quot;Send Money&quot; → Number:{' '}
+                    <span className="font-mono font-bold">{selectedAccount.accountNumber}</span>
+                  </li>
+                  {selectedAccount.accountName && (
+                    <li>
+                      Account Name: <span className="font-bold">{selectedAccount.accountName}</span>
+                    </li>
+                  )}
+                  <li>Amount: {formatCurrency(course.admissionFee)}</li>
+                  <li>Reference: Your Full Name</li>
+                  <li>Note down the Transaction ID</li>
+                </ol>
+              )}
+              {selectedAccount.qrCodeUrl && (
+                <div className="mt-3">
+                  <p className={cn('text-sm mb-1', getPaymentStyle(selectedAccount.methodType).instructionText)}>
+                    Or scan the QR code:
+                  </p>
+                  <div className="bg-white p-2 rounded-lg inline-block">
+                    <Image
+                      src={selectedAccount.qrCodeUrl}
+                      alt={`${getPaymentStyle(selectedAccount.methodType).label} QR`}
+                      width={160}
+                      height={160}
+                      className="rounded"
+                    />
+                  </div>
+                </div>
+              )}
             </div>
           )}
-        </div>
+        </>
       )}
 
       {/* Transaction fields */}

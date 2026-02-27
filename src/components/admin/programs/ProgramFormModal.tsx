@@ -1,9 +1,10 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { XMarkIcon } from '@heroicons/react/24/outline';
 import { createProgram, updateProgram } from '@/actions/program-actions';
 import { toast } from 'sonner';
+import PaymentAccountSelector from '@/components/admin/shared/PaymentAccountSelector';
 
 // Define the shape of our form data
 interface ProgramFormData {
@@ -38,6 +39,7 @@ const PROGRAM_TYPES = [
 
 export default function ProgramFormModal({ isOpen, onClose, onSuccess, initialData }: ProgramFormModalProps) {
   const [loading, setLoading] = useState(false);
+  const selectedPaymentAccountIdsRef = useRef<string[]>([]);
   const [formData, setFormData] = useState<ProgramFormData>({
     title: '',
     slug: '',
@@ -114,6 +116,19 @@ export default function ProgramFormModal({ isOpen, onClose, onSuccess, initialDa
       }
 
       if (result.success) {
+        // Sync payment accounts
+        const programId = initialData?.id ?? result.data?.id;
+        if (programId) {
+          try {
+            await fetch(`/api/admin/programs/${programId}/payment-accounts`, {
+              method: 'PUT',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ paymentAccountIds: selectedPaymentAccountIdsRef.current }),
+            });
+          } catch (e) {
+            console.error('Failed to sync payment accounts:', e);
+          }
+        }
         toast.success(initialData ? 'Program updated' : 'Program created');
         onSuccess();
       } else {
@@ -261,6 +276,21 @@ export default function ProgramFormModal({ isOpen, onClose, onSuccess, initialDa
                     className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm border p-2"
                   />
                   <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">Set to 0 for no limit</p>
+                </div>
+
+                {/* Payment Accounts */}
+                <div className="col-span-full border-t pt-4">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Payment Accounts</label>
+                  <p className="text-xs text-gray-500 dark:text-gray-400 mb-3">
+                    Select which payment accounts participants should use for this program.
+                    Manage accounts in{' '}
+                    <a href="/en/admin/payment-settings" target="_blank" className="text-blue-600 hover:underline">Payment Settings</a>.
+                  </p>
+                  <PaymentAccountSelector
+                    scope="program"
+                    scopeId={initialData?.id}
+                    onChange={(ids) => { selectedPaymentAccountIdsRef.current = ids; }}
+                  />
                 </div>
                 
                  <div className="col-span-full border-t pt-4">
