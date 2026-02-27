@@ -17,11 +17,13 @@ interface Permission {
 
 const RESOURCES = [
   "USER", "ACCOUNT", "SESSION", "PROVIDER", "ROLE", "PERMISSION",
-  "COURSE", "BLOG", "MEDIA", "GALLERY", "CLASS", "EQUIPMENT", 
-  "MEMBER", "BILL", "PAYMENT", "LEVEL", "VERIFICATION_TOKEN"
+  "COURSE", "BLOG", "MEDIA", "GALLERY", "CLASS", "EQUIPMENT",
+  "MEMBER", "BILL", "PAYMENT", "EVENT", "ANNOUNCEMENT", "CERTIFICATE", "REPORT",
+  "ENROLLMENT", "MONTHLY_FEE", "SCHEDULE", "PROGRAM", "PROGRAM_REGISTRATION",
+  "PARTNER", "PARTNER_BILL"
 ];
 
-const ACTIONS = ["CREATE", "READ", "UPDATE", "DELETE", "MANAGE"];
+const ACTIONS = ["CREATE", "READ", "UPDATE", "DELETE", "MANAGE", "APPROVE", "VERIFY"];
 
 export default function PermissionsManagement() {
   const [permissions, setPermissions] = useState<Permission[]>([]);

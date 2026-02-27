@@ -266,7 +266,7 @@ const rolePermissionMappings: { [key: string]: string[] } = {
     // Program permissions for admin
     "create_program", "read_program", "update_program", "delete_program", "manage_program", 
     // Program Registration permissions for admin
-    "read_program_registration", "update_program_registration", "delete_program_registration", "manage_program_registration", "approve_program_registration", "verify_program_registration",
+    "create_program_registration", "read_program_registration", "update_program_registration", "delete_program_registration", "manage_program_registration", "approve_program_registration", "verify_program_registration",
     // Partner permissions for admin
     "create_partner", "read_partner", "update_partner", "delete_partner", "manage_partner",
     // Partner Bill permissions for admin

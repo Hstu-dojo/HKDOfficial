@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/connect-db';
 import { user, userRole, role } from '@/db/schema';
 import { eq, and } from 'drizzle-orm';
+import { ADMIN_ROLES } from '@/lib/rbac/constants';
 
 /**
  * API endpoint to check if a user has admin-level roles
@@ -27,8 +28,8 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ hasAdminRole: false, error: 'User not found' }, { status: 404 });
     }
 
-    // Define admin-level roles
-    const adminRoles = ['SUPER_ADMIN', 'ADMIN', 'MODERATOR', 'INSTRUCTOR'];
+    // Admin-level roles from shared constants
+    const adminRoles: readonly string[] = ADMIN_ROLES;
 
     // Check if user has admin-level roles in userRole table
     const userRoles = await db

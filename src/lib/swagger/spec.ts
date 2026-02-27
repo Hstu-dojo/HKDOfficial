@@ -60,7 +60,7 @@ export const swaggerSpec = {
           userAvatar: { type: "string" },
           defaultRole: { 
             type: "string", 
-            enum: ["ADMIN", "MODERATOR", "INSTRUCTOR", "MEMBER", "GUEST"] 
+            enum: ["SUPER_ADMIN", "ADMIN", "MODERATOR", "INSTRUCTOR", "STUDENT", "USER", "MEMBER", "GUEST"] 
           },
           roleId: { type: "string", format: "uuid", nullable: true },
           createdAt: { type: "string", format: "date-time" },
@@ -77,7 +77,7 @@ export const swaggerSpec = {
           userAvatar: { type: "string" },
           defaultRole: { 
             type: "string", 
-            enum: ["ADMIN", "MODERATOR", "INSTRUCTOR", "MEMBER", "GUEST"],
+            enum: ["SUPER_ADMIN", "ADMIN", "MODERATOR", "INSTRUCTOR", "STUDENT", "USER", "MEMBER", "GUEST"],
             default: "GUEST"
           }
         },
@@ -128,11 +128,11 @@ export const swaggerSpec = {
           description: { type: "string", nullable: true },
           resource: { 
             type: "string", 
-            enum: ["USER", "ACCOUNT", "SESSION", "PROVIDER", "ROLE", "PERMISSION", "COURSE", "BLOG", "MEDIA", "CLASS", "EQUIPMENT", "MEMBER", "BILL", "PAYMENT", "GALLERY", "EVENT", "ANNOUNCEMENT", "CERTIFICATE", "REPORT"] 
+            enum: ["USER", "ACCOUNT", "SESSION", "PROVIDER", "ROLE", "PERMISSION", "COURSE", "BLOG", "MEDIA", "CLASS", "EQUIPMENT", "MEMBER", "BILL", "PAYMENT", "GALLERY", "EVENT", "ANNOUNCEMENT", "CERTIFICATE", "REPORT", "ENROLLMENT", "MONTHLY_FEE", "SCHEDULE", "PROGRAM", "PROGRAM_REGISTRATION", "PARTNER", "PARTNER_BILL"] 
           },
           action: { 
             type: "string", 
-            enum: ["CREATE", "READ", "UPDATE", "DELETE", "MANAGE"] 
+            enum: ["CREATE", "READ", "UPDATE", "DELETE", "MANAGE", "APPROVE", "VERIFY"] 
           },
           createdAt: { type: "string", format: "date-time" },
           updatedAt: { type: "string", format: "date-time" }
@@ -146,11 +146,11 @@ export const swaggerSpec = {
           description: { type: "string" },
           resource: { 
             type: "string", 
-            enum: ["USER", "ACCOUNT", "SESSION", "PROVIDER", "ROLE", "PERMISSION", "COURSE", "BLOG", "MEDIA", "CLASS", "EQUIPMENT", "MEMBER", "BILL", "PAYMENT", "GALLERY", "EVENT", "ANNOUNCEMENT", "CERTIFICATE", "REPORT"] 
+            enum: ["USER", "ACCOUNT", "SESSION", "PROVIDER", "ROLE", "PERMISSION", "COURSE", "BLOG", "MEDIA", "CLASS", "EQUIPMENT", "MEMBER", "BILL", "PAYMENT", "GALLERY", "EVENT", "ANNOUNCEMENT", "CERTIFICATE", "REPORT", "ENROLLMENT", "MONTHLY_FEE", "SCHEDULE", "PROGRAM", "PROGRAM_REGISTRATION", "PARTNER", "PARTNER_BILL"] 
           },
           action: { 
             type: "string", 
-            enum: ["CREATE", "READ", "UPDATE", "DELETE", "MANAGE"] 
+            enum: ["CREATE", "READ", "UPDATE", "DELETE", "MANAGE", "APPROVE", "VERIFY"] 
           }
         },
         required: ["name", "resource", "action"]
@@ -854,11 +854,11 @@ export const swaggerSpec = {
                   description: { type: "string" },
                   resource: { 
                     type: "string", 
-                    enum: ["USER", "ACCOUNT", "SESSION", "PROVIDER", "ROLE", "PERMISSION", "COURSE", "BLOG", "MEDIA", "CLASS", "EQUIPMENT", "MEMBER", "BILL", "PAYMENT", "GALLERY", "EVENT", "ANNOUNCEMENT", "CERTIFICATE", "REPORT"]
+                    enum: ["USER", "ACCOUNT", "SESSION", "PROVIDER", "ROLE", "PERMISSION", "COURSE", "BLOG", "MEDIA", "CLASS", "EQUIPMENT", "MEMBER", "BILL", "PAYMENT", "GALLERY", "EVENT", "ANNOUNCEMENT", "CERTIFICATE", "REPORT", "ENROLLMENT", "MONTHLY_FEE", "SCHEDULE", "PROGRAM", "PROGRAM_REGISTRATION", "PARTNER", "PARTNER_BILL"]
                   },
                   action: { 
                     type: "string", 
-                    enum: ["CREATE", "READ", "UPDATE", "DELETE", "MANAGE"] 
+                    enum: ["CREATE", "READ", "UPDATE", "DELETE", "MANAGE", "APPROVE", "VERIFY"] 
                   }
                 }
               }

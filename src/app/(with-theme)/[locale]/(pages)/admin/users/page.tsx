@@ -353,6 +353,8 @@ export default function UsersPage() {
               <option value="MODERATOR">Moderator</option>
               <option value="INSTRUCTOR">Instructor</option>
               <option value="STUDENT">Student</option>
+              <option value="USER">User</option>
+              <option value="MEMBER">Member</option>
               <option value="GUEST">Guest</option>
             </select>
           </div>

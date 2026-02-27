@@ -20,7 +20,7 @@ User:
       description: URL to user's avatar image
     defaultRole:
       type: string
-      enum: [ADMIN, MODERATOR, INSTRUCTOR, MEMBER, GUEST]
+      enum: [SUPER_ADMIN, ADMIN, MODERATOR, INSTRUCTOR, STUDENT, USER, MEMBER, GUEST]
       description: User's default role
     roleId:
       type: string
@@ -62,7 +62,7 @@ NewUser:
       description: URL to user's avatar image
     defaultRole:
       type: string
-      enum: [ADMIN, MODERATOR, INSTRUCTOR, MEMBER, GUEST]
+      enum: [SUPER_ADMIN, ADMIN, MODERATOR, INSTRUCTOR, STUDENT, USER, MEMBER, GUEST]
       default: GUEST
       description: User's default role
   required:

@@ -3,6 +3,7 @@ import { cookies } from 'next/headers';
 import { redirect } from "next/navigation";
 import { getUserPermissions, hasRole } from "@/lib/rbac/permissions";
 import { getLocalUserId } from "@/lib/rbac/middleware";
+import { ADMIN_ROLES } from "@/lib/rbac/constants";
 
 interface AdminRouteGuardProps {
   children: React.ReactNode;
@@ -37,10 +38,10 @@ export async function AdminRouteGuard({
 
   try {
     // Check for basic admin access using local user ID
-    const isAdmin = await hasRole(localUserId, 'SUPER_ADMIN') ||
-                   await hasRole(localUserId, 'ADMIN') ||
-                   await hasRole(localUserId, 'MODERATOR') ||
-                   await hasRole(localUserId, 'INSTRUCTOR');
+    const roleChecks = await Promise.all(
+      ADMIN_ROLES.map((role) => hasRole(localUserId, role))
+    );
+    const isAdmin = roleChecks.some(Boolean);
 
     if (!isAdmin) {
       redirect('/unauthorized');

@@ -2,9 +2,20 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getProgramRegistrationsForExport } from '@/actions/program-actions';
 import { format } from 'date-fns';
 import * as XLSX from 'xlsx';
+import { hasPermission } from '@/lib/rbac/permissions';
+import { getRBACContext } from '@/lib/rbac/middleware';
 
 export async function GET(request: NextRequest) {
   try {
+    // Auth check — only users with PROGRAM_REGISTRATION READ access
+    const context = await getRBACContext();
+    if (!context) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+    const canRead = await hasPermission(context.userId, 'PROGRAM_REGISTRATION', 'READ');
+    if (!canRead) {
+      return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+    }
     const { searchParams } = new URL(request.url);
     const programId = searchParams.get('programId') || undefined;
     const statusFilter = searchParams.get('status') || undefined;

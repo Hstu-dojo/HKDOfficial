@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useSession } from '@/hooks/useSessionCompat';
 import { useAuth } from '@/context/AuthContext';
 import { useRBAC } from '@/hooks/useRBAC';
+import { ADMIN_ROLES } from '@/lib/rbac/constants';
 import Image from 'next/image';
 import { 
   Bars3Icon, 
@@ -25,11 +26,13 @@ export function AdminHeader({ onToggleSidebar, sidebarOpen }: AdminHeaderProps) 
   const { hasRole } = useRBAC();
   const [showUserMenu, setShowUserMenu] = useState(false);
 
-  const userRoles = [];
-  if (hasRole('SUPER_ADMIN')) userRoles.push('Super Admin');
-  if (hasRole('ADMIN')) userRoles.push('Admin');
-  if (hasRole('MODERATOR')) userRoles.push('Moderator');
-  if (hasRole('INSTRUCTOR')) userRoles.push('Instructor');
+  const ROLE_LABELS: Record<string, string> = {
+    SUPER_ADMIN: 'Super Admin',
+    ADMIN: 'Admin',
+    MODERATOR: 'Moderator',
+    INSTRUCTOR: 'Instructor',
+  };
+  const userRoles = ADMIN_ROLES.filter((r) => hasRole(r)).map((r) => ROLE_LABELS[r] ?? r);
 
   return (
     <header className="bg-white dark:bg-gray-800 shadow-sm border-b border-slate-200 dark:border-slate-700 sticky top-0 z-30">

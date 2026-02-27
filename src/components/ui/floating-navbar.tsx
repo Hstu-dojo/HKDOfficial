@@ -77,7 +77,7 @@ export const FloatingNav = ({
           </Link>
         ))}
         {/* @ts-ignore */}
-        {session?.user?.role === ("ADMIN" || "MODERATOR") ? (
+        {["ADMIN", "MODERATOR", "SUPER_ADMIN"].includes(session?.user?.role as string) ? (
           <Link href={"/studio"}>
             <button className="relative rounded-full border border-neutral-200 px-4 py-2 text-sm font-medium text-black dark:border-white/[0.2] dark:text-white">
               <span>Studio</span>
