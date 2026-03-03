@@ -18,7 +18,6 @@ import {
   getProgramParticipants,
   getProgramCertificates,
   markEligible,
-  autoMarkEligible,
   issueCertificates,
   revokeCertificate,
   removeEligibility,
@@ -145,14 +144,17 @@ export default function ProgramCertificateManagement() {
   // Handlers
   // ---------------------------------------------------------------------------
 
-  const handleAutoMark = async () => {
-    const result = await autoMarkEligible(programId);
-    if (result.success) {
-      toast.success(`Auto-marked ${result.count} participants as eligible`);
-      fetchData();
-    } else {
-      toast.error(result.error || 'Failed');
+  const handleAutoMark = () => {
+    // Select all uncertified participants with approved or payment_verified status — frontend only
+    const autoIds = uncertified
+      .filter((p) => p.profileId && (p.status === 'approved' || p.status === 'payment_verified'))
+      .map((p) => p.profileId as string);
+    if (autoIds.length === 0) {
+      toast.info('No verified/approved participants to auto-select');
+      return;
     }
+    setSelectedProfileIds(new Set(autoIds));
+    toast.success(`${autoIds.length} participant${autoIds.length !== 1 ? 's' : ''} selected — click "Mark Selected" to confirm`);
   };
 
   const handleManualMark = async () => {
@@ -192,10 +194,6 @@ export default function ProgramCertificateManagement() {
   };
 
   const handleIssueCertificates = async () => {
-    if (!trainerSigId || !coordinatorSigId) {
-      toast.error('Select both trainer and coordinator signatures');
-      return;
-    }
     if (selectedCertIds.size === 0) {
       toast.error('No certificates selected');
       return;
@@ -205,8 +203,8 @@ export default function ProgramCertificateManagement() {
     try {
       const result = await issueCertificates(
         Array.from(selectedCertIds),
-        trainerSigId,
-        coordinatorSigId
+        trainerSigId || null,
+        coordinatorSigId || null
       );
       if (result.success) {
         toast.success('Certificates issued successfully!');
@@ -533,45 +531,48 @@ export default function ProgramCertificateManagement() {
               {selectedCertIds.size} certificate(s) will be issued. Select signatures:
             </p>
 
+            {/* Optional signatures note */}
+            <p className="text-xs text-gray-400 dark:text-gray-500 italic">
+              Signatures are optional. If not selected, the certificate will be issued without trainer/coordinator names and signature images.
+            </p>
+
             {/* Trainer Signature */}
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                Trainer Signature <span className="text-red-500">*</span>
+                Trainer Signature <span className="text-xs font-normal text-gray-400">(optional)</span>
               </label>
-              {trainerSigs.length === 0 ? (
-                <p className="text-xs text-red-500">No active trainer signatures. <Link href="/admin/programs/signatures" className="underline">Add one</Link></p>
-              ) : (
-                <select
-                  value={trainerSigId}
-                  onChange={(e) => setTrainerSigId(e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 outline-none"
-                >
-                  <option value="">Select trainer...</option>
-                  {trainerSigs.map((s) => (
-                    <option key={s.id} value={s.id}>{s.name}{s.title ? ` — ${s.title}` : ''}</option>
-                  ))}
-                </select>
+              <select
+                value={trainerSigId}
+                onChange={(e) => setTrainerSigId(e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 outline-none"
+              >
+                <option value="">— No trainer signature —</option>
+                {trainerSigs.map((s) => (
+                  <option key={s.id} value={s.id}>{s.name}{s.title ? ` — ${s.title}` : ''}</option>
+                ))}
+              </select>
+              {trainerSigs.length === 0 && (
+                <p className="mt-1 text-xs text-gray-400 dark:text-gray-500">No active trainer signatures. <Link href="/admin/programs/signatures" className="underline">Add one</Link></p>
               )}
             </div>
 
             {/* Coordinator Signature */}
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                Coordinator Signature <span className="text-red-500">*</span>
+                Coordinator Signature <span className="text-xs font-normal text-gray-400">(optional)</span>
               </label>
-              {coordinatorSigs.length === 0 ? (
-                <p className="text-xs text-red-500">No active coordinator signatures. <Link href="/admin/programs/signatures" className="underline">Add one</Link></p>
-              ) : (
-                <select
-                  value={coordinatorSigId}
-                  onChange={(e) => setCoordinatorSigId(e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 outline-none"
-                >
-                  <option value="">Select coordinator...</option>
-                  {coordinatorSigs.map((s) => (
-                    <option key={s.id} value={s.id}>{s.name}{s.title ? ` — ${s.title}` : ''}</option>
-                  ))}
-                </select>
+              <select
+                value={coordinatorSigId}
+                onChange={(e) => setCoordinatorSigId(e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 outline-none"
+              >
+                <option value="">— No coordinator signature —</option>
+                {coordinatorSigs.map((s) => (
+                  <option key={s.id} value={s.id}>{s.name}{s.title ? ` — ${s.title}` : ''}</option>
+                ))}
+              </select>
+              {coordinatorSigs.length === 0 && (
+                <p className="mt-1 text-xs text-gray-400 dark:text-gray-500">No active coordinator signatures. <Link href="/admin/programs/signatures" className="underline">Add one</Link></p>
               )}
             </div>
 
@@ -584,7 +585,7 @@ export default function ProgramCertificateManagement() {
               </button>
               <button
                 onClick={handleIssueCertificates}
-                disabled={issuing || !trainerSigId || !coordinatorSigId}
+                disabled={issuing}
                 className="px-4 py-2 text-sm text-white bg-blue-600 rounded-md hover:bg-blue-700 disabled:opacity-50"
               >
                 {issuing ? 'Issuing...' : `Issue ${selectedCertIds.size} Certificate(s)`}

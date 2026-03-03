@@ -288,12 +288,13 @@ export async function autoMarkEligible(programId: string) {
 }
 
 /**
- * Issue certificates — sets status to ISSUED with signatures and issue date.
+ * Issue certificates — sets status to ISSUED with optional signatures and issue date.
+ * Passing null/empty for signature IDs means the certificate will be issued without that signature.
  */
 export async function issueCertificates(
   certificateIds: string[],
-  trainerSignatureId: string,
-  coordinatorSignatureId: string,
+  trainerSignatureId: string | null | undefined,
+  coordinatorSignatureId: string | null | undefined,
   issueDate?: Date
 ) {
   try {
@@ -306,8 +307,8 @@ export async function issueCertificates(
       .update(programCertificates)
       .set({
         status: 'ISSUED',
-        trainerSignatureId,
-        coordinatorSignatureId,
+        trainerSignatureId: trainerSignatureId || null,
+        coordinatorSignatureId: coordinatorSignatureId || null,
         issueDate: now,
         issuedBy: userId,
         issuedAt: new Date(),
