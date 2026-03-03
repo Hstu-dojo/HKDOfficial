@@ -25,6 +25,7 @@ import {
   issueCertificates,
   updateCertificateSignatures,
   revokeCertificate,
+  deleteCertificate,
   removeEligibility,
   getActiveSignatures,
   createManualCertificate,
@@ -271,6 +272,17 @@ export default function ProgramCertificateManagement() {
     }
   };
 
+  const handleDeleteCert = async (certId: string) => {
+    if (!confirm('Permanently delete this revoked certificate? This cannot be undone.')) return;
+    const result = await deleteCertificate(certId);
+    if (result.success) {
+      toast.success('Certificate deleted');
+      fetchData();
+    } else {
+      toast.error(result.error || 'Failed to delete certificate');
+    }
+  };
+
   const handleOpenUpdateSigModal = (certIds?: string[]) => {
     const ids = certIds ?? issuedCerts.map((c) => c.id);
     if (ids.length === 0) {
@@ -430,7 +442,7 @@ export default function ProgramCertificateManagement() {
           {issuedCerts.length > 0 && (
             <button
               onClick={handleBulkDownload}
-              className="inline-flex items-center px-3 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 text-sm"
+              className="inline-flex items-center px-3 py-2 bg-teal-600 text-white rounded-lg hover:bg-teal-700 text-sm"
             >
               <ArrowDownTrayIcon className="h-4 w-4 mr-1.5" />
               Download All ({issuedCerts.length})
@@ -699,6 +711,8 @@ export default function ProgramCertificateManagement() {
         <CertTable
           title={`Revoked (${revokedCerts.length})`}
           certs={revokedCerts}
+          canDelete={canDelete}
+          onDelete={canDelete ? handleDeleteCert : undefined}
         />
       )}
 
@@ -1075,6 +1089,7 @@ function CertTable({
   onDownload,
   onRevoke,
   onRemove,
+  onDelete,
   onUpdateSignatures,
   onAttachProfile,
   headerAction,
@@ -1087,6 +1102,7 @@ function CertTable({
   onDownload?: (id: string) => void;
   onRevoke?: (id: string) => void;
   onRemove?: (id: string) => void;
+  onDelete?: (id: string) => void;
   onUpdateSignatures?: (id: string) => void;
   onAttachProfile?: (id: string) => void;
   headerAction?: React.ReactNode;
@@ -1192,6 +1208,14 @@ function CertTable({
                         className="text-red-600 hover:text-red-800 text-xs font-medium"
                       >
                         Remove
+                      </button>
+                    )}
+                    {onDelete && c.status === 'REVOKED' && canDelete && (
+                      <button
+                        onClick={() => onDelete(c.id)}
+                        className="text-red-600 hover:text-red-800 text-xs font-medium"
+                      >
+                        Delete
                       </button>
                     )}
                   </td>

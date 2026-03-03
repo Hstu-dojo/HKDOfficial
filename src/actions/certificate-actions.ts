@@ -358,6 +358,40 @@ export async function revokeCertificate(certificateId: string, reason: string) {
 }
 
 /**
+ * Permanently delete a revoked certificate.
+ * Only REVOKED certificates can be deleted.
+ */
+export async function deleteCertificate(certificateId: string) {
+  try {
+    const userId = await getAuthUserId();
+    if (!userId) return { success: false, error: 'Unauthorized' };
+
+    // Ensure the certificate is revoked before deleting
+    const [cert] = await db
+      .select({ id: programCertificates.id, status: programCertificates.status })
+      .from(programCertificates)
+      .where(eq(programCertificates.id, certificateId))
+      .limit(1);
+
+    if (!cert) return { success: false, error: 'Certificate not found' };
+    if (cert.status !== 'REVOKED') {
+      return { success: false, error: 'Only revoked certificates can be deleted' };
+    }
+
+    await db
+      .delete(programCertificates)
+      .where(eq(programCertificates.id, certificateId));
+
+    revalidatePath('/admin/programs');
+    revalidatePath('/admin/certificates');
+    return { success: true };
+  } catch (error) {
+    console.error('[cert-actions] deleteCertificate error:', error);
+    return { success: false, error: 'Failed to delete certificate' };
+  }
+}
+
+/**
  * Update signatures on already-issued certificates.
  * Does NOT change status, certificate number, or issue date.
  */
