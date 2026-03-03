@@ -12,6 +12,10 @@ import {
   ShieldCheckIcon,
   ExclamationTriangleIcon,
   InformationCircleIcon,
+  PlusCircleIcon,
+  TableCellsIcon,
+  LinkIcon,
+  MagnifyingGlassIcon,
 } from '@heroicons/react/24/outline';
 import { toast } from 'sonner';
 import {
@@ -23,6 +27,9 @@ import {
   revokeCertificate,
   removeEligibility,
   getActiveSignatures,
+  createManualCertificate,
+  attachProfileToCertificate,
+  searchProfiles,
   type ProgramParticipant,
 } from '@/actions/certificate-actions';
 import { getProgramById } from '@/actions/program-actions';
@@ -37,10 +44,11 @@ interface CertRow {
   id: string;
   certificateNumber: string;
   status: string;
-  profileId: string;
+  profileId: string | null;
   profileName: string | null;
   profileNameBangla: string | null;
-  memberNumber: string;
+  participantName: string | null;
+  memberNumber: string | null;
   issueDate: Date | string | null;
   trainerSignatureId: string | null;
   coordinatorSignatureId: string | null;
@@ -56,6 +64,7 @@ export default function ProgramCertificateManagement() {
   const { hasPermission, loading: rbacLoading } = useRBAC();
 
   const [programTitle, setProgramTitle] = useState('');
+  const [programEndDate, setProgramEndDate] = useState<Date | null>(null);
   const [participants, setParticipants] = useState<ProgramParticipant[]>([]);
   const [certificates, setCertificates] = useState<CertRow[]>([]);
   const [signatures, setSignatures] = useState<CertificateSignature[]>([]);
@@ -83,6 +92,20 @@ export default function ProgramCertificateManagement() {
   const [updateCoordinatorSigId, setUpdateCoordinatorSigId] = useState('');
   const [updating, setUpdating] = useState(false);
 
+  // Manual certificate creation
+  const [showManualCertForm, setShowManualCertForm] = useState(false);
+  const [manualName, setManualName] = useState('');
+  const [manualTrainerSigId, setManualTrainerSigId] = useState('');
+  const [manualCoordinatorSigId, setManualCoordinatorSigId] = useState('');
+  const [creatingManual, setCreatingManual] = useState(false);
+
+  // Attach profile modal
+  const [attachCertId, setAttachCertId] = useState<string | null>(null);
+  const [profileSearchQuery, setProfileSearchQuery] = useState('');
+  const [profileSearchResults, setProfileSearchResults] = useState<{ id: string; fullNameEnglish: string | null; fullNameBangla: string | null; memberNumber: string }[]>([]);
+  const [profileSearching, setProfileSearching] = useState(false);
+  const [attaching, setAttaching] = useState(false);
+
   const canCreate = hasPermission('CERTIFICATE', 'CREATE');
   const canUpdate = hasPermission('CERTIFICATE', 'UPDATE');
   const canDelete = hasPermission('CERTIFICATE', 'DELETE');
@@ -99,8 +122,10 @@ export default function ProgramCertificateManagement() {
         getActiveSignatures(),
       ]);
 
-      if (progRes.success && progRes.data) setProgramTitle(progRes.data.title);
-      else if (!progRes.success) setFetchError(progRes.error || 'Failed to load program');
+      if (progRes.success && progRes.data) {
+        setProgramTitle(progRes.data.title);
+        setProgramEndDate(progRes.data.endDate ? new Date(progRes.data.endDate) : null);
+      } else if (!progRes.success) setFetchError(progRes.error || 'Failed to load program');
 
       if (partRes.success && partRes.data) setParticipants(partRes.data);
       else if (!partRes.success) setFetchError(partRes.error || 'Failed to load participants');
@@ -212,7 +237,8 @@ export default function ProgramCertificateManagement() {
       const result = await issueCertificates(
         Array.from(selectedCertIds),
         trainerSigId || null,
-        coordinatorSigId || null
+        coordinatorSigId || null,
+        programEndDate ?? undefined
       );
       if (result.success) {
         toast.success('Certificates issued successfully!');
@@ -293,6 +319,81 @@ export default function ProgramCertificateManagement() {
     window.open(`/api/certificates/bulk-download?programId=${programId}`, '_blank');
   };
 
+  const handleExportExcel = () => {
+    window.open(`/api/certificates/export-excel?programId=${programId}`, '_blank');
+  };
+
+  // Manual certificate creation
+  const handleCreateManualCert = async () => {
+    if (!manualName.trim()) {
+      toast.error('Participant name is required');
+      return;
+    }
+    setCreatingManual(true);
+    try {
+      const result = await createManualCertificate(
+        programId,
+        manualName.trim(),
+        manualTrainerSigId || null,
+        manualCoordinatorSigId || null,
+        programEndDate ?? undefined
+      );
+      if (result.success) {
+        toast.success('Manual certificate created!');
+        setManualName('');
+        setManualTrainerSigId('');
+        setManualCoordinatorSigId('');
+        setShowManualCertForm(false);
+        fetchData();
+      } else {
+        toast.error(result.error || 'Failed to create');
+      }
+    } catch {
+      toast.error('Failed to create manual certificate');
+    } finally {
+      setCreatingManual(false);
+    }
+  };
+
+  // Attach profile to manual certificate
+  const handleSearchProfiles = async () => {
+    if (!profileSearchQuery.trim()) return;
+    setProfileSearching(true);
+    try {
+      const result = await searchProfiles(profileSearchQuery.trim());
+      if (result.success && result.data) {
+        setProfileSearchResults(result.data);
+      } else {
+        toast.error(result.error || 'Search failed');
+      }
+    } catch {
+      toast.error('Search failed');
+    } finally {
+      setProfileSearching(false);
+    }
+  };
+
+  const handleAttachProfile = async (profileId: string) => {
+    if (!attachCertId) return;
+    setAttaching(true);
+    try {
+      const result = await attachProfileToCertificate(attachCertId, profileId);
+      if (result.success) {
+        toast.success('Profile linked to certificate');
+        setAttachCertId(null);
+        setProfileSearchQuery('');
+        setProfileSearchResults([]);
+        fetchData();
+      } else {
+        toast.error(result.error || 'Failed to attach profile');
+      }
+    } catch {
+      toast.error('Failed to attach profile');
+    } finally {
+      setAttaching(false);
+    }
+  };
+
   // ---------------------------------------------------------------------------
   // Render
   // ---------------------------------------------------------------------------
@@ -327,24 +428,42 @@ export default function ProgramCertificateManagement() {
         </div>
         <div className="flex gap-2 flex-wrap">
           {issuedCerts.length > 0 && (
-            <button
-              onClick={handleBulkDownload}
-              className="inline-flex items-center px-3 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 text-sm"
-            >
-              <ArrowDownTrayIcon className="h-4 w-4 mr-1.5" />
-              Download All ({issuedCerts.length})
-            </button>
+            <>
+              <button
+                onClick={handleBulkDownload}
+                className="inline-flex items-center px-3 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 text-sm"
+              >
+                <ArrowDownTrayIcon className="h-4 w-4 mr-1.5" />
+                Download All ({issuedCerts.length})
+              </button>
+              <button
+                onClick={handleExportExcel}
+                className="inline-flex items-center px-3 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 text-sm"
+              >
+                <TableCellsIcon className="h-4 w-4 mr-1.5" />
+                Export Excel
+              </button>
+            </>
           )}
           {canCreate && (
-            <button
-              onClick={handleOpenIssueModal}
-              disabled={eligibleCerts.length === 0}
-              title={eligibleCerts.length === 0 ? 'Mark participants as eligible first' : `Issue ${eligibleCerts.length} certificate(s)`}
-              className="inline-flex items-center px-3 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-sm disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              <DocumentCheckIcon className="h-4 w-4 mr-1.5" />
-              Issue Certificates {eligibleCerts.length > 0 && `(${eligibleCerts.length})`}
-            </button>
+            <>
+              <button
+                onClick={() => setShowManualCertForm(true)}
+                className="inline-flex items-center px-3 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 text-sm"
+              >
+                <PlusCircleIcon className="h-4 w-4 mr-1.5" />
+                Manual Certificate
+              </button>
+              <button
+                onClick={handleOpenIssueModal}
+                disabled={eligibleCerts.length === 0}
+                title={eligibleCerts.length === 0 ? 'Mark participants as eligible first' : `Issue ${eligibleCerts.length} certificate(s)`}
+                className="inline-flex items-center px-3 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-sm disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                <DocumentCheckIcon className="h-4 w-4 mr-1.5" />
+                Issue Certificates {eligibleCerts.length > 0 && `(${eligibleCerts.length})`}
+              </button>
+            </>
           )}
         </div>
       </div>
@@ -560,6 +679,7 @@ export default function ProgramCertificateManagement() {
             onDownload={handleDownload}
             onRevoke={canUpdate ? (id) => setRevoking(id) : undefined}
             onUpdateSignatures={canUpdate ? (id) => handleOpenUpdateSigModal([id]) : undefined}
+            onAttachProfile={canUpdate ? (id) => { setAttachCertId(id); setProfileSearchQuery(''); setProfileSearchResults([]); } : undefined}
             headerAction={
               canUpdate ? (
                 <button
@@ -754,6 +874,163 @@ export default function ProgramCertificateManagement() {
           </div>
         </div>
       )}
+
+      {/* Manual Certificate Modal */}
+      {showManualCertForm && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl w-full max-w-lg mx-4 p-6 space-y-4">
+            <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+              Create Manual Certificate
+            </h2>
+            <p className="text-sm text-gray-500 dark:text-gray-400">
+              Create a certificate for someone not registered in the system. You can attach a profile later.
+              {programEndDate && (
+                <span className="block mt-1 text-xs">
+                  Certificate date: <strong>{programEndDate.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</strong> (program end date)
+                </span>
+              )}
+            </p>
+
+            {/* Participant Name */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                Participant Name <span className="text-red-500">*</span>
+              </label>
+              <input
+                type="text"
+                value={manualName}
+                onChange={(e) => setManualName(e.target.value)}
+                placeholder="Full name of the participant"
+                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 outline-none"
+              />
+            </div>
+
+            {/* Trainer Signature */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                Trainer Signature <span className="text-xs font-normal text-gray-400">(optional)</span>
+              </label>
+              <select
+                value={manualTrainerSigId}
+                onChange={(e) => setManualTrainerSigId(e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 outline-none"
+              >
+                <option value="">— No trainer signature —</option>
+                {trainerSigs.map((s) => (
+                  <option key={s.id} value={s.id}>{s.name}{s.title ? ` — ${s.title}` : ''}</option>
+                ))}
+              </select>
+            </div>
+
+            {/* Coordinator Signature */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                Coordinator Signature <span className="text-xs font-normal text-gray-400">(optional)</span>
+              </label>
+              <select
+                value={manualCoordinatorSigId}
+                onChange={(e) => setManualCoordinatorSigId(e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 outline-none"
+              >
+                <option value="">— No coordinator signature —</option>
+                {coordinatorSigs.map((s) => (
+                  <option key={s.id} value={s.id}>{s.name}{s.title ? ` — ${s.title}` : ''}</option>
+                ))}
+              </select>
+            </div>
+
+            <div className="flex justify-end gap-3 pt-4 border-t">
+              <button
+                onClick={() => { setShowManualCertForm(false); setManualName(''); }}
+                className="px-4 py-2 text-sm text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-700 rounded-md hover:bg-gray-200 dark:hover:bg-gray-600"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleCreateManualCert}
+                disabled={creatingManual || !manualName.trim()}
+                className="px-4 py-2 text-sm text-white bg-purple-600 rounded-md hover:bg-purple-700 disabled:opacity-50"
+              >
+                {creatingManual ? 'Creating...' : 'Create & Issue'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Attach Profile Modal */}
+      {attachCertId && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl w-full max-w-lg mx-4 p-6 space-y-4">
+            <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+              Attach Member Profile
+            </h2>
+            <p className="text-sm text-gray-500 dark:text-gray-400">
+              Search for a member profile to link to this certificate.
+            </p>
+
+            {/* Search */}
+            <div className="flex gap-2">
+              <div className="relative flex-1">
+                <MagnifyingGlassIcon className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+                <input
+                  type="text"
+                  value={profileSearchQuery}
+                  onChange={(e) => setProfileSearchQuery(e.target.value)}
+                  onKeyDown={(e) => e.key === 'Enter' && handleSearchProfiles()}
+                  placeholder="Search by name or member number..."
+                  className="w-full pl-9 pr-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 outline-none text-sm"
+                />
+              </div>
+              <button
+                onClick={handleSearchProfiles}
+                disabled={profileSearching || !profileSearchQuery.trim()}
+                className="px-4 py-2 text-sm bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50"
+              >
+                {profileSearching ? '...' : 'Search'}
+              </button>
+            </div>
+
+            {/* Results */}
+            {profileSearchResults.length > 0 && (
+              <div className="max-h-52 overflow-y-auto divide-y divide-gray-100 dark:divide-gray-700 border rounded-md">
+                {profileSearchResults.map((p) => (
+                  <div
+                    key={p.id}
+                    className="flex items-center justify-between px-3 py-2 hover:bg-gray-50 dark:hover:bg-gray-700"
+                  >
+                    <div>
+                      <span className="text-sm text-gray-900 dark:text-gray-100">
+                        {p.fullNameEnglish || p.fullNameBangla || 'Unknown'}
+                      </span>
+                      <span className="ml-2 text-xs text-gray-400 font-mono">#{p.memberNumber}</span>
+                    </div>
+                    <button
+                      onClick={() => handleAttachProfile(p.id)}
+                      disabled={attaching}
+                      className="text-xs font-medium text-blue-600 hover:text-blue-800 disabled:opacity-50"
+                    >
+                      {attaching ? '...' : 'Link'}
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
+            {profileSearchResults.length === 0 && profileSearchQuery && !profileSearching && (
+              <p className="text-sm text-gray-400 text-center py-3">No profiles found. Try a different search.</p>
+            )}
+
+            <div className="flex justify-end pt-4 border-t">
+              <button
+                onClick={() => { setAttachCertId(null); setProfileSearchQuery(''); setProfileSearchResults([]); }}
+                className="px-4 py-2 text-sm text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-700 rounded-md hover:bg-gray-200 dark:hover:bg-gray-600"
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
@@ -799,6 +1076,7 @@ function CertTable({
   onRevoke,
   onRemove,
   onUpdateSignatures,
+  onAttachProfile,
   headerAction,
   signatures,
 }: {
@@ -810,6 +1088,7 @@ function CertTable({
   onRevoke?: (id: string) => void;
   onRemove?: (id: string) => void;
   onUpdateSignatures?: (id: string) => void;
+  onAttachProfile?: (id: string) => void;
   headerAction?: React.ReactNode;
   signatures?: CertificateSignature[];
 }) {
@@ -845,62 +1124,80 @@ function CertTable({
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
-            {certs.map((c) => (
-              <tr key={c.id}>
-                <td className="px-4 py-2 text-xs font-mono text-gray-600 dark:text-gray-400">{c.certificateNumber}</td>
-                <td className="px-4 py-2 text-sm text-gray-900 dark:text-gray-100">
-                  {c.profileName || c.profileNameBangla || '—'}
-                </td>
-                <td className="px-4 py-2 text-xs text-gray-500 dark:text-gray-400">{c.memberNumber}</td>
-                <td className="px-4 py-2">
-                  <StatusBadge status={c.status} />
-                </td>
-                {showSigColumns && (
-                  <>
-                    <td className="px-4 py-2 text-xs text-gray-600 dark:text-gray-400">
-                      {sigName(c.trainerSignatureId) || <span className="text-gray-400 italic">—</span>}
-                    </td>
-                    <td className="px-4 py-2 text-xs text-gray-600 dark:text-gray-400">
-                      {sigName(c.coordinatorSignatureId) || <span className="text-gray-400 italic">—</span>}
-                    </td>
-                  </>
-                )}
-                <td className="px-4 py-2 text-right space-x-2">
-                  {onDownload && c.status === 'ISSUED' && (
-                    <button
-                      onClick={() => onDownload(c.id)}
-                      className="text-green-600 hover:text-green-800 text-xs font-medium"
-                    >
-                      Download
-                    </button>
+            {certs.map((c) => {
+              const displayName = c.profileName || c.profileNameBangla || c.participantName || '—';
+              const isManual = !c.profileId;
+
+              return (
+                <tr key={c.id}>
+                  <td className="px-4 py-2 text-xs font-mono text-gray-600 dark:text-gray-400">{c.certificateNumber}</td>
+                  <td className="px-4 py-2 text-sm text-gray-900 dark:text-gray-100">
+                    {displayName}
+                    {isManual && (
+                      <span className="ml-2 inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300">
+                        Manual
+                      </span>
+                    )}
+                  </td>
+                  <td className="px-4 py-2 text-xs text-gray-500 dark:text-gray-400">{c.memberNumber || '—'}</td>
+                  <td className="px-4 py-2">
+                    <StatusBadge status={c.status} />
+                  </td>
+                  {showSigColumns && (
+                    <>
+                      <td className="px-4 py-2 text-xs text-gray-600 dark:text-gray-400">
+                        {sigName(c.trainerSignatureId) || <span className="text-gray-400 italic">—</span>}
+                      </td>
+                      <td className="px-4 py-2 text-xs text-gray-600 dark:text-gray-400">
+                        {sigName(c.coordinatorSignatureId) || <span className="text-gray-400 italic">—</span>}
+                      </td>
+                    </>
                   )}
-                  {onUpdateSignatures && c.status === 'ISSUED' && canUpdate && (
-                    <button
-                      onClick={() => onUpdateSignatures(c.id)}
-                      className="text-blue-600 hover:text-blue-800 text-xs font-medium"
-                    >
-                      Edit Sig
-                    </button>
-                  )}
-                  {onRevoke && c.status === 'ISSUED' && canUpdate && (
-                    <button
-                      onClick={() => onRevoke(c.id)}
-                      className="text-red-600 hover:text-red-800 text-xs font-medium"
-                    >
-                      Revoke
-                    </button>
-                  )}
-                  {onRemove && c.status === 'ELIGIBLE' && canDelete && (
-                    <button
-                      onClick={() => onRemove(c.id)}
-                      className="text-red-600 hover:text-red-800 text-xs font-medium"
-                    >
-                      Remove
-                    </button>
-                  )}
-                </td>
-              </tr>
-            ))}
+                  <td className="px-4 py-2 text-right space-x-2">
+                    {onDownload && c.status === 'ISSUED' && (
+                      <button
+                        onClick={() => onDownload(c.id)}
+                        className="text-green-600 hover:text-green-800 text-xs font-medium"
+                      >
+                        Download
+                      </button>
+                    )}
+                    {onAttachProfile && isManual && c.status === 'ISSUED' && (
+                      <button
+                        onClick={() => onAttachProfile(c.id)}
+                        className="text-purple-600 hover:text-purple-800 text-xs font-medium"
+                      >
+                        Attach Profile
+                      </button>
+                    )}
+                    {onUpdateSignatures && c.status === 'ISSUED' && canUpdate && (
+                      <button
+                        onClick={() => onUpdateSignatures(c.id)}
+                        className="text-blue-600 hover:text-blue-800 text-xs font-medium"
+                      >
+                        Edit Sig
+                      </button>
+                    )}
+                    {onRevoke && c.status === 'ISSUED' && canUpdate && (
+                      <button
+                        onClick={() => onRevoke(c.id)}
+                        className="text-red-600 hover:text-red-800 text-xs font-medium"
+                      >
+                        Revoke
+                      </button>
+                    )}
+                    {onRemove && c.status === 'ELIGIBLE' && canDelete && (
+                      <button
+                        onClick={() => onRemove(c.id)}
+                        className="text-red-600 hover:text-red-800 text-xs font-medium"
+                      >
+                        Remove
+                      </button>
+                    )}
+                  </td>
+                </tr>
+              );
+            })}
           </tbody>
         </table>
       </div>

@@ -85,6 +85,20 @@
       "when": 1772555474142,
       "tag": "0011_eager_havok",
       "breakpoints": true
+    },
+    {
+      "idx": 12,
+      "version": "7",
+      "when": 1772812800000,
+      "tag": "0012_manual_certificates",
+      "breakpoints": true
+    },
+    {
+      "idx": 13,
+      "version": "7",
+      "when": 1772576896573,
+      "tag": "0013_pink_leech",
+      "breakpoints": true
     }
   ]
 }

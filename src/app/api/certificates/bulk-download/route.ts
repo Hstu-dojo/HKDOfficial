@@ -59,7 +59,7 @@ export async function GET(request: NextRequest) {
       const year = issueDate.getFullYear().toString();
 
       const pdfBytes = await generateCertificatePdf({
-        name: c.profileName ?? c.profileNameBangla ?? 'Participant',
+        name: c.profileName ?? c.profileNameBangla ?? c.participantName ?? 'Participant',
         programName: c.programTitle,
         date: day,
         month,

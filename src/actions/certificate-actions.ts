@@ -10,7 +10,7 @@ import {
 } from '@/db/schemas/karate';
 import { user } from '@/db/schemas/auth';
 import { revalidatePath } from 'next/cache';
-import { eq, desc, and, inArray, sql, like } from 'drizzle-orm';
+import { eq, desc, and, inArray, sql, like, isNull, isNotNull, or } from 'drizzle-orm';
 import type {
   NewCertificateSignature,
   NewProgramCertificate,
@@ -398,6 +398,124 @@ export async function updateCertificateSignatures(
 }
 
 /**
+ * Create a manual certificate (no profile linked initially).
+ * Admin inputs a participant name; the certificate can be linked to a profile later.
+ */
+export async function createManualCertificate(
+  programId: string,
+  participantName: string,
+  trainerSignatureId: string | null | undefined,
+  coordinatorSignatureId: string | null | undefined,
+  issueDate?: Date
+) {
+  try {
+    const userId = await getAuthUserId();
+    if (!userId) return { success: false, error: 'Unauthorized' };
+    if (!participantName.trim()) return { success: false, error: 'Participant name is required' };
+
+    const now = issueDate ?? new Date();
+    const [cert] = await db
+      .insert(programCertificates)
+      .values({
+        programId,
+        profileId: null,
+        participantName: participantName.trim(),
+        certificateNumber: generateCertificateNumber(),
+        status: 'ISSUED',
+        trainerSignatureId: trainerSignatureId || null,
+        coordinatorSignatureId: coordinatorSignatureId || null,
+        issueDate: now,
+        issuedBy: userId,
+        issuedAt: new Date(),
+      })
+      .returning();
+
+    revalidatePath('/admin/programs');
+    revalidatePath('/admin/certificates');
+    return { success: true, data: cert };
+  } catch (error) {
+    console.error('[cert-actions] createManualCertificate error:', error);
+    return { success: false, error: 'Failed to create manual certificate' };
+  }
+}
+
+/**
+ * Attach a profile to a manual certificate (one that was created without a profile).
+ */
+export async function attachProfileToCertificate(
+  certificateId: string,
+  profileId: string
+) {
+  try {
+    const userId = await getAuthUserId();
+    if (!userId) return { success: false, error: 'Unauthorized' };
+
+    // Find the certificate
+    const cert = await db.query.programCertificates.findFirst({
+      where: eq(programCertificates.id, certificateId),
+    });
+    if (!cert) return { success: false, error: 'Certificate not found' };
+    if (cert.profileId) return { success: false, error: 'Certificate already has a profile linked' };
+
+    // Check no duplicate profile+program
+    const existing = await db.query.programCertificates.findFirst({
+      where: and(
+        eq(programCertificates.programId, cert.programId),
+        eq(programCertificates.profileId, profileId),
+      ),
+    });
+    if (existing) return { success: false, error: 'This profile already has a certificate for this program' };
+
+    const [updated] = await db
+      .update(programCertificates)
+      .set({ profileId, updatedAt: new Date() })
+      .where(eq(programCertificates.id, certificateId))
+      .returning();
+
+    revalidatePath('/admin/programs');
+    revalidatePath('/admin/certificates');
+    return { success: true, data: updated };
+  } catch (error) {
+    console.error('[cert-actions] attachProfileToCertificate error:', error);
+    return { success: false, error: 'Failed to attach profile' };
+  }
+}
+
+/**
+ * Search profiles by name or member number (for attach-profile modal).
+ */
+export async function searchProfiles(query: string) {
+  try {
+    const userId = await getAuthUserId();
+    if (!userId) return { success: false, error: 'Unauthorized' };
+    if (!query.trim()) return { success: true, data: [] };
+
+    const q = `%${query.trim()}%`;
+    const results = await db
+      .select({
+        id: profiles.id,
+        fullNameEnglish: profiles.fullNameEnglish,
+        fullNameBangla: profiles.fullNameBangla,
+        memberNumber: profiles.memberNumber,
+      })
+      .from(profiles)
+      .where(
+        or(
+          like(profiles.fullNameEnglish, q),
+          like(profiles.fullNameBangla, q),
+          like(profiles.memberNumber, q)
+        )
+      )
+      .limit(20);
+
+    return { success: true, data: results };
+  } catch (error) {
+    console.error('[cert-actions] searchProfiles error:', error);
+    return { success: false, error: 'Failed to search profiles' };
+  }
+}
+
+/**
  * Remove eligibility (delete certificate row, only if ELIGIBLE status).
  */
 export async function removeEligibility(certificateId: string) {
@@ -436,6 +554,7 @@ export async function getProgramCertificates(programId: string) {
         id: programCertificates.id,
         programId: programCertificates.programId,
         profileId: programCertificates.profileId,
+        participantName: programCertificates.participantName,
         certificateNumber: programCertificates.certificateNumber,
         status: programCertificates.status,
         issueDate: programCertificates.issueDate,
@@ -444,13 +563,13 @@ export async function getProgramCertificates(programId: string) {
         notes: programCertificates.notes,
         trainerSignatureId: programCertificates.trainerSignatureId,
         coordinatorSignatureId: programCertificates.coordinatorSignatureId,
-        // Profile info
+        // Profile info (nullable for manual certs)
         profileName: profiles.fullNameEnglish,
         profileNameBangla: profiles.fullNameBangla,
         memberNumber: profiles.memberNumber,
       })
       .from(programCertificates)
-      .innerJoin(profiles, eq(programCertificates.profileId, profiles.id))
+      .leftJoin(profiles, eq(programCertificates.profileId, profiles.id))
       .where(eq(programCertificates.programId, programId))
       .orderBy(desc(programCertificates.createdAt));
 
@@ -471,18 +590,19 @@ export async function getAllCertificates() {
         id: programCertificates.id,
         programId: programCertificates.programId,
         profileId: programCertificates.profileId,
+        participantName: programCertificates.participantName,
         certificateNumber: programCertificates.certificateNumber,
         status: programCertificates.status,
         issueDate: programCertificates.issueDate,
         issuedAt: programCertificates.issuedAt,
-        // Profile
+        // Profile (nullable for manual certs)
         profileName: profiles.fullNameEnglish,
         memberNumber: profiles.memberNumber,
         // Program
         programTitle: programs.title,
       })
       .from(programCertificates)
-      .innerJoin(profiles, eq(programCertificates.profileId, profiles.id))
+      .leftJoin(profiles, eq(programCertificates.profileId, profiles.id))
       .innerJoin(programs, eq(programCertificates.programId, programs.id))
       .orderBy(desc(programCertificates.issuedAt));
 
@@ -554,14 +674,15 @@ export async function getCertificateForPdf(certificateId: string) {
         coordinatorSignatureId: programCertificates.coordinatorSignatureId,
         programId: programCertificates.programId,
         profileId: programCertificates.profileId,
-        // Profile
+        participantName: programCertificates.participantName,
+        // Profile (nullable for manual certs)
         profileName: profiles.fullNameEnglish,
         profileNameBangla: profiles.fullNameBangla,
         // Program
         programTitle: programs.title,
       })
       .from(programCertificates)
-      .innerJoin(profiles, eq(programCertificates.profileId, profiles.id))
+      .leftJoin(profiles, eq(programCertificates.profileId, profiles.id))
       .innerJoin(programs, eq(programCertificates.programId, programs.id))
       .where(eq(programCertificates.id, certificateId))
       .limit(1);

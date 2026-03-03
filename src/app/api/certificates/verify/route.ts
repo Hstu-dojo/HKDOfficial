@@ -32,6 +32,7 @@ export async function GET(request: NextRequest) {
         issueDate: programCertificates.issueDate,
         trainerSignatureId: programCertificates.trainerSignatureId,
         coordinatorSignatureId: programCertificates.coordinatorSignatureId,
+        participantName: programCertificates.participantName,
         // Program info
         programTitle: programs.title,
         programType: programs.type,
@@ -39,14 +40,14 @@ export async function GET(request: NextRequest) {
         programEndDate: programs.endDate,
         programLocation: programs.location,
         programDescription: programs.description,
-        // Profile info (public-safe fields only)
+        // Profile info (nullable for manual certs)
         profileName: profiles.fullNameEnglish,
         profileNameBangla: profiles.fullNameBangla,
         memberNumber: profiles.memberNumber,
       })
       .from(programCertificates)
       .innerJoin(programs, eq(programCertificates.programId, programs.id))
-      .innerJoin(profiles, eq(programCertificates.profileId, profiles.id))
+      .leftJoin(profiles, eq(programCertificates.profileId, profiles.id))
       .where(
         and(
           eq(programCertificates.certificateNumber, certId.trim()),
@@ -89,7 +90,7 @@ export async function GET(request: NextRequest) {
         id: cert.id,
         certificateNumber: cert.certificateNumber,
         issueDate: cert.issueDate,
-        recipientName: cert.profileName ?? cert.profileNameBangla ?? 'Participant',
+        recipientName: cert.profileName ?? cert.profileNameBangla ?? cert.participantName ?? 'Participant',
         recipientNameBangla: cert.profileNameBangla,
         memberNumber: cert.memberNumber,
         program: {

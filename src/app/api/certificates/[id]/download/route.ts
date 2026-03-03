@@ -54,7 +54,7 @@ export async function GET(
 
     // Generate the flattened PDF
     const pdfBytes = await generateCertificatePdf({
-      name: cert.profileName ?? cert.profileNameBangla ?? 'Participant',
+      name: cert.profileName ?? cert.profileNameBangla ?? cert.participantName ?? 'Participant',
       programName: cert.programTitle,
       date: day,
       month,

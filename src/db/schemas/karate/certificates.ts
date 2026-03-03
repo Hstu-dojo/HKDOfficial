@@ -48,7 +48,10 @@ export const programCertificates = pgTable("program_certificates", {
   
   // Linked entities
   programId: text("program_id").notNull().references(() => programs.id, { onDelete: "cascade" }),
-  profileId: text("profile_id").notNull().references(() => profiles.id, { onDelete: "cascade" }),
+  profileId: text("profile_id").references(() => profiles.id, { onDelete: "cascade" }), // nullable — manual certs may not have a profile initially
+  
+  // Manual participant name (used when no profile is linked)
+  participantName: text("participant_name"),
   
   // Certificate identification
   certificateNumber: text("certificate_number").notNull().unique(), // e.g. "HKD-CERT-2026-0001"
@@ -76,8 +79,8 @@ export const programCertificates = pgTable("program_certificates", {
   createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
   updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow().notNull(),
 }, (table) => ({
-  // One certificate per profile per program
-  uniqueProfileProgram: sql`unique(${table.profileId}, ${table.programId})`,
+  // One certificate per profile per program (only when profile is linked)
+  uniqueProfileProgram: sql`unique nulls not distinct (${table.profileId}, ${table.programId})`,
 }));
 
 // Type exports
