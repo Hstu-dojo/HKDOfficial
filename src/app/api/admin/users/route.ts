@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { protectApiRoute } from "@/lib/rbac/middleware";
 import { db } from "@/lib/connect-db";
-import { user, userRole, role } from "@/db/schema";
+import { user, userRole, role, profiles, partners } from "@/db/schema";
 import { eq, like, or, desc } from "drizzle-orm";
 
 // GET /api/admin/users - Get all users with their roles
@@ -34,7 +34,7 @@ export const GET = protectApiRoute("USER", "READ", async (request, context) => {
       whereConditions.push(eq(user.emailVerified, false));
     }
 
-    // Get users with their roles
+    // Get users with their roles and profile info
     const users = await db
       .select({
         id: user.id,
@@ -44,8 +44,18 @@ export const GET = protectApiRoute("USER", "READ", async (request, context) => {
         emailVerified: user.emailVerified,
         createdAt: user.createdAt,
         defaultRole: user.defaultRole,
+        // Profile fields
+        memberNumber: profiles.memberNumber,
+        fullNameEnglish: profiles.fullNameEnglish,
+        phoneNumber: profiles.phoneNumber,
+        beltRank: profiles.beltRank,
+        isActive: profiles.isActive,
+        partnerId: profiles.partnerId,
+        partnerName: partners.name,
       })
       .from(user)
+      .leftJoin(profiles, eq(profiles.userId, user.id))
+      .leftJoin(partners, eq(profiles.partnerId, partners.id))
       .where(whereConditions.length > 0 ? whereConditions[0] : undefined)
       .orderBy(desc(user.createdAt))
       .limit(limit)
@@ -66,6 +76,15 @@ export const GET = protectApiRoute("USER", "READ", async (request, context) => {
 
         return {
           ...userData,
+          profile: userData.memberNumber ? {
+            memberNumber: userData.memberNumber,
+            fullNameEnglish: userData.fullNameEnglish,
+            phoneNumber: userData.phoneNumber,
+            beltRank: userData.beltRank,
+            isActive: userData.isActive,
+            partnerId: userData.partnerId,
+            partnerName: userData.partnerName,
+          } : null,
           roles: userRoles,
         };
       })

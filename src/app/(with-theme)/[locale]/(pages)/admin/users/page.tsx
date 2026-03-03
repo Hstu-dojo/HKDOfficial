@@ -15,6 +15,16 @@ import {
 } from "@heroicons/react/24/outline";
 import { LoadingSpinner } from "@/components/ui/loading-spinner";
 
+interface UserProfile {
+  memberNumber: string;
+  fullNameEnglish: string | null;
+  phoneNumber: string | null;
+  beltRank: string;
+  isActive: boolean;
+  partnerId: string | null;
+  partnerName: string | null;
+}
+
 interface User {
   id: string;
   userName: string;
@@ -23,6 +33,7 @@ interface User {
   emailVerified: boolean;
   createdAt: string;
   defaultRole: string;
+  profile: UserProfile | null;
   roles: Array<{
     id: string;
     name: string;
@@ -243,9 +254,12 @@ export default function UsersPage() {
   };
 
   const filteredUsers = users.filter((user) => {
+    const s = filters.search.toLowerCase();
     const matchesSearch =
-      user.userName.toLowerCase().includes(filters.search.toLowerCase()) ||
-      user.email.toLowerCase().includes(filters.search.toLowerCase());
+      user.userName.toLowerCase().includes(s) ||
+      user.email.toLowerCase().includes(s) ||
+      (user.profile?.memberNumber?.toLowerCase().includes(s) ?? false) ||
+      (user.profile?.fullNameEnglish?.toLowerCase().includes(s) ?? false);
     const matchesRole =
       !filters.role ||
       user.defaultRole === filters.role ||
@@ -405,6 +419,9 @@ export default function UsersPage() {
                     User
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">
+                    Member
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">
                     Role
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">
@@ -447,6 +464,31 @@ export default function UsersPage() {
                           </div>
                         </div>
                       </div>
+                    </td>
+                    <td className="whitespace-nowrap px-6 py-4">
+                      {user.profile ? (
+                        <div className="flex flex-col">
+                          <span className="text-sm font-mono font-medium text-gray-900 dark:text-gray-100">
+                            {user.profile.memberNumber}
+                          </span>
+                          {user.profile.partnerName && (
+                            <span className="text-xs text-gray-500 dark:text-gray-400">
+                              {user.profile.partnerName}
+                            </span>
+                          )}
+                          <span className={`mt-0.5 inline-flex w-fit rounded-full px-2 py-0.5 text-xs font-semibold ${
+                            user.profile.isActive
+                              ? 'bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300'
+                              : 'bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-300'
+                          }`}>
+                            {user.profile.beltRank || 'white'}
+                          </span>
+                        </div>
+                      ) : (
+                        <span className="text-xs text-gray-400 dark:text-gray-500 italic">
+                          No profile
+                        </span>
+                      )}
                     </td>
                     <td className="whitespace-nowrap px-6 py-4">
                       <div className="flex flex-col">
