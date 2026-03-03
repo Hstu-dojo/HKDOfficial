@@ -358,6 +358,46 @@ export async function revokeCertificate(certificateId: string, reason: string) {
 }
 
 /**
+ * Update signatures on already-issued certificates.
+ * Does NOT change status, certificate number, or issue date.
+ */
+export async function updateCertificateSignatures(
+  certificateIds: string[],
+  trainerSignatureId: string | null | undefined,
+  coordinatorSignatureId: string | null | undefined,
+) {
+  try {
+    const userId = await getAuthUserId();
+    if (!userId) return { success: false, error: 'Unauthorized' };
+
+    if (certificateIds.length === 0) {
+      return { success: false, error: 'No certificates selected' };
+    }
+
+    await db
+      .update(programCertificates)
+      .set({
+        trainerSignatureId: trainerSignatureId || null,
+        coordinatorSignatureId: coordinatorSignatureId || null,
+        updatedAt: new Date(),
+      })
+      .where(
+        and(
+          inArray(programCertificates.id, certificateIds),
+          eq(programCertificates.status, 'ISSUED')
+        )
+      );
+
+    revalidatePath('/admin/programs');
+    revalidatePath('/admin/certificates');
+    return { success: true };
+  } catch (error) {
+    console.error('[cert-actions] updateCertificateSignatures error:', error);
+    return { success: false, error: 'Failed to update signatures' };
+  }
+}
+
+/**
  * Remove eligibility (delete certificate row, only if ELIGIBLE status).
  */
 export async function removeEligibility(certificateId: string) {

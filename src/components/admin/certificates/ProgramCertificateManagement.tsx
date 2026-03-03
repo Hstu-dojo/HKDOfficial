@@ -19,6 +19,7 @@ import {
   getProgramCertificates,
   markEligible,
   issueCertificates,
+  updateCertificateSignatures,
   revokeCertificate,
   removeEligibility,
   getActiveSignatures,
@@ -74,6 +75,13 @@ export default function ProgramCertificateManagement() {
   // Revoke modal
   const [revoking, setRevoking] = useState<string | null>(null);
   const [revokeReason, setRevokeReason] = useState('');
+
+  // Update signatures modal
+  const [showUpdateSigModal, setShowUpdateSigModal] = useState(false);
+  const [updateSigCertIds, setUpdateSigCertIds] = useState<string[]>([]);
+  const [updateTrainerSigId, setUpdateTrainerSigId] = useState('');
+  const [updateCoordinatorSigId, setUpdateCoordinatorSigId] = useState('');
+  const [updating, setUpdating] = useState(false);
 
   const canCreate = hasPermission('CERTIFICATE', 'CREATE');
   const canUpdate = hasPermission('CERTIFICATE', 'UPDATE');
@@ -234,6 +242,46 @@ export default function ProgramCertificateManagement() {
       fetchData();
     } else {
       toast.error(result.error || 'Failed to revoke');
+    }
+  };
+
+  const handleOpenUpdateSigModal = (certIds?: string[]) => {
+    const ids = certIds ?? issuedCerts.map((c) => c.id);
+    if (ids.length === 0) {
+      toast.error('No issued certificates to update');
+      return;
+    }
+    setUpdateSigCertIds(ids);
+    // Pre-fill with existing signatures from the first selected cert
+    const firstCert = issuedCerts.find((c) => ids.includes(c.id));
+    setUpdateTrainerSigId(firstCert?.trainerSignatureId ?? '');
+    setUpdateCoordinatorSigId(firstCert?.coordinatorSignatureId ?? '');
+    setShowUpdateSigModal(true);
+  };
+
+  const handleUpdateSignatures = async () => {
+    if (updateSigCertIds.length === 0) {
+      toast.error('No certificates selected');
+      return;
+    }
+    setUpdating(true);
+    try {
+      const result = await updateCertificateSignatures(
+        updateSigCertIds,
+        updateTrainerSigId || null,
+        updateCoordinatorSigId || null,
+      );
+      if (result.success) {
+        toast.success(`Signatures updated for ${updateSigCertIds.length} certificate(s)`);
+        setShowUpdateSigModal(false);
+        fetchData();
+      } else {
+        toast.error(result.error || 'Failed to update signatures');
+      }
+    } catch {
+      toast.error('Failed to update signatures');
+    } finally {
+      setUpdating(false);
     }
   };
 
@@ -503,13 +551,27 @@ export default function ProgramCertificateManagement() {
 
       {/* Section: Issued Certificates */}
       {issuedCerts.length > 0 && (
-        <CertTable
-          title={`Issued (${issuedCerts.length})`}
-          certs={issuedCerts}
-          canUpdate={canUpdate}
-          onDownload={handleDownload}
-          onRevoke={canUpdate ? (id) => setRevoking(id) : undefined}
-        />
+        <>
+          <CertTable
+            title={`Issued (${issuedCerts.length})`}
+            certs={issuedCerts}
+            signatures={signatures}
+            canUpdate={canUpdate}
+            onDownload={handleDownload}
+            onRevoke={canUpdate ? (id) => setRevoking(id) : undefined}
+            onUpdateSignatures={canUpdate ? (id) => handleOpenUpdateSigModal([id]) : undefined}
+            headerAction={
+              canUpdate ? (
+                <button
+                  onClick={() => handleOpenUpdateSigModal()}
+                  className="inline-flex items-center px-3 py-1.5 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 text-xs font-medium"
+                >
+                  Update All Signatures
+                </button>
+              ) : undefined
+            }
+          />
+        </>
       )}
 
       {/* Section: Revoked */}
@@ -628,6 +690,70 @@ export default function ProgramCertificateManagement() {
           </div>
         </div>
       )}
+
+      {/* Update Signatures Modal */}
+      {showUpdateSigModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl w-full max-w-lg mx-4 p-6 space-y-4">
+            <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+              Update Signatures
+            </h2>
+            <p className="text-sm text-gray-500 dark:text-gray-400">
+              Update signatures for {updateSigCertIds.length} certificate(s). Certificate IDs and issue dates will remain unchanged.
+            </p>
+
+            {/* Trainer Signature */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                Trainer Signature <span className="text-xs font-normal text-gray-400">(optional)</span>
+              </label>
+              <select
+                value={updateTrainerSigId}
+                onChange={(e) => setUpdateTrainerSigId(e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 outline-none"
+              >
+                <option value="">— No trainer signature —</option>
+                {trainerSigs.map((s) => (
+                  <option key={s.id} value={s.id}>{s.name}{s.title ? ` — ${s.title}` : ''}</option>
+                ))}
+              </select>
+            </div>
+
+            {/* Coordinator Signature */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                Coordinator Signature <span className="text-xs font-normal text-gray-400">(optional)</span>
+              </label>
+              <select
+                value={updateCoordinatorSigId}
+                onChange={(e) => setUpdateCoordinatorSigId(e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 outline-none"
+              >
+                <option value="">— No coordinator signature —</option>
+                {coordinatorSigs.map((s) => (
+                  <option key={s.id} value={s.id}>{s.name}{s.title ? ` — ${s.title}` : ''}</option>
+                ))}
+              </select>
+            </div>
+
+            <div className="flex justify-end gap-3 pt-4 border-t">
+              <button
+                onClick={() => setShowUpdateSigModal(false)}
+                className="px-4 py-2 text-sm text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-700 rounded-md hover:bg-gray-200 dark:hover:bg-gray-600"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleUpdateSignatures}
+                disabled={updating}
+                className="px-4 py-2 text-sm text-white bg-indigo-600 rounded-md hover:bg-indigo-700 disabled:opacity-50"
+              >
+                {updating ? 'Updating...' : 'Update Signatures'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
@@ -672,6 +798,9 @@ function CertTable({
   onDownload,
   onRevoke,
   onRemove,
+  onUpdateSignatures,
+  headerAction,
+  signatures,
 }: {
   title: string;
   certs: CertRow[];
@@ -680,11 +809,23 @@ function CertTable({
   onDownload?: (id: string) => void;
   onRevoke?: (id: string) => void;
   onRemove?: (id: string) => void;
+  onUpdateSignatures?: (id: string) => void;
+  headerAction?: React.ReactNode;
+  signatures?: CertificateSignature[];
 }) {
+  const sigName = (id: string | null) => {
+    if (!id || !signatures) return null;
+    const s = signatures.find((sig) => sig.id === id);
+    return s?.name ?? null;
+  };
+
+  const showSigColumns = !!signatures && signatures.length > 0;
+
   return (
     <div className="bg-white dark:bg-gray-800 rounded-lg border shadow-sm overflow-hidden">
-      <div className="px-5 py-3 border-b bg-gray-50 dark:bg-gray-900/50">
+      <div className="px-5 py-3 border-b bg-gray-50 dark:bg-gray-900/50 flex items-center justify-between">
         <h3 className="text-sm font-semibold text-gray-700 dark:text-gray-300">{title}</h3>
+        {headerAction && <div>{headerAction}</div>}
       </div>
       <div className="overflow-x-auto">
         <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
@@ -694,6 +835,12 @@ function CertTable({
               <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Participant</th>
               <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Member #</th>
               <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+              {showSigColumns && (
+                <>
+                  <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Trainer</th>
+                  <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Coordinator</th>
+                </>
+              )}
               <th className="px-4 py-2 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
             </tr>
           </thead>
@@ -708,6 +855,16 @@ function CertTable({
                 <td className="px-4 py-2">
                   <StatusBadge status={c.status} />
                 </td>
+                {showSigColumns && (
+                  <>
+                    <td className="px-4 py-2 text-xs text-gray-600 dark:text-gray-400">
+                      {sigName(c.trainerSignatureId) || <span className="text-gray-400 italic">—</span>}
+                    </td>
+                    <td className="px-4 py-2 text-xs text-gray-600 dark:text-gray-400">
+                      {sigName(c.coordinatorSignatureId) || <span className="text-gray-400 italic">—</span>}
+                    </td>
+                  </>
+                )}
                 <td className="px-4 py-2 text-right space-x-2">
                   {onDownload && c.status === 'ISSUED' && (
                     <button
@@ -715,6 +872,14 @@ function CertTable({
                       className="text-green-600 hover:text-green-800 text-xs font-medium"
                     >
                       Download
+                    </button>
+                  )}
+                  {onUpdateSignatures && c.status === 'ISSUED' && canUpdate && (
+                    <button
+                      onClick={() => onUpdateSignatures(c.id)}
+                      className="text-blue-600 hover:text-blue-800 text-xs font-medium"
+                    >
+                      Edit Sig
                     </button>
                   )}
                   {onRevoke && c.status === 'ISSUED' && canUpdate && (
