@@ -1,11 +1,8 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import { useState, useEffect } from "react";
 import {
   ArrowDownTrayIcon,
-  ShareIcon,
-  ShieldCheckIcon,
-  ClipboardDocumentIcon,
   EyeIcon,
   XMarkIcon,
 } from "@heroicons/react/24/outline";
@@ -15,6 +12,7 @@ interface CertificateActionsProps {
   certNumber: string;
   programTitle: string;
   recipientName: string;
+  issueDate?: string;
 }
 
 export default function CertificateActions({
@@ -22,24 +20,11 @@ export default function CertificateActions({
   certNumber,
   programTitle,
   recipientName,
+  issueDate,
 }: CertificateActionsProps) {
   const [showPreview, setShowPreview] = useState(false);
   const [pdfBlobUrl, setPdfBlobUrl] = useState<string | null>(null);
   const [pdfLoading, setPdfLoading] = useState(false);
-  const [copied, setCopied] = useState(false);
-  const [shareOpen, setShareOpen] = useState(false);
-  const shareRef = useRef<HTMLDivElement>(null);
-
-  // Close share menu on outside click
-  useEffect(() => {
-    function handleClick(e: MouseEvent) {
-      if (shareRef.current && !shareRef.current.contains(e.target as Node)) {
-        setShareOpen(false);
-      }
-    }
-    if (shareOpen) document.addEventListener("mousedown", handleClick);
-    return () => document.removeEventListener("mousedown", handleClick);
-  }, [shareOpen]);
 
   const verifyUrl =
     typeof window !== "undefined"
@@ -47,6 +32,22 @@ export default function CertificateActions({
       : "";
 
   const downloadUrl = `/api/certificates/${certId}/download`;
+
+  // Build LinkedIn Add-to-Profile URL
+  const linkedInUrl = (() => {
+    const params = new URLSearchParams();
+    params.set("startTask", "CERTIFICATION_NAME");
+    params.set("name", programTitle);
+    params.set("organizationId", "105579222");
+    if (issueDate) {
+      const d = new Date(issueDate);
+      params.set("issueYear", String(d.getFullYear()));
+      params.set("issueMonth", String(d.getMonth() + 1));
+    }
+    params.set("certUrl", verifyUrl);
+    params.set("certId", certNumber);
+    return `https://www.linkedin.com/profile/add?${params.toString()}`;
+  })();
 
   async function handleView() {
     setShowPreview(true);
@@ -71,32 +72,6 @@ export default function CertificateActions({
       if (pdfBlobUrl) URL.revokeObjectURL(pdfBlobUrl);
     };
   }, [pdfBlobUrl]);
-
-  function handleCopyLink() {
-    navigator.clipboard.writeText(verifyUrl);
-    setCopied(true);
-    setShareOpen(false);
-    setTimeout(() => setCopied(false), 2500);
-  }
-
-  function handleNativeShare() {
-    if (navigator.share) {
-      navigator.share({
-        title: `Certificate — ${certNumber}`,
-        text: `Verify my certificate for "${programTitle}" issued by HKD Official.`,
-        url: verifyUrl,
-      });
-    }
-    setShareOpen(false);
-  }
-
-  function handleLinkedIn() {
-    // LinkedIn Add to Profile URL
-    // Users will be able to customize details later — structure placeholder
-    const linkedInUrl = `https://www.linkedin.com/profile/add?startTask=CERTIFICATION_NAME&name=${encodeURIComponent(programTitle)}&organizationName=${encodeURIComponent("HKD Official")}&certUrl=${encodeURIComponent(verifyUrl)}&certId=${encodeURIComponent(certNumber)}`;
-    window.open(linkedInUrl, "_blank", "noopener,noreferrer");
-    setShareOpen(false);
-  }
 
   return (
     <>
@@ -123,70 +98,19 @@ export default function CertificateActions({
           <span className="hidden sm:inline">Download</span>
         </a>
 
-        {/* Share dropdown */}
-        <div className="relative" ref={shareRef}>
-          <button
-            onClick={() => setShareOpen((v) => !v)}
-            className={`inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-semibold rounded-lg border transition-colors ${
-              copied
-                ? "border-green-300 dark:border-green-700 text-green-600 dark:text-green-400 bg-green-50 dark:bg-green-950/30"
-                : "border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700"
-            }`}
-            title="Share"
-          >
-            {copied ? (
-              <>
-                <ClipboardDocumentIcon className="h-4 w-4" />
-                <span className="hidden sm:inline">Copied!</span>
-              </>
-            ) : (
-              <>
-                <ShareIcon className="h-4 w-4" />
-                <span className="hidden sm:inline">Share</span>
-              </>
-            )}
-          </button>
-
-          {shareOpen && (
-            <div className="absolute right-0 top-full mt-2 w-52 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 shadow-lg z-50 py-1.5 animate-in fade-in-0 zoom-in-95 duration-150">
-              <button
-                onClick={handleCopyLink}
-                className="w-full flex items-center gap-2.5 px-4 py-2.5 text-sm text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors"
-              >
-                <ClipboardDocumentIcon className="h-4 w-4 text-slate-400" />
-                Copy Verify Link
-              </button>
-              <button
-                onClick={handleLinkedIn}
-                className="w-full flex items-center gap-2.5 px-4 py-2.5 text-sm text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors"
-              >
-                <svg className="h-4 w-4 text-[#0A66C2]" viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" />
-                </svg>
-                Add to LinkedIn
-              </button>
-              {typeof navigator !== "undefined" && typeof navigator.share === "function" && (
-                <button
-                  onClick={handleNativeShare}
-                  className="w-full flex items-center gap-2.5 px-4 py-2.5 text-sm text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors"
-                >
-                  <ShareIcon className="h-4 w-4 text-slate-400" />
-                  Share via…
-                </button>
-              )}
-              <div className="mx-3 my-1.5 border-t border-slate-100 dark:border-slate-700" />
-              <a
-                href={`/en/cert-verify?certId=${encodeURIComponent(certNumber)}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="w-full flex items-center gap-2.5 px-4 py-2.5 text-sm text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors"
-              >
-                <ShieldCheckIcon className="h-4 w-4 text-green-500" />
-                Verify Page
-              </a>
-            </div>
-          )}
-        </div>
+        {/* Add to LinkedIn */}
+        <a
+          href={linkedInUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-semibold rounded-lg border border-[#0A66C2]/30 text-[#0A66C2] bg-white dark:bg-slate-800 hover:bg-[#0A66C2]/5 dark:hover:bg-[#0A66C2]/10 transition-colors"
+          title="Add to LinkedIn"
+        >
+          <svg className="h-4 w-4" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" />
+          </svg>
+          <span className="hidden sm:inline">Add to LinkedIn</span>
+        </a>
       </div>
 
       {/* Full-screen Certificate Preview Modal */}

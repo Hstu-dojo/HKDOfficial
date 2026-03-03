@@ -92,6 +92,7 @@ export default async function CertificatesPage() {
                     certNumber={cert.certificateNumber}
                     programTitle={cert.programTitle}
                     recipientName=""
+                    issueDate={cert.issueDate}
                   />
                 </div>
               </div>
