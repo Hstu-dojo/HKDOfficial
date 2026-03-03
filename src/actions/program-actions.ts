@@ -1,7 +1,7 @@
 'use server';
 
 import { db } from "@/lib/connect-db";
-import { programs, programRegistrations, members, registrations } from "@/db/schemas/karate";
+import { programs, programRegistrations, members, profiles, registrations } from "@/db/schemas/karate";
 import { user, account } from "@/db/schemas/auth";
 import { revalidatePath } from "next/cache";
 import { eq, desc } from "drizzle-orm";
@@ -93,10 +93,16 @@ export async function registerForProgram(data: NewProgramRegistration) {
       return { success: false, error: "Program is full" };
     }
 
+    // 3. Resolve profile for this user (if exists)
+    const userProfile = await db.query.profiles.findFirst({
+      where: eq(profiles.userId, publicUserId),
+    });
+
     // 3. Create Registration
     const [registration] = await db.insert(programRegistrations).values({
         ...data,
-        userId: publicUserId // Swap Auth ID for Public ID
+        userId: publicUserId, // Swap Auth ID for Public ID
+        profileId: userProfile?.id ?? null,
     }).returning({
       id: programRegistrations.id,
       status: programRegistrations.status,

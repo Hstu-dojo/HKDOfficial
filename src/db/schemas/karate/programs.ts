@@ -1,6 +1,7 @@
 import { pgTable, text, integer, boolean, timestamp, jsonb, pgEnum } from "drizzle-orm/pg-core";
 import { sql } from "drizzle-orm";
 import { user } from "../auth";
+import { profiles } from "./members";
 import { enrollmentApplicationStatusEnum } from "./enrollments";
 
 // Program Type Enum
@@ -56,6 +57,7 @@ export const programRegistrations = pgTable("program_registrations", {
   id: text("id").primaryKey().default(sql`gen_random_uuid()`),
   programId: text("program_id").notNull().references(() => programs.id, { onDelete: 'cascade' }),
   userId: text("user_id").notNull().references(() => user.id, { onDelete: 'cascade' }),
+  profileId: text("profile_id").references(() => profiles.id, { onDelete: 'set null' }), // nullable — backfilled once profile exists
   
   // Registration data
   registrationNumber: text("registration_number").unique(), // e.g. "PROG-2026-001"

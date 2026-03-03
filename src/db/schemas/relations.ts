@@ -147,6 +147,7 @@ export const profilesRelations = relations(profiles, ({ one, many }) => ({
   paymentReminders: many(paymentReminders),
   enrollmentApplications: many(enrollmentApplications),
   certificates: many(programCertificates),
+  programRegistrations: many(programRegistrations),
 }));
 
 export const classesRelations = relations(classes, ({ one, many }) => ({
@@ -473,6 +474,10 @@ export const programRegistrationsRelations = relations(programRegistrations, ({ 
   user: one(user, {
     fields: [programRegistrations.userId],
     references: [user.id],
+  }),
+  profile: one(profiles, {
+    fields: [programRegistrations.profileId],
+    references: [profiles.id],
   }),
   verifier: one(user, {
     fields: [programRegistrations.verifiedBy],
