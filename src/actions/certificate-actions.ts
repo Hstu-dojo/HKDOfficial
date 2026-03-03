@@ -158,75 +158,48 @@ export interface ProgramParticipant {
 
 /**
  * Get all participants for a program, including their certificate status.
+ * Uses LEFT JOINs so participants always appear even when profile or
+ * certificate rows are missing.
  */
 export async function getProgramParticipants(programId: string) {
   try {
-    // Get all registrations for this program
-    const regs = await db
+    const rows = await db
       .select({
         registrationId: programRegistrations.id,
         userId: programRegistrations.userId,
         status: programRegistrations.status,
-      })
-      .from(programRegistrations)
-      .where(eq(programRegistrations.programId, programId))
-      .orderBy(desc(programRegistrations.createdAt));
-
-    if (regs.length === 0) {
-      return { success: true, data: [] as ProgramParticipant[] };
-    }
-
-    // Get user IDs
-    const userIds = regs.map((r) => r.userId);
-
-    // Get profiles for these users
-    const userProfiles = await db
-      .select({
-        userId: profiles.userId,
         profileId: profiles.id,
         fullNameEnglish: profiles.fullNameEnglish,
         fullNameBangla: profiles.fullNameBangla,
         memberNumber: profiles.memberNumber,
-      })
-      .from(profiles)
-      .where(inArray(profiles.userId, userIds));
-
-    const profileMap = new Map(
-      userProfiles.map((p) => [p.userId, p])
-    );
-
-    // Get existing certificates for this program
-    const certs = await db
-      .select({
-        profileId: programCertificates.profileId,
-        id: programCertificates.id,
-        status: programCertificates.status,
+        certificateId: programCertificates.id,
+        certificateStatus: programCertificates.status,
         certificateNumber: programCertificates.certificateNumber,
       })
-      .from(programCertificates)
-      .where(eq(programCertificates.programId, programId));
+      .from(programRegistrations)
+      .leftJoin(profiles, eq(profiles.userId, programRegistrations.userId))
+      .leftJoin(
+        programCertificates,
+        and(
+          eq(programCertificates.programId, programRegistrations.programId),
+          eq(programCertificates.profileId, profiles.id)
+        )
+      )
+      .where(eq(programRegistrations.programId, programId))
+      .orderBy(desc(programRegistrations.createdAt));
 
-    const certMap = new Map(
-      certs.map((c) => [c.profileId, c])
-    );
-
-    const participants: ProgramParticipant[] = regs.map((reg) => {
-      const profile = profileMap.get(reg.userId);
-      const cert = profile ? certMap.get(profile.profileId) : null;
-
-      return {
-        registrationId: reg.registrationId,
-        userId: reg.userId,
-        profileId: profile?.profileId ?? null,
-        profileName: profile?.fullNameEnglish ?? null,
-        profileNameBangla: profile?.fullNameBangla ?? null,
-        memberNumber: profile?.memberNumber ?? null,
-        status: reg.status,
-        certificateId: cert?.id ?? null,
-        certificateStatus: cert?.status ?? null,
-        certificateNumber: cert?.certificateNumber ?? null,
-      };
-    });
+    const participants: ProgramParticipant[] = rows.map((row) => ({
+      registrationId: row.registrationId,
+      userId: row.userId,
+      profileId: row.profileId ?? null,
+      profileName: row.fullNameEnglish ?? null,
+      profileNameBangla: row.fullNameBangla ?? null,
+      memberNumber: row.memberNumber ?? null,
+      status: row.status,
+      certificateId: row.certificateId ?? null,
+      certificateStatus: row.certificateStatus ?? null,
+      certificateNumber: row.certificateNumber ?? null,
+    }));
 
     return { success: true, data: participants };
   } catch (error) {
