@@ -9,6 +9,7 @@ import {
   Cog6ToothIcon,
   Bars3Icon,
   ArrowLeftOnRectangleIcon,
+  DocumentCheckIcon,
 } from "@heroicons/react/24/outline";
 import { useEffect, useCallback } from "react";
 import { useCurrentLocale } from "@/locales/client";
@@ -23,9 +24,10 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
 
 const navItems = [
-  { title: "Overview",         href: "/dashboard",             icon: HomeIcon,       exact: true  },
-  { title: "My Enrollments",   href: "/dashboard/enrollments", icon: AcademicCapIcon               },
-  { title: "Account Settings", href: "/dashboard/profile",     icon: Cog6ToothIcon                 },
+  { title: "Overview",         href: "/dashboard",              icon: HomeIcon,          exact: true  },
+  { title: "My Enrollments",   href: "/dashboard/enrollments",  icon: AcademicCapIcon                  },
+  { title: "Certificates",     href: "/dashboard/certificates", icon: DocumentCheckIcon                 },
+  { title: "Account Settings", href: "/dashboard/profile",      icon: Cog6ToothIcon                    },
 ];
 
 export default function DashboardSidebar() {

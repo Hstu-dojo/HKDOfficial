@@ -381,7 +381,15 @@ export default async function DashboardPage() {
           {/* My Certificates */}
           {certificates.length > 0 && (
             <Card className="p-5">
-              <CardHeader icon={DocumentCheckIcon} title="My Certificates" />
+              <CardHeader
+                icon={DocumentCheckIcon}
+                title="My Certificates"
+                action={
+                  <Link href="/dashboard/certificates" className="text-xs text-primary hover:underline font-medium">
+                    View All
+                  </Link>
+                }
+              />
               <div className="space-y-3">
                 {certificates.map((cert: any) => (
                   <div
@@ -418,16 +426,16 @@ export default async function DashboardPage() {
           )}
 
           {/* Help card */}
-          <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-slate-900 to-slate-800 text-white p-5 shadow-md">
-            <div className="absolute -top-8 -right-8 h-28 w-28 rounded-full bg-primary opacity-20 blur-2xl pointer-events-none" />
+          <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-slate-100 to-slate-50 dark:from-slate-900 dark:to-slate-800 p-5 shadow-sm dark:shadow-md border border-slate-200 dark:border-slate-700/50">
+            <div className="absolute -top-8 -right-8 h-28 w-28 rounded-full bg-primary opacity-10 dark:opacity-20 blur-2xl pointer-events-none" />
             <div className="relative z-10">
-              <h3 className="font-bold text-base mb-1.5">Need Help?</h3>
-              <p className="text-slate-300 text-xs leading-relaxed mb-4">
+              <h3 className="font-bold text-base mb-1.5 text-slate-900 dark:text-white">Need Help?</h3>
+              <p className="text-slate-500 dark:text-slate-300 text-xs leading-relaxed mb-4">
                 Contact our support team if you have questions about your classes or billing.
               </p>
               <Link
                 href="/contact"
-                className="inline-block px-4 py-2 bg-white text-slate-900 rounded-lg text-xs font-bold hover:bg-slate-100 transition-colors"
+                className="inline-block px-4 py-2 bg-primary text-white dark:bg-white dark:text-slate-900 rounded-lg text-xs font-bold hover:opacity-90 dark:hover:bg-slate-100 transition-colors"
               >
                 Contact Support
               </Link>
