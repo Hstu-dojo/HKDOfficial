@@ -110,7 +110,7 @@ export default function AdminDashboard({ dashboardData }: AdminDashboardProps) {
       value: dashboardData.stats.users.toLocaleString(),
       description: 'Active registered users',
       icon: UserGroupIcon,
-      href: hasPermission('USER', 'READ') ? '/admin/users' : undefined,
+      href: hasPermission('MEMBER', 'READ') ? '/admin/registrations' : undefined,
     },
     {
       title: 'Courses',
@@ -145,14 +145,7 @@ export default function AdminDashboard({ dashboardData }: AdminDashboardProps) {
       color: 'bg-purple-500',
       show: hasRole('SUPER_ADMIN'),
     },
-    {
-      title: 'Add New User',
-      description: 'Create a new user account',
-      href: '/admin/users/new',
-      icon: UserGroupIcon,
-      color: 'bg-green-500',
-      show: hasPermission('USER', 'CREATE'),
-    },
+
     {
       title: 'System Analytics',
       description: 'View detailed system reports',

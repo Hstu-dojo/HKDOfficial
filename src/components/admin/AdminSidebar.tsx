@@ -54,16 +54,6 @@ const navigation: NavItem[] = [
     },
   },
   {
-    name: 'User Management',
-    href: '/admin/users',
-    icon: UserGroupIcon,
-    description: 'Manage users and accounts',
-    requiredPermission: {
-      resource: 'USER',
-      action: 'READ',
-    },
-  },
-  {
     name: 'Registrations',
     href: '/admin/registrations',
     icon: ClipboardDocumentListIcon,
