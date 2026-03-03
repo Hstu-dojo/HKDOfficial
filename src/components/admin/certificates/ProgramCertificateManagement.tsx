@@ -428,22 +428,22 @@ export default function ProgramCertificateManagement() {
         </div>
         <div className="flex gap-2 flex-wrap">
           {issuedCerts.length > 0 && (
-            <>
-              <button
-                onClick={handleBulkDownload}
-                className="inline-flex items-center px-3 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 text-sm"
-              >
-                <ArrowDownTrayIcon className="h-4 w-4 mr-1.5" />
-                Download All ({issuedCerts.length})
-              </button>
-              <button
-                onClick={handleExportExcel}
-                className="inline-flex items-center px-3 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 text-sm"
-              >
-                <TableCellsIcon className="h-4 w-4 mr-1.5" />
-                Export Excel
-              </button>
-            </>
+            <button
+              onClick={handleBulkDownload}
+              className="inline-flex items-center px-3 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 text-sm"
+            >
+              <ArrowDownTrayIcon className="h-4 w-4 mr-1.5" />
+              Download All ({issuedCerts.length})
+            </button>
+          )}
+          {certificates.length > 0 && (
+            <button
+              onClick={handleExportExcel}
+              className="inline-flex items-center px-3 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 text-sm"
+            >
+              <TableCellsIcon className="h-4 w-4 mr-1.5" />
+              Export Excel
+            </button>
           )}
           {canCreate && (
             <>
