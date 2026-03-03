@@ -205,7 +205,7 @@ export default function CertificateActions({
             {/* PDF iframe */}
             <div className="w-full aspect-[1.414/1] max-h-[80vh]">
               <iframe
-                src={`${downloadUrl}#toolbar=0&navpanes=0`}
+                src={`${downloadUrl}?inline=true`}
                 className="w-full h-full"
                 title={`Certificate ${certNumber}`}
               />

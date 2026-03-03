@@ -68,12 +68,13 @@ export async function GET(
 
     // Return as downloadable PDF
     const filename = `Certificate_${cert.certificateNumber}.pdf`;
+    const inline = _request.nextUrl.searchParams.get('inline') === 'true';
     const buf = new Uint8Array(pdfBytes).buffer as ArrayBuffer;
     return new NextResponse(buf, {
       status: 200,
       headers: {
         'Content-Type': 'application/pdf',
-        'Content-Disposition': `attachment; filename="${filename}"`,
+        'Content-Disposition': `${inline ? 'inline' : 'attachment'}; filename="${filename}"`,
         'Cache-Control': 'no-store',
       },
     });
