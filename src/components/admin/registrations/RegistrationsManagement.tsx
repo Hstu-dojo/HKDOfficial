@@ -32,6 +32,12 @@ interface RegistrationUser {
   defaultRole: string;
 }
 
+interface RegistrationProfile {
+  memberNumber: string;
+  beltRank: string;
+  isActive: boolean;
+}
+
 interface Registration {
   id: string;
   userId: string;
@@ -50,6 +56,15 @@ interface Registration {
   createdAt: string;
   updatedAt: string;
   user: RegistrationUser | null;
+  profile: RegistrationProfile | null;
+  partnerName: string | null;
+}
+
+interface Pagination {
+  page: number;
+  limit: number;
+  total: number;
+  totalPages: number;
 }
 
 const STATUS_CONFIG: Record<string, { label: string; color: string; bg: string; icon: typeof ClockIcon }> = {
@@ -147,39 +162,55 @@ export default function RegistrationsManagement() {
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState('');
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pagination, setPagination] = useState<Pagination | null>(null);
   const [selectedRegistration, setSelectedRegistration] = useState<Registration | null>(null);
   const [showDetailModal, setShowDetailModal] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [editData, setEditData] = useState<Record<string, any>>({});
   const [saving, setSaving] = useState(false);
+  const PAGE_SIZE = 20;
 
   const canRead = hasPermission('MEMBER', 'READ');
   const canUpdate = hasPermission('MEMBER', 'UPDATE');
   const canApprove = hasPermission('MEMBER', 'APPROVE') || hasRole('SUPER_ADMIN') || hasRole('ADMIN');
   const isSuperAdmin = hasRole('SUPER_ADMIN');
 
-  const fetchRegistrations = useCallback(async () => {
+  const fetchRegistrations = useCallback(async (page = currentPage) => {
     try {
       setLoading(true);
       const params = new URLSearchParams();
       if (search) params.set('search', search);
       if (statusFilter) params.set('status', statusFilter);
+      params.set('page', String(page));
+      params.set('limit', String(PAGE_SIZE));
       const res = await fetch(`/api/admin/registrations?${params}`);
       if (res.ok) {
         const data = await res.json();
         setRegistrations(data.registrations);
+        setPagination(data.pagination);
       }
     } catch (error) {
       console.error('Failed to fetch registrations:', error);
     } finally {
       setLoading(false);
     }
-  }, [search, statusFilter]);
+  }, [search, statusFilter, currentPage]);
 
   useEffect(() => {
     if (canRead) fetchRegistrations();
     else setLoading(false);
   }, [canRead, fetchRegistrations]);
+
+  // Reset to page 1 when search or filter changes
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [search, statusFilter]);
+
+  const goToPage = (page: number) => {
+    setCurrentPage(page);
+    fetchRegistrations(page);
+  };
 
   const openDetail = (reg: Registration) => {
     setSelectedRegistration(reg);
@@ -249,7 +280,7 @@ export default function RegistrationsManagement() {
   // ─── Stats ─────────────────────────────────────────────────────────────────
 
   const stats = {
-    total: registrations.length,
+    total: pagination?.total ?? registrations.length,
     pending: registrations.filter((r) => r.status === 'pending').length,
     approved: registrations.filter((r) => r.status === 'approved').length,
     rejected: registrations.filter((r) => r.status === 'rejected').length,
@@ -343,7 +374,13 @@ export default function RegistrationsManagement() {
                 Member
               </th>
               <th className="px-4 py-3 text-left text-xs font-medium uppercase text-gray-500 dark:text-gray-400">
+                Member ID
+              </th>
+              <th className="px-4 py-3 text-left text-xs font-medium uppercase text-gray-500 dark:text-gray-400">
                 Contact
+              </th>
+              <th className="px-4 py-3 text-left text-xs font-medium uppercase text-gray-500 dark:text-gray-400">
+                Role
               </th>
               <th className="px-4 py-3 text-left text-xs font-medium uppercase text-gray-500 dark:text-gray-400">
                 Status
@@ -359,7 +396,7 @@ export default function RegistrationsManagement() {
           <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
             {registrations.length === 0 ? (
               <tr>
-                <td colSpan={5} className="px-4 py-8 text-center text-sm text-gray-500 dark:text-gray-400">
+                <td colSpan={7} className="px-4 py-8 text-center text-sm text-gray-500 dark:text-gray-400">
                   No registrations found.
                 </td>
               </tr>
@@ -397,8 +434,36 @@ export default function RegistrationsManagement() {
                       </div>
                     </td>
                     <td className="px-4 py-3">
+                      {reg.profile ? (
+                        <div>
+                          <p className="text-sm font-mono font-medium text-gray-900 dark:text-white">
+                            {reg.profile.memberNumber}
+                          </p>
+                          {reg.partnerName && (
+                            <p className="text-xs text-gray-500 dark:text-gray-400">{reg.partnerName}</p>
+                          )}
+                          <span className={`mt-0.5 inline-flex rounded-full px-2 py-0.5 text-xs font-semibold ${
+                            reg.profile.isActive
+                              ? 'bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300'
+                              : 'bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-300'
+                          }`}>
+                            {reg.profile.beltRank || 'white'}
+                          </span>
+                        </div>
+                      ) : (
+                        <span className="text-xs text-gray-400 dark:text-gray-500 italic">No profile</span>
+                      )}
+                    </td>
+                    <td className="px-4 py-3">
                       <p className="text-sm text-gray-700 dark:text-gray-300">{reg.email}</p>
                       <p className="text-xs text-gray-500 dark:text-gray-400">{reg.phoneNumber}</p>
+                    </td>
+                    <td className="px-4 py-3">
+                      {reg.user?.defaultRole && (
+                        <span className="inline-flex rounded-full bg-blue-100 dark:bg-blue-900/30 px-2 py-0.5 text-xs font-semibold text-blue-800 dark:text-blue-300">
+                          {reg.user.defaultRole}
+                        </span>
+                      )}
                     </td>
                     <td className="px-4 py-3">
                       <span className={`inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-medium ${statusCfg.bg} ${statusCfg.color}`}>
@@ -445,6 +510,44 @@ export default function RegistrationsManagement() {
           </tbody>
         </table>
       </div>
+
+      {/* Pagination */}
+      {pagination && pagination.totalPages > 1 && (
+        <div className="flex items-center justify-between rounded-lg border bg-white dark:bg-gray-800 px-4 py-3">
+          <div className="text-sm text-gray-500 dark:text-gray-400">
+            Showing {((pagination.page - 1) * pagination.limit) + 1}–{Math.min(pagination.page * pagination.limit, pagination.total)} of {pagination.total} registrations
+          </div>
+          <div className="flex items-center gap-1">
+            <button
+              onClick={() => goToPage(pagination.page - 1)}
+              disabled={pagination.page <= 1}
+              className="rounded px-3 py-1 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 disabled:opacity-40 disabled:cursor-not-allowed"
+            >
+              Previous
+            </button>
+            {Array.from({ length: pagination.totalPages }, (_, i) => i + 1).map((p) => (
+              <button
+                key={p}
+                onClick={() => goToPage(p)}
+                className={`rounded px-3 py-1 text-sm font-medium ${
+                  p === pagination.page
+                    ? 'bg-blue-600 text-white'
+                    : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'
+                }`}
+              >
+                {p}
+              </button>
+            ))}
+            <button
+              onClick={() => goToPage(pagination.page + 1)}
+              disabled={pagination.page >= pagination.totalPages}
+              className="rounded px-3 py-1 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 disabled:opacity-40 disabled:cursor-not-allowed"
+            >
+              Next
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* Detail / Edit Modal */}
       {showDetailModal && selectedRegistration && (
