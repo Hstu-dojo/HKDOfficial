@@ -180,6 +180,13 @@ export default function ProgramsManagement() {
                     Registrations
                  </a>
 
+                 <a
+                   href={`/admin/programs/certificates?programId=${program.id}`}
+                   className="inline-flex items-center px-3 py-1.5 border border-green-300 dark:border-green-600 shadow-sm text-xs font-medium rounded text-green-700 dark:text-green-300 bg-white dark:bg-gray-800 hover:bg-green-50 dark:hover:bg-green-900/20 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
+                 >
+                    Certificates
+                 </a>
+
                 {canUpdate && (
                   <button
                     onClick={() => handleEdit(program)}

@@ -12,7 +12,8 @@ import {
   enrollmentApplications, courseEnrollments,
   monthlyFees, paymentReminders, paymentSettings,
   programs, programRegistrations,
-  profileMonthlyStatus, memberMonthlyStatus, branchChangeRequests
+  profileMonthlyStatus, memberMonthlyStatus, branchChangeRequests,
+  certificateSignatures, programCertificates
 } from "./karate";
 import { billableItems, bills, payments } from "./billing";
 import { 
@@ -145,6 +146,7 @@ export const profilesRelations = relations(profiles, ({ one, many }) => ({
   monthlyFees: many(monthlyFees),
   paymentReminders: many(paymentReminders),
   enrollmentApplications: many(enrollmentApplications),
+  certificates: many(programCertificates),
 }));
 
 export const classesRelations = relations(classes, ({ one, many }) => ({
@@ -456,6 +458,7 @@ export const galleryImagesRelations = relations(galleryImages, ({ one }) => ({
 // Program Relations
 export const programsRelations = relations(programs, ({ one, many }) => ({
   registrations: many(programRegistrations),
+  certificates: many(programCertificates),
   creator: one(user, {
     fields: [programs.createdBy],
     references: [user.id],
@@ -545,5 +548,50 @@ export const branchChangeRequestsRelations = relations(branchChangeRequests, ({ 
     fields: [branchChangeRequests.toPartnerId],
     references: [partners.id],
     relationName: "toPartner",
+  }),
+}));
+
+// Certificate Relations
+export const certificateSignaturesRelations = relations(certificateSignatures, ({ one, many }) => ({
+  createdByUser: one(user, {
+    fields: [certificateSignatures.createdBy],
+    references: [user.id],
+  }),
+  certificatesAsTrainer: many(programCertificates, {
+    relationName: "trainerSignature",
+  }),
+  certificatesAsCoordinator: many(programCertificates, {
+    relationName: "coordinatorSignature",
+  }),
+}));
+
+export const programCertificatesRelations = relations(programCertificates, ({ one }) => ({
+  program: one(programs, {
+    fields: [programCertificates.programId],
+    references: [programs.id],
+  }),
+  profile: one(profiles, {
+    fields: [programCertificates.profileId],
+    references: [profiles.id],
+  }),
+  trainerSignature: one(certificateSignatures, {
+    fields: [programCertificates.trainerSignatureId],
+    references: [certificateSignatures.id],
+    relationName: "trainerSignature",
+  }),
+  coordinatorSignature: one(certificateSignatures, {
+    fields: [programCertificates.coordinatorSignatureId],
+    references: [certificateSignatures.id],
+    relationName: "coordinatorSignature",
+  }),
+  issuedByUser: one(user, {
+    fields: [programCertificates.issuedBy],
+    references: [user.id],
+    relationName: "certIssuer",
+  }),
+  revokedByUser: one(user, {
+    fields: [programCertificates.revokedBy],
+    references: [user.id],
+    relationName: "certRevoker",
   }),
 }));

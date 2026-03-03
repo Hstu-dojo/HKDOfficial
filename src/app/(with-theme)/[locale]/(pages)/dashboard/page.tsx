@@ -8,9 +8,12 @@ import {
   CurrencyBangladeshiIcon,
   CalendarDaysIcon,
   TrophyIcon,
+  DocumentCheckIcon,
+  ArrowDownTrayIcon,
 } from '@heroicons/react/24/outline';
 import { format } from 'date-fns';
 import { getUserDashboardData } from '@/actions/dashboard-actions';
+import { getMyCertificates } from '@/actions/certificate-actions';
 import { ProfileCompletionCard } from '@/components/dashboard/profile-completion-card';
 
 export const metadata = {
@@ -104,6 +107,10 @@ export default async function DashboardPage() {
   }
 
   const { user, applications, enrollments, payments, programRegistrations } = data;
+
+  // Fetch user's issued certificates
+  const certificatesResult = await getMyCertificates();
+  const certificates = 'error' in certificatesResult ? [] : certificatesResult;
 
   return (
     <div className="space-y-6">
@@ -370,6 +377,45 @@ export default async function DashboardPage() {
               </p>
             )}
           </Card>
+
+          {/* My Certificates */}
+          {certificates.length > 0 && (
+            <Card className="p-5">
+              <CardHeader icon={DocumentCheckIcon} title="My Certificates" />
+              <div className="space-y-3">
+                {certificates.map((cert: any) => (
+                  <div
+                    key={cert.id}
+                    className="p-3.5 rounded-xl bg-slate-50 dark:bg-slate-700/30 border border-slate-100 dark:border-slate-700/50"
+                  >
+                    <div className="flex justify-between items-start mb-1.5">
+                      <span className="font-semibold text-sm text-slate-900 dark:text-slate-100 truncate pr-2">
+                        {cert.programTitle}
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-2 text-xs text-slate-500 dark:text-slate-400 mb-2.5">
+                      <span className="font-mono">{cert.certificateNumber}</span>
+                      {cert.issueDate && (
+                        <>
+                          <span>•</span>
+                          <span>{format(new Date(cert.issueDate), 'MMM d, yyyy')}</span>
+                        </>
+                      )}
+                    </div>
+                    <a
+                      href={`/api/certificates/${cert.id}/download`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-primary bg-primary/10 rounded-lg hover:bg-primary/20 transition-colors"
+                    >
+                      <ArrowDownTrayIcon className="h-3.5 w-3.5" />
+                      Download PDF
+                    </a>
+                  </div>
+                ))}
+              </div>
+            </Card>
+          )}
 
           {/* Help card */}
           <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-slate-900 to-slate-800 text-white p-5 shadow-md">
