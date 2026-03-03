@@ -24,6 +24,8 @@ export default function CertificateActions({
   recipientName,
 }: CertificateActionsProps) {
   const [showPreview, setShowPreview] = useState(false);
+  const [pdfBlobUrl, setPdfBlobUrl] = useState<string | null>(null);
+  const [pdfLoading, setPdfLoading] = useState(false);
   const [copied, setCopied] = useState(false);
   const [shareOpen, setShareOpen] = useState(false);
   const shareRef = useRef<HTMLDivElement>(null);
@@ -45,6 +47,30 @@ export default function CertificateActions({
       : "";
 
   const downloadUrl = `/api/certificates/${certId}/download`;
+
+  async function handleView() {
+    setShowPreview(true);
+    if (pdfBlobUrl) return; // already fetched
+    setPdfLoading(true);
+    try {
+      const res = await fetch(`${downloadUrl}?inline=true`);
+      if (!res.ok) throw new Error("Failed to load PDF");
+      const blob = await res.blob();
+      const url = URL.createObjectURL(blob);
+      setPdfBlobUrl(url);
+    } catch (err) {
+      console.error("Error loading certificate PDF:", err);
+    } finally {
+      setPdfLoading(false);
+    }
+  }
+
+  // Cleanup blob URL on unmount
+  useEffect(() => {
+    return () => {
+      if (pdfBlobUrl) URL.revokeObjectURL(pdfBlobUrl);
+    };
+  }, [pdfBlobUrl]);
 
   function handleCopyLink() {
     navigator.clipboard.writeText(verifyUrl);
@@ -77,7 +103,7 @@ export default function CertificateActions({
       <div className="flex items-center gap-2 flex-shrink-0">
         {/* Preview */}
         <button
-          onClick={() => setShowPreview(true)}
+          onClick={handleView}
           className="inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-semibold rounded-lg border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors"
           title="View Certificate"
         >
@@ -202,13 +228,38 @@ export default function CertificateActions({
               </div>
             </div>
 
-            {/* PDF iframe */}
-            <div className="w-full aspect-[1.414/1] max-h-[80vh]">
-              <iframe
-                src={`${downloadUrl}?inline=true`}
-                className="w-full h-full"
-                title={`Certificate ${certNumber}`}
-              />
+            {/* PDF viewer */}
+            <div className="w-full aspect-[1.414/1] max-h-[80vh] bg-slate-100 dark:bg-slate-950">
+              {pdfLoading ? (
+                <div className="flex items-center justify-center h-full">
+                  <span className="h-8 w-8 border-3 border-primary/30 border-t-primary rounded-full animate-spin" />
+                </div>
+              ) : pdfBlobUrl ? (
+                <object
+                  data={pdfBlobUrl}
+                  type="application/pdf"
+                  className="w-full h-full"
+                >
+                  <div className="flex flex-col items-center justify-center h-full gap-3 p-6 text-center">
+                    <p className="text-sm text-slate-500 dark:text-slate-400">
+                      Unable to display PDF in browser.
+                    </p>
+                    <a
+                      href={downloadUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-1.5 px-4 py-2 text-xs font-semibold rounded-lg text-white bg-primary hover:opacity-90 transition-opacity"
+                    >
+                      <ArrowDownTrayIcon className="h-3.5 w-3.5" />
+                      Download Instead
+                    </a>
+                  </div>
+                </object>
+              ) : (
+                <div className="flex items-center justify-center h-full">
+                  <p className="text-sm text-slate-500 dark:text-slate-400">Failed to load certificate.</p>
+                </div>
+              )}
             </div>
           </div>
         </div>
