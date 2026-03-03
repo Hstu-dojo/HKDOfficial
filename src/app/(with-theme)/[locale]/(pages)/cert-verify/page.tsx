@@ -346,6 +346,15 @@ function CertVerifyContent() {
 
               {/* Action buttons */}
               <div className="flex flex-wrap gap-3 justify-center">
+                <a
+                  href={`/api/certificates/${certificate.id}/download`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-primary text-white text-sm font-semibold hover:opacity-90 transition-opacity"
+                >
+                  <DocumentArrowDownIcon className="h-4 w-4" />
+                  Download
+                </a>
                 <button
                   onClick={handleShare}
                   className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-sm font-semibold text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors"
