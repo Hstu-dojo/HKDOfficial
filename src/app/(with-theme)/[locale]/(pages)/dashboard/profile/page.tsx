@@ -20,10 +20,14 @@ import {
   KeyRound,
   Settings,
   FileText,
-  ArrowLeft
+  ArrowLeft,
+  Award,
+  Download
 } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import Link from "next/link";
+import { getMyCertificates } from "@/actions/certificate-actions";
+import { format } from "date-fns";
 
 function ProfileSettingsContent() {
   const { user, loading, signOut } = useAuth();
@@ -49,6 +53,10 @@ function ProfileSettingsContent() {
   const [profileUpdateError, setProfileUpdateError] = useState("");
   const [passwordChangeError, setPasswordChangeError] = useState("");
   
+  // Certificate states
+  const [certificates, setCertificates] = useState<any[]>([]);
+  const [certsLoading, setCertsLoading] = useState(true);
+
   // Check if user has password (from identities)
   const [hasPassword, setHasPassword] = useState(false);
   const [isCheckingPassword, setIsCheckingPassword] = useState(true);
@@ -175,6 +183,24 @@ function ProfileSettingsContent() {
 
     return () => subscription.unsubscribe();
   }, []);
+
+  // Fetch user's certificates
+  useEffect(() => {
+    async function fetchCerts() {
+      try {
+        const result = await getMyCertificates();
+        if (result && 'data' in result && Array.isArray(result.data)) {
+          setCertificates(result.data);
+        }
+      } catch (err) {
+        console.error('Error fetching certificates:', err);
+      } finally {
+        setCertsLoading(false);
+      }
+    }
+    if (user) fetchCerts();
+    else setCertsLoading(false);
+  }, [user]);
 
   if (loading) {
     return (
@@ -365,7 +391,7 @@ function ProfileSettingsContent() {
 
       {/* Tabs for different sections */}
       <Tabs defaultValue="account" className="space-y-6">
-        <TabsList className="grid w-full grid-cols-3 lg:w-[400px]">
+        <TabsList className="grid w-full grid-cols-4 lg:w-[520px]">
           <TabsTrigger value="account" className="flex items-center gap-2">
             <User className="h-4 w-4" />
             <span className="hidden sm:inline">Account</span>
@@ -373,6 +399,10 @@ function ProfileSettingsContent() {
           <TabsTrigger value="security" className="flex items-center gap-2">
             <KeyRound className="h-4 w-4" />
             <span className="hidden sm:inline">Security</span>
+          </TabsTrigger>
+          <TabsTrigger value="certificates" className="flex items-center gap-2">
+            <Award className="h-4 w-4" />
+            <span className="hidden sm:inline">Certificates</span>
           </TabsTrigger>
           <TabsTrigger value="membership" className="flex items-center gap-2">
             <FileText className="h-4 w-4" />
@@ -693,6 +723,74 @@ function ProfileSettingsContent() {
                   )}
                 </Button>
               </form>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        {/* Certificates Tab */}
+        <TabsContent value="certificates" className="space-y-6">
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Award className="h-5 w-5" />
+                My Certificates
+              </CardTitle>
+              <CardDescription>
+                View and download certificates issued for programs you&apos;ve completed
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              {certsLoading ? (
+                <div className="flex items-center justify-center py-8">
+                  <Loader2 className="h-6 w-6 animate-spin text-primary" />
+                  <span className="ml-2 text-sm text-muted-foreground">Loading certificates...</span>
+                </div>
+              ) : certificates.length > 0 ? (
+                <div className="space-y-3">
+                  {certificates.map((cert: any) => (
+                    <div
+                      key={cert.id}
+                      className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 rounded-xl bg-slate-50 dark:bg-slate-700/30 border border-slate-100 dark:border-slate-700/50"
+                    >
+                      <div className="min-w-0 flex-1">
+                        <h3 className="font-semibold text-slate-900 dark:text-slate-100 truncate">
+                          {cert.programTitle}
+                        </h3>
+                        <div className="flex flex-wrap items-center gap-2 mt-1 text-xs text-slate-500 dark:text-slate-400">
+                          <span className="font-mono bg-slate-100 dark:bg-slate-600/50 px-2 py-0.5 rounded">
+                            {cert.certificateNumber}
+                          </span>
+                          {cert.issueDate && (
+                            <>
+                              <span>&bull;</span>
+                              <span>Issued {format(new Date(cert.issueDate), 'MMM d, yyyy')}</span>
+                            </>
+                          )}
+                        </div>
+                      </div>
+                      <a
+                        href={`/api/certificates/${cert.id}/download`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-1.5 px-4 py-2 text-sm font-semibold text-white bg-primary rounded-lg hover:opacity-90 transition-opacity flex-shrink-0"
+                      >
+                        <Download className="h-4 w-4" />
+                        Download PDF
+                      </a>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="text-center py-10">
+                  <Award className="h-12 w-12 text-slate-200 dark:text-slate-700 mx-auto mb-3" />
+                  <p className="text-slate-500 dark:text-slate-400 text-sm mb-2">
+                    No certificates issued yet.
+                  </p>
+                  <p className="text-slate-400 dark:text-slate-500 text-xs">
+                    Certificates will appear here once they are issued for programs you&apos;ve completed.
+                  </p>
+                </div>
+              )}
             </CardContent>
           </Card>
         </TabsContent>

@@ -175,21 +175,23 @@ export async function PUT(
         } catch {}
 
         // Determine partner slug for member number prefix
-        let prefix = 'HKD-ADMIN';
         const partnerId = noteData.partnerId || existing.partnerId || null;
-        if (partnerId) {
-          const partner = await db.query.partners.findFirst({
-            where: eq(partners.id, partnerId),
-          });
-          if (partner?.slug) {
-            prefix = `HKD-${partner.slug.toUpperCase().slice(0, 8)}`;
-          }
+        if (!partnerId) {
+          return NextResponse.json(
+            { error: 'Cannot approve: registration has no partner/branch assigned. Please assign a branch first.' },
+            { status: 400 }
+          );
         }
 
+        const partnerRecord = await db.query.partners.findFirst({
+          where: eq(partners.id, partnerId),
+        });
+        const prefix = partnerRecord?.slug
+          ? `HKD-${partnerRecord.slug.toUpperCase().slice(0, 8)}`
+          : 'HKD-HQ';
+
         // Generate member number
-        const existingCount = partnerId
-          ? await db.select({ total: count() }).from(profiles).where(eq(profiles.partnerId, partnerId))
-          : await db.select({ total: count() }).from(profiles);
+        const existingCount = await db.select({ total: count() }).from(profiles).where(eq(profiles.partnerId, partnerId));
         const memberNumber = `${prefix}-${String((existingCount[0]?.total || 0) + 1).padStart(4, '0')}`;
 
         await db.insert(profiles).values({

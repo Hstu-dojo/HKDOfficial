@@ -63,21 +63,22 @@ async function populateProfiles() {
       } catch {}
 
       // Determine partner for member number prefix
-      let prefix = 'HKD-ADMIN';
       const partnerId = noteData.partnerId || reg.partnerId || null;
-      if (partnerId) {
-        const partner = await db.query.partners.findFirst({
-          where: eq(partners.id, partnerId),
-        });
-        if (partner?.slug) {
-          prefix = `HKD-${partner.slug.toUpperCase().slice(0, 8)}`;
-        }
+      if (!partnerId) {
+        console.log(`  ⚠️  No partnerId for userId: ${userId} (${reg.firstName} ${reg.lastName}), skipping`);
+        skipped++;
+        continue;
       }
 
+      const partner = await db.query.partners.findFirst({
+        where: eq(partners.id, partnerId),
+      });
+      const prefix = partner?.slug
+        ? `HKD-${partner.slug.toUpperCase().slice(0, 8)}`
+        : 'HKD-HQ';
+
       // Generate member number
-      const existingCount = partnerId
-        ? await db.select({ total: count() }).from(profiles).where(eq(profiles.partnerId, partnerId))
-        : await db.select({ total: count() }).from(profiles);
+      const existingCount = await db.select({ total: count() }).from(profiles).where(eq(profiles.partnerId, partnerId));
       const memberNumber = `${prefix}-${String((existingCount[0]?.total || 0) + 1).padStart(4, '0')}`;
 
       const [newProfile] = await db.insert(profiles).values({
@@ -146,20 +147,20 @@ async function populateProfiles() {
           : (reg.notes || {});
       } catch {}
 
-      let prefix = 'HKD-ADMIN';
       const partnerId = noteData.partnerId || reg.partnerId || null;
-      if (partnerId) {
-        const partner = await db.query.partners.findFirst({
-          where: eq(partners.id, partnerId),
-        });
-        if (partner?.slug) {
-          prefix = `HKD-${partner.slug.toUpperCase().slice(0, 8)}`;
-        }
+      if (!partnerId) {
+        console.log(`  ⚠️  No partnerId for approved reg userId: ${reg.userId} (${reg.firstName} ${reg.lastName}), skipping`);
+        continue;
       }
 
-      const existingCount = partnerId
-        ? await db.select({ total: count() }).from(profiles).where(eq(profiles.partnerId, partnerId))
-        : await db.select({ total: count() }).from(profiles);
+      const partner = await db.query.partners.findFirst({
+        where: eq(partners.id, partnerId),
+      });
+      const prefix = partner?.slug
+        ? `HKD-${partner.slug.toUpperCase().slice(0, 8)}`
+        : 'HKD-HQ';
+
+      const existingCount = await db.select({ total: count() }).from(profiles).where(eq(profiles.partnerId, partnerId));
       const memberNumber = `${prefix}-${String((existingCount[0]?.total || 0) + 1).padStart(4, '0')}`;
 
       await db.insert(profiles).values({
