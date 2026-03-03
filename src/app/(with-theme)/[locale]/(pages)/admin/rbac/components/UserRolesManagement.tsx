@@ -43,7 +43,7 @@ export default function UserRolesManagement() {
     try {
       setLoading(true);
       const [usersRes, rolesRes] = await Promise.all([
-        fetch("/api/admin/users"),
+        fetch("/api/admin/users?limit=100"),
         fetch("/api/rbac/roles"),
       ]);
 

@@ -81,7 +81,7 @@ export default function UsersPage() {
   const fetchUsers = async () => {
     try {
       setLoading(true);
-      const response = await fetch("/api/admin/users");
+      const response = await fetch("/api/admin/users?limit=100");
       if (response.ok) {
         const data = await response.json();
         setUsers(data.users);

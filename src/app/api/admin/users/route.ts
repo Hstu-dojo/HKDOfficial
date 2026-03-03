@@ -9,7 +9,7 @@ export const GET = protectApiRoute("USER", "READ", async (request, context) => {
   try {
     const url = new URL(request.url);
     const page = parseInt(url.searchParams.get('page') || '1');
-    const limit = parseInt(url.searchParams.get('limit') || '10');
+    const limit = parseInt(url.searchParams.get('limit') || '100');
     const search = url.searchParams.get('search') || '';
     const roleFilter = url.searchParams.get('role') || '';
     const statusFilter = url.searchParams.get('status') || '';
