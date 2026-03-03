@@ -11,6 +11,7 @@ import {
   DocumentCheckIcon,
   ShieldCheckIcon,
   ExclamationTriangleIcon,
+  InformationCircleIcon,
 } from '@heroicons/react/24/outline';
 import { toast } from 'sonner';
 import {
@@ -59,6 +60,7 @@ export default function ProgramCertificateManagement() {
   const [certificates, setCertificates] = useState<CertRow[]>([]);
   const [signatures, setSignatures] = useState<CertificateSignature[]>([]);
   const [loading, setLoading] = useState(true);
+  const [fetchError, setFetchError] = useState<string | null>(null);
 
   // Selection state for eligibility
   const [selectedProfileIds, setSelectedProfileIds] = useState<Set<string>>(new Set());
@@ -82,6 +84,7 @@ export default function ProgramCertificateManagement() {
     if (!programId) return;
     try {
       setLoading(true);
+      setFetchError(null);
       const [progRes, partRes, certRes, sigRes] = await Promise.all([
         getProgramById(programId),
         getProgramParticipants(programId),
@@ -90,10 +93,19 @@ export default function ProgramCertificateManagement() {
       ]);
 
       if (progRes.success && progRes.data) setProgramTitle(progRes.data.title);
+      else if (!progRes.success) setFetchError(progRes.error || 'Failed to load program');
+
       if (partRes.success && partRes.data) setParticipants(partRes.data);
+      else if (!partRes.success) setFetchError(partRes.error || 'Failed to load participants');
+
       if (certRes.success && certRes.data) setCertificates(certRes.data as CertRow[]);
+      else if (!certRes.success) setFetchError(certRes.error || 'Failed to load certificates');
+
       if (sigRes.success && sigRes.data) setSignatures(sigRes.data);
-    } catch {
+      else if (!sigRes.success) setFetchError(prev => prev || (sigRes.error || 'Failed to load signatures'));
+    } catch (err) {
+      console.error('[ProgramCertificateManagement] fetchData error:', err);
+      setFetchError('Failed to load data. Please try again.');
       toast.error('Failed to load data');
     } finally {
       setLoading(false);
@@ -104,10 +116,13 @@ export default function ProgramCertificateManagement() {
     if (!rbacLoading && programId) fetchData();
   }, [rbacLoading, programId, fetchData]);
 
-  // Participants without a certificate yet
+  // Participants without a certificate yet (and who have profiles)
   const uncertified = participants.filter(
     (p) => p.profileId && !p.certificateId
   );
+
+  // Participants who registered but have no profile yet
+  const noProfileParticipants = participants.filter((p) => !p.profileId);
 
   // Separate cert rows by status
   const eligibleCerts = certificates.filter((c) => c.status === 'ELIGIBLE');
@@ -116,6 +131,15 @@ export default function ProgramCertificateManagement() {
 
   const trainerSigs = signatures.filter((s) => s.role === 'TRAINER');
   const coordinatorSigs = signatures.filter((s) => s.role === 'COORDINATOR');
+
+  // Determine workflow stage for stepper
+  const workflowStage = issuedCerts.length > 0
+    ? 3 // has issued certs
+    : eligibleCerts.length > 0
+      ? 2 // has eligible, ready to issue
+      : participants.length > 0
+        ? 1 // has participants, need to mark eligible
+        : 0; // no participants yet
 
   // ---------------------------------------------------------------------------
   // Handlers
@@ -249,7 +273,7 @@ export default function ProgramCertificateManagement() {
       <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
         <div>
           <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
-            Certificates — {programTitle}
+            Certificates — {programTitle || 'Program'}
           </h1>
           <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
             Manage certificate eligibility and issuance for this program.
@@ -265,15 +289,68 @@ export default function ProgramCertificateManagement() {
               Download All ({issuedCerts.length})
             </button>
           )}
-          {canCreate && eligibleCerts.length > 0 && (
+          {canCreate && (
             <button
               onClick={handleOpenIssueModal}
-              className="inline-flex items-center px-3 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-sm"
+              disabled={eligibleCerts.length === 0}
+              title={eligibleCerts.length === 0 ? 'Mark participants as eligible first' : `Issue ${eligibleCerts.length} certificate(s)`}
+              className="inline-flex items-center px-3 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-sm disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <DocumentCheckIcon className="h-4 w-4 mr-1.5" />
-              Issue Certificates ({eligibleCerts.length})
+              Issue Certificates {eligibleCerts.length > 0 && `(${eligibleCerts.length})`}
             </button>
           )}
+        </div>
+      </div>
+
+      {/* Error Banner */}
+      {fetchError && (
+        <div className="rounded-lg border border-red-200 dark:border-red-800/50 bg-red-50 dark:bg-red-900/20 p-4">
+          <div className="flex items-start gap-3">
+            <ExclamationTriangleIcon className="h-5 w-5 text-red-500 flex-shrink-0 mt-0.5" />
+            <div className="flex-1">
+              <h3 className="text-sm font-medium text-red-800 dark:text-red-300">Error loading data</h3>
+              <p className="mt-1 text-sm text-red-700 dark:text-red-400">{fetchError}</p>
+            </div>
+            <button onClick={fetchData} className="text-xs font-medium text-red-600 hover:text-red-800 underline">
+              Retry
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Workflow Guide */}
+      <div className="bg-white dark:bg-gray-800 rounded-lg border shadow-sm p-4">
+        <div className="flex items-center justify-between">
+          {[
+            { step: 0, label: 'Register', desc: 'Participants register' },
+            { step: 1, label: 'Mark Eligible', desc: 'Select who qualifies' },
+            { step: 2, label: 'Issue', desc: 'Generate certificates' },
+            { step: 3, label: 'Download', desc: 'Download PDFs' },
+          ].map(({ step, label, desc }, idx) => (
+            <div key={step} className="flex items-center flex-1">
+              <div className="flex flex-col items-center text-center flex-1">
+                <div className={`h-8 w-8 rounded-full flex items-center justify-center text-xs font-bold border-2 transition-colors ${
+                  workflowStage > step
+                    ? 'bg-green-500 border-green-500 text-white'
+                    : workflowStage === step
+                      ? 'bg-blue-500 border-blue-500 text-white'
+                      : 'bg-gray-100 dark:bg-gray-700 border-gray-300 dark:border-gray-600 text-gray-400 dark:text-gray-500'
+                }`}>
+                  {workflowStage > step ? <CheckCircleIcon className="h-5 w-5" /> : step + 1}
+                </div>
+                <span className={`mt-1 text-xs font-medium ${
+                  workflowStage >= step ? 'text-gray-900 dark:text-gray-100' : 'text-gray-400 dark:text-gray-500'
+                }`}>{label}</span>
+                <span className="text-[10px] text-gray-400 dark:text-gray-500 hidden sm:block">{desc}</span>
+              </div>
+              {idx < 3 && (
+                <div className={`h-0.5 w-full mx-1 ${
+                  workflowStage > step ? 'bg-green-400' : 'bg-gray-200 dark:bg-gray-700'
+                }`} />
+              )}
+            </div>
+          ))}
         </div>
       </div>
 
@@ -285,60 +362,133 @@ export default function ProgramCertificateManagement() {
         <Stat label="Revoked" value={revokedCerts.length} icon={ExclamationTriangleIcon} color="red" />
       </div>
 
-      {/* Section: Mark Eligible */}
-      {canCreate && uncertified.length > 0 && (
-        <div className="bg-white dark:bg-gray-800 rounded-lg border shadow-sm p-5 space-y-4">
-          <div className="flex justify-between items-center">
-            <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
-              Mark Eligible ({uncertified.length} without certificate)
-            </h2>
-            <div className="flex gap-2">
-              <button
-                onClick={handleAutoMark}
-                className="inline-flex items-center px-3 py-1.5 bg-amber-500 text-white rounded-md hover:bg-amber-600 text-xs font-medium"
-              >
-                Auto-select (verified/approved)
-              </button>
-              <button
-                onClick={handleManualMark}
-                disabled={selectedProfileIds.size === 0}
-                className="inline-flex items-center px-3 py-1.5 bg-blue-600 text-white rounded-md hover:bg-blue-700 text-xs font-medium disabled:opacity-50"
-              >
-                Mark Selected ({selectedProfileIds.size})
-              </button>
+      {/* Warning: Participants without profiles */}
+      {noProfileParticipants.length > 0 && (
+        <div className="rounded-lg border border-amber-200 dark:border-amber-800/50 bg-amber-50 dark:bg-amber-900/20 p-4">
+          <div className="flex items-start gap-3">
+            <ExclamationTriangleIcon className="h-5 w-5 text-amber-500 flex-shrink-0 mt-0.5" />
+            <div>
+              <h3 className="text-sm font-medium text-amber-800 dark:text-amber-300">
+                {noProfileParticipants.length} participant{noProfileParticipants.length > 1 ? 's' : ''} without member profiles
+              </h3>
+              <p className="mt-1 text-xs text-amber-700 dark:text-amber-400">
+                These registered participants do not have member profiles yet. They must complete their profiles before certificates can be issued.
+              </p>
+              <ul className="mt-2 space-y-1">
+                {noProfileParticipants.map((p) => (
+                  <li key={p.registrationId} className="text-xs text-amber-700 dark:text-amber-400 flex items-center gap-2">
+                    <span className="h-1.5 w-1.5 rounded-full bg-amber-400 flex-shrink-0" />
+                    User ID: {p.userId.substring(0, 8)}…
+                    <span className={`px-1.5 py-0.5 rounded text-[10px] ${
+                      p.status === 'approved' || p.status === 'payment_verified'
+                        ? 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300'
+                        : 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400'
+                    }`}>
+                      {p.status.replace('_', ' ')}
+                    </span>
+                  </li>
+                ))}
+              </ul>
             </div>
           </div>
-          <div className="max-h-64 overflow-y-auto divide-y divide-gray-100 dark:divide-gray-700">
-            {uncertified.map((p) => (
-              <label
-                key={p.registrationId}
-                className="flex items-center px-3 py-2 hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer"
-              >
-                <input
-                  type="checkbox"
-                  checked={p.profileId ? selectedProfileIds.has(p.profileId) : false}
-                  disabled={!p.profileId}
-                  onChange={(e) => {
-                    if (!p.profileId) return;
-                    const next = new Set(selectedProfileIds);
-                    e.target.checked ? next.add(p.profileId) : next.delete(p.profileId);
-                    setSelectedProfileIds(next);
-                  }}
-                  className="mr-3 h-4 w-4 rounded border-gray-300"
-                />
-                <span className="text-sm text-gray-900 dark:text-gray-100 flex-1">
-                  {p.profileName || p.profileNameBangla || 'Unknown'}
+        </div>
+      )}
+
+      {/* Empty state: no participants at all */}
+      {participants.length === 0 && !fetchError && (
+        <div className="bg-white dark:bg-gray-800 rounded-lg border shadow-sm p-8 text-center">
+          <UserGroupIcon className="h-12 w-12 text-gray-300 dark:text-gray-600 mx-auto mb-3" />
+          <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2">No Registrations Found</h3>
+          <p className="text-sm text-gray-500 dark:text-gray-400 max-w-md mx-auto">
+            No one has registered for this program yet. Participants must register and complete payment before certificates can be issued.
+          </p>
+          <Link
+            href="/admin/programs"
+            className="inline-flex items-center mt-4 px-4 py-2 text-sm font-medium text-blue-600 hover:text-blue-800 hover:underline"
+          >
+            ← Back to Programs
+          </Link>
+        </div>
+      )}
+
+      {/* Section: Mark Eligible — always visible when there are participants */}
+      {canCreate && participants.length > 0 && (
+        <div className="bg-white dark:bg-gray-800 rounded-lg border shadow-sm p-5 space-y-4">
+          <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3">
+            <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+              Mark Eligible
+              {uncertified.length > 0 && (
+                <span className="ml-2 text-sm font-normal text-gray-500 dark:text-gray-400">
+                  ({uncertified.length} without certificate)
                 </span>
-                <span className={`text-xs px-2 py-0.5 rounded-full ${
-                  p.status === 'approved' || p.status === 'payment_verified'
-                    ? 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300'
-                    : 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400'
-                }`}>
-                  {p.status.replace('_', ' ')}
-                </span>
-              </label>
-            ))}
+              )}
+            </h2>
+            {uncertified.length > 0 && (
+              <div className="flex gap-2">
+                <button
+                  onClick={handleAutoMark}
+                  className="inline-flex items-center px-3 py-1.5 bg-amber-500 text-white rounded-md hover:bg-amber-600 text-xs font-medium"
+                >
+                  Auto-select (verified/approved)
+                </button>
+                <button
+                  onClick={handleManualMark}
+                  disabled={selectedProfileIds.size === 0}
+                  className="inline-flex items-center px-3 py-1.5 bg-blue-600 text-white rounded-md hover:bg-blue-700 text-xs font-medium disabled:opacity-50"
+                >
+                  Mark Selected ({selectedProfileIds.size})
+                </button>
+              </div>
+            )}
           </div>
+
+          {uncertified.length > 0 ? (
+            <div className="max-h-64 overflow-y-auto divide-y divide-gray-100 dark:divide-gray-700">
+              {uncertified.map((p) => (
+                <label
+                  key={p.registrationId}
+                  className="flex items-center px-3 py-2 hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer"
+                >
+                  <input
+                    type="checkbox"
+                    checked={p.profileId ? selectedProfileIds.has(p.profileId) : false}
+                    disabled={!p.profileId}
+                    onChange={(e) => {
+                      if (!p.profileId) return;
+                      const next = new Set(selectedProfileIds);
+                      e.target.checked ? next.add(p.profileId) : next.delete(p.profileId);
+                      setSelectedProfileIds(next);
+                    }}
+                    className="mr-3 h-4 w-4 rounded border-gray-300"
+                  />
+                  <span className="text-sm text-gray-900 dark:text-gray-100 flex-1">
+                    {p.profileName || p.profileNameBangla || 'Unknown'}
+                    {p.memberNumber && (
+                      <span className="ml-2 text-xs text-gray-400 dark:text-gray-500 font-mono">#{p.memberNumber}</span>
+                    )}
+                  </span>
+                  <span className={`text-xs px-2 py-0.5 rounded-full ${
+                    p.status === 'approved' || p.status === 'payment_verified'
+                      ? 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300'
+                      : 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400'
+                  }`}>
+                    {p.status.replace('_', ' ')}
+                  </span>
+                </label>
+              ))}
+            </div>
+          ) : (
+            <div className="flex items-center gap-3 p-4 rounded-lg bg-gray-50 dark:bg-gray-900/30">
+              <InformationCircleIcon className="h-5 w-5 text-gray-400 flex-shrink-0" />
+              <p className="text-sm text-gray-500 dark:text-gray-400">
+                {certificates.length > 0
+                  ? 'All participants with profiles already have certificates (eligible, issued, or revoked).'
+                  : noProfileParticipants.length > 0 && noProfileParticipants.length === participants.length
+                    ? 'All registered participants are missing member profiles. They need to complete their profiles first.'
+                    : 'No participants are ready for eligibility marking. Ensure participants have registered and completed their profiles.'}
+              </p>
+            </div>
+          )}
         </div>
       )}
 

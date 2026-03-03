@@ -149,6 +149,7 @@ export interface ProgramParticipant {
   profileId: string | null;
   profileName: string | null;
   profileNameBangla: string | null;
+  memberNumber: string | null;
   status: string;
   certificateId: string | null;
   certificateStatus: string | null;
@@ -185,6 +186,7 @@ export async function getProgramParticipants(programId: string) {
         profileId: profiles.id,
         fullNameEnglish: profiles.fullNameEnglish,
         fullNameBangla: profiles.fullNameBangla,
+        memberNumber: profiles.memberNumber,
       })
       .from(profiles)
       .where(inArray(profiles.userId, userIds));
@@ -218,6 +220,7 @@ export async function getProgramParticipants(programId: string) {
         profileId: profile?.profileId ?? null,
         profileName: profile?.fullNameEnglish ?? null,
         profileNameBangla: profile?.fullNameBangla ?? null,
+        memberNumber: profile?.memberNumber ?? null,
         status: reg.status,
         certificateId: cert?.id ?? null,
         certificateStatus: cert?.status ?? null,

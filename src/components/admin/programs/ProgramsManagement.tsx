@@ -16,6 +16,7 @@ import { toast } from 'sonner';
 import ProgramFormModal from './ProgramFormModal';
 import { getAllPrograms } from '@/actions/program-actions';
 import { format } from 'date-fns';
+import Link from 'next/link';
 
 // Create a local type matching the schema return
 // Or import if available. For now defining interface based on schema.
@@ -172,20 +173,20 @@ export default function ProgramsManagement() {
 
               {/* Action Buttons */}
               <div className="mt-6 pt-4 border-t flex justify-end space-x-3">
-                 {/* Link to view registrations - we will create this page next */}
-                 <a 
+                 {/* Link to view registrations */}
+                 <Link 
                    href={`/admin/programs/registrations?programId=${program.id}`}
                    className="inline-flex items-center px-3 py-1.5 border border-gray-300 dark:border-gray-600 shadow-sm text-xs font-medium rounded text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
                  >
                     Registrations
-                 </a>
+                 </Link>
 
-                 <a
+                 <Link
                    href={`/admin/programs/certificates?programId=${program.id}`}
                    className="inline-flex items-center px-3 py-1.5 border border-green-300 dark:border-green-600 shadow-sm text-xs font-medium rounded text-green-700 dark:text-green-300 bg-white dark:bg-gray-800 hover:bg-green-50 dark:hover:bg-green-900/20 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
                  >
                     Certificates
-                 </a>
+                 </Link>
 
                 {canUpdate && (
                   <button
