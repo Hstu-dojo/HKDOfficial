@@ -35,10 +35,9 @@ async function getAuthUserId(): Promise<string | null> {
 }
 
 function generateCertificateNumber(): string {
-  const now = new Date();
-  const year = now.getFullYear();
-  const rand = Math.random().toString(36).substring(2, 8).toUpperCase();
-  return `HKD-CERT-${year}-${rand}`;
+  const yy = new Date().getFullYear().toString().slice(2); // "26"
+  const rand = Math.random().toString(36).substring(2, 7).toUpperCase(); // 5 chars
+  return `HKD-P${yy}-${rand}`;
 }
 
 // ---------------------------------------------------------------------------
