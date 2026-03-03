@@ -93,12 +93,14 @@ export async function generateCertificatePdf(data: CertificateData): Promise<Uin
     try {
       const field = form.getTextField(fieldName);
 
-      // Expand widget width by 6pt to prevent the last character being clipped
-      // when pdf-lib flattens the field (the widget rect becomes the clip box).
+      // Expand widget width to prevent the last character being clipped when
+      // pdf-lib flattens the field (the widget rect becomes the clip box).
+      // Large display fields (name, program_name) need more room than small ones.
+      const extraWidth = (fieldName === 'name' || fieldName === 'program_name') ? 20 : 8;
       const widgets = (field as any).acroField.getWidgets();
       for (const widget of widgets) {
         const r = widget.getRectangle();
-        widget.setRectangle({ x: r.x, y: r.y, width: r.width + 6, height: r.height });
+        widget.setRectangle({ x: r.x, y: r.y, width: r.width + extraWidth, height: r.height });
       }
 
       field.setText(value);
