@@ -2,15 +2,20 @@
  * Server-side certificate PDF generation using pdf-lib.
  *
  * Strategy:
- *  1. Load the fillable PDF template (has AcroForm text fields).
- *  2. Fill each text field directly using form.getTextField(name).setText(value).
- *  3. Overlay signature images on top of the PDFSignature field rectangles.
- *  4. Flatten the form so the PDF is no longer editable.
+ *  1. Load the fillable PDF template (AcroForm text fields).
+ *  2. For large display fields (name, program_name): draw text DIRECTLY on the
+ *     page with page.drawText() so there is zero clipping. Leave those form
+ *     fields empty so they disappear on flatten.
+ *  3. For small metadata fields (date, month, year, cert_id, trainer/coordinator
+ *     names): set via form.getTextField().setText() — expand widget width by 8pt
+ *     to absorb pdf-lib's flatten clipping margin.
+ *  4. Overlay signature images on the PDFSignature widget rectangles.
+ *  5. Flatten the form so the PDF is no longer editable.
  *
  * This module is server-only — never import from client components.
  */
 
-import { PDFDocument } from 'pdf-lib';
+import { PDFDocument, StandardFonts, rgb } from 'pdf-lib';
 import { readFile } from 'fs/promises';
 import { join } from 'path';
 
@@ -19,101 +24,117 @@ import { join } from 'path';
 // ---------------------------------------------------------------------------
 
 export interface CertificateData {
-  /** Participant full name (English or Bangla) */
   name: string;
-  /** Program title */
   programName: string;
-  /** Day of month (e.g. "15") */
   date: string;
-  /** Month name (e.g. "January") */
   month: string;
-  /** Year (e.g. "2026") */
   year: string;
-  /** Certificate number (e.g. "HKD-CERT-2026-0001") */
   certId: string;
-  /** Trainer / Chief Instructor name */
   trainerName: string;
-  /** Coordinator / General Secretary name */
   coordinatorName: string;
-  /** Trainer signature image URL (remote) */
   trainerSignatureUrl?: string;
-  /** Coordinator signature image URL (remote) */
   coordinatorSignatureUrl?: string;
 }
 
 // ---------------------------------------------------------------------------
-// Fetch remote image as Buffer
+// Helpers
 // ---------------------------------------------------------------------------
 
 async function fetchImageBuffer(url: string): Promise<{ buffer: Buffer; type: 'png' | 'jpg' }> {
   const res = await fetch(url);
   if (!res.ok) throw new Error(`Failed to fetch image: ${url}`);
-  const arrayBuf = await res.arrayBuffer();
-  const buffer = Buffer.from(arrayBuf);
-  const contentType = res.headers.get('content-type') ?? '';
-  const type = contentType.includes('png') ? 'png' as const : 'jpg' as const;
-  return { buffer, type };
+  const buf = Buffer.from(await res.arrayBuffer());
+  const ct = res.headers.get('content-type') ?? '';
+  return { buffer: buf, type: ct.includes('png') ? 'png' : 'jpg' };
+}
+
+/**
+ * Draw centred text inside a field rect directly on the page,
+ * bypassing AcroForm clipping entirely.
+ *
+ * fieldRect comes from PDF introspection (bottom-left origin):
+ *   name:         x:151, y:315, w:298, h:36
+ *   program_name: x:151, y:271, w:297, h:23
+ */
+async function drawCentredText(
+  pdfDoc: PDFDocument,
+  page: ReturnType<PDFDocument['getPages']>[0],
+  text: string,
+  rect: { x: number; y: number; w: number; h: number },
+  maxFontSize: number,
+) {
+  const font = await pdfDoc.embedFont(StandardFonts.Helvetica);
+
+  // Auto-shrink font so text fits inside the rect width
+  let fontSize = maxFontSize;
+  while (fontSize > 6) {
+    const tw = font.widthOfTextAtSize(text, fontSize);
+    if (tw <= rect.w) break;
+    fontSize -= 0.5;
+  }
+
+  const textWidth = font.widthOfTextAtSize(text, fontSize);
+  // Centre horizontally
+  const x = rect.x + (rect.w - textWidth) / 2;
+  // Centre vertically: pdf-lib drawText y = baseline; ascent ≈ 0.72 × fontSize
+  const y = rect.y + (rect.h - fontSize) / 2 + fontSize * 0.15;
+
+  page.drawText(text, { x, y, size: fontSize, font, color: rgb(0, 0, 0) });
 }
 
 // ---------------------------------------------------------------------------
 // Core: fill + flatten certificate PDF
 // ---------------------------------------------------------------------------
 
-/**
- * Fills the fillable PDF template fields, overlays any signature images,
- * then flattens (locks) the form so it cannot be re-edited.
- *
- * Field names in the template (confirmed via pdf-lib introspection):
- *   name, program_name, date, month, year, cert_id,
- *   trainer_name, coordinator_name,
- *   trainer_signature (PDFSignature), coordinator_signature (PDFSignature)
- */
 export async function generateCertificatePdf(data: CertificateData): Promise<Uint8Array> {
-  const templatePath = join(process.cwd(), 'public', 'certs', 'fillable - program cert.pdf');
-  const templateBytes = await readFile(templatePath);
+  const templateBytes = await readFile(
+    join(process.cwd(), 'public', 'certs', 'fillable - program cert.pdf')
+  );
 
   const pdfDoc = await PDFDocument.load(templateBytes);
   const form = pdfDoc.getForm();
   const page = pdfDoc.getPages()[0];
 
-  // ── Fill text fields ──────────────────────────────────────────────────────
-  const textFields: Record<string, string> = {
-    name:               data.name,
-    program_name:       data.programName,
-    date:               data.date,
-    month:              data.month,
-    year:               data.year,
-    cert_id:            data.certId,
-    trainer_name:       data.trainerName ?? '',
-    coordinator_name:   data.coordinatorName ?? '',
+  // ── Large display fields — draw directly (no AcroForm clipping) ──────────
+  // Field rects confirmed via PDF introspection (bottom-left origin):
+  //   name:         x:151, y:315, w:298, h:36
+  //   program_name: x:151, y:271, w:297, h:23
+  if (data.name) {
+    await drawCentredText(pdfDoc, page, data.name,
+      { x: 151, y: 315, w: 298, h: 36 }, 22);
+  }
+  if (data.programName) {
+    await drawCentredText(pdfDoc, page, data.programName,
+      { x: 151, y: 271, w: 297, h: 23 }, 14);
+  }
+
+  // ── Small metadata fields — fill via AcroForm (expand width to avoid clip) ─
+  const smallFields: Record<string, string> = {
+    date:             data.date,
+    month:            data.month,
+    year:             data.year,
+    cert_id:          data.certId,
+    trainer_name:     data.trainerName ?? '',
+    coordinator_name: data.coordinatorName ?? '',
   };
 
-  for (const [fieldName, value] of Object.entries(textFields)) {
+  for (const [fieldName, value] of Object.entries(smallFields)) {
     if (!value) continue;
     try {
       const field = form.getTextField(fieldName);
-
-      // Expand widget width to prevent the last character being clipped when
-      // pdf-lib flattens the field (the widget rect becomes the clip box).
-      // Large display fields (name, program_name) need more room than small ones.
-      const extraWidth = (fieldName === 'name' || fieldName === 'program_name') ? 20 : 8;
+      // Expand widget +8pt so the last glyph isn't clipped on flatten
       const widgets = (field as any).acroField.getWidgets();
-      for (const widget of widgets) {
-        const r = widget.getRectangle();
-        widget.setRectangle({ x: r.x, y: r.y, width: r.width + extraWidth, height: r.height });
+      for (const w of widgets) {
+        const r = w.getRectangle();
+        w.setRectangle({ x: r.x, y: r.y, width: r.width + 8, height: r.height });
       }
-
       field.setText(value);
     } catch (err) {
       console.warn(`[cert-pdf] Could not set field "${fieldName}":`, err);
     }
   }
 
-  // ── Overlay signature images on the PDFSignature field rectangles ─────────
-  // Positions match the actual widget rectangles confirmed from PDF introspection:
-  //   trainer_signature:     x:140, y:135, w:135, h:33
-  //   coordinator_signature: x:324, y:135, w:135, h:33
-
+  // ── Signature image overlays ──────────────────────────────────────────────
   if (data.trainerSignatureUrl) {
     try {
       const { buffer, type } = await fetchImageBuffer(data.trainerSignatureUrl);
@@ -134,27 +155,24 @@ export async function generateCertificatePdf(data: CertificateData): Promise<Uin
     }
   }
 
-  // ── Flatten — lock the form so it cannot be edited ───────────────────────
-  try {
-    form.flatten();
-  } catch {
-    /* safe to ignore if already flat */
-  }
+  // ── Flatten — makes PDF non-editable ─────────────────────────────────────
+  try { form.flatten(); } catch { /* ignore if already flat */ }
 
   return await pdfDoc.save();
 }
 
 // ---------------------------------------------------------------------------
-// Merge multiple single-page certificate PDFs into one document
+// Merge multiple PDFs into one
 // ---------------------------------------------------------------------------
 
 export async function mergeCertificatePdfs(pdfBytesArray: Uint8Array[]): Promise<Uint8Array> {
   const mergedDoc = await PDFDocument.create();
-  for (const pdfBytes of pdfBytesArray) {
-    const srcDoc = await PDFDocument.load(pdfBytes);
-    const [copiedPage] = await mergedDoc.copyPages(srcDoc, [0]);
-    mergedDoc.addPage(copiedPage);
+  for (const bytes of pdfBytesArray) {
+    const src = await PDFDocument.load(bytes);
+    const [page] = await mergedDoc.copyPages(src, [0]);
+    mergedDoc.addPage(page);
   }
   return await mergedDoc.save();
 }
+
 
