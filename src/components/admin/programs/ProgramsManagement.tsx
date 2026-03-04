@@ -115,16 +115,24 @@ export default function ProgramsManagement() {
           </p>
         </div>
         {canCreate && (
-          <button
-            onClick={() => {
-              setEditingProgram(null);
-              setShowForm(true);
-            }}
-            className="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
-          >
-            <PlusIcon className="h-5 w-5 mr-2" />
-            New Program
-          </button>
+          <div className="flex gap-2">
+            <Link
+              href="/admin/programs/signatures"
+              className="inline-flex items-center px-4 py-2 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-200 bg-white dark:bg-gray-800 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition text-sm font-medium"
+            >
+              Signatures
+            </Link>
+            <button
+              onClick={() => {
+                setEditingProgram(null);
+                setShowForm(true);
+              }}
+              className="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
+            >
+              <PlusIcon className="h-5 w-5 mr-2" />
+              New Program
+            </button>
+          </div>
         )}
       </div>
 
