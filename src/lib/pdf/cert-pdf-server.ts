@@ -122,11 +122,14 @@ export async function generateCertificatePdf(data: CertificateData): Promise<Uin
     if (!value) continue;
     try {
       const field = form.getTextField(fieldName);
-      // Expand widget +8pt so the last glyph isn't clipped on flatten
+      // Expand widget so the last glyph isn't clipped on flatten.
+      // Signature name fields need more padding than short date fields.
+      const isNameField = fieldName === 'trainer_name' || fieldName === 'coordinator_name';
+      const extraWidth = isNameField ? 20 : 8;
       const widgets = (field as any).acroField.getWidgets();
       for (const w of widgets) {
         const r = w.getRectangle();
-        w.setRectangle({ x: r.x, y: r.y, width: r.width + 8, height: r.height });
+        w.setRectangle({ x: r.x, y: r.y, width: r.width + extraWidth, height: r.height });
       }
       field.setText(value);
     } catch (err) {
