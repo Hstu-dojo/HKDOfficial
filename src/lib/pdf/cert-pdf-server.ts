@@ -114,26 +114,44 @@ export async function generateCertificatePdf(data: CertificateData): Promise<Uin
     month:            data.month,
     year:             data.year,
     cert_id:          data.certId,
-    trainer_name:     data.trainerName ?? '',
-    coordinator_name: data.coordinatorName ?? '',
   };
 
   for (const [fieldName, value] of Object.entries(smallFields)) {
     if (!value) continue;
     try {
       const field = form.getTextField(fieldName);
-      // Expand widget so the last glyph isn't clipped on flatten.
-      // Signature name fields need slightly more padding than short date fields.
-      const isNameField = fieldName === 'trainer_name' || fieldName === 'coordinator_name';
-      const extraWidth = isNameField ? 10 : 8;
+      // Expand widget +8pt so the last glyph isn't clipped on flatten
       const widgets = (field as any).acroField.getWidgets();
       for (const w of widgets) {
         const r = w.getRectangle();
-        w.setRectangle({ x: r.x, y: r.y, width: r.width + extraWidth, height: r.height });
+        w.setRectangle({ x: r.x, y: r.y, width: r.width + 8, height: r.height });
       }
       field.setText(value);
     } catch (err) {
       console.warn(`[cert-pdf] Could not set field "${fieldName}":`, err);
+    }
+  }
+
+  // ── Signature name fields — draw directly on page (same approach as name) ─
+  // Read the field rect from the PDF form, draw text centred inside it,
+  // then clear the form field so it doesn't double-render on flatten.
+  for (const [fieldName, value] of Object.entries({
+    trainer_name: data.trainerName ?? '',
+    coordinator_name: data.coordinatorName ?? '',
+  })) {
+    if (!value) continue;
+    try {
+      const field = form.getTextField(fieldName);
+      const widgets = (field as any).acroField.getWidgets();
+      if (widgets.length > 0) {
+        const r = widgets[0].getRectangle();
+        await drawCentredText(pdfDoc, page, value,
+          { x: r.x, y: r.y, w: r.width, h: r.height }, 10);
+      }
+      // Clear the form field so it doesn't render on top after flatten
+      field.setText('');
+    } catch (err) {
+      console.warn(`[cert-pdf] Could not draw field "${fieldName}":`, err);
     }
   }
 
