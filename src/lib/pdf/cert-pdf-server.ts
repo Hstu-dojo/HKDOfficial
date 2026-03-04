@@ -123,9 +123,9 @@ export async function generateCertificatePdf(data: CertificateData): Promise<Uin
     try {
       const field = form.getTextField(fieldName);
       // Expand widget so the last glyph isn't clipped on flatten.
-      // Signature name fields need more padding than short date fields.
+      // Signature name fields need slightly more padding than short date fields.
       const isNameField = fieldName === 'trainer_name' || fieldName === 'coordinator_name';
-      const extraWidth = isNameField ? 20 : 8;
+      const extraWidth = isNameField ? 10 : 8;
       const widgets = (field as any).acroField.getWidgets();
       for (const w of widgets) {
         const r = w.getRectangle();
