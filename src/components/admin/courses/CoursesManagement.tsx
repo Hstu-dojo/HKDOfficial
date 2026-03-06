@@ -156,6 +156,24 @@ export default function CoursesManagement() {
     }
   };
 
+  const toggleVisibility = async (courseId: string, isActive: boolean) => {
+    try {
+      const response = await fetch(`/api/admin/courses/${courseId}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ isActive: !isActive }),
+      });
+
+      if (!response.ok) throw new Error('Failed to update course');
+
+      toast.success(isActive ? 'Course hidden from public page' : 'Course visible on public page');
+      fetchCourses();
+    } catch (error) {
+      toast.error('Failed to update visibility');
+      console.error(error);
+    }
+  };
+
   const formatCurrency = (amount: number, currency: string) => {
     return new Intl.NumberFormat('en-BD', {
       style: 'currency',
@@ -364,6 +382,32 @@ export default function CoursesManagement() {
                     <>
                       <XCircleIcon className="h-4 w-4" />
                       Closed
+                    </>
+                  )}
+                </button>
+              </div>
+
+              {/* Public Visibility */}
+              <div className="flex items-center justify-between">
+                <span className="text-sm text-gray-500 dark:text-gray-400">Public Page:</span>
+                <button
+                  onClick={() => toggleVisibility(course.id, course.isActive)}
+                  disabled={!canUpdate}
+                  className={`flex items-center gap-1 px-2 py-1 rounded text-sm ${
+                    course.isActive
+                      ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300'
+                      : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300'
+                  }`}
+                >
+                  {course.isActive ? (
+                    <>
+                      <EyeIcon className="h-4 w-4" />
+                      Visible
+                    </>
+                  ) : (
+                    <>
+                      <XCircleIcon className="h-4 w-4" />
+                      Hidden
                     </>
                   )}
                 </button>
