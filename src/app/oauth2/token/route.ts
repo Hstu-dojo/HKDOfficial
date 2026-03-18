@@ -8,6 +8,7 @@ import {
   invalidateAuthorizationCode,
   isRegisteredClient,
 } from '@/lib/auth/external-auth';
+import { externalAuthOptions, withExternalAuthCors } from '@/lib/external-auth-cors';
 
 function parseUrlEncodedValue(value: FormDataEntryValue | null) {
   return typeof value === 'string' ? value : '';
@@ -18,6 +19,9 @@ function toBase64UrlSha256(input: string) {
 }
 
 export async function POST(request: NextRequest) {
+  const json = (body: unknown, init?: ResponseInit) =>
+    withExternalAuthCors(request, NextResponse.json(body, init));
+
   const form = await request.formData();
 
   const grantType = parseUrlEncodedValue(form.get('grant_type'));
@@ -29,12 +33,12 @@ export async function POST(request: NextRequest) {
   const refreshToken = parseUrlEncodedValue(form.get('refresh_token'));
 
   if (!isRegisteredClient(clientId)) {
-    return NextResponse.json({ error: 'invalid_client' }, { status: 401 });
+    return json({ error: 'invalid_client' }, { status: 401 });
   }
 
   if (grantType === 'authorization_code') {
     if (!code || !codeVerifier || !redirectUri || !state) {
-      return NextResponse.json({ error: 'invalid_request' }, { status: 400 });
+      return json({ error: 'invalid_request' }, { status: 400 });
     }
 
     const codeContextResult = getAuthorizationCodeContext(code);
@@ -47,30 +51,30 @@ export async function POST(request: NextRequest) {
       }
 
       if (codeContextResult.reason === 'reused') {
-        return NextResponse.json(
+        return json(
           { error: 'invalid_grant', error_description: 'code already used' },
           { status: 400 }
         );
       }
 
-      return NextResponse.json({ error: 'invalid_grant' }, { status: 400 });
+      return json({ error: 'invalid_grant' }, { status: 400 });
     }
 
     const codeContext = codeContextResult.context;
 
     if (codeContext.clientId !== clientId) {
-      return NextResponse.json({ error: 'invalid_grant' }, { status: 400 });
+      return json({ error: 'invalid_grant' }, { status: 400 });
     }
 
     if (codeContext.redirectUri !== redirectUri) {
-      return NextResponse.json(
+      return json(
         { error: 'invalid_grant', error_description: 'redirect_uri mismatch' },
         { status: 400 }
       );
     }
 
     if (codeContext.state !== state) {
-      return NextResponse.json(
+      return json(
         { error: 'invalid_grant', error_description: 'state mismatch' },
         { status: 400 }
       );
@@ -78,7 +82,7 @@ export async function POST(request: NextRequest) {
 
     const challenge = toBase64UrlSha256(codeVerifier);
     if (challenge !== codeContext.codeChallenge) {
-      return NextResponse.json(
+      return json(
         { error: 'invalid_grant', error_description: 'pkce mismatch' },
         { status: 400 }
       );
@@ -99,7 +103,7 @@ export async function POST(request: NextRequest) {
 
     invalidateAuthorizationCode(code);
 
-    return NextResponse.json({
+    return json({
       access_token: accessToken.token,
       refresh_token: refreshTokenValue,
       token_type: 'Bearer',
@@ -110,12 +114,12 @@ export async function POST(request: NextRequest) {
 
   if (grantType === 'refresh_token') {
     if (!refreshToken) {
-      return NextResponse.json({ error: 'invalid_request' }, { status: 400 });
+      return json({ error: 'invalid_request' }, { status: 400 });
     }
 
     const refreshCtx = getRefreshToken(refreshToken);
     if (!refreshCtx) {
-      return NextResponse.json({ error: 'invalid_grant' }, { status: 400 });
+      return json({ error: 'invalid_grant' }, { status: 400 });
     }
 
     const newAccessToken = createAccessToken({
@@ -125,7 +129,7 @@ export async function POST(request: NextRequest) {
       clientId,
     });
 
-    return NextResponse.json({
+    return json({
       access_token: newAccessToken.token,
       refresh_token: refreshToken,
       token_type: 'Bearer',
@@ -134,5 +138,9 @@ export async function POST(request: NextRequest) {
     });
   }
 
-  return NextResponse.json({ error: 'unsupported_grant_type' }, { status: 400 });
+  return json({ error: 'unsupported_grant_type' }, { status: 400 });
+}
+
+export async function OPTIONS(request: NextRequest) {
+  return externalAuthOptions(request);
 }
