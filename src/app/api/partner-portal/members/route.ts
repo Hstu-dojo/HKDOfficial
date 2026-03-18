@@ -51,6 +51,7 @@ export async function GET(request: Request) {
         fullNameBangla: members.fullNameBangla,
         phoneNumber: members.phoneNumber,
         beltRank: members.beltRank,
+        studentLevel: members.studentLevel,
         isActive: members.isActive,
         joinDate: members.joinDate,
         picture: members.picture,

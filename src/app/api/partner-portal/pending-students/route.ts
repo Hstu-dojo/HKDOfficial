@@ -10,6 +10,7 @@ import { db } from '@/lib/connect-db'
 import { registrations, members } from '@/db/schemas/karate/members'
 import { user } from '@/db/schemas/auth'
 import { eq, and, desc, count, sql } from 'drizzle-orm'
+import { normalizeStudentLevel } from '@/lib/auth/external-auth'
 
 export async function GET(request: Request) {
   const { user: partnerUser, error } = await requirePayloadPartnerUser()
@@ -163,6 +164,7 @@ export async function PATCH(request: Request) {
           nid: formData.nid || null,
           profession: formData.occupation || null,
           educationQualification: formData.levelClass || null,
+          studentLevel: normalizeStudentLevel(formData.levelClass),
           partnerId: partnerUser.partnerId,
           emergencyContact: reg.emergencyContact,
           emergencyPhone: reg.emergencyPhone,

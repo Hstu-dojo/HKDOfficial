@@ -21,6 +21,18 @@ export const classTypeEnum = pgEnum('class_type', ['beginner', 'intermediate', '
 export const equipmentStatusEnum = pgEnum('equipment_status', ['available', 'checked_out', 'maintenance', 'retired']);
 export const registrationStatusEnum = pgEnum('registration_status', ['pending', 'approved', 'rejected']);
 export const attendanceStatusEnum = pgEnum('attendance_status', ['present', 'absent', 'excused']);
+export const studentLevelEnum = pgEnum('student_level', [
+  'student_9th_kyu',
+  'student_8th_kyu',
+  'student_7th_kyu',
+  'student_6th_kyu',
+  'student_5th_kyu',
+  'student_4th_kyu',
+  'student_3rd_kyu',
+  'student_2nd_kyu',
+  'student_1st_kyu',
+  'black_belt',
+]);
 
 // Billing Enums
 export const billStatusEnum = pgEnum('bill_status', ['pending', 'paid', 'overdue', 'cancelled']);

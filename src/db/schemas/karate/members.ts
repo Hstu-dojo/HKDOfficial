@@ -1,6 +1,6 @@
 import { pgTable, text, boolean, timestamp, integer, uniqueIndex, real } from "drizzle-orm/pg-core";
 import { sql } from "drizzle-orm";
-import { beltRankEnum, registrationStatusEnum, identityTypeEnum } from "../enums";
+import { beltRankEnum, registrationStatusEnum, identityTypeEnum, studentLevelEnum } from "../enums";
 import { user } from "../auth";
 import { partners } from "../partner";
 
@@ -57,6 +57,7 @@ export const profiles = pgTable("profiles", {
   
   // Dojo Information
   beltRank: beltRankEnum("belt_rank").notNull().default('white'),
+  studentLevel: studentLevelEnum("student_level"),
   picture: text("picture"),
   signatureImage: text("signature_image"),
   

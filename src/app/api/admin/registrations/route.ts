@@ -28,6 +28,7 @@ export const GET = protectApiRoute("MEMBER", "READ", async (request, context) =>
         profile: {
           memberNumber: profiles.memberNumber,
           beltRank: profiles.beltRank,
+          studentLevel: profiles.studentLevel,
           isActive: profiles.isActive,
         },
         partnerName: partners.name,

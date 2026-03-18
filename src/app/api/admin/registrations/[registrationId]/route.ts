@@ -6,6 +6,7 @@ import { registrations, profiles, user } from "@/db/schema";
 import { eq, count } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import { partners } from "@/db/schemas/partner";
+import { normalizeStudentLevel } from '@/lib/auth/external-auth';
 
 // GET /api/admin/registrations/[registrationId]
 export async function GET(
@@ -214,6 +215,7 @@ export async function PUT(
           nid: noteData.nid || null,
           profession: noteData.occupation || null,
           educationQualification: noteData.levelClass || null,
+          studentLevel: normalizeStudentLevel(noteData.levelClass),
           institute: noteData.institute || null,
           faculty: noteData.faculty || null,
           department: noteData.department || null,
