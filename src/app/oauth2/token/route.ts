@@ -1,10 +1,11 @@
 import crypto from 'crypto';
 import { NextRequest, NextResponse } from 'next/server';
 import {
-  consumeAuthorizationCode,
   createAccessToken,
   createRefreshToken,
+  getAuthorizationCodeContext,
   getRefreshToken,
+  invalidateAuthorizationCode,
   isRegisteredClient,
 } from '@/lib/auth/external-auth';
 
@@ -22,6 +23,8 @@ export async function POST(request: NextRequest) {
   const grantType = parseUrlEncodedValue(form.get('grant_type'));
   const clientId = parseUrlEncodedValue(form.get('client_id'));
   const code = parseUrlEncodedValue(form.get('code'));
+  const state = parseUrlEncodedValue(form.get('state'));
+  const redirectUri = parseUrlEncodedValue(form.get('redirect_uri'));
   const codeVerifier = parseUrlEncodedValue(form.get('code_verifier'));
   const refreshToken = parseUrlEncodedValue(form.get('refresh_token'));
 
@@ -30,13 +33,47 @@ export async function POST(request: NextRequest) {
   }
 
   if (grantType === 'authorization_code') {
-    if (!code || !codeVerifier) {
+    if (!code || !codeVerifier || !redirectUri || !state) {
       return NextResponse.json({ error: 'invalid_request' }, { status: 400 });
     }
 
-    const codeContext = consumeAuthorizationCode(code);
-    if (!codeContext) {
+    const codeContextResult = getAuthorizationCodeContext(code);
+    if (!codeContextResult.ok) {
+      if (codeContextResult.reason === 'expired') {
+        return NextResponse.json(
+          { error: 'invalid_grant', error_description: 'code expired' },
+          { status: 400 }
+        );
+      }
+
+      if (codeContextResult.reason === 'reused') {
+        return NextResponse.json(
+          { error: 'invalid_grant', error_description: 'code already used' },
+          { status: 400 }
+        );
+      }
+
       return NextResponse.json({ error: 'invalid_grant' }, { status: 400 });
+    }
+
+    const codeContext = codeContextResult.context;
+
+    if (codeContext.clientId !== clientId) {
+      return NextResponse.json({ error: 'invalid_grant' }, { status: 400 });
+    }
+
+    if (codeContext.redirectUri !== redirectUri) {
+      return NextResponse.json(
+        { error: 'invalid_grant', error_description: 'redirect_uri mismatch' },
+        { status: 400 }
+      );
+    }
+
+    if (codeContext.state !== state) {
+      return NextResponse.json(
+        { error: 'invalid_grant', error_description: 'state mismatch' },
+        { status: 400 }
+      );
     }
 
     const challenge = toBase64UrlSha256(codeVerifier);
@@ -59,6 +96,8 @@ export async function POST(request: NextRequest) {
       role: codeContext.role,
       email: codeContext.email,
     });
+
+    invalidateAuthorizationCode(code);
 
     return NextResponse.json({
       access_token: accessToken.token,

@@ -2,13 +2,21 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getAccessToken } from '@/lib/auth/external-auth';
 
 export async function POST(request: NextRequest) {
-  const authHeader = request.headers.get('authorization') || '';
-  const serviceToken = authHeader.startsWith('Bearer ')
-    ? authHeader.slice('Bearer '.length)
-    : '';
+  const authHeader = (request.headers.get('authorization') || '').trim();
+  const bearerMatch = authHeader.match(/^Bearer\s+(.+)$/i);
+  const serviceToken = bearerMatch?.[1]?.trim() || '';
 
-  const validServiceToken = process.env.AUTH_SERVER_SERVICE_TOKEN || '';
-  if (!validServiceToken || serviceToken !== validServiceToken) {
+  const validServiceToken = (process.env.AUTH_SERVER_SERVICE_TOKEN || '').trim();
+
+  if (!validServiceToken) {
+    return NextResponse.json({ error: 'service_token_not_configured' }, { status: 500 });
+  }
+
+  if (!serviceToken) {
+    return NextResponse.json({ error: 'missing_service_token' }, { status: 401 });
+  }
+
+  if (serviceToken !== validServiceToken) {
     return NextResponse.json({ error: 'invalid_service_token' }, { status: 403 });
   }
 

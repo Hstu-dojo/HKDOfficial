@@ -31,6 +31,7 @@ type OAuthCodeContext = {
   codeChallenge: string;
   state: string;
   createdAt: number;
+  expiresAt: number;
 };
 
 type RefreshTokenContext = {
@@ -49,10 +50,11 @@ type AccessTokenContext = {
   clientId: string;
 };
 
-const AUTH_CODE_TTL_MS = 10 * 60 * 1000;
+const AUTH_CODE_TTL_MS = 180 * 1000;
 const ACCESS_TOKEN_TTL_MS = 60 * 60 * 1000;
 
 const oauthCodeStore = new Map<string, OAuthCodeContext>();
+const usedAuthorizationCodes = new Set<string>();
 const refreshTokenStore = new Map<string, RefreshTokenContext>();
 const accessTokenStore = new Map<string, AccessTokenContext>();
 
@@ -65,21 +67,50 @@ export function isRegisteredClient(clientId: string) {
   return getRegisteredClients().includes(clientId);
 }
 
-export function createAuthorizationCode(payload: Omit<OAuthCodeContext, 'createdAt'>) {
+export function createAuthorizationCode(payload: Omit<OAuthCodeContext, 'createdAt' | 'expiresAt'>) {
   const code = crypto.randomBytes(32).toString('hex');
+  const createdAt = Date.now();
   oauthCodeStore.set(code, {
     ...payload,
-    createdAt: Date.now(),
+    createdAt,
+    expiresAt: createdAt + AUTH_CODE_TTL_MS,
   });
   return code;
 }
 
-export function consumeAuthorizationCode(code: string) {
+export function getAuthorizationCodeContext(code: string):
+  | { ok: true; context: OAuthCodeContext }
+  | { ok: false; reason: 'missing' | 'reused' | 'expired' } {
+  if (usedAuthorizationCodes.has(code)) {
+    return { ok: false, reason: 'reused' };
+  }
+
   const ctx = oauthCodeStore.get(code);
-  if (!ctx) return null;
+  if (!ctx) {
+    return { ok: false, reason: 'missing' };
+  }
+
+  if (Date.now() > ctx.expiresAt) {
+    oauthCodeStore.delete(code);
+    return { ok: false, reason: 'expired' };
+  }
+
+  return { ok: true, context: ctx };
+}
+
+export function invalidateAuthorizationCode(code: string) {
   oauthCodeStore.delete(code);
-  if (Date.now() - ctx.createdAt > AUTH_CODE_TTL_MS) return null;
-  return ctx;
+  usedAuthorizationCodes.add(code);
+}
+
+export function isPlaceholderState(state: string) {
+  const normalized = state.trim().toLowerCase();
+  return (
+    normalized === '<state>' ||
+    normalized === 'state' ||
+    normalized === '{state}' ||
+    normalized === '{{state}}'
+  );
 }
 
 export function createAccessToken(input: {

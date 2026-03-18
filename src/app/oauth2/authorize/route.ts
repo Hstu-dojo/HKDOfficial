@@ -2,11 +2,13 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 import {
   createAuthorizationCode,
+  isPlaceholderState,
   isRegisteredClient,
   resolveExternalRoleBySupabaseUserId,
 } from '@/lib/auth/external-auth';
 
 export async function GET(request: NextRequest) {
+  const canonicalOrigin = process.env.AUTH_CANONICAL_ORIGIN || 'https://www.hstuma.com';
   const url = request.nextUrl;
   const clientId = url.searchParams.get('client_id') ?? '';
   const redirectUri = url.searchParams.get('redirect_uri') ?? '';
@@ -17,6 +19,13 @@ export async function GET(request: NextRequest) {
 
   if (!clientId || !redirectUri || responseType !== 'code' || !state || !codeChallenge) {
     return NextResponse.json({ error: 'invalid_request' }, { status: 400 });
+  }
+
+  if (isPlaceholderState(state)) {
+    return NextResponse.json(
+      { error: 'invalid_request', error_description: 'Invalid state value' },
+      { status: 400 }
+    );
   }
 
   if (codeChallengeMethod !== 'S256') {
@@ -41,8 +50,8 @@ export async function GET(request: NextRequest) {
   const { data: { user: authUser } } = await supabase.auth.getUser();
 
   if (!authUser?.id) {
-    const loginUrl = new URL('/login', request.url);
-    loginUrl.searchParams.set('callbackUrl', request.nextUrl.pathname + request.nextUrl.search);
+    const loginUrl = new URL('/login', canonicalOrigin);
+    loginUrl.searchParams.set('callbackUrl', `${canonicalOrigin}${request.nextUrl.pathname}${request.nextUrl.search}`);
     return NextResponse.redirect(loginUrl);
   }
 
