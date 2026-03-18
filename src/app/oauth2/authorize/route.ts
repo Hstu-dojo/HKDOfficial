@@ -47,6 +47,16 @@ export async function GET(request: NextRequest) {
   }
 
   const roleContext = await resolveExternalRoleBySupabaseUserId(authUser.id);
+  if (!roleContext.profileId) {
+    return NextResponse.json(
+      {
+        error: 'invalid_grant',
+        error_description: 'Profile not found. A linked profile is required for external authentication.',
+      },
+      { status: 400 }
+    );
+  }
+
   if (!roleContext.role) {
     return NextResponse.json(
       {
@@ -60,7 +70,7 @@ export async function GET(request: NextRequest) {
   const authCode = createAuthorizationCode({
     clientId,
     redirectUri,
-    userId: roleContext.localUserId,
+    userId: roleContext.profileId,
     role: roleContext.role,
     email: roleContext.email,
     codeChallenge,

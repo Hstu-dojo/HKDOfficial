@@ -144,7 +144,7 @@ export function normalizeStudentLevel(input: unknown): StudentLevel | null {
 }
 
 export async function resolveExternalRoleBySupabaseUserId(supabaseUserId: string): Promise<{
-  localUserId: string;
+  profileId: string | null;
   email: string;
   role: ExternalSystemRole | null;
 }> {
@@ -161,31 +161,33 @@ export async function resolveExternalRoleBySupabaseUserId(supabaseUserId: string
   const localUserId = localUser[0].id;
   const email = localUser[0].email ?? '';
 
+  const linkedProfile = await db
+    .select({ id: profiles.id, studentLevel: profiles.studentLevel })
+    .from(profiles)
+    .where(eq(profiles.userId, localUserId))
+    .limit(1);
+
+  const profileId = linkedProfile[0]?.id ?? null;
+
   const userPerms = await getUserPermissionsWithFallback(localUserId);
   const roleNames = userPerms.roles.map((r) => r.name);
 
   if (roleNames.some((r) => ['SUPER_ADMIN', 'ADMIN', 'MODERATOR'].includes(r))) {
-    return { localUserId, email, role: 'admin' };
+    return { profileId, email, role: 'admin' };
   }
 
   if (roleNames.includes('INSTRUCTOR')) {
-    return { localUserId, email, role: 'teacher' };
+    return { profileId, email, role: 'teacher' };
   }
 
   if (roleNames.includes('PARTNER')) {
-    return { localUserId, email, role: 'partner' };
+    return { profileId, email, role: 'partner' };
   }
 
   if (roleNames.some((r) => ['STUDENT', 'MEMBER'].includes(r))) {
-    const profile = await db
-      .select({ studentLevel: profiles.studentLevel })
-      .from(profiles)
-      .where(eq(profiles.userId, localUserId))
-      .limit(1);
-
-    const studentLevel = resolveStudentLevel(profile[0]?.studentLevel);
-    return { localUserId, email, role: studentLevel };
+    const studentLevel = resolveStudentLevel(linkedProfile[0]?.studentLevel);
+    return { profileId, email, role: studentLevel };
   }
 
-  return { localUserId, email, role: null };
+  return { profileId, email, role: null };
 }
