@@ -44,7 +44,7 @@ export async function POST(request: NextRequest) {
     const codeContextResult = getAuthorizationCodeContext(code);
     if (!codeContextResult.ok) {
       if (codeContextResult.reason === 'expired') {
-        return NextResponse.json(
+        return json(
           { error: 'invalid_grant', error_description: 'code expired' },
           { status: 400 }
         );
