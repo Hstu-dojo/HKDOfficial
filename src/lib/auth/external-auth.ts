@@ -330,15 +330,15 @@ export async function resolveExternalRoleBySupabaseUserId(supabaseUserId: string
   const roleNames = userPerms.roles.map((r) => r.name);
 
   if (roleNames.some((r) => ['SUPER_ADMIN', 'ADMIN', 'MODERATOR'].includes(r))) {
-    return { profileId, email, role: 'admin' };
+    return { profileId: profileId ?? localUserId, email, role: 'admin' };
   }
 
   if (roleNames.includes('INSTRUCTOR')) {
-    return { profileId, email, role: 'teacher' };
+    return { profileId: profileId ?? localUserId, email, role: 'teacher' };
   }
 
   if (roleNames.includes('PARTNER')) {
-    return { profileId, email, role: 'partner' };
+    return { profileId: profileId ?? localUserId, email, role: 'partner' };
   }
 
   if (roleNames.some((r) => ['STUDENT', 'MEMBER'].includes(r))) {
