@@ -7,7 +7,7 @@ import { NextResponse } from 'next/server'
 import { db } from '@/lib/connect-db'
 import { partners, partnerPageSettings } from '@/db/schemas/partner'
 import { members, courses } from '@/db/schema'
-import { eq, asc, and, count, sql } from 'drizzle-orm'
+import { eq, asc, and, count, inArray } from 'drizzle-orm'
 
 export async function GET() {
   try {
@@ -31,12 +31,12 @@ export async function GET() {
 
     // Get member and course counts for each partner
     const partnerIds = activePartners.map(p => p.id)
-    
+
     const memberCounts = partnerIds.length > 0
       ? await db
           .select({ partnerId: members.partnerId, count: count() })
           .from(members)
-          .where(and(eq(members.isActive, true), sql`${members.partnerId} = ANY(${partnerIds})`))
+          .where(and(eq(members.isActive, true), inArray(members.partnerId, partnerIds)))
           .groupBy(members.partnerId)
       : []
 
@@ -44,7 +44,7 @@ export async function GET() {
       ? await db
           .select({ partnerId: courses.partnerId, count: count() })
           .from(courses)
-          .where(and(eq(courses.isActive, true), sql`${courses.partnerId} = ANY(${partnerIds})`))
+          .where(and(eq(courses.isActive, true), inArray(courses.partnerId, partnerIds)))
           .groupBy(courses.partnerId)
       : []
 
