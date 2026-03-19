@@ -61,23 +61,15 @@ export async function GET(request: NextRequest) {
 
   const roleContext = await resolveExternalRoleBySupabaseUserId(authUser.id);
   if (!roleContext.profileId) {
-    return json(
-      {
-        error: 'invalid_grant',
-        error_description: 'Profile not found. A linked profile is required for external authentication.',
-      },
-      { status: 400 }
-    );
+    const errorUrl = new URL('/en/oauth-error', canonicalOrigin);
+    errorUrl.searchParams.set('error', 'profile_not_found');
+    return withExternalAuthCors(request, NextResponse.redirect(errorUrl));
   }
 
   if (!roleContext.role) {
-    return json(
-      {
-        error: 'invalid_grant',
-        error_description: 'Student level is not set. Ask admin/partner to assign your student level.',
-      },
-      { status: 400 }
-    );
+    const errorUrl = new URL('/en/oauth-error', canonicalOrigin);
+    errorUrl.searchParams.set('error', 'role_missing');
+    return withExternalAuthCors(request, NextResponse.redirect(errorUrl));
   }
 
   const authCode = createAuthorizationCode({
