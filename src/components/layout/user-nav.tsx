@@ -19,7 +19,8 @@ import {
   UserCircleIcon, 
   ArrowRightOnRectangleIcon,
   ClipboardDocumentListIcon,
-  Squares2X2Icon
+  Squares2X2Icon,
+  DevicePhoneMobileIcon
 } from "@heroicons/react/24/outline";
 import { ChevronDownIcon } from "@heroicons/react/20/solid";
 
@@ -165,6 +166,14 @@ export function UserNav() {
           <Link href={`/${locale}/dashboard/profile`} className="cursor-pointer">
             <UserCircleIcon className="h-4 w-4 mr-2" />
             {t('header.profile') || 'Profile'}
+          </Link>
+        </DropdownMenuItem>
+
+        {/* Download App */}
+        <DropdownMenuItem asChild>
+          <Link href={`/${locale}/dashboard/apk-download`} className="cursor-pointer">
+            <DevicePhoneMobileIcon className="h-4 w-4 mr-2" />
+            Download App
           </Link>
         </DropdownMenuItem>
 
