@@ -81,6 +81,11 @@ export const mainNav = [
         items: [],
       },
       {
+        title: "Download App",
+        href: "/dashboard/apk-download",
+        items: [],
+      },
+      {
         title: "Developer",
         href: "/dev",
         items: [],
