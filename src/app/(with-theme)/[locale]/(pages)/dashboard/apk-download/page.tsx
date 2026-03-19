@@ -9,11 +9,6 @@ import {
   SparklesIcon,
 } from '@heroicons/react/24/outline';
 
-export const metadata = {
-  title: 'Download App | HKD Dojo',
-  description: 'Download the HKD Dojo mobile application to access your tutorials and certificates on the go.',
-};
-
 interface APKInfo {
   id: string;
   version: string;
