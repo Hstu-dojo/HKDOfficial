@@ -56,7 +56,109 @@ const ACCESS_TOKEN_TTL_MS = 60 * 60 * 1000;
 const oauthCodeStore = new Map<string, OAuthCodeContext>();
 const usedAuthorizationCodes = new Set<string>();
 const refreshTokenStore = new Map<string, RefreshTokenContext>();
-const accessTokenStore = new Map<string, AccessTokenContext>();
+
+// JWT helpers for stateless access tokens
+function getJwtSecret(): string {
+  const secret = (process.env.JWT_SECRET || '').trim();
+  if (!secret) {
+    throw new Error('JWT_SECRET not configured in environment');
+  }
+  return secret;
+}
+
+function base64UrlEncode(data: string): string {
+  return Buffer.from(data)
+    .toString('base64')
+    .replace(/\+/g, '-')
+    .replace(/\//g, '_')
+    .replace(/=/g, '');
+}
+
+function base64UrlDecode(str: string): string {
+  let padded = str + '='.repeat((4 - (str.length % 4)) % 4);
+  return Buffer.from(padded.replace(/-/g, '+').replace(/_/g, '/'), 'base64').toString();
+}
+
+function signJWT(payload: Record<string, unknown>): string {
+  const header = { alg: 'HS256', typ: 'JWT' };
+  const now = Math.floor(Date.now() / 1000);
+  const exp = now + 3600; // 1 hour expiry
+
+  const jwtPayload = {
+    ...payload,
+    iat: now,
+    exp,
+    iss: 'hkd-auth-server',
+    aud: 'dojo-video-server',
+  };
+
+  const headerEncoded = base64UrlEncode(JSON.stringify(header));
+  const payloadEncoded = base64UrlEncode(JSON.stringify(jwtPayload));
+  const message = `${headerEncoded}.${payloadEncoded}`;
+
+  const secret = getJwtSecret();
+  const signature = base64UrlEncode(
+    crypto.createHmac('sha256', secret).update(message).digest('base64')
+  );
+
+  return `${message}.${signature}`;
+}
+
+interface JWTPayload {
+  userId: string;
+  email: string;
+  role: ExternalSystemRole;
+  iat: number;
+  exp: number;
+  iss: string;
+  aud: string;
+}
+
+function verifyJWT(token: string): JWTPayload | null {
+  try {
+    const parts = token.split('.');
+    if (parts.length !== 3) {
+      console.warn('[verifyJWT] Invalid JWT format: wrong number of parts');
+      return null;
+    }
+
+    const [headerEncoded, payloadEncoded, signatureEncoded] = parts;
+
+    // Verify signature
+    const message = `${headerEncoded}.${payloadEncoded}`;
+    const secret = getJwtSecret();
+    const expectedSignature = base64UrlEncode(
+      crypto.createHmac('sha256', secret).update(message).digest('base64')
+    );
+
+    if (signatureEncoded !== expectedSignature) {
+      console.warn('[verifyJWT] Signature verification failed');
+      return null;
+    }
+
+    // Decode and parse payload
+    const payloadJson = base64UrlDecode(payloadEncoded);
+    const payload = JSON.parse(payloadJson) as JWTPayload;
+
+    // Check expiration
+    const now = Math.floor(Date.now() / 1000);
+    if (now >= payload.exp) {
+      console.warn('[verifyJWT] Token has expired');
+      return null;
+    }
+
+    // Verify issuer and audience
+    if (payload.iss !== 'hkd-auth-server' || payload.aud !== 'dojo-video-server') {
+      console.warn('[verifyJWT] Invalid issuer or audience');
+      return null;
+    }
+
+    return payload;
+  } catch (error) {
+    console.error('[verifyJWT] Error verifying JWT:', error);
+    return null;
+  }
+}
 
 export function getRegisteredClients() {
   const raw = process.env.OAUTH_REGISTERED_CLIENTS || 'dojo-app';
@@ -119,28 +221,23 @@ export function createAccessToken(input: {
   email: string;
   clientId: string;
 }) {
-  const token = crypto.randomBytes(48).toString('hex');
-  const issuedAt = Date.now();
-  const expiresAt = issuedAt + ACCESS_TOKEN_TTL_MS;
-  
-  accessTokenStore.set(token, {
-    ...input,
-    issuedAt,
-    expiresAt,
+  const jwt = signJWT({
+    sub: input.userId, // subject = profile ID
+    userId: input.userId, // also include as userId for convenience
+    email: input.email,
+    role: input.role,
   });
-  
-  console.log('[createAccessToken] New token issued');
-  console.log('[createAccessToken] Token first 20 chars:', token.substring(0, 20));
+
+  console.log('[createAccessToken] New JWT token issued');
+  console.log('[createAccessToken] Token first 20 chars:', jwt.substring(0, 20));
   console.log('[createAccessToken] ProfileId:', input.userId);
   console.log('[createAccessToken] Email:', input.email);
   console.log('[createAccessToken] Role:', input.role);
   console.log('[createAccessToken] ClientId:', input.clientId);
-  console.log('[createAccessToken] Issued at:', issuedAt);
-  console.log('[createAccessToken] Expires at:', expiresAt);
-  console.log('[createAccessToken] Token store now has', accessTokenStore.size, 'tokens');
-  
+  console.log('[createAccessToken] Token is stateless (no store needed)');
+
   return {
-    token,
+    token: jwt,
     expiresIn: 3600,
   };
 }
@@ -163,29 +260,29 @@ export function revokeRefreshToken(refreshToken: string) {
 }
 
 export function getAccessToken(accessToken: string) {
-  console.log('[getAccessToken] Looking up token, first 20 chars:', accessToken.substring(0, 20));
-  console.log('[getAccessToken] Token store size:', accessTokenStore.size);
-  
-  const token = accessTokenStore.get(accessToken);
-  
-  if (!token) {
-    console.warn('[getAccessToken] Token not found in store');
+  console.log('[getAccessToken] Verifying JWT token, first 20 chars:', accessToken.substring(0, 20));
+
+  const payload = verifyJWT(accessToken);
+
+  if (!payload) {
+    console.warn('[getAccessToken] JWT verification failed');
     return null;
   }
-  
-  console.log('[getAccessToken] Token found. Checking expiration...');
-  console.log('[getAccessToken] Current time:', Date.now());
-  console.log('[getAccessToken] Token expires at:', token.expiresAt);
-  console.log('[getAccessToken] Time until expiration (ms):', token.expiresAt - Date.now());
-  
-  if (Date.now() >= token.expiresAt) {
-    console.warn('[getAccessToken] Token has expired, removing from store');
-    accessTokenStore.delete(accessToken);
-    return null;
-  }
-  
-  console.log('[getAccessToken] Token is valid, profileId:', token.userId);
-  return token;
+
+  console.log('[getAccessToken] JWT verified successfully');
+  console.log('[getAccessToken] ProfileId:', payload.userId);
+  console.log('[getAccessToken] Email:', payload.email);
+  console.log('[getAccessToken] Role:', payload.role);
+  console.log('[getAccessToken] Expires at (unix):', payload.exp);
+
+  return {
+    userId: payload.userId,
+    email: payload.email,
+    role: payload.role,
+    issuedAt: payload.iat * 1000,
+    expiresAt: payload.exp * 1000,
+    clientId: 'dojo-app', // JWT doesn't store clientId, but we can default to registered client
+  };
 }
 
 export function resolveStudentLevel(level: unknown): StudentLevel | null {
