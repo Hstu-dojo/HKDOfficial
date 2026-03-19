@@ -19,7 +19,7 @@ export const STUDENT_LEVELS = [
 
 export type StudentLevel = (typeof STUDENT_LEVELS)[number];
 
-export const EXTERNAL_SYSTEM_ROLES = ['admin', 'instructor', 'partner', ...STUDENT_LEVELS] as const;
+export const EXTERNAL_SYSTEM_ROLES = ['admin', 'teacher', 'partner', ...STUDENT_LEVELS] as const;
 export type ExternalSystemRole = (typeof EXTERNAL_SYSTEM_ROLES)[number];
 
 type OAuthCodeContext = {
@@ -334,7 +334,7 @@ export async function resolveExternalRoleBySupabaseUserId(supabaseUserId: string
   }
 
   if (roleNames.includes('INSTRUCTOR')) {
-    return { profileId: profileId ?? localUserId, email, role: 'instructor' };
+    return { profileId: profileId ?? localUserId, email, role: 'teacher' };
   }
 
   if (roleNames.includes('PARTNER')) {
