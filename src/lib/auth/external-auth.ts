@@ -121,11 +121,24 @@ export function createAccessToken(input: {
 }) {
   const token = crypto.randomBytes(48).toString('hex');
   const issuedAt = Date.now();
+  const expiresAt = issuedAt + ACCESS_TOKEN_TTL_MS;
+  
   accessTokenStore.set(token, {
     ...input,
     issuedAt,
-    expiresAt: issuedAt + ACCESS_TOKEN_TTL_MS,
+    expiresAt,
   });
+  
+  console.log('[createAccessToken] New token issued');
+  console.log('[createAccessToken] Token first 20 chars:', token.substring(0, 20));
+  console.log('[createAccessToken] ProfileId:', input.userId);
+  console.log('[createAccessToken] Email:', input.email);
+  console.log('[createAccessToken] Role:', input.role);
+  console.log('[createAccessToken] ClientId:', input.clientId);
+  console.log('[createAccessToken] Issued at:', issuedAt);
+  console.log('[createAccessToken] Expires at:', expiresAt);
+  console.log('[createAccessToken] Token store now has', accessTokenStore.size, 'tokens');
+  
   return {
     token,
     expiresIn: 3600,
@@ -150,12 +163,28 @@ export function revokeRefreshToken(refreshToken: string) {
 }
 
 export function getAccessToken(accessToken: string) {
+  console.log('[getAccessToken] Looking up token, first 20 chars:', accessToken.substring(0, 20));
+  console.log('[getAccessToken] Token store size:', accessTokenStore.size);
+  
   const token = accessTokenStore.get(accessToken);
-  if (!token) return null;
+  
+  if (!token) {
+    console.warn('[getAccessToken] Token not found in store');
+    return null;
+  }
+  
+  console.log('[getAccessToken] Token found. Checking expiration...');
+  console.log('[getAccessToken] Current time:', Date.now());
+  console.log('[getAccessToken] Token expires at:', token.expiresAt);
+  console.log('[getAccessToken] Time until expiration (ms):', token.expiresAt - Date.now());
+  
   if (Date.now() >= token.expiresAt) {
+    console.warn('[getAccessToken] Token has expired, removing from store');
     accessTokenStore.delete(accessToken);
     return null;
   }
+  
+  console.log('[getAccessToken] Token is valid, profileId:', token.userId);
   return token;
 }
 
