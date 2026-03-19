@@ -319,7 +319,7 @@ export async function resolveExternalRoleBySupabaseUserId(supabaseUserId: string
   const email = localUser[0].email ?? '';
 
   const linkedProfile = await db
-    .select({ id: profiles.id, studentLevel: profiles.studentLevel })
+    .select({ id: profiles.id, studentLevel: profiles.studentLevel, beltRank: profiles.beltRank })
     .from(profiles)
     .where(eq(profiles.userId, localUserId))
     .limit(1);
@@ -342,8 +342,14 @@ export async function resolveExternalRoleBySupabaseUserId(supabaseUserId: string
   }
 
   if (roleNames.some((r) => ['STUDENT', 'MEMBER'].includes(r))) {
-    const studentLevel = resolveStudentLevel(linkedProfile[0]?.studentLevel);
-    return { profileId, email, role: studentLevel };
+    // Check belt rank from the onboarding profile data
+    const beltRank = linkedProfile[0]?.beltRank;
+    
+    if (beltRank === 'black') {
+      return { profileId, email, role: 'black_belt' };
+    }
+    
+    return { profileId, email, role: "student_9th_kyu" };
   }
 
   return { profileId, email, role: null };
