@@ -17,13 +17,13 @@ export default async function RootLayout({
 }) {
   // get next theme color
   return (
-    <body className={`${roboto.className}`}>
+    <div className={`${roboto.className}`}>
       <Header />
       <div style={{ color: "#64748B" }} className="mt-20 lg:mt-28">
         {children}
         {(await draftMode()).isEnabled && <LiveVisualEditing />}
       </div>
       <BackToTop />
-    </body>
+    </div>
   );
 }

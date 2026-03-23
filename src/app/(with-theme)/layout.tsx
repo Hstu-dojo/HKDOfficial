@@ -9,12 +9,12 @@ export default async function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <body className={`min-w-[350px] overflow-x-scroll dark:bg-slate-850 dark:text-slate-200`}>
+    <div className={`min-w-[350px] overflow-x-scroll dark:bg-slate-850 dark:text-slate-200`}>
       <AuthProvider>
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
           {children}
         </ThemeProvider>
       </AuthProvider>
-    </body>
+    </div>
   );
 }

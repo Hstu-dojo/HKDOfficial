@@ -71,7 +71,7 @@ export default async function RootLayout({
   const { locale } = await params;
   
   return (
-    <body
+    <div
       className={`${roboto.className} dark:bg-slate-850 dark:text-slate-200`}
     >
       <I18nProviderClient locale={locale}>
@@ -84,6 +84,6 @@ export default async function RootLayout({
         <Toaster richColors />
         <BackToTop />
       </I18nProviderClient>
-    </body>
+    </div>
   );
 }

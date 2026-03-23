@@ -52,12 +52,3 @@ export interface RBACContext {
   email: string;
   roles: string[];
 }
-  // Admin Panel access
-    "access_admin_panel",
-    // Admin Panel access
-    "access_admin_panel",
-    // Admin Panel access
-    "access_admin_panel",
-  
-  // Admin Panel access permission
-  { name: "access_admin_panel", resource: "ADMIN_PANEL", action: "ACCESS", description: "Access the admin dashboard" },
