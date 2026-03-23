@@ -38,7 +38,8 @@ export default function EnrollmentsView() {
   const totalPages = Math.ceil(total / 20)
 
   return (
-    <div style={{ padding: '2rem', maxWidth: '1200px' }}>
+    <div className="collection-edit">
+      <div className="collection-edit__main">
       <h1 style={{ fontSize: '1.5rem', fontWeight: 700, marginBottom: '0.25rem' }}>Enrollments</h1>
       <p style={{ color: '#6b7280', fontSize: '0.875rem', marginBottom: '1.5rem' }}>
         {total} total enrollment{total !== 1 ? 's' : ''}
@@ -118,6 +119,7 @@ export default function EnrollmentsView() {
           )}
         </>
       )}
+      </div>
     </div>
   )
 }

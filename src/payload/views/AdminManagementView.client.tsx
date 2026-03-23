@@ -85,7 +85,8 @@ export default function AdminManagementView() {
   }
 
   return (
-    <div style={{ padding: '2rem', maxWidth: '900px' }}>
+    <div className="collection-edit">
+      <div className="collection-edit__main">
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '1.5rem' }}>
         <div>
           <h1 style={{ fontSize: '1.5rem', fontWeight: 700, marginBottom: '0.25rem' }}>
@@ -305,6 +306,7 @@ export default function AdminManagementView() {
           </table>
         </div>
       )}
+      </div>
     </div>
   )
 }

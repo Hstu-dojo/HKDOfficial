@@ -77,7 +77,8 @@ export default function MembersView() {
   const totalPages = Math.ceil(total / 20)
 
   return (
-    <div style={{ padding: '2rem', maxWidth: '1200px' }}>
+    <div className="collection-edit">
+      <div className="collection-edit__main">
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
         <div>
           <h1 style={{ fontSize: '1.5rem', fontWeight: 700 }}>Members</h1>
@@ -279,6 +280,7 @@ export default function MembersView() {
           )}
         </>
       )}
+      </div>
     </div>
   )
 }

@@ -36,155 +36,95 @@ export default function PartnerDashboard() {
 
   if (loading) {
     return (
-      <div style={{ padding: '2rem' }}>
-        <p>Loading dashboard...</p>
+      <div className="collection-edit">
+        <div className="collection-edit__main">
+          <p>Loading dashboard...</p>
+        </div>
       </div>
     )
   }
 
   if (!stats) {
     return (
-      <div style={{ padding: '2rem' }}>
-        <p>Unable to load partner data. Please log in again.</p>
+      <div className="collection-edit">
+        <div className="collection-edit__main">
+          <p>Unable to load partner data. Please log in again.</p>
+        </div>
       </div>
     )
   }
 
   return (
-    <div style={{ padding: '2rem', maxWidth: '1200px' }}>
-      <h1 style={{ fontSize: '1.5rem', fontWeight: 700, marginBottom: '0.5rem' }}>
-        Welcome, {stats.name}
-      </h1>
-      <p style={{ color: '#6b7280', marginBottom: '2rem' }}>
-        Partner portal dashboard — /org/{stats.slug}
-      </p>
+    <div className="collection-edit">
+      <div className="collection-edit__main">
+        <header className="view-header" style={{ marginBottom: '1.5rem' }}>
+          <h1 className="view-header__title">Welcome, {stats.name}</h1>
+          <p className="field-description">Partner portal dashboard — /org/{stats.slug}</p>
+        </header>
 
-      <div
-        style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
-          gap: '1rem',
-          marginBottom: '2rem',
-        }}
-      >
-        <StatCard label="Members" value={stats.memberCount} />
-        <StatCard label="Courses" value={stats.courseCount} />
-        {stats.location && <InfoCard label="Location" value={stats.location} />}
-        {stats.contactEmail && <InfoCard label="Contact" value={stats.contactEmail} />}
-      </div>
+        <div style={{ marginBottom: '1.5rem' }}>
+          <table className="table" cellPadding="0" cellSpacing="0" style={{ width: '100%', textAlign: 'left' }}>
+            <thead>
+              <tr>
+                <th style={{ padding: '1rem', borderBottom: '1px solid var(--theme-elevation-200)' }}>Summary</th>
+                <th style={{ padding: '1rem', borderBottom: '1px solid var(--theme-elevation-200)' }}>Value</th>
+              </tr>
+            </thead>
+            <tbody>
+              <SummaryRow label="Members" value={String(stats.memberCount)} />
+              <SummaryRow label="Courses" value={String(stats.courseCount)} />
+              {stats.location && <SummaryRow label="Location" value={stats.location} />}
+              {stats.contactEmail && <SummaryRow label="Contact" value={stats.contactEmail} />}
+            </tbody>
+          </table>
+        </div>
 
-      <div
-        style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
-          gap: '1rem',
-        }}
-      >
-        <NavCard
-          title="Members"
-          description="View and manage your organization's members"
-          href="/partner-admin/members"
-        />
-        <NavCard
-          title="Enrollments"
-          description="View course enrollments for your members"
-          href="/partner-admin/enrollments"
-        />
-        <NavCard
-          title="Bills & Payments"
-          description="Track billing and payment status"
-          href="/partner-admin/bills"
-        />
-        <NavCard
-          title="Schedules"
-          description="View class schedules and timetables"
-          href="/partner-admin/schedules"
-        />
-        <NavCard
-          title="Profile"
-          description="Manage your organization profile"
-          href="/partner-admin/profile"
-        />
-        <NavCard
-          title="Page Settings"
-          description="Customize your public homepage appearance"
-          href="/partner-admin/page-settings"
-        />
-        <NavCard
-          title="Pending Students"
-          description="Review and approve student registrations"
-          href="/partner-admin/pending-students"
-        />
-        <NavCard
-          title="Monthly Status"
-          description="Track member activity status each month"
-          href="/partner-admin/monthly-status"
-        />
-        <NavCard
-          title="Branch Transfers"
-          description="Review incoming student transfer requests"
-          href="/partner-admin/branch-requests"
-        />
-        <NavCard
-          title="Admin Management"
-          description="Manage portal administrators"
-          href="/partner-admin/admin-management"
-        />
+        <div className="table-wrapper">
+          <table className="table" cellPadding="0" cellSpacing="0" style={{ width: '100%', textAlign: 'left' }}>
+            <thead>
+              <tr>
+                <th style={{ padding: '1rem', borderBottom: '1px solid var(--theme-elevation-200)' }}>Quick Navigation</th>
+                <th style={{ padding: '1rem', borderBottom: '1px solid var(--theme-elevation-200)' }}>Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              <DashboardLinkRow title="Members" description="View and manage your organization's members" href="/partner-admin/portal/members" />
+              <DashboardLinkRow title="Enrollments" description="View course enrollments for your members" href="/partner-admin/portal/enrollments" />
+              <DashboardLinkRow title="Bills & Payments" description="Track billing and payment status" href="/partner-admin/portal/bills" />
+              <DashboardLinkRow title="Schedules" description="View class schedules and timetables" href="/partner-admin/portal/schedules" />
+              <DashboardLinkRow title="Profile" description="Manage your organization profile" href="/partner-admin/portal/profile" />
+              <DashboardLinkRow title="Page Settings" description="Customize your public homepage appearance" href="/partner-admin/portal/page-settings" />
+              <DashboardLinkRow title="Pending Students" description="Review and approve student registrations" href="/partner-admin/portal/pending-students" />
+              <DashboardLinkRow title="Monthly Status" description="Track member activity status each month" href="/partner-admin/portal/monthly-status" />
+              <DashboardLinkRow title="Branch Transfers" description="Review incoming student transfer requests" href="/partner-admin/portal/branch-requests" />
+              <DashboardLinkRow title="Admin Management" description="Manage portal administrators" href="/partner-admin/portal/admin-management" />
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   )
 }
 
-function StatCard({ label, value }: { label: string; value: number }) {
+function SummaryRow({ label, value }: { label: string; value: string }) {
   return (
-    <div
-      style={{
-        padding: '1.25rem',
-        borderRadius: '0.5rem',
-        border: '1px solid #e5e7eb',
-        backgroundColor: '#f9fafb',
-      }}
-    >
-      <p style={{ fontSize: '0.875rem', color: '#6b7280' }}>{label}</p>
-      <p style={{ fontSize: '2rem', fontWeight: 700 }}>{value}</p>
-    </div>
+    <tr className="row" style={{ borderBottom: '1px solid var(--theme-elevation-100)' }}>
+      <td style={{ padding: '1rem' }} className="field-label">{label}</td>
+      <td style={{ padding: '1rem' }}>{value}</td>
+    </tr>
   )
 }
 
-function InfoCard({ label, value }: { label: string; value: string }) {
+function DashboardLinkRow({ title, description, href }: { title: string; description: string; href: string }) {
   return (
-    <div
-      style={{
-        padding: '1.25rem',
-        borderRadius: '0.5rem',
-        border: '1px solid #e5e7eb',
-        backgroundColor: '#f9fafb',
-      }}
-    >
-      <p style={{ fontSize: '0.875rem', color: '#6b7280' }}>{label}</p>
-      <p style={{ fontSize: '1rem', fontWeight: 500 }}>{value}</p>
-    </div>
-  )
-}
-
-function NavCard({ title, description, href }: { title: string; description: string; href: string }) {
-  return (
-    <a
-      href={href}
-      style={{
-        display: 'block',
-        padding: '1.25rem',
-        borderRadius: '0.5rem',
-        border: '1px solid #e5e7eb',
-        textDecoration: 'none',
-        color: 'inherit',
-        transition: 'box-shadow 0.15s',
-      }}
-      onMouseEnter={(e) => (e.currentTarget.style.boxShadow = '0 4px 6px -1px rgba(0,0,0,0.1)')}
-      onMouseLeave={(e) => (e.currentTarget.style.boxShadow = 'none')}
-    >
-      <h3 style={{ fontWeight: 600, marginBottom: '0.25rem' }}>{title}</h3>
-      <p style={{ fontSize: '0.875rem', color: '#6b7280' }}>{description}</p>
-    </a>
+    <tr className="row" style={{ borderBottom: '1px solid var(--theme-elevation-100)' }}>
+      <td style={{ padding: '1rem' }}>
+        <div className="field-label" style={{ marginBottom: '0.2rem' }}>{title}</div>
+        <div className="field-description" style={{ margin: 0 }}>{description}</div>
+      </td>
+      <td style={{ padding: '1rem' }}>
+        <a href={href} className="btn btn--style-secondary btn--size-small">Open</a>
+      </td>
+    </tr>
   )
 }

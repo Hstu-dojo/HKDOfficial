@@ -46,7 +46,8 @@ export default function BillsView() {
   }
 
   return (
-    <div style={{ padding: '2rem', maxWidth: '1200px' }}>
+    <div className="collection-edit">
+      <div className="collection-edit__main">
       <h1 style={{ fontSize: '1.5rem', fontWeight: 700, marginBottom: '0.25rem' }}>
         Bills &amp; Payments
       </h1>
@@ -140,6 +141,7 @@ export default function BillsView() {
           )}
         </>
       )}
+      </div>
     </div>
   )
 }

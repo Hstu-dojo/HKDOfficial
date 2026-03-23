@@ -118,160 +118,125 @@ export default function MonthlyStatusView() {
   }
 
   return (
-    <div style={{ padding: '2rem', maxWidth: '1000px' }}>
-      <h1 style={{ fontSize: '1.5rem', fontWeight: 700, marginBottom: '0.25rem' }}>
-        Monthly Activity Status
-      </h1>
-      <p style={{ color: '#6b7280', fontSize: '0.875rem', marginBottom: '1.5rem' }}>
-        Track which members are active or inactive each month
-      </p>
+    <div className="collection-edit">
+      <div className="collection-edit__main">
+        <header className="view-header" style={{ marginBottom: '2rem' }}>
+          <h1 style={{ fontSize: '2rem', marginBottom: '0.25rem' }}>Monthly Activity Status</h1>
+          <p className="field-description">
+            Track which members are active or inactive each month
+          </p>
+        </header>
 
-      {message && (
+        {message && (
+          <div className={`payload-toast ${message.includes('Failed') || message.includes('error') ? 'payload-toast--error' : 'payload-toast--success'}`} style={{ marginBottom: '1rem', padding: '1rem', background: message.includes('Failed') ? '#fef2f2' : '#f0fdf4', color: message.includes('Failed') ? '#dc2626' : '#16a34a', borderRadius: '4px' }}>
+            {message}
+          </div>
+        )}
+
         <div
           style={{
-            padding: '0.75rem',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '1rem',
             marginBottom: '1rem',
-            borderRadius: '0.375rem',
-            backgroundColor: message.includes('Failed') || message.includes('error') ? '#fef2f2' : '#f0fdf4',
-            color: message.includes('Failed') || message.includes('error') ? '#dc2626' : '#16a34a',
-            fontSize: '0.875rem',
+            padding: '1rem',
+            border: '1px solid var(--theme-border-color)',
+            borderRadius: '4px',
+            backgroundColor: 'var(--theme-bg)',
           }}
         >
-          {message}
+          <button onClick={prevMonth} className="btn btn--size-small btn--style-secondary">← Prev</button>
+          <span style={{ fontWeight: 600, fontSize: '1rem', flex: 1, textAlign: 'center' }}>
+            {MONTH_NAMES[month - 1]} {year}
+          </span>
+          <button onClick={nextMonth} className="btn btn--size-small btn--style-secondary">Next →</button>
         </div>
-      )}
 
-      {/* Month Navigator */}
-      <div
-        style={{
-          display: 'flex',
-          alignItems: 'center',
-          gap: '1rem',
-          marginBottom: '1rem',
-          padding: '0.75rem 1rem',
-          border: '1px solid #e5e7eb',
-          borderRadius: '0.5rem',
-          backgroundColor: '#f9fafb',
-        }}
-      >
-        <button onClick={prevMonth} style={navBtnStyle}>← Prev</button>
-        <span style={{ fontWeight: 600, fontSize: '1rem', flex: 1, textAlign: 'center' }}>
-          {MONTH_NAMES[month - 1]} {year}
-        </span>
-        <button onClick={nextMonth} style={navBtnStyle}>Next →</button>
-      </div>
-
-      {/* Summary Cards */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '0.75rem', marginBottom: '1rem' }}>
-        <SummaryCard label="Total Members" value={summary.total} color="#374151" />
-        <SummaryCard label="Active" value={summary.activeThisMonth} color="#16a34a" />
-        <SummaryCard label="Inactive" value={summary.inactiveThisMonth} color="#dc2626" />
-      </div>
-
-      {/* Bulk Actions */}
-      {members.length > 0 && (
-        <div style={{ marginBottom: '1rem' }}>
-          <button
-            onClick={markAllActive}
-            disabled={savingAll}
-            style={{
-              padding: '0.375rem 0.75rem',
-              border: '1px solid #d1d5db',
-              borderRadius: '0.375rem',
-              backgroundColor: 'white',
-              cursor: savingAll ? 'not-allowed' : 'pointer',
-              fontSize: '0.8125rem',
-              fontWeight: 500,
-              opacity: savingAll ? 0.5 : 1,
-            }}
-          >
-            {savingAll ? 'Updating...' : 'Mark All Active'}
-          </button>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1rem', marginBottom: '1.5rem' }}>
+          <SummaryCard label="Total Members" value={summary.total} color="var(--theme-elevation-800)" />
+          <SummaryCard label="Active" value={summary.activeThisMonth} color="var(--theme-success-600)" />
+          <SummaryCard label="Inactive" value={summary.inactiveThisMonth} color="var(--theme-error-600)" />
         </div>
-      )}
 
-      {loading ? (
-        <p>Loading...</p>
-      ) : members.length === 0 ? (
-        <div
-          style={{
-            padding: '2rem',
-            textAlign: 'center',
-            border: '1px solid #e5e7eb',
-            borderRadius: '0.5rem',
-            color: '#6b7280',
-          }}
-        >
-          No members found. Add members first from the Members view.
-        </div>
-      ) : (
-        <div style={{ border: '1px solid #e5e7eb', borderRadius: '0.5rem', overflow: 'hidden' }}>
-          <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.875rem' }}>
-            <thead>
-              <tr style={{ backgroundColor: '#f9fafb' }}>
-                <th style={thStyle}>Member</th>
-                <th style={thStyle}>ID</th>
-                <th style={thStyle}>Status</th>
-                <th style={{ ...thStyle, textAlign: 'center' }}>Toggle</th>
-              </tr>
-            </thead>
-            <tbody>
-              {members.map((m) => (
-                <tr key={m.profileId} style={{ borderTop: '1px solid #e5e7eb' }}>
-                  <td style={tdStyle}>{m.memberName || 'Unknown'}</td>
-                  <td style={{ ...tdStyle, color: '#6b7280', fontFamily: 'monospace', fontSize: '0.8125rem' }}>
-                    {m.memberNumber || '—'}
-                  </td>
-                  <td style={tdStyle}>
-                    <span
-                      style={{
-                        display: 'inline-block',
-                        padding: '0.125rem 0.5rem',
-                        borderRadius: '9999px',
-                        fontSize: '0.75rem',
-                        fontWeight: 500,
-                        backgroundColor: m.isActiveThisMonth ? '#dcfce7' : '#fecaca',
-                        color: m.isActiveThisMonth ? '#166534' : '#991b1b',
-                      }}
-                    >
-                      {m.isActiveThisMonth ? 'Active' : 'Inactive'}
-                    </span>
-                    {!m.hasMonthlyRecord && (
-                      <span style={{ marginLeft: '0.5rem', fontSize: '0.7rem', color: '#9ca3af' }}>
-                        (default)
-                      </span>
-                    )}
-                  </td>
-                  <td style={{ ...tdStyle, textAlign: 'center' }}>
-                    <button
-                      onClick={() => toggleMember(m.profileId, m.isActiveThisMonth)}
-                      disabled={updating === m.profileId}
-                      style={{
-                        padding: '0.25rem 0.625rem',
-                        border: '1px solid',
-                        borderColor: m.isActiveThisMonth ? '#fecaca' : '#bbf7d0',
-                        borderRadius: '0.25rem',
-                        backgroundColor: m.isActiveThisMonth ? '#fef2f2' : '#f0fdf4',
-                        color: m.isActiveThisMonth ? '#dc2626' : '#16a34a',
-                        cursor: updating === m.profileId ? 'not-allowed' : 'pointer',
-                        fontSize: '0.75rem',
-                        fontWeight: 500,
-                        opacity: updating === m.profileId ? 0.5 : 1,
-                      }}
-                    >
-                      {updating === m.profileId
-                        ? '...'
-                        : m.isActiveThisMonth
-                          ? 'Set Inactive'
-                          : 'Set Active'}
-                    </button>
-                  </td>
+        {members.length > 0 && (
+          <div style={{ marginBottom: '1.5rem' }}>
+            <button
+              onClick={markAllActive}
+              disabled={savingAll}
+              className="btn btn--size-small btn--style-secondary"
+            >
+              {savingAll ? 'Updating...' : 'Mark All Active'}
+            </button>
+          </div>
+        )}
+
+        {loading ? (
+          <p>Loading...</p>
+        ) : members.length === 0 ? (
+          <div className="no-results" style={{ padding: '2rem', textAlign: 'center', color: 'var(--theme-elevation-400)' }}>
+            No members found. Add members first from the Members view.
+          </div>
+        ) : (
+          <div className="table-wrapper">
+            <table className="table" cellPadding="0" cellSpacing="0" style={{ width: '100%', textAlign: 'left' }}>
+              <thead>
+                <tr>
+                  <th style={{ padding: '1rem', borderBottom: '1px solid var(--theme-border-color)' }}>Member</th>
+                  <th style={{ padding: '1rem', borderBottom: '1px solid var(--theme-border-color)' }}>ID</th>
+                  <th style={{ padding: '1rem', borderBottom: '1px solid var(--theme-border-color)' }}>Status</th>
+                  <th style={{ padding: '1rem', borderBottom: '1px solid var(--theme-border-color)', textAlign: 'center' }}>Toggle</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      )}
+              </thead>
+              <tbody>
+                {members.map((m) => (
+                  <tr key={m.profileId} className="row" style={{ borderBottom: '1px solid var(--theme-elevation-100)' }}>
+                    <td style={{ padding: '1rem' }}>{m.memberName || 'Unknown'}</td>
+                    <td style={{ padding: '1rem', color: 'var(--theme-elevation-400)', fontFamily: 'monospace', fontSize: '0.8125rem' }}>
+                      {m.memberNumber || '—'}
+                    </td>
+                    <td style={{ padding: '1rem' }}>
+                      <span
+                        style={{
+                          display: 'inline-block',
+                          padding: '0.2rem 0.5rem',
+                          borderRadius: '4px',
+                          fontSize: '0.75rem',
+                          background: m.isActiveThisMonth ? 'var(--theme-success-100)' : 'var(--theme-error-100)',
+                          color: m.isActiveThisMonth ? 'var(--theme-success-700)' : 'var(--theme-error-700)',
+                        }}
+                      >
+                        {m.isActiveThisMonth ? 'Active' : 'Inactive'}
+                      </span>
+                      {!m.hasMonthlyRecord && (
+                        <span style={{ marginLeft: '0.5rem', fontSize: '0.7rem', color: 'var(--theme-elevation-400)' }}>
+                          (default)
+                        </span>
+                      )}
+                    </td>
+                    <td style={{ padding: '1rem', textAlign: 'center' }}>
+                      <button
+                        onClick={() => toggleMember(m.profileId, m.isActiveThisMonth)}
+                        disabled={updating === m.profileId}
+                        className={`btn btn--size-small ${m.isActiveThisMonth ? 'btn--style-secondary' : 'btn--style-primary'}`}
+                        style={{
+                          minWidth: '100px',
+                          opacity: updating === m.profileId ? 0.5 : 1,
+                        }}
+                      >
+                        {updating === m.profileId
+                          ? '...'
+                          : m.isActiveThisMonth
+                            ? 'Set Inactive'
+                            : 'Set Active'}
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </div>
     </div>
   )
 }
@@ -280,36 +245,15 @@ function SummaryCard({ label, value, color }: { label: string; value: number; co
   return (
     <div
       style={{
-        padding: '1rem',
-        borderRadius: '0.5rem',
-        border: '1px solid #e5e7eb',
-        backgroundColor: '#f9fafb',
+        padding: '1.5rem',
+        borderRadius: '4px',
+        border: '1px solid var(--theme-border-color)',
+        backgroundColor: 'var(--theme-bg)',
         textAlign: 'center',
       }}
     >
-      <p style={{ fontSize: '0.8125rem', color: '#6b7280' }}>{label}</p>
-      <p style={{ fontSize: '1.75rem', fontWeight: 700, color }}>{value}</p>
+      <p style={{ fontSize: '0.875rem', color: 'var(--theme-elevation-500)', marginBottom: '0.5rem' }}>{label}</p>
+      <p style={{ fontSize: '2rem', fontWeight: 600, color: color }}>{value}</p>
     </div>
   )
-}
-
-const thStyle: React.CSSProperties = {
-  padding: '0.75rem',
-  textAlign: 'left',
-  fontWeight: 600,
-  fontSize: '0.8125rem',
-  color: '#374151',
-}
-
-const tdStyle: React.CSSProperties = {
-  padding: '0.75rem',
-}
-
-const navBtnStyle: React.CSSProperties = {
-  padding: '0.375rem 0.75rem',
-  border: '1px solid #d1d5db',
-  borderRadius: '0.375rem',
-  backgroundColor: 'white',
-  cursor: 'pointer',
-  fontSize: '0.8125rem',
 }

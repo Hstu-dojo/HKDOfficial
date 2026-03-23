@@ -78,7 +78,8 @@ export default function BranchRequestsView() {
   }
 
   return (
-    <div style={{ padding: '2rem', maxWidth: '1100px' }}>
+    <div className="collection-edit">
+      <div className="collection-edit__main">
       <h1 style={{ fontSize: '1.5rem', fontWeight: 700, marginBottom: '0.25rem' }}>
         Branch Transfer Requests
       </h1>
@@ -234,6 +235,7 @@ export default function BranchRequestsView() {
           )}
         </>
       )}
+      </div>
     </div>
   )
 }

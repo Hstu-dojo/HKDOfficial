@@ -68,14 +68,17 @@ export default function ProfileView() {
 
   if (loading) {
     return (
-      <div style={{ padding: '2rem' }}>
-        <p>Loading...</p>
+      <div className="collection-edit">
+        <div className="collection-edit__main">
+          <p>Loading...</p>
+        </div>
       </div>
     )
   }
 
   return (
-    <div style={{ padding: '2rem', maxWidth: '800px' }}>
+    <div className="collection-edit">
+      <div className="collection-edit__main">
       <h1 style={{ fontSize: '1.5rem', fontWeight: 700, marginBottom: '0.25rem' }}>
         Organization Profile
       </h1>
@@ -168,6 +171,7 @@ export default function ProfileView() {
           </button>
         </div>
       </form>
+      </div>
     </div>
   )
 }
