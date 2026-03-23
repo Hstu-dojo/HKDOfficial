@@ -1,6 +1,7 @@
 'use client'
 
 import React, { useEffect, useState, useCallback } from 'react'
+import PortalStepNav from './PortalStepNav'
 
 interface Admin {
   id: string
@@ -85,9 +86,11 @@ export default function AdminManagementView() {
   }
 
   return (
-    <div className="collection-edit">
-      <div className="collection-edit__main">
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '1.5rem' }}>
+    <>
+      <PortalStepNav label="Admin Management" />
+      <div className="collection-edit">
+        <div className="collection-edit__main">
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '1.5rem' }}>
         <div>
           <h1 style={{ fontSize: '1.5rem', fontWeight: 700, marginBottom: '0.25rem' }}>
             Admin Management
@@ -306,8 +309,9 @@ export default function AdminManagementView() {
           </table>
         </div>
       )}
+        </div>
       </div>
-    </div>
+    </>
   )
 }
 

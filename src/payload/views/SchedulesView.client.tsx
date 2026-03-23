@@ -1,6 +1,7 @@
 'use client'
 
 import React, { useEffect, useState, useCallback } from 'react'
+import PortalStepNav from './PortalStepNav'
 
 const DAY_NAMES = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
 const DAY_SHORT = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT']
@@ -195,17 +196,22 @@ export default function SchedulesView() {
 
   if (loading) {
     return (
-      <div className="collection-list">
-        <div className="collection-edit__main">
-          <p className="field-description">Loading schedules...</p>
+      <>
+        <PortalStepNav label="Schedules" />
+        <div className="collection-list">
+          <div className="collection-edit__main">
+            <p className="field-description">Loading schedules...</p>
+          </div>
         </div>
-      </div>
+      </>
     )
   }
 
   return (
-    <div className="collection-list">
-      <div className="collection-edit__main">
+    <>
+      <PortalStepNav label="Schedules" />
+      <div className="collection-list">
+        <div className="collection-edit__main">
         <header className="view-header">
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
             <div>
@@ -461,7 +467,8 @@ export default function SchedulesView() {
             </div>
           </div>
         )}
+        </div>
       </div>
-    </div>
+    </>
   )
 }

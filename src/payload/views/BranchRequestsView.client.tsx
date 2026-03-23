@@ -1,6 +1,7 @@
 'use client'
 
 import React, { useEffect, useState, useCallback } from 'react'
+import PortalStepNav from './PortalStepNav'
 
 interface BranchRequest {
   id: string
@@ -78,9 +79,11 @@ export default function BranchRequestsView() {
   }
 
   return (
-    <div className="collection-edit">
-      <div className="collection-edit__main">
-      <h1 style={{ fontSize: '1.5rem', fontWeight: 700, marginBottom: '0.25rem' }}>
+    <>
+      <PortalStepNav label="Branch Transfers" />
+      <div className="collection-edit">
+        <div className="collection-edit__main">
+        <h1 style={{ fontSize: '1.5rem', fontWeight: 700, marginBottom: '0.25rem' }}>
         Branch Transfer Requests
       </h1>
       <p style={{ color: '#6b7280', fontSize: '0.875rem', marginBottom: '1.5rem' }}>
@@ -235,8 +238,9 @@ export default function BranchRequestsView() {
           )}
         </>
       )}
+        </div>
       </div>
-    </div>
+    </>
   )
 }
 

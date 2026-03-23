@@ -1,6 +1,7 @@
 'use client'
 
 import React, { useEffect, useState, useCallback } from 'react'
+import PortalStepNav from './PortalStepNav'
 
 interface MemberStatus {
   profileId: string
@@ -118,8 +119,10 @@ export default function MonthlyStatusView() {
   }
 
   return (
-    <div className="collection-edit">
-      <div className="collection-edit__main">
+    <>
+      <PortalStepNav label="Monthly Status" />
+      <div className="collection-edit">
+        <div className="collection-edit__main">
         <header className="view-header" style={{ marginBottom: '2rem' }}>
           <h1 style={{ fontSize: '2rem', marginBottom: '0.25rem' }}>Monthly Activity Status</h1>
           <p className="field-description">
@@ -236,8 +239,9 @@ export default function MonthlyStatusView() {
             </table>
           </div>
         )}
+        </div>
       </div>
-    </div>
+    </>
   )
 }
 

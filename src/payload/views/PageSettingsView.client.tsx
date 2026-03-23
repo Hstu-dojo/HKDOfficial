@@ -1,6 +1,7 @@
 'use client'
 
 import React, { useEffect, useState, useCallback } from 'react'
+import PortalStepNav from './PortalStepNav'
 
 interface PageSettings {
   heroImageUrl: string | null
@@ -188,11 +189,13 @@ export default function PageSettingsView() {
     }))
   }
 
-  if (loading) {
-    return <div className="collection-edit"><div className="collection-edit__main"><p>Loading page settings...</p></div></div>
-  }
-
-  return (
+  const content = loading ? (
+    <div className="collection-edit">
+      <div className="collection-edit__main">
+        <p>Loading page settings...</p>
+      </div>
+    </div>
+  ) : (
     <div className="collection-edit">
       <div className="collection-edit__main">
         <header className="view-header">
@@ -495,6 +498,13 @@ export default function PageSettingsView() {
         </form>
       </div>
     </div>
+  )
+
+  return (
+    <>
+      <PortalStepNav label="Page Settings" />
+      {content}
+    </>
   )
 }
 

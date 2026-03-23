@@ -2,6 +2,7 @@
 
 import React from 'react'
 import { useAuth } from '@payloadcms/ui'
+import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 
 const ADMIN_BASE = '/partner-admin'
@@ -46,7 +47,7 @@ export default function PartnerNavLinks() {
       </div>
 
       {portalLinks.map((link) => (
-        <a
+        <Link
           key={link.href}
           href={link.href}
           className="nav__link"
@@ -61,14 +62,14 @@ export default function PartnerNavLinks() {
           }}
         >
           {link.label}
-        </a>
+        </Link>
       ))}
 
       <div style={{ fontSize: '0.6875rem', textTransform: 'uppercase', letterSpacing: '0.04em', color: 'var(--theme-elevation-500)', padding: '0.75rem var(--nav-link--padding-h, 1.25rem) 0.5rem' }}>
         Quick Links
       </div>
 
-      <a
+      <Link
         href="/"
         className="nav__link"
         style={{
@@ -79,7 +80,7 @@ export default function PartnerNavLinks() {
         }}
       >
         Home Page
-      </a>
+      </Link>
 
       {partnerSlug && partnerSlug !== '__system__' && (
         <a

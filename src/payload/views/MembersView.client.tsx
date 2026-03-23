@@ -1,6 +1,7 @@
 'use client'
 
 import React, { useEffect, useState, useCallback } from 'react'
+import PortalStepNav from './PortalStepNav'
 
 interface Member {
   id: string
@@ -77,9 +78,11 @@ export default function MembersView() {
   const totalPages = Math.ceil(total / 20)
 
   return (
-    <div className="collection-edit">
-      <div className="collection-edit__main">
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
+    <>
+      <PortalStepNav label="Members" />
+      <div className="collection-edit">
+        <div className="collection-edit__main">
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
         <div>
           <h1 style={{ fontSize: '1.5rem', fontWeight: 700 }}>Members</h1>
           <p style={{ color: '#6b7280', fontSize: '0.875rem' }}>{total} total members</p>
@@ -280,8 +283,9 @@ export default function MembersView() {
           )}
         </>
       )}
+        </div>
       </div>
-    </div>
+    </>
   )
 }
 
