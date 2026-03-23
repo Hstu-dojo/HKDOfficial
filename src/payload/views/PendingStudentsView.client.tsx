@@ -1,6 +1,7 @@
 'use client'
 
 import React, { useEffect, useState, useCallback } from 'react'
+import { Gutter } from '@payloadcms/ui'
 import PortalStepNav from './PortalStepNav'
 
 interface Registration {
@@ -88,6 +89,7 @@ export default function PendingStudentsView() {
       <PortalStepNav label="Pending Students" />
       <div className="collection-list">
         <div className="collection-edit__main">
+        <Gutter className="collection-list__wrap">
         <header className="view-header">
           <h1 className="view-header__title">Pending Students</h1>
           <p className="field-description">
@@ -195,6 +197,7 @@ export default function PendingStudentsView() {
             </button>
           </div>
         )}
+        </Gutter>
         </div>
       </div>
     </>

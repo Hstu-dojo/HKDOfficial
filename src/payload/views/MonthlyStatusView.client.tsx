@@ -1,6 +1,7 @@
 'use client'
 
 import React, { useEffect, useState, useCallback } from 'react'
+import { Gutter } from '@payloadcms/ui'
 import PortalStepNav from './PortalStepNav'
 
 interface MemberStatus {
@@ -123,6 +124,7 @@ export default function MonthlyStatusView() {
       <PortalStepNav label="Monthly Status" />
       <div className="collection-edit">
         <div className="collection-edit__main">
+        <Gutter>
         <header className="view-header" style={{ marginBottom: '2rem' }}>
           <h1 style={{ fontSize: '2rem', marginBottom: '0.25rem' }}>Monthly Activity Status</h1>
           <p className="field-description">
@@ -155,7 +157,7 @@ export default function MonthlyStatusView() {
           <button onClick={nextMonth} className="btn btn--size-small btn--style-secondary">Next →</button>
         </div>
 
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1rem', marginBottom: '1.5rem' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '1rem', marginBottom: '1.5rem' }}>
           <SummaryCard label="Total Members" value={summary.total} color="var(--theme-elevation-800)" />
           <SummaryCard label="Active" value={summary.activeThisMonth} color="var(--theme-success-600)" />
           <SummaryCard label="Inactive" value={summary.inactiveThisMonth} color="var(--theme-error-600)" />
@@ -239,6 +241,7 @@ export default function MonthlyStatusView() {
             </table>
           </div>
         )}
+        </Gutter>
         </div>
       </div>
     </>

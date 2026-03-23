@@ -1,6 +1,7 @@
 'use client'
 
 import React, { useEffect, useState, useCallback } from 'react'
+import { Gutter } from '@payloadcms/ui'
 import PortalStepNav from './PortalStepNav'
 
 const DAY_NAMES = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
@@ -200,7 +201,9 @@ export default function SchedulesView() {
         <PortalStepNav label="Schedules" />
         <div className="collection-list">
           <div className="collection-edit__main">
-            <p className="field-description">Loading schedules...</p>
+            <Gutter className="collection-list__wrap">
+              <p className="field-description">Loading schedules...</p>
+            </Gutter>
           </div>
         </div>
       </>
@@ -212,6 +215,7 @@ export default function SchedulesView() {
       <PortalStepNav label="Schedules" />
       <div className="collection-list">
         <div className="collection-edit__main">
+        <Gutter className="collection-list__wrap">
         <header className="view-header">
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
             <div>
@@ -467,8 +471,9 @@ export default function SchedulesView() {
             </div>
           </div>
         )}
+          </Gutter>
+          </div>
         </div>
-      </div>
     </>
   )
 }

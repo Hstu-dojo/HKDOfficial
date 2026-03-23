@@ -1,6 +1,7 @@
 'use client'
 
 import React, { useEffect, useState } from 'react'
+import { Gutter } from '@payloadcms/ui'
 import PortalStepNav from './PortalStepNav'
 
 interface Partner {
@@ -73,7 +74,9 @@ export default function ProfileView() {
         <PortalStepNav label="Profile" />
         <div className="collection-edit">
           <div className="collection-edit__main">
-            <p>Loading...</p>
+            <Gutter>
+              <p>Loading...</p>
+            </Gutter>
           </div>
         </div>
       </>
@@ -85,6 +88,7 @@ export default function ProfileView() {
       <PortalStepNav label="Profile" />
       <div className="collection-edit">
         <div className="collection-edit__main">
+        <Gutter>
         <h1 style={{ fontSize: '1.5rem', fontWeight: 700, marginBottom: '0.25rem' }}>
         Organization Profile
       </h1>
@@ -177,6 +181,7 @@ export default function ProfileView() {
           </button>
         </div>
       </form>
+        </Gutter>
         </div>
       </div>
     </>

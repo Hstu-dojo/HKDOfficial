@@ -1,6 +1,7 @@
 'use client'
 
 import React, { useEffect, useState, useCallback } from 'react'
+import { Gutter } from '@payloadcms/ui'
 import PortalStepNav from './PortalStepNav'
 
 interface Member {
@@ -82,6 +83,7 @@ export default function MembersView() {
       <PortalStepNav label="Members" />
       <div className="collection-edit">
         <div className="collection-edit__main">
+        <Gutter>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
         <div>
           <h1 style={{ fontSize: '1.5rem', fontWeight: 700 }}>Members</h1>
@@ -131,7 +133,7 @@ export default function MembersView() {
             backgroundColor: '#f9fafb',
           }}
         >
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '0.75rem' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '0.75rem' }}>
             <div>
               <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 500, marginBottom: '0.25rem' }}>
                 First Name *
@@ -283,6 +285,7 @@ export default function MembersView() {
           )}
         </>
       )}
+        </Gutter>
         </div>
       </div>
     </>

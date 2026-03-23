@@ -1,6 +1,7 @@
 'use client'
 
 import React, { useEffect, useState, useCallback } from 'react'
+import { Gutter } from '@payloadcms/ui'
 import PortalStepNav from './PortalStepNav'
 
 interface BranchRequest {
@@ -83,6 +84,7 @@ export default function BranchRequestsView() {
       <PortalStepNav label="Branch Transfers" />
       <div className="collection-edit">
         <div className="collection-edit__main">
+        <Gutter>
         <h1 style={{ fontSize: '1.5rem', fontWeight: 700, marginBottom: '0.25rem' }}>
         Branch Transfer Requests
       </h1>
@@ -238,6 +240,7 @@ export default function BranchRequestsView() {
           )}
         </>
       )}
+        </Gutter>
         </div>
       </div>
     </>

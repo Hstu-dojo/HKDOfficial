@@ -1,6 +1,7 @@
 'use client'
 
 import React, { useEffect, useState, useCallback } from 'react'
+import { Gutter } from '@payloadcms/ui'
 import PortalStepNav from './PortalStepNav'
 
 interface PageSettings {
@@ -192,12 +193,15 @@ export default function PageSettingsView() {
   const content = loading ? (
     <div className="collection-edit">
       <div className="collection-edit__main">
-        <p>Loading page settings...</p>
+        <Gutter>
+          <p>Loading page settings...</p>
+        </Gutter>
       </div>
     </div>
   ) : (
     <div className="collection-edit">
       <div className="collection-edit__main">
+        <Gutter>
         <header className="view-header">
           <h1 className="view-header__title">Page Settings</h1>
           <p className="field-description">
@@ -496,6 +500,7 @@ export default function PageSettingsView() {
           </Section>
 
         </form>
+        </Gutter>
       </div>
     </div>
   )

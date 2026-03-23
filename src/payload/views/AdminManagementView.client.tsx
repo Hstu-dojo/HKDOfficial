@@ -1,6 +1,7 @@
 'use client'
 
 import React, { useEffect, useState, useCallback } from 'react'
+import { Gutter } from '@payloadcms/ui'
 import PortalStepNav from './PortalStepNav'
 
 interface Admin {
@@ -90,6 +91,7 @@ export default function AdminManagementView() {
       <PortalStepNav label="Admin Management" />
       <div className="collection-edit">
         <div className="collection-edit__main">
+        <Gutter>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '1.5rem' }}>
         <div>
           <h1 style={{ fontSize: '1.5rem', fontWeight: 700, marginBottom: '0.25rem' }}>
@@ -144,7 +146,7 @@ export default function AdminManagementView() {
         >
           <h3 style={{ fontWeight: 600, marginBottom: '1rem' }}>Add New Admin</h3>
           <form onSubmit={handleCreate} style={{ display: 'grid', gap: '0.75rem' }}>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '0.75rem' }}>
               <div>
                 <label style={labelStyle}>Full Name *</label>
                 <input
@@ -167,7 +169,7 @@ export default function AdminManagementView() {
                 />
               </div>
             </div>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '0.75rem' }}>
               <div>
                 <label style={labelStyle}>Password *</label>
                 <input
@@ -309,6 +311,7 @@ export default function AdminManagementView() {
           </table>
         </div>
       )}
+        </Gutter>
         </div>
       </div>
     </>

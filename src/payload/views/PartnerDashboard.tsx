@@ -1,6 +1,7 @@
 'use client'
 
 import React, { useEffect, useState } from 'react'
+import { Gutter } from '@payloadcms/ui'
 
 interface Stats {
   memberCount: number
@@ -38,7 +39,9 @@ export default function PartnerDashboard() {
     return (
       <div className="collection-edit">
         <div className="collection-edit__main">
-          <p>Loading dashboard...</p>
+          <Gutter>
+            <p>Loading dashboard...</p>
+          </Gutter>
         </div>
       </div>
     )
@@ -48,7 +51,9 @@ export default function PartnerDashboard() {
     return (
       <div className="collection-edit">
         <div className="collection-edit__main">
-          <p>Unable to load partner data. Please log in again.</p>
+          <Gutter>
+            <p>Unable to load partner data. Please log in again.</p>
+          </Gutter>
         </div>
       </div>
     )
@@ -57,6 +62,7 @@ export default function PartnerDashboard() {
   return (
     <div className="collection-edit">
       <div className="collection-edit__main">
+        <Gutter>
         <header className="view-header" style={{ marginBottom: '1.5rem' }}>
           <h1 className="view-header__title">Welcome, {stats.name}</h1>
           <p className="field-description">Partner portal dashboard — /org/{stats.slug}</p>
@@ -101,6 +107,7 @@ export default function PartnerDashboard() {
             </tbody>
           </table>
         </div>
+        </Gutter>
       </div>
     </div>
   )

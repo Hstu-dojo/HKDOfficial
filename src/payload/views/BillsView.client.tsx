@@ -1,6 +1,7 @@
 'use client'
 
 import React, { useEffect, useState, useCallback } from 'react'
+import { Gutter } from '@payloadcms/ui'
 import PortalStepNav from './PortalStepNav'
 
 interface Bill {
@@ -51,6 +52,7 @@ export default function BillsView() {
       <PortalStepNav label="Bills & Payments" />
       <div className="collection-edit">
         <div className="collection-edit__main">
+        <Gutter>
         <h1 style={{ fontSize: '1.5rem', fontWeight: 700, marginBottom: '0.25rem' }}>
         Bills &amp; Payments
       </h1>
@@ -144,6 +146,7 @@ export default function BillsView() {
           )}
         </>
       )}
+        </Gutter>
         </div>
       </div>
     </>
