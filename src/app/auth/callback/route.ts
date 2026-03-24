@@ -12,7 +12,7 @@ export async function GET(request: Request) {
   const type = requestUrl.searchParams.get('type')
 
   const nextFromQuery = requestUrl.searchParams.get('next')
-  const nextFromCookieRaw = cookies().get('post_auth_next')?.value
+  const nextFromCookieRaw = (await cookies()).get('post_auth_next')?.value
   const nextFromCookie = nextFromCookieRaw ? decodeURIComponent(nextFromCookieRaw) : null
 
   const defaultNext = (() => {

@@ -35,7 +35,9 @@ function withPartnerAdminFix(request: NextRequest) {
   ) {
     const url = request.nextUrl.clone();
     url.searchParams.set('redirect', '/partner-admin');
-    return NextResponse.redirect(url);
+    // Use a rewrite to avoid a client-side navigation getting stuck
+    // (blank screen until hard refresh) when the router encounters a redirect.
+    return NextResponse.rewrite(url);
   }
 
   return NextResponse.next();
@@ -85,6 +87,8 @@ function withTenantRouting(request: NextRequest): NextResponse | null {
     const isPassthroughOnTenant =
       // Auth entry points
       /^\/(login|register)(\/|$)/.test(pathname) ||
+      // Payload partner portal (must not be rewritten under /org/<tenant>/...)
+      /^\/partner-admin(\/|$)/.test(pathname) ||
       // Password recovery / onboarding (these must not be rewritten under /org/<tenant>/...)
       /^\/(forget|reset-password)(\/|$)/.test(pathname) ||
       /^\/(onboarding|profile)(\/|$)/.test(pathname) ||
