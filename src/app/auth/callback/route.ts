@@ -25,6 +25,17 @@ export async function GET(request: Request) {
 
   const next = nextFromQuery ?? nextFromCookie ?? defaultNext
 
+  function normalizeRedirectPath(url: URL): URL {
+    const normalized = new URL(url.toString())
+    // Defensive normalization: some flows can accidentally construct
+    // /<locale>/dashboard/dashboard/... which should be /<locale>/dashboard/...
+    normalized.pathname = normalized.pathname.replace(
+      /\/dashboard\/dashboard(\/|$)/g,
+      '/dashboard$1'
+    )
+    return normalized
+  }
+
   function getSafeNextUrl(): URL {
     const fallback = new URL('/', requestUrl.origin)
 
@@ -55,7 +66,7 @@ export async function GET(request: Request) {
     }
   }
 
-  const nextUrl = getSafeNextUrl()
+  const nextUrl = normalizeRedirectPath(getSafeNextUrl())
 
   console.log('🔍 Callback received:', { 
     code: !!code, 
