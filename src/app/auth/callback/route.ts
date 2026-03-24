@@ -180,13 +180,13 @@ export async function GET(request: Request) {
     })
 
     if (error) {
-      const errorUrl = new URL('/profile', requestUrl.origin)
+      const errorUrl = new URL(nextUrl.toString())
       errorUrl.searchParams.set('error', 'Email change verification failed: ' + error.message)
       return clearNextCookie(NextResponse.redirect(errorUrl))
     }
 
     // Email change successful - redirect to profile with success message
-    const successUrl = new URL('/profile', requestUrl.origin)
+    const successUrl = new URL(nextUrl.toString())
     successUrl.searchParams.set('message', 'Email updated successfully!')
     successUrl.searchParams.set('sync_email', 'true') // Flag to trigger client-side sync
     return clearNextCookie(NextResponse.redirect(successUrl))

@@ -30,6 +30,39 @@ function ProfileSettingsContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
 
+  const buildEmailChangeRedirectTo = () => {
+    if (typeof window === 'undefined') return undefined;
+
+    const host = window.location.hostname.toLowerCase();
+    const isLocalhost = host.includes('localhost') || host.startsWith('127.');
+
+    const tenantBaseDomain =
+      (process.env.NEXT_PUBLIC_TENANT_BASE_DOMAIN as string | undefined) ||
+      'p.hstuma.com';
+
+    const suffix = `.${tenantBaseDomain.toLowerCase()}`;
+    const tenant = host.endsWith(suffix) ? host.slice(0, -suffix.length) : null;
+    const safeTenant = tenant && /^[a-z0-9-]+$/.test(tenant) ? tenant : null;
+
+    const pathname = window.location.pathname;
+    const localeFromPath = pathname.split('/')[1] || '';
+    const locale = /^[a-z]{2}(-[A-Z]{2})?$/.test(localeFromPath) ? localeFromPath : null;
+    const nextPath = locale ? `/${locale}/dashboard/profile` : '/dashboard/profile';
+
+    const rootDomain =
+      (process.env.NEXT_PUBLIC_ROOT_DOMAIN as string | undefined) ||
+      host.split('.').slice(-2).join('.');
+
+    const callbackOrigin = isLocalhost
+      ? window.location.origin
+      : (process.env.NEXT_PUBLIC_SITE_URL as string | undefined) || `https://www.${rootDomain}`;
+
+    const url = new URL('/auth/callback', callbackOrigin);
+    if (safeTenant) url.searchParams.set('tenant', safeTenant);
+    url.searchParams.set('next', nextPath);
+    return url.toString();
+  };
+
   // Form states
   const [newEmail, setNewEmail] = useState("");
   const [name, setName] = useState("");
@@ -224,7 +257,11 @@ function ProfileSettingsContent() {
         localStorage.setItem('email_change_old', currentEmail);
       }
 
-      const { error } = await supabase.auth.updateUser({ email: newEmail });
+      const emailRedirectTo = buildEmailChangeRedirectTo();
+      const { error } = await supabase.auth.updateUser(
+        { email: newEmail },
+        emailRedirectTo ? { emailRedirectTo } : undefined
+      );
 
       if (error) throw error;
 
