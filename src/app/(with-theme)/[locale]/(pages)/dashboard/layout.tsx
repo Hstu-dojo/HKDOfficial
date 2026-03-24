@@ -1,4 +1,3 @@
-import Header from "@/components/layout/header";
 import DashboardShell from "@/components/dashboard/dashboard-shell";
 
 export default function DashboardLayout({
@@ -8,7 +7,6 @@ export default function DashboardLayout({
 }) {
   return (
     <>
-      <Header />
       <DashboardShell>{children}</DashboardShell>
     </>
   );

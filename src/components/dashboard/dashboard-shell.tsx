@@ -41,7 +41,7 @@ export default function DashboardShell({
         closeMobile: () => setIsMobileOpen(false),
       }}
     >
-      <div className="flex flex-col lg:flex-row pt-24 min-h-screen bg-slate-50 dark:bg-slate-950">
+      <div className="flex flex-col lg:flex-row min-h-screen bg-slate-50 dark:bg-slate-950">
         <DashboardSidebar />
 
         <main className="flex-1 min-w-0">
