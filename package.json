@@ -164,7 +164,7 @@
     "@types/xlsx": "^0.0.36",
     "dotenv": "^17.2.3",
     "drizzle-kit": "^0.24.2",
-    "next": "^16.2.1",
+    "next": "^15.5.9",
     "prettier": "^3.7.4",
     "prettier-plugin-tailwindcss": "^0.5.14",
     "tsx": "^4.21.0"
