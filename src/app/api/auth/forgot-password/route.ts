@@ -2,14 +2,44 @@ import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 
 function getOrigin(request: NextRequest): string {
-  const forwardedHost = request.headers.get('x-forwarded-host')
+  const forwardedHostRaw = request.headers.get('x-forwarded-host')
+  const hostRaw = request.headers.get('host')
   const forwardedProto = request.headers.get('x-forwarded-proto')
-  if (forwardedHost) {
-    const proto = forwardedProto || 'https'
-    return `${proto}://${forwardedHost}`
-  }
 
-  return request.nextUrl.origin
+  // Some proxies send comma-separated values; the first entry is the original.
+  const forwardedHost = forwardedHostRaw?.split(',')[0]?.trim()
+  const host = hostRaw?.split(',')[0]?.trim()
+
+  const isInternalHost = (value: string) =>
+    value.endsWith('.vercel.app') || value.endsWith('.now.sh')
+
+  // Prefer the actual Host header (what the user typed). If it looks internal,
+  // fall back to x-forwarded-host.
+  const resolvedHost =
+    host && !isInternalHost(host)
+      ? host
+      : (forwardedHost || host || request.nextUrl.host)
+
+  if (!resolvedHost) return request.nextUrl.origin
+
+  const proto = forwardedProto || request.nextUrl.protocol.replace(':', '') || 'https'
+  return `${proto}://${resolvedHost}`
+}
+
+function getAuthCallbackOrigin(request: NextRequest): string {
+  const forwardedProto = request.headers.get('x-forwarded-proto')
+  const proto = forwardedProto || request.nextUrl.protocol.replace(':', '') || 'https'
+
+  const rootDomain = (process.env.ROOT_DOMAIN || 'hstuma.com').toLowerCase()
+  const wwwRoot = `www.${rootDomain}`
+
+  const hostRaw = request.headers.get('host')
+  const host = hostRaw?.split(',')[0]?.trim().toLowerCase()
+  const isRootRequest = host === rootDomain || host === wwwRoot
+
+  // Prefer www on production to match typical Supabase allowlist entries.
+  const callbackHost = isRootRequest ? (host || wwwRoot) : wwwRoot
+  return `${proto}://${callbackHost}`
 }
 
 function getCanonicalOrigin(request: NextRequest): string {
@@ -38,9 +68,14 @@ export async function POST(request: NextRequest) {
 
     const supabase = await createClient();
     const origin = getOrigin(request)
+    const callbackOrigin = getAuthCallbackOrigin(request)
 
     const { error } = await supabase.auth.resetPasswordForEmail(email, {
-      redirectTo: `${origin}/auth/callback`,
+      // Use canonical callback origin (usually www.<root>) and hop to the tenant via `next=`.
+      // This avoids needing every tenant subdomain in Supabase's redirect allowlist.
+      redirectTo: `${callbackOrigin}/auth/callback?next=${encodeURIComponent(
+        `${origin}/reset-password`
+      )}`,
     });
 
     if (error) {
