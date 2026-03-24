@@ -1,6 +1,41 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/client'
 
+function getLocaleFromReferer(request: NextRequest): string | null {
+  const referer = request.headers.get('referer')
+  if (!referer) return null
+  try {
+    const url = new URL(referer)
+    const firstSeg = url.pathname.split('/')[1] || ''
+    if (/^[a-z]{2}(-[A-Z]{2})?$/.test(firstSeg)) return firstSeg
+    return null
+  } catch {
+    return null
+  }
+}
+
+function getTenantSlugFromRequest(request: NextRequest): string | null {
+  const tenantBaseDomain = (process.env.TENANT_BASE_DOMAIN || 'p.hstuma.com').toLowerCase()
+  const suffix = `.${tenantBaseDomain}`
+
+  const candidates = [
+    request.headers.get('x-forwarded-host'),
+    request.headers.get('host'),
+    request.nextUrl.host,
+  ]
+    .filter(Boolean)
+    .map((h) => (h as string).split(',')[0]!.trim().toLowerCase())
+
+  for (const host of candidates) {
+    if (!host.endsWith(suffix)) continue
+    const slug = host.slice(0, -suffix.length)
+    if (!slug || !/^[a-z0-9-]+$/.test(slug)) continue
+    return slug
+  }
+
+  return null
+}
+
 function getOrigin(request: NextRequest): string {
   const forwardedHostRaw = request.headers.get('x-forwarded-host')
   const hostRaw = request.headers.get('host')
@@ -70,13 +105,19 @@ export async function POST(request: NextRequest) {
     const supabase = createClient();
     const origin = getOrigin(request)
     const callbackOrigin = getAuthCallbackOrigin(request)
+
+    const locale = getLocaleFromReferer(request)
+    const nextPath = locale ? `/${locale}/login` : '/login'
+    const tenant = getTenantSlugFromRequest(request)
+    const emailRedirectUrl = new URL('/auth/callback', callbackOrigin)
+    if (tenant) emailRedirectUrl.searchParams.set('tenant', tenant)
+    emailRedirectUrl.searchParams.set('next', nextPath)
+
     const { error } = await supabase.auth.resend({
       type: 'signup',
       email: email,
       options: {
-        emailRedirectTo: `${callbackOrigin}/auth/callback?next=${encodeURIComponent(
-          `${origin}/login`
-        )}`
+        emailRedirectTo: emailRedirectUrl.toString(),
       }
     })
 

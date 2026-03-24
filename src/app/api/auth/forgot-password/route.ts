@@ -1,6 +1,41 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 
+function getLocaleFromReferer(request: NextRequest): string | null {
+  const referer = request.headers.get('referer')
+  if (!referer) return null
+  try {
+    const url = new URL(referer)
+    const firstSeg = url.pathname.split('/')[1] || ''
+    if (/^[a-z]{2}(-[A-Z]{2})?$/.test(firstSeg)) return firstSeg
+    return null
+  } catch {
+    return null
+  }
+}
+
+function getTenantSlugFromRequest(request: NextRequest): string | null {
+  const tenantBaseDomain = (process.env.TENANT_BASE_DOMAIN || 'p.hstuma.com').toLowerCase()
+  const suffix = `.${tenantBaseDomain}`
+
+  const candidates = [
+    request.headers.get('x-forwarded-host'),
+    request.headers.get('host'),
+    request.nextUrl.host,
+  ]
+    .filter(Boolean)
+    .map((h) => (h as string).split(',')[0]!.trim().toLowerCase())
+
+  for (const host of candidates) {
+    if (!host.endsWith(suffix)) continue
+    const slug = host.slice(0, -suffix.length)
+    if (!slug || !/^[a-z0-9-]+$/.test(slug)) continue
+    return slug
+  }
+
+  return null
+}
+
 function getOrigin(request: NextRequest): string {
   const forwardedHostRaw = request.headers.get('x-forwarded-host')
   const hostRaw = request.headers.get('host')
@@ -70,12 +105,18 @@ export async function POST(request: NextRequest) {
     const origin = getOrigin(request)
     const callbackOrigin = getAuthCallbackOrigin(request)
 
+    const locale = getLocaleFromReferer(request)
+    const nextPath = locale ? `/${locale}/reset-password` : '/reset-password'
+    const tenant = getTenantSlugFromRequest(request)
+
+    const redirectToUrl = new URL('/auth/callback', callbackOrigin)
+    if (tenant) redirectToUrl.searchParams.set('tenant', tenant)
+    redirectToUrl.searchParams.set('next', nextPath)
+
     const { error } = await supabase.auth.resetPasswordForEmail(email, {
       // Use canonical callback origin (usually www.<root>) and hop to the tenant via `next=`.
       // This avoids needing every tenant subdomain in Supabase's redirect allowlist.
-      redirectTo: `${callbackOrigin}/auth/callback?next=${encodeURIComponent(
-        `${origin}/reset-password`
-      )}`,
+      redirectTo: redirectToUrl.toString(),
     });
 
     if (error) {

@@ -10,6 +10,15 @@ export async function GET(request: Request) {
   const code = requestUrl.searchParams.get('code')
   const token_hash = requestUrl.searchParams.get('token_hash')
   const type = requestUrl.searchParams.get('type')
+  const tenantRaw = requestUrl.searchParams.get('tenant')
+
+  const tenant = (() => {
+    if (!tenantRaw) return null
+    const value = tenantRaw.trim().toLowerCase()
+    if (!value) return null
+    if (!/^[a-z0-9-]+$/.test(value)) return null
+    return value
+  })()
 
   const nextFromQuery = requestUrl.searchParams.get('next')
   const nextFromCookieRaw = (await cookies()).get('post_auth_next')?.value
@@ -42,13 +51,17 @@ export async function GET(request: Request) {
     if (!next) return fallback
 
     try {
+      const tenantBaseDomain = (process.env.TENANT_BASE_DOMAIN || 'p.hstuma.com').toLowerCase()
+      const redirectBaseOrigin = tenant
+        ? `${requestUrl.protocol}//${tenant}.${tenantBaseDomain}`
+        : requestUrl.origin
+
       const nextUrl = next.startsWith('http://') || next.startsWith('https://')
         ? new URL(next)
-        : new URL(next, requestUrl.origin)
+        : new URL(next, redirectBaseOrigin)
 
       // Prevent open-redirects: only allow redirects back to our known domains.
       const rootDomain = (process.env.ROOT_DOMAIN || 'hstuma.com').toLowerCase()
-      const tenantBaseDomain = (process.env.TENANT_BASE_DOMAIN || 'p.hstuma.com').toLowerCase()
       const host = nextUrl.hostname.toLowerCase()
       const isHttp = nextUrl.protocol === 'http:' || nextUrl.protocol === 'https:'
 
