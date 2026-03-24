@@ -3,6 +3,7 @@
 import React, { useEffect, useState, useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { useSession } from "@/hooks/useSessionCompat";
 
 function Counter({
   target,
@@ -70,11 +71,10 @@ export default function OrgHero({
   memberCount,
   courseCount,
   navLinks,
-  ctaText,
-  ctaLink,
 }: OrgHeroProps) {
   const [go, setGo] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  const { status } = useSession();
 
   useEffect(() => {
     const t = requestAnimationFrame(() => setGo(true));
@@ -211,14 +211,20 @@ export default function OrgHero({
               <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
             </svg>
           </Link>
-          <a
-            href={ctaLink || `/org/${slug}#contact`}
+          <Link
+            href={status === "authenticated" ? "/dashboard" : "/login"}
             className="relative font-body text-[8px] md:text-[11px] bg-accent text-accent-foreground px-3 md:px-5 py-2 md:py-2.5 tracking-[0.15em] uppercase overflow-hidden group anim-snap-in min-h-[36px] md:min-h-[40px] flex items-center"
             style={d(350)}
+            aria-busy={status === "loading"}
           >
-            <span className="relative z-10">{ctaText || "Join Now"}</span>
-            <span className="absolute inset-0 bg-foreground translate-y-full group-hover:translate-y-0 transition-transform duration-300" style={{ transitionTimingFunction: 'cubic-bezier(0.22, 1, 0.36, 1)' }} />
-          </a>
+            <span className="relative z-10 transition-colors duration-300 group-hover:text-background">
+              {status === "authenticated" ? "Dashboard" : "Login"}
+            </span>
+            <span
+              className="absolute inset-0 bg-foreground translate-y-full group-hover:translate-y-0 transition-transform duration-300"
+              style={{ transitionTimingFunction: "cubic-bezier(0.22, 1, 0.36, 1)" }}
+            />
+          </Link>
           <button
             onClick={() => setMenuOpen(!menuOpen)}
             className="lg:hidden flex flex-col gap-1.5 p-2 min-h-[36px] min-w-[36px] items-center justify-center anim-cut-in"

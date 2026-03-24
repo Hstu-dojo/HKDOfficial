@@ -1,5 +1,6 @@
 import React from "react";
 import { Bebas_Neue, JetBrains_Mono } from "next/font/google";
+import { AuthProvider } from "@/context/AuthContext";
 
 import "@/styles/org-globals.css";
 
@@ -29,7 +30,7 @@ export default function OrgLayout({
         minHeight: "100vh",
       }}
     >
-      {children}
+      <AuthProvider>{children}</AuthProvider>
     </div>
   );
 }
