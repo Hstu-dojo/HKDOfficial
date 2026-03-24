@@ -23,8 +23,31 @@ export default function ResetPasswordForm() {
   useEffect(() => {
     let mounted = true;
 
+    const tokenHashFromUrl = searchParams?.get('token_hash');
+    const typeFromUrl = searchParams?.get('type');
+
     const initializeAuth = async () => {
       try {
+        // If we were redirected from /auth/callback, we'll have token_hash in the URL.
+        // Verify it on THIS origin so Supabase session cookies are created for the
+        // tenant domain (or root domain) the user is currently on.
+        if (tokenHashFromUrl && typeFromUrl === 'recovery') {
+          const { error } = await supabase.auth.verifyOtp({
+            token_hash: tokenHashFromUrl,
+            type: 'recovery',
+          });
+
+          if (error) {
+            console.error('Recovery verifyOtp error:', error);
+            if (mounted) setIsValidToken(false);
+            return;
+          }
+
+          hasResetCodeRef.current = true;
+          if (mounted) setIsValidToken(true);
+          return;
+        }
+
         const { data: { session } } = await supabase.auth.getSession();
         
         if (session) {
@@ -72,7 +95,7 @@ export default function ResetPasswordForm() {
       mounted = false;
       cleanup?.then(cleanupFn => cleanupFn?.());
     };
-  }, [supabase.auth]);
+  }, [supabase.auth, searchParams]);
 
   async function onSubmit(event: React.FormEvent) {
     event.preventDefault();

@@ -85,19 +85,17 @@ export async function GET(request: Request) {
 
   // Handle password recovery with token_hash (PKCE flow for password reset)
   if (token_hash && type === 'recovery') {
-    const { error } = await supabase.auth.verifyOtp({
-      token_hash,
-      type: 'recovery',
-    })
+    // IMPORTANT: Do not verify the recovery OTP on this callback host.
+    // If we verify here (e.g. on www.<root>), Supabase session cookies are set
+    // for that host only and won't be available on tenant subdomains.
+    // Instead, forward the token_hash to the final destination and let the
+    // reset-password page verify it client-side on the correct domain.
 
-    if (error) {
-      return clearNextCookie(
-        NextResponse.redirect(new URL('/en/auth/auth-code-error', requestUrl.origin))
-      )
-    }
+    const destination = new URL(nextUrl.toString())
+    destination.searchParams.set('token_hash', token_hash)
+    destination.searchParams.set('type', 'recovery')
 
-    // If a next URL was provided (possibly absolute to a tenant), honor it.
-    return clearNextCookie(NextResponse.redirect(nextUrl))
+    return clearNextCookie(NextResponse.redirect(destination))
   }
 
   // Handle signup confirmation with token_hash (PKCE flow)
