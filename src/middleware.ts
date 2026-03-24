@@ -74,6 +74,21 @@ function withTenantRouting(request: NextRequest): NextResponse | null {
   // 1) Tenant subdomain: rewrite to the existing /org/[slug] route
   const tenant = getTenantFromHost(hostname);
   if (tenant) {
+    // Some routes should be served directly on the tenant subdomain,
+    // not rewritten under /org/<tenant>/...
+    // Examples:
+    //   orgname.p.hstuma.com/login
+    //   orgname.p.hstuma.com/register
+    //   orgname.p.hstuma.com/dashboard/...
+    // Also allow locale-prefixed variants:
+    //   orgname.p.hstuma.com/en/login
+    const isPassthroughOnTenant =
+      /^\/(login|register)(\/|$)/.test(pathname) ||
+      /^\/dashboard(\/|$)/.test(pathname) ||
+      /^\/[a-z]{2}\/(login|register)(\/|$)/.test(pathname) ||
+      /^\/[a-z]{2}\/dashboard(\/|$)/.test(pathname);
+    if (isPassthroughOnTenant) return null;
+
     // If the tenant domain already requests an internal org path, don't rewrite again.
     if (pathname.startsWith("/org/")) return null;
     const url = request.nextUrl.clone();
