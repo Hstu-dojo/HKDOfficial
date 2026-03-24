@@ -1,7 +1,32 @@
-import { NextResponse } from 'next/server'
+import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/client'
 
-export async function POST(request: Request) {
+function getOrigin(request: NextRequest): string {
+  const forwardedHost = request.headers.get('x-forwarded-host')
+  const forwardedProto = request.headers.get('x-forwarded-proto')
+  if (forwardedHost) {
+    const proto = forwardedProto || 'https'
+    return `${proto}://${forwardedHost}`
+  }
+
+  return request.nextUrl.origin
+}
+
+function getCanonicalOrigin(request: NextRequest): string {
+  const host = (request.headers.get('x-forwarded-host') || request.headers.get('host') || request.nextUrl.host || '').toLowerCase()
+  const forwardedProto = request.headers.get('x-forwarded-proto')
+  const proto = forwardedProto || request.nextUrl.protocol.replace(':', '') || 'https'
+
+  // In local dev, keep everything on the same origin.
+  if (host.includes('localhost') || host.startsWith('127.0.0.1')) {
+    return request.nextUrl.origin
+  }
+
+  const rootDomain = process.env.ROOT_DOMAIN || 'hstuma.com'
+  return `${proto}://${rootDomain}`
+}
+
+export async function POST(request: NextRequest) {
   try {
     const { email } = await request.json()
 
@@ -14,11 +39,13 @@ export async function POST(request: Request) {
 
     // Resend confirmation email
     const supabase = createClient();
+    const origin = getOrigin(request)
+    const canonicalOrigin = getCanonicalOrigin(request)
     const { error } = await supabase.auth.resend({
       type: 'signup',
       email: email,
       options: {
-        emailRedirectTo: `${process.env.NEXT_PUBLIC_APP_URL}/auth/callback?next=/en`
+        emailRedirectTo: `${canonicalOrigin}/auth/callback?next=${encodeURIComponent(`${origin}/en`)}`
       }
     })
 

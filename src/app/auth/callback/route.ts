@@ -11,6 +11,38 @@ export async function GET(request: Request) {
   const type = requestUrl.searchParams.get('type')
   const next = requestUrl.searchParams.get('next') ?? '/en'
 
+  function getSafeNextUrl(): URL {
+    const fallback = new URL('/en', requestUrl.origin)
+
+    if (!next) return fallback
+
+    try {
+      const nextUrl = next.startsWith('http://') || next.startsWith('https://')
+        ? new URL(next)
+        : new URL(next, requestUrl.origin)
+
+      // Prevent open-redirects: only allow redirects back to our known domains.
+      const rootDomain = (process.env.ROOT_DOMAIN || 'hstuma.com').toLowerCase()
+      const tenantBaseDomain = (process.env.TENANT_BASE_DOMAIN || 'p.hstuma.com').toLowerCase()
+      const host = nextUrl.hostname.toLowerCase()
+      const isHttp = nextUrl.protocol === 'http:' || nextUrl.protocol === 'https:'
+
+      const allowedHost =
+        host === rootDomain ||
+        host === `www.${rootDomain}` ||
+        host === tenantBaseDomain ||
+        host.endsWith(`.${tenantBaseDomain}`) ||
+        host === requestUrl.hostname.toLowerCase()
+
+      if (!isHttp || !allowedHost) return fallback
+      return nextUrl
+    } catch {
+      return fallback
+    }
+  }
+
+  const nextUrl = getSafeNextUrl()
+
   console.log('🔍 Callback received:', { 
     code: !!code, 
     token_hash: !!token_hash, 
@@ -32,7 +64,8 @@ export async function GET(request: Request) {
       return NextResponse.redirect(new URL('/en/auth/auth-code-error', requestUrl.origin))
     }
 
-    return NextResponse.redirect(new URL('/en/reset-password', requestUrl.origin))
+    // If a next URL was provided (possibly absolute to a tenant), honor it.
+    return NextResponse.redirect(nextUrl)
   }
 
   // Handle signup confirmation with token_hash (PKCE flow)
@@ -88,7 +121,7 @@ export async function GET(request: Request) {
     }
 
     // Redirect to home page with verified flag - the login page/modal will show success message
-    const successUrl = new URL('/en', requestUrl.origin)
+    const successUrl = new URL(nextUrl.toString())
     successUrl.searchParams.set('verified', 'true')
     successUrl.searchParams.set('showLogin', 'true')
     return NextResponse.redirect(successUrl)
@@ -271,8 +304,10 @@ export async function GET(request: Request) {
         }
 
         // Redirect to success page
-        console.log('✅ Callback complete, redirecting to:', next)
-        return NextResponse.redirect(new URL(`${next}?verified=true`, requestUrl.origin))
+        console.log('✅ Callback complete, redirecting to:', nextUrl.toString())
+        const successUrl = new URL(nextUrl.toString())
+        successUrl.searchParams.set('verified', 'true')
+        return NextResponse.redirect(successUrl)
       }
     } catch (exchangeError: any) {
       console.error('❌ FATAL: Exchange code error:', exchangeError);

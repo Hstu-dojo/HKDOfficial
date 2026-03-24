@@ -25,7 +25,22 @@ export function SocialLoginButtons({ redirectTo = "/en/profile" }: SocialLoginBu
 
       // IMPORTANT: OAuth must ALWAYS go through /auth/callback first to exchange code
       // The 'next' parameter tells callback where to redirect after successful auth
-      const callbackUrl = `${window.location.origin}/auth/callback?next=${encodeURIComponent(redirectTo)}`;
+      const canonicalOrigin = (() => {
+        try {
+          return new URL(process.env.NEXT_PUBLIC_APP_URL || window.location.origin).origin;
+        } catch {
+          return window.location.origin;
+        }
+      })();
+
+      const nextUrl = (() => {
+        // Prefer absolute next urls, so the callback host can bounce back to tenant.
+        if (redirectTo.startsWith('http://') || redirectTo.startsWith('https://')) return redirectTo;
+        const path = redirectTo.startsWith('/') ? redirectTo : `/${redirectTo}`;
+        return `${window.location.origin}${path}`;
+      })();
+
+      const callbackUrl = `${canonicalOrigin}/auth/callback?next=${encodeURIComponent(nextUrl)}`;
 
       const { error } = await supabase.auth.signInWithOAuth({
         provider,

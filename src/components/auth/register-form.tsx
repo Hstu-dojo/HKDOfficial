@@ -22,6 +22,7 @@ import {
 import Image from "next/image";
 import { SocialLoginButtons } from "@/components/auth/social-login-buttons";
 import { useI18n } from "@/locales/client";
+import { useCurrentLocale } from "@/locales/client";
 
 export function RegisterForm({ className, ...props }: UserAuthFormProps) {
   const searchParams = useSearchParams();
@@ -33,6 +34,7 @@ export function RegisterForm({ className, ...props }: UserAuthFormProps) {
   const [userAvatar, setAvatar] = useState("/image/avatar/Milo.svg");
   const router = useRouter();
   const t = useI18n();
+  const locale = useCurrentLocale();
   const onSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setIsLoading(true);
@@ -61,7 +63,7 @@ export function RegisterForm({ className, ...props }: UserAuthFormProps) {
             description: "This email is already registered. Please login instead or use a different email.",
             action: {
               label: "Go to Login",
-              onClick: () => router.push("/en/login"),
+              onClick: () => router.push(`/${locale}/login`),
             },
           });
           setIsLoading(false);
@@ -80,6 +82,15 @@ export function RegisterForm({ className, ...props }: UserAuthFormProps) {
       
       // Use Supabase client directly instead of API route
       const supabase = createClient();
+      const canonicalOrigin = (() => {
+        try {
+          return new URL(process.env.NEXT_PUBLIC_APP_URL || window.location.origin).origin;
+        } catch {
+          return window.location.origin;
+        }
+      })();
+
+      const nextUrl = `${window.location.origin}/${locale}`;
       const { data, error } = await supabase.auth.signUp({
         email,
         password,
@@ -88,7 +99,7 @@ export function RegisterForm({ className, ...props }: UserAuthFormProps) {
             username: userName,
             avatar_url: userAvatar,
           },
-          emailRedirectTo: `${window.location.origin}/auth/callback`
+          emailRedirectTo: `${canonicalOrigin}/auth/callback?next=${encodeURIComponent(nextUrl)}`
         }
       });
 
@@ -101,7 +112,7 @@ export function RegisterForm({ className, ...props }: UserAuthFormProps) {
             description: "This email is already registered. Please login instead.",
             action: {
               label: "Go to Login",
-              onClick: () => router.push("/en/login"),
+              onClick: () => router.push(`/${locale}/login`),
             },
           });
         } else {
@@ -163,7 +174,7 @@ export function RegisterForm({ className, ...props }: UserAuthFormProps) {
             },
           },
         });
-        return router.push("/en/login");
+        return router.push(`/${locale}/login`);
       }
       setIsLoading(false);
     } catch (error) {
