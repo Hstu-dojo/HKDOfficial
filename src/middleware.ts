@@ -5,6 +5,9 @@ import { withLocaleMiddleware } from "./middlewares/internationalization";
 import { withAuthMiddleware } from "./middlewares/authentication";
 import { withAdminMiddleware } from "./middlewares/admin";
 
+const TENANT_BASE_DOMAIN = process.env.TENANT_BASE_DOMAIN || "p.hstuma.com";
+const ROOT_DOMAIN = process.env.ROOT_DOMAIN || "hstuma.com";
+
 /**
  * Intercept the (.)login pattern that leaks from the @loginDialogue
  * intercepting route into partner-admin URLs. Redirect cleanly to /partner-admin.
@@ -36,6 +39,60 @@ function withPartnerAdminFix(request: NextRequest) {
   }
 
   return NextResponse.next();
+}
+
+function getHostname(request: NextRequest): string {
+  const host = request.headers.get("host") || "";
+  return host.toLowerCase().split(":")[0] || "";
+}
+
+function getTenantFromHost(hostname: string): string | null {
+  // Match: <tenant>.p.hstuma.com
+  const suffix = `.${TENANT_BASE_DOMAIN}`;
+  if (!hostname.endsWith(suffix)) return null;
+  const subdomainPart = hostname.slice(0, -suffix.length);
+  if (!subdomainPart) return null;
+  // Disallow obvious non-tenant subdomains
+  if (["www", "app", "api"].includes(subdomainPart)) return null;
+  return subdomainPart;
+}
+
+function withTenantRouting(request: NextRequest): NextResponse | null {
+  const hostname = getHostname(request);
+  const pathname = request.nextUrl.pathname;
+
+  // 1) Tenant subdomain: rewrite to the existing /org/[slug] route
+  const tenant = getTenantFromHost(hostname);
+  if (tenant) {
+    // If the tenant domain already requests an internal org path, don't rewrite again.
+    if (pathname.startsWith("/org/")) return null;
+    const url = request.nextUrl.clone();
+    // Map:
+    //   orgName.p.hstuma.com/        -> /org/orgName
+    //   orgName.p.hstuma.com/foo    -> /org/orgName/foo
+    const suffixPath = pathname === "/" ? "" : pathname;
+    url.pathname = `/org/${tenant}${suffixPath}`;
+    return NextResponse.rewrite(url);
+  }
+
+  // 2) Legacy path-based org URL on the main domain: redirect to tenant subdomain
+  //    hstuma.com/org/orgName[/...] -> orgName.p.hstuma.com[/...]
+  const isRootDomain =
+    hostname === ROOT_DOMAIN || hostname === `www.${ROOT_DOMAIN}`;
+  if (isRootDomain) {
+    const match = pathname.match(/^\/org\/([^\/]+)(\/.*)?$/);
+    if (match) {
+      const slug = match[1];
+      const rest = match[2] || "/";
+
+      const url = request.nextUrl.clone();
+      url.hostname = `${slug}.${TENANT_BASE_DOMAIN}`;
+      url.pathname = rest;
+      return NextResponse.redirect(url);
+    }
+  }
+
+  return null;
 }
 
 const middlewares = {
@@ -145,6 +202,10 @@ const middlewares = {
 const nemoMiddleware = createNEMO(middlewares);
 
 export async function middleware(request: NextRequest) {
+  // Subdomain multitenancy (run before everything else)
+  const tenantResult = withTenantRouting(request);
+  if (tenantResult) return tenantResult;
+
   // Always run the partner-admin fix first for any matched route
   const pathname = request.nextUrl.pathname;
 
@@ -176,6 +237,6 @@ export const config = {
   matcher: [
     // NOTE: /docs is intentionally NOT excluded — it needs withAdminMiddleware.
     // Routes like /blog, /unauthorized, /studio etc. need no middleware at all.
-    "/((?!api|payload-api|org|auth|static|blog|unauthorized|studio|notice|p|.*\\..*|_next|favicon.ico|sitemap.xml|robots.txt).*)",
+    "/((?!api|payload-api|auth|static|blog|unauthorized|studio|notice|p|.*\\..*|_next|favicon.ico|sitemap.xml|robots.txt).*)",
   ],
 };
