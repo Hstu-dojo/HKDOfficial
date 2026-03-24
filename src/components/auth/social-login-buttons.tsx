@@ -23,13 +23,18 @@ export function SocialLoginButtons({ redirectTo = "/profile" }: SocialLoginButto
       // Create Supabase client
       const supabase = createClient();
 
-      // IMPORTANT: OAuth must ALWAYS go through /auth/callback first to exchange code
-      // The 'next' parameter tells callback where to redirect after successful auth
-      // NOTE: PKCE verifier is origin-scoped. If the callback happens on a different
-      // origin (e.g. main site instead of tenant subdomain) the verifier won't be found.
-      // So keep the callback on the same origin as the initiating page.
+      // IMPORTANT:
+      // - OAuth must ALWAYS go through /auth/callback first to exchange code.
+      // - Supabase's redirect allowlist matching can be strict; query strings may cause
+      //   the redirect_to URL to be rejected (falling back to Site URL).
+      // So: store the intended post-auth destination in a short-lived cookie and
+      // keep redirectTo URL clean (no query string).
       const nextPath = redirectTo.startsWith('/') ? redirectTo : `/${redirectTo}`;
-      const callbackUrl = `${window.location.origin}/auth/callback?next=${encodeURIComponent(nextPath)}`;
+      const cookieValue = encodeURIComponent(nextPath);
+      document.cookie = `post_auth_next=${cookieValue}; Path=/; Max-Age=600; SameSite=Lax`;
+
+      // Keep the callback on the same origin as the initiating page (tenant-safe + PKCE-safe)
+      const callbackUrl = `${window.location.origin}/auth/callback`;
 
       const { error } = await supabase.auth.signInWithOAuth({
         provider,

@@ -210,7 +210,9 @@ export function UserAuthForm({
           </Link>
         </small>
       </div>
-      <SocialLoginButtons redirectTo={callbackUrl || `/${locale}/profile`} />
+      <SocialLoginButtons
+        redirectTo={callbackUrl || (isTenantHost ? "/profile" : `/${locale}/profile`)}
+      />
     </div>
   );
 }

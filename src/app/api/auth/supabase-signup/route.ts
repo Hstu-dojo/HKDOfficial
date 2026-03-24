@@ -49,8 +49,8 @@ export async function POST(request: NextRequest) {
           username: userName,
           avatar_url: userAvatar,
         },
-        // Keep callback + post-auth redirect on the initiating origin (tenant-safe)
-        emailRedirectTo: `${origin}/auth/callback?next=${encodeURIComponent(`${origin}/`)}`
+        // Keep redirect_to clean (no query params) so Supabase allowlist matching succeeds.
+        emailRedirectTo: `${origin}/auth/callback`
       }
     })
 

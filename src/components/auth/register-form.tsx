@@ -97,9 +97,6 @@ export function RegisterForm({ className, ...props }: UserAuthFormProps) {
       // IMPORTANT: for tenant flows, keep redirects on the tenant origin.
       // Using NEXT_PUBLIC_APP_URL here will bounce users back to the root domain.
       const callbackOrigin = window.location.origin;
-      const nextUrl = isTenantHost
-        ? `${callbackOrigin}/`
-        : `${callbackOrigin}/${locale}`;
       const { data, error } = await supabase.auth.signUp({
         email,
         password,
@@ -108,7 +105,9 @@ export function RegisterForm({ className, ...props }: UserAuthFormProps) {
             username: userName,
             avatar_url: userAvatar,
           },
-          emailRedirectTo: `${callbackOrigin}/auth/callback?next=${encodeURIComponent(nextUrl)}`
+          // Keep redirect_to clean (no query params) so Supabase allowlist matching succeeds.
+          // The callback handler will choose the correct destination for signup confirmations.
+          emailRedirectTo: `${callbackOrigin}/auth/callback`
         }
       });
 

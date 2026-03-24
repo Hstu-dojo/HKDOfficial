@@ -1,5 +1,6 @@
 import { createClient } from '@/lib/supabase/server'
 import { NextResponse } from 'next/server'
+import { cookies } from 'next/headers'
 import { db } from '@/lib/connect-db'
 import { user } from '@/db/schema'
 import { eq } from 'drizzle-orm'
@@ -9,7 +10,20 @@ export async function GET(request: Request) {
   const code = requestUrl.searchParams.get('code')
   const token_hash = requestUrl.searchParams.get('token_hash')
   const type = requestUrl.searchParams.get('type')
-  const next = requestUrl.searchParams.get('next') ?? '/'
+
+  const nextFromQuery = requestUrl.searchParams.get('next')
+  const nextFromCookieRaw = cookies().get('post_auth_next')?.value
+  const nextFromCookie = nextFromCookieRaw ? decodeURIComponent(nextFromCookieRaw) : null
+
+  const defaultNext = (() => {
+    if (token_hash && type === 'recovery') return '/reset-password'
+    if (token_hash && type === 'signup') return '/login'
+    if (token_hash && type === 'email_change') return '/profile'
+    if (code) return '/profile'
+    return '/'
+  })()
+
+  const next = nextFromQuery ?? nextFromCookie ?? defaultNext
 
   function getSafeNextUrl(): URL {
     const fallback = new URL('/', requestUrl.origin)
@@ -53,6 +67,11 @@ export async function GET(request: Request) {
 
   const supabase = await createClient()
 
+  const clearNextCookie = (response: NextResponse) => {
+    response.cookies.set('post_auth_next', '', { path: '/', maxAge: 0 })
+    return response
+  }
+
   // Handle password recovery with token_hash (PKCE flow for password reset)
   if (token_hash && type === 'recovery') {
     const { error } = await supabase.auth.verifyOtp({
@@ -61,11 +80,13 @@ export async function GET(request: Request) {
     })
 
     if (error) {
-      return NextResponse.redirect(new URL('/en/auth/auth-code-error', requestUrl.origin))
+      return clearNextCookie(
+        NextResponse.redirect(new URL('/en/auth/auth-code-error', requestUrl.origin))
+      )
     }
 
     // If a next URL was provided (possibly absolute to a tenant), honor it.
-    return NextResponse.redirect(nextUrl)
+    return clearNextCookie(NextResponse.redirect(nextUrl))
   }
 
   // Handle signup confirmation with token_hash (PKCE flow)
@@ -77,7 +98,9 @@ export async function GET(request: Request) {
 
     if (error) {
       console.error('Signup verification error:', error)
-      return NextResponse.redirect(new URL('/en/auth/auth-code-error', requestUrl.origin))
+      return clearNextCookie(
+        NextResponse.redirect(new URL('/en/auth/auth-code-error', requestUrl.origin))
+      )
     }
 
     // Verification successful - create user in local database
@@ -124,7 +147,7 @@ export async function GET(request: Request) {
     const successUrl = new URL(nextUrl.toString())
     successUrl.searchParams.set('verified', 'true')
     successUrl.searchParams.set('showLogin', 'true')
-    return NextResponse.redirect(successUrl)
+    return clearNextCookie(NextResponse.redirect(successUrl))
   }
 
   // Handle email change confirmation
@@ -137,14 +160,14 @@ export async function GET(request: Request) {
     if (error) {
       const errorUrl = new URL('/profile', requestUrl.origin)
       errorUrl.searchParams.set('error', 'Email change verification failed: ' + error.message)
-      return NextResponse.redirect(errorUrl)
+      return clearNextCookie(NextResponse.redirect(errorUrl))
     }
 
     // Email change successful - redirect to profile with success message
     const successUrl = new URL('/profile', requestUrl.origin)
     successUrl.searchParams.set('message', 'Email updated successfully!')
     successUrl.searchParams.set('sync_email', 'true') // Flag to trigger client-side sync
-    return NextResponse.redirect(successUrl)
+    return clearNextCookie(NextResponse.redirect(successUrl))
   }
 
   // Handle regular OAuth or signup confirmation with code
@@ -163,8 +186,10 @@ export async function GET(request: Request) {
           status: error.status,
           code: error.code,
         })
-        return NextResponse.redirect(
-          new URL(`/en/auth/auth-code-error?error=${encodeURIComponent(error.message)}`, requestUrl.origin)
+        return clearNextCookie(
+          NextResponse.redirect(
+            new URL(`/en/auth/auth-code-error?error=${encodeURIComponent(error.message)}`, requestUrl.origin)
+          )
         )
       }
       
@@ -214,7 +239,7 @@ export async function GET(request: Request) {
           // Redirect to password setup page
           const setupUrl = new URL('/onboarding/set-password', requestUrl.origin)
           setupUrl.searchParams.set('data', encodeURIComponent(JSON.stringify(providerData)))
-          return NextResponse.redirect(setupUrl)
+          return clearNextCookie(NextResponse.redirect(setupUrl))
         }
 
         // User exists or has email identity - create/update local database record
@@ -307,13 +332,15 @@ export async function GET(request: Request) {
         console.log('✅ Callback complete, redirecting to:', nextUrl.toString())
         const successUrl = new URL(nextUrl.toString())
         successUrl.searchParams.set('verified', 'true')
-        return NextResponse.redirect(successUrl)
+        return clearNextCookie(NextResponse.redirect(successUrl))
       }
     } catch (exchangeError: any) {
       console.error('❌ FATAL: Exchange code error:', exchangeError);
       console.error('❌ Error stack:', exchangeError.stack);
-      return NextResponse.redirect(
-        new URL(`/en/auth/auth-code-error?error=${encodeURIComponent(exchangeError.message || 'Unknown error')}`, requestUrl.origin)
+      return clearNextCookie(
+        NextResponse.redirect(
+          new URL(`/en/auth/auth-code-error?error=${encodeURIComponent(exchangeError.message || 'Unknown error')}`, requestUrl.origin)
+        )
       )
     }
   }
@@ -321,5 +348,7 @@ export async function GET(request: Request) {
   // Redirect to error page with language prefix
   console.error('❌ No code or token_hash provided, redirecting to error')
   console.error('❌ Search params:', Object.fromEntries(requestUrl.searchParams))
-  return NextResponse.redirect(new URL('/en/auth/auth-code-error?error=no_code', requestUrl.origin))
+  return clearNextCookie(
+    NextResponse.redirect(new URL('/en/auth/auth-code-error?error=no_code', requestUrl.origin))
+  )
 }

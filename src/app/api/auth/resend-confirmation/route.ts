@@ -44,7 +44,7 @@ export async function POST(request: NextRequest) {
       type: 'signup',
       email: email,
       options: {
-        emailRedirectTo: `${origin}/auth/callback?next=${encodeURIComponent(`${origin}/`)}`
+        emailRedirectTo: `${origin}/auth/callback`
       }
     })
 
