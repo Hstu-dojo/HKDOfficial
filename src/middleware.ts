@@ -97,6 +97,7 @@ function withTenantRouting(request: NextRequest): NextResponse | null {
 
       const url = request.nextUrl.clone();
       url.hostname = `${slug}.${TENANT_BASE_DOMAIN}`;
+      url.protocol = "http:";
       url.pathname = rest;
       return NextResponse.redirect(url);
     }
