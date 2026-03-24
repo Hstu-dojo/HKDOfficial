@@ -61,6 +61,16 @@ function withTenantRouting(request: NextRequest): NextResponse | null {
   const hostname = getHostname(request);
   const pathname = request.nextUrl.pathname;
 
+  // Bare tenant base domain should not serve content
+  //   p.hstuma.com -> hstuma.com/org
+  if (hostname === TENANT_BASE_DOMAIN || hostname === `www.${TENANT_BASE_DOMAIN}`) {
+    const url = request.nextUrl.clone();
+    url.hostname = ROOT_DOMAIN;
+    url.pathname = "/org";
+    url.search = "";
+    return NextResponse.redirect(url);
+  }
+
   // 1) Tenant subdomain: rewrite to the existing /org/[slug] route
   const tenant = getTenantFromHost(hostname);
   if (tenant) {
@@ -108,6 +118,8 @@ const middlewares = {
   "/about": withLocaleMiddleware,
   "/gallery": withLocaleMiddleware,
   "/pricing": withLocaleMiddleware,
+  "/partner": withLocaleMiddleware,
+  "/org": withLocaleMiddleware,
   "/services": withLocaleMiddleware,
   "/services/:path*": withLocaleMiddleware,
 
@@ -171,6 +183,8 @@ const middlewares = {
   "/:locale/about": withLocaleMiddleware,
   "/:locale/gallery": withLocaleMiddleware,
   "/:locale/pricing": withLocaleMiddleware,
+  "/:locale/partner": withLocaleMiddleware,
+  "/:locale/org": withLocaleMiddleware,
   "/:locale/services": withLocaleMiddleware,
   "/:locale/services/:path*": withLocaleMiddleware,
   "/:locale/login": withLocaleMiddleware,
