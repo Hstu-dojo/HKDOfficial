@@ -212,13 +212,13 @@ export default function OrgHero({
             </svg>
           </Link>
           <Link
-            href={status === "authenticated" ? "/dashboard" : "/login"}
+            href={status === "authenticated" ? "/dashboard" : "/register"}
             className="relative font-body text-[8px] md:text-[11px] bg-accent text-accent-foreground px-3 md:px-5 py-2 md:py-2.5 tracking-[0.15em] uppercase overflow-hidden group anim-snap-in min-h-[36px] md:min-h-[40px] flex items-center"
             style={d(350)}
             aria-busy={status === "loading"}
           >
             <span className="relative z-10 transition-colors duration-300 group-hover:text-background">
-              {status === "authenticated" ? "Dashboard" : "Login"}
+              {status === "authenticated" ? "Dashboard" : "Join Now"}
             </span>
             <span
               className="absolute inset-0 bg-foreground translate-y-full group-hover:translate-y-0 transition-transform duration-300"
