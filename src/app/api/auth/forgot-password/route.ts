@@ -38,10 +38,9 @@ export async function POST(request: NextRequest) {
 
     const supabase = await createClient();
     const origin = getOrigin(request)
-    const canonicalOrigin = getCanonicalOrigin(request)
 
     const { error } = await supabase.auth.resetPasswordForEmail(email, {
-      redirectTo: `${canonicalOrigin}/auth/callback?next=${encodeURIComponent(`${origin}/en/reset-password`)}`,
+      redirectTo: `${origin}/auth/callback?next=${encodeURIComponent(`${origin}/reset-password`)}`,
     });
 
     if (error) {

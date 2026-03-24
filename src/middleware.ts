@@ -83,9 +83,22 @@ function withTenantRouting(request: NextRequest): NextResponse | null {
     // Also allow locale-prefixed variants:
     //   orgname.p.hstuma.com/en/login
     const isPassthroughOnTenant =
+      // Auth entry points
       /^\/(login|register)(\/|$)/.test(pathname) ||
+      // Password recovery / onboarding (these must not be rewritten under /org/<tenant>/...)
+      /^\/(forget|reset-password)(\/|$)/.test(pathname) ||
+      /^\/(onboarding|profile)(\/|$)/.test(pathname) ||
+      // Auth callback (OAuth + OTP flows) can appear with a locale prefix
+      /^\/auth\/callback(\/|$)/.test(pathname) ||
+      // Auth pages can appear with a locale prefix (/en/auth/...) and must not be rewritten
+      /^\/[a-z]{2}\/auth(\/|$)/.test(pathname) ||
+      // Dashboard
       /^\/dashboard(\/|$)/.test(pathname) ||
+      // Locale-prefixed variants (client navigations)
       /^\/[a-z]{2}\/(login|register)(\/|$)/.test(pathname) ||
+      /^\/[a-z]{2}\/(forget|reset-password)(\/|$)/.test(pathname) ||
+      /^\/[a-z]{2}\/(onboarding|profile)(\/|$)/.test(pathname) ||
+      /^\/[a-z]{2}\/auth\/callback(\/|$)/.test(pathname) ||
       /^\/[a-z]{2}\/dashboard(\/|$)/.test(pathname);
     if (isPassthroughOnTenant) return null;
 

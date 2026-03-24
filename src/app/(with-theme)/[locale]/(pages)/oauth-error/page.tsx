@@ -30,14 +30,14 @@ function OAuthErrorContent() {
 
             <div className="pt-4 flex flex-col gap-3">
               <Link
-                href="/en/onboarding"
+                href="/onboarding"
                 className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-primary text-white rounded-xl font-medium hover:bg-primary/90 transition-colors"
               >
                 <UserPlusIcon className="w-5 h-5" />
                 Complete Profile & Enroll
               </Link>
               <Link
-                href="/en/dashboard"
+                href="/dashboard"
                 className="w-full px-4 py-3 text-slate-600 dark:text-slate-400 bg-slate-50 dark:bg-slate-900 rounded-xl font-medium hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
               >
                 Go to Dashboard
@@ -54,7 +54,7 @@ function OAuthErrorContent() {
             </div>
             <div className="pt-4 flex flex-col gap-3">
               <Link
-                href="/en/dashboard"
+                href="/dashboard"
                 className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-primary text-white rounded-xl font-medium hover:bg-primary/90 transition-colors"
               >
                 Go to Dashboard
@@ -71,7 +71,7 @@ function OAuthErrorContent() {
             </div>
             <div className="pt-4 flex flex-col gap-3">
               <Link
-                href="/en/dashboard"
+                href="/dashboard"
                 className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-primary text-white rounded-xl font-medium hover:bg-primary/90 transition-colors"
               >
                 Go to Dashboard

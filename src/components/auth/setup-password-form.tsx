@@ -64,7 +64,7 @@ export function SetupPasswordForm({
 
       if (response.ok) {
         toast.success("Password set successfully! You can now login with email and password.");
-        router.push(callbackUrl || "/en/profile");
+        router.push(callbackUrl || "/profile");
       } else {
         toast.error(result.error || "Failed to set password");
       }
@@ -78,7 +78,7 @@ export function SetupPasswordForm({
 
   const handleSkip = () => {
     toast.info(`You can continue using ${provider} to sign in`);
-    router.push(callbackUrl || "/en/profile");
+    router.push(callbackUrl || "/profile");
   };
 
   return (

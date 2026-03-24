@@ -41,7 +41,6 @@ export async function POST(request: NextRequest) {
     // Sign up user with Supabase Auth
     const supabase = createClient();
     const origin = getOrigin(request)
-    const canonicalOrigin = getCanonicalOrigin(request)
     const { data: authData, error: authError } = await supabase.auth.signUp({
       email,
       password,
@@ -50,7 +49,8 @@ export async function POST(request: NextRequest) {
           username: userName,
           avatar_url: userAvatar,
         },
-        emailRedirectTo: `${canonicalOrigin}/auth/callback?next=${encodeURIComponent(`${origin}/en`)}`
+        // Keep callback + post-auth redirect on the initiating origin (tenant-safe)
+        emailRedirectTo: `${origin}/auth/callback?next=${encodeURIComponent(`${origin}/`)}`
       }
     })
 

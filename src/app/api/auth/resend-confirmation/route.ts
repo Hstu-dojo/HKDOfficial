@@ -40,12 +40,11 @@ export async function POST(request: NextRequest) {
     // Resend confirmation email
     const supabase = createClient();
     const origin = getOrigin(request)
-    const canonicalOrigin = getCanonicalOrigin(request)
     const { error } = await supabase.auth.resend({
       type: 'signup',
       email: email,
       options: {
-        emailRedirectTo: `${canonicalOrigin}/auth/callback?next=${encodeURIComponent(`${origin}/en`)}`
+        emailRedirectTo: `${origin}/auth/callback?next=${encodeURIComponent(`${origin}/`)}`
       }
     })
 

@@ -35,6 +35,17 @@ export function RegisterForm({ className, ...props }: UserAuthFormProps) {
   const router = useRouter();
   const t = useI18n();
   const locale = useCurrentLocale();
+
+  const tenantBaseDomain =
+    (process.env.NEXT_PUBLIC_TENANT_BASE_DOMAIN as string | undefined) ||
+    "p.hstuma.com";
+  const isTenantHost = (() => {
+    if (typeof window === "undefined") return false;
+    const hostname = window.location.hostname.toLowerCase();
+    const base = tenantBaseDomain.toLowerCase();
+    return hostname.endsWith(`.${base}`) && hostname !== base && hostname !== `www.${base}`;
+  })();
+
   const onSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setIsLoading(true);
@@ -82,15 +93,13 @@ export function RegisterForm({ className, ...props }: UserAuthFormProps) {
       
       // Use Supabase client directly instead of API route
       const supabase = createClient();
-      const canonicalOrigin = (() => {
-        try {
-          return new URL(process.env.NEXT_PUBLIC_APP_URL || window.location.origin).origin;
-        } catch {
-          return window.location.origin;
-        }
-      })();
 
-      const nextUrl = `${window.location.origin}/${locale}`;
+      // IMPORTANT: for tenant flows, keep redirects on the tenant origin.
+      // Using NEXT_PUBLIC_APP_URL here will bounce users back to the root domain.
+      const callbackOrigin = window.location.origin;
+      const nextUrl = isTenantHost
+        ? `${callbackOrigin}/`
+        : `${callbackOrigin}/${locale}`;
       const { data, error } = await supabase.auth.signUp({
         email,
         password,
@@ -99,7 +108,7 @@ export function RegisterForm({ className, ...props }: UserAuthFormProps) {
             username: userName,
             avatar_url: userAvatar,
           },
-          emailRedirectTo: `${canonicalOrigin}/auth/callback?next=${encodeURIComponent(nextUrl)}`
+          emailRedirectTo: `${callbackOrigin}/auth/callback?next=${encodeURIComponent(nextUrl)}`
         }
       });
 
@@ -140,7 +149,7 @@ export function RegisterForm({ className, ...props }: UserAuthFormProps) {
             description: "This email is already registered. Please login instead or check your email for the confirmation link.",
             action: {
               label: "Go to Login",
-              onClick: () => router.push("/en/login"),
+              onClick: () => router.push(`/${locale}/login`),
             },
           });
           setIsLoading(false);
@@ -183,7 +192,7 @@ export function RegisterForm({ className, ...props }: UserAuthFormProps) {
         description: "something went wrong, please try again later",
         action: {
           label: "Home",
-          onClick: () => router.push("/en"),
+          onClick: () => router.push(isTenantHost ? "/" : `/${locale}`),
         },
       });
     }
@@ -286,7 +295,7 @@ export function RegisterForm({ className, ...props }: UserAuthFormProps) {
           </Button>
         </div>
       </form>
-      <SocialLoginButtons redirectTo="/en/profile" />
+      <SocialLoginButtons redirectTo="/profile" />
       <div className="flex-rol relative bottom-4 flex flex-wrap items-center justify-between">
         <small>
           {t('auth.register.existingMember')}{" "}

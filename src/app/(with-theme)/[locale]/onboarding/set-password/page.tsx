@@ -31,7 +31,7 @@ function SetPasswordContent() {
 
   useEffect(() => {
     if (!searchParams) {
-      router.push('/en/login');
+      router.push('/login');
       return;
     }
     
@@ -43,11 +43,11 @@ function SetPasswordContent() {
       } catch (error) {
         console.error('Failed to parse user data:', error);
         toast.error("Invalid data. Please try signing in again.");
-        router.push('/en/login');
+        router.push('/login');
       }
     } else {
       // No data provided, redirect to login
-      router.push('/en/login');
+      router.push('/login');
     }
   }, [searchParams, router]);
 
@@ -122,7 +122,7 @@ function SetPasswordContent() {
         description: "You can now login with email/password or your social account",
       });
 
-      router.push('/en/profile');
+      router.push('/profile');
     } catch (error: any) {
       console.error('Set password error:', error);
       toast.error("Failed to set password", {
@@ -163,7 +163,7 @@ function SetPasswordContent() {
         description: "You can add a password later from your profile settings",
       });
 
-      router.push('/en/profile');
+      router.push('/profile');
     } catch (error: any) {
       console.error('Skip error:', error);
       toast.error("Failed to complete setup", {

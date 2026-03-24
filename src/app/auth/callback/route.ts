@@ -9,10 +9,10 @@ export async function GET(request: Request) {
   const code = requestUrl.searchParams.get('code')
   const token_hash = requestUrl.searchParams.get('token_hash')
   const type = requestUrl.searchParams.get('type')
-  const next = requestUrl.searchParams.get('next') ?? '/en'
+  const next = requestUrl.searchParams.get('next') ?? '/'
 
   function getSafeNextUrl(): URL {
-    const fallback = new URL('/en', requestUrl.origin)
+    const fallback = new URL('/', requestUrl.origin)
 
     if (!next) return fallback
 
@@ -135,13 +135,13 @@ export async function GET(request: Request) {
     })
 
     if (error) {
-      const errorUrl = new URL('/en/profile', requestUrl.origin)
+      const errorUrl = new URL('/profile', requestUrl.origin)
       errorUrl.searchParams.set('error', 'Email change verification failed: ' + error.message)
       return NextResponse.redirect(errorUrl)
     }
 
     // Email change successful - redirect to profile with success message
-    const successUrl = new URL('/en/profile', requestUrl.origin)
+    const successUrl = new URL('/profile', requestUrl.origin)
     successUrl.searchParams.set('message', 'Email updated successfully!')
     successUrl.searchParams.set('sync_email', 'true') // Flag to trigger client-side sync
     return NextResponse.redirect(successUrl)
@@ -212,7 +212,7 @@ export async function GET(request: Request) {
           }
           
           // Redirect to password setup page
-          const setupUrl = new URL('/en/onboarding/set-password', requestUrl.origin)
+          const setupUrl = new URL('/onboarding/set-password', requestUrl.origin)
           setupUrl.searchParams.set('data', encodeURIComponent(JSON.stringify(providerData)))
           return NextResponse.redirect(setupUrl)
         }

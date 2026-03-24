@@ -111,7 +111,7 @@ export default function ResetPasswordForm() {
         // Sign out after password reset for security
         await supabase.auth.signOut();
         
-        router.push("/en/login");
+        router.push("/login");
       } else if (resetCode) {
         
         const response = await fetch('/api/auth/update-password-with-code', {
@@ -132,7 +132,7 @@ export default function ResetPasswordForm() {
         }
 
         toast.success("Password updated successfully");
-        router.push("/en/login");
+        router.push("/login");
       } else {
         throw new Error('Unable to reset password - no valid session or reset code');
       }
@@ -173,7 +173,7 @@ export default function ResetPasswordForm() {
         
         <Button
           variant="outline"
-          onClick={() => router.push("/en/forget")}
+          onClick={() => router.push("/forget")}
           className="w-full"
         >
           Request New Reset Link

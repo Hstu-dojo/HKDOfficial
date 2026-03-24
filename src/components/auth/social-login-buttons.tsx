@@ -10,7 +10,7 @@ interface SocialLoginButtonsProps {
   redirectTo?: string; // Final destination AFTER successful auth
 }
 
-export function SocialLoginButtons({ redirectTo = "/en/profile" }: SocialLoginButtonsProps) {
+export function SocialLoginButtons({ redirectTo = "/profile" }: SocialLoginButtonsProps) {
   const [isLoadingGoogle, setIsLoadingGoogle] = useState(false);
   const [isLoadingGithub, setIsLoadingGithub] = useState(false);
 
@@ -25,22 +25,11 @@ export function SocialLoginButtons({ redirectTo = "/en/profile" }: SocialLoginBu
 
       // IMPORTANT: OAuth must ALWAYS go through /auth/callback first to exchange code
       // The 'next' parameter tells callback where to redirect after successful auth
-      const canonicalOrigin = (() => {
-        try {
-          return new URL(process.env.NEXT_PUBLIC_APP_URL || window.location.origin).origin;
-        } catch {
-          return window.location.origin;
-        }
-      })();
-
-      const nextUrl = (() => {
-        // Prefer absolute next urls, so the callback host can bounce back to tenant.
-        if (redirectTo.startsWith('http://') || redirectTo.startsWith('https://')) return redirectTo;
-        const path = redirectTo.startsWith('/') ? redirectTo : `/${redirectTo}`;
-        return `${window.location.origin}${path}`;
-      })();
-
-      const callbackUrl = `${canonicalOrigin}/auth/callback?next=${encodeURIComponent(nextUrl)}`;
+      // NOTE: PKCE verifier is origin-scoped. If the callback happens on a different
+      // origin (e.g. main site instead of tenant subdomain) the verifier won't be found.
+      // So keep the callback on the same origin as the initiating page.
+      const nextPath = redirectTo.startsWith('/') ? redirectTo : `/${redirectTo}`;
+      const callbackUrl = `${window.location.origin}/auth/callback?next=${encodeURIComponent(nextPath)}`;
 
       const { error } = await supabase.auth.signInWithOAuth({
         provider,

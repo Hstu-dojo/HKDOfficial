@@ -31,6 +31,16 @@ export function UserAuthForm({
   const pathname = usePathname();
   const t = useI18n();
   const locale = useCurrentLocale();
+
+  const tenantBaseDomain =
+    (process.env.NEXT_PUBLIC_TENANT_BASE_DOMAIN as string | undefined) ||
+    "p.hstuma.com";
+  const isTenantHost = (() => {
+    if (typeof window === "undefined") return false;
+    const hostname = window.location.hostname.toLowerCase();
+    const base = tenantBaseDomain.toLowerCase();
+    return hostname.endsWith(`.${base}`) && hostname !== base && hostname !== `www.${base}`;
+  })();
   
   // Show success message if redirected after email verification
   React.useEffect(() => {
@@ -48,7 +58,7 @@ export function UserAuthForm({
   React.useEffect(() => {
     // Only redirect if login was successful and we have a session
     if (loginSuccess && status === 'authenticated' && session?.user?.email) {
-      const destination = callbackUrl || `/${locale}`;
+      const destination = callbackUrl || (isTenantHost ? "/" : `/${locale}`);
       // If we're in a modal (pathname includes /login), replace the URL
       if (pathname?.includes('/login')) {
         // Use replace to avoid adding to history stack
@@ -119,8 +129,9 @@ export function UserAuthForm({
         
         // Check if email is verified
         if (!data.user.email_confirmed_at) {
+          const verifyCallback = callbackUrl || (isTenantHost ? "/" : `/${locale}`);
           router.push(
-            `/${locale}/onboarding/verify-email?callbackUrl=${callbackUrl || `/${locale}`}`,
+            `/${locale}/onboarding/verify-email?callbackUrl=${encodeURIComponent(verifyCallback)}`,
           );
           setIsLoading(false);
           return;
