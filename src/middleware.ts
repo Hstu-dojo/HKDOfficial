@@ -280,6 +280,6 @@ export const config = {
   matcher: [
     // NOTE: /docs is intentionally NOT excluded — it needs withAdminMiddleware.
     // Routes like /blog, /unauthorized, /studio etc. need no middleware at all.
-    "/((?!api|payload-api|auth|static|blog|unauthorized|studio|notice|p|.*\\..*|_next|favicon.ico|sitemap.xml|robots.txt).*)",
+    "/((?!api|payload-api|auth|static|blog|unauthorized|studio|notice|p(?:/|$)|.*\\..*|_next|favicon.ico|sitemap.xml|robots.txt).*)",
   ],
 };
