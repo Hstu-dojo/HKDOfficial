@@ -1,7 +1,7 @@
 import { createNEMO } from "@rescale/nemo";
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
-import { withLocaleMiddleware } from "./middlewares/internationalization";
+import { I18N_LOCALES, withLocaleMiddleware } from "./middlewares/internationalization";
 import { withAuthMiddleware } from "./middlewares/authentication";
 import { withAdminMiddleware } from "./middlewares/admin";
 
@@ -76,6 +76,19 @@ function withTenantRouting(request: NextRequest): NextResponse | null {
   // 1) Tenant subdomain: rewrite to the existing /org/[slug] route
   const tenant = getTenantFromHost(hostname);
   if (tenant) {
+    // If a tenant subdomain is requested with ONLY a locale root segment,
+    // strip it (e.g. tenant.p.hstuma.com/en -> tenant.p.hstuma.com/).
+    // But do NOT strip locale prefixes for deeper routes like /en/login.
+    const pathSegments = pathname.split("/").filter(Boolean);
+    if (pathSegments.length === 1) {
+      const maybeLocale = pathSegments[0];
+      if ((I18N_LOCALES as readonly string[]).includes(maybeLocale)) {
+        const url = request.nextUrl.clone();
+        url.pathname = "/";
+        return NextResponse.redirect(url);
+      }
+    }
+
     // Some routes should be served directly on the tenant subdomain,
     // not rewritten under /org/<tenant>/...
     // Examples:
@@ -129,7 +142,7 @@ function withTenantRouting(request: NextRequest): NextResponse | null {
 
       const url = request.nextUrl.clone();
       url.hostname = `${slug}.${TENANT_BASE_DOMAIN}`;
-      url.protocol = "http:";
+      url.protocol = "https:";
       url.pathname = rest;
       return NextResponse.redirect(url);
     }
