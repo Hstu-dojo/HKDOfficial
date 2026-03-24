@@ -1,7 +1,7 @@
 import { createNEMO } from "@rescale/nemo";
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
-import { SUPPORTED_LOCALES, withLocaleMiddleware } from "./middlewares/internationalization";
+import { withLocaleMiddleware } from "./middlewares/internationalization";
 import { withAuthMiddleware } from "./middlewares/authentication";
 import { withAdminMiddleware } from "./middlewares/admin";
 
@@ -81,7 +81,8 @@ function withTenantRouting(request: NextRequest): NextResponse | null {
     const localePrefixMatch = pathname.match(/^\/([a-z]{2})(?=\/|$)/);
     if (localePrefixMatch) {
       const locale = localePrefixMatch[1];
-      if (SUPPORTED_LOCALES.includes(locale as any)) {
+      const tenantLocales = new Set(["en", "bn", "ne", "np"]);
+      if (tenantLocales.has(locale)) {
         const url = request.nextUrl.clone();
         const stripped = pathname.replace(/^\/[a-z]{2}(?=\/|$)/, "") || "/";
         url.pathname = stripped;
