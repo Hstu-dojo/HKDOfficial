@@ -74,31 +74,19 @@ function withTenantRouting(request: NextRequest): NextResponse | null {
   // 1) Tenant subdomain: rewrite to the existing /org/[slug] route
   const tenant = getTenantFromHost(hostname);
   if (tenant) {
-    // Tenant subdomains should NOT use locale-prefixed URLs.
-    // Redirect:
-    //   orgname.p.hstuma.com/en/something -> orgname.p.hstuma.com/something
-    //   orgname.p.hstuma.com/en          -> orgname.p.hstuma.com/
-    const localePrefixMatch = pathname.match(/^\/([a-z]{2})(?=\/|$)/);
-    if (localePrefixMatch) {
-      const locale = localePrefixMatch[1];
-      const tenantLocales = new Set(["en", "bn", "ne", "np"]);
-      if (tenantLocales.has(locale)) {
-        const url = request.nextUrl.clone();
-        const stripped = pathname.replace(/^\/[a-z]{2}(?=\/|$)/, "") || "/";
-        url.pathname = stripped;
-        return NextResponse.redirect(url);
-      }
-    }
-
     // Some routes should be served directly on the tenant subdomain,
     // not rewritten under /org/<tenant>/...
     // Examples:
     //   orgname.p.hstuma.com/login
     //   orgname.p.hstuma.com/register
     //   orgname.p.hstuma.com/dashboard/...
+    // Also allow locale-prefixed variants:
+    //   orgname.p.hstuma.com/en/login
     const isPassthroughOnTenant =
       /^\/(login|register)(\/|$)/.test(pathname) ||
-      /^\/dashboard(\/|$)/.test(pathname);
+      /^\/dashboard(\/|$)/.test(pathname) ||
+      /^\/[a-z]{2}\/(login|register)(\/|$)/.test(pathname) ||
+      /^\/[a-z]{2}\/dashboard(\/|$)/.test(pathname);
     if (isPassthroughOnTenant) return null;
 
     // If the tenant domain already requests an internal org path, don't rewrite again.
