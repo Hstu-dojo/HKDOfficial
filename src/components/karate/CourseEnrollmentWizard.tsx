@@ -49,6 +49,9 @@ import {
   type ImageData,
 } from '@/lib/pdf/pdf-utils';
 
+const MotionDiv = motion.div as any;
+const MotionP = motion.p as any;
+
 // ---------------------------------------------------------------------------
 // Types
 // ---------------------------------------------------------------------------
@@ -66,6 +69,10 @@ interface Course {
   bkashNumber?: string;
   /** @deprecated Use payment_accounts API instead. Kept for backward compat. */
   bkashQrCodeUrl?: string;
+  /** @deprecated Use payment_accounts API instead. Kept for backward compat. */
+  nagadNumber?: string;
+  /** @deprecated Use payment_accounts API instead. Kept for backward compat. */
+  rocketNumber?: string;
   imageUrl?: string;
 }
 
@@ -456,13 +463,13 @@ export default function CourseEnrollmentWizard({
   if (showSuccess) {
     return (
       <div className="max-w-2xl mx-auto text-center py-16 space-y-6">
-        <motion.div
+        <MotionDiv
           initial={{ scale: 0 }}
           animate={{ scale: 1 }}
           className="mx-auto w-20 h-20 rounded-full bg-green-100 dark:bg-green-900/30 flex items-center justify-center"
         >
           <CheckCircle className="h-10 w-10 text-green-600" />
-        </motion.div>
+        </MotionDiv>
         <h2 className="text-2xl font-bold">Application Submitted!</h2>
         <p className="text-muted-foreground max-w-md mx-auto">
           Your enrollment application for <strong>{course.name}</strong> has been
@@ -533,7 +540,7 @@ export default function CourseEnrollmentWizard({
           <span>{overallCompletion}%</span>
         </div>
         <div className="h-1.5 rounded-full bg-muted overflow-hidden">
-          <motion.div
+          <MotionDiv
             className="h-full bg-primary rounded-full"
             initial={false}
             animate={{ width: `${overallCompletion}%` }}
@@ -581,7 +588,7 @@ export default function CourseEnrollmentWizard({
       <div className="bg-card rounded-xl border border-border shadow-sm">
         <div className="overflow-hidden">
         <AnimatePresence mode="wait" custom={direction}>
-          <motion.div
+          <MotionDiv
             key={currentSectionId}
             custom={direction}
             initial={{ x: direction > 0 ? 80 : -80, opacity: 0 }}
@@ -651,7 +658,7 @@ export default function CourseEnrollmentWizard({
                 formatCurrency={formatCurrency}
               />
             )}
-          </motion.div>
+          </MotionDiv>
         </AnimatePresence>
         </div>
 
@@ -845,13 +852,13 @@ function FormField({
 
       {/* Error */}
       {error && (
-        <motion.p
+        <MotionP
           initial={{ opacity: 0, y: -4 }}
           animate={{ opacity: 1, y: 0 }}
           className="flex items-center gap-1 text-xs text-destructive"
         >
           <AlertCircle className="h-3 w-3" /> {error}
-        </motion.p>
+        </MotionP>
       )}
     </div>
   );

@@ -110,7 +110,7 @@ export default async function DashboardPage() {
 
   // Fetch user's issued certificates
   const certificatesResult = await getMyCertificates();
-  const certificates = 'error' in certificatesResult ? [] : certificatesResult;
+  const certificates = certificatesResult.success ? (certificatesResult.data ?? []) : [];
 
   return (
     <div className="space-y-6">
