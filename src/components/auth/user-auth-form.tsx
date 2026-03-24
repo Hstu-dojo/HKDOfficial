@@ -25,7 +25,6 @@ export function UserAuthForm({
   ...props
 }: UserAuthFormProps) {
   const [isLoading, setIsLoading] = React.useState<boolean>(false);
-  const [loginSuccess, setLoginSuccess] = React.useState(false);
   const { data: session, status } = useSession();
   const router = useRouter();
   const pathname = usePathname();
@@ -53,21 +52,6 @@ export function UserAuthForm({
       window.history.replaceState({}, '', window.location.pathname);
     }
   }, []);
-  
-  // Handle redirect after login success and session update
-  React.useEffect(() => {
-    // Only redirect if login was successful and we have a session
-    if (loginSuccess && status === 'authenticated' && session?.user?.email) {
-      const destination = callbackUrl || (isTenantHost ? "/" : `/${locale}`);
-      // If we're in a modal (pathname includes /login), replace the URL
-      if (pathname?.includes('/login')) {
-        // Use replace to avoid adding to history stack
-        window.location.href = destination;
-      } else {
-        router.push(destination);
-      }
-    }
-  }, [loginSuccess, status, session?.user?.email, callbackUrl, pathname, router]);
 
   async function onSubmit(event: React.SyntheticEvent) {
     event.preventDefault();
@@ -129,22 +113,26 @@ export function UserAuthForm({
         
         // Check if email is verified
         if (!data.user.email_confirmed_at) {
-          const verifyCallback = callbackUrl || (isTenantHost ? "/" : `/${locale}`);
+          const verifyCallback = callbackUrl || "/";
           router.push(
             `/${locale}/onboarding/verify-email?callbackUrl=${encodeURIComponent(verifyCallback)}`,
           );
           setIsLoading(false);
           return;
         }
-        
-        // Mark login as successful - the useEffect will handle redirect
-        setLoginSuccess(true);
-        
-        // Call the onLoginSuccess callback if provided (for modal to close)
+
+        // Redirect immediately after successful login.
+        // This avoids relying on async session propagation timing.
+        const destination = callbackUrl || "/";
         onLoginSuccess?.();
-        
-        // Refresh router to update session state
-        router.refresh();
+
+        if (pathname?.includes('/login')) {
+          window.location.href = destination;
+        } else {
+          router.push(destination);
+          router.refresh();
+        }
+        return;
       }
     } catch (error) {
       console.error(error);
