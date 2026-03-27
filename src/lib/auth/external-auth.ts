@@ -1,7 +1,13 @@
 import crypto from 'crypto';
 import { db } from '@/lib/connect-db';
-import { user, profiles } from '@/db/schema';
-import { eq } from 'drizzle-orm';
+import {
+  oauth2AuthorizationCodes,
+  oauth2RefreshTokens,
+  oauth2TokenInvalidations,
+  user,
+  profiles,
+} from '@/db/schema';
+import { and, eq, gt, isNull } from 'drizzle-orm';
 import { getUserPermissionsWithFallback } from '@/lib/rbac/permissions';
 
 export const STUDENT_LEVELS = [
@@ -22,40 +28,49 @@ export type StudentLevel = (typeof STUDENT_LEVELS)[number];
 export const EXTERNAL_SYSTEM_ROLES = ['admin', 'teacher', 'partner', ...STUDENT_LEVELS] as const;
 export type ExternalSystemRole = (typeof EXTERNAL_SYSTEM_ROLES)[number];
 
-type OAuthCodeContext = {
-  clientId: string;
-  redirectUri: string;
-  userId: string;
-  role: ExternalSystemRole;
-  email: string;
-  codeChallenge: string;
-  state: string;
-  createdAt: number;
-  expiresAt: number;
-};
+type OAuthCodeCreateInput = {
+  clientId: string
+  redirectUri: string
+  scope: string
+  userId: string
+  codeChallenge: string
+  codeChallengeMethod: 'S256'
+}
 
-type RefreshTokenContext = {
-  userId: string;
-  role: ExternalSystemRole;
-  email: string;
-  issuedAt: number;
-};
+const AUTH_CODE_TTL_MS = 10 * 60 * 1000;
+const ACCESS_TOKEN_TTL_SECONDS = 15 * 60;
+const REFRESH_TOKEN_BYTES = 48; // 48 bytes => long random token (base64url)
+const REFRESH_TOKEN_TTL_DAYS = 180;
 
-type AccessTokenContext = {
-  userId: string;
-  role: ExternalSystemRole;
-  email: string;
-  issuedAt: number;
-  expiresAt: number;
-  clientId: string;
-};
+function getTokenHashPepper(): string {
+  const pepper = (process.env.OAUTH_TOKEN_HASH_PEPPER || '').trim();
+  if (pepper) return pepper;
 
-const AUTH_CODE_TTL_MS = 180 * 1000;
-const ACCESS_TOKEN_TTL_MS = 60 * 60 * 1000;
+  // Dev fallback to avoid a hard crash locally.
+  if (process.env.NODE_ENV !== 'production') {
+    return getJwtSecret();
+  }
 
-const oauthCodeStore = new Map<string, OAuthCodeContext>();
-const usedAuthorizationCodes = new Set<string>();
-const refreshTokenStore = new Map<string, RefreshTokenContext>();
+  throw new Error('OAUTH_TOKEN_HASH_PEPPER not configured in environment');
+}
+
+function sha256Hex(input: string): string {
+  return crypto.createHash('sha256').update(input).digest('hex')
+}
+
+function hashWithPepper(value: string): string {
+  const pepper = getTokenHashPepper()
+  return sha256Hex(`${pepper}:${value}`)
+}
+
+function randomToken(bytes: number): string {
+  // Node supports base64url in modern versions; fall back if needed.
+  try {
+    return crypto.randomBytes(bytes).toString('base64url')
+  } catch {
+    return crypto.randomBytes(bytes).toString('hex')
+  }
+}
 
 // JWT helpers for stateless access tokens
 function getJwtSecret(): string {
@@ -79,10 +94,10 @@ function base64UrlDecode(str: string): string {
   return Buffer.from(padded.replace(/-/g, '+').replace(/_/g, '/'), 'base64').toString();
 }
 
-function signJWT(payload: Record<string, unknown>): string {
+function signJWT(payload: Record<string, unknown>, expiresInSeconds: number): string {
   const header = { alg: 'HS256', typ: 'JWT' };
   const now = Math.floor(Date.now() / 1000);
-  const exp = now + 3600; // 1 hour expiry
+  const exp = now + expiresInSeconds;
 
   const jwtPayload = {
     ...payload,
@@ -108,6 +123,8 @@ interface JWTPayload {
   userId: string;
   email: string;
   role: ExternalSystemRole;
+  clientId?: string;
+  jti?: string;
   iat: number;
   exp: number;
   iss: string;
@@ -165,44 +182,83 @@ export function getRegisteredClients() {
   return raw.split(',').map((v) => v.trim()).filter(Boolean);
 }
 
+export function getRegisteredClientSecret(clientId: string): string | null {
+  const raw = (process.env.OAUTH_CLIENT_SECRETS || '').trim()
+  if (!raw) return null
+
+  // Format: clientA=secretA,clientB=secretB
+  const pairs = raw.split(',').map((v) => v.trim()).filter(Boolean)
+  for (const p of pairs) {
+    const idx = p.indexOf('=')
+    if (idx <= 0) continue
+    const id = p.slice(0, idx).trim()
+    const secret = p.slice(idx + 1).trim()
+    if (id === clientId && secret) return secret
+  }
+  return null
+}
+
+export function isConfidentialClient(clientId: string): boolean {
+  return !!getRegisteredClientSecret(clientId)
+}
+
 export function isRegisteredClient(clientId: string) {
   return getRegisteredClients().includes(clientId);
 }
 
-export function createAuthorizationCode(payload: Omit<OAuthCodeContext, 'createdAt' | 'expiresAt'>) {
-  const code = crypto.randomBytes(32).toString('hex');
-  const createdAt = Date.now();
-  oauthCodeStore.set(code, {
-    ...payload,
-    createdAt,
-    expiresAt: createdAt + AUTH_CODE_TTL_MS,
+export async function createAuthorizationCode(payload: OAuthCodeCreateInput) {
+  const code = randomToken(32);
+  const codeHash = hashWithPepper(code);
+  const now = new Date();
+  const expiresAt = new Date(now.getTime() + AUTH_CODE_TTL_MS);
+
+  await db.insert(oauth2AuthorizationCodes).values({
+    codeHash,
+    clientId: payload.clientId,
+    redirectUri: payload.redirectUri,
+    scope: payload.scope ?? '',
+    userId: payload.userId,
+    codeChallenge: payload.codeChallenge,
+    codeChallengeMethod: payload.codeChallengeMethod,
+    expiresAt,
   });
+
   return code;
 }
 
-export function getAuthorizationCodeContext(code: string):
-  | { ok: true; context: OAuthCodeContext }
-  | { ok: false; reason: 'missing' | 'reused' | 'expired' } {
-  if (usedAuthorizationCodes.has(code)) {
-    return { ok: false, reason: 'reused' };
-  }
+export async function consumeAuthorizationCode(code: string) {
+  const codeHash = hashWithPepper(code);
+  const now = new Date();
 
-  const ctx = oauthCodeStore.get(code);
-  if (!ctx) {
-    return { ok: false, reason: 'missing' };
-  }
+  const existing = await db
+    .select()
+    .from(oauth2AuthorizationCodes)
+    .where(eq(oauth2AuthorizationCodes.codeHash, codeHash))
+    .limit(1);
 
-  if (Date.now() > ctx.expiresAt) {
-    oauthCodeStore.delete(code);
-    return { ok: false, reason: 'expired' };
-  }
-
-  return { ok: true, context: ctx };
+  if (existing.length === 0) return { ok: false as const, reason: 'missing' as const };
+  if (existing[0].usedAt) return { ok: false as const, reason: 'reused' as const };
+  if (existing[0].expiresAt.getTime() <= now.getTime()) return { ok: false as const, reason: 'expired' as const };
+  return { ok: true as const, code: existing[0] };
 }
 
-export function invalidateAuthorizationCode(code: string) {
-  oauthCodeStore.delete(code);
-  usedAuthorizationCodes.add(code);
+export async function markAuthorizationCodeUsed(code: string) {
+  const codeHash = hashWithPepper(code);
+  const now = new Date();
+
+  const updated = await db
+    .update(oauth2AuthorizationCodes)
+    .set({ usedAt: now })
+    .where(
+      and(
+        eq(oauth2AuthorizationCodes.codeHash, codeHash),
+        isNull(oauth2AuthorizationCodes.usedAt),
+        gt(oauth2AuthorizationCodes.expiresAt, now)
+      )
+    )
+    .returning({ id: oauth2AuthorizationCodes.id });
+
+  return updated.length > 0;
 }
 
 export function isPlaceholderState(state: string) {
@@ -221,12 +277,20 @@ export function createAccessToken(input: {
   email: string;
   clientId: string;
 }) {
-  const jwt = signJWT({
+  const jti = randomToken(16);
+  const jwt = signJWT(
+    {
     sub: input.userId, // subject = profile ID
     userId: input.userId, // also include as userId for convenience
     email: input.email,
     role: input.role,
-  });
+    clientId: input.clientId,
+    jti,
+    },
+    ACCESS_TOKEN_TTL_SECONDS
+  );
+
+  // Note: access tokens are short-lived; revocation is handled via oauth2_token_invalidations.
 
   console.log('[createAccessToken] New JWT token issued');
   console.log('[createAccessToken] Token first 20 chars:', jwt.substring(0, 20));
@@ -238,25 +302,159 @@ export function createAccessToken(input: {
 
   return {
     token: jwt,
-    expiresIn: 3600,
+    expiresIn: ACCESS_TOKEN_TTL_SECONDS,
   };
 }
 
-export function createRefreshToken(input: Omit<RefreshTokenContext, 'issuedAt'>) {
-  const token = crypto.randomBytes(48).toString('hex');
-  refreshTokenStore.set(token, {
-    ...input,
-    issuedAt: Date.now(),
-  });
-  return token;
+export async function issueRefreshToken(input: {
+  userId: string
+  clientId: string
+  userAgent?: string | null
+  ip?: string | null
+  familyId?: string
+}) {
+  const familyId = input.familyId ?? crypto.randomUUID()
+  const token = randomToken(REFRESH_TOKEN_BYTES)
+  const tokenHash = hashWithPepper(token)
+  const now = new Date()
+  const expiresAt = new Date(now.getTime() + REFRESH_TOKEN_TTL_DAYS * 24 * 60 * 60 * 1000)
+
+  const inserted = await db
+    .insert(oauth2RefreshTokens)
+    .values({
+      familyId,
+      userId: input.userId,
+      clientId: input.clientId,
+      tokenHash,
+      issuedAt: now,
+      expiresAt,
+      userAgent: input.userAgent ?? null,
+      ip: input.ip ?? null,
+      lastUsedAt: now,
+    })
+    .returning({ id: oauth2RefreshTokens.id, familyId: oauth2RefreshTokens.familyId });
+
+  return {
+    token,
+    id: inserted[0]!.id,
+    familyId: inserted[0]!.familyId,
+    expiresAt,
+  }
 }
 
-export function getRefreshToken(refreshToken: string) {
-  return refreshTokenStore.get(refreshToken) ?? null;
+export async function revokeRefreshTokenFamily(familyId: string, clientId: string, userId: string) {
+  const now = new Date()
+
+  await db
+    .update(oauth2RefreshTokens)
+    .set({ revokedAt: now })
+    .where(and(eq(oauth2RefreshTokens.familyId, familyId), isNull(oauth2RefreshTokens.revokedAt)));
+
+  // Mark access tokens as revoked from this point forward.
+  await db
+    .insert(oauth2TokenInvalidations)
+    .values({ userId, clientId, invalidatedAt: now, updatedAt: now })
+    .onConflictDoUpdate({
+      target: [oauth2TokenInvalidations.userId, oauth2TokenInvalidations.clientId],
+      set: { invalidatedAt: now, updatedAt: now },
+    });
 }
 
-export function revokeRefreshToken(refreshToken: string) {
-  refreshTokenStore.delete(refreshToken);
+export async function rotateRefreshToken(input: {
+  clientId: string
+  refreshToken: string
+  userAgent?: string | null
+  ip?: string | null
+}) {
+  const tokenHash = hashWithPepper(input.refreshToken)
+  const now = new Date()
+
+  const existing = await db
+    .select()
+    .from(oauth2RefreshTokens)
+    .where(and(eq(oauth2RefreshTokens.clientId, input.clientId), eq(oauth2RefreshTokens.tokenHash, tokenHash)))
+    .limit(1)
+
+  if (existing.length === 0) return { ok: false as const, reason: 'missing' as const }
+
+  const rt = existing[0]
+
+  if (rt.expiresAt.getTime() <= now.getTime()) return { ok: false as const, reason: 'expired' as const }
+
+  if (rt.revokedAt) {
+    // Reuse detected: revoke entire family.
+    await revokeRefreshTokenFamily(rt.familyId, rt.clientId, rt.userId)
+    return { ok: false as const, reason: 'reused' as const }
+  }
+
+  const newToken = randomToken(REFRESH_TOKEN_BYTES)
+  const newHash = hashWithPepper(newToken)
+  const newExpiresAt = new Date(now.getTime() + REFRESH_TOKEN_TTL_DAYS * 24 * 60 * 60 * 1000)
+
+  const result = await db.transaction(async (tx) => {
+    const inserted = await tx
+      .insert(oauth2RefreshTokens)
+      .values({
+        familyId: rt.familyId,
+        userId: rt.userId,
+        clientId: rt.clientId,
+        tokenHash: newHash,
+        issuedAt: now,
+        expiresAt: newExpiresAt,
+        userAgent: input.userAgent ?? null,
+        ip: input.ip ?? null,
+        lastUsedAt: now,
+      })
+      .returning({ id: oauth2RefreshTokens.id })
+
+    const newId = inserted[0]!.id
+
+    // Revoke old token (rotation)
+    const updated = await tx
+      .update(oauth2RefreshTokens)
+      .set({ revokedAt: now, rotatedToId: newId, lastUsedAt: now })
+      .where(and(eq(oauth2RefreshTokens.id, rt.id), isNull(oauth2RefreshTokens.revokedAt)))
+      .returning({ id: oauth2RefreshTokens.id })
+
+    if (updated.length === 0) {
+      // Another request may have rotated/revoked it concurrently: treat as reuse.
+      await revokeRefreshTokenFamily(rt.familyId, rt.clientId, rt.userId)
+      return { ok: false as const, reason: 'reused' as const }
+    }
+
+    return { ok: true as const, userId: rt.userId, familyId: rt.familyId, refreshToken: newToken }
+  })
+
+  return result
+}
+
+export async function revokeRefreshTokenByValue(clientId: string, refreshToken: string) {
+  const tokenHash = hashWithPepper(refreshToken)
+  const existing = await db
+    .select()
+    .from(oauth2RefreshTokens)
+    .where(and(eq(oauth2RefreshTokens.clientId, clientId), eq(oauth2RefreshTokens.tokenHash, tokenHash)))
+    .limit(1)
+
+  if (existing.length === 0) return { ok: false as const }
+  const rt = existing[0]
+  await revokeRefreshTokenFamily(rt.familyId, rt.clientId, rt.userId)
+  return { ok: true as const }
+}
+
+export async function isAccessTokenInvalidated(input: {
+  userId: string
+  clientId: string
+  issuedAtMs: number
+}) {
+  const rows = await db
+    .select({ invalidatedAt: oauth2TokenInvalidations.invalidatedAt })
+    .from(oauth2TokenInvalidations)
+    .where(and(eq(oauth2TokenInvalidations.userId, input.userId), eq(oauth2TokenInvalidations.clientId, input.clientId)))
+    .limit(1)
+
+  if (rows.length === 0) return false
+  return rows[0]!.invalidatedAt.getTime() > input.issuedAtMs
 }
 
 export function getAccessToken(accessToken: string) {
@@ -281,7 +479,7 @@ export function getAccessToken(accessToken: string) {
     role: payload.role,
     issuedAt: payload.iat * 1000,
     expiresAt: payload.exp * 1000,
-    clientId: 'dojo-app', // JWT doesn't store clientId, but we can default to registered client
+    clientId: payload.clientId || 'dojo-app',
   };
 }
 
@@ -353,4 +551,52 @@ export async function resolveExternalRoleBySupabaseUserId(supabaseUserId: string
   }
 
   return { profileId, email, role: null };
+}
+
+export async function resolveExternalRoleByProfileId(profileId: string): Promise<{
+  profileId: string
+  email: string
+  role: ExternalSystemRole | null
+}> {
+  const linked = await db
+    .select({
+      profileId: profiles.id,
+      userId: profiles.userId,
+      beltRank: profiles.beltRank,
+      email: user.email,
+    })
+    .from(profiles)
+    .leftJoin(user, eq(profiles.userId, user.id))
+    .where(eq(profiles.id, profileId))
+    .limit(1)
+
+  if (linked.length === 0) {
+    throw new Error('Profile not found in local database')
+  }
+
+  const localUserId = linked[0]!.userId
+  const email = linked[0]!.email ?? ''
+
+  const userPerms = await getUserPermissionsWithFallback(localUserId)
+  const roleNames = userPerms.roles.map((r) => r.name)
+
+  if (roleNames.some((r) => ['SUPER_ADMIN', 'ADMIN', 'MODERATOR'].includes(r))) {
+    return { profileId, email, role: 'admin' }
+  }
+
+  if (roleNames.includes('INSTRUCTOR')) {
+    return { profileId, email, role: 'teacher' }
+  }
+
+  if (roleNames.includes('PARTNER')) {
+    return { profileId, email, role: 'partner' }
+  }
+
+  if (roleNames.some((r) => ['STUDENT', 'MEMBER'].includes(r))) {
+    const beltRank = linked[0]!.beltRank
+    if (beltRank === 'black') return { profileId, email, role: 'black_belt' }
+    return { profileId, email, role: 'student_9th_kyu' }
+  }
+
+  return { profileId, email, role: null }
 }
