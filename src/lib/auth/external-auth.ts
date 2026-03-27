@@ -46,12 +46,19 @@ function getTokenHashPepper(): string {
   const pepper = (process.env.OAUTH_TOKEN_HASH_PEPPER || '').trim();
   if (pepper) return pepper;
 
-  // Dev fallback to avoid a hard crash locally.
-  if (process.env.NODE_ENV !== 'production') {
-    return getJwtSecret();
+  // Fallback to avoid hard failures if the env var isn't set yet.
+  // Prefer setting OAUTH_TOKEN_HASH_PEPPER explicitly (separate from JWT secret).
+  const jwtSecret = (process.env.JWT_SECRET || '').trim();
+  if (jwtSecret) {
+    if (process.env.NODE_ENV === 'production') {
+      console.warn(
+        '[oauth2] OAUTH_TOKEN_HASH_PEPPER is not configured; falling back to JWT_SECRET. Set OAUTH_TOKEN_HASH_PEPPER to avoid coupling token hashing to JWT signing.'
+      );
+    }
+    return jwtSecret;
   }
 
-  throw new Error('OAUTH_TOKEN_HASH_PEPPER not configured in environment');
+  throw new Error('OAUTH_TOKEN_HASH_PEPPER (or JWT_SECRET fallback) not configured in environment');
 }
 
 function sha256Hex(input: string): string {
