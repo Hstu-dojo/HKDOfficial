@@ -84,6 +84,20 @@ export default function PendingStudentsView() {
     }
   }
 
+  const formatDate = (value: string | null) => {
+    if (!value) return '—'
+    const date = new Date(value)
+    if (Number.isNaN(date.getTime())) return '—'
+    return date.toLocaleDateString()
+  }
+
+  const truncate = (value: string | null, max = 80) => {
+    if (!value) return '—'
+    const cleaned = value.replace(/\s+/g, ' ').trim()
+    if (cleaned.length <= max) return cleaned
+    return `${cleaned.slice(0, max)}…`
+  }
+
   return (
     <>
       <PortalStepNav label="Pending Students" />
@@ -139,8 +153,12 @@ export default function PendingStudentsView() {
                   <th style={{ padding: '1rem', borderBottom: '1px solid var(--theme-elevation-200)' }}>Name</th>
                   <th style={{ padding: '1rem', borderBottom: '1px solid var(--theme-elevation-200)' }}>Email</th>
                   <th style={{ padding: '1rem', borderBottom: '1px solid var(--theme-elevation-200)' }}>Phone</th>
-                  <th style={{ padding: '1rem', borderBottom: '1px solid var(--theme-elevation-200)' }}>Date</th>
+                  <th style={{ padding: '1rem', borderBottom: '1px solid var(--theme-elevation-200)' }}>DOB</th>
+                  <th style={{ padding: '1rem', borderBottom: '1px solid var(--theme-elevation-200)' }}>Emergency</th>
+                  <th style={{ padding: '1rem', borderBottom: '1px solid var(--theme-elevation-200)' }}>Applied</th>
+                  <th style={{ padding: '1rem', borderBottom: '1px solid var(--theme-elevation-200)' }}>Reviewed</th>
                   <th style={{ padding: '1rem', borderBottom: '1px solid var(--theme-elevation-200)' }}>Status</th>
+                  <th style={{ padding: '1rem', borderBottom: '1px solid var(--theme-elevation-200)' }}>Notes</th>
                   {statusFilter === 'pending' && <th style={{ padding: '1rem', borderBottom: '1px solid var(--theme-elevation-200)' }}>Actions</th>}
                 </tr>
               </thead>
@@ -152,9 +170,22 @@ export default function PendingStudentsView() {
                     </td>
                     <td style={{ padding: '1rem' }}>{reg.email}</td>
                     <td style={{ padding: '1rem' }}>{reg.phoneNumber || '—'}</td>
-                    <td style={{ padding: '1rem' }}>{new Date(reg.createdAt).toLocaleDateString()}</td>
+                    <td style={{ padding: '1rem' }}>{formatDate(reg.dateOfBirth)}</td>
+                    <td style={{ padding: '1rem' }}>
+                      <div>
+                        <div style={{ fontWeight: 500 }}>{reg.emergencyContact || '—'}</div>
+                        <div className="field-description" style={{ margin: 0 }}>{reg.emergencyPhone || '—'}</div>
+                      </div>
+                    </td>
+                    <td style={{ padding: '1rem' }}>{formatDate(reg.createdAt)}</td>
+                    <td style={{ padding: '1rem' }}>{formatDate(reg.reviewedAt)}</td>
                     <td style={{ padding: '1rem' }}>
                       <StatusBadge status={reg.status} />
+                    </td>
+                    <td style={{ padding: '1rem', maxWidth: '260px' }}>
+                      <span className="field-description" style={{ margin: 0 }} title={reg.notes || undefined}>
+                        {truncate(reg.notes, 120)}
+                      </span>
                     </td>
                     {statusFilter === 'pending' && (
                       <td style={{ padding: '1rem' }}>

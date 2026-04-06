@@ -56,9 +56,11 @@ export async function GET(request: Request) {
         beltRank: members.beltRank,
         studentLevel: members.studentLevel,
         isActive: members.isActive,
+        isProfileComplete: members.isProfileComplete,
         joinDate: members.joinDate,
         picture: members.picture,
         email: user.email,
+        hasAccount: sql<boolean>`(${members.userId} is not null)`,
       })
       .from(members)
       .leftJoin(user, eq(members.userId, user.id))
@@ -101,7 +103,7 @@ export async function POST(request: Request) {
   try {
     const body = await request.json()
 
-    const { fullNameEnglish, phoneNumber, email, dateOfBirth, gender, bloodGroup, fatherName, motherName } = body
+    const { fullNameEnglish, fullNameBangla, phoneNumber, email, dateOfBirth, gender, bloodGroup, fatherName, motherName } = body
 
     if (!fullNameEnglish || !phoneNumber) {
       return NextResponse.json({ error: 'Name and phone number are required' }, { status: 400 })
@@ -225,6 +227,7 @@ export async function POST(request: Request) {
         userId: userId || null,
         memberNumber,
         fullNameEnglish,
+        fullNameBangla: fullNameBangla || null,
         phoneNumber,
         email: email || null,
         dateOfBirth: dateOfBirth ? new Date(dateOfBirth) : undefined,

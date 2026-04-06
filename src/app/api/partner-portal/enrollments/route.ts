@@ -9,7 +9,7 @@ import { db } from '@/lib/connect-db'
 import { courseEnrollments } from '@/db/schemas/karate/enrollments'
 import { members } from '@/db/schemas/karate/members'
 import { courses } from '@/db/schemas/karate/courses'
-import { eq, and, desc, count } from 'drizzle-orm'
+import { eq, and, desc, count, sql } from 'drizzle-orm'
 
 export async function GET(request: Request) {
   const { user: partnerUser, error } = await requirePayloadPartnerUser()
@@ -25,6 +25,12 @@ export async function GET(request: Request) {
 
     if (status === 'active') {
       conditions.push(eq(courseEnrollments.isActive, true))
+    } else if (status === 'completed') {
+      conditions.push(eq(courseEnrollments.isActive, false))
+      conditions.push(sql`${courseEnrollments.completedAt} is not null`)
+    } else if (status === 'dropped') {
+      conditions.push(eq(courseEnrollments.isActive, false))
+      conditions.push(sql`${courseEnrollments.droppedAt} is not null`)
     }
 
     const offset = (page - 1) * limit

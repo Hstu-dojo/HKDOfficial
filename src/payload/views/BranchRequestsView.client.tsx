@@ -140,10 +140,13 @@ export default function BranchRequestsView() {
               <thead>
                 <tr>
                   <th style={{ padding: '1rem', borderBottom: '1px solid var(--theme-elevation-200)' }}>Student</th>
+                  <th style={{ padding: '1rem', borderBottom: '1px solid var(--theme-elevation-200)' }}>Phone</th>
                   <th style={{ padding: '1rem', borderBottom: '1px solid var(--theme-elevation-200)' }}>From Branch</th>
                   <th style={{ padding: '1rem', borderBottom: '1px solid var(--theme-elevation-200)' }}>Reason</th>
                   <th style={{ padding: '1rem', borderBottom: '1px solid var(--theme-elevation-200)' }}>Date</th>
+                  <th style={{ padding: '1rem', borderBottom: '1px solid var(--theme-elevation-200)' }}>Reviewed</th>
                   <th style={{ padding: '1rem', borderBottom: '1px solid var(--theme-elevation-200)' }}>Status</th>
+                  <th style={{ padding: '1rem', borderBottom: '1px solid var(--theme-elevation-200)' }}>Review Notes</th>
                   {statusFilter === 'pending' && (
                     <th style={{ padding: '1rem', borderBottom: '1px solid var(--theme-elevation-200)' }}>Actions</th>
                   )}
@@ -162,6 +165,7 @@ export default function BranchRequestsView() {
                         )}
                       </div>
                     </td>
+                    <td style={{ padding: '1rem' }}>{req.memberPhone || '—'}</td>
                     <td style={{ padding: '1rem' }}>{req.fromPartnerName || '—'}</td>
                     <td style={{ padding: '1rem', maxWidth: '200px' }}>
                       <span style={{ fontSize: '0.8125rem', color: 'var(--theme-elevation-500)' }}>
@@ -169,8 +173,14 @@ export default function BranchRequestsView() {
                       </span>
                     </td>
                     <td style={{ padding: '1rem' }}>{new Date(req.createdAt).toLocaleDateString()}</td>
+                    <td style={{ padding: '1rem' }}>{req.reviewedAt ? new Date(req.reviewedAt).toLocaleDateString() : '—'}</td>
                     <td style={{ padding: '1rem' }}>
                       <StatusBadge status={req.status} />
+                    </td>
+                    <td style={{ padding: '1rem', maxWidth: '240px' }}>
+                      <span className="field-description" style={{ margin: 0 }} title={req.reviewNotes || undefined}>
+                        {req.reviewNotes || '—'}
+                      </span>
                     </td>
                     {statusFilter === 'pending' && (
                       <td style={{ padding: '1rem' }}>

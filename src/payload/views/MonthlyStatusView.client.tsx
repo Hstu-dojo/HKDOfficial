@@ -198,6 +198,7 @@ export default function MonthlyStatusView() {
                   <th style={{ padding: '1rem', borderBottom: '1px solid var(--theme-border-color)' }}>Member</th>
                   <th style={{ padding: '1rem', borderBottom: '1px solid var(--theme-border-color)' }}>ID</th>
                   <th style={{ padding: '1rem', borderBottom: '1px solid var(--theme-border-color)' }}>Status</th>
+                  <th style={{ padding: '1rem', borderBottom: '1px solid var(--theme-border-color)' }}>Notes</th>
                   <th style={{ padding: '1rem', borderBottom: '1px solid var(--theme-border-color)', textAlign: 'center' }}>Toggle</th>
                 </tr>
               </thead>
@@ -226,6 +227,11 @@ export default function MonthlyStatusView() {
                           (default)
                         </span>
                       )}
+                    </td>
+                    <td style={{ padding: '1rem', maxWidth: '320px' }}>
+                      <span className="field-description" style={{ margin: 0 }} title={m.notes || undefined}>
+                        {m.notes || '—'}
+                      </span>
                     </td>
                     <td style={{ padding: '1rem', textAlign: 'center' }}>
                       <button

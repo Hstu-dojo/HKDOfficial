@@ -11,6 +11,7 @@ interface Schedule {
   id: string
   courseId: string
   courseName: string
+  courseNameBangla?: string | null
   dayOfWeek: number
   dayName: string
   startTime: string
@@ -320,7 +321,12 @@ export default function SchedulesView() {
                     {currentDaySchedules.map((s) => (
                       <tr key={s.id} className="row" style={{ borderBottom: '1px solid var(--theme-elevation-100)' }}>
                         <td style={{ padding: '1rem' }}>
-                          <span className="field-label" style={{ margin: 0 }}>{s.courseName}</span>
+                          <div>
+                            <span className="field-label" style={{ margin: 0 }}>{s.courseName}</span>
+                            {s.courseNameBangla && (
+                              <div className="field-description" style={{ margin: 0 }}>{s.courseNameBangla}</div>
+                            )}
+                          </div>
                         </td>
                         <td style={{ padding: '1rem' }}>
                           <span className="field-description" style={{ margin: 0 }}>
@@ -330,7 +336,11 @@ export default function SchedulesView() {
                         </td>
                         <td style={{ padding: '1rem' }}>
                           <span className="field-description" style={{ margin: 0 }}>
-                            {s.instructors.map((i) => i.name || 'Unknown').join(', ')}
+                            {s.instructors
+                              .slice()
+                              .sort((a, b) => (a.isPrimary === b.isPrimary ? 0 : a.isPrimary ? -1 : 1))
+                              .map((i) => `${i.name || 'Unknown'}${i.isPrimary ? ' (Primary)' : ''}`)
+                              .join(', ')}
                           </span>
                         </td>
                         <td style={{ padding: '1rem' }}>

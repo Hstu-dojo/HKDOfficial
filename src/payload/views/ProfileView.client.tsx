@@ -16,6 +16,7 @@ interface Partner {
 
 export default function ProfileView() {
   const [partner, setPartner] = useState<Partner | null>(null)
+  const [stats, setStats] = useState<{ totalMembers: number; totalCourses: number } | null>(null)
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
   const [message, setMessage] = useState('')
@@ -34,6 +35,7 @@ export default function ProfileView() {
       .then((data) => {
         if (data.partner) {
           setPartner(data.partner)
+          if (data.stats) setStats(data.stats)
           setForm({
             name: data.partner.name || '',
             description: data.partner.description || '',
@@ -92,6 +94,11 @@ export default function ProfileView() {
             <header className="view-header">
               <h1 className="view-header__title">Organization Profile</h1>
               <p className="field-description">Public page: /org/{partner?.slug}</p>
+              {stats && (
+                <p className="field-description" style={{ marginTop: '0.25rem' }}>
+                  {stats.totalMembers} member{stats.totalMembers !== 1 ? 's' : ''} · {stats.totalCourses} active course{stats.totalCourses !== 1 ? 's' : ''}
+                </p>
+              )}
             </header>
 
       {message && (

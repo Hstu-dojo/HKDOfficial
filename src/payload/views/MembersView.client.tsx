@@ -13,8 +13,11 @@ interface Member {
   beltRank: string | null
   studentLevel: string | null
   isActive: boolean
+  isProfileComplete?: boolean
+  hasAccount?: boolean
   email: string | null
   joinDate: string | null
+  picture?: string | null
 }
 
 interface Pagination {
@@ -28,6 +31,7 @@ export default function MembersView() {
   const [members, setMembers] = useState<Member[]>([])
   const [loading, setLoading] = useState(true)
   const [search, setSearch] = useState('')
+  const [statusFilter, setStatusFilter] = useState<'all' | 'active' | 'inactive'>('all')
   const [page, setPage] = useState(1)
   const [pagination, setPagination] = useState<Pagination>({
     page: 1,
@@ -42,6 +46,7 @@ export default function MembersView() {
   const [form, setForm] = useState({
     firstName: '',
     lastName: '',
+    fullNameBangla: '',
     email: '',
     phone: '',
   })
@@ -54,6 +59,7 @@ export default function MembersView() {
     try {
       const params = new URLSearchParams({ page: String(page), limit: '20' })
       if (search) params.set('search', search)
+      if (statusFilter !== 'all') params.set('status', statusFilter)
       const res = await fetch(`/api/partner-portal/members?${params}`)
       const data = await res.json()
       if (!res.ok) throw new Error(data?.error || 'Failed to load members')
@@ -72,7 +78,11 @@ export default function MembersView() {
     } finally {
       setLoading(false)
     }
-  }, [page, search])
+  }, [page, search, statusFilter])
+
+  useEffect(() => {
+    setPage(1)
+  }, [statusFilter])
 
   useEffect(() => {
     fetchMembers()
@@ -89,6 +99,7 @@ export default function MembersView() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           fullNameEnglish,
+          fullNameBangla: form.fullNameBangla || null,
           phoneNumber: form.phone,
           email: form.email || null,
         }),
@@ -97,7 +108,7 @@ export default function MembersView() {
       if (!res.ok) throw new Error(data.error)
       setMessage(`Member created: ${data.member.memberNumber}`)
       setShowCreate(false)
-      setForm({ firstName: '', lastName: '', email: '', phone: '' })
+      setForm({ firstName: '', lastName: '', fullNameBangla: '', email: '', phone: '' })
       fetchMembers()
     } catch (err: any) {
       setMessage(err.message || 'Failed to create member')
@@ -107,6 +118,13 @@ export default function MembersView() {
   }
 
   const totalPages = pagination.totalPages || Math.ceil((pagination.total || 0) / 20)
+
+  const formatDate = (value: string | null) => {
+    if (!value) return '—'
+    const date = new Date(value)
+    if (Number.isNaN(date.getTime())) return '—'
+    return date.toLocaleDateString()
+  }
 
   return (
     <>
@@ -169,6 +187,14 @@ export default function MembersView() {
               />
             </div>
             <div className="field-type text">
+              <label className="field-label">Name (Bangla)</label>
+              <input
+                value={form.fullNameBangla}
+                onChange={(e) => setForm((p) => ({ ...p, fullNameBangla: e.target.value }))}
+                className="input-string"
+              />
+            </div>
+            <div className="field-type text">
               <label className="field-label">Email</label>
               <input
                 type="email"
@@ -208,6 +234,23 @@ export default function MembersView() {
         style={{ marginBottom: '1rem', width: '100%' }}
       />
 
+      {/* Status filter */}
+      <div className="tabs-container" style={{ marginBottom: '1.5rem', borderBottom: '1px solid var(--theme-elevation-200)', display: 'flex', gap: '1rem' }}>
+        {([
+          { key: 'all', label: 'All' },
+          { key: 'active', label: 'Active' },
+          { key: 'inactive', label: 'Inactive' },
+        ] as const).map((t) => (
+          <button
+            key={t.key}
+            onClick={() => setStatusFilter(t.key)}
+            className={`btn btn--style-${statusFilter === t.key ? 'primary' : 'secondary'} btn--size-small`}
+          >
+            {t.label}
+          </button>
+        ))}
+      </div>
+
       {/* Table */}
       {loading ? (
         <p>Loading...</p>
@@ -217,22 +260,56 @@ export default function MembersView() {
             <table className="table" cellPadding="0" cellSpacing="0" style={{ width: '100%', textAlign: 'left' }}>
               <thead>
                 <tr>
+                  <th style={{ padding: '1rem', borderBottom: '1px solid var(--theme-elevation-200)' }}>Photo</th>
                   <th style={{ padding: '1rem', borderBottom: '1px solid var(--theme-elevation-200)' }}>Member #</th>
                   <th style={{ padding: '1rem', borderBottom: '1px solid var(--theme-elevation-200)' }}>Name</th>
                   <th style={{ padding: '1rem', borderBottom: '1px solid var(--theme-elevation-200)' }}>Email</th>
                   <th style={{ padding: '1rem', borderBottom: '1px solid var(--theme-elevation-200)' }}>Phone</th>
                   <th style={{ padding: '1rem', borderBottom: '1px solid var(--theme-elevation-200)' }}>Belt</th>
+                  <th style={{ padding: '1rem', borderBottom: '1px solid var(--theme-elevation-200)' }}>Level</th>
+                  <th style={{ padding: '1rem', borderBottom: '1px solid var(--theme-elevation-200)' }}>Joined</th>
+                  <th style={{ padding: '1rem', borderBottom: '1px solid var(--theme-elevation-200)' }}>Complete</th>
+                  <th style={{ padding: '1rem', borderBottom: '1px solid var(--theme-elevation-200)' }}>Account</th>
                   <th style={{ padding: '1rem', borderBottom: '1px solid var(--theme-elevation-200)' }}>Status</th>
                 </tr>
               </thead>
               <tbody>
                 {members.map((m) => (
                   <tr key={m.id} className="row" style={{ borderBottom: '1px solid var(--theme-elevation-100)' }}>
+                    <td style={{ padding: '1rem' }}>
+                      {m.picture ? (
+                        // eslint-disable-next-line @next/next/no-img-element
+                        <img
+                          src={m.picture}
+                          alt=""
+                          width={32}
+                          height={32}
+                          style={{ borderRadius: '9999px', objectFit: 'cover', border: '1px solid var(--theme-elevation-150)' }}
+                        />
+                      ) : (
+                        <span style={{ color: 'var(--theme-elevation-400)' }}>—</span>
+                      )}
+                    </td>
                     <td style={{ padding: '1rem' }}>{m.memberNumber}</td>
-                    <td style={{ padding: '1rem' }}>{m.fullNameEnglish || m.fullNameBangla || '—'}</td>
+                    <td style={{ padding: '1rem' }}>
+                      <div>
+                        <div style={{ fontWeight: 500 }}>
+                          {m.fullNameEnglish || m.fullNameBangla || '—'}
+                        </div>
+                        {m.fullNameBangla && m.fullNameEnglish && (
+                          <div className="field-description" style={{ margin: 0 }}>
+                            {m.fullNameBangla}
+                          </div>
+                        )}
+                      </div>
+                    </td>
                     <td style={{ padding: '1rem' }}>{m.email || '—'}</td>
                     <td style={{ padding: '1rem' }}>{m.phoneNumber || '—'}</td>
                     <td style={{ padding: '1rem' }}>{m.beltRank || '—'}</td>
+                    <td style={{ padding: '1rem' }}>{m.studentLevel || '—'}</td>
+                    <td style={{ padding: '1rem' }}>{formatDate(m.joinDate)}</td>
+                    <td style={{ padding: '1rem' }}>{m.isProfileComplete ? 'Yes' : 'No'}</td>
+                    <td style={{ padding: '1rem' }}>{m.hasAccount ? 'Yes' : 'No'}</td>
                     <td style={{ padding: '1rem' }}>
                       <span
                         style={{
@@ -251,7 +328,7 @@ export default function MembersView() {
                 ))}
                 {members.length === 0 && (
                   <tr>
-                    <td colSpan={6} style={{ padding: '1.25rem', textAlign: 'center', color: 'var(--theme-elevation-400)' }}>
+                    <td colSpan={11} style={{ padding: '1.25rem', textAlign: 'center', color: 'var(--theme-elevation-400)' }}>
                       No members found
                     </td>
                   </tr>
