@@ -8,8 +8,8 @@ import { NextResponse } from 'next/server'
 import { requirePayloadPartnerUser } from '@/lib/payload/auth'
 import { db } from '@/lib/connect-db'
 import { registrations, members } from '@/db/schemas/karate/members'
-import { user } from '@/db/schemas/auth'
-import { eq, and, desc, count, sql } from 'drizzle-orm'
+import { getPartnerIdFromRegistrationRow, parseNotesRecord } from '@/lib/partner-assignment'
+import { eq, and, desc, count } from 'drizzle-orm'
 import { normalizeStudentLevel } from '@/lib/auth/external-auth'
 
 export async function GET(request: Request) {
@@ -89,19 +89,23 @@ export async function PATCH(request: Request) {
       return NextResponse.json({ error: 'action must be "approve" or "reject"' }, { status: 400 })
     }
 
-    // Fetch the registration
-    const [reg] = await db
-      .select()
-      .from(registrations)
-      .where(
-        and(
-          eq(registrations.id, registrationId),
-          eq(registrations.partnerId, partnerUser.partnerId)
-        )
-      )
-      .limit(1)
+    // Fetch the registration (do NOT trust partnerId column alone; legacy rows may store partnerId only in notes)
+    const [reg] = await db.select().from(registrations).where(eq(registrations.id, registrationId)).limit(1)
 
     if (!reg) {
+      return NextResponse.json({ error: 'Registration not found' }, { status: 404 })
+    }
+
+    const resolvedPartnerId = getPartnerIdFromRegistrationRow(reg)
+    if (!resolvedPartnerId) {
+      return NextResponse.json(
+        { error: 'Cannot process: registration has no partner/venue assigned.' },
+        { status: 400 }
+      )
+    }
+
+    // Authorization: partner admins can only act on registrations for their partner
+    if (resolvedPartnerId !== partnerUser.partnerId) {
       return NextResponse.json({ error: 'Registration not found' }, { status: 404 })
     }
 
@@ -117,6 +121,8 @@ export async function PATCH(request: Request) {
       .set({
         status: newStatus,
         reviewedAt: new Date(),
+        // Backfill partnerId column for legacy rows
+        partnerId: resolvedPartnerId,
         updatedAt: new Date(),
       })
       .where(eq(registrations.id, registrationId))
@@ -132,17 +138,14 @@ export async function PATCH(request: Request) {
 
       if (existingMember.length === 0) {
         // Parse form data from notes for additional fields
-        let formData: any = {}
-        try {
-          formData = typeof reg.notes === 'string' ? JSON.parse(reg.notes || '{}') : (reg.notes || {})
-        } catch (e) {}
+        const formData = parseNotesRecord(reg.notes)
 
         // Generate member number
         const prefix = `HKD-${partnerUser.partnerSlug.toUpperCase().slice(0, 8)}`
         const existingCount = await db
           .select({ total: count() })
           .from(members)
-          .where(eq(members.partnerId, partnerUser.partnerId))
+          .where(eq(members.partnerId, resolvedPartnerId))
 
         const memberNumber = `${prefix}-${String((existingCount[0]?.total || 0) + 1).padStart(4, '0')}`
 
@@ -150,22 +153,22 @@ export async function PATCH(request: Request) {
           userId: reg.userId,
           memberNumber,
           fullNameEnglish: `${reg.firstName} ${reg.lastName}`.trim(),
-          fullNameBangla: formData.usernameBn || null,
-          fatherName: formData.fatherName || null,
-          motherName: formData.motherName || null,
+          fullNameBangla: (formData.usernameBn as string) || null,
+          fatherName: (formData.fatherName as string) || null,
+          motherName: (formData.motherName as string) || null,
           dateOfBirth: reg.dateOfBirth,
-          gender: formData.sex || null,
-          bloodGroup: formData.bloodGroup || null,
-          religion: formData.religion || null,
-          nationality: formData.nationality || null,
+          gender: (formData.sex as string) || null,
+          bloodGroup: (formData.bloodGroup as string) || null,
+          religion: (formData.religion as string) || null,
+          nationality: (formData.nationality as string) || null,
           phoneNumber: reg.phoneNumber,
-          presentAddress: formData.address || null,
-          permanentAddress: formData.permanentAddress || null,
-          nid: formData.nid || null,
-          profession: formData.occupation || null,
-          educationQualification: formData.levelClass || null,
-          studentLevel: normalizeStudentLevel(formData.levelClass),
-          partnerId: partnerUser.partnerId,
+          presentAddress: (formData.address as string) || null,
+          permanentAddress: (formData.permanentAddress as string) || null,
+          nid: (formData.nid as string) || null,
+          profession: (formData.occupation as string) || null,
+          educationQualification: (formData.levelClass as string) || null,
+          studentLevel: normalizeStudentLevel(formData.levelClass as string),
+          partnerId: resolvedPartnerId,
           emergencyContact: reg.emergencyContact,
           emergencyPhone: reg.emergencyPhone,
           isActive: true,
@@ -177,7 +180,7 @@ export async function PATCH(request: Request) {
         await db
           .update(members)
           .set({
-            partnerId: partnerUser.partnerId,
+            partnerId: resolvedPartnerId,
             isActive: true,
             updatedAt: new Date(),
           })

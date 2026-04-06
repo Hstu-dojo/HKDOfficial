@@ -7,6 +7,8 @@ import { db } from '@/lib/connect-db';
 import { courses, courseSchedules } from '@/db/schemas/karate';
 import { eq } from 'drizzle-orm';
 import { notFound } from 'next/navigation';
+import { createClient } from '@/lib/supabase/server';
+import { getPartnerIdForSupabaseUser } from '@/lib/partner-assignment';
 import { 
   CalendarDaysIcon, 
   ClockIcon, 
@@ -39,6 +41,11 @@ export default async function CourseDetailsPage({ params }: { params: Promise<{ 
   }
 
   const schedules = await db.select().from(courseSchedules).where(eq(courseSchedules.courseId, course.id));
+
+  const supabase = await createClient();
+  const { data: { user: authUser } } = await supabase.auth.getUser();
+  const viewerPartnerId = authUser ? await getPartnerIdForSupabaseUser(authUser.id) : null;
+  const canSeePricing = !!(viewerPartnerId && course.partnerId && course.partnerId === viewerPartnerId);
 
   const features = course.features as string[] || [];
 
@@ -168,21 +175,27 @@ export default async function CourseDetailsPage({ params }: { params: Promise<{ 
                   <div className="lg:col-span-1">
                     <div className="sticky top-24 bg-slate-50 dark:bg-slate-900/50 rounded-xl p-6 border border-slate-200 dark:border-slate-700">
                       <h3 className="text-lg font-semibold text-slate-900 dark:text-slate-100 mb-4">Pricing</h3>
-                      
-                      <div className="space-y-4">
-                        <div className="flex justify-between items-center pb-3 border-b border-slate-200 dark:border-slate-700">
-                          <span className="text-slate-500 dark:text-slate-400">Admission Fee</span>
-                          <span className="font-bold text-slate-900 dark:text-slate-100 text-xl">
-                            ৳{course.admissionFee}
-                          </span>
+
+                      {canSeePricing ? (
+                        <div className="space-y-4">
+                          <div className="flex justify-between items-center pb-3 border-b border-slate-200 dark:border-slate-700">
+                            <span className="text-slate-500 dark:text-slate-400">Admission Fee</span>
+                            <span className="font-bold text-slate-900 dark:text-slate-100 text-xl">
+                              ৳{course.admissionFee}
+                            </span>
+                          </div>
+                          <div className="flex justify-between items-center">
+                            <span className="text-slate-500 dark:text-slate-400">Monthly Fee</span>
+                            <span className="font-bold text-primary text-2xl">
+                              ৳{course.monthlyFee}
+                            </span>
+                          </div>
                         </div>
-                        <div className="flex justify-between items-center">
-                          <span className="text-slate-500 dark:text-slate-400">Monthly Fee</span>
-                          <span className="font-bold text-primary text-2xl">
-                            ৳{course.monthlyFee}
-                          </span>
+                      ) : (
+                        <div className="rounded-lg border border-slate-200 dark:border-slate-700 bg-white/40 dark:bg-slate-900/40 p-4">
+                          <p className="text-sm text-slate-600 dark:text-slate-400">Pricing is hidden until onboarding is completed.</p>
                         </div>
-                      </div>
+                      )}
 
                       {course.targetBelt && (
                         <div className="mt-4 p-3 rounded-lg bg-primary/10 border border-primary/20">

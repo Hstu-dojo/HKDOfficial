@@ -7,6 +7,8 @@ import Footer from '@/components/layout/footer';
 import MaxWidthWrapper from '@/components/maxWidthWrapper';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import Link from 'next/link';
+import { createClient } from '@/lib/supabase/server';
+import { getPartnerIdForSupabaseUser } from '@/lib/partner-assignment';
 
 interface PartnerPageProps {
   params: Promise<{
@@ -17,6 +19,10 @@ interface PartnerPageProps {
 
 export default async function PartnerPage({ params }: PartnerPageProps) {
   const { slug } = await params;
+
+  const supabase = await createClient();
+  const { data: { user: authUser } } = await supabase.auth.getUser();
+  const viewerPartnerId = authUser ? await getPartnerIdForSupabaseUser(authUser.id) : null;
 
   // Fetch partner by slug
   const partner = await db.query.partners.findFirst({
@@ -34,6 +40,8 @@ export default async function PartnerPage({ params }: PartnerPageProps) {
       eq(courses.isActive, true)
     ),
   });
+
+  const canSeePricing = !!(viewerPartnerId && viewerPartnerId === partner.id);
 
   return (
     <>
@@ -127,7 +135,9 @@ export default async function PartnerPage({ params }: PartnerPageProps) {
                         </div>
                         <div className="flex justify-between">
                           <span className="text-slate-500">Monthly Fee:</span>
-                          <span className="font-medium">{course.currency} {(course.monthlyFee / 100).toFixed(2)}</span>
+                          <span className="font-medium">
+                            {canSeePricing ? `${course.currency} ${(course.monthlyFee / 100).toFixed(2)}` : '—'}
+                          </span>
                         </div>
                       </div>
                       <Link 

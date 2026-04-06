@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/connect-db";
 import { courses, courseSchedules, courseInstructors, user } from "@/db/schema";
 import { eq, and, desc } from "drizzle-orm";
+import { createClient } from '@/lib/supabase/server';
+import { getPartnerIdForSupabaseUser } from '@/lib/partner-assignment';
 
 /**
  * @swagger
@@ -22,6 +24,10 @@ import { eq, and, desc } from "drizzle-orm";
  */
 export async function GET(request: NextRequest) {
   try {
+    const supabase = await createClient();
+    const { data: { user: authUser } } = await supabase.auth.getUser();
+    const viewerPartnerId = authUser ? await getPartnerIdForSupabaseUser(authUser.id) : null;
+
     const searchParams = request.nextUrl.searchParams;
     const enrollmentFilter = searchParams.get("enrollmentOpen");
     const partnerFilter = searchParams.get("partnerId");
@@ -68,6 +74,7 @@ export async function GET(request: NextRequest) {
     // Get schedules and instructors for each course
     const coursesWithDetails = await Promise.all(
       allCourses.map(async (course) => {
+        const canSeePricing = !!(viewerPartnerId && course.partnerId && course.partnerId === viewerPartnerId);
         const schedules = await db
           .select({
             dayOfWeek: courseSchedules.dayOfWeek,
@@ -95,6 +102,8 @@ export async function GET(request: NextRequest) {
 
         return {
           ...course,
+          admissionFee: canSeePricing ? course.admissionFee : null,
+          monthlyFee: canSeePricing ? course.monthlyFee : null,
           schedules,
           instructors,
           isFull,

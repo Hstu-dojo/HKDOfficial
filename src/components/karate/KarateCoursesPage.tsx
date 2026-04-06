@@ -24,8 +24,8 @@ interface Course {
   beltLevelFrom?: string;
   beltLevelTo?: string;
   durationMonths?: number;
-  monthlyFee: number;
-  admissionFee: number;
+  monthlyFee: number | null;
+  admissionFee: number | null;
   currency: string;
   maxCapacity?: number;
   currentEnrollment: number;
@@ -144,12 +144,14 @@ export default function KarateCoursesPage({ initialCourses, enrolledCourseIds = 
     }
   };
 
-  const formatCurrency = (amount: number, currency: string) =>
-    new Intl.NumberFormat('en-BD', {
+  const formatCurrency = (amount: number | null | undefined, currency: string) => {
+    if (amount == null) return '—'
+    return new Intl.NumberFormat('en-BD', {
       style: 'currency',
       currency,
       minimumFractionDigits: 0,
-    }).format(amount / 100);
+    }).format(amount / 100)
+  };
 
   const formatTime = (time: string) => {
     const [hours, minutes] = time.split(':');
@@ -378,7 +380,7 @@ export default function KarateCoursesPage({ initialCourses, enrolledCourseIds = 
                                 {formatCurrency(course.monthlyFee, course.currency)}
                               </p>
                             </div>
-                            {course.admissionFee > 0 && (
+                            {course.admissionFee != null && course.admissionFee > 0 && (
                               <div className="text-right">
                                 <p className="text-[10px] font-medium text-muted-foreground uppercase tracking-wider">Admission</p>
                                 <p className="text-base font-semibold">

@@ -18,6 +18,7 @@
     "db:test-permissions": "tsx scripts/test-permissions.ts",
     "db:verify-rbac": "tsx scripts/verify-rbac.ts",
     "db:check-user-roles": "tsx scripts/check-user-roles.ts",
+    "test:partner-assignment": "tsx scripts/test-partner-assignment.ts",
     "postbuild": "next-sitemap",
     "postinstall": "bash scripts/patch-payload.sh",
     "start": "next start",

@@ -145,10 +145,13 @@ export async function submitOnboarding(formData: any) {
 
       const extraData: Record<string, any> = existing ? { ...existingNotes, ...formData } : { ...formData };
 
+      // Partner/venue selection rules:
+      // - If already set on the registration, treat it as immutable here.
+      // - If missing, allow setting it once (new registration or legacy rows with null partnerId).
       const partnerIdToStore =
+        existing?.partnerId ||
         (typeof formData?.partnerId === 'string' && formData.partnerId) ||
         (typeof existingNotes?.partnerId === 'string' && existingNotes.partnerId) ||
-        existing?.partnerId ||
         null;
 
       // Ensure important fields exist in notes even if the UI doesn't ask for them
@@ -171,6 +174,8 @@ export async function submitOnboarding(formData: any) {
             phoneNumber: phoneToStore,
             emergencyContact: emergencyContactToStore,
             emergencyPhone: emergencyPhoneToStore,
+            // Backfill partnerId once if it was previously null (legacy records)
+            ...(existing.partnerId ? {} : { partnerId: partnerIdToStore }),
             notes: JSON.stringify(extraData),
             status: 'pending', 
             updatedAt: new Date()

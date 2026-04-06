@@ -9,6 +9,7 @@ import { enrollmentApplications } from "@/db/schemas/karate/enrollments";
 import { user as userSchema } from "@/db/schemas/auth";
 import { eq, and, ne } from "drizzle-orm";
 import { createClient } from "@/lib/supabase/server";
+import { getPartnerIdForSupabaseUser } from '@/lib/partner-assignment';
 
 export const metadata: Metadata = {
   title: 'Karate Courses | HKD Dojo',
@@ -61,10 +62,15 @@ async function getUserEnrolledCourses(): Promise<{ courseIds: string[]; applicat
 
 async function getCourses() {
   try {
+    const supabase = await createClient();
+    const { data: { user: authUser } } = await supabase.auth.getUser();
+    const viewerPartnerId = authUser ? await getPartnerIdForSupabaseUser(authUser.id) : null;
+
     const activeCourses = await db.select().from(courses).where(eq(courses.isActive, true));
 
     const coursesWithSchedules = await Promise.all(activeCourses.map(async (course) => {
       const schedules = await db.select().from(courseSchedules).where(eq(courseSchedules.courseId, course.id));
+      const canSeePricing = !!(viewerPartnerId && course.partnerId && course.partnerId === viewerPartnerId);
       return {
         id: course.id,
         name: course.name,
@@ -77,8 +83,8 @@ async function getCourses() {
         beltLevelFrom: course.minimumBelt ?? undefined,
         beltLevelTo: course.targetBelt ?? undefined,
         durationMonths: course.duration ?? undefined,
-        monthlyFee: course.monthlyFee,
-        admissionFee: course.admissionFee,
+        monthlyFee: canSeePricing ? course.monthlyFee : null,
+        admissionFee: canSeePricing ? course.admissionFee : null,
         currency: course.currency,
         maxCapacity: course.maxStudents ?? undefined,
         currentEnrollment: course.currentStudents ?? 0,

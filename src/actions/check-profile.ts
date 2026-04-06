@@ -3,6 +3,7 @@
 import { db } from "@/lib/connect-db";
 import { members, registrations } from "@/db/schemas/karate";
 import { eq } from "drizzle-orm";
+import { getPartnerIdFromRegistrationRow } from '@/lib/partner-assignment';
 // import { auth } from "@/auth"; // Assuming you have an auth helper, or use getSession mechanism you have. 
 // Wait, I see `useSession` in client components, but server side?
 // Checking `src/hooks/useSessionCompat` might give a clue, or `src/middleware.ts`
@@ -19,6 +20,10 @@ export async function checkUserProfileStatus(userId: string) {
 
   if (member) {
     if (member.isProfileComplete) {
+      // A complete profile should always be tied to a partner/venue.
+      if (!member.partnerId) {
+        return { isComplete: false, message: "No training venue assigned. Please contact support.", profileId: member.id };
+      }
       return { isComplete: true, profileId: member.id };
     }
     return { isComplete: false, message: "Profile incomplete", profileId: member.id };
@@ -33,7 +38,11 @@ export async function checkUserProfileStatus(userId: string) {
       // If approved, they should have a member record. If not, something is sync-broken.
       // If pending or approved, allow them to register for programs
       if (registration.status === 'approved' || registration.status === 'pending') {
-        return { isComplete: true, status: registration.status };
+        const partnerId = getPartnerIdFromRegistrationRow(registration);
+        if (!partnerId) {
+          return { isComplete: false, message: "Please select your training venue to continue.", status: registration.status };
+        }
+        return { isComplete: true, status: registration.status, partnerId };
       }
       // Rejected or other statuses
       return { 

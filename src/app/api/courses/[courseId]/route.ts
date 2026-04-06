@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/connect-db";
 import { courses, courseSchedules, courseInstructors, user } from "@/db/schema";
 import { eq, and } from "drizzle-orm";
+import { createClient } from '@/lib/supabase/server';
+import { getPartnerIdForSupabaseUser } from '@/lib/partner-assignment';
 
 interface RouteParams {
   params: Promise<{ courseId: string }>;
@@ -28,6 +30,10 @@ interface RouteParams {
  */
 export async function GET(request: NextRequest, { params }: RouteParams) {
   try {
+    const supabase = await createClient();
+    const { data: { user: authUser } } = await supabase.auth.getUser();
+    const viewerPartnerId = authUser ? await getPartnerIdForSupabaseUser(authUser.id) : null;
+
     const { courseId } = await params;
 
     const [course] = await db
@@ -53,6 +59,7 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
         isEnrollmentOpen: courses.isEnrollmentOpen,
         bkashNumber: courses.bkashNumber,
         bkashQrCodeUrl: courses.bkashQrCodeUrl,
+        partnerId: courses.partnerId,
         isActive: courses.isActive,
       })
       .from(courses)
@@ -61,6 +68,8 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
     if (!course || !course.isActive) {
       return NextResponse.json({ error: "Course not found" }, { status: 404 });
     }
+
+    const canSeePricing = !!(viewerPartnerId && course.partnerId && course.partnerId === viewerPartnerId);
 
     // Get schedules
     const schedules = await db
@@ -98,6 +107,8 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
 
     return NextResponse.json({
       ...course,
+      admissionFee: canSeePricing ? course.admissionFee : null,
+      monthlyFee: canSeePricing ? course.monthlyFee : null,
       schedules: formattedSchedules,
       instructors,
       isFull,

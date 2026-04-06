@@ -10,6 +10,9 @@ import { db } from '@/lib/connect-db'
 import { members } from '@/db/schemas/karate/members'
 import { user } from '@/db/schemas/auth'
 import { eq, and, ilike, or, desc, sql, count } from 'drizzle-orm'
+import { createClient as createSupabaseAdminClient } from '@supabase/supabase-js'
+import { Resend } from 'resend'
+import crypto from 'crypto'
 
 export async function GET(request: Request) {
   const { user: partnerUser, error } = await requirePayloadPartnerUser()
@@ -116,6 +119,9 @@ export async function POST(request: Request) {
     // If email is provided, try to link to existing user account
     let userId: string | undefined = undefined
 
+    // If we create a new auth account, we'll email this password once.
+    let createdAuthPassword: string | null = null
+
     if (email) {
       const existingUser = await db
         .select({ id: user.id })
@@ -126,8 +132,90 @@ export async function POST(request: Request) {
       if (existingUser.length > 0) {
         userId = existingUser[0].id
       }
-      // If no user exists, profile is created without a linked account
-      // The user can be linked later via attach/detach APIs
+
+      // If no user exists, optionally create an auth account + local user record
+      if (!userId) {
+        if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.SUPABASE_SERVICE_ROLE_KEY) {
+          return NextResponse.json(
+            { error: 'Auth provisioning is not configured on the server' },
+            { status: 500 }
+          )
+        }
+
+        const supabaseAdmin = createSupabaseAdminClient(
+          process.env.NEXT_PUBLIC_SUPABASE_URL,
+          process.env.SUPABASE_SERVICE_ROLE_KEY,
+          {
+            auth: {
+              autoRefreshToken: false,
+              persistSession: false,
+            },
+          }
+        )
+
+        const password = crypto.randomBytes(12).toString('base64url')
+        const { data: created, error: createErr } = await supabaseAdmin.auth.admin.createUser({
+          email,
+          password,
+          email_confirm: true,
+          user_metadata: {
+            createdByPartner: partnerUser.partnerId,
+            createdByPartnerAdmin: partnerUser.name,
+          },
+        })
+
+        if (createErr || !created?.user) {
+          console.error('[PartnerPortal] Supabase user create error:', createErr)
+          return NextResponse.json(
+            { error: 'Failed to create auth account for this email' },
+            { status: 500 }
+          )
+        }
+
+        const supabaseUserId = created.user.id
+
+        const baseUsername = (fullNameEnglish || email.split('@')[0])
+          .toLowerCase()
+          .replace(/[^a-z0-9]/g, '')
+          .slice(0, 20) || 'member'
+
+        let userName = `${baseUsername}${Math.floor(Math.random() * 10000)}`
+        for (let i = 0; i < 5; i++) {
+          const existingName = await db
+            .select({ id: user.id })
+            .from(user)
+            .where(eq(user.userName, userName))
+            .limit(1)
+          if (existingName.length === 0) break
+          userName = `${baseUsername}${Math.floor(Math.random() * 10000)}`
+        }
+
+        const [newUser] = await db
+          .insert(user)
+          .values({
+            supabaseUserId,
+            email,
+            emailVerified: true,
+            password: `supabase_${supabaseUserId}`,
+            userName,
+            userAvatar: '/image/avatar/Milo.svg',
+            defaultRole: 'GUEST',
+            hasPassword: true,
+            authProviders: [
+              {
+                provider: 'email',
+                email,
+                providerId: supabaseUserId,
+                linkedAt: new Date().toISOString(),
+              },
+            ] as any,
+            updatedAt: new Date(),
+          })
+          .returning({ id: user.id })
+
+        userId = newUser?.id
+        createdAuthPassword = password
+      }
     }
 
     // Create the profile record (no user account required)
@@ -150,7 +238,45 @@ export async function POST(request: Request) {
       })
       .returning()
 
-    return NextResponse.json({ member: newProfile }, { status: 201 })
+    // If we created a new auth account, email credentials to the user.
+    // (Best effort — member creation succeeds even if email fails.)
+    let emailSent = false
+    if (email && createdAuthPassword) {
+      try {
+        if (process.env.RESEND_API_KEY) {
+          const resend = new Resend(process.env.RESEND_API_KEY)
+          const appUrl = process.env.NEXT_PUBLIC_APP_URL || process.env.NEXT_PUBLIC_SITE_URL || ''
+
+          await resend.emails.send({
+            from: process.env.EMAIL_FROM_ADDRESS || 'HKD Dojo <onboarding@resend.dev>',
+            to: email,
+            subject: 'Your HKD account has been created',
+            html: `
+              <div style="font-family: ui-sans-serif, system-ui; line-height: 1.5;">
+                <p>Hello,</p>
+                <p>Your HKD account has been created by <strong>${partnerUser.name}</strong>.</p>
+                <p><strong>Login email:</strong> ${email}</p>
+                <p><strong>Temporary password:</strong> ${createdAuthPassword}</p>
+                ${appUrl ? `<p><strong>Login:</strong> <a href="${appUrl}/login">${appUrl}/login</a></p>` : ''}
+                <p>Please log in and change your password as soon as possible.</p>
+              </div>
+            `,
+          })
+          emailSent = true
+        }
+      } catch (mailErr) {
+        console.error('[PartnerPortal] Credential email send failed:', mailErr)
+      }
+    }
+
+    return NextResponse.json(
+      {
+        member: newProfile,
+        accountCreated: !!createdAuthPassword,
+        emailSent,
+      },
+      { status: 201 }
+    )
   } catch (err) {
     console.error('[PartnerPortal] Members POST error:', err)
     return NextResponse.json({ error: 'Failed to create member' }, { status: 500 })
