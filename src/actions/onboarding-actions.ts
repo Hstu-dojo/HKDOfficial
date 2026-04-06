@@ -111,6 +111,18 @@ export async function submitOnboarding(formData: any) {
         where: eq(registrations.userId, publicUser.id)
       });
       // Removed early return to allow upsert/edit
+
+      const trimmedEmail = typeof formData?.email === 'string' ? formData.email.trim() : '';
+      const emailToStore = trimmedEmail || authUser.email || (existing?.email ?? '');
+      const phoneToStore = typeof formData?.phone === 'string' ? formData.phone.trim() : (formData?.phone ?? '');
+      const dobToStore = formData?.dob;
+      const emergencyPhoneToStore =
+        (typeof formData?.emergencyPhone === 'string' ? formData.emergencyPhone.trim() : '') ||
+        phoneToStore ||
+        (existing?.emergencyPhone ?? '');
+      const emergencyContactToStore =
+        (typeof formData?.emergencyContact === 'string' ? formData.emergencyContact.trim() : '') ||
+        (existing?.emergencyContact ?? 'Not Provided');
       
       // Parse Name
       const fullName = formData.username || "";
@@ -119,25 +131,46 @@ export async function submitOnboarding(formData: any) {
       const lastName = nameParts.slice(1).join(" ") || ".";
 
       // Prepare Notes with extra data (Save ALL form data to support editing)
-      const extraData = {
-          ...formData
-      };
+      let existingNotes: Record<string, any> = {};
+      if (existing) {
+        try {
+          existingNotes =
+            typeof existing.notes === 'string'
+              ? JSON.parse(existing.notes || '{}')
+              : (existing.notes as any) || {};
+        } catch (e) {
+          existingNotes = {};
+        }
+      }
 
-      // Extract partnerId from form data (required on first registration)
-      const partnerId = formData.partnerId || null;
+      const extraData: Record<string, any> = existing ? { ...existingNotes, ...formData } : { ...formData };
+
+      const partnerIdToStore =
+        (typeof formData?.partnerId === 'string' && formData.partnerId) ||
+        (typeof existingNotes?.partnerId === 'string' && existingNotes.partnerId) ||
+        existing?.partnerId ||
+        null;
+
+      // Ensure important fields exist in notes even if the UI doesn't ask for them
+      extraData.email = emailToStore;
+      extraData.phone = phoneToStore;
+      extraData.dob = dobToStore;
+      extraData.partnerId = partnerIdToStore;
+      extraData.emergencyContact = emergencyContactToStore;
+      extraData.emergencyPhone = emergencyPhoneToStore;
 
       if (existing) {
         // Update existing registration — partnerId is NOT updatable here
         // (branch change must go through the dedicated request flow)
         await db.update(registrations)
           .set({
-            dateOfBirth: new Date(formData.dob),
-            email: formData.email,
+            dateOfBirth: new Date(dobToStore),
+            email: emailToStore,
             firstName: firstName,
             lastName: lastName,
-            phoneNumber: formData.phone,
-            emergencyContact: formData.emergencyContact || "Not Provided",
-            emergencyPhone: formData.emergencyPhone || formData.phone,
+            phoneNumber: phoneToStore,
+            emergencyContact: emergencyContactToStore,
+            emergencyPhone: emergencyPhoneToStore,
             notes: JSON.stringify(extraData),
             status: 'pending', 
             updatedAt: new Date()
@@ -147,14 +180,14 @@ export async function submitOnboarding(formData: any) {
         // Create new registration — include partnerId (venue selection)
         await db.insert(registrations).values({
             userId: publicUser.id,
-            dateOfBirth: new Date(formData.dob),
-            email: formData.email,
+            dateOfBirth: new Date(dobToStore),
+            email: emailToStore,
             firstName: firstName,
             lastName: lastName,
-            phoneNumber: formData.phone,
-            emergencyContact: formData.emergencyContact || "Not Provided",
-            emergencyPhone: formData.emergencyPhone || formData.phone,
-            partnerId: partnerId,
+            phoneNumber: phoneToStore,
+            emergencyContact: emergencyContactToStore,
+            emergencyPhone: emergencyPhoneToStore,
+            partnerId: partnerIdToStore,
             notes: JSON.stringify(extraData),
             status: 'pending'
         });
