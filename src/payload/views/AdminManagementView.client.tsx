@@ -91,42 +91,29 @@ export default function AdminManagementView() {
       <PortalStepNav label="Admin Management" />
       <div className="collection-edit">
         <div className="collection-edit__main">
-        <Gutter>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '1.5rem' }}>
-        <div>
-          <h1 style={{ fontSize: '1.5rem', fontWeight: 700, marginBottom: '0.25rem' }}>
-            Admin Management
-          </h1>
-          <p style={{ color: '#6b7280', fontSize: '0.875rem' }}>
-            Manage portal administrators for your organization
-          </p>
-        </div>
-        <button
-          onClick={() => setShowForm(!showForm)}
-          style={{
-            padding: '0.5rem 1rem',
-            backgroundColor: showForm ? '#6b7280' : '#2563eb',
-            color: 'white',
-            border: 'none',
-            borderRadius: '0.375rem',
-            cursor: 'pointer',
-            fontSize: '0.875rem',
-            fontWeight: 500,
-          }}
-        >
-          {showForm ? 'Cancel' : '+ Add Admin'}
-        </button>
-      </div>
+          <Gutter>
+            <header className="view-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '1rem' }}>
+              <div>
+                <h1 className="view-header__title">Admin Management</h1>
+                <p className="field-description">Manage portal administrators for your organization</p>
+              </div>
+              <button
+                onClick={() => setShowForm(!showForm)}
+                className={`btn btn--size-small btn--style-${showForm ? 'secondary' : 'primary'}`}
+              >
+                {showForm ? 'Cancel' : '+ Add Admin'}
+              </button>
+            </header>
 
       {message && (
         <div
+          className={`payload-toast ${message.includes('Failed') || message.includes('error') ? 'payload-toast--error' : 'payload-toast--success'}`}
           style={{
-            padding: '0.75rem',
             marginBottom: '1rem',
-            borderRadius: '0.375rem',
-            backgroundColor: message.includes('Failed') || message.includes('error') ? '#fef2f2' : '#f0fdf4',
-            color: message.includes('Failed') || message.includes('error') ? '#dc2626' : '#16a34a',
-            fontSize: '0.875rem',
+            padding: '1rem',
+            background: message.includes('Failed') || message.includes('error') ? 'var(--theme-error-100)' : 'var(--theme-success-100)',
+            color: message.includes('Failed') || message.includes('error') ? 'var(--theme-error-700)' : 'var(--theme-success-700)',
+            borderRadius: '4px',
           }}
         >
           {message}
@@ -138,40 +125,40 @@ export default function AdminManagementView() {
         <div
           style={{
             padding: '1.25rem',
-            border: '1px solid #e5e7eb',
-            borderRadius: '0.5rem',
+            border: '1px solid var(--theme-elevation-100)',
+            borderRadius: '4px',
             marginBottom: '1.5rem',
-            backgroundColor: '#f9fafb',
+            backgroundColor: 'var(--theme-bg)',
           }}
         >
           <h3 style={{ fontWeight: 600, marginBottom: '1rem' }}>Add New Admin</h3>
           <form onSubmit={handleCreate} style={{ display: 'grid', gap: '0.75rem' }}>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '0.75rem' }}>
-              <div>
-                <label style={labelStyle}>Full Name *</label>
+              <div className="field-type text">
+                <label className="field-label">Full Name *</label>
                 <input
                   required
                   value={form.name}
                   onChange={(e) => setForm((p) => ({ ...p, name: e.target.value }))}
                   placeholder="John Doe"
-                  style={inputStyle}
+                  className="input-string"
                 />
               </div>
-              <div>
-                <label style={labelStyle}>Email *</label>
+              <div className="field-type text">
+                <label className="field-label">Email *</label>
                 <input
                   required
                   type="email"
                   value={form.email}
                   onChange={(e) => setForm((p) => ({ ...p, email: e.target.value }))}
                   placeholder="admin@example.com"
-                  style={inputStyle}
+                  className="input-string"
                 />
               </div>
             </div>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '0.75rem' }}>
-              <div>
-                <label style={labelStyle}>Password *</label>
+              <div className="field-type text">
+                <label className="field-label">Password *</label>
                 <input
                   required
                   type="password"
@@ -179,16 +166,16 @@ export default function AdminManagementView() {
                   onChange={(e) => setForm((p) => ({ ...p, password: e.target.value }))}
                   placeholder="Min 8 characters"
                   minLength={8}
-                  style={inputStyle}
+                  className="input-string"
                 />
               </div>
-              <div>
-                <label style={labelStyle}>Phone</label>
+              <div className="field-type text">
+                <label className="field-label">Phone</label>
                 <input
                   value={form.phone}
                   onChange={(e) => setForm((p) => ({ ...p, phone: e.target.value }))}
                   placeholder="+1234567890"
-                  style={inputStyle}
+                  className="input-string"
                 />
               </div>
             </div>
@@ -196,17 +183,8 @@ export default function AdminManagementView() {
               <button
                 type="submit"
                 disabled={creating}
-                style={{
-                  padding: '0.5rem 1.5rem',
-                  backgroundColor: '#2563eb',
-                  color: 'white',
-                  border: 'none',
-                  borderRadius: '0.375rem',
-                  cursor: creating ? 'not-allowed' : 'pointer',
-                  fontSize: '0.875rem',
-                  fontWeight: 500,
-                  opacity: creating ? 0.6 : 1,
-                }}
+                className="btn btn--style-primary"
+                style={{ opacity: creating ? 0.6 : 1 }}
               >
                 {creating ? 'Adding...' : 'Add Admin'}
               </button>
@@ -223,30 +201,30 @@ export default function AdminManagementView() {
           style={{
             padding: '2rem',
             textAlign: 'center',
-            border: '1px solid #e5e7eb',
-            borderRadius: '0.5rem',
-            color: '#6b7280',
+            border: '1px dashed var(--theme-elevation-200)',
+            borderRadius: '4px',
+            color: 'var(--theme-elevation-400)',
           }}
         >
           No admins found.
         </div>
       ) : (
-        <div style={{ border: '1px solid #e5e7eb', borderRadius: '0.5rem', overflow: 'hidden' }}>
-          <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.875rem' }}>
+        <div className="table-wrapper">
+          <table className="table" cellPadding="0" cellSpacing="0" style={{ width: '100%', textAlign: 'left' }}>
             <thead>
-              <tr style={{ backgroundColor: '#f9fafb' }}>
-                <th style={thStyle}>Name</th>
-                <th style={thStyle}>Email</th>
-                <th style={thStyle}>Phone</th>
-                <th style={thStyle}>Status</th>
-                <th style={thStyle}>Joined</th>
-                <th style={{ ...thStyle, textAlign: 'center' }}>Actions</th>
+              <tr>
+                <th style={{ padding: '1rem', borderBottom: '1px solid var(--theme-elevation-200)' }}>Name</th>
+                <th style={{ padding: '1rem', borderBottom: '1px solid var(--theme-elevation-200)' }}>Email</th>
+                <th style={{ padding: '1rem', borderBottom: '1px solid var(--theme-elevation-200)' }}>Phone</th>
+                <th style={{ padding: '1rem', borderBottom: '1px solid var(--theme-elevation-200)' }}>Status</th>
+                <th style={{ padding: '1rem', borderBottom: '1px solid var(--theme-elevation-200)' }}>Joined</th>
+                <th style={{ padding: '1rem', borderBottom: '1px solid var(--theme-elevation-200)', textAlign: 'center' }}>Actions</th>
               </tr>
             </thead>
             <tbody>
               {admins.map((admin) => (
-                <tr key={admin.id} style={{ borderTop: '1px solid #e5e7eb' }}>
-                  <td style={tdStyle}>
+                <tr key={admin.id} className="row" style={{ borderBottom: '1px solid var(--theme-elevation-100)' }}>
+                  <td style={{ padding: '1rem' }}>
                     <span style={{ fontWeight: 500 }}>{admin.name}</span>
                     {admin.isCurrentUser && (
                       <span
@@ -255,51 +233,41 @@ export default function AdminManagementView() {
                           fontSize: '0.6875rem',
                           padding: '0.0625rem 0.375rem',
                           borderRadius: '9999px',
-                          backgroundColor: '#dbeafe',
-                          color: '#1e40af',
+                          backgroundColor: 'var(--theme-elevation-150)',
+                          color: 'var(--theme-elevation-800)',
                         }}
                       >
                         You
                       </span>
                     )}
                   </td>
-                  <td style={tdStyle}>{admin.email}</td>
-                  <td style={tdStyle}>{admin.phone || '—'}</td>
-                  <td style={tdStyle}>
+                  <td style={{ padding: '1rem' }}>{admin.email}</td>
+                  <td style={{ padding: '1rem' }}>{admin.phone || '—'}</td>
+                  <td style={{ padding: '1rem' }}>
                     <span
                       style={{
                         display: 'inline-block',
-                        padding: '0.125rem 0.5rem',
-                        borderRadius: '9999px',
+                        padding: '0.2rem 0.5rem',
+                        borderRadius: '4px',
                         fontSize: '0.75rem',
                         fontWeight: 500,
-                        backgroundColor: admin.isActive ? '#dcfce7' : '#fecaca',
-                        color: admin.isActive ? '#166534' : '#991b1b',
+                        background: admin.isActive ? 'var(--theme-success-100)' : 'var(--theme-error-100)',
+                        color: admin.isActive ? 'var(--theme-success-700)' : 'var(--theme-error-700)',
                       }}
                     >
                       {admin.isActive ? 'Active' : 'Inactive'}
                     </span>
                   </td>
-                  <td style={tdStyle}>{new Date(admin.createdAt).toLocaleDateString()}</td>
-                  <td style={{ ...tdStyle, textAlign: 'center' }}>
+                  <td style={{ padding: '1rem' }}>{new Date(admin.createdAt).toLocaleDateString()}</td>
+                  <td style={{ padding: '1rem', textAlign: 'center' }}>
                     {admin.isCurrentUser ? (
-                      <span style={{ fontSize: '0.75rem', color: '#9ca3af' }}>—</span>
+                      <span style={{ fontSize: '0.75rem', color: 'var(--theme-elevation-400)' }}>—</span>
                     ) : (
                       <button
                         onClick={() => toggleActive(admin.id, admin.isActive)}
                         disabled={toggling === admin.id}
-                        style={{
-                          padding: '0.25rem 0.625rem',
-                          border: '1px solid',
-                          borderColor: admin.isActive ? '#fecaca' : '#bbf7d0',
-                          borderRadius: '0.25rem',
-                          backgroundColor: admin.isActive ? '#fef2f2' : '#f0fdf4',
-                          color: admin.isActive ? '#dc2626' : '#16a34a',
-                          cursor: toggling === admin.id ? 'not-allowed' : 'pointer',
-                          fontSize: '0.75rem',
-                          fontWeight: 500,
-                          opacity: toggling === admin.id ? 0.5 : 1,
-                        }}
+                        className={`btn btn--size-small btn--style-${admin.isActive ? 'error' : 'success'}`}
+                        style={{ opacity: toggling === admin.id ? 0.6 : 1 }}
                       >
                         {toggling === admin.id ? '...' : admin.isActive ? 'Deactivate' : 'Activate'}
                       </button>
@@ -311,38 +279,9 @@ export default function AdminManagementView() {
           </table>
         </div>
       )}
-        </Gutter>
+          </Gutter>
         </div>
       </div>
     </>
   )
-}
-
-const labelStyle: React.CSSProperties = {
-  display: 'block',
-  fontSize: '0.875rem',
-  fontWeight: 500,
-  marginBottom: '0.25rem',
-  color: '#374151',
-}
-
-const inputStyle: React.CSSProperties = {
-  width: '100%',
-  padding: '0.5rem 0.75rem',
-  border: '1px solid #d1d5db',
-  borderRadius: '0.375rem',
-  fontSize: '0.875rem',
-  boxSizing: 'border-box',
-}
-
-const thStyle: React.CSSProperties = {
-  padding: '0.75rem',
-  textAlign: 'left',
-  fontWeight: 600,
-  fontSize: '0.8125rem',
-  color: '#374151',
-}
-
-const tdStyle: React.CSSProperties = {
-  padding: '0.75rem',
 }

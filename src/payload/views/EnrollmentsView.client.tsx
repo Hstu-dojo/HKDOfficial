@@ -9,25 +9,37 @@ interface Enrollment {
   memberName: string
   memberNumber: string
   courseName: string
-  status: string
   enrolledAt: string
+  isActive: boolean
+  completedAt: string | null
+  droppedAt: string | null
+}
+
+interface Pagination {
+  page: number
+  limit: number
+  total: number
+  totalPages: number
 }
 
 export default function EnrollmentsView() {
   const [enrollments, setEnrollments] = useState<Enrollment[]>([])
   const [loading, setLoading] = useState(true)
   const [page, setPage] = useState(1)
-  const [total, setTotal] = useState(0)
+  const [pagination, setPagination] = useState<Pagination>({ page: 1, limit: 20, total: 0, totalPages: 0 })
+  const [message, setMessage] = useState('')
 
   const fetchEnrollments = useCallback(async () => {
     setLoading(true)
+    setMessage('')
     try {
       const res = await fetch(`/api/partner-portal/enrollments?page=${page}&limit=20`)
       const data = await res.json()
+      if (!res.ok) throw new Error(data?.error || 'Failed to load enrollments')
       setEnrollments(data.enrollments || [])
-      setTotal(data.total || 0)
+      setPagination(data.pagination || { page, limit: 20, total: 0, totalPages: 0 })
     } catch {
-      // silent
+      setMessage('Failed to load enrollments')
     } finally {
       setLoading(false)
     }
@@ -37,62 +49,103 @@ export default function EnrollmentsView() {
     fetchEnrollments()
   }, [fetchEnrollments])
 
-  const totalPages = Math.ceil(total / 20)
+  const totalPages = pagination.totalPages || Math.ceil((pagination.total || 0) / 20)
+
+  const getStatus = (e: Enrollment) => {
+    if (e.isActive) return 'active'
+    if (e.droppedAt) return 'dropped'
+    if (e.completedAt) return 'completed'
+    return 'inactive'
+  }
 
   return (
     <>
       <PortalStepNav label="Enrollments" />
       <div className="collection-edit">
         <div className="collection-edit__main">
-        <Gutter>
-        <h1 style={{ fontSize: '1.5rem', fontWeight: 700, marginBottom: '0.25rem' }}>Enrollments</h1>
-      <p style={{ color: '#6b7280', fontSize: '0.875rem', marginBottom: '1.5rem' }}>
-        {total} total enrollment{total !== 1 ? 's' : ''}
-      </p>
+          <Gutter>
+            <header className="view-header">
+              <h1 className="view-header__title">Enrollments</h1>
+              <p className="field-description">
+                {pagination.total} total enrollment{pagination.total !== 1 ? 's' : ''}
+              </p>
+            </header>
+
+            {message && (
+              <div
+                className="payload-toast payload-toast--error"
+                style={{
+                  marginBottom: '1rem',
+                  padding: '1rem',
+                  background: 'var(--theme-error-100)',
+                  color: 'var(--theme-error-700)',
+                  borderRadius: '4px',
+                }}
+              >
+                {message}
+              </div>
+            )}
 
       {loading ? (
         <p>Loading...</p>
       ) : (
         <>
-          <div style={{ overflowX: 'auto' }}>
-            <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.875rem' }}>
+          <div className="table-wrapper">
+            <table className="table" cellPadding="0" cellSpacing="0" style={{ width: '100%', textAlign: 'left' }}>
               <thead>
-                <tr style={{ borderBottom: '2px solid #e5e7eb' }}>
-                  <th style={thStyle}>Member</th>
-                  <th style={thStyle}>Member #</th>
-                  <th style={thStyle}>Course</th>
-                  <th style={thStyle}>Status</th>
-                  <th style={thStyle}>Enrolled</th>
+                <tr>
+                  <th style={{ padding: '1rem', borderBottom: '1px solid var(--theme-elevation-200)' }}>Member</th>
+                  <th style={{ padding: '1rem', borderBottom: '1px solid var(--theme-elevation-200)' }}>Member #</th>
+                  <th style={{ padding: '1rem', borderBottom: '1px solid var(--theme-elevation-200)' }}>Course</th>
+                  <th style={{ padding: '1rem', borderBottom: '1px solid var(--theme-elevation-200)' }}>Status</th>
+                  <th style={{ padding: '1rem', borderBottom: '1px solid var(--theme-elevation-200)' }}>Enrolled</th>
                 </tr>
               </thead>
               <tbody>
                 {enrollments.map((e) => (
-                  <tr key={e.id} style={{ borderBottom: '1px solid #e5e7eb' }}>
-                    <td style={tdStyle}>{e.memberName}</td>
-                    <td style={tdStyle}>{e.memberNumber}</td>
-                    <td style={tdStyle}>{e.courseName}</td>
-                    <td style={tdStyle}>
+                  <tr key={e.id} className="row" style={{ borderBottom: '1px solid var(--theme-elevation-100)' }}>
+                    <td style={{ padding: '1rem' }}>{e.memberName}</td>
+                    <td style={{ padding: '1rem' }}>{e.memberNumber}</td>
+                    <td style={{ padding: '1rem' }}>{e.courseName}</td>
+                    <td style={{ padding: '1rem' }}>
                       <span
+                        data-status={getStatus(e)}
                         style={{
-                          padding: '0.125rem 0.5rem',
-                          borderRadius: '9999px',
+                          display: 'inline-block',
+                          padding: '0.2rem 0.5rem',
+                          borderRadius: '4px',
                           fontSize: '0.75rem',
                           fontWeight: 500,
-                          backgroundColor: e.status === 'active' ? '#dcfce7' : '#fef9c3',
-                          color: e.status === 'active' ? '#16a34a' : '#ca8a04',
+                          background:
+                            getStatus(e) === 'active'
+                              ? 'var(--theme-success-100)'
+                              : getStatus(e) === 'dropped'
+                                ? 'var(--theme-error-100)'
+                                : getStatus(e) === 'completed'
+                                  ? 'var(--theme-elevation-150)'
+                                  : 'var(--theme-warning-100)',
+                          color:
+                            getStatus(e) === 'active'
+                              ? 'var(--theme-success-700)'
+                              : getStatus(e) === 'dropped'
+                                ? 'var(--theme-error-700)'
+                                : getStatus(e) === 'completed'
+                                  ? 'var(--theme-elevation-800)'
+                                  : 'var(--theme-warning-700)',
+                          textTransform: 'capitalize',
                         }}
                       >
-                        {e.status}
+                        {getStatus(e)}
                       </span>
                     </td>
-                    <td style={tdStyle}>
+                    <td style={{ padding: '1rem' }}>
                       {new Date(e.enrolledAt).toLocaleDateString()}
                     </td>
                   </tr>
                 ))}
                 {enrollments.length === 0 && (
                   <tr>
-                    <td colSpan={5} style={{ ...tdStyle, textAlign: 'center', color: '#9ca3af' }}>
+                    <td colSpan={5} style={{ padding: '1.25rem', textAlign: 'center', color: 'var(--theme-elevation-400)' }}>
                       No enrollments found
                     </td>
                   </tr>
@@ -102,21 +155,21 @@ export default function EnrollmentsView() {
           </div>
 
           {totalPages > 1 && (
-            <div style={{ display: 'flex', gap: '0.5rem', marginTop: '1rem', justifyContent: 'center' }}>
+            <div style={{ display: 'flex', gap: '0.5rem', marginTop: '1rem', justifyContent: 'center', alignItems: 'center' }}>
               <button
                 onClick={() => setPage((p) => Math.max(1, p - 1))}
                 disabled={page === 1}
-                style={btnStyle}
+                className="btn btn--style-secondary btn--size-small"
               >
                 Previous
               </button>
-              <span style={{ padding: '0.5rem', fontSize: '0.875rem' }}>
+              <span className="field-description" style={{ margin: 0 }}>
                 Page {page} of {totalPages}
               </span>
               <button
                 onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
                 disabled={page === totalPages}
-                style={btnStyle}
+                className="btn btn--style-secondary btn--size-small"
               >
                 Next
               </button>
@@ -124,29 +177,9 @@ export default function EnrollmentsView() {
           )}
         </>
       )}
-        </Gutter>
+          </Gutter>
         </div>
       </div>
     </>
   )
-}
-
-const thStyle: React.CSSProperties = {
-  textAlign: 'left',
-  padding: '0.75rem 0.5rem',
-  fontWeight: 600,
-  color: '#374151',
-}
-
-const tdStyle: React.CSSProperties = {
-  padding: '0.75rem 0.5rem',
-}
-
-const btnStyle: React.CSSProperties = {
-  padding: '0.375rem 0.75rem',
-  border: '1px solid #d1d5db',
-  borderRadius: '0.375rem',
-  backgroundColor: 'white',
-  cursor: 'pointer',
-  fontSize: '0.875rem',
 }

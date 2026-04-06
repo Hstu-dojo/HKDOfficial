@@ -133,7 +133,16 @@ export default function MonthlyStatusView() {
         </header>
 
         {message && (
-          <div className={`payload-toast ${message.includes('Failed') || message.includes('error') ? 'payload-toast--error' : 'payload-toast--success'}`} style={{ marginBottom: '1rem', padding: '1rem', background: message.includes('Failed') ? '#fef2f2' : '#f0fdf4', color: message.includes('Failed') ? '#dc2626' : '#16a34a', borderRadius: '4px' }}>
+          <div
+            className={`payload-toast ${message.includes('Failed') || message.includes('error') ? 'payload-toast--error' : 'payload-toast--success'}`}
+            style={{
+              marginBottom: '1rem',
+              padding: '1rem',
+              background: message.includes('Failed') || message.includes('error') ? 'var(--theme-error-100)' : 'var(--theme-success-100)',
+              color: message.includes('Failed') || message.includes('error') ? 'var(--theme-error-700)' : 'var(--theme-success-700)',
+              borderRadius: '4px',
+            }}
+          >
             {message}
           </div>
         )}

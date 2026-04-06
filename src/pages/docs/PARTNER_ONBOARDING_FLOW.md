@@ -37,6 +37,8 @@ If `email` is provided and there is no existing local user with that email, the 
 3. Create the member/profile record under the partner
 4. Best-effort email the credentials via Resend
 
+> **Note on Direct Approval:** By design, members added via `POST /api/partner-portal/members` bypass the "pending registration" flow (`registrations` row). Since the partner admin is directly creating them, they are assumed to be immediately approved and jump straight to having an active member profile.
+
 ### Required environment variables
 
 - `NEXT_PUBLIC_SUPABASE_URL`

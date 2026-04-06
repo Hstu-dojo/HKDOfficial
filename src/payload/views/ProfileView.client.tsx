@@ -88,76 +88,75 @@ export default function ProfileView() {
       <PortalStepNav label="Profile" />
       <div className="collection-edit">
         <div className="collection-edit__main">
-        <Gutter>
-        <h1 style={{ fontSize: '1.5rem', fontWeight: 700, marginBottom: '0.25rem' }}>
-        Organization Profile
-      </h1>
-      <p style={{ color: '#6b7280', fontSize: '0.875rem', marginBottom: '1.5rem' }}>
-        Public page: /org/{partner?.slug}
-      </p>
+          <Gutter>
+            <header className="view-header">
+              <h1 className="view-header__title">Organization Profile</h1>
+              <p className="field-description">Public page: /org/{partner?.slug}</p>
+            </header>
 
       {message && (
         <div
+          className={`payload-toast ${message.includes('Failed') || message.includes('error') ? 'payload-toast--error' : 'payload-toast--success'}`}
           style={{
-            padding: '0.75rem',
             marginBottom: '1rem',
-            borderRadius: '0.375rem',
-            backgroundColor: message.includes('Failed') || message.includes('error') ? '#fef2f2' : '#f0fdf4',
-            color: message.includes('Failed') || message.includes('error') ? '#dc2626' : '#16a34a',
-            fontSize: '0.875rem',
+            padding: '1rem',
+            background: message.includes('Failed') || message.includes('error') ? 'var(--theme-error-100)' : 'var(--theme-success-100)',
+            color: message.includes('Failed') || message.includes('error') ? 'var(--theme-error-700)' : 'var(--theme-success-700)',
+            borderRadius: '4px',
           }}
         >
           {message}
         </div>
       )}
 
-      <form onSubmit={handleSubmit} style={{ display: 'grid', gap: '1rem' }}>
-        <div>
-          <label style={labelStyle}>Organization Name</label>
+      <form onSubmit={handleSubmit} className="form" style={{ display: 'grid', gap: '1rem' }}>
+        <div className="field-type text">
+          <label className="field-label">Organization Name</label>
           <input
             required
             value={form.name}
             onChange={(e) => setForm((p) => ({ ...p, name: e.target.value }))}
-            style={inputStyle}
+            className="input-string"
           />
         </div>
 
-        <div>
-          <label style={labelStyle}>Description</label>
+        <div className="field-type textarea">
+          <label className="field-label">Description</label>
           <textarea
             value={form.description}
             onChange={(e) => setForm((p) => ({ ...p, description: e.target.value }))}
             rows={3}
-            style={{ ...inputStyle, resize: 'vertical' }}
+            className="textarea-element"
+            style={{ resize: 'vertical' }}
           />
         </div>
 
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '1rem' }}>
-          <div>
-            <label style={labelStyle}>Location</label>
+          <div className="field-type text">
+            <label className="field-label">Location</label>
             <input
               value={form.location}
               onChange={(e) => setForm((p) => ({ ...p, location: e.target.value }))}
-              style={inputStyle}
+              className="input-string"
             />
           </div>
-          <div>
-            <label style={labelStyle}>Contact Email</label>
+          <div className="field-type text">
+            <label className="field-label">Contact Email</label>
             <input
               type="email"
               value={form.contactEmail}
               onChange={(e) => setForm((p) => ({ ...p, contactEmail: e.target.value }))}
-              style={inputStyle}
+              className="input-string"
             />
           </div>
         </div>
 
-        <div>
-          <label style={labelStyle}>Contact Phone</label>
+        <div className="field-type text">
+          <label className="field-label">Contact Phone</label>
           <input
             value={form.contactPhone}
             onChange={(e) => setForm((p) => ({ ...p, contactPhone: e.target.value }))}
-            style={inputStyle}
+            className="input-string"
           />
         </div>
 
@@ -165,41 +164,16 @@ export default function ProfileView() {
           <button
             type="submit"
             disabled={saving}
-            style={{
-              padding: '0.5rem 1.5rem',
-              backgroundColor: '#2563eb',
-              color: 'white',
-              border: 'none',
-              borderRadius: '0.375rem',
-              cursor: 'pointer',
-              fontSize: '0.875rem',
-              fontWeight: 500,
-              opacity: saving ? 0.6 : 1,
-            }}
+            className="btn btn--style-primary"
+            style={{ opacity: saving ? 0.6 : 1 }}
           >
             {saving ? 'Saving...' : 'Save Changes'}
           </button>
         </div>
       </form>
-        </Gutter>
+          </Gutter>
         </div>
       </div>
     </>
   )
-}
-
-const labelStyle: React.CSSProperties = {
-  display: 'block',
-  fontSize: '0.875rem',
-  fontWeight: 500,
-  marginBottom: '0.25rem',
-  color: '#374151',
-}
-
-const inputStyle: React.CSSProperties = {
-  width: '100%',
-  padding: '0.5rem 0.75rem',
-  border: '1px solid #d1d5db',
-  borderRadius: '0.375rem',
-  fontSize: '0.875rem',
 }

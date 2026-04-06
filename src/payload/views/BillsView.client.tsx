@@ -7,29 +7,41 @@ import PortalStepNav from './PortalStepNav'
 interface Bill {
   id: string
   description: string | null
-  amount: string
+  amount: number
   currency: string
   status: string
   dueDate: string | null
   paidAt: string | null
+  month: number
+  year: number
   createdAt: string
+}
+
+interface Pagination {
+  page: number
+  limit: number
+  total: number
+  totalPages: number
 }
 
 export default function BillsView() {
   const [bills, setBills] = useState<Bill[]>([])
   const [loading, setLoading] = useState(true)
   const [page, setPage] = useState(1)
-  const [total, setTotal] = useState(0)
+  const [pagination, setPagination] = useState<Pagination>({ page: 1, limit: 20, total: 0, totalPages: 0 })
+  const [message, setMessage] = useState('')
 
   const fetchBills = useCallback(async () => {
     setLoading(true)
+    setMessage('')
     try {
       const res = await fetch(`/api/partner-portal/bills?page=${page}&limit=20`)
       const data = await res.json()
+      if (!res.ok) throw new Error(data?.error || 'Failed to load bills')
       setBills(data.bills || [])
-      setTotal(data.total || 0)
+      setPagination(data.pagination || { page, limit: 20, total: 0, totalPages: 0 })
     } catch {
-      // silent
+      setMessage('Failed to load bills')
     } finally {
       setLoading(false)
     }
@@ -39,12 +51,12 @@ export default function BillsView() {
     fetchBills()
   }, [fetchBills])
 
-  const totalPages = Math.ceil(total / 20)
+  const totalPages = pagination.totalPages || Math.ceil((pagination.total || 0) / 20)
 
-  const formatCurrency = (amount: string, currency: string) => {
-    const num = parseFloat(amount)
-    if (currency === 'BDT') return `৳${num.toLocaleString()}`
-    return `$${num.toLocaleString()}`
+  const formatCurrency = (amount: number, currency: string) => {
+    if (currency === 'BDT') return `৳${amount.toLocaleString()}`
+    if (currency === 'USD') return `$${amount.toLocaleString()}`
+    return `${currency} ${amount.toLocaleString()}`
   }
 
   return (
@@ -52,69 +64,86 @@ export default function BillsView() {
       <PortalStepNav label="Bills & Payments" />
       <div className="collection-edit">
         <div className="collection-edit__main">
-        <Gutter>
-        <h1 style={{ fontSize: '1.5rem', fontWeight: 700, marginBottom: '0.25rem' }}>
-        Bills &amp; Payments
-      </h1>
-      <p style={{ color: '#6b7280', fontSize: '0.875rem', marginBottom: '1.5rem' }}>
-        {total} total bill{total !== 1 ? 's' : ''}
-      </p>
+          <Gutter>
+            <header className="view-header">
+              <h1 className="view-header__title">Bills &amp; Payments</h1>
+              <p className="field-description">
+                {pagination.total} total bill{pagination.total !== 1 ? 's' : ''}
+              </p>
+            </header>
+
+            {message && (
+              <div
+                className="payload-toast payload-toast--error"
+                style={{
+                  marginBottom: '1rem',
+                  padding: '1rem',
+                  background: 'var(--theme-error-100)',
+                  color: 'var(--theme-error-700)',
+                  borderRadius: '4px',
+                }}
+              >
+                {message}
+              </div>
+            )}
 
       {loading ? (
         <p>Loading...</p>
       ) : (
         <>
-          <div style={{ overflowX: 'auto' }}>
-            <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.875rem' }}>
+          <div className="table-wrapper">
+            <table className="table" cellPadding="0" cellSpacing="0" style={{ width: '100%', textAlign: 'left' }}>
               <thead>
-                <tr style={{ borderBottom: '2px solid #e5e7eb' }}>
-                  <th style={thStyle}>Description</th>
-                  <th style={thStyle}>Amount</th>
-                  <th style={thStyle}>Status</th>
-                  <th style={thStyle}>Due Date</th>
-                  <th style={thStyle}>Paid At</th>
+                <tr>
+                  <th style={{ padding: '1rem', borderBottom: '1px solid var(--theme-elevation-200)' }}>Description</th>
+                  <th style={{ padding: '1rem', borderBottom: '1px solid var(--theme-elevation-200)' }}>Amount</th>
+                  <th style={{ padding: '1rem', borderBottom: '1px solid var(--theme-elevation-200)' }}>Status</th>
+                  <th style={{ padding: '1rem', borderBottom: '1px solid var(--theme-elevation-200)' }}>Due Date</th>
+                  <th style={{ padding: '1rem', borderBottom: '1px solid var(--theme-elevation-200)' }}>Paid At</th>
                 </tr>
               </thead>
               <tbody>
                 {bills.map((b) => (
-                  <tr key={b.id} style={{ borderBottom: '1px solid #e5e7eb' }}>
-                    <td style={tdStyle}>{b.description || '—'}</td>
-                    <td style={tdStyle}>{formatCurrency(b.amount, b.currency)}</td>
-                    <td style={tdStyle}>
+                  <tr key={b.id} className="row" style={{ borderBottom: '1px solid var(--theme-elevation-100)' }}>
+                    <td style={{ padding: '1rem' }}>{b.description || `Bill ${b.month}/${b.year}`}</td>
+                    <td style={{ padding: '1rem' }}>{formatCurrency(b.amount, b.currency)}</td>
+                    <td style={{ padding: '1rem' }}>
                       <span
                         style={{
-                          padding: '0.125rem 0.5rem',
-                          borderRadius: '9999px',
+                          display: 'inline-block',
+                          padding: '0.2rem 0.5rem',
+                          borderRadius: '4px',
                           fontSize: '0.75rem',
                           fontWeight: 500,
-                          backgroundColor:
+                          background:
                             b.status === 'paid'
-                              ? '#dcfce7'
+                              ? 'var(--theme-success-100)'
                               : b.status === 'overdue'
-                                ? '#fef2f2'
-                                : '#fef9c3',
+                                ? 'var(--theme-error-100)'
+                                : 'var(--theme-warning-100)',
                           color:
                             b.status === 'paid'
-                              ? '#16a34a'
+                              ? 'var(--theme-success-700)'
                               : b.status === 'overdue'
-                                ? '#dc2626'
-                                : '#ca8a04',
+                                ? 'var(--theme-error-700)'
+                                : 'var(--theme-warning-700)',
+                          textTransform: 'capitalize',
                         }}
                       >
                         {b.status}
                       </span>
                     </td>
-                    <td style={tdStyle}>
+                    <td style={{ padding: '1rem' }}>
                       {b.dueDate ? new Date(b.dueDate).toLocaleDateString() : '—'}
                     </td>
-                    <td style={tdStyle}>
+                    <td style={{ padding: '1rem' }}>
                       {b.paidAt ? new Date(b.paidAt).toLocaleDateString() : '—'}
                     </td>
                   </tr>
                 ))}
                 {bills.length === 0 && (
                   <tr>
-                    <td colSpan={5} style={{ ...tdStyle, textAlign: 'center', color: '#9ca3af' }}>
+                    <td colSpan={5} style={{ padding: '1.25rem', textAlign: 'center', color: 'var(--theme-elevation-400)' }}>
                       No bills found
                     </td>
                   </tr>
@@ -124,21 +153,21 @@ export default function BillsView() {
           </div>
 
           {totalPages > 1 && (
-            <div style={{ display: 'flex', gap: '0.5rem', marginTop: '1rem', justifyContent: 'center' }}>
+            <div style={{ display: 'flex', gap: '0.5rem', marginTop: '1rem', justifyContent: 'center', alignItems: 'center' }}>
               <button
                 onClick={() => setPage((p) => Math.max(1, p - 1))}
                 disabled={page === 1}
-                style={btnStyle}
+                className="btn btn--style-secondary btn--size-small"
               >
                 Previous
               </button>
-              <span style={{ padding: '0.5rem', fontSize: '0.875rem' }}>
+              <span className="field-description" style={{ margin: 0 }}>
                 Page {page} of {totalPages}
               </span>
               <button
                 onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
                 disabled={page === totalPages}
-                style={btnStyle}
+                className="btn btn--style-secondary btn--size-small"
               >
                 Next
               </button>
@@ -146,29 +175,9 @@ export default function BillsView() {
           )}
         </>
       )}
-        </Gutter>
+          </Gutter>
         </div>
       </div>
     </>
   )
-}
-
-const thStyle: React.CSSProperties = {
-  textAlign: 'left',
-  padding: '0.75rem 0.5rem',
-  fontWeight: 600,
-  color: '#374151',
-}
-
-const tdStyle: React.CSSProperties = {
-  padding: '0.75rem 0.5rem',
-}
-
-const btnStyle: React.CSSProperties = {
-  padding: '0.375rem 0.75rem',
-  border: '1px solid #d1d5db',
-  borderRadius: '0.375rem',
-  backgroundColor: 'white',
-  cursor: 'pointer',
-  fontSize: '0.875rem',
 }
