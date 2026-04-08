@@ -9,6 +9,8 @@ import { NextResponse } from 'next/server'
 import { requirePayloadPartnerUser } from '@/lib/payload/auth'
 import { db } from '@/lib/connect-db'
 import { members, memberMonthlyStatus } from '@/db/schemas/karate/members'
+import { courseEnrollments } from '@/db/schemas/karate/enrollments'
+import { courses } from '@/db/schemas/karate/courses'
 import { eq, and, inArray } from 'drizzle-orm'
 
 export async function GET(request: Request) {
@@ -47,21 +49,35 @@ export async function GET(request: Request) {
       .leftJoin(members, eq(memberMonthlyStatus.profileId, members.id))
       .where(and(...conditions))
 
-    // Also get all members for this partner (to show who doesn't have a status yet)
-    const allMembers = await db
-      .select({
-        id: members.id,
-        fullNameEnglish: members.fullNameEnglish,
-        memberNumber: members.memberNumber,
-        isActive: members.isActive,
-      })
-      .from(members)
-      .where(eq(members.partnerId, partnerUser.partnerId))
+    // Build the eligible profile list from enrollments in this partner's courses.
+    // This matches the billing intent: students belong to a partner for charging purposes
+    // when they are enrolled in that partner's courses.
+    const enrolledProfileRows = await db
+      .select({ profileId: courseEnrollments.profileId })
+      .from(courseEnrollments)
+      .innerJoin(courses, eq(courseEnrollments.courseId, courses.id))
+      .where(and(eq(courses.partnerId, partnerUser.partnerId), eq(courseEnrollments.isActive, true)))
+      .groupBy(courseEnrollments.profileId)
+
+    const enrolledProfileIds = enrolledProfileRows.map((r) => r.profileId)
+
+    const allMembers = enrolledProfileIds.length
+      ? await db
+          .select({
+            id: members.id,
+            fullNameEnglish: members.fullNameEnglish,
+            memberNumber: members.memberNumber,
+            isActive: members.isActive,
+          })
+          .from(members)
+          .where(inArray(members.id, enrolledProfileIds))
+      : []
 
     // Build a map: profileId → monthlyStatus
     const statusMap = new Map(statuses.map((s) => [s.profileId, s]))
 
-    // Merge: members with their monthly status (default to the member's overall isActive)
+    // Merge: members with their monthly status.
+    // Default is INACTIVE unless a monthly record exists.
     const merged = allMembers.map((m) => {
       const ms = statusMap.get(m.id)
       return {
@@ -70,7 +86,7 @@ export async function GET(request: Request) {
         memberNumber: m.memberNumber,
         month,
         year,
-        isActiveThisMonth: ms ? ms.isActive : m.isActive, // fallback to member.isActive
+        isActiveThisMonth: ms ? ms.isActive : false,
         hasMonthlyRecord: !!ms,
         monthlyStatusId: ms?.id || null,
         notes: ms?.notes || null,
@@ -106,16 +122,21 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'profileId, month, and year are required' }, { status: 400 })
     }
 
-    // Verify member belongs to this partner
-    const [member] = await db
-      .select({ id: members.id })
-      .from(members)
-      .where(and(eq(members.id, profileId), eq(members.partnerId, partnerUser.partnerId)))
+    // Verify profile is eligible for this partner (enrolled in a course owned by this partner)
+    const [eligible] = await db
+      .select({ id: courseEnrollments.id })
+      .from(courseEnrollments)
+      .innerJoin(courses, eq(courseEnrollments.courseId, courses.id))
+      .where(
+        and(
+          eq(courseEnrollments.profileId, profileId),
+          eq(courses.partnerId, partnerUser.partnerId),
+          eq(courseEnrollments.isActive, true)
+        )
+      )
       .limit(1)
 
-    if (!member) {
-      return NextResponse.json({ error: 'Member not found in your organization' }, { status: 404 })
-    }
+    if (!eligible) return NextResponse.json({ error: 'Member not found in your enrollments' }, { status: 404 })
 
     // Upsert: create or update the monthly status
     const existing = await db
@@ -178,14 +199,22 @@ export async function PATCH(request: Request) {
       )
     }
 
-    // Verify all members belong to this partner
+    // Verify all profiles are eligible for this partner (enrolled in partner-owned courses)
     const memberIds = updates.map((u: any) => u.profileId || u.memberId)
-    const validMembers = await db
-      .select({ id: members.id })
-      .from(members)
-      .where(and(eq(members.partnerId, partnerUser.partnerId), inArray(members.id, memberIds)))
+    const eligibleProfiles = await db
+      .select({ profileId: courseEnrollments.profileId })
+      .from(courseEnrollments)
+      .innerJoin(courses, eq(courseEnrollments.courseId, courses.id))
+      .where(
+        and(
+          eq(courses.partnerId, partnerUser.partnerId),
+          eq(courseEnrollments.isActive, true),
+          inArray(courseEnrollments.profileId, memberIds)
+        )
+      )
+      .groupBy(courseEnrollments.profileId)
 
-    const validIds = new Set(validMembers.map((m) => m.id))
+    const validIds = new Set(eligibleProfiles.map((m) => m.profileId))
 
     let processed = 0
     for (const update of updates) {

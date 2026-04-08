@@ -21,7 +21,10 @@ export async function GET(request: Request) {
   const status = url.searchParams.get('status') // 'active' | 'completed' | 'dropped'
 
   try {
-    const conditions = [eq(members.partnerId, partnerUser.partnerId)]
+    // IMPORTANT:
+    // Enrollments belong to an organization by course.partnerId (not by the member's current partnerId).
+    // This ensures enrollments remain visible even if a member transfers branches later.
+    const conditions = [eq(courses.partnerId, partnerUser.partnerId)]
 
     if (status === 'active') {
       conditions.push(eq(courseEnrollments.isActive, true))
@@ -66,6 +69,7 @@ export async function GET(request: Request) {
         .select({ total: count() })
         .from(courseEnrollments)
         .innerJoin(members, eq(courseEnrollments.profileId, members.id))
+        .innerJoin(courses, eq(courseEnrollments.courseId, courses.id))
         .where(and(...conditions)),
     ])
 

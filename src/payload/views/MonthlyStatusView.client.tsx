@@ -188,7 +188,7 @@ export default function MonthlyStatusView() {
           <p>Loading...</p>
         ) : members.length === 0 ? (
           <div className="no-results" style={{ padding: '2rem', textAlign: 'center', color: 'var(--theme-elevation-400)' }}>
-            No members found. Add members first from the Members view.
+            No enrolled students found. Approve enrollments first to start monthly charging.
           </div>
         ) : (
           <div className="table-wrapper">
