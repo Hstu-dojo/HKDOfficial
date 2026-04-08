@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createClient } from '@/lib/supabase/client'
-import { createUser } from '@/lib/db/user'
-import { hash } from '@/lib/hash'
+import { createClient } from '@/lib/supabase/server'
+import { db } from '@/lib/connect-db'
+import { user, registrations } from '@/db/schema'
+import { and, eq, or } from 'drizzle-orm'
 
 function getLocaleFromReferer(request: NextRequest): string | null {
   const referer = request.headers.get('referer')
@@ -93,7 +94,23 @@ function getCanonicalOrigin(request: NextRequest): string {
 
 export async function POST(request: NextRequest) {
   try {
-    const { email, password, userName, userAvatar } = await request.json()
+    const {
+      email,
+      password,
+      userName,
+      userAvatar,
+      // onboarding fields
+      sex,
+      nid,
+      occupation,
+      institute,
+      faculty,
+      address,
+      phone,
+      dob,
+      partnerId,
+      agreement,
+    } = await request.json()
 
     if (!email || !password || !userName) {
       return NextResponse.json(
@@ -102,8 +119,31 @@ export async function POST(request: NextRequest) {
       )
     }
 
+    // Basic onboarding validation for merged registration flow
+    // (Provider logins still use the existing onboarding page.)
+    if (!phone || !dob || !partnerId || agreement !== true) {
+      return NextResponse.json(
+        { error: 'Please complete the onboarding fields (phone, date of birth, training venue, agreement).' },
+        { status: 400 }
+      )
+    }
+
+    // Prevent duplicates in local DB early
+    const existing = await db
+      .select({ id: user.id })
+      .from(user)
+      .where(or(eq(user.email, email), eq(user.userName, userName)))
+      .limit(1)
+
+    if (existing.length > 0) {
+      return NextResponse.json(
+        { error: 'Email or username already exists' },
+        { status: 409 }
+      )
+    }
+
     // Sign up user with Supabase Auth
-    const supabase = createClient();
+    const supabase = await createClient();
     const origin = getOrigin(request)
     const callbackOrigin = getAuthCallbackOrigin(request)
 
@@ -142,20 +182,77 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Create user in your database (optional - you might want to do this via database triggers)
-    try {
-      const hashedPassword = await hash(password)
-      await createUser({
-        email,
-        password: hashedPassword,
-        userName,
-        userAvatar,
-      })
-    } catch (dbError) {
-      console.error('Database Error:', dbError)
-      // User created in Supabase but failed to create in local DB
-      // You might want to handle this differently based on your needs
+    // Supabase can return a user object for an already-registered email without identities.
+    // Treat that as a conflict.
+    const identities = (authData.user as any).identities as any[] | undefined
+    if (Array.isArray(identities) && identities.length === 0) {
+      return NextResponse.json(
+        { error: 'Email already registered. Please login instead or check your email for verification.' },
+        { status: 409 }
+      )
     }
+
+    // Create local user + onboarding registration immediately so onboarding is "merged"
+    // into the registration page for email/password signups.
+    const supabaseUserId = authData.user.id
+
+    const [localUser] = await db
+      .insert(user)
+      .values({
+        supabaseUserId,
+        email,
+        emailVerified: false,
+        password: `supabase_${supabaseUserId}`,
+        userName,
+        userAvatar: userAvatar || '/image/avatar/Milo.svg',
+        defaultRole: 'GUEST',
+        hasPassword: true,
+        authProviders: [
+          {
+            provider: 'email',
+            providerId: supabaseUserId,
+            email,
+            linkedAt: new Date().toISOString(),
+          },
+        ] as any,
+      })
+      .returning({ id: user.id })
+
+    const fullName = userName
+    const nameParts = fullName.split(' ')
+    const firstName = nameParts[0] || 'Unknown'
+    const lastName = nameParts.slice(1).join(' ') || '.'
+
+    const onboardingPayload: Record<string, any> = {
+      username: fullName,
+      sex,
+      nid,
+      occupation,
+      institute,
+      faculty,
+      address,
+      phone,
+      dob,
+      partnerId,
+      agreement: true,
+      email,
+      emergencyContact: 'Not Provided',
+      emergencyPhone: phone,
+    }
+
+    await db.insert(registrations).values({
+      userId: localUser.id,
+      firstName,
+      lastName,
+      email,
+      phoneNumber: phone,
+      dateOfBirth: new Date(dob),
+      emergencyContact: 'Not Provided',
+      emergencyPhone: phone,
+      partnerId,
+      notes: JSON.stringify(onboardingPayload),
+      status: 'pending',
+    })
 
     return NextResponse.json({
       message: 'User created successfully. Please check your email to verify your account.',

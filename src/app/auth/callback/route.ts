@@ -156,9 +156,29 @@ export async function GET(request: Request) {
             userName: userName,
             userAvatar: userAvatar,
             defaultRole: "GUEST",
+            hasPassword: true,
+            authProviders: [
+              {
+                provider: 'email',
+                providerId: supabaseUser.id,
+                email: supabaseUser.email,
+                linkedAt: new Date().toISOString(),
+              },
+            ] as any,
           })
 
           console.log('✅ User created in local DB after signup confirmation');
+        } else {
+          // User may have been created during merged signup (before email verification).
+          // Ensure local DB reflects the verified email status.
+          await db
+            .update(user)
+            .set({
+              emailVerified: true,
+              email: supabaseUser.email,
+              updatedAt: new Date(),
+            })
+            .where(eq(user.supabaseUserId, supabaseUser.id))
         }
       } catch (dbError) {
         console.error('Database error during signup confirmation:', dbError);

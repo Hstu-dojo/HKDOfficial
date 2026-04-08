@@ -10,7 +10,6 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 interface UserAuthFormProps extends React.HTMLAttributes<HTMLDivElement> {}
 import { toast } from "sonner";
-import { createClient } from "@/lib/supabase/client";
 import avatarsData from "@/db/avatars.json";
 import {
   Select,
@@ -23,6 +22,7 @@ import Image from "next/image";
 import { SocialLoginButtons } from "@/components/auth/social-login-buttons";
 import { useI18n } from "@/locales/client";
 import { useCurrentLocale } from "@/locales/client";
+import { Checkbox } from "@/components/ui/checkbox";
 
 export function RegisterForm({ className, ...props }: UserAuthFormProps) {
   const searchParams = useSearchParams();
@@ -32,6 +32,19 @@ export function RegisterForm({ className, ...props }: UserAuthFormProps) {
   const [password, setPassword] = useState("");
   const [userName, setUsername] = useState("");
   const [userAvatar, setAvatar] = useState("/image/avatar/Milo.svg");
+
+  // Onboarding fields (merged)
+  const [sex, setSex] = useState<string>("");
+  const [nid, setNid] = useState<string>("");
+  const [occupation, setOccupation] = useState<string>("");
+  const [institute, setInstitute] = useState<string>("");
+  const [faculty, setFaculty] = useState<string>("");
+  const [address, setAddress] = useState<string>("");
+  const [phone, setPhone] = useState<string>("");
+  const [dob, setDob] = useState<string>("");
+  const [partnerId, setPartnerId] = useState<string>("");
+  const [agreement, setAgreement] = useState<boolean>(false);
+  const [partners, setPartners] = useState<Array<{ id: string; name: string; location: string | null }>>([]);
   const router = useRouter();
   const t = useI18n();
   const locale = useCurrentLocale();
@@ -54,6 +67,14 @@ export function RegisterForm({ className, ...props }: UserAuthFormProps) {
       setIsLoading(false);
       return toast("All fields are required", {
         description: "all fields are required, please fill them out",
+      });
+    }
+
+    // Onboarding required fields
+    if (!phone || !dob || !partnerId || agreement !== true) {
+      setIsLoading(false);
+      return toast.error("Please complete onboarding details", {
+        description: "Phone, Date of Birth, Training Venue, and agreement are required.",
       });
     }
     // console.log(email, password, userName, userAvatar);
@@ -91,70 +112,49 @@ export function RegisterForm({ className, ...props }: UserAuthFormProps) {
         }
       }
       
-      // Use Supabase client directly instead of API route
-      const supabase = createClient();
-
-      // IMPORTANT: for tenant flows, keep redirects on the tenant origin.
-      // Using NEXT_PUBLIC_APP_URL here will bounce users back to the root domain.
-      const callbackOrigin = window.location.origin;
-      const { data, error } = await supabase.auth.signUp({
-        email,
-        password,
-        options: {
-          data: {
-            username: userName,
-            avatar_url: userAvatar,
-          },
-          // Keep redirect_to clean (no query params) so Supabase allowlist matching succeeds.
-          // The callback handler will choose the correct destination for signup confirmations.
-          emailRedirectTo: `${callbackOrigin}/auth/callback`
-        }
+      // Use backend endpoint so we can create both local user row + onboarding registration row.
+      const response = await fetch('/api/auth/supabase-signup', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          email,
+          password,
+          userName,
+          userAvatar,
+          sex: sex || null,
+          nid: nid || null,
+          occupation: occupation || null,
+          institute: institute || null,
+          faculty: faculty || null,
+          address: address || null,
+          phone,
+          dob,
+          partnerId,
+          agreement,
+        }),
       });
 
-      if (error) {
-        console.error('Supabase Auth Error:', error);
-        
-        // Handle specific error cases
-        if (error.message.includes('already registered') || error.message.includes('already exists')) {
-          toast.error("Email already exists", {
-            description: "This email is already registered. Please login instead.",
+      const result = await response.json().catch(() => null);
+
+      if (!response.ok) {
+        const msg = result?.error || "Registration failed";
+        if (response.status === 409) {
+          toast.error("Email/Username already registered", {
+            description: msg,
             action: {
               label: "Go to Login",
               onClick: () => router.push(`/${locale}/login`),
             },
           });
         } else {
-          toast.error(error.message || "Registration failed", {
-            description: error.message || "Something went wrong, please try again later",
-          });
+          toast.error(msg);
         }
         setIsLoading(false);
         return;
       }
-      
+
       // Registration initiated successfully
-      if (data.user) {
-        // Log for debugging
-        console.log('Signup response:', { 
-          userId: data.user.id,
-          email: data.user.email,
-          hasIdentities: data.user.identities && data.user.identities.length > 0,
-          hasSession: !!data.session
-        });
-        
-        // Check if this is actually a duplicate (Supabase returns user but no identities)
-        if (data.user.identities && data.user.identities.length === 0) {
-          toast.error("Email already registered", {
-            description: "This email is already registered. Please login instead or check your email for the confirmation link.",
-            action: {
-              label: "Go to Login",
-              onClick: () => router.push(`/${locale}/login`),
-            },
-          });
-          setIsLoading(false);
-          return;
-        }
-        
+      if (result?.user?.id) {
         toast.success("Registration Successful! 🎉", {
           description: "Please check your email to verify your account before signing in.",
           action: {
@@ -203,10 +203,25 @@ export function RegisterForm({ className, ...props }: UserAuthFormProps) {
     setAvatars(avatarsData as any);
   }, []);
 
+  useEffect(() => {
+    async function fetchPartners() {
+      try {
+        const response = await fetch('/api/partners');
+        if (response.ok) {
+          const data = await response.json();
+          if (Array.isArray(data)) setPartners(data);
+        }
+      } catch (error) {
+        console.error('Failed to fetch partners:', error);
+      }
+    }
+    fetchPartners();
+  }, []);
+
   return (
     <div className={cn("grid gap-6", className)} {...props}>
       <form onSubmit={onSubmit}>
-        <div className="grid gap-2">
+        <div className="grid gap-4">
           <div className="grid gap-1">
             <Label className="sr-only" htmlFor="username">
               {t('auth.register.usernameLabel')}
@@ -286,6 +301,126 @@ export function RegisterForm({ className, ...props }: UserAuthFormProps) {
               </SelectContent>
             </Select>
           </div>
+
+          {/* Onboarding Fields (Merged) */}
+          <div className="grid gap-1">
+            <Label className="sr-only" htmlFor="phone">
+              Phone
+            </Label>
+            <Input
+              id="phone"
+              onChange={(e) => setPhone(e.target.value)}
+              placeholder="Phone Number"
+              type="tel"
+              autoComplete="tel"
+              disabled={isLoading}
+              required={true}
+            />
+          </div>
+
+          <div className="grid gap-1">
+            <Label className="sr-only" htmlFor="dob">
+              Date of Birth
+            </Label>
+            <Input
+              id="dob"
+              onChange={(e) => setDob(e.target.value)}
+              type="date"
+              autoComplete="bday"
+              disabled={isLoading}
+              required={true}
+            />
+          </div>
+
+          <div className="grid gap-1">
+            <Select onValueChange={(v) => setSex(v)} value={sex}>
+              <SelectTrigger className="w-full">
+                <SelectValue placeholder="Sex" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="Male">Male</SelectItem>
+                <SelectItem value="Female">Female</SelectItem>
+                <SelectItem value="Other">Other</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div className="grid gap-1">
+            <Input
+              id="nid"
+              onChange={(e) => setNid(e.target.value)}
+              placeholder="NID / Birth Cert. / Passport No."
+              type="text"
+              disabled={isLoading}
+            />
+          </div>
+
+          <div className="grid gap-1">
+            <Input
+              id="occupation"
+              onChange={(e) => setOccupation(e.target.value)}
+              placeholder="Occupation"
+              type="text"
+              disabled={isLoading}
+            />
+          </div>
+
+          <div className="grid gap-1">
+            <Input
+              id="institute"
+              onChange={(e) => setInstitute(e.target.value)}
+              placeholder="Institute"
+              type="text"
+              disabled={isLoading}
+            />
+          </div>
+
+          <div className="grid gap-1">
+            <Input
+              id="faculty"
+              onChange={(e) => setFaculty(e.target.value)}
+              placeholder="Faculty / Section (Optional)"
+              type="text"
+              disabled={isLoading}
+            />
+          </div>
+
+          <div className="grid gap-1">
+            <Input
+              id="address"
+              onChange={(e) => setAddress(e.target.value)}
+              placeholder="Present Address"
+              type="text"
+              disabled={isLoading}
+            />
+          </div>
+
+          <div className="grid gap-1">
+            <Select onValueChange={(v) => setPartnerId(v)} value={partnerId}>
+              <SelectTrigger className="w-full">
+                <SelectValue placeholder="Training Venue" />
+              </SelectTrigger>
+              <SelectContent>
+                {partners.map((partner) => (
+                  <SelectItem key={partner.id} value={partner.id}>
+                    {partner.name}{partner.location ? ` — ${partner.location}` : ''}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div className="flex items-start gap-3 rounded-md border p-3">
+            <Checkbox
+              checked={agreement}
+              onCheckedChange={(v) => setAgreement(v === true)}
+              disabled={isLoading}
+            />
+            <div className="text-sm leading-snug text-muted-foreground">
+              I agree to the terms and conditions.
+            </div>
+          </div>
+
           <Button disabled={isLoading}>
             {/* {isLoading && (
               <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
