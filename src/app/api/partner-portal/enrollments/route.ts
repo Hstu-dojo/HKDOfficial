@@ -52,6 +52,8 @@ export async function GET(request: Request) {
           // Member info
           memberName: members.fullNameEnglish,
           memberNumber: members.memberNumber,
+          memberPhone: members.phoneNumber,
+          memberEmail: members.email,
           profileId: members.id,
           // Course info
           courseName: courses.name,

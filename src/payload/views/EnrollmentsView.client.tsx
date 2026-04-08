@@ -8,6 +8,8 @@ interface Enrollment {
   id: string
   memberName: string
   memberNumber: string
+  memberPhone?: string | null
+  memberEmail?: string | null
   courseName: string
   enrolledAt: string
   startDate?: string | null
@@ -140,14 +142,31 @@ export default function EnrollmentsView() {
     }
   }
 
+  const getStudentInfo = (raw: any) => {
+    if (!raw) return {}
+    if (typeof raw === 'string') {
+      try {
+        return JSON.parse(raw)
+      } catch {
+        return {}
+      }
+    }
+    return raw
+  }
+
   const getStudentName = (app: EnrollmentApplication) => {
-    const info = app.studentInfo || {}
-    return info.fullNameEnglish || info.fullName || '—'
+    const info = getStudentInfo(app.studentInfo)
+    return info.fullNameEnglish || info.fullName || info.name || '—'
   }
 
   const getStudentPhone = (app: EnrollmentApplication) => {
-    const info = app.studentInfo || {}
-    return info.phoneNumber || info.phone || '—'
+    const info = getStudentInfo(app.studentInfo)
+    return info.phoneNumber || info.phone || info.mobile || '—'
+  }
+
+  const getStudentEmail = (app: EnrollmentApplication) => {
+    const info = getStudentInfo(app.studentInfo)
+    return info.email || '—'
   }
 
   const performApplicationAction = async (applicationId: string, action: 'verify_payment' | 'approve' | 'reject') => {
@@ -244,10 +263,12 @@ export default function EnrollmentsView() {
                           <th style={{ padding: '1rem', borderBottom: '1px solid var(--theme-elevation-200)' }}>App #</th>
                           <th style={{ padding: '1rem', borderBottom: '1px solid var(--theme-elevation-200)' }}>Student</th>
                           <th style={{ padding: '1rem', borderBottom: '1px solid var(--theme-elevation-200)' }}>Phone</th>
+                          <th style={{ padding: '1rem', borderBottom: '1px solid var(--theme-elevation-200)' }}>Email</th>
                           <th style={{ padding: '1rem', borderBottom: '1px solid var(--theme-elevation-200)' }}>Course</th>
                           <th style={{ padding: '1rem', borderBottom: '1px solid var(--theme-elevation-200)' }}>Status</th>
                           <th style={{ padding: '1rem', borderBottom: '1px solid var(--theme-elevation-200)' }}>Payment</th>
                           <th style={{ padding: '1rem', borderBottom: '1px solid var(--theme-elevation-200)' }}>Applied</th>
+                          <th style={{ padding: '1rem', borderBottom: '1px solid var(--theme-elevation-200)' }}>Submitted</th>
                           <th style={{ padding: '1rem', borderBottom: '1px solid var(--theme-elevation-200)' }}>Actions</th>
                         </tr>
                       </thead>
@@ -257,9 +278,13 @@ export default function EnrollmentsView() {
                             <td style={{ padding: '1rem' }}>{a.applicationNumber}</td>
                             <td style={{ padding: '1rem' }}>{getStudentName(a)}</td>
                             <td style={{ padding: '1rem' }}>{getStudentPhone(a)}</td>
+                            <td style={{ padding: '1rem' }}>{getStudentEmail(a)}</td>
                             <td style={{ padding: '1rem' }}>{a.courseName}</td>
                             <td style={{ padding: '1rem', textTransform: 'capitalize' }}>{a.status.replace(/_/g, ' ')}</td>
                             <td style={{ padding: '1rem' }}>
+                              <div style={{ marginBottom: '0.35rem' }}>
+                                {formatCurrency(a.admissionFeeAmount, a.currency)}
+                              </div>
                               {a.paymentProofUrl ? (
                                 <a href={a.paymentProofUrl} target="_blank" rel="noreferrer" className="btn btn--style-secondary btn--size-small">
                                   View Proof
@@ -274,6 +299,7 @@ export default function EnrollmentsView() {
                               ) : null}
                             </td>
                             <td style={{ padding: '1rem' }}>{formatDate(a.createdAt)}</td>
+                            <td style={{ padding: '1rem' }}>{formatDate(a.paymentSubmittedAt)}</td>
                             <td style={{ padding: '1rem' }}>
                               {a.status === 'payment_submitted' ? (
                                 <button
@@ -298,7 +324,7 @@ export default function EnrollmentsView() {
 
                         {applications.length === 0 && (
                           <tr>
-                            <td colSpan={8} style={{ padding: '1.25rem', textAlign: 'center', color: 'var(--theme-elevation-400)' }}>
+                            <td colSpan={10} style={{ padding: '1.25rem', textAlign: 'center', color: 'var(--theme-elevation-400)' }}>
                               No applications found
                             </td>
                           </tr>
@@ -384,6 +410,8 @@ export default function EnrollmentsView() {
                       <tr>
                         <th style={{ padding: '1rem', borderBottom: '1px solid var(--theme-elevation-200)' }}>Member</th>
                         <th style={{ padding: '1rem', borderBottom: '1px solid var(--theme-elevation-200)' }}>Member #</th>
+                        <th style={{ padding: '1rem', borderBottom: '1px solid var(--theme-elevation-200)' }}>Phone</th>
+                        <th style={{ padding: '1rem', borderBottom: '1px solid var(--theme-elevation-200)' }}>Email</th>
                         <th style={{ padding: '1rem', borderBottom: '1px solid var(--theme-elevation-200)' }}>Course</th>
                         <th style={{ padding: '1rem', borderBottom: '1px solid var(--theme-elevation-200)' }}>Status</th>
                         <th style={{ padding: '1rem', borderBottom: '1px solid var(--theme-elevation-200)' }}>Enrolled</th>
@@ -398,6 +426,8 @@ export default function EnrollmentsView() {
                         <tr key={e.id} className="row" style={{ borderBottom: '1px solid var(--theme-elevation-100)' }}>
                           <td style={{ padding: '1rem' }}>{e.memberName}</td>
                           <td style={{ padding: '1rem' }}>{e.memberNumber}</td>
+                          <td style={{ padding: '1rem' }}>{e.memberPhone || '—'}</td>
+                          <td style={{ padding: '1rem' }}>{e.memberEmail || '—'}</td>
                           <td style={{ padding: '1rem' }}>{e.courseName}</td>
                           <td style={{ padding: '1rem' }}>
                             <span
@@ -439,7 +469,7 @@ export default function EnrollmentsView() {
                       ))}
                       {enrollments.length === 0 && (
                         <tr>
-                          <td colSpan={9} style={{ padding: '1.25rem', textAlign: 'center', color: 'var(--theme-elevation-400)' }}>
+                          <td colSpan={11} style={{ padding: '1.25rem', textAlign: 'center', color: 'var(--theme-elevation-400)' }}>
                             No enrollments found
                           </td>
                         </tr>
