@@ -24,6 +24,7 @@ export async function GET(request: Request) {
   const page = parseInt(url.searchParams.get('page') || '1', 10)
   const limit = Math.min(parseInt(url.searchParams.get('limit') || '20', 10), 100)
   const status = url.searchParams.get('status') || 'all'
+  const q = (url.searchParams.get('q') || '').trim()
 
   try {
     const offset = (page - 1) * limit
@@ -31,6 +32,18 @@ export async function GET(request: Request) {
     const conditions = [eq(courses.partnerId, partnerUser.partnerId)]
     if (status !== 'all') {
       conditions.push(eq(enrollmentApplications.status, status as any))
+    }
+
+    if (q) {
+      const pattern = `%${q}%`
+      conditions.push(
+        sql`(
+          coalesce(${courses.name}, '') ILIKE ${pattern}
+          OR coalesce(${enrollmentApplications.applicationNumber}, '') ILIKE ${pattern}
+          OR coalesce(${enrollmentApplications.transactionId}, '') ILIKE ${pattern}
+          OR coalesce(${sql`${enrollmentApplications.studentInfo}::text`}, '') ILIKE ${pattern}
+        )`
+      )
     }
 
     const [results, totalResult] = await Promise.all([
@@ -94,7 +107,7 @@ export async function PATCH(request: Request) {
     const body = await request.json()
     const { applicationId, action, notes, rejectionReason } = body as {
       applicationId?: string
-      action?: 'verify_payment' | 'approve' | 'reject'
+      action?: 'verify_payment' | 'approve' | 'reject' | 'cancel'
       notes?: string
       rejectionReason?: string
     }
@@ -103,7 +116,7 @@ export async function PATCH(request: Request) {
       return NextResponse.json({ error: 'applicationId and action are required' }, { status: 400 })
     }
 
-    if (!['verify_payment', 'approve', 'reject'].includes(action)) {
+    if (!['verify_payment', 'approve', 'reject', 'cancel'].includes(action)) {
       return NextResponse.json({ error: 'Invalid action' }, { status: 400 })
     }
 
@@ -179,6 +192,25 @@ export async function PATCH(request: Request) {
       return NextResponse.json({ success: true, application: updated })
     }
 
+    if (action === 'cancel') {
+      if (application.status === 'approved') {
+        return NextResponse.json({ error: 'Cannot cancel an approved application' }, { status: 400 })
+      }
+
+      const [updated] = await db
+        .update(enrollmentApplications)
+        .set({
+          status: 'cancelled',
+          reviewedAt: new Date(),
+          reviewNotes: notes || `Cancelled by partner admin: ${partnerUser.name}`,
+          updatedAt: new Date(),
+        })
+        .where(eq(enrollmentApplications.id, applicationId))
+        .returning()
+
+      return NextResponse.json({ success: true, application: updated })
+    }
+
     // action === 'approve'
     if (application.status !== 'payment_verified') {
       return NextResponse.json({ error: 'Payment must be verified before approval' }, { status: 400 })
@@ -191,7 +223,24 @@ export async function PATCH(request: Request) {
       .where(eq(members.userId, application.userId))
       .limit(1)
 
-    const studentInfo = (application.studentInfo || {}) as Record<string, any>
+    let studentInfo: Record<string, any> = (application.studentInfo || {}) as any
+    if (typeof studentInfo === 'string') {
+      try {
+        studentInfo = JSON.parse(studentInfo) as any
+      } catch {
+        studentInfo = {}
+      }
+    }
+
+    const fullNameEnglish =
+      studentInfo.fullNameEnglish || studentInfo.username || studentInfo.fullName || studentInfo.name || null
+    const phoneNumber = studentInfo.phoneNumber || studentInfo.phone || studentInfo.mobile || null
+    const email = studentInfo.email || null
+    const dateOfBirthRaw = studentInfo.dateOfBirth || studentInfo.dob || null
+    const gender = studentInfo.gender || studentInfo.sex || null
+    const presentAddress = studentInfo.presentAddress || studentInfo.address || null
+    const emergencyContactName = studentInfo.emergencyContactName || studentInfo.emergencyContact || null
+    const emergencyContactPhone = studentInfo.emergencyContactPhone || studentInfo.emergencyPhone || null
 
     if (!memberProfile) {
       const prefix = `HKD-${partnerUser.partnerSlug.toUpperCase().slice(0, 8)}`
@@ -207,28 +256,28 @@ export async function PATCH(request: Request) {
         .values({
           userId: application.userId,
           memberNumber,
-          fullNameEnglish: studentInfo.fullNameEnglish || null,
+          fullNameEnglish,
           fullNameBangla: studentInfo.fullNameBangla || null,
           fatherName: studentInfo.fatherName || null,
           fatherNameBangla: studentInfo.fatherNameBangla || null,
           motherName: studentInfo.motherName || null,
           motherNameBangla: studentInfo.motherNameBangla || null,
-          dateOfBirth: studentInfo.dateOfBirth ? new Date(studentInfo.dateOfBirth) : undefined,
-          gender: studentInfo.gender || null,
+          dateOfBirth: dateOfBirthRaw ? new Date(dateOfBirthRaw) : undefined,
+          gender,
           bloodGroup: studentInfo.bloodGroup || null,
           religion: studentInfo.religion || null,
           nationality: studentInfo.nationality || null,
-          phoneNumber: studentInfo.phoneNumber || null,
-          email: studentInfo.email || null,
-          presentAddress: studentInfo.presentAddress || null,
+          phoneNumber,
+          email,
+          presentAddress,
           permanentAddress: studentInfo.permanentAddress || null,
           nid: studentInfo.nid || null,
           birthCertificateNo: studentInfo.birthCertificateNo || null,
           passportNo: studentInfo.passportNo || null,
           profession: studentInfo.profession || null,
           educationQualification: studentInfo.educationQualification || null,
-          emergencyContact: studentInfo.emergencyContactName || null,
-          emergencyPhone: studentInfo.emergencyContactPhone || null,
+          emergencyContact: emergencyContactName,
+          emergencyPhone: emergencyContactPhone,
           picture: studentInfo.profilePhotoUrl || null,
           beltRank: (course.minimumBelt as any) || 'white',
           partnerId: partnerUser.partnerId,

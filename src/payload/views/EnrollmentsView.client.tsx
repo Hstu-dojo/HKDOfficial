@@ -18,6 +18,8 @@ interface Enrollment {
   isActive: boolean
   completedAt: string | null
   droppedAt: string | null
+  transactionId?: string | null
+  paymentProofUrl?: string | null
 }
 
 interface EnrollmentApplication {
@@ -42,6 +44,8 @@ interface Pagination {
 }
 
 export default function EnrollmentsView() {
+  const [search, setSearch] = useState('')
+
   const [applications, setApplications] = useState<EnrollmentApplication[]>([])
   const [applicationsLoading, setApplicationsLoading] = useState(true)
   const [applicationsPage, setApplicationsPage] = useState(1)
@@ -64,6 +68,7 @@ export default function EnrollmentsView() {
     try {
       const params = new URLSearchParams({ page: String(applicationsPage), limit: '20' })
       if (applicationStatusFilter !== 'all') params.set('status', applicationStatusFilter)
+      if (search) params.set('q', search)
       const res = await fetch(`/api/partner-portal/enrollment-applications?${params}`)
       const data = await res.json()
       if (!res.ok) throw new Error(data?.error || 'Failed to load applications')
@@ -74,7 +79,7 @@ export default function EnrollmentsView() {
     } finally {
       setApplicationsLoading(false)
     }
-  }, [applicationsPage, applicationStatusFilter])
+  }, [applicationsPage, applicationStatusFilter, search])
 
   const fetchEnrollments = useCallback(async () => {
     setLoading(true)
@@ -82,6 +87,7 @@ export default function EnrollmentsView() {
     try {
       const params = new URLSearchParams({ page: String(page), limit: '20' })
       if (statusFilter !== 'all') params.set('status', statusFilter)
+      if (search) params.set('q', search)
       const res = await fetch(`/api/partner-portal/enrollments?${params}`)
       const data = await res.json()
       if (!res.ok) throw new Error(data?.error || 'Failed to load enrollments')
@@ -92,7 +98,7 @@ export default function EnrollmentsView() {
     } finally {
       setLoading(false)
     }
-  }, [page, statusFilter])
+  }, [page, statusFilter, search])
 
   useEffect(() => {
     setPage(1)
@@ -101,6 +107,11 @@ export default function EnrollmentsView() {
   useEffect(() => {
     setApplicationsPage(1)
   }, [applicationStatusFilter])
+
+  useEffect(() => {
+    setPage(1)
+    setApplicationsPage(1)
+  }, [search])
 
   useEffect(() => {
     fetchEnrollments()
@@ -156,7 +167,15 @@ export default function EnrollmentsView() {
 
   const getStudentName = (app: EnrollmentApplication) => {
     const info = getStudentInfo(app.studentInfo)
-    return info.fullNameEnglish || info.fullName || info.name || '—'
+    const firstLast = [info.firstName, info.lastName].filter(Boolean).join(' ').trim()
+    return (
+      info.fullNameEnglish ||
+      info.fullName ||
+      info.name ||
+      info.username ||
+      firstLast ||
+      '—'
+    )
   }
 
   const getStudentPhone = (app: EnrollmentApplication) => {
@@ -169,13 +188,17 @@ export default function EnrollmentsView() {
     return info.email || '—'
   }
 
-  const performApplicationAction = async (applicationId: string, action: 'verify_payment' | 'approve' | 'reject') => {
+  const performApplicationAction = async (
+    applicationId: string,
+    action: 'verify_payment' | 'approve' | 'reject' | 'cancel',
+    payload?: { rejectionReason?: string; notes?: string }
+  ) => {
     setApplicationsMessage('')
     try {
       const res = await fetch('/api/partner-portal/enrollment-applications', {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ applicationId, action }),
+        body: JSON.stringify({ applicationId, action, ...payload }),
       })
       const data = await res.json()
       if (!res.ok) throw new Error(data?.error || 'Failed to update application')
@@ -184,6 +207,31 @@ export default function EnrollmentsView() {
     } catch (err: any) {
       setApplicationsMessage(err?.message || 'Failed to update application')
     }
+  }
+
+  const performEnrollmentAction = async (
+    enrollmentId: string,
+    action: 'drop',
+    payload?: { dropReason?: string }
+  ) => {
+    setMessage('')
+    try {
+      const res = await fetch('/api/partner-portal/enrollments', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ enrollmentId, action, ...payload }),
+      })
+      const data = await res.json()
+      if (!res.ok) throw new Error(data?.error || 'Failed to update enrollment')
+      await fetchEnrollments()
+    } catch (err: any) {
+      setMessage(err?.message || 'Failed to update enrollment')
+    }
+  }
+
+  const shouldShowProofThumbnail = (url: string) => {
+    const u = url.toLowerCase()
+    return u.endsWith('.png') || u.endsWith('.jpg') || u.endsWith('.jpeg') || u.endsWith('.webp') || u.includes('cloudinary')
   }
 
   return (
@@ -196,6 +244,16 @@ export default function EnrollmentsView() {
               <h1 className="view-header__title">Enrollments</h1>
               <p className="field-description">Manage course applications (payment approval) and confirmed enrollments.</p>
             </header>
+
+            {/* Search */}
+            <input
+              type="text"
+              placeholder="Search by student name, phone, email, TX ID, member #, course..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              className="input-string"
+              style={{ marginBottom: '1rem', width: '100%' }}
+            />
 
             {/* Applications */}
             <div style={{ marginBottom: '2rem' }}>
@@ -286,9 +344,21 @@ export default function EnrollmentsView() {
                                 {formatCurrency(a.admissionFeeAmount, a.currency)}
                               </div>
                               {a.paymentProofUrl ? (
-                                <a href={a.paymentProofUrl} target="_blank" rel="noreferrer" className="btn btn--style-secondary btn--size-small">
-                                  View Proof
-                                </a>
+                                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.35rem' }}>
+                                  {shouldShowProofThumbnail(a.paymentProofUrl) ? (
+                                    <a href={a.paymentProofUrl} target="_blank" rel="noreferrer" style={{ display: 'inline-block' }}>
+                                      <img
+                                        src={a.paymentProofUrl}
+                                        alt="Payment proof"
+                                        loading="lazy"
+                                        style={{ width: 64, height: 64, objectFit: 'cover', borderRadius: 6, border: '1px solid var(--theme-elevation-150)' }}
+                                      />
+                                    </a>
+                                  ) : null}
+                                  <a href={a.paymentProofUrl} target="_blank" rel="noreferrer" className="btn btn--style-secondary btn--size-small">
+                                    View Proof
+                                  </a>
+                                </div>
                               ) : (
                                 <span className="field-description">—</span>
                               )}
@@ -301,23 +371,55 @@ export default function EnrollmentsView() {
                             <td style={{ padding: '1rem' }}>{formatDate(a.createdAt)}</td>
                             <td style={{ padding: '1rem' }}>{formatDate(a.paymentSubmittedAt)}</td>
                             <td style={{ padding: '1rem' }}>
-                              {a.status === 'payment_submitted' ? (
-                                <button
-                                  className="btn btn--style-primary btn--size-small"
-                                  onClick={() => performApplicationAction(a.id, 'verify_payment')}
-                                >
-                                  Verify
-                                </button>
-                              ) : a.status === 'payment_verified' ? (
-                                <button
-                                  className="btn btn--style-primary btn--size-small"
-                                  onClick={() => performApplicationAction(a.id, 'approve')}
-                                >
-                                  Approve
-                                </button>
-                              ) : (
-                                <span className="field-description">—</span>
-                              )}
+                              <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
+                                {a.status === 'payment_submitted' ? (
+                                  <button
+                                    className="btn btn--style-primary btn--size-small"
+                                    onClick={() => performApplicationAction(a.id, 'verify_payment')}
+                                  >
+                                    Verify
+                                  </button>
+                                ) : null}
+
+                                {a.status === 'payment_verified' ? (
+                                  <button
+                                    className="btn btn--style-primary btn--size-small"
+                                    onClick={() => performApplicationAction(a.id, 'approve')}
+                                  >
+                                    Approve
+                                  </button>
+                                ) : null}
+
+                                {a.status !== 'approved' && a.status !== 'rejected' && a.status !== 'cancelled' ? (
+                                  <button
+                                    className="btn btn--style-secondary btn--size-small"
+                                    onClick={() => {
+                                      const reason = window.prompt('Rejection reason (required)')
+                                      if (!reason) return
+                                      performApplicationAction(a.id, 'reject', { rejectionReason: reason })
+                                    }}
+                                  >
+                                    Reject
+                                  </button>
+                                ) : null}
+
+                                {a.status !== 'approved' && a.status !== 'rejected' && a.status !== 'cancelled' ? (
+                                  <button
+                                    className="btn btn--style-secondary btn--size-small"
+                                    onClick={() => {
+                                      const ok = window.confirm('Cancel this application?')
+                                      if (!ok) return
+                                      performApplicationAction(a.id, 'cancel')
+                                    }}
+                                  >
+                                    Cancel
+                                  </button>
+                                ) : null}
+
+                                {a.status === 'approved' || a.status === 'rejected' || a.status === 'cancelled' ? (
+                                  <span className="field-description">—</span>
+                                ) : null}
+                              </div>
                             </td>
                           </tr>
                         ))}
@@ -414,17 +516,19 @@ export default function EnrollmentsView() {
                         <th style={{ padding: '1rem', borderBottom: '1px solid var(--theme-elevation-200)' }}>Email</th>
                         <th style={{ padding: '1rem', borderBottom: '1px solid var(--theme-elevation-200)' }}>Course</th>
                         <th style={{ padding: '1rem', borderBottom: '1px solid var(--theme-elevation-200)' }}>Status</th>
+                        <th style={{ padding: '1rem', borderBottom: '1px solid var(--theme-elevation-200)' }}>Payment</th>
                         <th style={{ padding: '1rem', borderBottom: '1px solid var(--theme-elevation-200)' }}>Enrolled</th>
                         <th style={{ padding: '1rem', borderBottom: '1px solid var(--theme-elevation-200)' }}>Start</th>
                         <th style={{ padding: '1rem', borderBottom: '1px solid var(--theme-elevation-200)' }}>Monthly Fee</th>
                         <th style={{ padding: '1rem', borderBottom: '1px solid var(--theme-elevation-200)' }}>Completed</th>
                         <th style={{ padding: '1rem', borderBottom: '1px solid var(--theme-elevation-200)' }}>Dropped</th>
+                        <th style={{ padding: '1rem', borderBottom: '1px solid var(--theme-elevation-200)' }}>Actions</th>
                       </tr>
                     </thead>
                     <tbody>
                       {enrollments.map((e) => (
                         <tr key={e.id} className="row" style={{ borderBottom: '1px solid var(--theme-elevation-100)' }}>
-                          <td style={{ padding: '1rem' }}>{e.memberName}</td>
+                          <td style={{ padding: '1rem' }}>{e.memberName || e.memberEmail || '—'}</td>
                           <td style={{ padding: '1rem' }}>{e.memberNumber}</td>
                           <td style={{ padding: '1rem' }}>{e.memberPhone || '—'}</td>
                           <td style={{ padding: '1rem' }}>{e.memberEmail || '—'}</td>
@@ -460,16 +564,57 @@ export default function EnrollmentsView() {
                               {getStatus(e)}
                             </span>
                           </td>
+                          <td style={{ padding: '1rem' }}>
+                            {e.paymentProofUrl ? (
+                              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.35rem' }}>
+                                {shouldShowProofThumbnail(e.paymentProofUrl) ? (
+                                  <a href={e.paymentProofUrl} target="_blank" rel="noreferrer" style={{ display: 'inline-block' }}>
+                                    <img
+                                      src={e.paymentProofUrl}
+                                      alt="Payment proof"
+                                      loading="lazy"
+                                      style={{ width: 64, height: 64, objectFit: 'cover', borderRadius: 6, border: '1px solid var(--theme-elevation-150)' }}
+                                    />
+                                  </a>
+                                ) : null}
+                                <a href={e.paymentProofUrl} target="_blank" rel="noreferrer" className="btn btn--style-secondary btn--size-small">
+                                  View Proof
+                                </a>
+                                {e.transactionId ? (
+                                  <div className="field-description">TX: {e.transactionId}</div>
+                                ) : null}
+                              </div>
+                            ) : (
+                              <span className="field-description">—</span>
+                            )}
+                          </td>
                           <td style={{ padding: '1rem' }}>{formatDate(e.enrolledAt)}</td>
                           <td style={{ padding: '1rem' }}>{formatDate(e.startDate)}</td>
                           <td style={{ padding: '1rem' }}>{formatCurrency(e.monthlyFee, e.currency)}</td>
                           <td style={{ padding: '1rem' }}>{formatDate(e.completedAt)}</td>
                           <td style={{ padding: '1rem' }}>{formatDate(e.droppedAt)}</td>
+                          <td style={{ padding: '1rem' }}>
+                            {getStatus(e) === 'active' ? (
+                              <button
+                                className="btn btn--style-secondary btn--size-small"
+                                onClick={() => {
+                                  const ok = window.confirm('Drop this enrollment?')
+                                  if (!ok) return
+                                  const reason = window.prompt('Drop reason (optional)') || undefined
+                                  performEnrollmentAction(e.id, 'drop', { dropReason: reason })
+                                }}
+                              >
+                                Drop
+                              </button>
+                            ) : (
+                              <span className="field-description">—</span>
+                            )}
+                          </td>
                         </tr>
                       ))}
                       {enrollments.length === 0 && (
                         <tr>
-                          <td colSpan={11} style={{ padding: '1.25rem', textAlign: 'center', color: 'var(--theme-elevation-400)' }}>
+                          <td colSpan={13} style={{ padding: '1.25rem', textAlign: 'center', color: 'var(--theme-elevation-400)' }}>
                             No enrollments found
                           </td>
                         </tr>
