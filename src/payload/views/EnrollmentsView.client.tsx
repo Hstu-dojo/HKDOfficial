@@ -18,6 +18,20 @@ interface Enrollment {
   droppedAt: string | null
 }
 
+interface EnrollmentApplication {
+  id: string
+  applicationNumber: string
+  status: string
+  createdAt: string
+  paymentSubmittedAt: string | null
+  transactionId: string | null
+  paymentProofUrl: string | null
+  admissionFeeAmount: number
+  currency: string
+  courseName: string
+  studentInfo: any
+}
+
 interface Pagination {
   page: number
   limit: number
@@ -26,12 +40,39 @@ interface Pagination {
 }
 
 export default function EnrollmentsView() {
+  const [applications, setApplications] = useState<EnrollmentApplication[]>([])
+  const [applicationsLoading, setApplicationsLoading] = useState(true)
+  const [applicationsPage, setApplicationsPage] = useState(1)
+  const [applicationsPagination, setApplicationsPagination] = useState<Pagination>({ page: 1, limit: 20, total: 0, totalPages: 0 })
+  const [applicationsMessage, setApplicationsMessage] = useState('')
+  const [applicationStatusFilter, setApplicationStatusFilter] = useState<
+    'all' | 'pending_payment' | 'payment_submitted' | 'payment_verified' | 'approved' | 'rejected' | 'cancelled'
+  >('payment_submitted')
+
   const [enrollments, setEnrollments] = useState<Enrollment[]>([])
   const [loading, setLoading] = useState(true)
   const [page, setPage] = useState(1)
   const [pagination, setPagination] = useState<Pagination>({ page: 1, limit: 20, total: 0, totalPages: 0 })
   const [message, setMessage] = useState('')
   const [statusFilter, setStatusFilter] = useState<'all' | 'active' | 'completed' | 'dropped'>('all')
+
+  const fetchApplications = useCallback(async () => {
+    setApplicationsLoading(true)
+    setApplicationsMessage('')
+    try {
+      const params = new URLSearchParams({ page: String(applicationsPage), limit: '20' })
+      if (applicationStatusFilter !== 'all') params.set('status', applicationStatusFilter)
+      const res = await fetch(`/api/partner-portal/enrollment-applications?${params}`)
+      const data = await res.json()
+      if (!res.ok) throw new Error(data?.error || 'Failed to load applications')
+      setApplications(data.applications || [])
+      setApplicationsPagination(data.pagination || { page: applicationsPage, limit: 20, total: 0, totalPages: 0 })
+    } catch {
+      setApplicationsMessage('Failed to load applications')
+    } finally {
+      setApplicationsLoading(false)
+    }
+  }, [applicationsPage, applicationStatusFilter])
 
   const fetchEnrollments = useCallback(async () => {
     setLoading(true)
@@ -56,10 +97,20 @@ export default function EnrollmentsView() {
   }, [statusFilter])
 
   useEffect(() => {
+    setApplicationsPage(1)
+  }, [applicationStatusFilter])
+
+  useEffect(() => {
     fetchEnrollments()
   }, [fetchEnrollments])
 
+  useEffect(() => {
+    fetchApplications()
+  }, [fetchApplications])
+
   const totalPages = pagination.totalPages || Math.ceil((pagination.total || 0) / 20)
+  const applicationsTotalPages =
+    applicationsPagination.totalPages || Math.ceil((applicationsPagination.total || 0) / 20)
 
   const getStatus = (e: Enrollment) => {
     if (e.isActive) return 'active'
@@ -89,6 +140,33 @@ export default function EnrollmentsView() {
     }
   }
 
+  const getStudentName = (app: EnrollmentApplication) => {
+    const info = app.studentInfo || {}
+    return info.fullNameEnglish || info.fullName || '—'
+  }
+
+  const getStudentPhone = (app: EnrollmentApplication) => {
+    const info = app.studentInfo || {}
+    return info.phoneNumber || info.phone || '—'
+  }
+
+  const performApplicationAction = async (applicationId: string, action: 'verify_payment' | 'approve' | 'reject') => {
+    setApplicationsMessage('')
+    try {
+      const res = await fetch('/api/partner-portal/enrollment-applications', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ applicationId, action }),
+      })
+      const data = await res.json()
+      if (!res.ok) throw new Error(data?.error || 'Failed to update application')
+      await fetchApplications()
+      await fetchEnrollments()
+    } catch (err: any) {
+      setApplicationsMessage(err?.message || 'Failed to update application')
+    }
+  }
+
   return (
     <>
       <PortalStepNav label="Enrollments" />
@@ -97,6 +175,168 @@ export default function EnrollmentsView() {
           <Gutter>
             <header className="view-header">
               <h1 className="view-header__title">Enrollments</h1>
+              <p className="field-description">Manage course applications (payment approval) and confirmed enrollments.</p>
+            </header>
+
+            {/* Applications */}
+            <div style={{ marginBottom: '2rem' }}>
+              <header className="view-header" style={{ marginTop: '1rem' }}>
+                <h2 className="view-header__title" style={{ fontSize: '1.25rem' }}>
+                  Course Applications
+                </h2>
+                <p className="field-description">
+                  {applicationsPagination.total} total application{applicationsPagination.total !== 1 ? 's' : ''}
+                </p>
+              </header>
+
+              <div
+                className="tabs-container"
+                style={{
+                  marginBottom: '1.5rem',
+                  borderBottom: '1px solid var(--theme-elevation-200)',
+                  display: 'flex',
+                  gap: '1rem',
+                  flexWrap: 'wrap',
+                }}
+              >
+                {([
+                  { key: 'payment_submitted', label: 'Payment Submitted' },
+                  { key: 'payment_verified', label: 'Payment Verified' },
+                  { key: 'pending_payment', label: 'Pending Payment' },
+                  { key: 'approved', label: 'Approved' },
+                  { key: 'rejected', label: 'Rejected' },
+                  { key: 'cancelled', label: 'Cancelled' },
+                  { key: 'all', label: 'All' },
+                ] as const).map((t) => (
+                  <button
+                    key={t.key}
+                    onClick={() => setApplicationStatusFilter(t.key)}
+                    className={`btn btn--style-${applicationStatusFilter === t.key ? 'primary' : 'secondary'} btn--size-small`}
+                  >
+                    {t.label}
+                  </button>
+                ))}
+              </div>
+
+              {applicationsMessage && (
+                <div
+                  className="payload-toast payload-toast--error"
+                  style={{
+                    marginBottom: '1rem',
+                    padding: '1rem',
+                    background: 'var(--theme-error-100)',
+                    color: 'var(--theme-error-700)',
+                    borderRadius: '4px',
+                  }}
+                >
+                  {applicationsMessage}
+                </div>
+              )}
+
+              {applicationsLoading ? (
+                <p>Loading...</p>
+              ) : (
+                <>
+                  <div className="table-wrapper">
+                    <table className="table" cellPadding="0" cellSpacing="0" style={{ width: '100%', textAlign: 'left' }}>
+                      <thead>
+                        <tr>
+                          <th style={{ padding: '1rem', borderBottom: '1px solid var(--theme-elevation-200)' }}>App #</th>
+                          <th style={{ padding: '1rem', borderBottom: '1px solid var(--theme-elevation-200)' }}>Student</th>
+                          <th style={{ padding: '1rem', borderBottom: '1px solid var(--theme-elevation-200)' }}>Phone</th>
+                          <th style={{ padding: '1rem', borderBottom: '1px solid var(--theme-elevation-200)' }}>Course</th>
+                          <th style={{ padding: '1rem', borderBottom: '1px solid var(--theme-elevation-200)' }}>Status</th>
+                          <th style={{ padding: '1rem', borderBottom: '1px solid var(--theme-elevation-200)' }}>Payment</th>
+                          <th style={{ padding: '1rem', borderBottom: '1px solid var(--theme-elevation-200)' }}>Applied</th>
+                          <th style={{ padding: '1rem', borderBottom: '1px solid var(--theme-elevation-200)' }}>Actions</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {applications.map((a) => (
+                          <tr key={a.id} className="row" style={{ borderBottom: '1px solid var(--theme-elevation-100)' }}>
+                            <td style={{ padding: '1rem' }}>{a.applicationNumber}</td>
+                            <td style={{ padding: '1rem' }}>{getStudentName(a)}</td>
+                            <td style={{ padding: '1rem' }}>{getStudentPhone(a)}</td>
+                            <td style={{ padding: '1rem' }}>{a.courseName}</td>
+                            <td style={{ padding: '1rem', textTransform: 'capitalize' }}>{a.status.replace(/_/g, ' ')}</td>
+                            <td style={{ padding: '1rem' }}>
+                              {a.paymentProofUrl ? (
+                                <a href={a.paymentProofUrl} target="_blank" rel="noreferrer" className="btn btn--style-secondary btn--size-small">
+                                  View Proof
+                                </a>
+                              ) : (
+                                <span className="field-description">—</span>
+                              )}
+                              {a.transactionId ? (
+                                <div className="field-description" style={{ marginTop: '0.25rem' }}>
+                                  TX: {a.transactionId}
+                                </div>
+                              ) : null}
+                            </td>
+                            <td style={{ padding: '1rem' }}>{formatDate(a.createdAt)}</td>
+                            <td style={{ padding: '1rem' }}>
+                              {a.status === 'payment_submitted' ? (
+                                <button
+                                  className="btn btn--style-primary btn--size-small"
+                                  onClick={() => performApplicationAction(a.id, 'verify_payment')}
+                                >
+                                  Verify
+                                </button>
+                              ) : a.status === 'payment_verified' ? (
+                                <button
+                                  className="btn btn--style-primary btn--size-small"
+                                  onClick={() => performApplicationAction(a.id, 'approve')}
+                                >
+                                  Approve
+                                </button>
+                              ) : (
+                                <span className="field-description">—</span>
+                              )}
+                            </td>
+                          </tr>
+                        ))}
+
+                        {applications.length === 0 && (
+                          <tr>
+                            <td colSpan={8} style={{ padding: '1.25rem', textAlign: 'center', color: 'var(--theme-elevation-400)' }}>
+                              No applications found
+                            </td>
+                          </tr>
+                        )}
+                      </tbody>
+                    </table>
+                  </div>
+
+                  {applicationsTotalPages > 1 && (
+                    <div style={{ display: 'flex', gap: '0.5rem', marginTop: '1rem', justifyContent: 'center', alignItems: 'center' }}>
+                      <button
+                        onClick={() => setApplicationsPage((p) => Math.max(1, p - 1))}
+                        disabled={applicationsPage === 1}
+                        className="btn btn--style-secondary btn--size-small"
+                      >
+                        Previous
+                      </button>
+                      <span className="field-description" style={{ margin: 0 }}>
+                        Page {applicationsPage} of {applicationsTotalPages}
+                      </span>
+                      <button
+                        onClick={() => setApplicationsPage((p) => Math.min(applicationsTotalPages, p + 1))}
+                        disabled={applicationsPage === applicationsTotalPages}
+                        className="btn btn--style-secondary btn--size-small"
+                      >
+                        Next
+                      </button>
+                    </div>
+                  )}
+                </>
+              )}
+            </div>
+
+            {/* Confirmed enrollments */}
+            <header className="view-header" style={{ marginTop: '1.5rem' }}>
+              <h2 className="view-header__title" style={{ fontSize: '1.25rem' }}>
+                Confirmed Enrollments
+              </h2>
               <p className="field-description">
                 {pagination.total} total enrollment{pagination.total !== 1 ? 's' : ''}
               </p>
