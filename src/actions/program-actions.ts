@@ -1,10 +1,10 @@
 'use server';
 
 import { db } from "@/lib/connect-db";
-import { programs, programRegistrations, members, profiles, registrations, courseEnrollments, courses } from "@/db/schemas/karate";
+import { programs, programRegistrations, members, profiles, registrations, courseEnrollments, courses, enrollmentApplications } from "@/db/schemas/karate";
 import { user, account } from "@/db/schemas/auth";
 import { revalidatePath } from "next/cache";
-import { eq, desc, and } from "drizzle-orm";
+import { eq, desc, and, inArray } from "drizzle-orm";
 import { NewProgram, NewProgramRegistration } from "@/db/schemas/karate/programs";
 import { checkUserProfileStatus } from "./check-profile";
 
@@ -189,7 +189,50 @@ export async function registerForProgram(data: NewProgramRegistration) {
         .limit(1);
 
       if (activeEnrollment.length === 0) {
-        return { success: false, error: 'You are not enrolled in a course under this partner, so you cannot register for this Belt Test.' };
+        // Fallback: Some flows track “applied” in enrollment_applications and create course_enrollments later.
+        // If the application is already approved, treat it as eligible.
+        const appConditions = [
+          eq(enrollmentApplications.userId, publicUserId),
+          inArray(enrollmentApplications.status, ['approved'] as any),
+        ];
+
+        if (beltTestCourse.partnerId) {
+          appConditions.push(eq(courses.partnerId, beltTestCourse.partnerId));
+        }
+
+        const approvedApplication = await db
+          .select({ id: enrollmentApplications.id })
+          .from(enrollmentApplications)
+          .innerJoin(courses, eq(enrollmentApplications.courseId, courses.id))
+          .where(and(...appConditions))
+          .limit(1);
+
+        if (approvedApplication.length === 0) {
+          const anyApplication = await db
+            .select({ status: enrollmentApplications.status })
+            .from(enrollmentApplications)
+            .innerJoin(courses, eq(enrollmentApplications.courseId, courses.id))
+            .where(
+              and(
+                eq(enrollmentApplications.userId, publicUserId),
+                ...(beltTestCourse.partnerId ? [eq(courses.partnerId, beltTestCourse.partnerId)] : [])
+              )
+            )
+            .orderBy(desc(enrollmentApplications.createdAt))
+            .limit(1);
+
+          if (anyApplication.length > 0) {
+            return {
+              success: false,
+              error: `Your course application is still "${anyApplication[0]!.status}". You can register for this Belt Test after your enrollment is approved.`
+            };
+          }
+
+          return {
+            success: false,
+            error: 'You are not enrolled in a course under this partner, so you cannot register for this Belt Test.'
+          };
+        }
       }
     }
 
