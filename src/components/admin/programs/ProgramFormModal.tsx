@@ -12,6 +12,7 @@ interface ProgramFormData {
   slug: string;
   description: string;
   type: string;
+  courseId: string;
   startDate: string;
   endDate: string;
   registrationDeadline: string;
@@ -40,11 +41,13 @@ const PROGRAM_TYPES = [
 export default function ProgramFormModal({ isOpen, onClose, onSuccess, initialData }: ProgramFormModalProps) {
   const [loading, setLoading] = useState(false);
   const selectedPaymentAccountIdsRef = useRef<string[]>([]);
+  const [courses, setCourses] = useState<Array<{ id: string; name: string; partnerId?: string | null }>>([]);
   const [formData, setFormData] = useState<ProgramFormData>({
     title: '',
     slug: '',
     description: '',
     type: 'BELT_TEST',
+    courseId: '',
     startDate: '',
     endDate: '',
     registrationDeadline: '',
@@ -68,6 +71,7 @@ export default function ProgramFormModal({ isOpen, onClose, onSuccess, initialDa
         slug: initialData.slug || '',
         description: initialData.description || '',
         type: initialData.type || 'BELT_TEST',
+        courseId: initialData.courseId || '',
         startDate: formatDate(initialData.startDate),
         endDate: formatDate(initialData.endDate),
         registrationDeadline: formatDate(initialData.registrationDeadline),
@@ -78,6 +82,27 @@ export default function ProgramFormModal({ isOpen, onClose, onSuccess, initialDa
       });
     }
   }, [initialData]);
+
+  useEffect(() => {
+    if (!isOpen) return;
+    async function fetchCourses() {
+      try {
+        const res = await fetch('/api/admin/courses?active=true');
+        if (!res.ok) return;
+        const data = await res.json();
+        if (Array.isArray(data)) {
+          setCourses(
+            data
+              .map((c: any) => ({ id: String(c.id), name: String(c.name ?? ''), partnerId: c.partnerId ?? null }))
+              .filter((c: any) => c.id && c.name && c.partnerId)
+          );
+        }
+      } catch (e) {
+        console.error('Failed to fetch courses:', e);
+      }
+    }
+    fetchCourses();
+  }, [isOpen]);
 
   // Auto-generate slug from title if creating new
   const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -98,6 +123,11 @@ export default function ProgramFormModal({ isOpen, onClose, onSuccess, initialDa
     setLoading(true);
 
     try {
+      if (formData.type === 'BELT_TEST' && !formData.courseId) {
+        toast.error('Please select a course for Belt Test');
+        return;
+      }
+
       const payload: any = {
         ...formData,
         startDate: formData.startDate ? new Date(formData.startDate) : null,
@@ -107,6 +137,9 @@ export default function ProgramFormModal({ isOpen, onClose, onSuccess, initialDa
         fee: Number(formData.fee),
         maxParticipants: Number(formData.maxParticipants) || null,
       };
+
+      // Only persist courseId for Belt Test programs
+      payload.courseId = formData.type === 'BELT_TEST' ? formData.courseId : null;
 
       let result;
       if (initialData) {
@@ -177,7 +210,14 @@ export default function ProgramFormModal({ isOpen, onClose, onSuccess, initialDa
                   <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Type</label>
                   <select
                     value={formData.type}
-                    onChange={(e) => setFormData(prev => ({ ...prev, type: e.target.value }))}
+                    onChange={(e) => {
+                      const nextType = e.target.value;
+                      setFormData(prev => ({
+                        ...prev,
+                        type: nextType,
+                        courseId: nextType === 'BELT_TEST' ? prev.courseId : '',
+                      }));
+                    }}
                     className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm border p-2"
                   >
                     {PROGRAM_TYPES.map(type => (
@@ -185,6 +225,28 @@ export default function ProgramFormModal({ isOpen, onClose, onSuccess, initialDa
                     ))}
                   </select>
                 </div>
+
+                {formData.type === 'BELT_TEST' && (
+                  <div className="col-span-2">
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Course (Belt Test)</label>
+                    <select
+                      required
+                      value={formData.courseId}
+                      onChange={(e) => setFormData(prev => ({ ...prev, courseId: e.target.value }))}
+                      className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm border p-2"
+                    >
+                      <option value="">Select a course</option>
+                      {courses.map((course) => (
+                        <option key={course.id} value={course.id}>
+                          {course.name}
+                        </option>
+                      ))}
+                    </select>
+                    <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                      Required for Belt Test. Eligibility is based on the course’s partner.
+                    </p>
+                  </div>
+                )}
 
                 <div className="col-span-1">
                   <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Slug</label>

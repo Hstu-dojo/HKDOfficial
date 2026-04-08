@@ -34,6 +34,20 @@ export default function ProgramDetails({ slug, initialProgram }: ProgramDetailsP
   const [paymentProofUrl, setPaymentProofUrl] = useState('');
   const [uploadingProof, setUploadingProof] = useState(false);
   const [registrationError, setRegistrationError] = useState('');
+
+  // Belt test specific
+  const [newRank, setNewRank] = useState<string>('');
+
+  const BELT_RANKS = [
+    { value: 'white', label: 'White' },
+    { value: 'yellow', label: 'Yellow' },
+    { value: 'orange', label: 'Orange' },
+    { value: 'green', label: 'Green' },
+    { value: 'blue', label: 'Blue' },
+    { value: 'red', label: 'Red' },
+    { value: 'brown', label: 'Brown' },
+    { value: 'black', label: 'Black' },
+  ];
   
   // Payment Account State
   const [paymentAccount, setPaymentAccount] = useState<{
@@ -84,6 +98,11 @@ export default function ProgramDetails({ slug, initialProgram }: ProgramDetailsP
       toast.error('Please enter transaction ID');
       return;
     }
+
+    if (program?.type === 'BELT_TEST' && !newRank) {
+      toast.error('Please select your new rank');
+      return;
+    }
     // Only require proof if you want to. Let's make it optional but recommended.
     
     setSubmitting(true);
@@ -98,6 +117,7 @@ export default function ProgramDetails({ slug, initialProgram }: ProgramDetailsP
          paymentProofUrl: paymentProofUrl || null,
          status: 'pending_payment', // Default
          paymentMethod: paymentAccount?.methodType || 'bkash', // Use selected payment method
+        newRank: program?.type === 'BELT_TEST' ? (newRank as any) : null,
       });
 
       if (res.success) {
@@ -272,6 +292,24 @@ export default function ProgramDetails({ slug, initialProgram }: ProgramDetailsP
                       )}
 
                       <form onSubmit={(e) => { e.preventDefault(); submitRegistration(); }} className="space-y-4">
+                         {program?.type === 'BELT_TEST' && (
+                           <div>
+                             <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">New Rank</label>
+                             <select
+                               required
+                               value={newRank}
+                               onChange={(e) => setNewRank(e.target.value)}
+                               className="w-full border border-slate-300 dark:border-slate-600 rounded-lg py-2.5 px-3 bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+                             >
+                               <option value="">Select new rank</option>
+                               {BELT_RANKS.map((belt) => (
+                                 <option key={belt.value} value={belt.value}>
+                                   {belt.label}
+                                 </option>
+                               ))}
+                             </select>
+                           </div>
+                         )}
                          <div>
                             <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Transaction ID</label>
                             <input 

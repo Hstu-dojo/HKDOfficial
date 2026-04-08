@@ -301,7 +301,7 @@ export async function issueCertificates(
 
     const now = issueDate ?? new Date();
 
-    await db
+    const issued = await db
       .update(programCertificates)
       .set({
         status: 'ISSUED',
@@ -317,7 +317,54 @@ export async function issueCertificates(
           inArray(programCertificates.id, certificateIds),
           eq(programCertificates.status, 'ELIGIBLE')
         )
-      );
+      )
+      .returning({
+        id: programCertificates.id,
+        programId: programCertificates.programId,
+        profileId: programCertificates.profileId,
+      });
+
+    // If the program is a BELT_TEST, issuing the certificate also approves the rank upgrade.
+    const issuedWithProfile = issued.filter((c) => Boolean(c.profileId));
+    if (issuedWithProfile.length > 0) {
+      const programIds = Array.from(new Set(issuedWithProfile.map((c) => c.programId)));
+
+      const beltTestPrograms = await db
+        .select({ id: programs.id })
+        .from(programs)
+        .where(and(inArray(programs.id, programIds), eq(programs.type, 'BELT_TEST')));
+
+      const beltTestProgramIdSet = new Set(beltTestPrograms.map((p) => p.id));
+
+      const beltTestIssued = issuedWithProfile.filter((c) => beltTestProgramIdSet.has(c.programId));
+      if (beltTestIssued.length > 0) {
+        const beltTestProfileIds = Array.from(new Set(beltTestIssued.map((c) => c.profileId!).filter(Boolean)));
+        const beltTestProgramIds = Array.from(new Set(beltTestIssued.map((c) => c.programId)));
+
+        const regRows = await db
+          .select({
+            profileId: programRegistrations.profileId,
+            newRank: programRegistrations.newRank,
+          })
+          .from(programRegistrations)
+          .where(
+            and(
+              inArray(programRegistrations.programId, beltTestProgramIds),
+              inArray(programRegistrations.profileId, beltTestProfileIds)
+            )
+          );
+
+        for (const row of regRows) {
+          if (!row.profileId) continue;
+          if (!row.newRank) continue;
+
+          await db
+            .update(profiles)
+            .set({ beltRank: row.newRank, updatedAt: new Date() })
+            .where(eq(profiles.id, row.profileId));
+        }
+      }
+    }
 
     revalidatePath('/admin/programs');
     revalidatePath('/admin/certificates');

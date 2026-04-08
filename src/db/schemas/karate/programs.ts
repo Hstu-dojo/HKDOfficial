@@ -3,6 +3,8 @@ import { sql } from "drizzle-orm";
 import { user } from "../auth";
 import { profiles } from "./members";
 import { enrollmentApplicationStatusEnum } from "./enrollments";
+import { beltRankEnum } from "../enums";
+import { courses } from "./courses";
 
 // Program Type Enum
 export const programTypeEnum = pgEnum('program_type', [
@@ -21,6 +23,9 @@ export const programs = pgTable("programs", {
   slug: text("slug").notNull().unique(), // URL friendly slug
   description: text("description"),
   type: programTypeEnum("type").notNull().default('OTHER'),
+
+  // Belt Test binding (optional for other program types)
+  courseId: text("course_id").references(() => courses.id, { onDelete: 'set null' }),
   
   // Schedule
   startDate: timestamp("start_date", { withTimezone: true }),
@@ -58,6 +63,9 @@ export const programRegistrations = pgTable("program_registrations", {
   programId: text("program_id").notNull().references(() => programs.id, { onDelete: 'cascade' }),
   userId: text("user_id").notNull().references(() => user.id, { onDelete: 'cascade' }),
   profileId: text("profile_id").references(() => profiles.id, { onDelete: 'set null' }), // nullable — backfilled once profile exists
+
+  // Belt test data
+  newRank: beltRankEnum("new_rank"),
   
   // Registration data
   registrationNumber: text("registration_number").unique(), // e.g. "PROG-2026-001"

@@ -464,6 +464,10 @@ export const programsRelations = relations(programs, ({ one, many }) => ({
     fields: [programs.createdBy],
     references: [user.id],
   }),
+  course: one(courses, {
+    fields: [programs.courseId],
+    references: [courses.id],
+  }),
 }));
 
 export const programRegistrationsRelations = relations(programRegistrations, ({ one }) => ({

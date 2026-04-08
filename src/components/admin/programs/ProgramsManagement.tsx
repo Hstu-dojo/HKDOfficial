@@ -26,6 +26,7 @@ interface Program {
   slug: string;
   description: string | null;
   type: string;
+  courseId?: string | null;
   startDate: Date | null;
   endDate: Date | null;
   dateStr: string | null;

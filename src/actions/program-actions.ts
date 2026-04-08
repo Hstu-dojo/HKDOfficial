@@ -1,15 +1,32 @@
 'use server';
 
 import { db } from "@/lib/connect-db";
-import { programs, programRegistrations, members, profiles, registrations } from "@/db/schemas/karate";
+import { programs, programRegistrations, members, profiles, registrations, courseEnrollments, courses } from "@/db/schemas/karate";
 import { user, account } from "@/db/schemas/auth";
 import { revalidatePath } from "next/cache";
-import { eq, desc } from "drizzle-orm";
+import { eq, desc, and } from "drizzle-orm";
 import { NewProgram, NewProgramRegistration } from "@/db/schemas/karate/programs";
 import { checkUserProfileStatus } from "./check-profile";
 
 export async function createProgram(data: NewProgram) {
   try {
+    if (data.type === 'BELT_TEST') {
+      if (!data.courseId) {
+        return { success: false, error: 'Belt Test programs require a course.' };
+      }
+
+      const course = await db.query.courses.findFirst({
+        where: eq(courses.id, data.courseId),
+      });
+
+      if (!course) {
+        return { success: false, error: 'Selected course not found.' };
+      }
+
+      if (!course.partnerId) {
+        return { success: false, error: 'Belt Test course must belong to a partner.' };
+      }
+    }
     const [newProgram] = await db.insert(programs).values(data).returning();
     revalidatePath("/karate/programs");
     revalidatePath("/admin/programs");
@@ -22,6 +39,33 @@ export async function createProgram(data: NewProgram) {
 
 export async function updateProgram(id: string, data: Partial<NewProgram>) {
   try {
+    const existing = await db.query.programs.findFirst({
+      where: eq(programs.id, id),
+    });
+    if (!existing) {
+      return { success: false, error: 'Program not found' };
+    }
+
+    const effectiveType = (data.type ?? existing.type) as any;
+    const effectiveCourseId = (data as any).courseId ?? (existing as any).courseId;
+
+    if (effectiveType === 'BELT_TEST') {
+      if (!effectiveCourseId) {
+        return { success: false, error: 'Belt Test programs require a course.' };
+      }
+
+      const course = await db.query.courses.findFirst({
+        where: eq(courses.id, effectiveCourseId),
+      });
+
+      if (!course) {
+        return { success: false, error: 'Selected course not found.' };
+      }
+
+      if (!course.partnerId) {
+        return { success: false, error: 'Belt Test course must belong to a partner.' };
+      }
+    }
     const [updatedProgram] = await db
       .update(programs)
       .set({ ...data, updatedAt: new Date() })
@@ -97,6 +141,57 @@ export async function registerForProgram(data: NewProgramRegistration) {
     const userProfile = await db.query.profiles.findFirst({
       where: eq(profiles.userId, publicUserId),
     });
+
+    // Belt Test gating
+    if (program.type === 'BELT_TEST') {
+      if (!program.courseId) {
+        return { success: false, error: 'This Belt Test is missing a course. Please contact admin.' };
+      }
+
+      // newRank is required for belt tests
+      const submittedNewRank = (data as any).newRank as string | null | undefined;
+      if (!submittedNewRank) {
+        return { success: false, error: 'New rank is required for Belt Test registration.' };
+      }
+
+      const allowedRanks = ['white', 'yellow', 'orange', 'green', 'blue', 'red', 'brown', 'black'];
+      if (!allowedRanks.includes(submittedNewRank)) {
+        return { success: false, error: 'Invalid new rank selected.' };
+      }
+
+      if (!userProfile?.id) {
+        return { success: false, error: 'You must have an active course enrollment to register for a Belt Test.' };
+      }
+
+      const beltTestCourse = await db.query.courses.findFirst({
+        where: eq(courses.id, program.courseId),
+      });
+
+      if (!beltTestCourse) {
+        return { success: false, error: 'Belt Test course not found. Please contact admin.' };
+      }
+
+      const enrollmentConditions = [
+        eq(courseEnrollments.profileId, userProfile.id),
+        eq(courseEnrollments.isActive, true),
+      ];
+
+      // If belt test is tied to a partner-owned course, require an active enrollment in any course of that partner
+      if (beltTestCourse.partnerId) {
+        enrollmentConditions.push(eq(courses.partnerId, beltTestCourse.partnerId));
+      }
+
+      const activeEnrollment = await db
+        .select({ id: courseEnrollments.id })
+        .from(courseEnrollments)
+        .innerJoin(courses, eq(courseEnrollments.courseId, courses.id))
+        .where(and(...enrollmentConditions))
+        .limit(1);
+
+      if (activeEnrollment.length === 0) {
+        return { success: false, error: 'You are not enrolled in a course under this partner, so you cannot register for this Belt Test.' };
+      }
+    }
 
     // 3. Create Registration
     const [registration] = await db.insert(programRegistrations).values({
