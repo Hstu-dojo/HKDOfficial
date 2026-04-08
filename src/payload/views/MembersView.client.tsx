@@ -48,7 +48,20 @@ export default function MembersView() {
     lastName: '',
     fullNameBangla: '',
     email: '',
+    password: '',
+    userName: '',
+    userAvatar: '',
     phone: '',
+    dob: '',
+    sex: '',
+    nid: '',
+    occupation: '',
+    institute: '',
+    faculty: '',
+    address: '',
+    emergencyContact: '',
+    emergencyPhone: '',
+    agreement: true,
   })
 
   const fetchMembers = useCallback(async () => {
@@ -102,13 +115,45 @@ export default function MembersView() {
           fullNameBangla: form.fullNameBangla || null,
           phoneNumber: form.phone,
           email: form.email || null,
+          password: form.password || null,
+          userName: form.userName || null,
+          userAvatar: form.userAvatar || null,
+          dateOfBirth: form.dob || null,
+          gender: form.sex || null,
+          nid: form.nid || null,
+          occupation: form.occupation || null,
+          institute: form.institute || null,
+          faculty: form.faculty || null,
+          address: form.address || null,
+          emergencyContact: form.emergencyContact || null,
+          emergencyPhone: form.emergencyPhone || null,
+          agreement: form.agreement === true,
         }),
       })
       const data = await res.json()
       if (!res.ok) throw new Error(data.error)
       setMessage(`Member created: ${data.member.memberNumber}`)
       setShowCreate(false)
-      setForm({ firstName: '', lastName: '', fullNameBangla: '', email: '', phone: '' })
+      setForm({
+        firstName: '',
+        lastName: '',
+        fullNameBangla: '',
+        email: '',
+        password: '',
+        userName: '',
+        userAvatar: '',
+        phone: '',
+        dob: '',
+        sex: '',
+        nid: '',
+        occupation: '',
+        institute: '',
+        faculty: '',
+        address: '',
+        emergencyContact: '',
+        emergencyPhone: '',
+        agreement: true,
+      })
       fetchMembers()
     } catch (err: any) {
       setMessage(err.message || 'Failed to create member')
@@ -202,6 +247,39 @@ export default function MembersView() {
                 onChange={(e) => setForm((p) => ({ ...p, email: e.target.value }))}
                 className="input-string"
               />
+              <div className="field-description" style={{ marginTop: '0.25rem' }}>
+                If provided, an account will be created for this email.
+              </div>
+            </div>
+            <div className="field-type text">
+              <label className="field-label">Password</label>
+              <input
+                type="password"
+                value={form.password}
+                onChange={(e) => setForm((p) => ({ ...p, password: e.target.value }))}
+                className="input-string"
+                autoComplete="new-password"
+              />
+              <div className="field-description" style={{ marginTop: '0.25rem' }}>
+                Optional. If empty, a password will be generated and emailed.
+              </div>
+            </div>
+            <div className="field-type text">
+              <label className="field-label">Username</label>
+              <input
+                value={form.userName}
+                onChange={(e) => setForm((p) => ({ ...p, userName: e.target.value }))}
+                className="input-string"
+              />
+            </div>
+            <div className="field-type text">
+              <label className="field-label">Avatar URL</label>
+              <input
+                value={form.userAvatar}
+                onChange={(e) => setForm((p) => ({ ...p, userAvatar: e.target.value }))}
+                className="input-string"
+                placeholder="/image/avatar/Milo.svg"
+              />
             </div>
             <div className="field-type text">
               <label className="field-label">Phone *</label>
@@ -211,6 +289,95 @@ export default function MembersView() {
                 onChange={(e) => setForm((p) => ({ ...p, phone: e.target.value }))}
                 className="input-string"
               />
+            </div>
+            <div className="field-type text">
+              <label className="field-label">Date of Birth</label>
+              <input
+                type="date"
+                value={form.dob}
+                onChange={(e) => setForm((p) => ({ ...p, dob: e.target.value }))}
+                className="input-string"
+              />
+            </div>
+            <div className="field-type text">
+              <label className="field-label">Sex</label>
+              <select
+                value={form.sex}
+                onChange={(e) => setForm((p) => ({ ...p, sex: e.target.value }))}
+                className="input-string"
+              >
+                <option value="">—</option>
+                <option value="male">Male</option>
+                <option value="female">Female</option>
+                <option value="other">Other</option>
+              </select>
+            </div>
+            <div className="field-type text">
+              <label className="field-label">NID / Birth Cert. / Passport No.</label>
+              <input
+                value={form.nid}
+                onChange={(e) => setForm((p) => ({ ...p, nid: e.target.value }))}
+                className="input-string"
+              />
+            </div>
+            <div className="field-type text">
+              <label className="field-label">Occupation</label>
+              <input
+                value={form.occupation}
+                onChange={(e) => setForm((p) => ({ ...p, occupation: e.target.value }))}
+                className="input-string"
+              />
+            </div>
+            <div className="field-type text">
+              <label className="field-label">Institute</label>
+              <input
+                value={form.institute}
+                onChange={(e) => setForm((p) => ({ ...p, institute: e.target.value }))}
+                className="input-string"
+              />
+            </div>
+            <div className="field-type text">
+              <label className="field-label">Faculty</label>
+              <input
+                value={form.faculty}
+                onChange={(e) => setForm((p) => ({ ...p, faculty: e.target.value }))}
+                className="input-string"
+              />
+            </div>
+            <div className="field-type text">
+              <label className="field-label">Present Address</label>
+              <input
+                value={form.address}
+                onChange={(e) => setForm((p) => ({ ...p, address: e.target.value }))}
+                className="input-string"
+              />
+            </div>
+            <div className="field-type text">
+              <label className="field-label">Emergency Contact</label>
+              <input
+                value={form.emergencyContact}
+                onChange={(e) => setForm((p) => ({ ...p, emergencyContact: e.target.value }))}
+                className="input-string"
+              />
+            </div>
+            <div className="field-type text">
+              <label className="field-label">Emergency Phone</label>
+              <input
+                value={form.emergencyPhone}
+                onChange={(e) => setForm((p) => ({ ...p, emergencyPhone: e.target.value }))}
+                className="input-string"
+              />
+            </div>
+            <div className="field-type checkbox" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+              <input
+                id="agreement"
+                type="checkbox"
+                checked={form.agreement}
+                onChange={(e) => setForm((p) => ({ ...p, agreement: e.target.checked }))}
+              />
+              <label className="field-label" htmlFor="agreement" style={{ margin: 0 }}>
+                Agreement accepted
+              </label>
             </div>
           </div>
           <button

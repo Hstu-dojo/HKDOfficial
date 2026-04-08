@@ -103,7 +103,30 @@ export async function POST(request: Request) {
   try {
     const body = await request.json()
 
-    const { fullNameEnglish, fullNameBangla, phoneNumber, email, dateOfBirth, gender, bloodGroup, fatherName, motherName } = body
+    const {
+      fullNameEnglish,
+      fullNameBangla,
+      phoneNumber,
+      email,
+      password,
+      userName: requestedUserName,
+      userAvatar,
+      // merged onboarding-ish fields
+      dateOfBirth,
+      gender,
+      nid,
+      occupation,
+      institute,
+      faculty,
+      address,
+      emergencyContact,
+      emergencyPhone,
+      agreement,
+      // additional profile fields
+      bloodGroup,
+      fatherName,
+      motherName,
+    } = body
 
     if (!fullNameEnglish || !phoneNumber) {
       return NextResponse.json({ error: 'Name and phone number are required' }, { status: 400 })
@@ -121,8 +144,9 @@ export async function POST(request: Request) {
     // If email is provided, try to link to existing user account
     let userId: string | undefined = undefined
 
-    // If we create a new auth account, we'll email this password once.
-    let createdAuthPassword: string | null = null
+    // If we create a new auth account, we may optionally email a generated password once.
+    let accountCreated = false
+    let passwordToEmail: string | null = null
 
     if (email) {
       const existingUser = await db
@@ -155,14 +179,19 @@ export async function POST(request: Request) {
           }
         )
 
-        const password = crypto.randomBytes(12).toString('base64url')
+        const providedPassword = typeof password === 'string' ? password.trim() : ''
+        const generatedPassword = crypto.randomBytes(12).toString('base64url')
+        const finalPassword = providedPassword.length >= 6 ? providedPassword : generatedPassword
+
         const { data: created, error: createErr } = await supabaseAdmin.auth.admin.createUser({
           email,
-          password,
+          password: finalPassword,
           email_confirm: true,
           user_metadata: {
             createdByPartner: partnerUser.partnerId,
             createdByPartnerAdmin: partnerUser.name,
+            username: typeof requestedUserName === 'string' ? requestedUserName : undefined,
+            avatar_url: typeof userAvatar === 'string' ? userAvatar : undefined,
           },
         })
 
@@ -176,20 +205,27 @@ export async function POST(request: Request) {
 
         const supabaseUserId = created.user.id
 
-        const baseUsername = (fullNameEnglish || email.split('@')[0])
-          .toLowerCase()
-          .replace(/[^a-z0-9]/g, '')
-          .slice(0, 20) || 'member'
+        const buildBaseUsername = (value: string) =>
+          value
+            .toLowerCase()
+            .replace(/[^a-z0-9]/g, '')
+            .slice(0, 20)
 
-        let userName = `${baseUsername}${Math.floor(Math.random() * 10000)}`
-        for (let i = 0; i < 5; i++) {
+        const baseFromNameOrEmail = buildBaseUsername(fullNameEnglish || email.split('@')[0] || 'member') || 'member'
+        const requestedBase =
+          typeof requestedUserName === 'string' && requestedUserName.trim()
+            ? buildBaseUsername(requestedUserName.trim())
+            : ''
+
+        let userName = requestedBase || `${baseFromNameOrEmail}${Math.floor(Math.random() * 10000)}`
+        for (let i = 0; i < 10; i++) {
           const existingName = await db
             .select({ id: user.id })
             .from(user)
             .where(eq(user.userName, userName))
             .limit(1)
           if (existingName.length === 0) break
-          userName = `${baseUsername}${Math.floor(Math.random() * 10000)}`
+          userName = `${(requestedBase || baseFromNameOrEmail)}${Math.floor(Math.random() * 10000)}`
         }
 
         const [newUser] = await db
@@ -200,7 +236,7 @@ export async function POST(request: Request) {
             emailVerified: true,
             password: `supabase_${supabaseUserId}`,
             userName,
-            userAvatar: '/image/avatar/Milo.svg',
+            userAvatar: (typeof userAvatar === 'string' && userAvatar.trim()) ? userAvatar.trim() : '/image/avatar/Milo.svg',
             defaultRole: 'GUEST',
             hasPassword: true,
             authProviders: [
@@ -216,7 +252,9 @@ export async function POST(request: Request) {
           .returning({ id: user.id })
 
         userId = newUser?.id
-        createdAuthPassword = password
+        accountCreated = true
+        // Only email a password if we generated one server-side.
+        passwordToEmail = providedPassword.length >= 6 ? null : finalPassword
       }
     }
 
@@ -237,14 +275,24 @@ export async function POST(request: Request) {
         motherName,
         partnerId: partnerUser.partnerId,
         isActive: true,
-        notes: `Added by partner admin: ${partnerUser.name}`,
+        nid: typeof nid === 'string' ? nid : undefined,
+        profession: typeof occupation === 'string' ? occupation : undefined,
+        institute: typeof institute === 'string' ? institute : undefined,
+        faculty: typeof faculty === 'string' ? faculty : undefined,
+        presentAddress: typeof address === 'string' ? address : undefined,
+        emergencyContact: typeof emergencyContact === 'string' ? emergencyContact : undefined,
+        emergencyPhone: typeof emergencyPhone === 'string' ? emergencyPhone : undefined,
+        notes: JSON.stringify({
+          createdByPartnerAdmin: partnerUser.name,
+          agreement: agreement === true,
+        }),
       })
       .returning()
 
     // If we created a new auth account, email credentials to the user.
     // (Best effort — member creation succeeds even if email fails.)
     let emailSent = false
-    if (email && createdAuthPassword) {
+    if (email && passwordToEmail) {
       try {
         if (process.env.RESEND_API_KEY) {
           const resend = new Resend(process.env.RESEND_API_KEY)
@@ -259,7 +307,7 @@ export async function POST(request: Request) {
                 <p>Hello,</p>
                 <p>Your HKD account has been created by <strong>${partnerUser.name}</strong>.</p>
                 <p><strong>Login email:</strong> ${email}</p>
-                <p><strong>Temporary password:</strong> ${createdAuthPassword}</p>
+                <p><strong>Temporary password:</strong> ${passwordToEmail}</p>
                 ${appUrl ? `<p><strong>Login:</strong> <a href="${appUrl}/login">${appUrl}/login</a></p>` : ''}
                 <p>Please log in and change your password as soon as possible.</p>
               </div>
@@ -275,7 +323,7 @@ export async function POST(request: Request) {
     return NextResponse.json(
       {
         member: newProfile,
-        accountCreated: !!createdAuthPassword,
+        accountCreated,
         emailSent,
       },
       { status: 201 }
