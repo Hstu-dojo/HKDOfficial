@@ -23,6 +23,24 @@ interface CertOverview {
   profileName: string | null;
   memberNumber: string;
   programTitle: string;
+  programType?: string | null;
+  beltTestNewRank?: string | null;
+}
+
+function formatBeltRank(rank?: string | null) {
+  if (!rank) return '—';
+  switch (rank) {
+    case 'brown_kyu3':
+      return 'Brown (Kyu 3)';
+    case 'brown_kyu2':
+      return 'Brown (Kyu 2)';
+    case 'brown_kyu1':
+      return 'Brown (Kyu 1)';
+    case 'brown':
+      return 'Brown';
+    default:
+      return rank.charAt(0).toUpperCase() + rank.slice(1);
+  }
 }
 
 export default function CertificatesOverview() {
@@ -58,7 +76,8 @@ export default function CertificatesOverview() {
       c.certificateNumber.toLowerCase().includes(s) ||
       (c.profileName?.toLowerCase().includes(s) ?? false) ||
       c.memberNumber.toLowerCase().includes(s) ||
-      c.programTitle.toLowerCase().includes(s)
+      c.programTitle.toLowerCase().includes(s) ||
+      (c.programType === 'BELT_TEST' && (c.beltTestNewRank?.toLowerCase().includes(s) ?? false))
     );
   });
 
@@ -134,6 +153,7 @@ export default function CertificatesOverview() {
                 <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Participant</th>
                 <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Member #</th>
                 <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Program</th>
+                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Belt Test</th>
                 <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
                 <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Issue Date</th>
                 <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase">Actions</th>
@@ -146,6 +166,9 @@ export default function CertificatesOverview() {
                   <td className="px-4 py-3 text-sm text-gray-900 dark:text-gray-100">{c.profileName || '—'}</td>
                   <td className="px-4 py-3 text-xs text-gray-500 dark:text-gray-400">{c.memberNumber}</td>
                   <td className="px-4 py-3 text-sm text-gray-700 dark:text-gray-300">{c.programTitle}</td>
+                  <td className="px-4 py-3 text-sm text-gray-700 dark:text-gray-300">
+                    {c.programType === 'BELT_TEST' ? formatBeltRank(c.beltTestNewRank) : '—'}
+                  </td>
                   <td className="px-4 py-3">
                     <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${
                       c.status === 'ISSUED'
@@ -177,7 +200,7 @@ export default function CertificatesOverview() {
               ))}
               {filtered.length === 0 && (
                 <tr>
-                  <td colSpan={7} className="px-4 py-12 text-center text-sm text-gray-500 dark:text-gray-400">
+                  <td colSpan={8} className="px-4 py-12 text-center text-sm text-gray-500 dark:text-gray-400">
                     {search ? 'No certificates match your search.' : 'No certificates found.'}
                   </td>
                 </tr>

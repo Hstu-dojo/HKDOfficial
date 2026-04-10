@@ -50,6 +50,7 @@ interface CertRow {
   profileNameBangla: string | null;
   participantName: string | null;
   memberNumber: string | null;
+  beltTestNewRank?: string | null;
   issueDate: Date | string | null;
   trainerSignatureId: string | null;
   coordinatorSignatureId: string | null;
@@ -66,6 +67,7 @@ export default function ProgramCertificateManagement() {
 
   const [programTitle, setProgramTitle] = useState('');
   const [programEndDate, setProgramEndDate] = useState<Date | null>(null);
+  const [programType, setProgramType] = useState<string>('');
   const [participants, setParticipants] = useState<ProgramParticipant[]>([]);
   const [certificates, setCertificates] = useState<CertRow[]>([]);
   const [signatures, setSignatures] = useState<CertificateSignature[]>([]);
@@ -126,6 +128,7 @@ export default function ProgramCertificateManagement() {
       if (progRes.success && progRes.data) {
         setProgramTitle(progRes.data.title);
         setProgramEndDate(progRes.data.endDate ? new Date(progRes.data.endDate) : null);
+        setProgramType(progRes.data.type || '');
       } else if (!progRes.success) setFetchError(progRes.error || 'Failed to load program');
 
       if (partRes.success && partRes.data) setParticipants(partRes.data);
@@ -177,6 +180,22 @@ export default function ProgramCertificateManagement() {
   // ---------------------------------------------------------------------------
   // Handlers
   // ---------------------------------------------------------------------------
+
+  const formatBeltRank = (rank?: string | null) => {
+    if (!rank) return '—';
+    switch (rank) {
+      case 'brown_kyu3':
+        return 'Brown (Kyu 3)';
+      case 'brown_kyu2':
+        return 'Brown (Kyu 2)';
+      case 'brown_kyu1':
+        return 'Brown (Kyu 1)';
+      case 'brown':
+        return 'Brown';
+      default:
+        return rank.charAt(0).toUpperCase() + rank.slice(1);
+    }
+  };
 
   const handleAutoMark = () => {
     // Select all uncertified participants with approved or payment_verified status — frontend only
@@ -643,6 +662,11 @@ export default function ProgramCertificateManagement() {
                     {p.memberNumber && (
                       <span className="ml-2 text-xs text-gray-400 dark:text-gray-500 font-mono">#{p.memberNumber}</span>
                     )}
+                    {programType === 'BELT_TEST' && p.newRank && (
+                      <span className="ml-2 text-xs text-gray-500 dark:text-gray-400">
+                        • {formatBeltRank(p.newRank)}
+                      </span>
+                    )}
                   </span>
                   <span className={`text-xs px-2 py-0.5 rounded-full ${
                     p.status === 'approved' || p.status === 'payment_verified'
@@ -674,6 +698,7 @@ export default function ProgramCertificateManagement() {
         <CertTable
           title={`Eligible (${eligibleCerts.length})`}
           certs={eligibleCerts}
+          showBeltTestColumn={programType === 'BELT_TEST'}
           canUpdate={canUpdate}
           canDelete={canDelete}
           onRemove={handleRemoveEligibility}
@@ -686,6 +711,7 @@ export default function ProgramCertificateManagement() {
           <CertTable
             title={`Issued (${issuedCerts.length})`}
             certs={issuedCerts}
+            showBeltTestColumn={programType === 'BELT_TEST'}
             signatures={signatures}
             canUpdate={canUpdate}
             onDownload={handleDownload}
@@ -711,6 +737,7 @@ export default function ProgramCertificateManagement() {
         <CertTable
           title={`Revoked (${revokedCerts.length})`}
           certs={revokedCerts}
+          showBeltTestColumn={programType === 'BELT_TEST'}
           canDelete={canDelete}
           onDelete={canDelete ? handleDeleteCert : undefined}
         />
@@ -1084,6 +1111,7 @@ function Stat({
 function CertTable({
   title,
   certs,
+  showBeltTestColumn,
   canUpdate,
   canDelete,
   onDownload,
@@ -1097,6 +1125,7 @@ function CertTable({
 }: {
   title: string;
   certs: CertRow[];
+  showBeltTestColumn?: boolean;
   canUpdate?: boolean;
   canDelete?: boolean;
   onDownload?: (id: string) => void;
@@ -1116,6 +1145,22 @@ function CertTable({
 
   const showSigColumns = !!signatures && signatures.length > 0;
 
+  const formatBeltRankLocal = (rank?: string | null) => {
+    if (!rank) return '—';
+    switch (rank) {
+      case 'brown_kyu3':
+        return 'Brown (Kyu 3)';
+      case 'brown_kyu2':
+        return 'Brown (Kyu 2)';
+      case 'brown_kyu1':
+        return 'Brown (Kyu 1)';
+      case 'brown':
+        return 'Brown';
+      default:
+        return rank.charAt(0).toUpperCase() + rank.slice(1);
+    }
+  };
+
   return (
     <div className="bg-white dark:bg-gray-800 rounded-lg border shadow-sm overflow-hidden">
       <div className="px-5 py-3 border-b bg-gray-50 dark:bg-gray-900/50 flex items-center justify-between">
@@ -1129,6 +1174,9 @@ function CertTable({
               <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Cert #</th>
               <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Participant</th>
               <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Member #</th>
+              {showBeltTestColumn && (
+                <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Belt Test</th>
+              )}
               <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
               {showSigColumns && (
                 <>
@@ -1156,6 +1204,11 @@ function CertTable({
                     )}
                   </td>
                   <td className="px-4 py-2 text-xs text-gray-500 dark:text-gray-400">{c.memberNumber || '—'}</td>
+                  {showBeltTestColumn && (
+                    <td className="px-4 py-2 text-xs text-gray-600 dark:text-gray-400">
+                      {formatBeltRankLocal(c.beltTestNewRank)}
+                    </td>
+                  )}
                   <td className="px-4 py-2">
                     <StatusBadge status={c.status} />
                   </td>

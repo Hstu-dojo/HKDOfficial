@@ -67,7 +67,10 @@ const BELT_RANKS = [
   { value: 'green', label: 'Green Belt' },
   { value: 'blue', label: 'Blue Belt' },
   { value: 'red', label: 'Red Belt' },
-  { value: 'brown', label: 'Brown Belt' },
+  { value: 'brown', label: 'Brown Belt (Legacy)' },
+  { value: 'brown_kyu3', label: 'Brown Belt (Kyu 3)' },
+  { value: 'brown_kyu2', label: 'Brown Belt (Kyu 2)' },
+  { value: 'brown_kyu1', label: 'Brown Belt (Kyu 1)' },
   { value: 'black', label: 'Black Belt' },
 ];
 

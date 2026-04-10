@@ -120,6 +120,13 @@
       "when": 1774593520589,
       "tag": "0016_supreme_titanium_man",
       "breakpoints": true
+    },
+    {
+      "idx": 17,
+      "version": "7",
+      "when": 1775000000000,
+      "tag": "0017_brown_kyu_ranks",
+      "breakpoints": true
     }
   ]
 }

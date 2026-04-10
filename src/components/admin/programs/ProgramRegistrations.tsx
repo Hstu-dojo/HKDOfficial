@@ -21,7 +21,15 @@ import {
   TrashIcon
 } from '@heroicons/react/24/outline';
 import { toast } from 'sonner';
-import { getProgramRegistrations, updateRegistrationStatus, updateRegistration, deleteRegistration } from '@/actions/program-actions';
+import {
+  getProgramById,
+  getProgramRegistrations,
+  updateRegistrationStatus,
+  updateRegistration,
+  deleteRegistration,
+  searchAdminRegistrantCandidates,
+  adminAddRegistrantToProgram,
+} from '@/actions/program-actions';
 import { format } from 'date-fns';
 
 // Types
@@ -29,6 +37,7 @@ interface RegistrationWithProfile {
   id: string;
   programId: string;
   userId: string;
+  newRank?: string | null;
   registrationNumber?: string;
   feeAmount: number;
   currency: string;
@@ -81,6 +90,18 @@ interface RegistrationWithProfile {
   };
 }
 
+interface AdminRegistrantCandidate {
+  userId: string;
+  email: string | null;
+  userName: string | null;
+  name: string | null;
+  phone: string | null;
+  memberNumber: string | null;
+  applicationNumber?: string | null;
+  applicationStatus?: string | null;
+  courseName?: string | null;
+}
+
 const STATUS_CONFIG: Record<string, { label: string; color: string; bgColor: string }> = {
   pending_payment: { label: 'Pending Payment', color: 'text-yellow-700', bgColor: 'bg-yellow-100 dark:bg-yellow-900/30' },
   payment_submitted: { label: 'Payment Submitted', color: 'text-blue-700', bgColor: 'bg-blue-100 dark:bg-blue-900/30' },
@@ -102,14 +123,26 @@ export default function ProgramRegistrations() {
   const { hasPermission, loading: rbacLoading } = useRBAC();
   const [registrations, setRegistrations] = useState<RegistrationWithProfile[]>([]);
   const [loading, setLoading] = useState(true);
+  const [programType, setProgramType] = useState<string>('');
+  const [programTitle, setProgramTitle] = useState<string>('');
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [selectedRegistration, setSelectedRegistration] = useState<RegistrationWithProfile | null>(null);
   const [editingRegistration, setEditingRegistration] = useState<RegistrationWithProfile | null>(null);
   const [statusFilter, setStatusFilter] = useState<string>('');
   const [exporting, setExporting] = useState(false);
 
+  // Add registrant modal
+  const [showAddRegistrant, setShowAddRegistrant] = useState(false);
+  const [candidateQuery, setCandidateQuery] = useState('');
+  const [candidateResults, setCandidateResults] = useState<AdminRegistrantCandidate[]>([]);
+  const [candidateSearching, setCandidateSearching] = useState(false);
+  const [selectedCandidate, setSelectedCandidate] = useState<AdminRegistrantCandidate | null>(null);
+  const [newRank, setNewRank] = useState<string>('');
+  const [addingRegistrant, setAddingRegistrant] = useState(false);
+
   const canApprove = hasPermission('PROGRAM_REGISTRATION', 'APPROVE');
   const canDelete = hasPermission('PROGRAM_REGISTRATION', 'DELETE');
+  const canCreate = hasPermission('PROGRAM_REGISTRATION', 'CREATE');
   
   const fetchRegistrations = useCallback(async () => {
     try {
@@ -128,11 +161,100 @@ export default function ProgramRegistrations() {
     }
   }, [programIdParam]);
 
+  const fetchProgramInfo = useCallback(async () => {
+    if (!programIdParam) {
+      setProgramType('');
+      setProgramTitle('');
+      return;
+    }
+    try {
+      const res = await getProgramById(programIdParam);
+      if (res.success && res.data) {
+        setProgramType((res.data as any).type || '');
+        setProgramTitle((res.data as any).title || '');
+      }
+    } catch (e) {
+      console.error(e);
+    }
+  }, [programIdParam]);
+
   useEffect(() => {
     if (!rbacLoading) {
       fetchRegistrations();
+      fetchProgramInfo();
     }
-  }, [rbacLoading, fetchRegistrations]);
+  }, [rbacLoading, fetchRegistrations, fetchProgramInfo]);
+
+  const BELT_RANK_OPTIONS = [
+    { value: 'white', label: 'White' },
+    { value: 'yellow', label: 'Yellow' },
+    { value: 'orange', label: 'Orange' },
+    { value: 'green', label: 'Green' },
+    { value: 'blue', label: 'Blue' },
+    { value: 'red', label: 'Red' },
+    { value: 'brown_kyu3', label: 'Brown (Kyu 3)' },
+    { value: 'brown_kyu2', label: 'Brown (Kyu 2)' },
+    { value: 'brown_kyu1', label: 'Brown (Kyu 1)' },
+    { value: 'black', label: 'Black' },
+  ];
+
+  const openAddRegistrant = () => {
+    setShowAddRegistrant(true);
+    setCandidateQuery('');
+    setCandidateResults([]);
+    setSelectedCandidate(null);
+    setNewRank('');
+  };
+
+  const handleSearchCandidates = async () => {
+    if (!programIdParam) return;
+    if (!candidateQuery.trim()) {
+      toast.error('Enter a name, email, phone, or member #');
+      return;
+    }
+    setCandidateSearching(true);
+    try {
+      const res = await searchAdminRegistrantCandidates(programIdParam, candidateQuery.trim());
+      if (res.success && res.data) {
+        setCandidateResults(res.data as AdminRegistrantCandidate[]);
+      } else {
+        toast.error(res.error || 'Failed to search candidates');
+      }
+    } catch (e) {
+      console.error(e);
+      toast.error('Failed to search candidates');
+    } finally {
+      setCandidateSearching(false);
+    }
+  };
+
+  const handleAddRegistrant = async () => {
+    if (!programIdParam || !selectedCandidate) return;
+    if (programType === 'BELT_TEST' && !newRank) {
+      toast.error('Select new rank');
+      return;
+    }
+    setAddingRegistrant(true);
+    try {
+      const res = await adminAddRegistrantToProgram({
+        programId: programIdParam,
+        userId: selectedCandidate.userId,
+        newRank: programType === 'BELT_TEST' ? newRank : null,
+      });
+      if (res.success) {
+        toast.success('Registrant added');
+        setShowAddRegistrant(false);
+        fetchRegistrations();
+      } else {
+        toast.error(res.error || 'Failed to add registrant');
+      }
+    } catch (e) {
+      console.error(e);
+      toast.error('Failed to add registrant');
+    } finally {
+      setAddingRegistrant(false);
+    }
+  };
 
   const handleStatusUpdate = async (id: string, status: 'approved' | 'rejected' | 'pending_payment' | 'payment_submitted') => {
     if (!confirm(`Are you sure you want to change this registration status to ${status.replace('_', ' ')}?`)) return;
@@ -241,6 +363,22 @@ export default function ProgramRegistrations() {
     );
   };
 
+  const formatBeltRank = (rank?: string | null) => {
+    if (!rank) return '-';
+    switch (rank) {
+      case 'brown_kyu3':
+        return 'Brown (Kyu 3)';
+      case 'brown_kyu2':
+        return 'Brown (Kyu 2)';
+      case 'brown_kyu1':
+        return 'Brown (Kyu 1)';
+      case 'brown':
+        return 'Brown';
+      default:
+        return rank.charAt(0).toUpperCase() + rank.slice(1);
+    }
+  };
+
   if (rbacLoading || loading) {
     return (
       <div className="flex justify-center items-center min-h-[400px]">
@@ -257,13 +395,21 @@ export default function ProgramRegistrations() {
           <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Program Registrations</h1>
           <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
              {programIdParam 
-               ? `Viewing registrations for selected program` 
+               ? `Viewing registrations for ${programTitle || 'selected program'}` 
                : 'Viewing all program registrations'}
           </p>
         </div>
         
         {/* Export Dropdown */}
         <div className="flex items-center gap-2">
+          {programIdParam && canCreate && (
+            <button
+              onClick={openAddRegistrant}
+              className="inline-flex items-center px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg shadow-sm text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700"
+            >
+              + Add Registrant
+            </button>
+          )}
           <div className="relative group">
             <button
               disabled={exporting}
@@ -360,6 +506,7 @@ export default function ProgramRegistrations() {
                 <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Participant</th>
                 <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Contact</th>
                 <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Program</th>
+                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Belt Test</th>
                 <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Registration</th>
                 <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Payment</th>
                 <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Status</th>
@@ -405,6 +552,13 @@ export default function ProgramRegistrations() {
                       {reg.program?.type?.replace('_', ' ')}
                       {reg.program?.startDate && ` • ${format(new Date(reg.program.startDate), 'MMM d, yyyy')}`}
                     </div>
+                  </td>
+                  <td className="px-6 py-4">
+                    {reg.program?.type === 'BELT_TEST' ? (
+                      <div className="text-sm text-gray-900 dark:text-gray-100">{formatBeltRank(reg.newRank)}</div>
+                    ) : (
+                      <div className="text-sm text-gray-400 dark:text-gray-500">-</div>
+                    )}
                   </td>
                   <td className="px-6 py-4">
                     <div className="text-sm text-gray-900 dark:text-gray-100">{reg.registrationNumber || '-'}</div>
@@ -484,7 +638,7 @@ export default function ProgramRegistrations() {
               
               {filteredRegistrations.length === 0 && (
                 <tr>
-                  <td colSpan={7} className="px-6 py-12 text-center text-gray-500 dark:text-gray-400">
+                  <td colSpan={8} className="px-6 py-12 text-center text-gray-500 dark:text-gray-400">
                     <UserIcon className="h-12 w-12 mx-auto text-gray-400 dark:text-gray-500 mb-2" />
                     <p>No registrations found.</p>
                   </td>
@@ -536,6 +690,134 @@ export default function ProgramRegistrations() {
           onClose={() => setEditingRegistration(null)}
           onSave={handleUpdateRegistration}
         />
+      )}
+
+      {/* Add Registrant Modal */}
+      {showAddRegistrant && programIdParam && (
+        <div className="fixed inset-0 z-50 overflow-y-auto">
+          <div className="flex min-h-full items-center justify-center p-4">
+            <div className="fixed inset-0 bg-black bg-opacity-50" onClick={() => setShowAddRegistrant(false)} />
+
+            <div className="relative bg-white dark:bg-gray-800 rounded-xl shadow-xl max-w-2xl w-full">
+              <div className="border-b px-6 py-4 flex justify-between items-center">
+                <div>
+                  <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100">Add Registrant</h2>
+                  <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
+                    {programTitle ? programTitle : 'Selected program'}
+                    {programType ? ` • ${programType.replace('_', ' ')}` : ''}
+                  </p>
+                </div>
+                <button
+                  onClick={() => setShowAddRegistrant(false)}
+                  className="p-2 hover:bg-gray-100 dark:hover:bg-gray-600 rounded-full"
+                >
+                  <XMarkIcon className="h-6 w-6" />
+                </button>
+              </div>
+
+              <div className="p-6 space-y-4">
+                {/* Search */}
+                <div className="flex gap-2">
+                  <input
+                    value={candidateQuery}
+                    onChange={(e) => setCandidateQuery(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter') handleSearchCandidates();
+                    }}
+                    placeholder="Search by name, email, phone, or member #"
+                    className="flex-1 px-3 py-2 border rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100"
+                  />
+                  <button
+                    onClick={handleSearchCandidates}
+                    disabled={candidateSearching}
+                    className="px-4 py-2 rounded-lg bg-blue-600 text-white text-sm font-medium hover:bg-blue-700 disabled:opacity-50"
+                  >
+                    {candidateSearching ? 'Searching...' : 'Search'}
+                  </button>
+                </div>
+
+                {/* Results */}
+                <div className="border rounded-lg overflow-hidden">
+                  <div className="max-h-56 overflow-y-auto divide-y divide-gray-100 dark:divide-gray-700">
+                    {candidateResults.map((c) => (
+                      <button
+                        key={c.userId}
+                        type="button"
+                        onClick={() => setSelectedCandidate(c)}
+                        className={`w-full text-left px-4 py-3 hover:bg-gray-50 dark:hover:bg-gray-700 ${
+                          selectedCandidate?.userId === c.userId ? 'bg-blue-50 dark:bg-blue-900/20' : ''
+                        }`}
+                      >
+                        <div className="flex items-center justify-between">
+                          <div>
+                            <div className="text-sm font-medium text-gray-900 dark:text-gray-100">
+                              {c.name || c.userName || c.email || 'Unknown'}
+                              {c.memberNumber ? (
+                                <span className="ml-2 text-xs text-gray-400 dark:text-gray-500 font-mono">#{c.memberNumber}</span>
+                              ) : null}
+                            </div>
+                            <div className="text-xs text-gray-500 dark:text-gray-400">
+                              {c.email || '—'}{c.phone ? ` • ${c.phone}` : ''}
+                            </div>
+                            {(c.applicationNumber || c.courseName) && (
+                              <div className="text-[11px] text-gray-500 dark:text-gray-400 mt-0.5">
+                                {c.courseName ? c.courseName : ''}
+                                {c.applicationNumber ? ` • ${c.applicationNumber}` : ''}
+                                {c.applicationStatus ? ` • ${c.applicationStatus.replace('_', ' ')}` : ''}
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      </button>
+                    ))}
+
+                    {candidateResults.length === 0 && (
+                      <div className="px-4 py-8 text-center text-sm text-gray-500 dark:text-gray-400">
+                        Search to find a registrant.
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                {/* Belt test extra field */}
+                {programType === 'BELT_TEST' && (
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">New Rank</label>
+                    <select
+                      value={newRank}
+                      onChange={(e) => setNewRank(e.target.value)}
+                      className="w-full px-3 py-2 border rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100"
+                    >
+                      <option value="">Select new rank</option>
+                      {BELT_RANK_OPTIONS.map((opt) => (
+                        <option key={opt.value} value={opt.value}>
+                          {opt.label}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                )}
+
+                {/* Actions */}
+                <div className="flex justify-end gap-2 pt-2">
+                  <button
+                    onClick={() => setShowAddRegistrant(false)}
+                    className="px-4 py-2 rounded-lg border text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    onClick={handleAddRegistrant}
+                    disabled={!selectedCandidate || addingRegistrant}
+                    className="px-4 py-2 rounded-lg bg-green-600 text-white text-sm font-medium hover:bg-green-700 disabled:opacity-50"
+                  >
+                    {addingRegistrant ? 'Adding...' : 'Add'}
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );
@@ -691,6 +973,22 @@ function RegistrationDetailModal({
   const user = registration.user;
   const program = registration.program;
 
+  const formatBeltRank = (rank?: string | null) => {
+    if (!rank) return '-';
+    switch (rank) {
+      case 'brown_kyu3':
+        return 'Brown (Kyu 3)';
+      case 'brown_kyu2':
+        return 'Brown (Kyu 2)';
+      case 'brown_kyu1':
+        return 'Brown (Kyu 1)';
+      case 'brown':
+        return 'Brown';
+      default:
+        return rank.charAt(0).toUpperCase() + rank.slice(1);
+    }
+  };
+
   return (
     <div className="fixed inset-0 z-50 overflow-y-auto">
       <div className="flex min-h-full items-center justify-center p-4">
@@ -845,6 +1143,11 @@ function RegistrationDetailModal({
                 <div className="bg-gray-50 dark:bg-gray-800/50 p-4 rounded-lg">
                   <p className="font-semibold text-gray-900 dark:text-gray-100">{program?.title}</p>
                   <p className="text-sm text-gray-500 dark:text-gray-400">{program?.type?.replace('_', ' ')}</p>
+                  {program?.type === 'BELT_TEST' && (
+                    <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                      Requested Rank: {formatBeltRank(registration.newRank)}
+                    </p>
+                  )}
                   {program?.startDate && (
                     <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
                       Date: {format(new Date(program.startDate), 'MMMM d, yyyy')}

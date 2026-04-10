@@ -16,7 +16,20 @@ export const resourceTypeEnum = pgEnum("resource_type", [
 export const actionEnum = pgEnum("action", ["CREATE", "READ", "UPDATE", "DELETE", "MANAGE", "APPROVE", "VERIFY", "ACCESS"]);
 
 // Karate-specific Enums
-export const beltRankEnum = pgEnum('belt_rank', ['white', 'yellow', 'orange', 'green', 'blue', 'red', 'brown', 'black']);
+// NOTE: Postgres enums cannot remove values safely; keep legacy 'brown' for existing rows.
+export const beltRankEnum = pgEnum('belt_rank', [
+  'white',
+  'yellow',
+  'orange',
+  'green',
+  'blue',
+  'red',
+  'brown',
+  'brown_kyu3',
+  'brown_kyu2',
+  'brown_kyu1',
+  'black',
+]);
 export const classTypeEnum = pgEnum('class_type', ['beginner', 'intermediate', 'advanced', 'sparring', 'kata']);
 export const equipmentStatusEnum = pgEnum('equipment_status', ['available', 'checked_out', 'maintenance', 'retired']);
 export const registrationStatusEnum = pgEnum('registration_status', ['pending', 'approved', 'rejected']);

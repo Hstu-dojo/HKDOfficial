@@ -45,7 +45,9 @@ export default function ProgramDetails({ slug, initialProgram }: ProgramDetailsP
     { value: 'green', label: 'Green' },
     { value: 'blue', label: 'Blue' },
     { value: 'red', label: 'Red' },
-    { value: 'brown', label: 'Brown' },
+    { value: 'brown_kyu3', label: 'Brown (Kyu 3)' },
+    { value: 'brown_kyu2', label: 'Brown (Kyu 2)' },
+    { value: 'brown_kyu1', label: 'Brown (Kyu 1)' },
     { value: 'black', label: 'Black' },
   ];
   

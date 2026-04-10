@@ -53,6 +53,7 @@ export async function GET(request: NextRequest) {
         'Registration Number': reg.registrationNumber || '-',
         'Member Number': mem?.memberNumber || '-',
         'Status': reg.status?.replace('_', ' ').toUpperCase() || '-',
+        'Belt Test New Rank': reg.newRank || '-',
         
         // Participant Info - check formData first (from onboarding), then member, then account
         'Name (English)': formData?.username || mem?.fullNameEnglish || acc?.name || usr?.userName || '-',
@@ -150,6 +151,7 @@ export async function GET(request: NextRequest) {
       { wch: 18 },  // Registration Number
       { wch: 15 },  // Member Number
       { wch: 18 },  // Status
+      { wch: 18 },  // Belt Test New Rank
       { wch: 25 },  // Name (English)
       { wch: 25 },  // Name (Bangla)
       { wch: 25 },  // Father's Name

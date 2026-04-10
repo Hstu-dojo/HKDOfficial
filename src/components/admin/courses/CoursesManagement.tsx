@@ -66,6 +66,9 @@ const BELT_COLORS: Record<string, string> = {
   blue: 'bg-blue-500',
   red: 'bg-red-500',
   brown: 'bg-amber-700',
+  brown_kyu3: 'bg-amber-700',
+  brown_kyu2: 'bg-amber-700',
+  brown_kyu1: 'bg-amber-700',
   black: 'bg-black',
 };
 

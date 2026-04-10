@@ -4,10 +4,36 @@ import { db } from "@/lib/connect-db";
 import { programs, programRegistrations, members, profiles, registrations, courseEnrollments, courses, enrollmentApplications } from "@/db/schemas/karate";
 import { user, account } from "@/db/schemas/auth";
 import { revalidatePath } from "next/cache";
-import { eq, desc, and, inArray, count } from "drizzle-orm";
+import { eq, desc, and, inArray, count, ilike, or } from "drizzle-orm";
 import { NewProgram, NewProgramRegistration } from "@/db/schemas/karate/programs";
 import { checkUserProfileStatus } from "./check-profile";
 import { partners } from "@/db/schemas/partner";
+
+type AdminRegistrantCandidate = {
+  userId: string;
+  email: string | null;
+  userName: string | null;
+  name: string | null;
+  phone: string | null;
+  memberNumber: string | null;
+  applicationNumber?: string | null;
+  applicationStatus?: string | null;
+  courseName?: string | null;
+};
+
+const BELT_TEST_ALLOWED_RANKS = [
+  'white',
+  'yellow',
+  'orange',
+  'green',
+  'blue',
+  'red',
+  'brown', // legacy
+  'brown_kyu3',
+  'brown_kyu2',
+  'brown_kyu1',
+  'black',
+];
 
 export async function createProgram(data: NewProgram) {
   try {
@@ -155,7 +181,19 @@ export async function registerForProgram(data: NewProgramRegistration) {
         return { success: false, error: 'New rank is required for Belt Test registration.' };
       }
 
-      const allowedRanks = ['white', 'yellow', 'orange', 'green', 'blue', 'red', 'brown', 'black'];
+      const allowedRanks = [
+        'white',
+        'yellow',
+        'orange',
+        'green',
+        'blue',
+        'red',
+        'brown', // legacy
+        'brown_kyu3',
+        'brown_kyu2',
+        'brown_kyu1',
+        'black',
+      ];
       if (!allowedRanks.includes(submittedNewRank)) {
         return { success: false, error: 'Invalid new rank selected.' };
       }
@@ -372,6 +410,7 @@ export async function getProgramRegistrationsForExport(programId?: string, statu
         registrationNumber: programRegistrations.registrationNumber,
         programId: programRegistrations.programId,
         userId: programRegistrations.userId,
+        newRank: programRegistrations.newRank,
         feeAmount: programRegistrations.feeAmount,
         currency: programRegistrations.currency,
         paymentMethod: programRegistrations.paymentMethod,
@@ -587,5 +626,315 @@ export async function getProgramBySlug(slug: string) {
   } catch (error) {
     console.error("Error fetching program by slug:", error);
     return { success: false, error: "Failed to fetch program" };
+  }
+}
+
+export async function searchAdminRegistrantCandidates(programId: string, q: string) {
+  try {
+    const query = (q || '').trim();
+    if (!programId) return { success: false, error: 'Program is required' };
+
+    const program = await db.query.programs.findFirst({
+      where: eq(programs.id, programId),
+    });
+
+    if (!program) return { success: false, error: 'Program not found' };
+
+    const existing = await db
+      .select({ userId: programRegistrations.userId })
+      .from(programRegistrations)
+      .where(eq(programRegistrations.programId, programId));
+    const alreadyRegistered = new Set(existing.map((r) => r.userId));
+
+    const like = `%${query}%`;
+    const searchClause = query
+      ? or(
+          ilike(user.email, like),
+          ilike(user.userName, like),
+          ilike(account.name, like),
+          ilike(account.phone, like),
+          ilike(profiles.fullNameEnglish, like),
+          ilike(profiles.memberNumber, like),
+          ilike(profiles.phoneNumber, like),
+          ilike(registrations.email, like),
+          ilike(registrations.firstName, like),
+          ilike(registrations.lastName, like),
+          ilike(registrations.phoneNumber, like),
+        )
+      : undefined;
+
+    const candidatesByUserId = new Map<string, AdminRegistrantCandidate>();
+
+    if (program.type === 'BELT_TEST') {
+      if (!program.courseId) {
+        return { success: false, error: 'This Belt Test is missing a course.' };
+      }
+
+      const beltTestCourse = await db.query.courses.findFirst({
+        where: eq(courses.id, program.courseId),
+      });
+
+      const partnerId = beltTestCourse?.partnerId || null;
+      if (!partnerId) {
+        return { success: false, error: 'Belt Test course must belong to a partner.' };
+      }
+
+      // 1) Partner-owned profiles (same partner)
+      const partnerProfiles = await db
+        .select({
+          userId: user.id,
+          email: user.email,
+          userName: user.userName,
+          name: account.name,
+          phone: account.phone,
+          memberNumber: profiles.memberNumber,
+        })
+        .from(user)
+        .innerJoin(profiles, eq(user.id, profiles.userId))
+        .leftJoin(account, eq(user.id, account.userId))
+        .leftJoin(registrations, eq(user.id, registrations.userId))
+        .where(and(eq(profiles.partnerId, partnerId), searchClause))
+        .limit(25);
+
+      for (const row of partnerProfiles) {
+        if (alreadyRegistered.has(row.userId)) continue;
+        candidatesByUserId.set(row.userId, {
+          userId: row.userId,
+          email: row.email ?? null,
+          userName: row.userName ?? null,
+          name: row.name ?? null,
+          phone: row.phone ?? null,
+          memberNumber: row.memberNumber ?? null,
+        });
+      }
+
+      // 2) Course applications under the same partner (even if no profile yet)
+      const allowedStatuses: Array<string> = [
+        'pending_payment',
+        'payment_submitted',
+        'payment_verified',
+        'approved',
+      ];
+
+      const partnerApps = await db
+        .select({
+          userId: user.id,
+          email: user.email,
+          userName: user.userName,
+          name: account.name,
+          phone: account.phone,
+          memberNumber: profiles.memberNumber,
+          applicationNumber: enrollmentApplications.applicationNumber,
+          applicationStatus: enrollmentApplications.status,
+          courseName: courses.title,
+        })
+        .from(enrollmentApplications)
+        .innerJoin(user, eq(enrollmentApplications.userId, user.id))
+        .innerJoin(courses, eq(enrollmentApplications.courseId, courses.id))
+        .leftJoin(account, eq(user.id, account.userId))
+        .leftJoin(profiles, eq(user.id, profiles.userId))
+        .leftJoin(registrations, eq(user.id, registrations.userId))
+        .where(
+          and(
+            eq(courses.partnerId, partnerId),
+            inArray(enrollmentApplications.status, allowedStatuses as any),
+            searchClause,
+          ),
+        )
+        .orderBy(desc(enrollmentApplications.createdAt))
+        .limit(25);
+
+      for (const row of partnerApps) {
+        if (alreadyRegistered.has(row.userId)) continue;
+        if (!candidatesByUserId.has(row.userId)) {
+          candidatesByUserId.set(row.userId, {
+            userId: row.userId,
+            email: row.email ?? null,
+            userName: row.userName ?? null,
+            name: row.name ?? null,
+            phone: row.phone ?? null,
+            memberNumber: row.memberNumber ?? null,
+            applicationNumber: row.applicationNumber ?? null,
+            applicationStatus: (row.applicationStatus as any) ?? null,
+            courseName: row.courseName ?? null,
+          });
+        }
+      }
+    } else {
+      // Non-belt-test: onboarding details are sufficient; search by email/name/phone/member #
+      const rows = await db
+        .select({
+          userId: user.id,
+          email: user.email,
+          userName: user.userName,
+          name: account.name,
+          phone: account.phone,
+          memberNumber: profiles.memberNumber,
+        })
+        .from(user)
+        .leftJoin(account, eq(user.id, account.userId))
+        .leftJoin(profiles, eq(user.id, profiles.userId))
+        .leftJoin(registrations, eq(user.id, registrations.userId))
+        .where(searchClause)
+        .limit(25);
+
+      for (const row of rows) {
+        if (alreadyRegistered.has(row.userId)) continue;
+        if (!candidatesByUserId.has(row.userId)) {
+          candidatesByUserId.set(row.userId, {
+            userId: row.userId,
+            email: row.email ?? null,
+            userName: row.userName ?? null,
+            name: row.name ?? null,
+            phone: row.phone ?? null,
+            memberNumber: row.memberNumber ?? null,
+          });
+        }
+      }
+    }
+
+    return { success: true, data: Array.from(candidatesByUserId.values()) };
+  } catch (error) {
+    console.error('Error searching admin registrant candidates:', error);
+    return { success: false, error: 'Failed to search candidates' };
+  }
+}
+
+export async function adminAddRegistrantToProgram(input: { programId: string; userId: string; newRank?: string | null }) {
+  try {
+    if (!input?.programId || !input?.userId) {
+      return { success: false, error: 'Program and user are required' };
+    }
+
+    const program = await db.query.programs.findFirst({
+      where: eq(programs.id, input.programId),
+    });
+
+    if (!program) return { success: false, error: 'Program not found' };
+
+    if (program.maxParticipants && (program.currentParticipants || 0) >= program.maxParticipants) {
+      return { success: false, error: 'Program is full' };
+    }
+
+    const existing = await db.query.programRegistrations.findFirst({
+      where: and(
+        eq(programRegistrations.programId, input.programId),
+        eq(programRegistrations.userId, input.userId),
+      ),
+    });
+    if (existing) {
+      return { success: false, error: 'User is already registered for this program.' };
+    }
+
+    const profile = await db.query.profiles.findFirst({
+      where: eq(profiles.userId, input.userId),
+    });
+
+    // For non-belt-test programs, onboarding data is enough.
+    if (program.type !== 'BELT_TEST') {
+      const hasAccount = await db.query.account.findFirst({
+        where: eq(account.userId, input.userId),
+      });
+      const hasOnboardingReg = await db.query.registrations.findFirst({
+        where: eq(registrations.userId, input.userId),
+      });
+      if (!profile?.id && !hasAccount && !hasOnboardingReg) {
+        return { success: false, error: 'User has not completed onboarding/profile yet.' };
+      }
+    }
+
+    // Belt Test: require newRank + partner/application gating
+    let newRankToSave: string | null = null;
+    if (program.type === 'BELT_TEST') {
+      const submittedNewRank = (input.newRank || '').trim();
+      if (!submittedNewRank) {
+        return { success: false, error: 'New rank is required for Belt Test registration.' };
+      }
+      if (!BELT_TEST_ALLOWED_RANKS.includes(submittedNewRank)) {
+        return { success: false, error: 'Invalid new rank selected.' };
+      }
+      newRankToSave = submittedNewRank;
+
+      if (!program.courseId) {
+        return { success: false, error: 'This Belt Test is missing a course.' };
+      }
+
+      const beltTestCourse = await db.query.courses.findFirst({
+        where: eq(courses.id, program.courseId),
+      });
+      const partnerId = beltTestCourse?.partnerId || null;
+
+      if (!partnerId) {
+        return { success: false, error: 'Belt Test course must belong to a partner.' };
+      }
+
+      let eligible = false;
+      if (profile?.partnerId && profile.partnerId === partnerId) {
+        eligible = true;
+      }
+
+      if (!eligible) {
+        const allowedStatuses: Array<string> = [
+          'pending_payment',
+          'payment_submitted',
+          'payment_verified',
+          'approved',
+        ];
+
+        const apps = await db
+          .select({ id: enrollmentApplications.id })
+          .from(enrollmentApplications)
+          .innerJoin(courses, eq(enrollmentApplications.courseId, courses.id))
+          .where(
+            and(
+              eq(enrollmentApplications.userId, input.userId),
+              eq(courses.partnerId, partnerId),
+              inArray(enrollmentApplications.status, allowedStatuses as any),
+            ),
+          )
+          .limit(1);
+
+        if (apps.length > 0) eligible = true;
+      }
+
+      if (!eligible) {
+        return {
+          success: false,
+          error: 'Only users under this partner (or who applied for a course under this partner) can be added to this Belt Test.',
+        };
+      }
+    }
+
+    const [registration] = await db
+      .insert(programRegistrations)
+      .values({
+        programId: input.programId,
+        userId: input.userId,
+        profileId: profile?.id ?? null,
+        newRank: newRankToSave as any,
+        feeAmount: program.fee,
+        currency: program.currency,
+        status: 'approved' as any,
+        notes: 'Added by admin',
+        updatedAt: new Date(),
+      } as any)
+      .returning({
+        id: programRegistrations.id,
+        status: programRegistrations.status,
+      });
+
+    await db
+      .update(programs)
+      .set({ currentParticipants: (program.currentParticipants || 0) + 1 })
+      .where(eq(programs.id, input.programId));
+
+    revalidatePath('/admin/programs/registrations');
+    return { success: true, data: registration };
+  } catch (error: any) {
+    console.error('Error adding admin registrant:', error);
+    if (error?.constraint === 'uniqueUserProgram') {
+      return { success: false, error: 'User is already registered for this program.' };
+    }
+    return { success: false, error: 'Failed to add registrant' };
   }
 }

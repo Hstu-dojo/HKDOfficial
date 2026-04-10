@@ -148,6 +148,7 @@ export interface ProgramParticipant {
   profileName: string | null;
   profileNameBangla: string | null;
   memberNumber: string | null;
+  newRank: string | null;
   status: string;
   certificateId: string | null;
   certificateStatus: string | null;
@@ -165,6 +166,7 @@ export async function getProgramParticipants(programId: string) {
       .select({
         registrationId: programRegistrations.id,
         userId: programRegistrations.userId,
+        newRank: programRegistrations.newRank,
         status: programRegistrations.status,
         profileId: profiles.id,
         fullNameEnglish: profiles.fullNameEnglish,
@@ -193,6 +195,7 @@ export async function getProgramParticipants(programId: string) {
       profileName: row.fullNameEnglish ?? null,
       profileNameBangla: row.fullNameBangla ?? null,
       memberNumber: row.memberNumber ?? null,
+      newRank: row.newRank ?? null,
       status: row.status,
       certificateId: row.certificateId ?? null,
       certificateStatus: row.certificateStatus ?? null,
@@ -648,9 +651,18 @@ export async function getProgramCertificates(programId: string) {
         profileName: profiles.fullNameEnglish,
         profileNameBangla: profiles.fullNameBangla,
         memberNumber: profiles.memberNumber,
+        // Belt Test info (nullable)
+        beltTestNewRank: programRegistrations.newRank,
       })
       .from(programCertificates)
       .leftJoin(profiles, eq(programCertificates.profileId, profiles.id))
+      .leftJoin(
+        programRegistrations,
+        and(
+          eq(programRegistrations.programId, programCertificates.programId),
+          eq(programRegistrations.userId, profiles.userId)
+        )
+      )
       .where(eq(programCertificates.programId, programId))
       .orderBy(desc(programCertificates.createdAt));
 
@@ -681,9 +693,18 @@ export async function getAllCertificates() {
         memberNumber: profiles.memberNumber,
         // Program
         programTitle: programs.title,
+        programType: programs.type,
+        beltTestNewRank: programRegistrations.newRank,
       })
       .from(programCertificates)
       .leftJoin(profiles, eq(programCertificates.profileId, profiles.id))
+      .leftJoin(
+        programRegistrations,
+        and(
+          eq(programRegistrations.programId, programCertificates.programId),
+          eq(programRegistrations.userId, profiles.userId)
+        )
+      )
       .innerJoin(programs, eq(programCertificates.programId, programs.id))
       .orderBy(desc(programCertificates.issuedAt));
 
