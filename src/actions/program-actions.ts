@@ -4,9 +4,10 @@ import { db } from "@/lib/connect-db";
 import { programs, programRegistrations, members, profiles, registrations, courseEnrollments, courses, enrollmentApplications } from "@/db/schemas/karate";
 import { user, account } from "@/db/schemas/auth";
 import { revalidatePath } from "next/cache";
-import { eq, desc, and, inArray } from "drizzle-orm";
+import { eq, desc, and, inArray, count } from "drizzle-orm";
 import { NewProgram, NewProgramRegistration } from "@/db/schemas/karate/programs";
 import { checkUserProfileStatus } from "./check-profile";
+import { partners } from "@/db/schemas/partner";
 
 export async function createProgram(data: NewProgram) {
   try {
@@ -159,10 +160,6 @@ export async function registerForProgram(data: NewProgramRegistration) {
         return { success: false, error: 'Invalid new rank selected.' };
       }
 
-      if (!userProfile?.id) {
-        return { success: false, error: 'You must have an active course enrollment to register for a Belt Test.' };
-      }
-
       const beltTestCourse = await db.query.courses.findFirst({
         where: eq(courses.id, program.courseId),
       });
@@ -171,67 +168,139 @@ export async function registerForProgram(data: NewProgramRegistration) {
         return { success: false, error: 'Belt Test course not found. Please contact admin.' };
       }
 
-      const enrollmentConditions = [
-        eq(courseEnrollments.profileId, userProfile.id),
-        eq(courseEnrollments.isActive, true),
-      ];
+      const partnerId = beltTestCourse.partnerId || null
+      let eligible = false
 
-      // If belt test is tied to a partner-owned course, require an active enrollment in any course of that partner
-      if (beltTestCourse.partnerId) {
-        enrollmentConditions.push(eq(courses.partnerId, beltTestCourse.partnerId));
-      }
+      // Prefer confirmed active enrollment when a profile exists.
+      if (userProfile?.id) {
+        const enrollmentConditions = [
+          eq(courseEnrollments.profileId, userProfile.id),
+          eq(courseEnrollments.isActive, true),
+        ]
 
-      const activeEnrollment = await db
-        .select({ id: courseEnrollments.id })
-        .from(courseEnrollments)
-        .innerJoin(courses, eq(courseEnrollments.courseId, courses.id))
-        .where(and(...enrollmentConditions))
-        .limit(1);
-
-      if (activeEnrollment.length === 0) {
-        // Fallback: Some flows track “applied” in enrollment_applications and create course_enrollments later.
-        // If the application is already approved, treat it as eligible.
-        const appConditions = [
-          eq(enrollmentApplications.userId, publicUserId),
-          inArray(enrollmentApplications.status, ['approved'] as any),
-        ];
-
-        if (beltTestCourse.partnerId) {
-          appConditions.push(eq(courses.partnerId, beltTestCourse.partnerId));
+        // If belt test is tied to a partner-owned course, require an active enrollment in any course of that partner
+        if (partnerId) {
+          enrollmentConditions.push(eq(courses.partnerId, partnerId))
         }
 
-        const approvedApplication = await db
-          .select({ id: enrollmentApplications.id })
+        const activeEnrollment = await db
+          .select({ id: courseEnrollments.id })
+          .from(courseEnrollments)
+          .innerJoin(courses, eq(courseEnrollments.courseId, courses.id))
+          .where(and(...enrollmentConditions))
+          .limit(1)
+
+        if (activeEnrollment.length > 0) {
+          eligible = true
+        }
+      }
+
+      // New rule: skip admin verify/approve — if the user has applied to any course under this partner,
+      // allow them to register for belt test.
+      if (!eligible && partnerId) {
+        const allowedStatuses: Array<string> = [
+          'pending_payment',
+          'payment_submitted',
+          'payment_verified',
+          'approved',
+        ]
+
+        const apps = await db
+          .select({
+            id: enrollmentApplications.id,
+            status: enrollmentApplications.status,
+            studentInfo: enrollmentApplications.studentInfo,
+          })
           .from(enrollmentApplications)
           .innerJoin(courses, eq(enrollmentApplications.courseId, courses.id))
-          .where(and(...appConditions))
-          .limit(1);
-
-        if (approvedApplication.length === 0) {
-          const anyApplication = await db
-            .select({ status: enrollmentApplications.status })
-            .from(enrollmentApplications)
-            .innerJoin(courses, eq(enrollmentApplications.courseId, courses.id))
-            .where(
-              and(
-                eq(enrollmentApplications.userId, publicUserId),
-                ...(beltTestCourse.partnerId ? [eq(courses.partnerId, beltTestCourse.partnerId)] : [])
-              )
+          .where(
+            and(
+              eq(enrollmentApplications.userId, publicUserId),
+              eq(courses.partnerId, partnerId),
+              inArray(enrollmentApplications.status, allowedStatuses as any)
             )
-            .orderBy(desc(enrollmentApplications.createdAt))
-            .limit(1);
+          )
+          .orderBy(desc(enrollmentApplications.createdAt))
+          .limit(1)
 
-          if (anyApplication.length > 0) {
-            return {
-              success: false,
-              error: `Your course application is still "${anyApplication[0]!.status}". You can register for this Belt Test after your enrollment is approved.`
-            };
+        if (apps.length > 0) {
+          eligible = true
+
+          // If the user doesn't yet have a member profile row, create one from the application info
+          // so belt test certificates / rank upgrades have a profile to attach to.
+          if (!userProfile?.id) {
+            let info: any = apps[0]!.studentInfo
+            if (typeof info === 'string') {
+              try {
+                info = JSON.parse(info)
+              } catch {
+                info = {}
+              }
+            }
+
+            const partner = await db.query.partners.findFirst({
+              where: eq(partners.id, partnerId),
+            })
+
+            const prefix = partner?.slug
+              ? `HKD-${partner.slug.toUpperCase().slice(0, 8)}`
+              : 'HKD-HQ'
+
+            const existingCount = await db
+              .select({ total: count() })
+              .from(members)
+              .where(eq(members.partnerId, partnerId))
+
+            const memberNumber = `${prefix}-${String((existingCount[0]?.total || 0) + 1).padStart(4, '0')}`
+
+            const fullNameEnglish = info.fullNameEnglish || info.username || info.fullName || info.name || null
+            const phoneNumber = info.phoneNumber || info.phone || info.mobile || null
+            const email = info.email || null
+            const dateOfBirthRaw = info.dateOfBirth || info.dob || null
+            const gender = info.gender || info.sex || null
+            const presentAddress = info.presentAddress || info.address || null
+            const emergencyContactName = info.emergencyContactName || info.emergencyContact || null
+            const emergencyContactPhone = info.emergencyContactPhone || info.emergencyPhone || null
+
+            await db.insert(members).values({
+              userId: publicUserId,
+              memberNumber,
+              fullNameEnglish,
+              fullNameBangla: info.fullNameBangla || null,
+              fatherName: info.fatherName || null,
+              fatherNameBangla: info.fatherNameBangla || null,
+              motherName: info.motherName || null,
+              motherNameBangla: info.motherNameBangla || null,
+              dateOfBirth: dateOfBirthRaw ? new Date(dateOfBirthRaw) : undefined,
+              gender,
+              bloodGroup: info.bloodGroup || null,
+              religion: info.religion || null,
+              nationality: info.nationality || null,
+              phoneNumber,
+              email,
+              presentAddress,
+              permanentAddress: info.permanentAddress || null,
+              nid: info.nid || null,
+              profession: info.profession || info.occupation || null,
+              institute: info.institute || null,
+              faculty: info.faculty || null,
+              emergencyContact: emergencyContactName,
+              emergencyPhone: emergencyContactPhone,
+              picture: info.profilePhotoUrl || null,
+              partnerId,
+              isActive: true,
+              isProfileComplete: true,
+              notes: 'Auto-created from course application (belt test eligibility)',
+              updatedAt: new Date(),
+            } as any)
           }
+        }
+      }
 
-          return {
-            success: false,
-            error: 'You are not enrolled in a course under this partner, so you cannot register for this Belt Test.'
-          };
+      if (!eligible) {
+        return {
+          success: false,
+          error: 'You must submit a course registration/application under this partner before registering for this Belt Test.',
         }
       }
     }
