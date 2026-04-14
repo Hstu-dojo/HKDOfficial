@@ -112,6 +112,31 @@ export async function POST(request: Request) {
       )
     }
 
+    // Postgres: invalid_password / insufficient_privilege / too_many_connections
+    if (pgCode === '28P01') {
+      console.error('[PartnerAdminLogin] Database authentication failed:', err)
+      return NextResponse.json(
+        { error: 'Database authentication failed. Please check server configuration.' },
+        { status: 503 }
+      )
+    }
+
+    if (pgCode === '42501') {
+      console.error('[PartnerAdminLogin] Database permission denied:', err)
+      return NextResponse.json(
+        { error: 'Database permission error. Please check database roles/policies.' },
+        { status: 503 }
+      )
+    }
+
+    if (pgCode === '53300') {
+      console.error('[PartnerAdminLogin] Database is at connection limit:', err)
+      return NextResponse.json(
+        { error: 'Database is busy. Please try again later.' },
+        { status: 503 }
+      )
+    }
+
     // Common Node/network failures
     if (nodeCode === 'ECONNREFUSED' || nodeCode === 'ENOTFOUND' || nodeCode === 'ETIMEDOUT') {
       console.error('[PartnerAdminLogin] Database connection error:', err)
