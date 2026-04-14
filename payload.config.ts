@@ -30,81 +30,19 @@ export default buildConfig({
     }
   },
 
-  // Use partner-admins as the auth collection
+  // Keep Payload for auth + REST API only.
+  // The Partner Admin portal UI is implemented with plain Next.js routes under /partner-admin.
   admin: {
     user: PartnerAdmins.slug,
     meta: {
       titleSuffix: ' — Partner Portal',
     },
-    avatar: 'default',
-    theme: 'light',
-    components: {
-      graphics: {
-        Logo: '/src/payload/components/Logo',
-        Icon: '/src/payload/components/Icon',
-      },
-      afterNavLinks: ['/src/payload/components/PartnerNavLinks'],
-      views: {
-        dashboard: {
-          Component: '/src/payload/views/PartnerDashboard',
-        },
-        members: {
-          Component: '/src/payload/views/MembersView',
-          path: '/portal/members',
-          exact: true,
-        },
-        enrollments: {
-          Component: '/src/payload/views/EnrollmentsView',
-          path: '/portal/enrollments',
-          exact: true,
-        },
-        bills: {
-          Component: '/src/payload/views/BillsView',
-          path: '/portal/bills',
-          exact: true,
-        },
-        schedules: {
-          Component: '/src/payload/views/SchedulesView',
-          path: '/portal/schedules',
-          exact: true,
-        },
-        profile: {
-          Component: '/src/payload/views/ProfileView',
-          path: '/portal/profile',
-          exact: true,
-        },
-        pageSettings: {
-          Component: '/src/payload/views/PageSettingsView',
-          path: '/portal/page-settings',
-          exact: true,
-        },
-        pendingStudents: {
-          Component: '/src/payload/views/PendingStudentsView',
-          path: '/portal/pending-students',
-          exact: true,
-        },
-        monthlyStatus: {
-          Component: '/src/payload/views/MonthlyStatusView',
-          path: '/portal/monthly-status',
-          exact: true,
-        },
-        branchRequests: {
-          Component: '/src/payload/views/BranchRequestsView',
-          path: '/portal/branch-requests',
-          exact: true,
-        },
-        adminManagement: {
-          Component: '/src/payload/views/AdminManagementView',
-          path: '/portal/admin-management',
-          exact: true,
-        },
-      },
-    },
   },
 
-  // Payload routes — avoid conflicts with existing /admin and /api
+  // Payload routes — keep API on /payload-api, move admin UI away from /partner-admin
+  // to avoid conflicts with the custom Next.js partner portal.
   routes: {
-    admin: '/partner-admin',
+    admin: '/payload-admin',
     api: '/payload-api',
   },
 

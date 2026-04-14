@@ -35,23 +35,23 @@ const rewrites = async () => {
   return {
     beforeFiles: [
       // Fix: Next.js intercepting route pattern (.)login leaking into partner-admin URLs.
-      // Rewrite to the normal partner-admin catch-all so Payload handles it properly.
+      // Rewrite to the Partner Portal login route.
       // Handle both encoded (%28.%29) and unencoded escaped forms.
       {
         source: "/partner-admin/%28.%29login",
-        destination: "/partner-admin",
+        destination: "/partner-admin/login",
       },
       {
         source: "/partner-admin/%28.%29login/:path*",
-        destination: "/partner-admin",
+        destination: "/partner-admin/login",
       },
       {
         source: "/partner-admin/\\(.\\)login",
-        destination: "/partner-admin",
+        destination: "/partner-admin/login",
       },
       {
         source: "/partner-admin/\\(.\\)login/:path*",
-        destination: "/partner-admin",
+        destination: "/partner-admin/login",
       },
     ],
   };

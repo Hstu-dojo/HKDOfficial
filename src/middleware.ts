@@ -10,7 +10,7 @@ const ROOT_DOMAIN = process.env.ROOT_DOMAIN || "hstuma.com";
 
 /**
  * Intercept the (.)login pattern that leaks from the @loginDialogue
- * intercepting route into partner-admin URLs. Redirect cleanly to /partner-admin.
+ * intercepting route into partner-admin URLs. Redirect cleanly to /partner-admin/login.
  */
 function withPartnerAdminFix(request: NextRequest) {
   const pathname = request.nextUrl.pathname;
@@ -21,7 +21,7 @@ function withPartnerAdminFix(request: NextRequest) {
     pathname.includes('%28.%29login')
   ) {
     const url = request.nextUrl.clone();
-    url.pathname = '/partner-admin';
+    url.pathname = '/partner-admin/login';
     url.search = ''; // strip ?redirect= too
     return NextResponse.redirect(url);
   }
@@ -34,7 +34,7 @@ function withPartnerAdminFix(request: NextRequest) {
     (redirectParam.includes('(.)login') || redirectParam.includes('%28.%29login'))
   ) {
     const url = request.nextUrl.clone();
-    url.searchParams.set('redirect', '/partner-admin');
+    url.searchParams.set('redirect', '/partner-admin/login');
     // Use a rewrite to avoid a client-side navigation getting stuck
     // (blank screen until hard refresh) when the router encounters a redirect.
     return NextResponse.rewrite(url);
@@ -274,7 +274,7 @@ export async function middleware(request: NextRequest) {
     if (fixResult.status === 307 || fixResult.status === 308) {
       return fixResult; // redirect was triggered
     }
-    // For normal /partner-admin routes, let Payload handle them (no NEMO processing)
+    // For normal /partner-admin routes, let the Partner Portal handle them (no NEMO processing)
     return NextResponse.next();
   }
 
