@@ -4,13 +4,13 @@
  * GET /api/partner-portal/bills — List bills for the partner
  */
 import { NextResponse } from 'next/server'
-import { requirePayloadPartnerUser } from '@/lib/payload/auth'
+import { requirePartnerAdminUser } from '@/lib/partner-admin/auth'
 import { db } from '@/lib/connect-db'
 import { partnerBills } from '@/db/schemas/partner'
 import { eq, and, desc, count } from 'drizzle-orm'
 
 export async function GET(request: Request) {
-  const { user: partnerUser, error } = await requirePayloadPartnerUser()
+  const { user: partnerUser, error } = await requirePartnerAdminUser()
   if (error) return error
 
   const url = new URL(request.url)

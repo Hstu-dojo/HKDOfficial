@@ -5,7 +5,7 @@
  * PATCH /api/partner-portal/pending-students — Approve or reject a registration
  */
 import { NextResponse } from 'next/server'
-import { requirePayloadPartnerUser } from '@/lib/payload/auth'
+import { requirePartnerAdminUser } from '@/lib/partner-admin/auth'
 import { db } from '@/lib/connect-db'
 import { registrations, members } from '@/db/schemas/karate/members'
 import { getPartnerIdFromRegistrationRow, parseNotesRecord } from '@/lib/partner-assignment'
@@ -13,7 +13,7 @@ import { eq, and, desc, count } from 'drizzle-orm'
 import { normalizeStudentLevel } from '@/lib/auth/external-auth'
 
 export async function GET(request: Request) {
-  const { user: partnerUser, error } = await requirePayloadPartnerUser()
+  const { user: partnerUser, error } = await requirePartnerAdminUser()
   if (error) return error
 
   const url = new URL(request.url)
@@ -74,7 +74,7 @@ export async function GET(request: Request) {
 }
 
 export async function PATCH(request: Request) {
-  const { user: partnerUser, error } = await requirePayloadPartnerUser()
+  const { user: partnerUser, error } = await requirePartnerAdminUser()
   if (error) return error
 
   try {

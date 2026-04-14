@@ -5,7 +5,7 @@
  * POST /api/partner-portal/members — Add a new member (simplified enrollment)
  */
 import { NextResponse } from 'next/server'
-import { requirePayloadPartnerUser } from '@/lib/payload/auth'
+import { requirePartnerAdminUser } from '@/lib/partner-admin/auth'
 import { db } from '@/lib/connect-db'
 import { members } from '@/db/schemas/karate/members'
 import { user } from '@/db/schemas/auth'
@@ -15,7 +15,7 @@ import { Resend } from 'resend'
 import crypto from 'crypto'
 
 export async function GET(request: Request) {
-  const { user: partnerUser, error } = await requirePayloadPartnerUser()
+  const { user: partnerUser, error } = await requirePartnerAdminUser()
   if (error) return error
 
   const url = new URL(request.url)
@@ -97,7 +97,7 @@ export async function GET(request: Request) {
 }
 
 export async function POST(request: Request) {
-  const { user: partnerUser, error } = await requirePayloadPartnerUser()
+  const { user: partnerUser, error } = await requirePartnerAdminUser()
   if (error) return error
 
   try {

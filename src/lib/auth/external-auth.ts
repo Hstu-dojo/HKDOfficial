@@ -584,6 +584,10 @@ export async function resolveExternalRoleByProfileId(profileId: string): Promise
   const localUserId = linked[0]!.userId
   const email = linked[0]!.email ?? ''
 
+  if (!localUserId) {
+    throw new Error('Profile is not linked to a local user')
+  }
+
   const userPerms = await getUserPermissionsWithFallback(localUserId)
   const roleNames = userPerms.roles.map((r) => r.name)
 

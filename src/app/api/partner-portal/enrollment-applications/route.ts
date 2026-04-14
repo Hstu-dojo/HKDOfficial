@@ -5,7 +5,7 @@
  * PATCH /api/partner-portal/enrollment-applications — Verify payment, approve, or reject an application
  */
 import { NextResponse } from 'next/server'
-import { requirePayloadPartnerUser } from '@/lib/payload/auth'
+import { requirePartnerAdminUser } from '@/lib/partner-admin/auth'
 import { db } from '@/lib/connect-db'
 import {
   enrollmentApplications,
@@ -17,7 +17,7 @@ import {
 import { eq, and, desc, count, sql } from 'drizzle-orm'
 
 export async function GET(request: Request) {
-  const { user: partnerUser, error } = await requirePayloadPartnerUser()
+  const { user: partnerUser, error } = await requirePartnerAdminUser()
   if (error) return error
 
   const url = new URL(request.url)
@@ -100,7 +100,7 @@ export async function GET(request: Request) {
 }
 
 export async function PATCH(request: Request) {
-  const { user: partnerUser, error } = await requirePayloadPartnerUser()
+  const { user: partnerUser, error } = await requirePartnerAdminUser()
   if (error) return error
 
   try {

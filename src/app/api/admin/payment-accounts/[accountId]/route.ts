@@ -31,7 +31,7 @@ export const GET = (request: NextRequest, routeContext: RouteContext) =>
       console.error("Error fetching payment account:", error);
       return NextResponse.json({ error: "Failed to fetch payment account" }, { status: 500 });
     }
-  })(request);
+  })(request, routeContext as unknown as { params: Promise<Record<string, string | string[]>> });
 
 // PUT /api/admin/payment-accounts/[accountId] - Update a payment account
 export const PUT = (request: NextRequest, routeContext: RouteContext) => 
@@ -107,7 +107,7 @@ export const PUT = (request: NextRequest, routeContext: RouteContext) =>
       console.error("Error updating payment account:", error);
       return NextResponse.json({ error: "Failed to update payment account" }, { status: 500 });
     }
-  })(request);
+  })(request, routeContext as unknown as { params: Promise<Record<string, string | string[]>> });
 
 // DELETE /api/admin/payment-accounts/[accountId] - Delete a payment account
 export const DELETE = (request: NextRequest, routeContext: RouteContext) => 
@@ -132,4 +132,4 @@ export const DELETE = (request: NextRequest, routeContext: RouteContext) =>
       console.error("Error deleting payment account:", error);
       return NextResponse.json({ error: "Failed to delete payment account" }, { status: 500 });
     }
-  })(request);
+  })(request, routeContext as unknown as { params: Promise<Record<string, string | string[]>> });

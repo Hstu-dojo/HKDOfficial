@@ -7,13 +7,13 @@
  * PATCH /api/partner-portal/page-settings — Update settings (partial)
  */
 import { NextResponse } from 'next/server'
-import { requirePayloadPartnerUser } from '@/lib/payload/auth'
+import { requirePartnerAdminUser } from '@/lib/partner-admin/auth'
 import { db } from '@/lib/connect-db'
 import { partnerPageSettings } from '@/db/schema'
 import { eq } from 'drizzle-orm'
 
 export async function GET() {
-  const { user: partnerUser, error } = await requirePayloadPartnerUser()
+  const { user: partnerUser, error } = await requirePartnerAdminUser()
   if (error) return error
 
   try {
@@ -66,7 +66,7 @@ const ALLOWED_FIELDS = new Set([
 ])
 
 export async function PATCH(request: Request) {
-  const { user: partnerUser, error } = await requirePayloadPartnerUser()
+  const { user: partnerUser, error } = await requirePartnerAdminUser()
   if (error) return error
 
   try {

@@ -5,7 +5,7 @@
  * PATCH /api/partner-portal/profile — Update partner organization profile
  */
 import { NextResponse } from 'next/server'
-import { requirePayloadPartnerUser } from '@/lib/payload/auth'
+import { requirePartnerAdminUser } from '@/lib/partner-admin/auth'
 import { db } from '@/lib/connect-db'
 import { partners } from '@/db/schemas/partner'
 import { members } from '@/db/schemas/karate/members'
@@ -13,7 +13,7 @@ import { courses } from '@/db/schemas/karate/courses'
 import { eq, and, count } from 'drizzle-orm'
 
 export async function GET() {
-  const { user: partnerUser, error } = await requirePayloadPartnerUser()
+  const { user: partnerUser, error } = await requirePartnerAdminUser()
   if (error) return error
 
   try {
@@ -58,7 +58,7 @@ export async function GET() {
 }
 
 export async function PATCH(request: Request) {
-  const { user: partnerUser, error } = await requirePayloadPartnerUser()
+  const { user: partnerUser, error } = await requirePartnerAdminUser()
   if (error) return error
 
   try {

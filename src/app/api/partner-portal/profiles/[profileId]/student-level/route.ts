@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { requirePayloadPartnerUser } from '@/lib/payload/auth';
+import { requirePartnerAdminUser } from '@/lib/partner-admin/auth';
 import { db } from '@/lib/connect-db';
 import { profiles } from '@/db/schemas/karate/members';
 import { and, eq } from 'drizzle-orm';
@@ -9,7 +9,7 @@ export async function PATCH(
   request: NextRequest,
   { params }: { params: Promise<{ profileId: string }> }
 ) {
-  const { user: partnerUser, error } = await requirePayloadPartnerUser();
+  const { user: partnerUser, error } = await requirePartnerAdminUser();
   if (error) return error;
 
   const { profileId } = await params;

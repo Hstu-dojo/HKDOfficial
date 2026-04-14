@@ -10,7 +10,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 export default function LoginForm() {
   const router = useRouter()
   const searchParams = useSearchParams()
-  const next = searchParams.get('next') || '/partner-admin'
+  const next = searchParams?.get('next') || '/partner-admin'
 
   const [email, setEmail] = React.useState('')
   const [password, setPassword] = React.useState('')
@@ -22,7 +22,7 @@ export default function LoginForm() {
     setError(null)
     setLoading(true)
     try {
-      const res = await fetch('/payload-api/partner-admins/login', {
+      const res = await fetch('/api/partner-admin/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
@@ -31,7 +31,7 @@ export default function LoginForm() {
 
       const data = await res.json().catch(() => null)
       if (!res.ok) {
-        throw new Error(data?.errors?.[0]?.message || data?.message || data?.error || 'Login failed')
+        throw new Error(data?.message || data?.error || 'Login failed')
       }
 
       router.replace(next)

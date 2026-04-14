@@ -7,7 +7,7 @@
  * DELETE /api/partner-portal/schedules — Delete schedule entry
  */
 import { NextResponse } from 'next/server'
-import { requirePayloadPartnerUser } from '@/lib/payload/auth'
+import { requirePartnerAdminUser } from '@/lib/partner-admin/auth'
 import { db } from '@/lib/connect-db'
 import { courses, courseSchedules, courseInstructors } from '@/db/schemas/karate/courses'
 import { user } from '@/db/schemas/auth'
@@ -16,7 +16,7 @@ import { eq, and } from 'drizzle-orm'
 const DAY_NAMES = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
 
 export async function GET(request: Request) {
-  const { user: partnerUser, error } = await requirePayloadPartnerUser()
+  const { user: partnerUser, error } = await requirePartnerAdminUser()
   if (error) return error
 
   try {
@@ -102,7 +102,7 @@ export async function GET(request: Request) {
  * POST — Create a new schedule entry for a partner's course
  */
 export async function POST(request: Request) {
-  const { user: partnerUser, error } = await requirePayloadPartnerUser()
+  const { user: partnerUser, error } = await requirePartnerAdminUser()
   if (error) return error
 
   try {
@@ -149,7 +149,7 @@ export async function POST(request: Request) {
  * PUT — Update an existing schedule entry
  */
 export async function PUT(request: Request) {
-  const { user: partnerUser, error } = await requirePayloadPartnerUser()
+  const { user: partnerUser, error } = await requirePartnerAdminUser()
   if (error) return error
 
   try {
@@ -201,7 +201,7 @@ export async function PUT(request: Request) {
  * DELETE — Remove a schedule entry
  */
 export async function DELETE(request: Request) {
-  const { user: partnerUser, error } = await requirePayloadPartnerUser()
+  const { user: partnerUser, error } = await requirePartnerAdminUser()
   if (error) return error
 
   try {

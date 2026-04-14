@@ -4,7 +4,7 @@
  * GET /api/partner-portal/enrollments — List enrollments for partner's members
  */
 import { NextResponse } from 'next/server'
-import { requirePayloadPartnerUser } from '@/lib/payload/auth'
+import { requirePartnerAdminUser } from '@/lib/partner-admin/auth'
 import { db } from '@/lib/connect-db'
 import { courseEnrollments } from '@/db/schemas/karate/enrollments'
 import { enrollmentApplications } from '@/db/schemas/karate/enrollments'
@@ -13,7 +13,7 @@ import { courses } from '@/db/schemas/karate/courses'
 import { eq, and, desc, count, sql } from 'drizzle-orm'
 
 export async function GET(request: Request) {
-  const { user: partnerUser, error } = await requirePayloadPartnerUser()
+  const { user: partnerUser, error } = await requirePartnerAdminUser()
   if (error) return error
 
   const url = new URL(request.url)
@@ -122,7 +122,7 @@ export async function GET(request: Request) {
 }
 
 export async function PATCH(request: Request) {
-  const { user: partnerUser, error } = await requirePayloadPartnerUser()
+  const { user: partnerUser, error } = await requirePartnerAdminUser()
   if (error) return error
 
   try {

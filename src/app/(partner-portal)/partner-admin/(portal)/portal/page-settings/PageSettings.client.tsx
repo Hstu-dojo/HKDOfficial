@@ -263,7 +263,9 @@ export default function PageSettings() {
 
         <section className="space-y-3">
           <h2 className="text-lg font-semibold text-foreground">Features</h2>
-          <p className="text-sm text-muted-foreground">JSON array of objects: {"icon","title","description"}.</p>
+          <p className="text-sm text-muted-foreground">
+            JSON array of objects (e.g. [{'{'}"icon":"...","title":"...","description":"..."{'}'}]).
+          </p>
           <Textarea value={featuresJSON} onChange={(e) => setFeaturesJSON(e.target.value)} className="font-mono text-xs" />
         </section>
 

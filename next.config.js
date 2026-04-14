@@ -1,5 +1,4 @@
 /** @type {import('next').NextConfig} */
-const { withPayload } = require("@payloadcms/next/withPayload");
 const withNextra = require("nextra")({
   theme: "nextra-theme-docs",
   themeConfig: "./theme.config.jsx",
@@ -97,4 +96,4 @@ const nextConfig = {
 };
 // module.exports = removeImports(withPWA(nextConfig));
 
-module.exports = withPayload(withPWA(withNextra(nextConfig)));
+module.exports = withPWA(withNextra(nextConfig));

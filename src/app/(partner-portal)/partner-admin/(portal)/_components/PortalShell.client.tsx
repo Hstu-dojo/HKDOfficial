@@ -23,7 +23,7 @@ export default function PortalShell({
   const onLogout = async () => {
     setLoggingOut(true)
     try {
-      await fetch('/payload-api/partner-admins/logout', { method: 'POST', credentials: 'include' })
+      await fetch('/api/partner-admin/logout', { method: 'POST', credentials: 'include' })
     } finally {
       router.replace('/partner-admin/login')
       router.refresh()
@@ -41,7 +41,7 @@ export default function PortalShell({
               <div className="text-xs text-muted-foreground">/org/{partnerSlug || '—'}</div>
               <div className="mt-2 text-xs text-muted-foreground">Signed in as {userName || '—'}</div>
             </div>
-            <PortalNav currentPath={pathname} />
+            <PortalNav currentPath={pathname ?? ''} />
             <div className="mt-4">
               <Button variant="outline" className="w-full" onClick={onLogout} disabled={loggingOut}>
                 {loggingOut ? 'Signing out…' : 'Sign out'}

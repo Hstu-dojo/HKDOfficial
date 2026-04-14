@@ -1,11 +1,11 @@
 import { redirect } from 'next/navigation'
-import { getPayloadPartnerUser } from '@/lib/payload/auth'
+import { getPartnerAdminUser } from '@/lib/partner-admin/auth'
 import LoginForm from './LoginForm.client'
 
 export const dynamic = 'force-dynamic'
 
 export default async function PartnerAdminLoginPage() {
-  const user = await getPayloadPartnerUser()
+  const user = await getPartnerAdminUser()
   if (user) redirect('/partner-admin')
 
   return (

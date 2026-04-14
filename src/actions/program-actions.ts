@@ -726,7 +726,7 @@ export async function searchAdminRegistrantCandidates(programId: string, q: stri
           memberNumber: profiles.memberNumber,
           applicationNumber: enrollmentApplications.applicationNumber,
           applicationStatus: enrollmentApplications.status,
-          courseName: courses.title,
+          courseName: courses.name,
         })
         .from(enrollmentApplications)
         .innerJoin(user, eq(enrollmentApplications.userId, user.id))

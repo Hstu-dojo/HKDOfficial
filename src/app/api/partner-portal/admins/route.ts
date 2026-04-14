@@ -8,33 +8,38 @@
  * PATCH  /api/partner-portal/admins — Update a co-admin (activate/deactivate, change role)
  */
 import { NextResponse } from 'next/server'
-import { requirePayloadPartnerUser } from '@/lib/payload/auth'
-import { getPayload } from 'payload'
-import configPromise from '@payload-config'
+import { requirePartnerAdminUser } from '@/lib/partner-admin/auth'
+import { db } from '@/lib/connect-db'
+import { partnerAdmins } from '@/db/schemas/partner'
+import { and, eq, count } from 'drizzle-orm'
+import { hash } from '@/lib/hash'
 
 export async function GET() {
-  const { user: partnerUser, error } = await requirePayloadPartnerUser()
+  const { user: partnerUser, error } = await requirePartnerAdminUser()
   if (error) return error
 
   try {
-    const payload = await getPayload({ config: configPromise })
-
-    const admins = await payload.find({
-      collection: 'partner-admins',
-      where: { partnerId: { equals: partnerUser.partnerId } },
-      sort: '-createdAt',
-    })
+    const admins = await db
+      .select({
+        id: partnerAdmins.id,
+        name: partnerAdmins.name,
+        email: partnerAdmins.email,
+        phone: partnerAdmins.phone,
+        isActive: partnerAdmins.isActive,
+        createdAt: partnerAdmins.createdAt,
+      })
+      .from(partnerAdmins)
+      .where(eq(partnerAdmins.partnerId, partnerUser.partnerId))
+      .orderBy(partnerAdmins.createdAt)
 
     return NextResponse.json({
-      admins: admins.docs.map((a: any) => ({
-        id: a.id,
-        name: a.name,
-        email: a.email,
-        phone: a.phone,
-        isActive: a.isActive,
-        isCurrentUser: a.id === partnerUser.id,
-        createdAt: a.createdAt,
-      })),
+      admins: admins
+        .slice()
+        .reverse()
+        .map((a) => ({
+          ...a,
+          isCurrentUser: a.id === partnerUser.id,
+        })),
     })
   } catch (err) {
     console.error('[PartnerPortal] Admins GET error:', err)
@@ -43,7 +48,7 @@ export async function GET() {
 }
 
 export async function POST(request: Request) {
-  const { user: partnerUser, error } = await requirePayloadPartnerUser()
+  const { user: partnerUser, error } = await requirePartnerAdminUser()
   if (error) return error
 
   try {
@@ -57,43 +62,38 @@ export async function POST(request: Request) {
       )
     }
 
-    const payload = await getPayload({ config: configPromise })
+    const existing = await db
+      .select({ total: count() })
+      .from(partnerAdmins)
+      .where(eq(partnerAdmins.email, String(email).trim().toLowerCase()))
 
-    // Check if email is already in use
-    const existing = await payload.find({
-      collection: 'partner-admins',
-      where: { email: { equals: email } },
-      limit: 1,
-    })
-
-    if (existing.docs.length > 0) {
+    if ((existing[0]?.total || 0) > 0) {
       return NextResponse.json(
         { error: 'An admin with this email already exists' },
         { status: 409 }
       )
     }
 
-    const newAdmin = await payload.create({
-      collection: 'partner-admins',
-      data: {
-        email,
-        password,
-        name,
+    const passwordHash = await hash(String(password))
+
+    const [newAdmin] = await db
+      .insert(partnerAdmins)
+      .values({
         partnerId: partnerUser.partnerId,
-        partnerName: partnerUser.partnerName,
-        partnerSlug: partnerUser.partnerSlug,
-        role: 'admin',
-        phone: phone || '',
+        email: String(email).trim().toLowerCase(),
+        passwordHash,
+        name: String(name).trim(),
+        phone: phone ? String(phone) : null,
         isActive: true,
-      },
-    })
+      })
+      .returning({ id: partnerAdmins.id, name: partnerAdmins.name, email: partnerAdmins.email })
 
     return NextResponse.json(
       {
         admin: {
           id: newAdmin.id,
           name: newAdmin.name,
-          email: (newAdmin as any).email,
+          email: newAdmin.email,
         },
         message: `Admin "${name}" added to your organization`,
       },
@@ -106,7 +106,7 @@ export async function POST(request: Request) {
 }
 
 export async function PATCH(request: Request) {
-  const { user: partnerUser, error } = await requirePayloadPartnerUser()
+  const { user: partnerUser, error } = await requirePartnerAdminUser()
   if (error) return error
 
   try {
@@ -125,15 +125,13 @@ export async function PATCH(request: Request) {
       )
     }
 
-    const payload = await getPayload({ config: configPromise })
+    const [target] = await db
+      .select({ id: partnerAdmins.id, partnerId: partnerAdmins.partnerId })
+      .from(partnerAdmins)
+      .where(eq(partnerAdmins.id, String(id)))
+      .limit(1)
 
-    // Verify the target admin belongs to the same organization
-    const target = await payload.findByID({
-      collection: 'partner-admins',
-      id,
-    })
-
-    if (!target || (target as any).partnerId !== partnerUser.partnerId) {
+    if (!target || target.partnerId !== partnerUser.partnerId) {
       return NextResponse.json({ error: 'Admin not found in your organization' }, { status: 404 })
     }
 
@@ -147,17 +145,22 @@ export async function PATCH(request: Request) {
       return NextResponse.json({ error: 'No valid fields to update' }, { status: 400 })
     }
 
-    const updated = await payload.update({
-      collection: 'partner-admins',
-      id,
-      data: updates,
-    })
+    const [updated] = await db
+      .update(partnerAdmins)
+      .set({
+        ...(typeof isActive === 'boolean' ? { isActive } : {}),
+        updatedAt: new Date(),
+      })
+      .where(and(eq(partnerAdmins.id, String(id)), eq(partnerAdmins.partnerId, partnerUser.partnerId)))
+      .returning({ id: partnerAdmins.id, name: partnerAdmins.name, isActive: partnerAdmins.isActive })
+
+    if (!updated) return NextResponse.json({ error: 'Admin not found' }, { status: 404 })
 
     return NextResponse.json({
       admin: {
         id: updated.id,
         name: updated.name,
-        isActive: (updated as any).isActive,
+        isActive: updated.isActive,
       },
       message: 'Admin updated successfully',
     })

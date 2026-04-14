@@ -1,5 +1,5 @@
 import { redirect } from 'next/navigation'
-import { getPayloadPartnerUser } from '@/lib/payload/auth'
+import { getPartnerAdminUser } from '@/lib/partner-admin/auth'
 import PortalShell from './_components/PortalShell.client'
 
 export const dynamic = 'force-dynamic'
@@ -9,7 +9,7 @@ export default async function PartnerAdminPortalLayout({
 }: {
   children: React.ReactNode
 }) {
-  const user = await getPayloadPartnerUser()
+  const user = await getPartnerAdminUser()
   if (!user) redirect('/partner-admin/login?next=/partner-admin')
 
   return (

@@ -100,7 +100,7 @@ function withTenantRouting(request: NextRequest): NextResponse | null {
     const isPassthroughOnTenant =
       // Auth entry points
       /^\/(login|register)(\/|$)/.test(pathname) ||
-      // Payload partner portal (must not be rewritten under /org/<tenant>/...)
+      // Partner admin portal (must not be rewritten under /org/<tenant>/...)
       /^\/partner-admin(\/|$)/.test(pathname) ||
       // Password recovery / onboarding (these must not be rewritten under /org/<tenant>/...)
       /^\/(forget|reset-password)(\/|$)/.test(pathname) ||
@@ -297,6 +297,6 @@ export const config = {
   matcher: [
     // NOTE: /docs is intentionally NOT excluded — it needs withAdminMiddleware.
     // Routes like /blog, /unauthorized, /studio etc. need no middleware at all.
-    "/((?!api|payload-api|auth|static|blog|unauthorized|studio|notice|p(?:/|$)|.*\\..*|_next|favicon.ico|sitemap.xml|robots.txt).*)",
+    "/((?!api|auth|static|blog|unauthorized|studio|notice|p(?:/|$)|.*\\..*|_next|favicon.ico|sitemap.xml|robots.txt).*)",
   ],
 };

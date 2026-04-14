@@ -5,7 +5,7 @@
  * POST /api/partner-portal/profiles/detach — Detach a user account from a profile
  */
 import { NextResponse } from 'next/server'
-import { requirePayloadPartnerUser } from '@/lib/payload/auth'
+import { requirePartnerAdminUser } from '@/lib/partner-admin/auth'
 import { db } from '@/lib/connect-db'
 import { profiles } from '@/db/schemas/karate/members'
 import { user } from '@/db/schemas/auth'
@@ -20,7 +20,7 @@ import { eq, and, isNull } from 'drizzle-orm'
  * The user must not already have another profile.
  */
 export async function POST(request: Request) {
-  const { user: partnerUser, error } = await requirePayloadPartnerUser()
+  const { user: partnerUser, error } = await requirePartnerAdminUser()
   if (error) return error
 
   try {

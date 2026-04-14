@@ -149,8 +149,9 @@ export async function userHasRole(roleName: string): Promise<boolean> {
 
 /**
  * Higher-order function for API route protection.
- * Returns a Next.js 15 compatible route handler that accepts an optional
- * route context (e.g. `{ params: Promise<{ id: string }> }` for dynamic segments).
+ * Returns a Next.js 15 compatible route handler.
+ * Next.js supplies a second argument (route context) shaped like
+ * `{ params: Promise<Record<string, string | string[]>> }`.
  */
 export function protectApiRoute(
   resource: ResourceType,
@@ -159,7 +160,7 @@ export function protectApiRoute(
 ) {
   return async function (
     request: NextRequest,
-    _routeContext?: { params?: Promise<Record<string, string | string[]>> }
+    _routeContext: { params: Promise<Record<string, string | string[]>> }
   ): Promise<NextResponse> {
     const context = await getRBACContext();
     

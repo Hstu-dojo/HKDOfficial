@@ -11,8 +11,8 @@ import type { RBACContext } from '@/lib/rbac/types'
 import { db } from '@/lib/connect-db'
 import { partners } from '@/db/schemas/partner'
 import { eq } from 'drizzle-orm'
-import { getPayload } from 'payload'
-import configPromise from '@payload-config'
+import { partnerAdmins } from '@/db/schemas/partner'
+import { hash } from '@/lib/hash'
 
 export const GET = protectApiRoute('PARTNER', 'READ', async (request: Request, context: RBACContext) => {
   try {
@@ -23,23 +23,20 @@ export const GET = protectApiRoute('PARTNER', 'READ', async (request: Request, c
       return NextResponse.json({ error: 'partnerId is required' }, { status: 400 })
     }
 
-    const payload = await getPayload({ config: configPromise })
-    const admins = await payload.find({
-      collection: 'partner-admins',
-      where: { partnerId: { equals: partnerId } },
-      sort: '-createdAt',
-    })
+    const admins = await db
+      .select({
+        id: partnerAdmins.id,
+        name: partnerAdmins.name,
+        email: partnerAdmins.email,
+        phone: partnerAdmins.phone,
+        isActive: partnerAdmins.isActive,
+        createdAt: partnerAdmins.createdAt,
+      })
+      .from(partnerAdmins)
+      .where(eq(partnerAdmins.partnerId, partnerId))
+      .orderBy(partnerAdmins.createdAt)
 
-    return NextResponse.json({
-      admins: admins.docs.map((a: any) => ({
-        id: a.id,
-        name: a.name,
-        email: a.email,
-        phone: a.phone,
-        isActive: a.isActive,
-        createdAt: a.createdAt,
-      })),
-    })
+    return NextResponse.json({ admins: admins.slice().reverse() })
   } catch (err) {
     console.error('[AdminPartnerAdmins] GET error:', err)
     return NextResponse.json({ error: 'Failed to fetch partner admins' }, { status: 500 })
@@ -72,44 +69,42 @@ export const POST = protectApiRoute('PARTNER', 'CREATE', async (request: Request
       return NextResponse.json({ error: 'Partner organization not found' }, { status: 404 })
     }
 
-    const payload = await getPayload({ config: configPromise })
+    const normalizedEmail = String(email).trim().toLowerCase()
 
-    // Check if email is already in use
-    const existing = await payload.find({
-      collection: 'partner-admins',
-      where: { email: { equals: email } },
-      limit: 1,
-    })
+    const existing = await db
+      .select({ id: partnerAdmins.id })
+      .from(partnerAdmins)
+      .where(eq(partnerAdmins.email, normalizedEmail))
+      .limit(1)
 
-    if (existing.docs.length > 0) {
+    if (existing.length > 0) {
       return NextResponse.json(
         { error: 'An admin with this email already exists' },
         { status: 409 }
       )
     }
 
-    const newAdmin = await payload.create({
-      collection: 'partner-admins',
-      data: {
-        email,
-        password,
-        name,
+    const passwordHash = await hash(String(password))
+
+    const [newAdmin] = await db
+      .insert(partnerAdmins)
+      .values({
         partnerId: partner.id,
-        partnerName: partner.name,
-        partnerSlug: partner.slug,
-        role: adminRole,
-        phone: phone || '',
+        email: normalizedEmail,
+        passwordHash,
+        name: String(name).trim(),
+        phone: phone || null,
         isActive: true,
-      },
-    })
+      })
+      .returning({ id: partnerAdmins.id, name: partnerAdmins.name, email: partnerAdmins.email })
 
     return NextResponse.json(
       {
         admin: {
           id: newAdmin.id,
           name: newAdmin.name,
-          email: (newAdmin as any).email,
-          role: (newAdmin as any).role,
+          email: newAdmin.email,
+          role: adminRole,
         },
         message: `Partner admin "${name}" added successfully`,
       },
@@ -130,29 +125,23 @@ export const PATCH = protectApiRoute('PARTNER', 'UPDATE', async (request: Reques
       return NextResponse.json({ error: 'Admin ID is required' }, { status: 400 })
     }
 
-    const payload = await getPayload({ config: configPromise })
-
-    const updates: Record<string, unknown> = {}
-
-    if (typeof isActive === 'boolean') {
-      updates.isActive = isActive
-    }
-
-    if (Object.keys(updates).length === 0) {
+    if (typeof isActive !== 'boolean') {
       return NextResponse.json({ error: 'No valid fields to update' }, { status: 400 })
     }
 
-    const updated = await payload.update({
-      collection: 'partner-admins',
-      id,
-      data: updates,
-    })
+    const [updated] = await db
+      .update(partnerAdmins)
+      .set({ isActive, updatedAt: new Date() })
+      .where(eq(partnerAdmins.id, id))
+      .returning({ id: partnerAdmins.id, name: partnerAdmins.name, isActive: partnerAdmins.isActive })
+
+    if (!updated) return NextResponse.json({ error: 'Admin not found' }, { status: 404 })
 
     return NextResponse.json({
       admin: {
         id: updated.id,
         name: updated.name,
-        isActive: (updated as any).isActive,
+        isActive: updated.isActive,
       },
       message: 'Partner admin updated successfully',
     })

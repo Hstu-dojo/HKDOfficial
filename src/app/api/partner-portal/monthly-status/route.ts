@@ -6,7 +6,7 @@
  * PATCH /api/partner-portal/monthly-status — Bulk update monthly status for multiple members
  */
 import { NextResponse } from 'next/server'
-import { requirePayloadPartnerUser } from '@/lib/payload/auth'
+import { requirePartnerAdminUser } from '@/lib/partner-admin/auth'
 import { db } from '@/lib/connect-db'
 import { members, memberMonthlyStatus } from '@/db/schemas/karate/members'
 import { courseEnrollments } from '@/db/schemas/karate/enrollments'
@@ -14,7 +14,7 @@ import { courses } from '@/db/schemas/karate/courses'
 import { eq, and, inArray } from 'drizzle-orm'
 
 export async function GET(request: Request) {
-  const { user: partnerUser, error } = await requirePayloadPartnerUser()
+  const { user: partnerUser, error } = await requirePartnerAdminUser()
   if (error) return error
 
   const url = new URL(request.url)
@@ -110,7 +110,7 @@ export async function GET(request: Request) {
 }
 
 export async function POST(request: Request) {
-  const { user: partnerUser, error } = await requirePayloadPartnerUser()
+  const { user: partnerUser, error } = await requirePartnerAdminUser()
   if (error) return error
 
   try {
@@ -184,7 +184,7 @@ export async function POST(request: Request) {
 }
 
 export async function PATCH(request: Request) {
-  const { user: partnerUser, error } = await requirePayloadPartnerUser()
+  const { user: partnerUser, error } = await requirePartnerAdminUser()
   if (error) return error
 
   try {

@@ -10,9 +10,10 @@ import { protectApiRoute } from '@/lib/rbac/middleware'
 import type { RBACContext } from '@/lib/rbac/types'
 import { db } from '@/lib/connect-db'
 import { partners } from '@/db/schemas/partner'
+import { partnerAdmins } from '@/db/schemas/partner'
 import { eq } from 'drizzle-orm'
-import { getPayload } from 'payload'
-import configPromise from '@payload-config'
+import { and, count } from 'drizzle-orm'
+import { hash } from '@/lib/hash'
 
 export const GET = protectApiRoute(
   'PARTNER',
@@ -29,26 +30,21 @@ export const GET = protectApiRoute(
         )
       }
 
-      const payload = await getPayload({ config: configPromise })
-      const admins = await payload.find({
-        collection: 'partner-admins',
-        where: { partnerId: { equals: partnerId } },
-        sort: '-createdAt',
-        limit: 100,
-      })
+      const admins = await db
+        .select({
+          id: partnerAdmins.id,
+          name: partnerAdmins.name,
+          email: partnerAdmins.email,
+          phone: partnerAdmins.phone,
+          isActive: partnerAdmins.isActive,
+          createdAt: partnerAdmins.createdAt,
+          updatedAt: partnerAdmins.updatedAt,
+        })
+        .from(partnerAdmins)
+        .where(eq(partnerAdmins.partnerId, partnerId))
+        .orderBy(partnerAdmins.createdAt)
 
-      // Return only safe fields (no password hashes)
-      const safeAdmins = admins.docs.map((admin) => ({
-        id: admin.id,
-        name: admin.name,
-        email: admin.email,
-        phone: (admin as Record<string, unknown>).phone || null,
-        isActive: (admin as Record<string, unknown>).isActive ?? true,
-        createdAt: admin.createdAt,
-        updatedAt: admin.updatedAt,
-      }))
-
-      return NextResponse.json({ admins: safeAdmins })
+      return NextResponse.json({ admins: admins.slice().reverse() })
     } catch (err) {
       console.error('[AdminPartnerAdmins] GET error:', err)
       return NextResponse.json(
@@ -95,36 +91,34 @@ export const POST = protectApiRoute(
         )
       }
 
-      const payload = await getPayload({ config: configPromise })
+      const normalizedEmail = String(email).trim().toLowerCase()
 
-      // Check if email is already taken in partner-admins
-      const existing = await payload.find({
-        collection: 'partner-admins',
-        where: { email: { equals: email } },
-        limit: 1,
-      })
+      const existing = await db
+        .select({ id: partnerAdmins.id })
+        .from(partnerAdmins)
+        .where(eq(partnerAdmins.email, normalizedEmail))
+        .limit(1)
 
-      if (existing.docs.length > 0) {
+      if (existing.length > 0) {
         return NextResponse.json(
           { error: `Email "${email}" is already registered as a partner admin` },
           { status: 409 }
         )
       }
 
-      const newAdmin = await payload.create({
-        collection: 'partner-admins',
-        data: {
-          email,
-          password,
-          name: name || partner.name + ' Admin',
+      const passwordHash = await hash(String(password))
+
+      const [newAdmin] = await db
+        .insert(partnerAdmins)
+        .values({
           partnerId: partner.id,
-          partnerName: partner.name,
-          partnerSlug: partner.slug,
-          role: 'admin',
-          phone: phone || '',
+          email: normalizedEmail,
+          passwordHash,
+          name: String(name || partner.name + ' Admin').trim(),
+          phone: phone || null,
           isActive: true,
-        },
-      })
+        })
+        .returning({ id: partnerAdmins.id, name: partnerAdmins.name, email: partnerAdmins.email })
 
       return NextResponse.json(
         {
@@ -162,13 +156,11 @@ export const DELETE = protectApiRoute(
         )
       }
 
-      const payload = await getPayload({ config: configPromise })
-
-      // Verify the admin belongs to the right partner
-      const admin = await payload.findByID({
-        collection: 'partner-admins',
-        id: adminId,
-      })
+      const [admin] = await db
+        .select({ id: partnerAdmins.id, partnerId: partnerAdmins.partnerId })
+        .from(partnerAdmins)
+        .where(eq(partnerAdmins.id, adminId))
+        .limit(1)
 
       if (!admin) {
         return NextResponse.json(
@@ -177,7 +169,7 @@ export const DELETE = protectApiRoute(
         )
       }
 
-      if ((admin as Record<string, unknown>).partnerId !== partnerId) {
+      if (admin.partnerId !== partnerId) {
         return NextResponse.json(
           { error: 'Admin does not belong to this partner' },
           { status: 403 }
@@ -185,23 +177,19 @@ export const DELETE = protectApiRoute(
       }
 
       // Check we're not deleting the last admin for this partner
-      const remaining = await payload.find({
-        collection: 'partner-admins',
-        where: { partnerId: { equals: partnerId } },
-        limit: 0,
-      })
+      const remaining = await db
+        .select({ total: count() })
+        .from(partnerAdmins)
+        .where(eq(partnerAdmins.partnerId, partnerId))
 
-      if (remaining.totalDocs <= 1) {
+      if ((remaining[0]?.total || 0) <= 1) {
         return NextResponse.json(
           { error: 'Cannot delete the last admin account for this partner' },
           { status: 400 }
         )
       }
 
-      await payload.delete({
-        collection: 'partner-admins',
-        id: adminId,
-      })
+      await db.delete(partnerAdmins).where(and(eq(partnerAdmins.id, adminId), eq(partnerAdmins.partnerId, partnerId)))
 
       return NextResponse.json({ message: 'Admin account deleted successfully' })
     } catch (err: any) {

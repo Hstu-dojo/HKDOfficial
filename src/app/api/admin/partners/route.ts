@@ -13,8 +13,8 @@ import { db } from '@/lib/connect-db'
 import { partners } from '@/db/schemas/partner'
 import { members } from '@/db/schemas/karate/members'
 import { eq, desc, count, and } from 'drizzle-orm'
-import { getPayload } from 'payload'
-import configPromise from '@payload-config'
+import { partnerAdmins } from '@/db/schemas/partner'
+import { hash } from '@/lib/hash'
 
 export const GET = protectApiRoute('PARTNER', 'READ', async (request: Request, context: RBACContext) => {
   try {
@@ -56,7 +56,7 @@ export const POST = protectApiRoute('PARTNER', 'CREATE', async (request: Request
       location,
       contactEmail,
       contactPhone,
-      // Admin user details for Payload
+      // Admin user details for Partner Portal
       adminName,
       adminEmail,
       adminPassword,
@@ -95,36 +95,41 @@ export const POST = protectApiRoute('PARTNER', 'CREATE', async (request: Request
       })
       .returning()
 
-    // Step 2: Create a Payload admin user for this partner
-    let payloadUser = null
+    // Step 2: Create the initial partner-admin account
     try {
-      const payload = await getPayload({ config: configPromise })
+      const email = String(adminEmail).trim().toLowerCase()
 
-      payloadUser = await payload.create({
-        collection: 'partner-admins',
-        data: {
-          email: adminEmail,
-          password: adminPassword,
-          name: adminName || name + ' Admin',
-          partnerId: newPartner.id,
-          partnerName: newPartner.name,
-          partnerSlug: newPartner.slug,
-          role: 'admin',
-          phone: contactPhone || '',
-          isActive: true,
-        },
+      const existingAdmin = await db
+        .select({ id: partnerAdmins.id })
+        .from(partnerAdmins)
+        .where(eq(partnerAdmins.email, email))
+        .limit(1)
+
+      if (existingAdmin.length > 0) {
+        await db.delete(partners).where(eq(partners.id, newPartner.id))
+        return NextResponse.json(
+          { error: `Email "${email}" is already registered as a partner admin` },
+          { status: 409 }
+        )
+      }
+
+      const passwordHash = await hash(String(adminPassword))
+
+      await db.insert(partnerAdmins).values({
+        partnerId: newPartner.id,
+        email,
+        passwordHash,
+        name: String(adminName || name + ' Admin').trim(),
+        phone: contactPhone || null,
+        isActive: true,
       })
-    } catch (payloadErr: any) {
-      // If Payload user creation fails, still keep the partner but log error
-      console.error('[AdminPartners] Failed to create Payload user:', payloadErr?.message || payloadErr)
-
-      // Clean up the partner if Payload user creation fails
+    } catch (adminErr: any) {
+      console.error('[AdminPartners] Failed to create partner admin:', adminErr?.message || adminErr)
       await db.delete(partners).where(eq(partners.id, newPartner.id))
-
       return NextResponse.json(
         {
           error: 'Failed to create partner admin account',
-          details: payloadErr?.message || 'Unknown Payload error',
+          details: adminErr?.message || 'Unknown error',
         },
         { status: 500 }
       )
@@ -133,9 +138,7 @@ export const POST = protectApiRoute('PARTNER', 'CREATE', async (request: Request
     return NextResponse.json(
       {
         partner: newPartner,
-        adminUser: payloadUser
-          ? { id: payloadUser.id, email: adminEmail }
-          : null,
+        adminUser: { email: String(adminEmail).trim().toLowerCase() },
         message: `Partner "${name}" created successfully. Admin can log in at /partner-admin`,
       },
       { status: 201 }
@@ -181,48 +184,15 @@ export const PATCH = protectApiRoute('PARTNER', 'UPDATE', async (request: Reques
       return NextResponse.json({ error: 'Partner not found' }, { status: 404 })
     }
 
-    // If deactivating, also deactivate the Payload admin user
+    // If deactivating, also deactivate partner-admin accounts
     if ('isActive' in safeUpdates && !safeUpdates.isActive) {
       try {
-        const payload = await getPayload({ config: configPromise })
-        const admins = await payload.find({
-          collection: 'partner-admins',
-          where: { partnerId: { equals: id } },
-        })
-
-        for (const admin of admins.docs) {
-          await payload.update({
-            collection: 'partner-admins',
-            id: admin.id,
-            data: { isActive: false },
-          })
-        }
-      } catch (payloadErr) {
-        console.error('[AdminPartners] Failed to deactivate Payload users:', payloadErr)
-      }
-    }
-
-    // If name or slug changed, sync to Payload partner-admins
-    if ('name' in safeUpdates || 'slug' in safeUpdates) {
-      try {
-        const payload = await getPayload({ config: configPromise })
-        const admins = await payload.find({
-          collection: 'partner-admins',
-          where: { partnerId: { equals: id } },
-        })
-
-        for (const admin of admins.docs) {
-          const syncData: Record<string, unknown> = {}
-          if ('name' in safeUpdates) syncData.partnerName = safeUpdates.name
-          if ('slug' in safeUpdates) syncData.partnerSlug = safeUpdates.slug
-          await payload.update({
-            collection: 'partner-admins',
-            id: admin.id,
-            data: syncData,
-          })
-        }
-      } catch (payloadErr) {
-        console.error('[AdminPartners] Failed to sync name/slug to Payload users:', payloadErr)
+        await db
+          .update(partnerAdmins)
+          .set({ isActive: false, updatedAt: new Date() })
+          .where(eq(partnerAdmins.partnerId, id))
+      } catch (adminErr) {
+        console.error('[AdminPartners] Failed to deactivate partner admins:', adminErr)
       }
     }
 

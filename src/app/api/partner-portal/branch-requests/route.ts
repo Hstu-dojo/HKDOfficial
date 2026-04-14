@@ -5,7 +5,7 @@
  * PATCH /api/partner-portal/branch-requests — Approve or reject a transfer
  */
 import { NextResponse } from 'next/server'
-import { requirePayloadPartnerUser } from '@/lib/payload/auth'
+import { requirePartnerAdminUser } from '@/lib/partner-admin/auth'
 import { db } from '@/lib/connect-db'
 import { members, branchChangeRequests } from '@/db/schemas/karate/members'
 import { partners } from '@/db/schemas/partner'
@@ -13,7 +13,7 @@ import { user } from '@/db/schemas/auth'
 import { eq, and, desc, count } from 'drizzle-orm'
 
 export async function GET(request: Request) {
-  const { user: partnerUser, error } = await requirePayloadPartnerUser()
+  const { user: partnerUser, error } = await requirePartnerAdminUser()
   if (error) return error
 
   const url = new URL(request.url)
@@ -76,7 +76,7 @@ export async function GET(request: Request) {
 }
 
 export async function PATCH(request: Request) {
-  const { user: partnerUser, error } = await requirePayloadPartnerUser()
+  const { user: partnerUser, error } = await requirePartnerAdminUser()
   if (error) return error
 
   try {

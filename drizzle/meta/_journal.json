@@ -127,6 +127,13 @@
       "when": 1775000000000,
       "tag": "0017_brown_kyu_ranks",
       "breakpoints": true
+    },
+    {
+      "idx": 18,
+      "version": "7",
+      "when": 1776144000000,
+      "tag": "0018_partner_admin_auth",
+      "breakpoints": true
     }
   ]
 }

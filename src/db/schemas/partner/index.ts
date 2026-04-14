@@ -100,6 +100,31 @@ export const partnerPageSettings = pgTable("partner_page_settings", {
   updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow().notNull(),
 });
 
+// Partner Admins table - portal users for /partner-admin
+export const partnerAdmins = pgTable("partner_admins", {
+  id: text("id").primaryKey().default(sql`gen_random_uuid()`),
+  partnerId: text("partner_id")
+    .notNull()
+    .references(() => partners.id, { onDelete: 'cascade' }),
+  email: text("email").notNull().unique(),
+  passwordHash: text("password_hash").notNull(),
+  name: text("name").notNull(),
+  phone: text("phone"),
+  isActive: boolean("is_active").notNull().default(true),
+  createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
+  updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow().notNull(),
+});
+
+// Partner Admin Sessions - cookie sessions for partner portal
+export const partnerAdminSessions = pgTable("partner_admin_sessions", {
+  token: text("token").primaryKey(),
+  partnerAdminId: text("partner_admin_id")
+    .notNull()
+    .references(() => partnerAdmins.id, { onDelete: 'cascade' }),
+  expiresAt: timestamp("expires_at", { withTimezone: true }).notNull(),
+  createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
+});
+
 // Type exports
 export type Partner = typeof partners.$inferSelect;
 export type NewPartner = typeof partners.$inferInsert;
@@ -107,3 +132,8 @@ export type PartnerBill = typeof partnerBills.$inferSelect;
 export type NewPartnerBill = typeof partnerBills.$inferInsert;
 export type PartnerPageSettings = typeof partnerPageSettings.$inferSelect;
 export type NewPartnerPageSettings = typeof partnerPageSettings.$inferInsert;
+
+export type PartnerAdmin = typeof partnerAdmins.$inferSelect;
+export type NewPartnerAdmin = typeof partnerAdmins.$inferInsert;
+export type PartnerAdminSession = typeof partnerAdminSessions.$inferSelect;
+export type NewPartnerAdminSession = typeof partnerAdminSessions.$inferInsert;

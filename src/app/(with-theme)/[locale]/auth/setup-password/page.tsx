@@ -8,15 +8,15 @@ export const metadata: Metadata = {
 };
 
 interface PageProps {
-  searchParams: {
+  searchParams: Promise<{
     email?: string;
     provider?: string;
     callbackUrl?: string;
-  };
+  }>;
 }
 
-export default function SetupPasswordPage({ searchParams }: PageProps) {
-  const { email, provider, callbackUrl } = searchParams;
+export default async function SetupPasswordPage({ searchParams }: PageProps) {
+  const { email, provider, callbackUrl } = await searchParams;
 
   return (
     <div className="relative flex min-h-screen flex-col items-center justify-center">
