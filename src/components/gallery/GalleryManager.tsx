@@ -264,7 +264,7 @@ export function GalleryManager({ initialFolderId = null }: GalleryManagerProps) 
         </div>
 
         {/* Actions */}
-        <div className="flex gap-2">
+        <div className="flex flex-col gap-2 sm:flex-row">
           <CreateFolderDialog
             parentId={currentFolder?.id}
             onFolderCreated={loadData}
@@ -452,7 +452,7 @@ export function GalleryManager({ initialFolderId = null }: GalleryManagerProps) 
           <p className="text-muted-foreground mb-4">
             Create a folder or upload images to get started.
           </p>
-          <div className="flex gap-2">
+          <div className="flex flex-col gap-2 sm:flex-row">
             <CreateFolderDialog parentId={currentFolder?.id} onFolderCreated={loadData} />
             <GalleryUploadButton
               folderId={currentFolder?.id}

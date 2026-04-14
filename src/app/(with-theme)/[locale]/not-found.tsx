@@ -2,6 +2,7 @@ import Header from "@/components/layout/header";
 import Footer from "@/components/layout/footer";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
+import Link from "next/link";
 
 export default function NotFound() {
   return (
@@ -23,7 +24,7 @@ export default function NotFound() {
               existed.
             </p>
             <Button size="lg" asChild>
-              <a href="/">Take me Home</a>
+              <Link href="/">Take me Home</Link>
             </Button>
           </div>
         </section>

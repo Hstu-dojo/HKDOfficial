@@ -126,8 +126,9 @@ function SignatureFormModal({ isOpen, onClose, onSuccess, initialData }: Signatu
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-      <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl w-full max-w-md mx-4 p-6">
+    <div className="fixed inset-0 z-50 bg-black/50 overflow-y-auto">
+      <div className="min-h-full flex items-start sm:items-center justify-center p-4">
+        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl w-full max-w-md max-h-[calc(100dvh-2rem)] overflow-y-auto p-6">
         <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">
           {initialData ? 'Edit Signature' : 'Add New Signature'}
         </h2>
@@ -224,6 +225,7 @@ function SignatureFormModal({ isOpen, onClose, onSuccess, initialData }: Signatu
           </div>
         </form>
       </div>
+      </div>
     </div>
   );
 }
@@ -295,7 +297,7 @@ export default function SignatureManagement() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex justify-between items-center">
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
         <div>
           <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Certificate Signatures</h1>
           <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">

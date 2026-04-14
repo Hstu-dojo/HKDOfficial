@@ -27,7 +27,7 @@ export default async function SetupPasswordPage({ searchParams }: PageProps) {
             Setup Your Password
           </h1>
           <p className="text-sm text-muted-foreground">
-            You've successfully signed in with {provider}. Set up a password to enable email login in the future.
+            You&apos;ve successfully signed in with {provider}. Set up a password to enable email login in the future.
           </p>
           {email && (
             <p className="text-xs text-muted-foreground">

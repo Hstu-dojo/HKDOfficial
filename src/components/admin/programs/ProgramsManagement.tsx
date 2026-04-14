@@ -8,9 +8,7 @@ import {
   CalendarDaysIcon,
   UserGroupIcon,
   CurrencyBangladeshiIcon,
-  TagIcon,
-  CheckCircleIcon,
-  XCircleIcon
+  TagIcon
 } from '@heroicons/react/24/outline';
 import { toast } from 'sonner';
 import ProgramFormModal from './ProgramFormModal';
@@ -108,7 +106,7 @@ export default function ProgramsManagement() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex justify-between items-center">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Program Management</h1>
           <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
@@ -116,10 +114,10 @@ export default function ProgramsManagement() {
           </p>
         </div>
         {canCreate && (
-          <div className="flex gap-2">
+          <div className="flex w-full flex-col gap-2 sm:w-auto sm:flex-row">
             <Link
               href="/admin/programs/signatures"
-              className="inline-flex items-center px-4 py-2 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-200 bg-white dark:bg-gray-800 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition text-sm font-medium"
+              className="inline-flex w-full items-center justify-center px-4 py-2 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-200 bg-white dark:bg-gray-800 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition text-sm font-medium sm:w-auto"
             >
               Signatures
             </Link>
@@ -128,7 +126,7 @@ export default function ProgramsManagement() {
                 setEditingProgram(null);
                 setShowForm(true);
               }}
-              className="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
+              className="inline-flex w-full items-center justify-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition sm:w-auto"
             >
               <PlusIcon className="h-5 w-5 mr-2" />
               New Program
@@ -181,18 +179,18 @@ export default function ProgramsManagement() {
               </div>
 
               {/* Action Buttons */}
-              <div className="mt-6 pt-4 border-t flex justify-end space-x-3">
+                <div className="mt-6 pt-4 border-t flex flex-wrap justify-end gap-2">
                  {/* Link to view registrations */}
                  <Link 
                    href={`/admin/programs/registrations?programId=${program.id}`}
-                   className="inline-flex items-center px-3 py-1.5 border border-gray-300 dark:border-gray-600 shadow-sm text-xs font-medium rounded text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                   className="inline-flex items-center whitespace-nowrap px-3 py-1.5 border border-gray-300 dark:border-gray-600 shadow-sm text-xs font-medium rounded text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
                  >
                     Registrations
                  </Link>
 
                  <Link
                    href={`/admin/programs/certificates?programId=${program.id}`}
-                   className="inline-flex items-center px-3 py-1.5 border border-green-300 dark:border-green-600 shadow-sm text-xs font-medium rounded text-green-700 dark:text-green-300 bg-white dark:bg-gray-800 hover:bg-green-50 dark:hover:bg-green-900/20 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
+                   className="inline-flex items-center whitespace-nowrap px-3 py-1.5 border border-green-300 dark:border-green-600 shadow-sm text-xs font-medium rounded text-green-700 dark:text-green-300 bg-white dark:bg-gray-800 hover:bg-green-50 dark:hover:bg-green-900/20 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
                  >
                     Certificates
                  </Link>
@@ -200,7 +198,7 @@ export default function ProgramsManagement() {
                 {canUpdate && (
                   <button
                     onClick={() => handleEdit(program)}
-                    className="inline-flex items-center text-blue-600 hover:text-blue-900 text-sm font-medium"
+                    className="inline-flex items-center whitespace-nowrap text-blue-600 hover:text-blue-900 text-sm font-medium"
                   >
                     <PencilIcon className="h-4 w-4 mr-1" />
                     Edit

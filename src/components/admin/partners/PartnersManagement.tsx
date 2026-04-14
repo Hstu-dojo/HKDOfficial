@@ -434,7 +434,7 @@ export default function PartnersManagement() {
             Manage partner venues and their admin accounts
           </p>
         </div>
-        <div className="flex gap-2">
+        <div className="flex flex-col sm:flex-row gap-2">
           <button
             onClick={openTenantModal}
             className="inline-flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100 dark:hover:bg-gray-700"
@@ -587,8 +587,9 @@ export default function PartnersManagement() {
 
       {/* Create/Edit Modal */}
       {showModal && (
-        <div className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-black/50 p-4 pt-12">
-          <div className="w-full max-w-2xl rounded-xl bg-white shadow-2xl dark:bg-gray-800">
+        <div className="fixed inset-0 z-50 bg-black/50 overflow-y-auto">
+          <div className="min-h-full flex items-start sm:items-center justify-center p-4">
+            <div className="w-full max-w-2xl max-h-[calc(100dvh-2rem)] overflow-y-auto rounded-xl bg-white shadow-2xl dark:bg-gray-800">
             {/* Modal Header */}
             <div className="flex items-center justify-between border-b p-5 dark:border-gray-700">
               <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
@@ -778,12 +779,14 @@ export default function PartnersManagement() {
             </form>
           </div>
         </div>
+        </div>
       )}
 
       {/* Admin Accounts Modal */}
       {showAdminModal && adminPartner && (
-        <div className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-black/50 p-4 pt-12">
-          <div className="w-full max-w-2xl rounded-xl bg-white shadow-2xl dark:bg-gray-800">
+        <div className="fixed inset-0 z-50 bg-black/50 overflow-y-auto">
+          <div className="min-h-full flex items-start sm:items-center justify-center p-4">
+            <div className="w-full max-w-2xl max-h-[calc(100dvh-2rem)] overflow-y-auto rounded-xl bg-white shadow-2xl dark:bg-gray-800">
             {/* Modal Header */}
             <div className="flex items-center justify-between border-b p-5 dark:border-gray-700">
               <div>
@@ -974,11 +977,13 @@ export default function PartnersManagement() {
             </div>
           </div>
         </div>
+        </div>
       )}
       {/* Tenant Subdomains Modal */}
       {showTenantModal && (
-        <div className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-black/50 p-4 pt-12">
-          <div className="w-full max-w-2xl rounded-xl bg-white shadow-2xl dark:bg-gray-800">
+        <div className="fixed inset-0 z-50 bg-black/50 overflow-y-auto">
+          <div className="min-h-full flex items-start sm:items-center justify-center p-4">
+            <div className="w-full max-w-2xl max-h-[calc(100dvh-2rem)] overflow-y-auto rounded-xl bg-white shadow-2xl dark:bg-gray-800">
             <div className="flex items-center justify-between border-b p-5 dark:border-gray-700">
               <div>
                 <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">Tenant Subdomains</h2>
@@ -1042,6 +1047,7 @@ export default function PartnersManagement() {
               </div>
             </div>
           </div>
+        </div>
         </div>
       )}    </div>
   )

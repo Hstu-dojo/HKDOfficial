@@ -196,7 +196,7 @@ export default function CoursesManagement() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex justify-between items-center">
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
         <div>
           <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Course Management</h1>
           <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
@@ -219,12 +219,12 @@ export default function CoursesManagement() {
 
       {/* Partner Filter */}
       {partners.length > 0 && (
-        <div className="flex items-center gap-3">
+        <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3">
           <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Filter by Partner:</label>
           <select
             value={partnerFilter}
             onChange={(e) => setPartnerFilter(e.target.value)}
-            className="px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-800"
+            className="w-full sm:w-auto px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-800"
           >
             <option value="">All Partners</option>
             {partners.map((p) => (
@@ -489,10 +489,11 @@ export default function CoursesManagement() {
 
       {/* View Course Modal */}
       {viewingCourse && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
-            <div className="p-6">
-              <div className="flex justify-between items-start mb-4">
+        <div className="fixed inset-0 z-50 bg-black/50 overflow-y-auto">
+          <div className="min-h-full flex items-start sm:items-center justify-center p-4">
+            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl max-w-2xl w-full max-h-[calc(100dvh-2rem)] overflow-y-auto">
+              <div className="p-6">
+                <div className="flex justify-between items-start mb-4">
                 <div>
                   <h2 className="text-xl font-bold">{viewingCourse.name}</h2>
                   {viewingCourse.nameBangla && (
@@ -541,6 +542,7 @@ export default function CoursesManagement() {
                 )}
               </div>
             </div>
+          </div>
           </div>
         </div>
       )}

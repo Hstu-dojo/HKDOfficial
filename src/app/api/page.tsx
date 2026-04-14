@@ -1,5 +1,6 @@
 "use client";
 import { useEffect } from "react";
+import Link from "next/link";
 
 export default function SwaggerDocsPage() {
   useEffect(() => {
@@ -13,9 +14,9 @@ export default function SwaggerDocsPage() {
         <div className="text-lg mb-4">Redirecting to Interactive API Documentation...</div>
         <div className="text-sm opacity-60">
           If you&apos;re not redirected automatically, 
-          <a href="/docs/api" className="text-blue-600 hover:text-blue-800 ml-1">
+          <Link href="/docs/api" className="text-blue-600 hover:text-blue-800 ml-1">
             click here
-          </a>
+          </Link>
         </div>
       </div>
     </div>

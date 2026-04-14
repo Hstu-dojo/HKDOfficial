@@ -21,18 +21,18 @@ export default function RBACDashboardPage() {
   ];
 
   return (
-    <div className="min-h-screen">
-      <div className="shadow">
-        <div className="max-w-7xl mx-auto px-4">
-          <div className="flex flex-wrap gap-2 py-2">
+    <div className="space-y-6">
+      <div className="shadow rounded-lg border bg-white dark:bg-gray-800">
+        <div className="overflow-x-auto">
+          <div className="flex gap-2 p-2 min-w-max">
             {tabs.map((tab) => (
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
-                className={`py-2 px-4 font-medium rounded-lg transition-colors ${
+                className={`py-2 px-4 font-medium rounded-lg transition-colors whitespace-nowrap ${
                   activeTab === tab.id
                     ? "bg-blue-600 text-white"
-                    : "bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700"
+                    : "bg-gray-100 dark:bg-gray-900 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700"
                 }`}
                 title={tab.description}
               >
@@ -43,7 +43,7 @@ export default function RBACDashboardPage() {
         </div>
       </div>
 
-      <div className="py-6 max-w-7xl mx-auto px-4">
+      <div>
         {activeTab === "matrix" && <PermissionMatrix />}
         {activeTab === "user-roles" && <UserRolesManagement />}
         {activeTab === "role-permissions" && <RolePermissionsManagement />}

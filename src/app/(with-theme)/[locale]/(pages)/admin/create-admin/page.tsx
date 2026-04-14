@@ -151,8 +151,8 @@ export default function AdminCreationPage() {
   }
 
   return (
-    <div className="max-w-6xl mx-auto p-6 space-y-8">
-      <div className="flex items-center space-x-3">
+    <div className="space-y-8">
+      <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-3">
         <Shield className="h-8 w-8 text-blue-600" />
         <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">Admin User Management</h1>
       </div>

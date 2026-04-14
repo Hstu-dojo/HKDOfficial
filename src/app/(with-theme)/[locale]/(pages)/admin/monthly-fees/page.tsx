@@ -7,9 +7,5 @@ export const metadata: Metadata = {
 };
 
 export default function MonthlyFeesPage() {
-  return (
-    <div className="p-6 max-w-7xl mx-auto">
-      <MonthlyFeesManagement />
-    </div>
-  );
+  return <MonthlyFeesManagement />;
 }

@@ -5,6 +5,7 @@ import { XMarkIcon } from '@heroicons/react/24/outline';
 import { createProgram, updateProgram } from '@/actions/program-actions';
 import { toast } from 'sonner';
 import PaymentAccountSelector from '@/components/admin/shared/PaymentAccountSelector';
+import Link from 'next/link';
 
 // Define the shape of our form data
 interface ProgramFormData {
@@ -178,22 +179,21 @@ export default function ProgramFormModal({ isOpen, onClose, onSuccess, initialDa
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 overflow-y-auto">
-      <div className="flex min-h-screen items-center justify-center px-4 pt-4 pb-20 text-center sm:block sm:p-0">
-        <div className="fixed inset-0 bg-gray-500/75 dark:bg-gray-900/80 transition-opacity" onClick={onClose} />
+    <div className="fixed inset-0 z-50 overflow-y-auto p-4">
+      <div className="fixed inset-0 bg-gray-500/75 dark:bg-gray-900/80 transition-opacity" onClick={onClose} />
 
-        <div className="inline-block transform overflow-hidden rounded-lg bg-white dark:bg-gray-800 text-left align-bottom shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-2xl sm:align-middle">
-          <div className="bg-white dark:bg-gray-800 px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
-            <div className="flex items-center justify-between mb-5">
-              <h3 className="text-lg font-medium leading-6 text-gray-900 dark:text-gray-100">
-                {initialData ? 'Edit Program' : 'Create New Program'}
-              </h3>
-              <button onClick={onClose} className="text-gray-400 dark:text-gray-500 hover:text-gray-500 dark:hover:text-gray-300">
-                <XMarkIcon className="h-6 w-6" />
-              </button>
-            </div>
+      <div className="relative mx-auto flex w-full max-w-2xl flex-col overflow-hidden rounded-lg bg-white dark:bg-gray-800 text-left shadow-xl max-h-[calc(100dvh-2rem)]">
+        <div className="shrink-0 bg-white dark:bg-gray-800 px-4 pt-5 pb-4 sm:p-6 sm:pb-4 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between">
+          <h3 className="text-lg font-medium leading-6 text-gray-900 dark:text-gray-100">
+            {initialData ? 'Edit Program' : 'Create New Program'}
+          </h3>
+          <button onClick={onClose} className="text-gray-400 dark:text-gray-500 hover:text-gray-500 dark:hover:text-gray-300">
+            <XMarkIcon className="h-6 w-6" />
+          </button>
+        </div>
 
-            <form onSubmit={handleSubmit} className="space-y-4">
+        <div className="flex-1 overflow-y-auto bg-white dark:bg-gray-800 px-4 pb-4 sm:px-6 sm:pb-6">
+          <form onSubmit={handleSubmit} className="space-y-4 pt-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="col-span-2">
                   <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Title</label>
@@ -346,7 +346,7 @@ export default function ProgramFormModal({ isOpen, onClose, onSuccess, initialDa
                   <p className="text-xs text-gray-500 dark:text-gray-400 mb-3">
                     Select which payment accounts participants should use for this program.
                     Manage accounts in{' '}
-                    <a href="/en/admin/payment-settings" target="_blank" className="text-blue-600 hover:underline">Payment Settings</a>.
+                    <Link href="/admin/payment-settings" target="_blank" className="text-blue-600 hover:underline">Payment Settings</Link>.
                   </p>
                   <PaymentAccountSelector
                     scope="program"
@@ -393,7 +393,6 @@ export default function ProgramFormModal({ isOpen, onClose, onSuccess, initialDa
                 </button>
               </div>
             </form>
-          </div>
         </div>
       </div>
     </div>

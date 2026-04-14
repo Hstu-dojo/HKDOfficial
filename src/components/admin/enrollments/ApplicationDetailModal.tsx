@@ -140,7 +140,7 @@ export default function ApplicationDetailModal({
         </Transition.Child>
 
         <div className="fixed inset-0 overflow-y-auto">
-          <div className="flex min-h-full items-center justify-center p-4">
+          <div className="flex min-h-full items-start sm:items-center justify-center p-4">
             <Transition.Child
               as={Fragment}
               enter="ease-out duration-300"
@@ -150,7 +150,7 @@ export default function ApplicationDetailModal({
               leaveFrom="opacity-100 scale-100"
               leaveTo="opacity-0 scale-95"
             >
-              <Dialog.Panel className="w-full max-w-3xl transform overflow-hidden rounded-2xl bg-white dark:bg-gray-800 shadow-xl transition-all">
+              <Dialog.Panel className="w-full max-w-3xl max-h-[calc(100dvh-2rem)] transform overflow-hidden rounded-2xl bg-white dark:bg-gray-800 shadow-xl transition-all flex flex-col">
                 {/* Header */}
                 <div className="bg-gray-50 dark:bg-gray-800/50 px-6 py-4 border-b flex items-center justify-between">
                   <div>
@@ -169,14 +169,14 @@ export default function ApplicationDetailModal({
                   </button>
                 </div>
 
-                <div className="px-6 py-4 max-h-[70vh] overflow-y-auto space-y-6">
+                <div className="px-6 py-4 flex-1 overflow-y-auto space-y-6">
                   {/* Student Info */}
                   <div className="bg-gray-50 dark:bg-gray-800/50 rounded-lg p-4">
                     <h3 className="text-sm font-semibold text-gray-900 dark:text-gray-100 mb-4 flex items-center">
                       <UserIcon className="h-5 w-5 mr-2" />
                       Student Information
                     </h3>
-                    <div className="flex items-start gap-4">
+                    <div className="flex flex-col sm:flex-row items-start gap-4">
                       {app.studentInfo.profilePhotoUrl ? (
                         <img
                           src={app.studentInfo.profilePhotoUrl}
@@ -188,7 +188,7 @@ export default function ApplicationDetailModal({
                           <UserIcon className="h-12 w-12 text-gray-400 dark:text-gray-500" />
                         </div>
                       )}
-                      <div className="flex-1 grid grid-cols-2 gap-4 text-sm">
+                      <div className="flex-1 grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
                         <div>
                           <label className="text-gray-500 dark:text-gray-400">Full Name (English)</label>
                           <p className="font-medium">{app.studentInfo.fullNameEnglish}</p>
@@ -245,7 +245,7 @@ export default function ApplicationDetailModal({
                       <PhoneIcon className="h-5 w-5 mr-2" />
                       Contact Information
                     </h3>
-                    <div className="grid grid-cols-2 gap-4 text-sm">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
                       <div className="flex items-center gap-2">
                         <EnvelopeIcon className="h-4 w-4 text-gray-400 dark:text-gray-500" />
                         <span>{app.studentInfo.email}</span>
@@ -261,7 +261,7 @@ export default function ApplicationDetailModal({
                         </div>
                       )}
                       {app.studentInfo.address && (
-                        <div className="col-span-2 flex items-start gap-2">
+                        <div className="sm:col-span-2 flex items-start gap-2">
                           <MapPinIcon className="h-4 w-4 text-gray-400 dark:text-gray-500 mt-1" />
                           <span>{app.studentInfo.address}</span>
                         </div>
@@ -270,7 +270,7 @@ export default function ApplicationDetailModal({
                   </div>
 
                   {/* Course & Payment Info */}
-                  <div className="grid grid-cols-2 gap-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div className="bg-gray-50 dark:bg-gray-800/50 rounded-lg p-4">
                       <h3 className="text-sm font-semibold text-gray-900 dark:text-gray-100 mb-4 flex items-center">
                         <IdentificationIcon className="h-5 w-5 mr-2" />

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { useRBAC } from '@/hooks/useRBAC';
 import { 
@@ -109,13 +109,6 @@ const STATUS_CONFIG: Record<string, { label: string; color: string; bgColor: str
   rejected: { label: 'Rejected', color: 'text-red-700', bgColor: 'bg-red-100 dark:bg-red-900/30' },
 };
 
-const STATUS_OPTIONS = [
-  { value: 'pending_payment', label: 'Pending Payment' },
-  { value: 'payment_submitted', label: 'Payment Submitted' },
-  { value: 'approved', label: 'Approved' },
-  { value: 'rejected', label: 'Rejected' },
-];
-
 export default function ProgramRegistrations() {
   const searchParams = useSearchParams();
   const programIdParam = searchParams?.get('programId');
@@ -130,6 +123,8 @@ export default function ProgramRegistrations() {
   const [editingRegistration, setEditingRegistration] = useState<RegistrationWithProfile | null>(null);
   const [statusFilter, setStatusFilter] = useState<string>('');
   const [exporting, setExporting] = useState(false);
+  const [exportMenuOpen, setExportMenuOpen] = useState(false);
+  const exportMenuRef = useRef<HTMLDivElement | null>(null);
 
   // Add registrant modal
   const [showAddRegistrant, setShowAddRegistrant] = useState(false);
@@ -184,6 +179,24 @@ export default function ProgramRegistrations() {
       fetchProgramInfo();
     }
   }, [rbacLoading, fetchRegistrations, fetchProgramInfo]);
+
+  useEffect(() => {
+    if (!exportMenuOpen) return;
+    const handlePointerDown = (e: MouseEvent | TouchEvent) => {
+      const target = e.target as Node | null;
+      if (!target) return;
+      if (exportMenuRef.current && !exportMenuRef.current.contains(target)) {
+        setExportMenuOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handlePointerDown);
+    document.addEventListener('touchstart', handlePointerDown);
+    return () => {
+      document.removeEventListener('mousedown', handlePointerDown);
+      document.removeEventListener('touchstart', handlePointerDown);
+    };
+  }, [exportMenuOpen]);
 
   const BELT_RANK_OPTIONS = [
     { value: 'white', label: 'White' },
@@ -401,49 +414,66 @@ export default function ProgramRegistrations() {
         </div>
         
         {/* Export Dropdown */}
-        <div className="flex items-center gap-2">
+        <div className="flex w-full flex-col gap-2 sm:w-auto sm:flex-row sm:items-center">
           {programIdParam && canCreate && (
             <button
               onClick={openAddRegistrant}
-              className="inline-flex items-center px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg shadow-sm text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700"
+              className="inline-flex w-full items-center justify-center px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg shadow-sm text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 sm:w-auto"
             >
               + Add Registrant
             </button>
           )}
-          <div className="relative group">
+          <div ref={exportMenuRef} className="relative">
             <button
               disabled={exporting}
-              className="inline-flex items-center px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg shadow-sm text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 disabled:opacity-50"
+              onClick={() => setExportMenuOpen((v) => !v)}
+              aria-haspopup="menu"
+              aria-expanded={exportMenuOpen}
+              className="inline-flex w-full items-center justify-center px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg shadow-sm text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 disabled:opacity-50 sm:w-auto"
             >
               <ArrowDownTrayIcon className="h-4 w-4 mr-2" />
               {exporting ? 'Exporting...' : 'Export Excel'}
             </button>
-            <div className="absolute right-0 mt-1 w-48 bg-white dark:bg-gray-800 rounded-lg shadow-lg border opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-10">
-              <button
-                onClick={() => handleExport()}
-                className="w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-600 rounded-t-lg"
-              >
-                All Registrations
-              </button>
-              <button
-                onClick={() => handleExport('approved')}
-                className="w-full text-left px-4 py-2 text-sm text-green-700 hover:bg-green-50 dark:hover:bg-green-900/20"
-              >
-                Approved Only
-              </button>
-              <button
-                onClick={() => handleExport('pending_payment')}
-                className="w-full text-left px-4 py-2 text-sm text-yellow-700 hover:bg-yellow-50 dark:bg-yellow-900/20"
-              >
-                Pending Only
-              </button>
-              <button
-                onClick={() => handleExport('rejected')}
-                className="w-full text-left px-4 py-2 text-sm text-red-700 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-b-lg"
-              >
-                Rejected Only
-              </button>
-            </div>
+            {exportMenuOpen && (
+              <div className="absolute right-0 mt-1 w-48 bg-white dark:bg-gray-800 rounded-lg shadow-lg border z-10">
+                <button
+                  onClick={() => {
+                    setExportMenuOpen(false);
+                    handleExport();
+                  }}
+                  className="w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-600 rounded-t-lg"
+                >
+                  All Registrations
+                </button>
+                <button
+                  onClick={() => {
+                    setExportMenuOpen(false);
+                    handleExport('approved');
+                  }}
+                  className="w-full text-left px-4 py-2 text-sm text-green-700 hover:bg-green-50 dark:hover:bg-green-900/20"
+                >
+                  Approved Only
+                </button>
+                <button
+                  onClick={() => {
+                    setExportMenuOpen(false);
+                    handleExport('pending_payment');
+                  }}
+                  className="w-full text-left px-4 py-2 text-sm text-yellow-700 hover:bg-yellow-50 dark:hover:bg-yellow-900/20"
+                >
+                  Pending Only
+                </button>
+                <button
+                  onClick={() => {
+                    setExportMenuOpen(false);
+                    handleExport('rejected');
+                  }}
+                  className="w-full text-left px-4 py-2 text-sm text-red-700 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-b-lg"
+                >
+                  Rejected Only
+                </button>
+              </div>
+            )}
           </div>
         </div>
       </div>
@@ -569,7 +599,7 @@ export default function ProgramRegistrations() {
                   <td className="px-6 py-4">
                     <div className="text-sm font-medium text-gray-900 dark:text-gray-100">{reg.feeAmount} {reg.currency}</div>
                     {reg.transactionId && (
-                      <div className="text-xs text-gray-500 dark:text-gray-400 font-mono">Trx: {reg.transactionId}</div>
+                      <div className="text-xs text-gray-500 dark:text-gray-400 font-mono break-all">Trx: {reg.transactionId}</div>
                     )}
                     {reg.paymentProofUrl && (
                       <button 
@@ -651,18 +681,25 @@ export default function ProgramRegistrations() {
 
       {/* Payment Proof Image Modal */}
       {selectedImage && (
-        <div 
-          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black bg-opacity-75" 
-          onClick={() => setSelectedImage(null)}
-        >
-          <div className="relative max-w-3xl max-h-screen">
-            <img src={selectedImage} alt="Payment Proof" className="max-w-full max-h-[90vh] rounded" />
-            <button 
-              className="absolute top-2 right-2 text-white bg-black bg-opacity-50 rounded-full p-1"
-              onClick={() => setSelectedImage(null)}
-            >
-              <XCircleIcon className="h-8 w-8" />
-            </button>
+        <div className="fixed inset-0 z-50 overflow-y-auto p-4" onClick={() => setSelectedImage(null)}>
+          <div className="fixed inset-0 bg-black/75" />
+          <div
+            className="relative mx-auto w-full max-w-3xl rounded-lg"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="relative bg-transparent">
+              <img
+                src={selectedImage}
+                alt="Payment Proof"
+                className="max-w-full rounded max-h-[calc(100dvh-4rem)] mx-auto"
+              />
+              <button
+                className="absolute top-2 right-2 text-white bg-black/50 rounded-full p-1"
+                onClick={() => setSelectedImage(null)}
+              >
+                <XCircleIcon className="h-8 w-8" />
+              </button>
+            </div>
           </div>
         </div>
       )}
@@ -694,12 +731,11 @@ export default function ProgramRegistrations() {
 
       {/* Add Registrant Modal */}
       {showAddRegistrant && programIdParam && (
-        <div className="fixed inset-0 z-50 overflow-y-auto">
-          <div className="flex min-h-full items-center justify-center p-4">
-            <div className="fixed inset-0 bg-black bg-opacity-50" onClick={() => setShowAddRegistrant(false)} />
+        <div className="fixed inset-0 z-50 overflow-y-auto p-4">
+          <div className="fixed inset-0 bg-black/50" onClick={() => setShowAddRegistrant(false)} />
 
-            <div className="relative bg-white dark:bg-gray-800 rounded-xl shadow-xl max-w-2xl w-full">
-              <div className="border-b px-6 py-4 flex justify-between items-center">
+          <div className="relative mx-auto flex w-full max-w-2xl flex-col overflow-hidden rounded-xl bg-white dark:bg-gray-800 shadow-xl max-h-[calc(100dvh-2rem)]">
+              <div className="shrink-0 border-b px-6 py-4 flex justify-between items-center">
                 <div>
                   <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100">Add Registrant</h2>
                   <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
@@ -715,9 +751,9 @@ export default function ProgramRegistrations() {
                 </button>
               </div>
 
-              <div className="p-6 space-y-4">
+              <div className="flex-1 overflow-y-auto p-6 space-y-4">
                 {/* Search */}
-                <div className="flex gap-2">
+                <div className="flex flex-col gap-2 sm:flex-row">
                   <input
                     value={candidateQuery}
                     onChange={(e) => setCandidateQuery(e.target.value)}
@@ -725,12 +761,12 @@ export default function ProgramRegistrations() {
                       if (e.key === 'Enter') handleSearchCandidates();
                     }}
                     placeholder="Search by name, email, phone, or member #"
-                    className="flex-1 px-3 py-2 border rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100"
+                    className="w-full flex-1 px-3 py-2 border rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100"
                   />
                   <button
                     onClick={handleSearchCandidates}
                     disabled={candidateSearching}
-                    className="px-4 py-2 rounded-lg bg-blue-600 text-white text-sm font-medium hover:bg-blue-700 disabled:opacity-50"
+                    className="w-full px-4 py-2 rounded-lg bg-blue-600 text-white text-sm font-medium hover:bg-blue-700 disabled:opacity-50 sm:w-auto"
                   >
                     {candidateSearching ? 'Searching...' : 'Search'}
                   </button>
@@ -799,24 +835,23 @@ export default function ProgramRegistrations() {
                 )}
 
                 {/* Actions */}
-                <div className="flex justify-end gap-2 pt-2">
+                <div className="flex flex-col-reverse gap-2 pt-2 sm:flex-row sm:justify-end">
                   <button
                     onClick={() => setShowAddRegistrant(false)}
-                    className="px-4 py-2 rounded-lg border text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700"
+                    className="w-full px-4 py-2 rounded-lg border text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 sm:w-auto"
                   >
                     Cancel
                   </button>
                   <button
                     onClick={handleAddRegistrant}
                     disabled={!selectedCandidate || addingRegistrant}
-                    className="px-4 py-2 rounded-lg bg-green-600 text-white text-sm font-medium hover:bg-green-700 disabled:opacity-50"
+                    className="w-full px-4 py-2 rounded-lg bg-green-600 text-white text-sm font-medium hover:bg-green-700 disabled:opacity-50 sm:w-auto"
                   >
                     {addingRegistrant ? 'Adding...' : 'Add'}
                   </button>
                 </div>
               </div>
             </div>
-          </div>
         </div>
       )}
     </div>
@@ -854,21 +889,21 @@ function EditRegistrationModal({
       <div className="flex min-h-full items-center justify-center p-4">
         <div className="fixed inset-0 bg-black bg-opacity-50" onClick={onClose} />
         
-        <div className="relative bg-white dark:bg-gray-800 rounded-xl shadow-xl max-w-lg w-full">
-          <div className="border-b px-6 py-4 flex justify-between items-center">
+        <div className="relative flex w-full max-w-lg flex-col overflow-hidden bg-white dark:bg-gray-800 rounded-xl shadow-xl max-h-[calc(100dvh-2rem)]">
+          <div className="shrink-0 border-b px-6 py-4 flex justify-between items-center">
             <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100">Edit Registration</h2>
             <button onClick={onClose} className="p-2 hover:bg-gray-100 dark:hover:bg-gray-600 rounded-full">
               <XMarkIcon className="h-6 w-6" />
             </button>
           </div>
 
-          <form onSubmit={handleSubmit} className="p-6 space-y-4">
+          <form onSubmit={handleSubmit} className="flex-1 overflow-y-auto p-6 space-y-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Status</label>
               <select
                 value={formData.status}
                 onChange={(e) => setFormData({ ...formData, status: e.target.value })}
-                className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                className="w-full px-3 py-2 border rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 border-gray-300 dark:border-gray-700 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
               >
                 <option value="pending_payment">Pending Payment</option>
                 <option value="payment_submitted">Payment Submitted</option>
@@ -882,7 +917,7 @@ function EditRegistrationModal({
               <select
                 value={formData.paymentMethod}
                 onChange={(e) => setFormData({ ...formData, paymentMethod: e.target.value })}
-                className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                className="w-full px-3 py-2 border rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 border-gray-300 dark:border-gray-700 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
               >
                 <option value="">Select method</option>
                 <option value="bkash">bKash</option>
@@ -899,7 +934,7 @@ function EditRegistrationModal({
                 type="text"
                 value={formData.transactionId}
                 onChange={(e) => setFormData({ ...formData, transactionId: e.target.value })}
-                className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                className="w-full px-3 py-2 border rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 border-gray-300 dark:border-gray-700 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                 placeholder="Enter transaction ID"
               />
             </div>
@@ -909,7 +944,7 @@ function EditRegistrationModal({
               <textarea
                 value={formData.notes}
                 onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
-                className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                className="w-full px-3 py-2 border rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 border-gray-300 dark:border-gray-700 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                 rows={3}
                 placeholder="Add notes about this registration"
               />
@@ -921,7 +956,7 @@ function EditRegistrationModal({
                 <textarea
                   value={formData.rejectionReason}
                   onChange={(e) => setFormData({ ...formData, rejectionReason: e.target.value })}
-                  className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  className="w-full px-3 py-2 border rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 border-gray-300 dark:border-gray-700 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                   rows={2}
                   placeholder="Reason for rejection"
                 />
@@ -990,13 +1025,13 @@ function RegistrationDetailModal({
   };
 
   return (
-    <div className="fixed inset-0 z-50 overflow-y-auto">
-      <div className="flex min-h-full items-center justify-center p-4">
+    <div className="fixed inset-0 z-50 overflow-y-auto p-4">
+      <div className="flex min-h-full items-center justify-center">
         <div className="fixed inset-0 bg-black bg-opacity-50" onClick={onClose} />
         
-        <div className="relative bg-white dark:bg-gray-800 rounded-xl shadow-xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+        <div className="relative bg-white dark:bg-gray-800 rounded-xl shadow-xl max-w-4xl w-full max-h-[calc(100dvh-2rem)] overflow-y-auto">
           {/* Header */}
-          <div className="sticky top-0 bg-white dark:bg-gray-800 border-b px-6 py-4 flex justify-between items-center z-10">
+          <div className="sticky top-0 bg-white dark:bg-gray-800 border-b px-6 py-4 flex flex-col gap-2 sm:flex-row sm:justify-between sm:items-center z-10">
             <div>
               <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100">Registration Details</h2>
               <p className="text-sm text-gray-500 dark:text-gray-400">
@@ -1091,7 +1126,7 @@ function RegistrationDetailModal({
                   </div>
                 </div>
 
-                <div className="grid grid-cols-2 gap-3 text-sm">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
                   <DetailItem icon={PhoneIcon} label="Phone" value={account?.phone} />
                   <DetailItem icon={CalendarIcon} label="Date of Birth" value={account?.dob ? format(new Date(account.dob), 'MMM d, yyyy') : undefined} />
                   <DetailItem label="Age" value={account?.age ? `${account.age} years` : undefined} />
@@ -1175,7 +1210,9 @@ function RegistrationDetailModal({
                   {registration.transactionId && (
                     <div className="flex justify-between">
                       <span className="text-gray-500 dark:text-gray-400">Transaction ID</span>
-                      <span className="font-mono text-xs bg-gray-100 dark:bg-gray-700 px-2 py-1 rounded">{registration.transactionId}</span>
+                      <span className="font-mono text-xs bg-gray-100 dark:bg-gray-700 px-2 py-1 rounded break-all text-right max-w-[14rem]">
+                        {registration.transactionId}
+                      </span>
                     </div>
                   )}
                   {registration.paymentSubmittedAt && (

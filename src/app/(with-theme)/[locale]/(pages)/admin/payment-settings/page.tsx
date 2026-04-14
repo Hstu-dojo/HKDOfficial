@@ -263,7 +263,7 @@ export default function PaymentSettingsPage() {
   }
 
   return (
-    <div className="space-y-6 p-6">
+    <div className="space-y-6">
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
@@ -275,7 +275,7 @@ export default function PaymentSettingsPage() {
             Manage bKash, Nagad, and other payment account numbers
           </p>
         </div>
-        <Button onClick={() => setShowForm(true)} className="gap-2">
+        <Button onClick={() => setShowForm(true)} className="gap-2 w-full md:w-auto">
           <PlusIcon className="h-4 w-4" />
           Add Payment Account
         </Button>
@@ -307,18 +307,19 @@ export default function PaymentSettingsPage() {
 
       {/* Form Modal */}
       {showForm && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+        <div className="fixed inset-0 z-50 overflow-y-auto p-4">
+          <div className="fixed inset-0 bg-black/50" onClick={resetForm} />
+          <div className="relative mx-auto flex w-full max-w-2xl flex-col overflow-hidden bg-white dark:bg-gray-800 rounded-lg shadow-xl max-h-[calc(100dvh-2rem)]">
             <div className="p-6 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between">
               <h2 className="text-xl font-semibold">
                 {editingAccount ? "Edit Payment Account" : "Add Payment Account"}
               </h2>
-              <button onClick={resetForm} className="p-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:bg-gray-700 rounded-full">
+              <button onClick={resetForm} className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full">
                 <XMarkIcon className="h-5 w-5" />
               </button>
             </div>
 
-            <form onSubmit={handleSubmit} className="p-6 space-y-4">
+            <form onSubmit={handleSubmit} className="flex-1 overflow-y-auto p-6 space-y-4">
               {/* Name */}
               <div>
                 <label className="block text-sm font-medium mb-1">Account Name *</label>
@@ -540,7 +541,7 @@ export default function PaymentSettingsPage() {
                     </div>
                     <div>
                       <h3 className="font-semibold">{account.name}</h3>
-                      <p className="text-lg font-mono text-primary">{account.accountNumber}</p>
+                      <p className="text-lg font-mono text-primary break-all">{account.accountNumber}</p>
                     </div>
                   </div>
                   <div className="flex items-center gap-1">
@@ -587,14 +588,14 @@ export default function PaymentSettingsPage() {
                   <div className="flex gap-2">
                     <button
                       onClick={() => handleEdit(account)}
-                      className="p-1.5 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:bg-gray-700 rounded"
+                      className="p-1.5 hover:bg-gray-100 dark:hover:bg-gray-700 rounded"
                       title="Edit"
                     >
                       <PencilIcon className="h-4 w-4 text-blue-600" />
                     </button>
                     <button
                       onClick={() => handleDelete(account.id)}
-                      className="p-1.5 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:bg-gray-700 rounded"
+                      className="p-1.5 hover:bg-gray-100 dark:hover:bg-gray-700 rounded"
                       title="Delete"
                     >
                       <TrashIcon className="h-4 w-4 text-red-600 dark:text-red-400" />

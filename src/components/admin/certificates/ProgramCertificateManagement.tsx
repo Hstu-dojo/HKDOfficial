@@ -745,8 +745,9 @@ export default function ProgramCertificateManagement() {
 
       {/* Issue Modal */}
       {showIssueModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl w-full max-w-lg mx-4 p-6 space-y-4">
+        <div className="fixed inset-0 z-50 bg-black/50 overflow-y-auto">
+          <div className="min-h-full flex items-start sm:items-center justify-center p-4">
+            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl w-full max-w-lg max-h-[calc(100dvh-2rem)] overflow-y-auto p-6 space-y-4">
             <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
               Issue Certificates
             </h2>
@@ -815,13 +816,15 @@ export default function ProgramCertificateManagement() {
               </button>
             </div>
           </div>
+          </div>
         </div>
       )}
 
       {/* Revoke Modal */}
       {revoking && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl w-full max-w-sm mx-4 p-6 space-y-4">
+        <div className="fixed inset-0 z-50 bg-black/50 overflow-y-auto">
+          <div className="min-h-full flex items-start sm:items-center justify-center p-4">
+            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl w-full max-w-sm max-h-[calc(100dvh-2rem)] overflow-y-auto p-6 space-y-4">
             <h2 className="text-lg font-semibold text-red-600">Revoke Certificate</h2>
             <p className="text-sm text-gray-500 dark:text-gray-400">
               This action cannot be easily undone. Please provide a reason:
@@ -849,13 +852,15 @@ export default function ProgramCertificateManagement() {
               </button>
             </div>
           </div>
+          </div>
         </div>
       )}
 
       {/* Update Signatures Modal */}
       {showUpdateSigModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl w-full max-w-lg mx-4 p-6 space-y-4">
+        <div className="fixed inset-0 z-50 bg-black/50 overflow-y-auto">
+          <div className="min-h-full flex items-start sm:items-center justify-center p-4">
+            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl w-full max-w-lg max-h-[calc(100dvh-2rem)] overflow-y-auto p-6 space-y-4">
             <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
               Update Signatures
             </h2>
@@ -913,13 +918,15 @@ export default function ProgramCertificateManagement() {
               </button>
             </div>
           </div>
+          </div>
         </div>
       )}
 
       {/* Manual Certificate Modal */}
       {showManualCertForm && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl w-full max-w-lg mx-4 p-6 space-y-4">
+        <div className="fixed inset-0 z-50 bg-black/50 overflow-y-auto">
+          <div className="min-h-full flex items-start sm:items-center justify-center p-4">
+            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl w-full max-w-lg max-h-[calc(100dvh-2rem)] overflow-y-auto p-6 space-y-4">
             <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
               Create Manual Certificate
             </h2>
@@ -996,13 +1003,15 @@ export default function ProgramCertificateManagement() {
               </button>
             </div>
           </div>
+          </div>
         </div>
       )}
 
       {/* Attach Profile Modal */}
       {attachCertId && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl w-full max-w-lg mx-4 p-6 space-y-4">
+        <div className="fixed inset-0 z-50 bg-black/50 overflow-y-auto">
+          <div className="min-h-full flex items-start sm:items-center justify-center p-4">
+            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl w-full max-w-lg max-h-[calc(100dvh-2rem)] overflow-y-auto p-6 space-y-4">
             <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
               Attach Member Profile
             </h2>
@@ -1069,6 +1078,7 @@ export default function ProgramCertificateManagement() {
                 Close
               </button>
             </div>
+          </div>
           </div>
         </div>
       )}

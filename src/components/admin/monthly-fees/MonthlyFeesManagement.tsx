@@ -224,7 +224,7 @@ export default function MonthlyFeesManagement() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex justify-between items-start">
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-4">
         <div>
           <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Monthly Fees</h1>
           <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
@@ -233,7 +233,7 @@ export default function MonthlyFeesManagement() {
         </div>
         <button
           onClick={handleGenerateMonthlyFees}
-          className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+          className="flex items-center justify-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 w-full sm:w-auto"
         >
           <PlusIcon className="h-5 w-5" />
           Generate Monthly Fees
@@ -293,7 +293,7 @@ export default function MonthlyFeesManagement() {
         <select
           value={monthFilter}
           onChange={(e) => setMonthFilter(e.target.value)}
-          className="px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
+          className="w-full sm:w-auto px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
         >
           <option value="">All Months</option>
           {monthOptions.map((opt) => (
@@ -304,7 +304,7 @@ export default function MonthlyFeesManagement() {
         <select
           value={statusFilter}
           onChange={(e) => setStatusFilter(e.target.value)}
-          className="px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
+          className="w-full sm:w-auto px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
         >
           <option value="">All Status</option>
           {Object.entries(STATUS_CONFIG).map(([key, config]) => (

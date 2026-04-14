@@ -290,7 +290,7 @@ export default function RegistrationsManagement() {
 
   if (!canRead) {
     return (
-      <div className="p-6">
+      <div>
         <div className="rounded-lg border border-red-200 dark:border-red-800 bg-red-50 dark:bg-red-900/20 p-4">
           <h3 className="font-medium text-red-800 dark:text-red-300">Access Denied</h3>
           <p className="mt-1 text-sm text-red-600 dark:text-red-400">
@@ -310,7 +310,7 @@ export default function RegistrationsManagement() {
   }
 
   return (
-    <div className="p-6 space-y-6">
+    <div className="space-y-6">
       {/* Header */}
       <div>
         <h1 className="text-2xl font-semibold text-gray-900 dark:text-white">
@@ -513,15 +513,15 @@ export default function RegistrationsManagement() {
 
       {/* Pagination */}
       {pagination && pagination.totalPages > 1 && (
-        <div className="flex items-center justify-between rounded-lg border bg-white dark:bg-gray-800 px-4 py-3">
+        <div className="flex flex-col gap-2 rounded-lg border bg-white dark:bg-gray-800 px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
           <div className="text-sm text-gray-500 dark:text-gray-400">
             Showing {((pagination.page - 1) * pagination.limit) + 1}–{Math.min(pagination.page * pagination.limit, pagination.total)} of {pagination.total} registrations
           </div>
-          <div className="flex items-center gap-1">
+          <div className="flex items-center gap-1 overflow-x-auto">
             <button
               onClick={() => goToPage(pagination.page - 1)}
               disabled={pagination.page <= 1}
-              className="rounded px-3 py-1 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 disabled:opacity-40 disabled:cursor-not-allowed"
+              className="rounded px-3 py-1 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 disabled:opacity-40 disabled:cursor-not-allowed whitespace-nowrap"
             >
               Previous
             </button>
@@ -533,7 +533,7 @@ export default function RegistrationsManagement() {
                   p === pagination.page
                     ? 'bg-blue-600 text-white'
                     : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'
-                }`}
+                } whitespace-nowrap`}
               >
                 {p}
               </button>
@@ -541,7 +541,7 @@ export default function RegistrationsManagement() {
             <button
               onClick={() => goToPage(pagination.page + 1)}
               disabled={pagination.page >= pagination.totalPages}
-              className="rounded px-3 py-1 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 disabled:opacity-40 disabled:cursor-not-allowed"
+              className="rounded px-3 py-1 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 disabled:opacity-40 disabled:cursor-not-allowed whitespace-nowrap"
             >
               Next
             </button>
@@ -615,10 +615,10 @@ function DetailModal({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-black/50 p-4 pt-12">
-      <div className="w-full max-w-4xl rounded-xl bg-white dark:bg-gray-800 shadow-2xl">
+    <div className="fixed inset-0 z-50 overflow-y-auto bg-black/50 p-4">
+      <div className="mx-auto flex w-full max-w-4xl flex-col overflow-hidden rounded-xl bg-white dark:bg-gray-800 shadow-2xl max-h-[calc(100dvh-2rem)]">
         {/* Header */}
-        <div className="flex items-center justify-between border-b p-5 dark:border-gray-700">
+        <div className="shrink-0 flex flex-col gap-3 border-b p-5 dark:border-gray-700 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex items-center gap-3">
             <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gray-200 dark:bg-gray-600">
               {registration.user?.userAvatar ? (
@@ -646,7 +646,7 @@ function DetailModal({
               </div>
             </div>
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex flex-wrap items-center gap-2">
             {!isEditing && canUpdate && (
               <button
                 onClick={onEdit}
@@ -682,7 +682,7 @@ function DetailModal({
         </div>
 
         {/* Body */}
-        <div className="max-h-[70vh] overflow-y-auto p-5 space-y-6">
+        <div className="flex-1 overflow-y-auto p-5 space-y-6">
           {/* Status actions */}
           {canApprove && registration.status === 'pending' && (
             <div className="flex gap-3 rounded-lg border border-yellow-200 dark:border-yellow-700 bg-yellow-50 dark:bg-yellow-900/20 p-4">

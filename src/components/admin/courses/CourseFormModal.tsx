@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from 'react';
 import { XMarkIcon, PlusIcon, TrashIcon } from '@heroicons/react/24/outline';
 import { toast } from 'sonner';
 import PaymentAccountSelector from '@/components/admin/shared/PaymentAccountSelector';
+import Link from 'next/link';
 
 interface Schedule {
   dayOfWeek: number;
@@ -217,8 +218,9 @@ export default function CourseFormModal({ course, onClose, onSaved }: CourseForm
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+    <div className="fixed inset-0 z-50 bg-black/50 overflow-y-auto">
+      <div className="min-h-full flex items-start sm:items-center justify-center p-4">
+        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl max-w-4xl w-full max-h-[calc(100dvh-2rem)] overflow-y-auto">
         <form onSubmit={handleSubmit}>
           {/* Header */}
           <div className="sticky top-0 bg-white dark:bg-gray-800 px-6 py-4 border-b flex justify-between items-center">
@@ -409,7 +411,7 @@ export default function CourseFormModal({ course, onClose, onSaved }: CourseForm
             <div className="space-y-4">
               <h3 className="font-semibold text-gray-900 dark:text-gray-100 border-b pb-2">Pricing</h3>
               
-              <div className="grid grid-cols-3 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                     Admission Fee (BDT)
@@ -459,7 +461,7 @@ export default function CourseFormModal({ course, onClose, onSaved }: CourseForm
               <p className="text-xs text-gray-500 dark:text-gray-400">
                 Select which payment accounts students should use for this course.
                 Manage accounts in{' '}
-                <a href="/en/admin/payment-settings" target="_blank" className="text-blue-600 hover:underline">Payment Settings</a>.
+                <Link href="/en/admin/payment-settings" target="_blank" className="text-blue-600 hover:underline">Payment Settings</Link>.
               </p>
               <PaymentAccountSelector
                 scope="course"
@@ -483,11 +485,11 @@ export default function CourseFormModal({ course, onClose, onSaved }: CourseForm
               </div>
 
               {formData.schedules.map((schedule, index) => (
-                <div key={index} className="flex items-center gap-3 p-3 bg-gray-50 dark:bg-gray-800/50 rounded-lg">
+                <div key={index} className="flex flex-col sm:flex-row sm:items-center gap-3 p-3 bg-gray-50 dark:bg-gray-800/50 rounded-lg">
                   <select
                     value={schedule.dayOfWeek}
                     onChange={(e) => updateSchedule(index, 'dayOfWeek', parseInt(e.target.value))}
-                    className="px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
+                    className="w-full sm:w-auto px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
                   >
                     {DAYS_OF_WEEK.map((day) => (
                       <option key={day.value} value={day.value}>
@@ -495,25 +497,27 @@ export default function CourseFormModal({ course, onClose, onSaved }: CourseForm
                       </option>
                     ))}
                   </select>
-                  <input
-                    type="time"
-                    value={schedule.startTime}
-                    onChange={(e) => updateSchedule(index, 'startTime', e.target.value)}
-                    className="px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
-                  />
-                  <span className="text-gray-500 dark:text-gray-400">to</span>
-                  <input
-                    type="time"
-                    value={schedule.endTime}
-                    onChange={(e) => updateSchedule(index, 'endTime', e.target.value)}
-                    className="px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
-                  />
+                  <div className="flex items-center gap-2 w-full sm:w-auto">
+                    <input
+                      type="time"
+                      value={schedule.startTime}
+                      onChange={(e) => updateSchedule(index, 'startTime', e.target.value)}
+                      className="w-full sm:w-auto px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
+                    />
+                    <span className="text-gray-500 dark:text-gray-400">to</span>
+                    <input
+                      type="time"
+                      value={schedule.endTime}
+                      onChange={(e) => updateSchedule(index, 'endTime', e.target.value)}
+                      className="w-full sm:w-auto px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
+                    />
+                  </div>
                   <input
                     type="text"
                     value={schedule.location}
                     onChange={(e) => updateSchedule(index, 'location', e.target.value)}
                     placeholder="Location"
-                    className="flex-1 px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
+                    className="w-full sm:flex-1 px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
                   />
                   <button
                     type="button"
@@ -577,7 +581,7 @@ export default function CourseFormModal({ course, onClose, onSaved }: CourseForm
             <div className="space-y-4">
               <h3 className="font-semibold text-gray-900 dark:text-gray-100 border-b pb-2">Status</h3>
               
-              <div className="flex gap-6">
+              <div className="flex flex-col sm:flex-row gap-3 sm:gap-6">
                 <label className="flex items-center gap-2">
                   <input
                     type="checkbox"
@@ -603,7 +607,7 @@ export default function CourseFormModal({ course, onClose, onSaved }: CourseForm
             <div className="space-y-4">
               <h3 className="font-semibold text-gray-900 dark:text-gray-100 border-b pb-2">Media</h3>
               
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                     Thumbnail URL
@@ -651,6 +655,7 @@ export default function CourseFormModal({ course, onClose, onSaved }: CourseForm
           </div>
         </form>
       </div>
+    </div>
     </div>
   );
 }
