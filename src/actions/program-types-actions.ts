@@ -27,13 +27,46 @@ export type ExtractedPdfField = {
   widgets: ProgramCertificateWidgetRect[];
 };
 
+function walkUpDirs(startDir: string, maxLevels = 12) {
+  const dirs: string[] = [];
+  let current = startDir;
+  for (let i = 0; i < maxLevels; i++) {
+    dirs.push(current);
+    const parent = path.dirname(current);
+    if (parent === current) break;
+    current = parent;
+  }
+  return dirs;
+}
+
+function getRuntimeAnchorDirs() {
+  const anchors: string[] = [];
+  try {
+    anchors.push(process.cwd());
+  } catch {
+    // ignore
+  }
+
+  // When bundled, the module directory can be a useful anchor (e.g. .next/server/app/...).
+  try {
+    // eslint-disable-next-line no-undef
+    if (typeof __dirname === 'string' && __dirname) anchors.push(__dirname);
+  } catch {
+    // ignore
+  }
+
+  return Array.from(new Set(anchors));
+}
+
 function getPublicDirCandidates() {
-  // In some runtimes, the server may be started from `.next/standalone`, so
-  // `process.cwd()` won't be the project root. Search a few parent levels.
-  const cwd = process.cwd();
-  return [cwd, path.resolve(cwd, '..'), path.resolve(cwd, '../..'), path.resolve(cwd, '../../..')].map((p) =>
-    path.join(p, 'public')
-  );
+  const anchors = getRuntimeAnchorDirs();
+  const candidates: string[] = [];
+  for (const anchor of anchors) {
+    for (const dir of walkUpDirs(anchor)) {
+      candidates.push(path.join(dir, 'public'));
+    }
+  }
+  return Array.from(new Set(candidates));
 }
 
 async function resolvePublicCertsDir() {
