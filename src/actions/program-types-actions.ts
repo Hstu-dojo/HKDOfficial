@@ -7,6 +7,7 @@ import { db } from '@/lib/connect-db';
 import { programTypes, programs } from '@/db/schemas/karate';
 import { user } from '@/db/schemas/auth';
 import { revalidatePath } from 'next/cache';
+import { headers } from 'next/headers';
 import { and, desc, eq, ilike, sql } from 'drizzle-orm';
 import { createClient } from '@/lib/supabase/server';
 import type {
@@ -130,15 +131,18 @@ function assertSafeCertPath(publicRelativePath: string) {
 
 export async function listCertificateTemplates() {
   try {
-    const certsDir = await resolvePublicCertsDir();
-    const files = await readdir(certsDir);
-    const pdfs = files
-      .filter((f) => f.toLowerCase().endsWith('.pdf'))
-      .sort((a, b) => a.localeCompare(b))
-      .map((filename) => ({
-        value: `certs/${filename}`,
-        label: filename,
-      } satisfies AvailableCertificateTemplate));
+    // Vercel Serverless environment does not bundle the 'public' directory to disk on Lambda.
+    // Therefore, we hardcode the known production certificates instead of using fs.readdir()
+    const pdfs = [
+      {
+        value: 'certs/fillable - Final Belt Test Certificates.pdf',
+        label: 'fillable - Final Belt Test Certificates.pdf',
+      },
+      {
+        value: 'certs/fillable - program cert.pdf',
+        label: 'fillable - program cert.pdf',
+      },
+    ] satisfies AvailableCertificateTemplate[];
 
     return { success: true as const, data: pdfs };
   } catch (error: any) {
@@ -155,8 +159,26 @@ export async function listCertificateTemplates() {
 export async function extractCertificateFields(publicRelativePath: string) {
   try {
     assertSafeCertPath(publicRelativePath);
-    const abs = await resolvePublicFileAbsPath(publicRelativePath);
-    const pdfBytes = await readFile(abs);
+    
+    // In Vercel, the public/ directory is dropped, so we MUST retrieve assets via HTTP
+    // Use the request host to construct an absolute URL for the payload fetch
+    const headersList = await headers();
+    const host = headersList.get('host') || 'localhost:3000';
+    const protocol = host.includes('localhost') ? 'http' : 'https';
+    
+    const urlPath = publicRelativePath.startsWith('/') ? publicRelativePath : `/${publicRelativePath}`;
+    const url = `${protocol}://${host}${urlPath}`;
+    
+    console.log(`[program-types] Fetching PDF from: ${url}`);
+    
+    const response = await fetch(url, { method: 'GET' });
+    if (!response.ok) {
+        throw new Error(`Failed to fetch PDF (${response.status}) from ${url}`);
+    }
+    
+    const arrayBuffer = await response.arrayBuffer();
+    const pdfBytes = new Uint8Array(arrayBuffer);
+    
     const pdfDoc = await PDFDocument.load(pdfBytes);
     const form = pdfDoc.getForm();
     const fields = form.getFields();
