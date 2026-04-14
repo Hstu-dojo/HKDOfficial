@@ -70,7 +70,7 @@ async function getCourses() {
 
     const coursesWithSchedules = await Promise.all(activeCourses.map(async (course) => {
       const schedules = await db.select().from(courseSchedules).where(eq(courseSchedules.courseId, course.id));
-      const canSeePricing = !!(viewerPartnerId && course.partnerId && course.partnerId === viewerPartnerId);
+      const canSeePricing = !course.partnerId || (viewerPartnerId === course.partnerId);
       return {
         id: course.id,
         name: course.name,
@@ -83,6 +83,7 @@ async function getCourses() {
         beltLevelFrom: course.minimumBelt ?? undefined,
         beltLevelTo: course.targetBelt ?? undefined,
         durationMonths: course.duration ?? undefined,
+        canApply: canSeePricing,
         monthlyFee: canSeePricing ? course.monthlyFee : null,
         admissionFee: canSeePricing ? course.admissionFee : null,
         currency: course.currency,

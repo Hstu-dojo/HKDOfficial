@@ -26,6 +26,7 @@ interface Course {
   durationMonths?: number;
   monthlyFee: number | null;
   admissionFee: number | null;
+  canApply?: boolean;
   currency: string;
   maxCapacity?: number;
   currentEnrollment: number;
@@ -238,6 +239,8 @@ export default function KarateCoursesPage({ initialCourses, enrolledCourseIds = 
                   ? BELT_STYLES[course.beltLevelFrom] || BELT_STYLES.white
                   : null;
 
+                const canApply = course.canApply ?? true;
+
                 return (
                   <motion.div
                     key={course.id}
@@ -246,7 +249,7 @@ export default function KarateCoursesPage({ initialCourses, enrolledCourseIds = 
                     animate={visible ? 'animate' : 'initial'}
                     custom={i}
                   >
-                    <div className="group relative bg-white dark:bg-slate-800 rounded-xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-500 border border-slate-100 dark:border-slate-700/50 hover:border-primary/30 dark:hover:border-primary/30 h-full flex flex-col">
+                    <div className={`group relative bg-white dark:bg-slate-800 rounded-xl overflow-hidden shadow-sm transition-all duration-500 border border-slate-100 dark:border-slate-700/50 h-full flex flex-col ${canApply ? 'hover:shadow-xl hover:border-primary/30 dark:hover:border-primary/30' : 'opacity-60 grayscale select-none'}`}>
                       {/* image */}
                       <div className="relative h-48 lg:h-52 overflow-hidden">
                         {course.imageUrl ? (
@@ -373,20 +376,31 @@ export default function KarateCoursesPage({ initialCourses, enrolledCourseIds = 
 
                         {/* pricing & CTA */}
                         <div className="border-t border-slate-100 dark:border-slate-700/50 pt-4 mt-2">
-                          <div className="flex items-end justify-between mb-4">
-                            <div>
-                              <p className="text-[10px] font-medium text-muted-foreground uppercase tracking-wider">Monthly</p>
-                              <p className="text-2xl font-bold text-primary">
-                                {formatCurrency(course.monthlyFee, course.currency)}
-                              </p>
-                            </div>
-                            {course.admissionFee != null && course.admissionFee > 0 && (
-                              <div className="text-right">
-                                <p className="text-[10px] font-medium text-muted-foreground uppercase tracking-wider">Admission</p>
-                                <p className="text-base font-semibold">
-                                  {formatCurrency(course.admissionFee, course.currency)}
-                                </p>
-                              </div>
+                          <div className="flex items-end justify-between mb-4 min-h-[44px]">
+                            {canApply ? (
+                              <>
+                                <div>
+                                  <p className="text-[10px] font-medium text-muted-foreground uppercase tracking-wider">Monthly</p>
+                                  <p className="text-2xl font-bold text-primary">
+                                    {formatCurrency(course.monthlyFee, course.currency)}
+                                  </p>
+                                </div>
+                                {course.admissionFee != null && course.admissionFee > 0 && (
+                                  <div className="text-right">
+                                    <p className="text-[10px] font-medium text-muted-foreground uppercase tracking-wider">Admission</p>
+                                    <p className="text-base font-semibold">
+                                      {formatCurrency(course.admissionFee, course.currency)}
+                                    </p>
+                                  </div>
+                                )}
+                              </>
+                            ) : (
+                                <div>
+                                  <p className="text-[10px] font-medium text-muted-foreground uppercase tracking-wider opacity-60">Pricing</p>
+                                  <p className="text-base font-medium text-muted-foreground opacity-60">
+                                    Private Course
+                                  </p>
+                                </div>
                             )}
                           </div>
 
@@ -413,7 +427,7 @@ export default function KarateCoursesPage({ initialCourses, enrolledCourseIds = 
                                   </button>
                                 )}
                               </div>
-                            ) : (
+                            ) : canApply ? (
                               <Link
                                 href={`/karate/courses/${course.slug}/apply`}
                                 className="flex items-center justify-center gap-2 w-full text-center px-4 py-3 bg-gradient-to-r from-primary to-tertiary text-white font-semibold rounded-lg hover:opacity-90 transition-all duration-300 shadow-sm hover:shadow-md text-sm"
@@ -423,6 +437,13 @@ export default function KarateCoursesPage({ initialCourses, enrolledCourseIds = 
                                   <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
                                 </svg>
                               </Link>
+                            ) : (
+                              <button
+                                disabled
+                                className="w-full px-4 py-3 bg-slate-200 dark:bg-slate-700 text-muted-foreground font-medium rounded-lg cursor-not-allowed text-sm flex items-center justify-center"
+                              >
+                                Exclusive Course
+                              </button>
                             )
                           ) : (
                             <button
