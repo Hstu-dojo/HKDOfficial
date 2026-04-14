@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server'
 import { db } from '@/lib/connect-db'
 import { partners, partnerAdmins, partnerAdminSessions } from '@/db/schemas/partner'
-import { and, eq } from 'drizzle-orm'
+import { eq, sql } from 'drizzle-orm'
 import { compare } from '@/lib/hash'
 import { PARTNER_ADMIN_SESSION_COOKIE } from '@/lib/partner-admin/auth'
 import { randomBytes } from 'crypto'
@@ -45,7 +45,7 @@ export async function POST(request: Request) {
       })
       .from(partnerAdmins)
       .innerJoin(partners, eq(partnerAdmins.partnerId, partners.id))
-      .where(eq(partnerAdmins.email, email))
+      .where(sql`lower(${partnerAdmins.email}) = ${email}`)
       .limit(1)
 
     const admin = rows[0]
