@@ -11,7 +11,7 @@ import {
   courses, courseSchedules, courseInstructors,
   enrollmentApplications, courseEnrollments,
   monthlyFees, paymentReminders, paymentSettings,
-  programs, programRegistrations,
+  programs, programRegistrations, programTypes,
   profileMonthlyStatus, memberMonthlyStatus, branchChangeRequests,
   certificateSignatures, programCertificates
 } from "./karate";
@@ -457,9 +457,21 @@ export const galleryImagesRelations = relations(galleryImages, ({ one }) => ({
   }),
 }));
 // Program Relations
+export const programTypesRelations = relations(programTypes, ({ one, many }) => ({
+  programs: many(programs),
+  creator: one(user, {
+    fields: [programTypes.createdBy],
+    references: [user.id],
+  }),
+}));
+
 export const programsRelations = relations(programs, ({ one, many }) => ({
   registrations: many(programRegistrations),
   certificates: many(programCertificates),
+  programType: one(programTypes, {
+    fields: [programs.programTypeId],
+    references: [programTypes.id],
+  }),
   creator: one(user, {
     fields: [programs.createdBy],
     references: [user.id],

@@ -1,20 +1,11 @@
-import { pgTable, text, integer, boolean, timestamp, jsonb, pgEnum } from "drizzle-orm/pg-core";
+import { pgTable, text, integer, boolean, timestamp, jsonb } from "drizzle-orm/pg-core";
 import { sql } from "drizzle-orm";
 import { user } from "../auth";
 import { profiles } from "./members";
 import { enrollmentApplicationStatusEnum } from "./enrollments";
-import { beltRankEnum } from "../enums";
+import { beltRankEnum, programTypeEnum } from "../enums";
 import { courses } from "./courses";
-
-// Program Type Enum
-export const programTypeEnum = pgEnum('program_type', [
-  'BELT_TEST',
-  'COMPETITION',
-  'SEMINAR',
-  'WORKSHOP',
-  'SPECIAL_TRAINING',
-  'OTHER'
-]);
+import { programTypes } from "./program-types";
 
 // Programs Table - Defines one-time fee events/programs
 export const programs = pgTable("programs", {
@@ -23,6 +14,9 @@ export const programs = pgTable("programs", {
   slug: text("slug").notNull().unique(), // URL friendly slug
   description: text("description"),
   type: programTypeEnum("type").notNull().default('OTHER'),
+
+  // Dynamic program type template (certificate mapping, etc.)
+  programTypeId: text('program_type_id').references(() => programTypes.id, { onDelete: 'set null' }),
 
   // Belt Test binding (optional for other program types)
   courseId: text("course_id").references(() => courses.id, { onDelete: 'set null' }),

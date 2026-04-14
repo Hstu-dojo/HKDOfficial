@@ -121,6 +121,12 @@ export default function ProgramsManagement() {
             >
               Signatures
             </Link>
+            <Link
+              href="/admin/programs/types"
+              className="inline-flex w-full items-center justify-center px-4 py-2 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-200 bg-white dark:bg-gray-800 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition text-sm font-medium sm:w-auto"
+            >
+              + Type
+            </Link>
             <button
               onClick={() => {
                 setEditingProgram(null);
@@ -146,7 +152,7 @@ export default function ProgramsManagement() {
                   {program.isRegistrationOpen ? 'Open' : 'Closed'}
                 </span>
                 <span className="inline-flex items-center text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide">
-                  {program.type.replace('_', ' ')}
+                  {(program as any).programType?.name ? String((program as any).programType.name) : program.type.replace('_', ' ')}
                 </span>
               </div>
 

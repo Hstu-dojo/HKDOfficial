@@ -134,6 +134,13 @@
       "when": 1776144000000,
       "tag": "0018_partner_admin_auth",
       "breakpoints": true
+    },
+    {
+      "idx": 19,
+      "version": "7",
+      "when": 1776193369441,
+      "tag": "0019_amazing_vance_astro",
+      "breakpoints": true
     }
   ]
 }

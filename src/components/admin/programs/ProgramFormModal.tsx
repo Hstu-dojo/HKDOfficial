@@ -6,13 +6,15 @@ import { createProgram, updateProgram } from '@/actions/program-actions';
 import { toast } from 'sonner';
 import PaymentAccountSelector from '@/components/admin/shared/PaymentAccountSelector';
 import Link from 'next/link';
+import { getProgramTypes } from '@/actions/program-types-actions';
+import type { ProgramType } from '@/db/schemas/karate/program-types';
 
 // Define the shape of our form data
 interface ProgramFormData {
   title: string;
   slug: string;
   description: string;
-  type: string;
+  programTypeId: string;
   courseId: string;
   startDate: string;
   endDate: string;
@@ -30,24 +32,18 @@ interface ProgramFormModalProps {
   initialData?: any; // Using any for simplicity as it matches Program interface but with Date objects
 }
 
-const PROGRAM_TYPES = [
-  { value: 'BELT_TEST', label: 'Belt Test' },
-  { value: 'COMPETITION', label: 'Competition' },
-  { value: 'SEMINAR', label: 'Seminar' },
-  { value: 'WORKSHOP', label: 'Workshop' },
-  { value: 'SPECIAL_TRAINING', label: 'Special Training' },
-  { value: 'OTHER', label: 'Other' },
-];
-
 export default function ProgramFormModal({ isOpen, onClose, onSuccess, initialData }: ProgramFormModalProps) {
   const [loading, setLoading] = useState(false);
   const selectedPaymentAccountIdsRef = useRef<string[]>([]);
   const [courses, setCourses] = useState<Array<{ id: string; name: string; partnerId?: string | null }>>([]);
+  const [programTypes, setProgramTypes] = useState<ProgramType[]>([]);
+  const [programTypesLoading, setProgramTypesLoading] = useState(false);
+  const [legacyCategory, setLegacyCategory] = useState<string>('OTHER');
   const [formData, setFormData] = useState<ProgramFormData>({
     title: '',
     slug: '',
     description: '',
-    type: 'BELT_TEST',
+    programTypeId: '',
     courseId: '',
     startDate: '',
     endDate: '',
@@ -71,7 +67,7 @@ export default function ProgramFormModal({ isOpen, onClose, onSuccess, initialDa
         title: initialData.title || '',
         slug: initialData.slug || '',
         description: initialData.description || '',
-        type: initialData.type || 'BELT_TEST',
+        programTypeId: initialData.programTypeId || '',
         courseId: initialData.courseId || '',
         startDate: formatDate(initialData.startDate),
         endDate: formatDate(initialData.endDate),
@@ -81,8 +77,17 @@ export default function ProgramFormModal({ isOpen, onClose, onSuccess, initialDa
         isRegistrationOpen: initialData.isRegistrationOpen ?? true,
         location: initialData.location || '',
       });
+
+      setLegacyCategory(initialData.type || 'OTHER');
     }
   }, [initialData]);
+
+  const selectedProgramType = useMemo(() => {
+    if (!formData.programTypeId) return null;
+    return programTypes.find((t) => t.id === formData.programTypeId) ?? null;
+  }, [formData.programTypeId, programTypes]);
+
+  const effectiveCategory = selectedProgramType?.category ? String(selectedProgramType.category) : legacyCategory;
 
   useEffect(() => {
     if (!isOpen) return;
@@ -105,6 +110,40 @@ export default function ProgramFormModal({ isOpen, onClose, onSuccess, initialDa
     fetchCourses();
   }, [isOpen]);
 
+  useEffect(() => {
+    if (!isOpen) return;
+    async function fetchProgramTypes() {
+      try {
+        setProgramTypesLoading(true);
+        const res = await getProgramTypes({ includeInactive: false });
+        if (res.success && res.data) {
+          setProgramTypes(res.data);
+        } else {
+          setProgramTypes([]);
+        }
+      } catch (e) {
+        console.error('Failed to fetch program types:', e);
+        setProgramTypes([]);
+      } finally {
+        setProgramTypesLoading(false);
+      }
+    }
+    fetchProgramTypes();
+  }, [isOpen]);
+
+  useEffect(() => {
+    // If editing an old program (no programTypeId), auto-pick a matching type by legacy category.
+    if (!isOpen) return;
+    if (formData.programTypeId) return;
+    if (!legacyCategory) return;
+    if (!programTypes.length) return;
+
+    const match = programTypes.find((t) => String(t.category) === String(legacyCategory));
+    if (match) {
+      setFormData((prev) => ({ ...prev, programTypeId: match.id }));
+    }
+  }, [formData.programTypeId, isOpen, legacyCategory, programTypes]);
+
   // Auto-generate slug from title if creating new
   const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const title = e.target.value;
@@ -124,7 +163,12 @@ export default function ProgramFormModal({ isOpen, onClose, onSuccess, initialDa
     setLoading(true);
 
     try {
-      if (formData.type === 'BELT_TEST' && !formData.courseId) {
+      if (!formData.programTypeId) {
+        toast.error('Please select a Program Type');
+        return;
+      }
+
+      if (effectiveCategory === 'BELT_TEST' && !formData.courseId) {
         toast.error('Please select a course for Belt Test');
         return;
       }
@@ -140,7 +184,7 @@ export default function ProgramFormModal({ isOpen, onClose, onSuccess, initialDa
       };
 
       // Only persist courseId for Belt Test programs
-      payload.courseId = formData.type === 'BELT_TEST' ? formData.courseId : null;
+      payload.courseId = effectiveCategory === 'BELT_TEST' ? formData.courseId : null;
 
       let result;
       if (initialData) {
@@ -207,26 +251,38 @@ export default function ProgramFormModal({ isOpen, onClose, onSuccess, initialDa
                 </div>
 
                 <div className="col-span-1">
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Type</label>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Program Type</label>
                   <select
-                    value={formData.type}
+                    value={formData.programTypeId}
                     onChange={(e) => {
-                      const nextType = e.target.value;
-                      setFormData(prev => ({
+                      const nextId = e.target.value;
+                      const nextType = programTypes.find((t) => t.id === nextId) ?? null;
+                      const nextCategory = nextType?.category ? String(nextType.category) : 'OTHER';
+
+                      setFormData((prev) => ({
                         ...prev,
-                        type: nextType,
-                        courseId: nextType === 'BELT_TEST' ? prev.courseId : '',
+                        programTypeId: nextId,
+                        courseId: nextCategory === 'BELT_TEST' ? prev.courseId : '',
                       }));
                     }}
                     className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm border p-2"
                   >
-                    {PROGRAM_TYPES.map(type => (
-                      <option key={type.value} value={type.value}>{type.label}</option>
+                    <option value="">
+                      {programTypesLoading ? 'Loading program types...' : 'Select a program type'}
+                    </option>
+                    {programTypes.map((t) => (
+                      <option key={t.id} value={t.id}>
+                        {t.name}
+                      </option>
                     ))}
                   </select>
+                  <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                    Create types in{' '}
+                    <Link href="/admin/programs/types" target="_blank" className="text-blue-600 hover:underline">Program Types</Link>.
+                  </p>
                 </div>
 
-                {formData.type === 'BELT_TEST' && (
+                {effectiveCategory === 'BELT_TEST' && (
                   <div className="col-span-2">
                     <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Course (Belt Test)</label>
                     <select

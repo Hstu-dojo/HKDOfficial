@@ -50,3 +50,13 @@ export const studentLevelEnum = pgEnum('student_level', [
 // Billing Enums
 export const billStatusEnum = pgEnum('bill_status', ['pending', 'paid', 'overdue', 'cancelled']);
 export const paymentMethodEnum = pgEnum('payment_method', ['bkash', 'cash', 'bank_transfer']);
+
+// Programs
+export const programTypeEnum = pgEnum('program_type', [
+  'BELT_TEST',
+  'COMPETITION',
+  'SEMINAR',
+  'WORKSHOP',
+  'SPECIAL_TRAINING',
+  'OTHER',
+]);

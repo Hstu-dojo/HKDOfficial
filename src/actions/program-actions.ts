@@ -1,13 +1,21 @@
 'use server';
 
 import { db } from "@/lib/connect-db";
-import { programs, programRegistrations, members, profiles, registrations, courseEnrollments, courses, enrollmentApplications } from "@/db/schemas/karate";
+import { programs, programRegistrations, members, profiles, registrations, courseEnrollments, courses, enrollmentApplications, programTypes } from "@/db/schemas/karate";
 import { user, account } from "@/db/schemas/auth";
 import { revalidatePath } from "next/cache";
 import { eq, desc, and, inArray, count, ilike, or } from "drizzle-orm";
 import { NewProgram, NewProgramRegistration } from "@/db/schemas/karate/programs";
 import { checkUserProfileStatus } from "./check-profile";
 import { partners } from "@/db/schemas/partner";
+
+async function resolveProgramCategoryFromTypeId(programTypeId: string) {
+  const programType = await db.query.programTypes.findFirst({
+    where: eq(programTypes.id, programTypeId),
+  });
+  if (!programType) return { ok: false as const, error: 'Selected program type not found.' };
+  return { ok: true as const, programType };
+}
 
 type AdminRegistrantCandidate = {
   userId: string;
@@ -37,6 +45,13 @@ const BELT_TEST_ALLOWED_RANKS = [
 
 export async function createProgram(data: NewProgram) {
   try {
+    // If a dynamic program type was selected, derive the category for business rules.
+    if (data.programTypeId) {
+      const resolved = await resolveProgramCategoryFromTypeId(data.programTypeId);
+      if (!resolved.ok) return { success: false, error: resolved.error };
+      data.type = resolved.programType.category as any;
+    }
+
     if (data.type === 'BELT_TEST') {
       if (!data.courseId) {
         return { success: false, error: 'Belt Test programs require a course.' };
@@ -73,7 +88,16 @@ export async function updateProgram(id: string, data: Partial<NewProgram>) {
       return { success: false, error: 'Program not found' };
     }
 
-    const effectiveType = (data.type ?? existing.type) as any;
+    let effectiveType = (data.type ?? existing.type) as any;
+    const effectiveProgramTypeId = (data as any).programTypeId ?? (existing as any).programTypeId;
+    if (effectiveProgramTypeId) {
+      const resolved = await resolveProgramCategoryFromTypeId(effectiveProgramTypeId);
+      if (!resolved.ok) return { success: false, error: resolved.error };
+      effectiveType = resolved.programType.category as any;
+      // Always keep the legacy category column in sync
+      (data as any).type = effectiveType;
+    }
+
     const effectiveCourseId = (data as any).courseId ?? (existing as any).courseId;
 
     if (effectiveType === 'BELT_TEST') {
@@ -111,6 +135,9 @@ export async function updateProgram(id: string, data: Partial<NewProgram>) {
 export async function getAllPrograms() {
   try {
     const allPrograms = await db.query.programs.findMany({
+      with: {
+        programType: true,
+      },
       orderBy: [desc(programs.startDate)],
     });
     return { success: true, data: allPrograms };
