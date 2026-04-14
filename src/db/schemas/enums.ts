@@ -25,10 +25,10 @@ export const beltRankEnum = pgEnum('belt_rank', [
   'blue',
   'red',
   'brown',
+  'black',
   'brown_kyu3',
   'brown_kyu2',
   'brown_kyu1',
-  'black',
 ]);
 export const classTypeEnum = pgEnum('class_type', ['beginner', 'intermediate', 'advanced', 'sparring', 'kata']);
 export const equipmentStatusEnum = pgEnum('equipment_status', ['available', 'checked_out', 'maintenance', 'retired']);
