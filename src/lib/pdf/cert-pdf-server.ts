@@ -206,6 +206,7 @@ export async function generateDynamicCertificatePdf({
   templatePath,
   fieldMappings,
   resolvedValues,
+  shouldFlatten,
 }: DynamicCertificateData): Promise<Uint8Array> {
   const headersList = await headers();
   const host = headersList.get('host') || 'localhost:3000';
@@ -282,7 +283,7 @@ export async function generateDynamicCertificatePdf({
     }
   }
 
-  if (options.shouldFlatten !== false) {
+  if (shouldFlatten !== false) {
     try { form.flatten(); } catch { /* ignore if already flat */ }
   }
   return await pdfDoc.save();
