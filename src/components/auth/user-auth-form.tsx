@@ -12,6 +12,7 @@ import { useSession } from "@/hooks/useSessionCompat";
 import { createClient } from "@/lib/supabase/client";
 import { SocialLoginButtons } from "@/components/auth/social-login-buttons";
 import { useI18n, useCurrentLocale } from "@/locales/client";
+import { Eye, EyeOff } from "lucide-react";
 export interface UserAuthFormProps
   extends React.HTMLAttributes<HTMLDivElement> {
   callbackUrl?: string;
@@ -25,6 +26,7 @@ export function UserAuthForm({
   ...props
 }: UserAuthFormProps) {
   const [isLoading, setIsLoading] = React.useState<boolean>(false);
+  const [showPassword, setShowPassword] = React.useState(false);
   const { data: session, status } = useSession();
   const router = useRouter();
   const pathname = usePathname();
@@ -165,17 +167,31 @@ export function UserAuthForm({
             <Label className="sr-only" htmlFor="password">
               {t('auth.login.passwordLabel')}
             </Label>
-            <Input
-              id="password"
-              name="password"
-              placeholder="XXXXXXXXXXXXXX"
-              type="password"
-              autoCapitalize="none"
-              autoComplete="password"
-              autoCorrect="off"
-              disabled={isLoading}
-              required={true}
-            />
+            <div className="relative">
+              <Input
+                id="password"
+                name="password"
+                placeholder="XXXXXXXXXXXXXX"
+                type={showPassword ? "text" : "password"}
+                autoCapitalize="none"
+                autoComplete="current-password"
+                autoCorrect="off"
+                disabled={isLoading}
+                required={true}
+                className="pr-10"
+              />
+              <Button
+                type="button"
+                variant="ghost"
+                size="icon"
+                className="absolute right-1 top-1/2 h-8 w-8 -translate-y-1/2"
+                onClick={() => setShowPassword((v) => !v)}
+                aria-label={showPassword ? "Hide password" : "Show password"}
+                disabled={isLoading}
+              >
+                {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+              </Button>
+            </div>
           </div>
           <Button disabled={isLoading}>
             {/* {isLoading && (

@@ -19,17 +19,19 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import Image from "next/image";
-import { SocialLoginButtons } from "@/components/auth/social-login-buttons";
 import { useI18n } from "@/locales/client";
 import { useCurrentLocale } from "@/locales/client";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Eye, EyeOff } from "lucide-react";
 
 export function RegisterForm({ className, ...props }: UserAuthFormProps) {
   const searchParams = useSearchParams();
   //   console.log(searchParams?.get('callbackUrl'));
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [step, setStep] = useState<0 | 1 | 2>(0);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [userName, setUsername] = useState("");
   const [userAvatar, setAvatar] = useState("/image/avatar/Milo.svg");
 
@@ -218,222 +220,311 @@ export function RegisterForm({ className, ...props }: UserAuthFormProps) {
     fetchPartners();
   }, []);
 
+  const validateStep = (nextStep: number) => {
+    if (nextStep <= 0) return true;
+
+    // Step 0 (Account)
+    if (!userName || !email || !password) {
+      toast.error("Please complete account details", {
+        description: "Username, email, and password are required.",
+      });
+      return false;
+    }
+
+    if (nextStep <= 1) return true;
+
+    // Step 1 (Personal)
+    if (!phone || !dob) {
+      toast.error("Please complete personal details", {
+        description: "Phone number and date of birth are required.",
+      });
+      return false;
+    }
+
+    return true;
+  };
+
+  const handleNextStep = () => {
+    const next = Math.min(2, step + 1) as 0 | 1 | 2;
+    if (!validateStep(next)) return;
+    setStep(next);
+  };
+
+  const handlePrevStep = () => {
+    setStep((s) => (Math.max(0, s - 1) as 0 | 1 | 2));
+  };
+
   return (
     <div className={cn("grid gap-6", className)} {...props}>
       <form onSubmit={onSubmit}>
         <div className="grid gap-4">
-          <div className="grid gap-1">
-            <Label className="sr-only" htmlFor="username">
-              {t('auth.register.usernameLabel')}
-            </Label>
-            <Input
-              className="border-green-500"
-              id="username"
-              onChange={(e) => setUsername(e.target.value)}
-              placeholder={t('auth.register.usernamePlaceholder')}
-              type="text"
-              autoCapitalize="none"
-              autoComplete="username"
-              autoCorrect="off"
-              disabled={isLoading}
-              required={true}
-            />
-          </div>
-          <div className="grid gap-1">
-            <Label className="sr-only" htmlFor="email">
-              {t('auth.register.emailLabel')}
-            </Label>
-            <Input
-              id="email"
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder={t('auth.register.emailPlaceholder')}
-              type="email"
-              autoCapitalize="none"
-              autoComplete="email"
-              autoCorrect="off"
-              disabled={isLoading}
-              required={true}
-            />
-          </div>
-          <div className="grid gap-1">
-            <Label className="sr-only" htmlFor="password">
-              {t('auth.register.passwordLabel')}
-            </Label>
-            <Input
-              id="password"
-              onChange={(e) => setPassword(e.target.value)}
-              placeholder={t('auth.register.passwordLabel')}
-              type="password"
-              autoCapitalize="none"
-              autoComplete="password"
-              autoCorrect="off"
-              disabled={isLoading}
-              required={true}
-            />
-          </div>
-          <div className="grid gap-1">
-            <Select required={false} onValueChange={(e) => setAvatar(e)}>
-              <SelectTrigger className="w-full">
-                <SelectValue placeholder={t('auth.register.avatarLabel')} />
-              </SelectTrigger>
-              <SelectContent className="h-60 overflow-y-auto ">
-                {avatars.map((avatar: any, index: any) => (
-                  <SelectItem
-                    key={avatar.name}
-                    className=""
-                    value={avatar.icon}
-                  >
-                    <div className="flex  flex-row items-center justify-between">
-                      <Image
-                        alt={avatar.name}
-                        height={30}
-                        width={30}
-                        className="mr-2"
-                        src={avatar.icon}
-                        style={{
-                          objectFit: "fill",
-                        }}
-                      />
-                      <span>{avatar.name}</span>
-                    </div>
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-
-          {/* Onboarding Fields (Merged) */}
-          <div className="grid gap-1">
-            <Label className="sr-only" htmlFor="phone">
-              Phone
-            </Label>
-            <Input
-              id="phone"
-              onChange={(e) => setPhone(e.target.value)}
-              placeholder="Phone Number"
-              type="tel"
-              autoComplete="tel"
-              disabled={isLoading}
-              required={true}
-            />
-          </div>
-
-          <div className="grid gap-1">
-            <Label className="sr-only" htmlFor="dob">
-              Date of Birth
-            </Label>
-            <Input
-              id="dob"
-              onChange={(e) => setDob(e.target.value)}
-              type="date"
-              autoComplete="bday"
-              disabled={isLoading}
-              required={true}
-            />
-          </div>
-
-          <div className="grid gap-1">
-            <Select onValueChange={(v) => setSex(v)} value={sex}>
-              <SelectTrigger className="w-full">
-                <SelectValue placeholder="Sex" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="Male">Male</SelectItem>
-                <SelectItem value="Female">Female</SelectItem>
-                <SelectItem value="Other">Other</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-
-          <div className="grid gap-1">
-            <Input
-              id="nid"
-              onChange={(e) => setNid(e.target.value)}
-              placeholder="NID / Birth Cert. / Passport No."
-              type="text"
-              disabled={isLoading}
-            />
-          </div>
-
-          <div className="grid gap-1">
-            <Input
-              id="occupation"
-              onChange={(e) => setOccupation(e.target.value)}
-              placeholder="Occupation"
-              type="text"
-              disabled={isLoading}
-            />
-          </div>
-
-          <div className="grid gap-1">
-            <Input
-              id="institute"
-              onChange={(e) => setInstitute(e.target.value)}
-              placeholder="Institute"
-              type="text"
-              disabled={isLoading}
-            />
-          </div>
-
-          <div className="grid gap-1">
-            <Input
-              id="faculty"
-              onChange={(e) => setFaculty(e.target.value)}
-              placeholder="Faculty / Section (Optional)"
-              type="text"
-              disabled={isLoading}
-            />
-          </div>
-
-          <div className="grid gap-1">
-            <Input
-              id="address"
-              onChange={(e) => setAddress(e.target.value)}
-              placeholder="Present Address"
-              type="text"
-              disabled={isLoading}
-            />
-          </div>
-
-          <div className="grid gap-1">
-            <Select onValueChange={(v) => setPartnerId(v)} value={partnerId}>
-              <SelectTrigger className="w-full">
-                <SelectValue placeholder="Training Venue" />
-              </SelectTrigger>
-              <SelectContent>
-                {partners.map((partner) => (
-                  <SelectItem key={partner.id} value={partner.id}>
-                    {partner.name}{partner.location ? ` — ${partner.location}` : ''}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-
-          <div className="flex items-start gap-3 rounded-md border p-3">
-            <Checkbox
-              checked={agreement}
-              onCheckedChange={(v) => setAgreement(v === true)}
-              disabled={isLoading}
-            />
-            <div className="text-sm leading-snug text-muted-foreground">
-              I agree to the terms and conditions.
+          <div className="flex items-center justify-between">
+            <p className="text-sm text-muted-foreground">Step {step + 1} of 3</p>
+            <div className="flex items-center gap-2">
+              <span className={cn("h-2 w-2 rounded-full", step >= 0 ? "bg-primary" : "bg-muted")} />
+              <span className={cn("h-2 w-2 rounded-full", step >= 1 ? "bg-primary" : "bg-muted")} />
+              <span className={cn("h-2 w-2 rounded-full", step >= 2 ? "bg-primary" : "bg-muted")} />
             </div>
           </div>
 
-          <Button disabled={isLoading}>
-            {/* {isLoading && (
-              <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
-            )} */}
-            {t('auth.register.registerButton')}
-          </Button>
+          {step === 0 && (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="grid gap-2">
+                <Label htmlFor="username">{t('auth.register.usernameLabel')}</Label>
+                <Input
+                  className="border-green-500"
+                  id="username"
+                  onChange={(e) => setUsername(e.target.value)}
+                  placeholder={t('auth.register.usernamePlaceholder')}
+                  type="text"
+                  autoCapitalize="none"
+                  autoComplete="username"
+                  autoCorrect="off"
+                  disabled={isLoading}
+                  required={true}
+                />
+              </div>
+              <div className="grid gap-2">
+                <Label htmlFor="email">{t('auth.register.emailLabel')}</Label>
+                <Input
+                  id="email"
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder={t('auth.register.emailPlaceholder')}
+                  type="email"
+                  autoCapitalize="none"
+                  autoComplete="email"
+                  autoCorrect="off"
+                  disabled={isLoading}
+                  required={true}
+                />
+              </div>
+
+              <div className="grid gap-2 md:col-span-2">
+                <Label htmlFor="password">{t('auth.register.passwordLabel')}</Label>
+                <div className="relative">
+                  <Input
+                    id="password"
+                    onChange={(e) => setPassword(e.target.value)}
+                    placeholder={t('auth.register.passwordLabel')}
+                    type={showPassword ? "text" : "password"}
+                    autoCapitalize="none"
+                    autoComplete="new-password"
+                    autoCorrect="off"
+                    disabled={isLoading}
+                    required={true}
+                    className="pr-10"
+                  />
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="icon"
+                    className="absolute right-1 top-1/2 h-8 w-8 -translate-y-1/2"
+                    onClick={() => setShowPassword((v) => !v)}
+                    aria-label={showPassword ? "Hide password" : "Show password"}
+                    disabled={isLoading}
+                  >
+                    {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                  </Button>
+                </div>
+              </div>
+
+              <div className="grid gap-2 md:col-span-2">
+                <Label>Avatar</Label>
+                <Select required={false} onValueChange={(e) => setAvatar(e)}>
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder={t('auth.register.avatarLabel')} />
+                  </SelectTrigger>
+                  <SelectContent className="h-60 overflow-y-auto ">
+                    {avatars.map((avatar: any) => (
+                      <SelectItem key={avatar.name} value={avatar.icon}>
+                        <div className="flex flex-row items-center justify-between">
+                          <Image
+                            alt={avatar.name}
+                            height={30}
+                            width={30}
+                            className="mr-2"
+                            src={avatar.icon}
+                            style={{ objectFit: "fill" }}
+                          />
+                          <span>{avatar.name}</span>
+                        </div>
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+          )}
+
+          {step === 1 && (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="grid gap-2">
+                <Label htmlFor="phone">Phone Number</Label>
+                <Input
+                  id="phone"
+                  onChange={(e) => setPhone(e.target.value)}
+                  placeholder="Phone Number"
+                  type="tel"
+                  autoComplete="tel"
+                  disabled={isLoading}
+                  required={true}
+                />
+              </div>
+
+              <div className="grid gap-2">
+                <Label htmlFor="dob">Date of Birth</Label>
+                <Input
+                  id="dob"
+                  onChange={(e) => setDob(e.target.value)}
+                  type="date"
+                  autoComplete="bday"
+                  disabled={isLoading}
+                  required={true}
+                />
+              </div>
+
+              <div className="grid gap-2">
+                <Label>Sex</Label>
+                <Select onValueChange={(v) => setSex(v)} value={sex}>
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder="Select" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="Male">Male</SelectItem>
+                    <SelectItem value="Female">Female</SelectItem>
+                    <SelectItem value="Other">Other</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="grid gap-2">
+                <Label htmlFor="nid">ID Number (optional)</Label>
+                <Input
+                  id="nid"
+                  onChange={(e) => setNid(e.target.value)}
+                  placeholder="NID / Birth Cert. / Passport"
+                  type="text"
+                  disabled={isLoading}
+                />
+              </div>
+            </div>
+          )}
+
+          {step === 2 && (
+            <div className="grid gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="grid gap-2">
+                  <Label htmlFor="occupation">Occupation (optional)</Label>
+                  <Input
+                    id="occupation"
+                    onChange={(e) => setOccupation(e.target.value)}
+                    placeholder="Occupation"
+                    type="text"
+                    disabled={isLoading}
+                  />
+                </div>
+
+                <div className="grid gap-2">
+                  <Label htmlFor="institute">Institute (optional)</Label>
+                  <Input
+                    id="institute"
+                    onChange={(e) => setInstitute(e.target.value)}
+                    placeholder="Institute"
+                    type="text"
+                    disabled={isLoading}
+                  />
+                </div>
+
+                <div className="grid gap-2">
+                  <Label htmlFor="faculty">Faculty / Section (optional)</Label>
+                  <Input
+                    id="faculty"
+                    onChange={(e) => setFaculty(e.target.value)}
+                    placeholder="Faculty / Section"
+                    type="text"
+                    disabled={isLoading}
+                  />
+                </div>
+
+                <div className="grid gap-2">
+                  <Label htmlFor="address">Present Address (optional)</Label>
+                  <Input
+                    id="address"
+                    onChange={(e) => setAddress(e.target.value)}
+                    placeholder="Present Address"
+                    type="text"
+                    disabled={isLoading}
+                  />
+                </div>
+
+                <div className="grid gap-2 md:col-span-2">
+                  <Label>Training Venue</Label>
+                  <Select onValueChange={(v) => setPartnerId(v)} value={partnerId}>
+                    <SelectTrigger className="w-full">
+                      <SelectValue placeholder="Select a venue" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {partners.map((partner) => (
+                        <SelectItem key={partner.id} value={partner.id}>
+                          {partner.name}{partner.location ? ` — ${partner.location}` : ''}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+
+              <div className="flex items-start gap-3 rounded-md border p-3">
+                <Checkbox
+                  checked={agreement}
+                  onCheckedChange={(v) => setAgreement(v === true)}
+                  disabled={isLoading}
+                />
+                <div className="text-sm leading-snug text-muted-foreground">
+                  I agree to the terms and conditions.
+                </div>
+              </div>
+            </div>
+          )}
+
+          <div className="flex items-center justify-between gap-3">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={handlePrevStep}
+              disabled={isLoading || step === 0}
+            >
+              Back
+            </Button>
+
+            {step < 2 ? (
+              <Button type="button" onClick={handleNextStep} disabled={isLoading}>
+                Next
+              </Button>
+            ) : (
+              <Button
+                type="submit"
+                disabled={isLoading}
+                onClick={() => {
+                  // keep submit UX consistent with the existing required field checks
+                  if (!validateStep(2)) return;
+                  if (!partnerId || agreement !== true) {
+                    toast.error("Please complete onboarding details", {
+                      description: "Training venue and agreement are required.",
+                    });
+                  }
+                }}
+              >
+                {t('auth.register.registerButton')}
+              </Button>
+            )}
+          </div>
         </div>
       </form>
-      <SocialLoginButtons redirectTo="/profile" />
       <div className="flex-rol relative bottom-4 flex flex-wrap items-center justify-between">
         <small>
           {t('auth.register.existingMember')}{" "}
-          <Link className="hover:underline" href="/login">
+          <Link className="hover:underline" href={`/${locale}/login`}>
             {t('auth.register.loginLink')}
           </Link>
         </small>

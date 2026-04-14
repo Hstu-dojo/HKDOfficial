@@ -695,7 +695,7 @@ export default function CourseEnrollmentWizard({
               <button
                 onClick={handleSubmit}
                 disabled={submitting}
-                className="inline-flex items-center gap-2 px-8 py-3 rounded-lg bg-green-600 text-white text-base font-bold hover:bg-green-500 shadow-lg shadow-green-600/30 ring-2 ring-green-500/20 transition-all disabled:opacity-60 disabled:cursor-not-allowed disabled:shadow-none"
+                className="inline-flex items-center gap-2 px-8 py-3 rounded-lg bg-primary text-primary-foreground text-base font-bold hover:bg-primary/90 shadow-lg ring-2 ring-primary/20 transition-all disabled:opacity-60 disabled:cursor-not-allowed disabled:shadow-none"
               >
                 {submitting ? (
                   <>
