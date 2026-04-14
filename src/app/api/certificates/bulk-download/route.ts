@@ -94,8 +94,16 @@ export async function GET(request: NextRequest) {
             }
           } else if (mapping.kind === 'signature' && mapping.signatureId) {
             const sig = c.mappedSignatures?.find((s: any) => s.id === mapping.signatureId);
-            if (sig?.signatureImageUrl) {
-              resolvedValues[fieldName] = { imageUrl: sig.signatureImageUrl };
+            let imgUrl = sig?.signatureImageUrl;
+
+            if (sig?.role === 'TRAINER' && c.trainerSignature?.signatureImageUrl) {
+              imgUrl = c.trainerSignature.signatureImageUrl;
+            } else if (sig?.role === 'COORDINATOR' && c.coordinatorSignature?.signatureImageUrl) {
+              imgUrl = c.coordinatorSignature.signatureImageUrl;
+            }
+
+            if (imgUrl) {
+              resolvedValues[fieldName] = { imageUrl: imgUrl };
             }
           }
         }

@@ -91,8 +91,17 @@ export async function GET(
         } else if (mapping.kind === 'signature' && mapping.signatureId) {
           // Pre-fetched mapped signatures
           const sig = cert.mappedSignatures?.find((s: any) => s.id === mapping.signatureId);
-          if (sig?.signatureImageUrl) {
-            resolvedValues[fieldName] = { imageUrl: sig.signatureImageUrl };
+          let imgUrl = sig?.signatureImageUrl;
+
+          // Manual Override Logic based on role:
+          if (sig?.role === 'TRAINER' && cert.trainerSignature?.signatureImageUrl) {
+            imgUrl = cert.trainerSignature.signatureImageUrl;
+          } else if (sig?.role === 'COORDINATOR' && cert.coordinatorSignature?.signatureImageUrl) {
+            imgUrl = cert.coordinatorSignature.signatureImageUrl;
+          }
+
+          if (imgUrl) {
+            resolvedValues[fieldName] = { imageUrl: imgUrl };
           }
         }
       }

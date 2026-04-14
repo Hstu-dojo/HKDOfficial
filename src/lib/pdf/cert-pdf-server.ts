@@ -255,12 +255,13 @@ export async function generateDynamicCertificatePdf({
           width: rect.width,
           height: rect.height,
         });
+        // Clear text field so it doesn't double-render over image
+        field.setText('');
       } else if (typeof value === 'string') {
+        // Obey native AcroForm properties exactly
         const text = value.trim();
-        await drawCentredText(pdfDoc, page, text, { x: rect.x, y: rect.y, w: rect.width, h: rect.height }, 12);
+        field.setText(text);
       }
-
-      field.setText('');
     } catch (err) {
       console.warn(`[cert-pdf] Failed mapping for field "${fieldName}":`, err);
     }
