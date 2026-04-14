@@ -269,9 +269,9 @@ export default function PermissionMatrix() {
       {/* Matrix Table */}
       <div className="overflow-x-auto border rounded-lg">
         <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-          <thead className="bg-gray-50 dark:bg-gray-800/50 dark:bg-gray-800">
+          <thead className="bg-gray-50 dark:bg-gray-800">
             <tr>
-              <th className="sticky left-0 z-10 bg-gray-50 dark:bg-gray-800/50 dark:bg-gray-800 px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider min-w-[200px]">
+              <th className="sticky left-0 z-10 bg-gray-50 dark:bg-gray-800 px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider min-w-[200px]">
                 Role
               </th>
               {filteredResources.map((resource) => {
@@ -302,12 +302,12 @@ export default function PermissionMatrix() {
               </th>
             </tr>
           </thead>
-          <tbody className="bg-white dark:bg-gray-800 dark:bg-gray-900 divide-y divide-gray-200 dark:divide-gray-700">
+          <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
             {matrixData.roles
               .filter((r) => r.isActive)
               .map((role) => (
-                <tr key={role.id} className="hover:bg-gray-50 dark:hover:bg-gray-700 dark:hover:bg-gray-800/50">
-                  <td className="sticky left-0 z-10 bg-white dark:bg-gray-800 dark:bg-gray-900 px-4 py-3 whitespace-nowrap border-r border-gray-200 dark:border-gray-700">
+                <tr key={role.id} className="hover:bg-gray-50 dark:hover:bg-gray-700">
+                  <td className="sticky left-0 z-10 bg-white dark:bg-gray-800 px-4 py-3 whitespace-nowrap border-r border-gray-200 dark:border-gray-700">
                     <div className="flex items-center gap-2">
                       <ShieldCheckIcon
                         className={`h-5 w-5 ${role.name === "SUPER_ADMIN" ? "text-yellow-500" : "text-green-600 dark:text-green-400"}`}
@@ -336,7 +336,7 @@ export default function PermissionMatrix() {
                             disabled={isUpdating || updating === `all-${role.id}`}
                             className={`w-6 h-6 rounded flex items-center justify-center transition-all ${
                               isUpdating
-                                ? "bg-gray-200 dark:bg-gray-600 dark:bg-gray-700"
+                                ? "bg-gray-200 dark:bg-gray-700"
                                 : hasPermission
                                 ? "bg-green-100 dark:bg-green-900/30 hover:bg-green-200 dark:hover:bg-green-800/50"
                                 : "bg-gray-100 dark:bg-gray-700 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-600 dark:hover:bg-gray-700"

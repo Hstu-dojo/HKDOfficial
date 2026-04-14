@@ -203,22 +203,22 @@ export default function AdminDashboard({ dashboardData }: AdminDashboardProps) {
                 switch (activity.type) {
                   case 'USER':
                     Icon = UserGroupIcon;
-                    colorClass = "text-blue-600";
+                    colorClass = "text-blue-600 dark:text-blue-400";
                     bgClass = "bg-blue-50 dark:bg-blue-900/20";
                     break;
                   case 'COURSE':
                     Icon = DocumentTextIcon;
-                    colorClass = "text-indigo-600";
+                    colorClass = "text-indigo-600 dark:text-indigo-400";
                     bgClass = "bg-indigo-50 dark:bg-indigo-900/20";
                     break;
                   case 'MEDIA':
                     Icon = PhotoIcon;
-                    colorClass = "text-emerald-600";
+                    colorClass = "text-emerald-600 dark:text-emerald-400";
                     bgClass = "bg-emerald-50 dark:bg-emerald-900/20";
                     break;
                   case 'CLASS':
                     Icon = CalendarIcon;
-                    colorClass = "text-purple-600";
+                    colorClass = "text-purple-600 dark:text-purple-400";
                     bgClass = "bg-purple-50 dark:bg-purple-900/20";
                     break;
                 }

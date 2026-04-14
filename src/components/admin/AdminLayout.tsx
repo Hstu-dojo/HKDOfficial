@@ -166,7 +166,7 @@ export function AdminLayout({ children }: AdminLayoutProps) {
       <div
         className={`fixed inset-y-0 left-0 z-50 lg:static lg:inset-0 transform transition-transform duration-200 ease-in-out lg:transform-none ${
           sidebarOpen ? 'translate-x-0' : '-translate-x-full'
-        } lg:translate-x-0 bg-white dark:bg-gray-800 border-r border-slate-200 dark:border-slate-700 shadow-sm`}
+        } lg:translate-x-0`}
       >
         <AdminSidebar onLinkClick={() => setSidebarOpen(false)} />
       </div>

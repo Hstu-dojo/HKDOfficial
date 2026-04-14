@@ -181,7 +181,7 @@ export default function UserRolesManagement() {
       </div>
 
       {error && (
-        <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-700 px-4 py-3 rounded-lg">
+        <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-400 px-4 py-3 rounded-lg">
           {error}
         </div>
       )}
@@ -210,7 +210,7 @@ export default function UserRolesManagement() {
                   selectedUser?.id === user.id ? "bg-blue-50 dark:bg-blue-900/20" : ""
                 }`}
               >
-                <div className="relative h-10 w-10 rounded-full bg-gray-200 dark:bg-gray-600 dark:bg-gray-700 flex items-center justify-center overflow-hidden">
+                <div className="relative h-10 w-10 rounded-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center overflow-hidden">
                   {user.userAvatar ? (
                     <Image
                       src={user.userAvatar}
@@ -250,7 +250,7 @@ export default function UserRolesManagement() {
             <>
               <div className="p-4 border-b">
                 <div className="flex items-center gap-3">
-                  <div className="relative h-12 w-12 rounded-full bg-gray-200 dark:bg-gray-600 dark:bg-gray-700 flex items-center justify-center overflow-hidden">
+                  <div className="relative h-12 w-12 rounded-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center overflow-hidden">
                     {selectedUser.userAvatar ? (
                       <Image
                         src={selectedUser.userAvatar}

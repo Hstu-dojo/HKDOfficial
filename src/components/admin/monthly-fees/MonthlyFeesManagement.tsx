@@ -248,11 +248,11 @@ export default function MonthlyFeesManagement() {
         </div>
         <div className="bg-white dark:bg-gray-800 p-4 rounded-lg border">
           <p className="text-sm text-gray-500 dark:text-gray-400">Pending/Due</p>
-          <p className="text-2xl font-semibold text-yellow-600">{stats.pending}</p>
+          <p className="text-2xl font-semibold text-yellow-600 dark:text-yellow-400">{stats.pending}</p>
         </div>
         <div className="bg-white dark:bg-gray-800 p-4 rounded-lg border">
           <p className="text-sm text-gray-500 dark:text-gray-400">Awaiting Verification</p>
-          <p className="text-2xl font-semibold text-blue-600">{stats.payment_submitted}</p>
+          <p className="text-2xl font-semibold text-blue-600 dark:text-blue-400">{stats.payment_submitted}</p>
         </div>
         <div className="bg-white dark:bg-gray-800 p-4 rounded-lg border">
           <p className="text-sm text-gray-500 dark:text-gray-400">Paid</p>
