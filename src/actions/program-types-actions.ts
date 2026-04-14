@@ -1,6 +1,6 @@
 'use server';
 
-import { readdir, readFile } from 'fs/promises';
+import { readdir, readFile, stat } from 'fs/promises';
 import path from 'path';
 import { PDFDocument } from 'pdf-lib';
 import { db } from '@/lib/connect-db';
@@ -27,7 +27,40 @@ export type ExtractedPdfField = {
   widgets: ProgramCertificateWidgetRect[];
 };
 
-const CERTS_DIR = path.join(process.cwd(), 'public', 'certs');
+function getPublicDirCandidates() {
+  // In some runtimes, the server may be started from `.next/standalone`, so
+  // `process.cwd()` won't be the project root. Search a few parent levels.
+  const cwd = process.cwd();
+  return [cwd, path.resolve(cwd, '..'), path.resolve(cwd, '../..'), path.resolve(cwd, '../../..')].map((p) =>
+    path.join(p, 'public')
+  );
+}
+
+async function resolvePublicCertsDir() {
+  const candidates = getPublicDirCandidates().map((p) => path.join(p, 'certs'));
+  for (const candidate of candidates) {
+    try {
+      const s = await stat(candidate);
+      if (s.isDirectory()) return candidate;
+    } catch {
+      // continue
+    }
+  }
+  return null;
+}
+
+async function resolvePublicFileAbsPath(publicRelativePath: string) {
+  const candidates = getPublicDirCandidates().map((p) => path.join(p, publicRelativePath));
+  for (const candidate of candidates) {
+    try {
+      const s = await stat(candidate);
+      if (s.isFile()) return candidate;
+    } catch {
+      // continue
+    }
+  }
+  return null;
+}
 
 async function getAuthUserId(): Promise<string | null> {
   const supabase = await createClient();
@@ -64,7 +97,17 @@ function assertSafeCertPath(publicRelativePath: string) {
 
 export async function listCertificateTemplates() {
   try {
-    const files = await readdir(CERTS_DIR);
+    const certsDir = await resolvePublicCertsDir();
+    if (!certsDir) {
+      return {
+        success: false as const,
+        error:
+          'Cannot find the "public/certs" directory at runtime. ' +
+          'If you are running a standalone build, ensure the public folder is copied and you start the server from the app root.',
+      };
+    }
+
+    const files = await readdir(certsDir);
     const pdfs = files
       .filter((f) => f.toLowerCase().endsWith('.pdf'))
       .sort((a, b) => a.localeCompare(b))
@@ -74,9 +117,14 @@ export async function listCertificateTemplates() {
       } satisfies AvailableCertificateTemplate));
 
     return { success: true as const, data: pdfs };
-  } catch (error) {
+  } catch (error: any) {
     console.error('[program-types] listCertificateTemplates error:', error);
-    return { success: false as const, error: 'Failed to list certificate templates' };
+    const msg = error?.message ? String(error.message) : String(error);
+    const code = error?.code ? String(error.code) : '';
+    return {
+      success: false as const,
+      error: `Failed to list certificate templates${code ? ` (${code})` : ''}: ${msg}`,
+    };
   }
 }
 
@@ -84,7 +132,15 @@ export async function extractCertificateFields(publicRelativePath: string) {
   try {
     assertSafeCertPath(publicRelativePath);
 
-    const abs = path.join(process.cwd(), 'public', publicRelativePath);
+    const abs = await resolvePublicFileAbsPath(publicRelativePath);
+    if (!abs) {
+      return {
+        success: false as const,
+        error:
+          `Cannot find certificate template at runtime: ${publicRelativePath}. ` +
+          `Ensure it exists under public/certs and is included in your deployment image.`,
+      };
+    }
     const pdfBytes = await readFile(abs);
     const pdfDoc = await PDFDocument.load(pdfBytes);
     const form = pdfDoc.getForm();
