@@ -256,8 +256,7 @@ export function RegisterForm({ className, ...props }: UserAuthFormProps) {
 
   const handleNextStep = () => {
     if (!validateStep(step)) return;
-    const next = Math.min(2, step + 1) as 0 | 1 | 2;
-    setStep(next);
+    setStep((s) => Math.min(2, s + 1) as 0 | 1 | 2);
   };
 
   const handlePrevStep = () => {
@@ -292,7 +291,7 @@ export function RegisterForm({ className, ...props }: UserAuthFormProps) {
                   autoComplete="username"
                   autoCorrect="off"
                   disabled={isLoading}
-                  required={true}
+                  required={false}
                 />
               </div>
               <div className="grid gap-2">
@@ -307,7 +306,7 @@ export function RegisterForm({ className, ...props }: UserAuthFormProps) {
                   autoComplete="email"
                   autoCorrect="off"
                   disabled={isLoading}
-                  required={true}
+                  required={false}
                 />
               </div>
 
@@ -324,7 +323,7 @@ export function RegisterForm({ className, ...props }: UserAuthFormProps) {
                     autoComplete="new-password"
                     autoCorrect="off"
                     disabled={isLoading}
-                    required={true}
+                    required={false}
                     className="pr-10"
                   />
                   <Button
@@ -381,7 +380,7 @@ export function RegisterForm({ className, ...props }: UserAuthFormProps) {
                   type="tel"
                   autoComplete="tel"
                   disabled={isLoading}
-                  required={true}
+                  required={false}
                 />
               </div>
 
@@ -394,7 +393,7 @@ export function RegisterForm({ className, ...props }: UserAuthFormProps) {
                   type="date"
                   autoComplete="bday"
                   disabled={isLoading}
-                  required={true}
+                  required={false}
                 />
               </div>
 

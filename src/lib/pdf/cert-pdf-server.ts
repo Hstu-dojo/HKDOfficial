@@ -228,20 +228,31 @@ export async function generateDynamicCertificatePdf({
     if (!value) continue;
 
     try {
-      const field = form.getTextField(fieldName);
-      const acroField = (field as any).acroField;
-      const widgets = acroField?.getWidgets?.() ?? [];
-      const widget = widgets[0];
-
+      let field: any = null;
       let rect = { x: 0, y: 0, width: 0, height: 0 };
-      if (widget) {
-        const r = widget.getRectangle();
-        rect = { x: Number(r.x), y: Number(r.y), width: Number(r.width), height: Number(r.height) };
-      } else if (mapping.widgets && mapping.widgets.length > 0) {
-        rect = mapping.widgets[0];
-      } else {
-        console.warn(`[cert-pdf] Field "${fieldName}" has no rectangle to draw in, skipping.`);
-        continue;
+      
+      // Try to get the field as a text field first
+      try {
+        field = form.getTextField(fieldName);
+        const acroField = field.acroField;
+        const widgets = acroField?.getWidgets?.() ?? [];
+        const widget = widgets[0];
+        if (widget) {
+          const r = widget.getRectangle();
+          rect = { x: Number(r.x), y: Number(r.y), width: Number(r.width), height: Number(r.height) };
+        }
+      } catch (e) {
+        // If it's not a text field, it throws.
+      }
+
+      // If we couldn't get a rect from the widget, fallback to mapping metadata
+      if (rect.width === 0 && rect.height === 0) {
+        if (mapping.widgets && mapping.widgets.length > 0) {
+          rect = mapping.widgets[0];
+        } else {
+          console.warn(`[cert-pdf] Field "${fieldName}" has no rectangle to draw in, skipping.`);
+          continue;
+        }
       }
 
       if (typeof value === 'object' && 'imageUrl' in value) {
@@ -256,11 +267,11 @@ export async function generateDynamicCertificatePdf({
           height: rect.height,
         });
         // Clear text field so it doesn't double-render over image
-        field.setText('');
+        if (field) field.setText('');
       } else if (typeof value === 'string') {
         // Obey native AcroForm properties exactly
         const text = value.trim();
-        field.setText(text);
+        if (field) field.setText(text);
       }
     } catch (err) {
       console.warn(`[cert-pdf] Failed mapping for field "${fieldName}":`, err);
