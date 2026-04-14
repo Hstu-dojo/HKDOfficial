@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useMemo, useRef } from 'react';
 import { XMarkIcon } from '@heroicons/react/24/outline';
 import { createProgram, updateProgram } from '@/actions/program-actions';
 import { toast } from 'sonner';
