@@ -50,6 +50,12 @@ export default function PortalShell({
           </aside>
           <main className="rounded-lg border bg-card p-4">{children}</main>
         </div>
+
+
+
+
+
+        
       </div>
     </div>
   )

@@ -2,7 +2,7 @@
  * Admin API — Partner Management
  * 
  * GET    /api/admin/partners — List all partners
- * POST   /api/admin/partners — Create a new partner + Payload admin user
+ * POST   /api/admin/partners — Create a new partner + partner admin user
  * PATCH  /api/admin/partners — Update a partner
  * DELETE /api/admin/partners — Deactivate a partner
  */
