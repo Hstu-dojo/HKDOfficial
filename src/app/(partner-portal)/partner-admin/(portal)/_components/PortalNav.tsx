@@ -15,7 +15,7 @@ const items = [
   { href: '/partner-admin/portal/admin-management', label: 'Admin Management' },
 ]
 
-export default function PortalNav({ currentPath }: { currentPath: string }) {
+export default function PortalNav({ currentPath, onClick }: { currentPath: string; onClick?: () => void }) {
   return (
     <nav className="space-y-1">
       {items.map((item) => {
@@ -24,6 +24,7 @@ export default function PortalNav({ currentPath }: { currentPath: string }) {
           <Link
             key={item.href}
             href={item.href}
+            onClick={onClick}
             className={cn(
               'block rounded-md px-3 py-2 text-sm transition-colors',
               active
