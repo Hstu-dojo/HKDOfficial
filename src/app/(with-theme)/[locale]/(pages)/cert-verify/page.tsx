@@ -21,6 +21,7 @@ import {
 } from "@heroicons/react/24/outline";
 import { format } from "date-fns";
 import Link from "next/link";
+import { rasterizeAndDownloadPdf } from "@/lib/pdf/rasterize-client";
 
 interface CertificateData {
   id: string;
@@ -54,6 +55,7 @@ function CertVerifyContent() {
   const [error, setError] = useState<string | null>(null);
   const [searched, setSearched] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [isRasterizing, setIsRasterizing] = useState(false);
 
   // Auto-search if certId comes from URL
   useEffect(() => {
@@ -105,6 +107,34 @@ function CertVerifyContent() {
       navigator.clipboard.writeText(url);
       setCopied(true);
       setTimeout(() => setCopied(false), 2500);
+    }
+  }
+
+  const handleDownloadRasterized = async () => {
+    if (!certificate) return;
+    setIsRasterizing(true);
+    try {
+      const url = `/api/certificates/${certificate.id}/download`;
+      await rasterizeAndDownloadPdf(url, `certificate-${certificate.certificateNumber}.pdf`);
+    } catch (err) {
+      console.error(err);
+      alert('Failed to download certificate image PDF.');
+    } finally {
+      setIsRasterizing(false);
+    }
+  }
+
+  const handleDownloadRasterized = async () => {
+    if (!certificate) return;
+    setIsRasterizing(true);
+    try {
+      const url = `/api/certificates/${certificate.id}/download`;
+      await rasterizeAndDownloadPdf(url, `certificate-${certificate.certificateNumber}.pdf`);
+    } catch (err) {
+      console.error(err);
+      alert('Failed to download certificate image PDF.');
+    } finally {
+      setIsRasterizing(false);
     }
   }
 
@@ -346,15 +376,14 @@ function CertVerifyContent() {
 
               {/* Action buttons */}
               <div className="flex flex-wrap gap-3 justify-center">
-                <a
-                  href={`/api/certificates/${certificate.id}/download`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-primary text-white text-sm font-semibold hover:opacity-90 transition-opacity"
+                <button
+                  onClick={handleDownloadRasterized}
+                  disabled={isRasterizing}
+                  className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-primary text-white text-sm font-semibold hover:opacity-90 transition-opacity disabled:opacity-50"
                 >
-                  <DocumentArrowDownIcon className="h-4 w-4" />
-                  Download
-                </a>
+                  <DocumentArrowDownIcon className={isRasterizing ? "h-4 w-4 animate-bounce" : "h-4 w-4"} />
+                  {isRasterizing ? "Generating..." : "Download"}
+                </button>
                 <button
                   onClick={handleShare}
                   className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-sm font-semibold text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors"

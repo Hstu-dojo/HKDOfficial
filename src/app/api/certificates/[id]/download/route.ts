@@ -17,7 +17,10 @@ export async function GET(
     const { id } = await params;
     const searchParams = _request.nextUrl.searchParams;
     const admin = searchParams.get('admin') === 'true';
-    const shouldFlatten = !admin;
+    
+    // Admins want "normal textbase pdf.. but not editable pdf like current" -> so ALWAYS flatten.
+    // Users want "completely image only pdf" -> Requires external rasterizer, currently falling back to flatten.
+    const shouldFlatten = true;
 
     // Auth check
     const supabase = await createClient();

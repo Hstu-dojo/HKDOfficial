@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { rasterizeAndDownloadPdf } from "@/lib/pdf/rasterize-client";
 import {
   ArrowDownTrayIcon,
   EyeIcon,
@@ -32,6 +33,21 @@ export default function CertificateActions({
       : "";
 
   const downloadUrl = `/api/certificates/${certId}/download`;
+
+  const [isRasterizing, setIsRasterizing] = useState(false);
+
+  async function handleDownloadRasterized() {
+    try {
+      setIsRasterizing(true);
+      await rasterizeAndDownloadPdf(downloadUrl, `certificate-${certNumber}.pdf`);
+    } catch (err) {
+      console.error("Failed to download rasterized PDF:", err);
+      // Fallback
+      window.open(downloadUrl, "_blank");
+    } finally {
+      setIsRasterizing(false);
+    }
+  }
 
   // Build LinkedIn Add-to-Profile URL
   const linkedInUrl = (() => {
@@ -87,16 +103,21 @@ export default function CertificateActions({
         </button>
 
         {/* Download */}
-        <a
-          href={downloadUrl}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-semibold rounded-lg text-white bg-primary hover:opacity-90 transition-opacity"
+        <button
+          onClick={handleDownloadRasterized}
+          disabled={isRasterizing}
+          className="inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-semibold rounded-lg text-white bg-primary hover:opacity-90 transition-opacity disabled:opacity-50"
           title="Download PDF"
         >
-          <ArrowDownTrayIcon className="h-4 w-4" />
-          <span className="hidden sm:inline">Download</span>
-        </a>
+          {isRasterizing ? (
+            <span className="h-4 w-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+          ) : (
+            <ArrowDownTrayIcon className="h-4 w-4" />
+          )}
+          <span className="hidden sm:inline">
+            {isRasterizing ? "Processing..." : "Download"}
+          </span>
+        </button>
 
         {/* Add to LinkedIn */}
         <a
@@ -134,15 +155,18 @@ export default function CertificateActions({
                 </p>
               </div>
               <div className="flex items-center gap-2">
-                <a
-                  href={downloadUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg text-white bg-primary hover:opacity-90 transition-opacity"
+                <button
+                  onClick={handleDownloadRasterized}
+                  disabled={isRasterizing}
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg text-white bg-primary hover:opacity-90 transition-opacity disabled:opacity-50"
                 >
-                  <ArrowDownTrayIcon className="h-3.5 w-3.5" />
-                  Download
-                </a>
+                  {isRasterizing ? (
+                    <span className="h-3.5 w-3.5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                  ) : (
+                    <ArrowDownTrayIcon className="h-3.5 w-3.5" />
+                  )}
+                  {isRasterizing ? "Processing..." : "Download"}
+                </button>
                 <button
                   onClick={() => setShowPreview(false)}
                   className="p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"

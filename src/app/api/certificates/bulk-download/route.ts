@@ -13,7 +13,7 @@ export async function GET(request: NextRequest) {
   try {
     const programId = request.nextUrl.searchParams.get('programId');
     const admin = request.nextUrl.searchParams.get('admin') === 'true';
-    const shouldFlatten = !admin;
+    const shouldFlatten = true; // Admin gets flattened textbase, users need rasterized image-pdf (pending external lib)
     if (!programId) {
       return NextResponse.json({ error: 'programId is required' }, { status: 400 });
     }
