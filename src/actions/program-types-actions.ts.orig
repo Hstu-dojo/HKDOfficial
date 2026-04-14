@@ -79,7 +79,7 @@ async function resolvePublicCertsDir() {
       // continue
     }
   }
-  throw new Error(`Cannot find public/certs directory. Paths checked: ${candidates.join(', ')}`);
+  return null;
 }
 
 async function resolvePublicFileAbsPath(publicRelativePath: string) {
@@ -92,7 +92,7 @@ async function resolvePublicFileAbsPath(publicRelativePath: string) {
       // continue
     }
   }
-  throw new Error(`Cannot find file ${publicRelativePath}. Paths checked: ${candidates.join(', ')}`);
+  return null;
 }
 
 async function getAuthUserId(): Promise<string | null> {
@@ -131,6 +131,15 @@ function assertSafeCertPath(publicRelativePath: string) {
 export async function listCertificateTemplates() {
   try {
     const certsDir = await resolvePublicCertsDir();
+    if (!certsDir) {
+      return {
+        success: false as const,
+        error:
+          'Cannot find the "public/certs" directory at runtime. ' +
+          'If you are running a standalone build, ensure the public folder is copied and you start the server from the app root.',
+      };
+    }
+
     const files = await readdir(certsDir);
     const pdfs = files
       .filter((f) => f.toLowerCase().endsWith('.pdf'))
@@ -147,7 +156,7 @@ export async function listCertificateTemplates() {
     const code = error?.code ? String(error.code) : '';
     return {
       success: false as const,
-      error: `Failed to list templates${code ? ` (${code})` : ''}: ${msg}`,
+      error: `Failed to list certificate templates${code ? ` (${code})` : ''}: ${msg}`,
     };
   }
 }
@@ -155,7 +164,16 @@ export async function listCertificateTemplates() {
 export async function extractCertificateFields(publicRelativePath: string) {
   try {
     assertSafeCertPath(publicRelativePath);
+
     const abs = await resolvePublicFileAbsPath(publicRelativePath);
+    if (!abs) {
+      return {
+        success: false as const,
+        error:
+          `Cannot find certificate template at runtime: ${publicRelativePath}. ` +
+          `Ensure it exists under public/certs and is included in your deployment image.`,
+      };
+    }
     const pdfBytes = await readFile(abs);
     const pdfDoc = await PDFDocument.load(pdfBytes);
     const form = pdfDoc.getForm();

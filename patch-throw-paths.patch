@@ -1,0 +1,40 @@
+--- src/actions/program-types-actions.ts
++++ src/actions/program-types-actions.ts
+@@ -62,35 +62,35 @@
+ 
+ async function resolvePublicCertsDir() {
+   const candidates = getPublicDirCandidates().map((p) => path.join(p, 'certs'));
+   for (const candidate of candidates) {
+     try {
+       const s = await stat(candidate);
+       if (s.isDirectory()) return candidate;
+     } catch {
+       // continue
+     }
+   }
+-  return null;
++  throw new Error(`Checked: ${candidates.join(', ')}`);
+ }
+ 
+ async function resolvePublicFileAbsPath(publicRelativePath: string) {
+   const candidates = getPublicDirCandidates().map((p) => path.join(p, publicRelativePath));
+   for (const candidate of candidates) {
+     try {
+       const s = await stat(candidate);
+       if (s.isFile()) return candidate;
+     } catch {
+       // continue
+     }
+   }
+-  return null;
++  throw new Error(`Checked: ${candidates.join(', ')}`);
+ }
+ 
+ export async function listCertificateTemplates() {
+   try {
+     const certsDir = await resolvePublicCertsDir();
+     if (!certsDir) {
+       return {
+         success: false as const,
+         error:
+           'Cannot find the "public/certs" directory at runtime. ' +
