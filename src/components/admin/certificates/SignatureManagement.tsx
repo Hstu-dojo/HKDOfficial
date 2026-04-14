@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
+import Image from 'next/image';
 import { useRBAC } from '@/hooks/useRBAC';
 import {
   PlusIcon,
@@ -194,7 +195,14 @@ function SignatureFormModal({ isOpen, onClose, onSuccess, initialData }: Signatu
             </label>
             {signatureImageUrl && (
               <div className="mb-2 p-2 bg-gray-50 dark:bg-gray-700 rounded border">
-                <img src={signatureImageUrl} alt="Signature" className="h-12 object-contain" />
+                <Image
+                  src={signatureImageUrl}
+                  alt="Signature"
+                  width={240}
+                  height={64}
+                  unoptimized
+                  className="h-12 w-auto object-contain"
+                />
               </div>
             )}
             <input
@@ -333,10 +341,13 @@ export default function SignatureManagement() {
               {signatures.map((sig) => (
                 <tr key={sig.id} className={!sig.isActive ? 'opacity-50' : ''}>
                   <td className="px-6 py-4">
-                    <img
+                    <Image
                       src={sig.signatureImageUrl}
                       alt={`${sig.name}'s signature`}
-                      className="h-8 object-contain"
+                      width={200}
+                      height={56}
+                      unoptimized
+                      className="h-8 w-auto object-contain"
                     />
                   </td>
                   <td className="px-6 py-4 text-sm text-gray-900 dark:text-gray-100">

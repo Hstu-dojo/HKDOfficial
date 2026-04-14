@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { useSearchParams } from 'next/navigation';
+import Image from 'next/image';
 import { useRBAC } from '@/hooks/useRBAC';
 import { 
   CheckCircleIcon, 
@@ -549,17 +550,29 @@ export default function ProgramRegistrations() {
                   <td className="px-6 py-4">
                     <div className="flex items-center">
                        <div className="flex-shrink-0 h-10 w-10">
-                         {reg.user?.account?.image || reg.user?.userAvatar ? (
-                           <img 
-                             className="h-10 w-10 rounded-full object-cover" 
-                             src={reg.user?.account?.image || reg.user?.userAvatar} 
-                             alt="" 
-                           />
-                         ) : (
-                           <div className="h-10 w-10 rounded-full bg-gray-200 dark:bg-gray-600 flex items-center justify-center">
-                             <UserIcon className="h-5 w-5 text-gray-500 dark:text-gray-400" />
-                           </div>
-                         )}
+                         {(() => {
+                           const avatarSrc = reg.user?.account?.image ?? reg.user?.userAvatar;
+                           if (!avatarSrc) {
+                             return (
+                               <div className="h-10 w-10 rounded-full bg-gray-200 dark:bg-gray-600 flex items-center justify-center">
+                                 <UserIcon className="h-5 w-5 text-gray-500 dark:text-gray-400" />
+                               </div>
+                             );
+                           }
+
+                           return (
+                             <div className="relative h-10 w-10 overflow-hidden rounded-full">
+                               <Image
+                                 className="object-cover"
+                                 src={avatarSrc}
+                                 alt=""
+                                 fill
+                                 unoptimized
+                                 sizes="40px"
+                               />
+                             </div>
+                           );
+                         })()}
                        </div>
                        <div className="ml-3">
                          <div className="text-sm font-medium text-gray-900 dark:text-gray-100">
@@ -688,10 +701,13 @@ export default function ProgramRegistrations() {
             onClick={(e) => e.stopPropagation()}
           >
             <div className="relative bg-transparent">
-              <img
+              <Image
                 src={selectedImage}
                 alt="Payment Proof"
-                className="max-w-full rounded max-h-[calc(100dvh-4rem)] mx-auto"
+                width={1400}
+                height={1000}
+                unoptimized
+                className="max-w-full rounded max-h-[calc(100dvh-4rem)] w-auto h-auto mx-auto object-contain"
               />
               <button
                 className="absolute top-2 right-2 text-white bg-black/50 rounded-full p-1"
@@ -1108,17 +1124,29 @@ function RegistrationDetailModal({
                 </h3>
                 
                 <div className="flex items-start gap-4">
-                  {account?.image || user?.userAvatar ? (
-                    <img 
-                      src={account?.image || user?.userAvatar} 
-                      alt="" 
-                      className="h-20 w-20 rounded-lg object-cover"
-                    />
-                  ) : (
-                    <div className="h-20 w-20 rounded-lg bg-gray-200 dark:bg-gray-600 flex items-center justify-center">
-                      <UserIcon className="h-8 w-8 text-gray-400 dark:text-gray-500" />
-                    </div>
-                  )}
+                  {(() => {
+                    const avatarSrc = account?.image ?? user?.userAvatar;
+                    if (!avatarSrc) {
+                      return (
+                        <div className="h-20 w-20 rounded-lg bg-gray-200 dark:bg-gray-600 flex items-center justify-center">
+                          <UserIcon className="h-8 w-8 text-gray-400 dark:text-gray-500" />
+                        </div>
+                      );
+                    }
+
+                    return (
+                      <div className="relative h-20 w-20 overflow-hidden rounded-lg">
+                        <Image
+                          src={avatarSrc}
+                          alt=""
+                          fill
+                          unoptimized
+                          sizes="80px"
+                          className="object-cover"
+                        />
+                      </div>
+                    );
+                  })()}
                   <div>
                     <p className="font-semibold text-gray-900 dark:text-gray-100">{account?.name || user?.userName || 'N/A'}</p>
                     {account?.nameBangla && <p className="text-gray-600 dark:text-gray-400">{account.nameBangla}</p>}
@@ -1226,10 +1254,13 @@ function RegistrationDetailModal({
                 {registration.paymentProofUrl && (
                   <div>
                     <p className="text-sm text-gray-500 dark:text-gray-400 mb-2">Payment Proof</p>
-                    <img 
-                      src={registration.paymentProofUrl} 
-                      alt="Payment Proof" 
-                      className="w-full rounded-lg border cursor-pointer hover:opacity-90"
+                    <Image
+                      src={registration.paymentProofUrl}
+                      alt="Payment Proof"
+                      width={1400}
+                      height={1000}
+                      unoptimized
+                      className="w-full rounded-lg border cursor-pointer hover:opacity-90 object-contain"
                       onClick={() => window.open(registration.paymentProofUrl, '_blank')}
                     />
                   </div>

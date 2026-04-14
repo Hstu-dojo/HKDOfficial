@@ -51,7 +51,7 @@ export function UserAuthForm({
       // Clean up URL
       window.history.replaceState({}, '', window.location.pathname);
     }
-  }, []);
+  }, [t]);
 
   async function onSubmit(event: React.SyntheticEvent) {
     event.preventDefault();

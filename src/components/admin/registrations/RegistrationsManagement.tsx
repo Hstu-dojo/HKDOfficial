@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
+import Image from 'next/image';
 import { useRBAC } from '@/hooks/useRBAC';
 import {
   MagnifyingGlassIcon,
@@ -412,12 +413,15 @@ export default function RegistrationsManagement() {
                   >
                     <td className="px-4 py-3">
                       <div className="flex items-center gap-3">
-                        <div className="flex h-9 w-9 items-center justify-center rounded-full bg-gray-200 dark:bg-gray-600">
+                        <div className="relative flex h-9 w-9 items-center justify-center overflow-hidden rounded-full bg-gray-200 dark:bg-gray-600">
                           {reg.user?.userAvatar ? (
-                            <img
+                            <Image
                               src={reg.user.userAvatar}
                               alt=""
-                              className="h-9 w-9 rounded-full object-cover"
+                              fill
+                              unoptimized
+                              sizes="36px"
+                              className="object-cover"
                             />
                           ) : (
                             <UserIcon className="h-5 w-5 text-gray-500 dark:text-gray-400" />
@@ -620,12 +624,15 @@ function DetailModal({
         {/* Header */}
         <div className="shrink-0 flex flex-col gap-3 border-b p-5 dark:border-gray-700 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gray-200 dark:bg-gray-600">
+            <div className="relative flex h-10 w-10 items-center justify-center overflow-hidden rounded-full bg-gray-200 dark:bg-gray-600">
               {registration.user?.userAvatar ? (
-                <img
+                <Image
                   src={registration.user.userAvatar}
                   alt=""
-                  className="h-10 w-10 rounded-full object-cover"
+                  fill
+                  unoptimized
+                  sizes="40px"
+                  className="object-cover"
                 />
               ) : (
                 <UserIcon className="h-6 w-6 text-gray-500 dark:text-gray-400" />

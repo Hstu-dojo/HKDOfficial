@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useRef } from "react";
+import { useEffect } from "react";
 import { motion, stagger, useAnimate } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { useInView } from "react-intersection-observer";
@@ -16,7 +16,7 @@ export const TextGenerateEffect = ({
     triggerOnce: true,
   });
 
-  let wordsArray = words.split(" ");
+  const wordsArray = words.split(" ");
 
   useEffect(() => {
     if (inView) {
@@ -31,7 +31,7 @@ export const TextGenerateEffect = ({
         },
       );
     }
-  }, [inView, scope.current]);
+  }, [inView, animate]);
 
   const handleHover = () => {
     const spans = scope.current.querySelectorAll(".text-animate");

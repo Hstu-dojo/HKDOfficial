@@ -2,6 +2,7 @@
 
 import { Fragment } from 'react';
 import { Dialog, Transition } from '@headlessui/react';
+import Image from 'next/image';
 import {
   XMarkIcon,
   UserIcon,
@@ -178,9 +179,12 @@ export default function ApplicationDetailModal({
                     </h3>
                     <div className="flex flex-col sm:flex-row items-start gap-4">
                       {app.studentInfo.profilePhotoUrl ? (
-                        <img
+                        <Image
                           src={app.studentInfo.profilePhotoUrl}
                           alt="Profile"
+                          width={96}
+                          height={96}
+                          unoptimized
                           className="h-24 w-24 rounded-lg object-cover border"
                         />
                       ) : (
@@ -339,10 +343,13 @@ export default function ApplicationDetailModal({
                         rel="noopener noreferrer"
                         className="block max-w-md"
                       >
-                        <img
+                        <Image
                           src={app.paymentProofUrl}
                           alt="Payment Proof"
-                          className="rounded-lg border shadow-sm max-h-64 object-contain"
+                          width={800}
+                          height={600}
+                          unoptimized
+                          className="rounded-lg border shadow-sm max-h-64 w-full object-contain"
                         />
                       </a>
                       <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">Click to view full image</p>

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
+import Image from "next/image";
 import { useRBAC } from "@/hooks/useRBAC";
 import {
   CheckCircleIcon,
@@ -453,11 +454,16 @@ export default function EnrollmentsManagement() {
                       <td className="whitespace-nowrap px-6 py-4">
                         <div className="flex items-center">
                           {app.application.studentInfo.profilePhotoUrl ? (
-                            <img
-                              src={app.application.studentInfo.profilePhotoUrl}
-                              alt=""
-                              className="h-8 w-8 rounded-full object-cover"
-                            />
+                            <div className="relative h-8 w-8 overflow-hidden rounded-full">
+                              <Image
+                                src={app.application.studentInfo.profilePhotoUrl}
+                                alt=""
+                                fill
+                                unoptimized
+                                sizes="32px"
+                                className="object-cover"
+                              />
+                            </div>
                           ) : (
                             <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gray-200 dark:bg-gray-600">
                               <UserIcon className="h-4 w-4 text-gray-500 dark:text-gray-400" />

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { PlusIcon, PencilIcon, TrashIcon, CheckIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -25,11 +25,7 @@ export default function RolesManagement() {
   const [submitting, setSubmitting] = useState(false);
   const { toast } = useToast();
 
-  useEffect(() => {
-    fetchRoles();
-  }, []);
-
-  async function fetchRoles() {
+  const fetchRoles = useCallback(async () => {
     try {
       setLoading(true);
       const res = await fetch("/api/rbac/roles");
@@ -42,7 +38,11 @@ export default function RolesManagement() {
     } finally {
       setLoading(false);
     }
-  }
+  }, [toast]);
+
+  useEffect(() => {
+    fetchRoles();
+  }, [fetchRoles]);
 
   async function handleCreate(e: React.FormEvent) {
     e.preventDefault();

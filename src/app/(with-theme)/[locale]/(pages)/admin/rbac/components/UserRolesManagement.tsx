@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
+import Image from "next/image";
 import { MagnifyingGlassIcon, PlusIcon, TrashIcon, UserIcon, ShieldCheckIcon } from "@heroicons/react/24/outline";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -35,11 +36,7 @@ export default function UserRolesManagement() {
   const [assigning, setAssigning] = useState(false);
   const { toast } = useToast();
 
-  useEffect(() => {
-    fetchData();
-  }, []);
-
-  async function fetchData() {
+  const fetchData = useCallback(async () => {
     try {
       setLoading(true);
       const [usersRes, rolesRes] = await Promise.all([
@@ -62,7 +59,11 @@ export default function UserRolesManagement() {
     } finally {
       setLoading(false);
     }
-  }
+  }, [toast]);
+
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
 
   async function fetchUserRoles(userId: string) {
     try {
@@ -209,9 +210,16 @@ export default function UserRolesManagement() {
                   selectedUser?.id === user.id ? "bg-blue-50 dark:bg-blue-900/20" : ""
                 }`}
               >
-                <div className="h-10 w-10 rounded-full bg-gray-200 dark:bg-gray-600 dark:bg-gray-700 flex items-center justify-center overflow-hidden">
+                <div className="relative h-10 w-10 rounded-full bg-gray-200 dark:bg-gray-600 dark:bg-gray-700 flex items-center justify-center overflow-hidden">
                   {user.userAvatar ? (
-                    <img src={user.userAvatar} alt="" className="h-full w-full object-cover" />
+                    <Image
+                      src={user.userAvatar}
+                      alt=""
+                      fill
+                      unoptimized
+                      sizes="40px"
+                      className="object-cover"
+                    />
                   ) : (
                     <UserIcon className="h-5 w-5 text-gray-500 dark:text-gray-400" />
                   )}
@@ -242,9 +250,16 @@ export default function UserRolesManagement() {
             <>
               <div className="p-4 border-b">
                 <div className="flex items-center gap-3">
-                  <div className="h-12 w-12 rounded-full bg-gray-200 dark:bg-gray-600 dark:bg-gray-700 flex items-center justify-center overflow-hidden">
+                  <div className="relative h-12 w-12 rounded-full bg-gray-200 dark:bg-gray-600 dark:bg-gray-700 flex items-center justify-center overflow-hidden">
                     {selectedUser.userAvatar ? (
-                      <img src={selectedUser.userAvatar} alt="" className="h-full w-full object-cover" />
+                      <Image
+                        src={selectedUser.userAvatar}
+                        alt=""
+                        fill
+                        unoptimized
+                        sizes="48px"
+                        className="object-cover"
+                      />
                     ) : (
                       <UserIcon className="h-6 w-6 text-gray-500 dark:text-gray-400" />
                     )}

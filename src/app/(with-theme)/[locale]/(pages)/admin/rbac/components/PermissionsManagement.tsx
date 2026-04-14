@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { PlusIcon, PencilIcon, TrashIcon } from "@heroicons/react/24/outline";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -44,11 +44,7 @@ export default function PermissionsManagement() {
   const [filterAction, setFilterAction] = useState<string>("");
   const { toast } = useToast();
 
-  useEffect(() => {
-    fetchPermissions();
-  }, []);
-
-  async function fetchPermissions() {
+  const fetchPermissions = useCallback(async () => {
     try {
       setLoading(true);
       const res = await fetch("/api/rbac/permissions");
@@ -61,7 +57,11 @@ export default function PermissionsManagement() {
     } finally {
       setLoading(false);
     }
-  }
+  }, [toast]);
+
+  useEffect(() => {
+    fetchPermissions();
+  }, [fetchPermissions]);
 
   async function handleCreate(e: React.FormEvent) {
     e.preventDefault();

@@ -82,8 +82,7 @@ export default function SystemStatusDashboard() {
     };
 
     fetchData(); // Call fetchData function
-    console.log("systemData", systemData);
-  }, []); // Empty dependency array ensures this runs on every refresh
+  }, [secret]); // Re-run only if auth secret changes
 
   const suspendSystem = async () => {
     try {

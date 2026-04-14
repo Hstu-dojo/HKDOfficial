@@ -1,6 +1,7 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
+import Image from 'next/image';
 import { useRBAC } from '@/hooks/useRBAC';
 import { 
   PlusIcon, 
@@ -86,7 +87,7 @@ export default function CoursesManagement() {
   const canUpdate = hasPermission('COURSE', 'UPDATE');
   const canDelete = hasPermission('COURSE', 'DELETE');
 
-  const fetchCourses = async () => {
+  const fetchCourses = useCallback(async () => {
     try {
       setLoading(true);
       const url = partnerFilter
@@ -102,25 +103,23 @@ export default function CoursesManagement() {
     } finally {
       setLoading(false);
     }
-  };
-
-  useEffect(() => {
-    if (!rbacLoading) {
-      fetchCourses();
-      fetch('/api/admin/partners')
-        .then((res) => res.json())
-        .then((data) => {
-          if (data.partners) setPartners(data.partners);
-        })
-        .catch(() => {});
-    }
-  }, [rbacLoading]);
-
-  useEffect(() => {
-    if (!rbacLoading) {
-      fetchCourses();
-    }
   }, [partnerFilter]);
+
+  useEffect(() => {
+    if (!rbacLoading) {
+      fetchCourses();
+    }
+  }, [rbacLoading, fetchCourses]);
+
+  useEffect(() => {
+    if (rbacLoading) return;
+    fetch('/api/admin/partners')
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.partners) setPartners(data.partners);
+      })
+      .catch(() => {});
+  }, [rbacLoading]);
 
   const handleDelete = async (courseId: string) => {
     if (!confirm('Are you sure you want to delete this course?')) return;
@@ -532,10 +531,13 @@ export default function CoursesManagement() {
                     <h4 className="font-medium text-gray-700 dark:text-gray-300">Payment Details</h4>
                     <p className="text-gray-600 dark:text-gray-400">bKash Number: {viewingCourse.bkashNumber}</p>
                     {viewingCourse.bkashQrCodeUrl && (
-                      <img
+                      <Image
                         src={viewingCourse.bkashQrCodeUrl}
                         alt="bKash QR Code"
-                        className="mt-2 w-32 h-32 object-contain"
+                        width={128}
+                        height={128}
+                        unoptimized
+                        className="mt-2 h-32 w-32 object-contain"
                       />
                     )}
                   </div>

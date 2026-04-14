@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { PlusIcon, TrashIcon, ShieldCheckIcon, KeyIcon, CheckIcon } from "@heroicons/react/24/outline";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
@@ -40,11 +40,7 @@ export default function RolePermissionsManagement() {
   const [selectedPermissions, setSelectedPermissions] = useState<Set<string>>(new Set());
   const { toast } = useToast();
 
-  useEffect(() => {
-    fetchData();
-  }, []);
-
-  async function fetchData() {
+  const fetchData = useCallback(async () => {
     try {
       setLoading(true);
       const [rolesRes, permissionsRes] = await Promise.all([
@@ -67,7 +63,11 @@ export default function RolePermissionsManagement() {
     } finally {
       setLoading(false);
     }
-  }
+  }, [toast]);
+
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
 
   async function fetchRolePermissions(roleId: string) {
     try {

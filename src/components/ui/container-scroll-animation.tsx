@@ -1,6 +1,7 @@
 "use client";
 import React, { useRef } from "react";
 import { useScroll, useTransform, motion } from "framer-motion";
+import Image from "next/image";
 export const ContainerScroll = ({
   users,
   titleComponent,
@@ -114,11 +115,13 @@ export const Card = ({
             <div className="absolute top-2 right-2 rounded-full text-xs font-bold bg-white px-2 py-1">
               {user.badge}
             </div>
-            {/* @ts-ignore */}
-            <img
+            <Image
               src={user.image}
-              className="rounded-tr-md rounded-tl-md text-sm "
               alt="thumbnail"
+              width={600}
+              height={400}
+              unoptimized
+              className="w-full h-auto rounded-tr-md rounded-tl-md text-sm"
             />
             <div className="p-4">
               <h1 className="font-semibold text-sm ">{user.name}</h1>
