@@ -274,6 +274,7 @@ export function RegisterForm({ className, ...props }: UserAuthFormProps) {
                 <Input
                   className="border-green-500"
                   id="username"
+                  value={userName}
                   onChange={(e) => setUsername(e.target.value)}
                   placeholder={t('auth.register.usernamePlaceholder')}
                   type="text"
@@ -288,6 +289,7 @@ export function RegisterForm({ className, ...props }: UserAuthFormProps) {
                 <Label htmlFor="email">{t('auth.register.emailLabel')}</Label>
                 <Input
                   id="email"
+                  value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder={t('auth.register.emailPlaceholder')}
                   type="email"
@@ -304,6 +306,7 @@ export function RegisterForm({ className, ...props }: UserAuthFormProps) {
                 <div className="relative">
                   <Input
                     id="password"
+                    value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     placeholder={t('auth.register.passwordLabel')}
                     type={showPassword ? "text" : "password"}
@@ -330,7 +333,7 @@ export function RegisterForm({ className, ...props }: UserAuthFormProps) {
 
               <div className="grid gap-2 md:col-span-2">
                 <Label>Avatar</Label>
-                <Select required={false} onValueChange={(e) => setAvatar(e)}>
+                <Select required={false} value={userAvatar} onValueChange={(e) => setAvatar(e)}>
                   <SelectTrigger className="w-full">
                     <SelectValue placeholder={t('auth.register.avatarLabel')} />
                   </SelectTrigger>
@@ -362,6 +365,7 @@ export function RegisterForm({ className, ...props }: UserAuthFormProps) {
                 <Label htmlFor="phone">Phone Number</Label>
                 <Input
                   id="phone"
+                  value={phone}
                   onChange={(e) => setPhone(e.target.value)}
                   placeholder="Phone Number"
                   type="tel"
@@ -375,6 +379,7 @@ export function RegisterForm({ className, ...props }: UserAuthFormProps) {
                 <Label htmlFor="dob">Date of Birth</Label>
                 <Input
                   id="dob"
+                  value={dob}
                   onChange={(e) => setDob(e.target.value)}
                   type="date"
                   autoComplete="bday"
@@ -401,6 +406,7 @@ export function RegisterForm({ className, ...props }: UserAuthFormProps) {
                 <Label htmlFor="nid">ID Number (optional)</Label>
                 <Input
                   id="nid"
+                  value={nid}
                   onChange={(e) => setNid(e.target.value)}
                   placeholder="NID / Birth Cert. / Passport"
                   type="text"
@@ -417,6 +423,7 @@ export function RegisterForm({ className, ...props }: UserAuthFormProps) {
                   <Label htmlFor="occupation">Occupation (optional)</Label>
                   <Input
                     id="occupation"
+                    value={occupation}
                     onChange={(e) => setOccupation(e.target.value)}
                     placeholder="Occupation"
                     type="text"
@@ -428,6 +435,7 @@ export function RegisterForm({ className, ...props }: UserAuthFormProps) {
                   <Label htmlFor="institute">Institute (optional)</Label>
                   <Input
                     id="institute"
+                    value={institute}
                     onChange={(e) => setInstitute(e.target.value)}
                     placeholder="Institute"
                     type="text"
@@ -439,6 +447,7 @@ export function RegisterForm({ className, ...props }: UserAuthFormProps) {
                   <Label htmlFor="faculty">Faculty / Section (optional)</Label>
                   <Input
                     id="faculty"
+                    value={faculty}
                     onChange={(e) => setFaculty(e.target.value)}
                     placeholder="Faculty / Section"
                     type="text"
@@ -450,6 +459,7 @@ export function RegisterForm({ className, ...props }: UserAuthFormProps) {
                   <Label htmlFor="address">Present Address (optional)</Label>
                   <Input
                     id="address"
+                    value={address}
                     onChange={(e) => setAddress(e.target.value)}
                     placeholder="Present Address"
                     type="text"
