@@ -81,8 +81,8 @@ export default function RolesPage() {
       ) : error ? (
         <div className="text-red-600 bg-red-50 p-3 rounded border border-red-200">{error}</div>
       ) : (
-        <div className="border rounded-lg overflow-hidden">
-          <table className="w-full">
+        <div className="border rounded-lg overflow-x-auto">
+          <table className="min-w-full">
             <thead>
               <tr className="border-b bg-opacity-50">
                 <th className="p-3 text-left font-semibold">Name</th>

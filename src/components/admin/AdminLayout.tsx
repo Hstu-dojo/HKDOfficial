@@ -151,7 +151,7 @@ export function AdminLayout({ children }: AdminLayoutProps) {
 
   // Authenticated and has admin access
   return (
-    <div className="flex h-screen bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-slate-100">
+    <div className="flex h-[100dvh] bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-slate-100">
       {/* Mobile sidebar overlay */}
       {sidebarOpen && (
         <div className="fixed inset-0 z-40 lg:hidden">
@@ -168,7 +168,7 @@ export function AdminLayout({ children }: AdminLayoutProps) {
           sidebarOpen ? 'translate-x-0' : '-translate-x-full'
         } lg:translate-x-0 bg-white dark:bg-gray-800 border-r border-slate-200 dark:border-slate-700 shadow-sm`}
       >
-        <AdminSidebar />
+        <AdminSidebar onLinkClick={() => setSidebarOpen(false)} />
       </div>
 
       {/* Main content */}
