@@ -2,6 +2,8 @@ import { redirect } from 'next/navigation'
 import { getPayloadPartnerUser } from '@/lib/payload/auth'
 import PortalShell from './_components/PortalShell.client'
 
+export const dynamic = 'force-dynamic'
+
 export default async function PartnerAdminPortalLayout({
   children,
 }: {

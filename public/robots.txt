@@ -18,5 +18,3 @@ Host: https://www.hstuma.com
 # Sitemaps
 Sitemap: https://www.hstuma.com/sitemap.xml
 Sitemap: https://www.hstuma.com/blog/sitemap.xml
-Sitemap: https://www.hstuma.com/google-news-sitemap.xml
-Sitemap: https://www.hstuma.com/feed.xml
