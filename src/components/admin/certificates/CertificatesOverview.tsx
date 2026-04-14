@@ -86,7 +86,7 @@ export default function CertificatesOverview() {
   const revokedCount = certificates.filter((c) => c.status === 'REVOKED').length;
 
   const handleDownload = (certId: string) => {
-    window.open(`/api/certificates/${certId}/download`, '_blank');
+    window.open(`/api/certificates/${certId}/download?admin=true`, '_blank');
   };
 
   if (rbacLoading || loading) {

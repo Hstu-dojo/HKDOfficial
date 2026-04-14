@@ -19,7 +19,7 @@ export default async function AuthenticationPage() {
   return (
     <>
       <Link href="/">
-        <div className="absolute right-10 z-20 flex flex-row-reverse items-center pt-6 text-lg font-medium text-white md:pt-8">
+        <div className="absolute right-4 top-4 md:right-8 md:top-8 z-20 flex flex-row-reverse items-center text-lg font-medium text-foreground lg:text-white">
           <Image
             src="/logo.png"
             className="ml-3"
@@ -30,9 +30,9 @@ export default async function AuthenticationPage() {
           <span className="hidden lg:flex">{t('header.brand')}</span>
         </div>
       </Link>
-      <div className="container relative grid min-h-screen flex-col items-center justify-center lg:max-w-none lg:grid-cols-2 lg:px-0">
+      <div className="container relative flex min-h-screen flex-col pt-24 pb-8 lg:grid lg:max-w-none lg:grid-cols-2 lg:items-center lg:justify-center lg:px-0 lg:py-0">
         <BackgroundBeams />
-        <div className="lg:p-8">
+        <div className="flex-1 lg:p-8 flex flex-col justify-center">
           <div className="mx-auto flex w-full flex-col justify-center space-y-6 sm:w-[520px]">
             <div className="flex flex-col space-y-2 text-center">
               <h1 className="text-2xl font-semibold tracking-tight">

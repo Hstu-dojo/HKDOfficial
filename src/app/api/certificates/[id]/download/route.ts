@@ -15,6 +15,9 @@ export async function GET(
 ) {
   try {
     const { id } = await params;
+    const searchParams = _request.nextUrl.searchParams;
+    const admin = searchParams.get('admin') === 'true';
+    const shouldFlatten = !admin;
 
     // Auth check
     const supabase = await createClient();
@@ -110,6 +113,7 @@ export async function GET(
         templatePath: cert.certificatePdfPath as string,
         fieldMappings: cert.fieldMappings as any[],
         resolvedValues,
+        shouldFlatten,
       });
 
     } else {
@@ -125,6 +129,7 @@ export async function GET(
         coordinatorName: cert.coordinatorSignature?.name ?? '',
         trainerSignatureUrl: cert.trainerSignature?.signatureImageUrl,
         coordinatorSignatureUrl: cert.coordinatorSignature?.signatureImageUrl,
+        shouldFlatten,
       });
     }
 

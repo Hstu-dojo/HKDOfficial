@@ -346,15 +346,15 @@ export default function ProgramCertificateManagement() {
   };
 
   const handleDownload = (certId: string) => {
-    window.open(`/api/certificates/${certId}/download`, '_blank');
+    window.open(`/api/certificates/${certId}/download?admin=true`, '_blank');
   };
 
   const handleBulkDownload = () => {
-    window.open(`/api/certificates/bulk-download?programId=${programId}`, '_blank');
+    window.open(`/api/certificates/bulk-download?programId=${programId}&admin=true`, '_blank');
   };
 
   const handleExportExcel = () => {
-    window.open(`/api/certificates/export-excel?programId=${programId}`, '_blank');
+    window.open(`/api/certificates/export-excel?programId=${programId}&admin=true`, '_blank');
   };
 
   // Manual certificate creation

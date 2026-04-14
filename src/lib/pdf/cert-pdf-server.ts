@@ -36,6 +36,7 @@ export interface CertificateData {
   coordinatorName: string;
   trainerSignatureUrl?: string;
   coordinatorSignatureUrl?: string;
+  shouldFlatten?: boolean;
 }
 
 // ---------------------------------------------------------------------------
@@ -179,7 +180,9 @@ export async function generateCertificatePdf(data: CertificateData): Promise<Uin
   }
 
   // ── Flatten — makes PDF non-editable ─────────────────────────────────────
-  try { form.flatten(); } catch { /* ignore if already flat */ }
+  if (data.shouldFlatten !== false) {
+    try { form.flatten(); } catch { /* ignore if already flat */ }
+  }
 
   return await pdfDoc.save();
 }
@@ -196,6 +199,7 @@ export interface DynamicCertificateData {
   templatePath: string;
   fieldMappings: ProgramCertificateFieldMapping[];
   resolvedValues: Record<string, string | { imageUrl: string }>;
+  shouldFlatten?: boolean;
 }
 
 export async function generateDynamicCertificatePdf({
@@ -278,7 +282,9 @@ export async function generateDynamicCertificatePdf({
     }
   }
 
-  try { form.flatten(); } catch { /* ignore if already flat */ }
+  if (options.shouldFlatten !== false) {
+    try { form.flatten(); } catch { /* ignore if already flat */ }
+  }
   return await pdfDoc.save();
 }
 

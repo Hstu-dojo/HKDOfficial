@@ -12,6 +12,8 @@ import { generateDynamicCertificatePdf, generateCertificatePdf, mergeCertificate
 export async function GET(request: NextRequest) {
   try {
     const programId = request.nextUrl.searchParams.get('programId');
+    const admin = request.nextUrl.searchParams.get('admin') === 'true';
+    const shouldFlatten = !admin;
     if (!programId) {
       return NextResponse.json({ error: 'programId is required' }, { status: 400 });
     }
@@ -112,6 +114,7 @@ export async function GET(request: NextRequest) {
           templatePath: c.certificatePdfPath as string,
           fieldMappings: c.fieldMappings as any[],
           resolvedValues,
+          shouldFlatten,
         });
       } else {
         pdfBytes = await generateCertificatePdf({
@@ -125,6 +128,7 @@ export async function GET(request: NextRequest) {
           coordinatorName: c.coordinatorSignature?.name ?? '',
           trainerSignatureUrl: c.trainerSignature?.signatureImageUrl,
           coordinatorSignatureUrl: c.coordinatorSignature?.signatureImageUrl,
+          shouldFlatten,
         });
       }
 

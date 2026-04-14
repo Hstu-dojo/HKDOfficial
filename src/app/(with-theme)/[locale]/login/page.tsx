@@ -32,7 +32,7 @@ export default async function AuthenticationPage({ searchParams }: PageProps) {
   return (
     <>
       <Link href="/">
-        <div className="absolute z-20 flex items-center px-10 pt-6 text-lg font-medium text-white md:pt-8">
+        <div className="absolute top-4 left-4 md:top-8 md:left-8 z-20 flex flex-row items-center text-lg font-medium text-foreground lg:text-white">
           <Image
             src="/logo.png"
             className="mr-3"
@@ -43,12 +43,12 @@ export default async function AuthenticationPage({ searchParams }: PageProps) {
           <span className="hidden lg:flex">{t('header.brand')}</span>
         </div>
       </Link>
-      <div className="container relative grid min-h-screen flex-col items-center justify-center lg:max-w-none lg:grid-cols-2 lg:px-0">
+      <div className="container relative flex min-h-screen flex-col pt-24 pb-8 lg:grid lg:max-w-none lg:grid-cols-2 lg:items-center lg:justify-center lg:px-0 lg:py-0">
         <Link
           href={`/${locale}/register`}
           className={cn(
             buttonVariants({ variant: "ghost" }),
-            "absolute right-4 top-4 md:right-8 md:top-8",
+            "absolute right-4 top-4 md:right-8 md:top-8 z-20",
           )}
         >
           {t('header.register')}
@@ -80,7 +80,7 @@ export default async function AuthenticationPage({ searchParams }: PageProps) {
             </blockquote>
           </div>
         </div>
-        <div className="lg:p-8">
+        <div className="flex-1 lg:p-8 flex flex-col justify-center">
           <BackgroundBeams />
           <div className="mx-auto flex w-full flex-col justify-center space-y-6 sm:w-[350px]">
             <div className="flex flex-col space-y-2 text-center">
