@@ -220,33 +220,43 @@ export function RegisterForm({ className, ...props }: UserAuthFormProps) {
     fetchPartners();
   }, []);
 
-  const validateStep = (nextStep: number) => {
-    if (nextStep <= 0) return true;
-
+  const validateStep = (currentStep: number) => {
     // Step 0 (Account)
-    if (!userName || !email || !password) {
-      toast.error("Please complete account details", {
-        description: "Username, email, and password are required.",
-      });
-      return false;
+    if (currentStep === 0) {
+      if (!userName || !email || !password || !userAvatar) {
+        toast.error("Please complete account details", {
+          description: "Username, email, password, and avatar are required.",
+        });
+        return false;
+      }
     }
 
-    if (nextStep <= 1) return true;
-
     // Step 1 (Personal)
-    if (!phone || !dob) {
-      toast.error("Please complete personal details", {
-        description: "Phone number and date of birth are required.",
-      });
-      return false;
+    if (currentStep === 1) {
+      if (!phone || !dob || !sex) {
+        toast.error("Please complete personal details", {
+          description: "Phone number, date of birth, and sex are required.",
+        });
+        return false;
+      }
+    }
+
+    // Step 2 (Final)
+    if (currentStep === 2) {
+      if (!partnerId || agreement !== true) {
+        toast.error("Please complete onboarding details", {
+          description: "Training venue and agreement are required.",
+        });
+        return false;
+      }
     }
 
     return true;
   };
 
   const handleNextStep = () => {
+    if (!validateStep(step)) return;
     const next = Math.min(2, step + 1) as 0 | 1 | 2;
-    if (!validateStep(next)) return;
     setStep(next);
   };
 
@@ -255,7 +265,7 @@ export function RegisterForm({ className, ...props }: UserAuthFormProps) {
   };
 
   return (
-    <div className={cn("grid gap-6", className)} {...props}>
+    <div className={cn("grid gap-6 my-8 md:my-12", className)} {...props}>
       <form onSubmit={onSubmit}>
         <div className="grid gap-4">
           <div className="flex items-center justify-between">
@@ -515,13 +525,11 @@ export function RegisterForm({ className, ...props }: UserAuthFormProps) {
               <Button
                 type="submit"
                 disabled={isLoading}
-                onClick={() => {
-                  // keep submit UX consistent with the existing required field checks
-                  if (!validateStep(2)) return;
-                  if (!partnerId || agreement !== true) {
-                    toast.error("Please complete onboarding details", {
-                      description: "Training venue and agreement are required.",
-                    });
+                onClick={(e) => {
+                  // Keep submit UX consistent and prevent default if invalid
+                  if (!validateStep(2)) {
+                    e.preventDefault();
+                    return;
                   }
                 }}
               >
