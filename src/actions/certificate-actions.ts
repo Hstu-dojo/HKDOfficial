@@ -7,6 +7,7 @@ import {
   profiles,
   certificateSignatures,
   programCertificates,
+  programTypes,
 } from '@/db/schemas/karate';
 import { user } from '@/db/schemas/auth';
 import { revalidatePath } from 'next/cache';
@@ -490,7 +491,8 @@ export async function createManualCertificate(
   participantName: string,
   trainerSignatureId: string | null | undefined,
   coordinatorSignatureId: string | null | undefined,
-  issueDate?: Date
+  issueDate?: Date,
+  metadata?: Record<string, any>
 ) {
   try {
     const userId = await getAuthUserId();
@@ -508,6 +510,7 @@ export async function createManualCertificate(
         status: 'ISSUED',
         trainerSignatureId: trainerSignatureId || null,
         coordinatorSignatureId: coordinatorSignatureId || null,
+        metadata: metadata || {},
         issueDate: now,
         issuedBy: userId,
         issuedAt: new Date(),
@@ -777,21 +780,36 @@ export async function getCertificateForPdf(certificateId: string) {
         programId: programCertificates.programId,
         profileId: programCertificates.profileId,
         participantName: programCertificates.participantName,
+        metadata: programCertificates.metadata,
         // Profile (nullable for manual certs)
         profileName: profiles.fullNameEnglish,
         profileNameBangla: profiles.fullNameBangla,
         // Program
         programTitle: programs.title,
+        // Program Type configuration
+        certificatePdfPath: programTypes.certificatePdfPath,
+        fieldMappings: programTypes.fieldMappings,
+        // Registration properties for dynamically mapping new Belt Rank
+        newRank: programRegistrations.newRank,
       })
       .from(programCertificates)
       .leftJoin(profiles, eq(programCertificates.profileId, profiles.id))
       .innerJoin(programs, eq(programCertificates.programId, programs.id))
+      .leftJoin(programTypes, eq(programTypes.id, programs.programTypeId))
+      .leftJoin(
+        programRegistrations, 
+        and(
+          eq(programRegistrations.programId, programCertificates.programId),
+          eq(programRegistrations.profileId, programCertificates.profileId)
+        )
+      )
       .where(eq(programCertificates.id, certificateId))
       .limit(1);
 
     if (!cert) return { success: false, error: 'Certificate not found' };
 
-    // Get signature data
+    // Get fallback manual signatures if they exist, though the PDF generator 
+    // will now prioritize fieldMappings
     let trainerSig = null;
     let coordinatorSig = null;
 
@@ -806,12 +824,25 @@ export async function getCertificateForPdf(certificateId: string) {
       });
     }
 
+    // Pre-fetch all mapped signatures for the dynamic generator
+    const mappedSignatureIds = (cert.fieldMappings || [])
+      .filter((m: any) => m.kind === 'signature' && m.signatureId)
+      .map((m: any) => m.signatureId);
+      
+    let mappedSignatures: CertificateSignature[] = [];
+    if (mappedSignatureIds.length > 0) {
+      mappedSignatures = await db.query.certificateSignatures.findMany({
+        where: inArray(certificateSignatures.id, mappedSignatureIds as string[])
+      });
+    }
+
     return {
       success: true,
       data: {
         ...cert,
         trainerSignature: trainerSig,
         coordinatorSignature: coordinatorSig,
+        mappedSignatures, // Attach mapped signatures for direct template use
       },
     };
   } catch (error) {

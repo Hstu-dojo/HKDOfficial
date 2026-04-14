@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 import { getCertificateForPdf } from '@/actions/certificate-actions';
-import { generateCertificatePdf } from '@/lib/pdf/cert-pdf-server';
+import { generateDynamicCertificatePdf, generateCertificatePdf } from '@/lib/pdf/cert-pdf-server';
 
 /**
  * GET /api/certificates/[id]/download
@@ -52,19 +52,72 @@ export async function GET(
     const month = monthNames[issueDate.getMonth()];
     const year = issueDate.getFullYear().toString();
 
-    // Generate the flattened PDF
-    const pdfBytes = await generateCertificatePdf({
-      name: cert.profileName ?? cert.profileNameBangla ?? cert.participantName ?? 'Participant',
-      programName: cert.programTitle,
-      date: day,
-      month,
-      year,
-      certId: cert.certificateNumber,
-      trainerName: cert.trainerSignature?.name ?? '',
-      coordinatorName: cert.coordinatorSignature?.name ?? '',
-      trainerSignatureUrl: cert.trainerSignature?.signatureImageUrl,
-      coordinatorSignatureUrl: cert.coordinatorSignature?.signatureImageUrl,
-    });
+    // Map Belt ranks from 'brown_kyu1' -> 'Brown (Kyu 1)' etc.
+    const mapBeltRank = (rank: string | null | undefined): string => {
+      if (!rank) return '';
+      const parts = rank.split('_');
+      if (parts.length === 1) return rank.charAt(0).toUpperCase() + rank.slice(1);
+      return `${parts[0].charAt(0).toUpperCase() + parts[0].slice(1)} (${parts[1].charAt(0).toUpperCase() + parts[1].slice(1, 4)} ${parts[1].slice(4)})`;
+    };
+
+    let pdfBytes: Uint8Array;
+
+    if (cert.certificatePdfPath && cert.fieldMappings && cert.fieldMappings.length > 0) {
+      // Dynamic mapped generation
+      const resolvedValues: Record<string, string | { imageUrl: string }> = {};
+
+      for (const mapping of (cert.fieldMappings as any[])) {
+        const fieldName = mapping.pdfFieldName;
+        if (mapping.kind === 'static') {
+          switch (mapping.staticSource) {
+            case 'program_title': resolvedValues[fieldName] = cert.programTitle || ''; break;
+            case 'program_date': resolvedValues[fieldName] = day; break;
+            case 'program_month': resolvedValues[fieldName] = month; break;
+            case 'program_year': resolvedValues[fieldName] = year; break;
+            case 'custom_text': resolvedValues[fieldName] = mapping.staticText || ''; break;
+          }
+        } else if (mapping.kind === 'dynamic') {
+          switch (mapping.dynamicSource) {
+            case 'participant_name':
+              resolvedValues[fieldName] = cert.profileName ?? cert.profileNameBangla ?? cert.participantName ?? 'Participant';
+              break;
+            case 'certificate_number':
+              resolvedValues[fieldName] = cert.certificateNumber || '';
+              break;
+            case 'belt_test_rank':
+              resolvedValues[fieldName] = mapBeltRank(cert.newRank ?? (cert.metadata as any)?.belt_test_rank);
+              break;
+          }
+        } else if (mapping.kind === 'signature' && mapping.signatureId) {
+          // Pre-fetched mapped signatures
+          const sig = cert.mappedSignatures?.find((s: any) => s.id === mapping.signatureId);
+          if (sig?.signatureImageUrl) {
+            resolvedValues[fieldName] = { imageUrl: sig.signatureImageUrl };
+          }
+        }
+      }
+
+      pdfBytes = await generateDynamicCertificatePdf({
+        templatePath: cert.certificatePdfPath as string,
+        fieldMappings: cert.fieldMappings as any[],
+        resolvedValues,
+      });
+
+    } else {
+      // Fallback legacy PDF generator
+      pdfBytes = await generateCertificatePdf({
+        name: cert.profileName ?? cert.profileNameBangla ?? cert.participantName ?? 'Participant',
+        programName: cert.programTitle,
+        date: day,
+        month,
+        year,
+        certId: cert.certificateNumber,
+        trainerName: cert.trainerSignature?.name ?? '',
+        coordinatorName: cert.coordinatorSignature?.name ?? '',
+        trainerSignatureUrl: cert.trainerSignature?.signatureImageUrl,
+        coordinatorSignatureUrl: cert.coordinatorSignature?.signatureImageUrl,
+      });
+    }
 
     // Return as downloadable PDF
     const filename = `Certificate_${cert.certificateNumber}.pdf`;

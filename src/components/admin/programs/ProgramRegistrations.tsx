@@ -110,6 +110,19 @@ const STATUS_CONFIG: Record<string, { label: string; color: string; bgColor: str
   rejected: { label: 'Rejected', color: 'text-red-700', bgColor: 'bg-red-100 dark:bg-red-900/30' },
 };
 
+const BELT_RANK_OPTIONS = [
+  { value: 'white', label: 'White' },
+  { value: 'yellow', label: 'Yellow' },
+  { value: 'orange', label: 'Orange' },
+  { value: 'green', label: 'Green' },
+  { value: 'blue', label: 'Blue' },
+  { value: 'red', label: 'Red' },
+  { value: 'brown_kyu3', label: 'Brown (Kyu 3)' },
+  { value: 'brown_kyu2', label: 'Brown (Kyu 2)' },
+  { value: 'brown_kyu1', label: 'Brown (Kyu 1)' },
+  { value: 'black', label: 'Black' },
+];
+
 export default function ProgramRegistrations() {
   const searchParams = useSearchParams();
   const programIdParam = searchParams?.get('programId');
@@ -198,19 +211,6 @@ export default function ProgramRegistrations() {
       document.removeEventListener('touchstart', handlePointerDown);
     };
   }, [exportMenuOpen]);
-
-  const BELT_RANK_OPTIONS = [
-    { value: 'white', label: 'White' },
-    { value: 'yellow', label: 'Yellow' },
-    { value: 'orange', label: 'Orange' },
-    { value: 'green', label: 'Green' },
-    { value: 'blue', label: 'Blue' },
-    { value: 'red', label: 'Red' },
-    { value: 'brown_kyu3', label: 'Brown (Kyu 3)' },
-    { value: 'brown_kyu2', label: 'Brown (Kyu 2)' },
-    { value: 'brown_kyu1', label: 'Brown (Kyu 1)' },
-    { value: 'black', label: 'Black' },
-  ];
 
   const openAddRegistrant = () => {
     setShowAddRegistrant(true);
@@ -306,7 +306,7 @@ export default function ProgramRegistrations() {
     }
   };
 
-  const handleUpdateRegistration = async (id: string, data: { status?: string; transactionId?: string; paymentMethod?: string; notes?: string; rejectionReason?: string }) => {
+  const handleUpdateRegistration = async (id: string, data: { status?: string; transactionId?: string; paymentMethod?: string; notes?: string; rejectionReason?: string; newRank?: string }) => {
     try {
       const result = await updateRegistration(id, data);
       if (result.success) {
@@ -742,6 +742,7 @@ export default function ProgramRegistrations() {
           registration={editingRegistration}
           onClose={() => setEditingRegistration(null)}
           onSave={handleUpdateRegistration}
+          isBeltTest={programType === 'BELT_TEST'}
         />
       )}
 
@@ -879,10 +880,12 @@ function EditRegistrationModal({
   registration,
   onClose,
   onSave,
+  isBeltTest,
 }: {
   registration: RegistrationWithProfile;
   onClose: () => void;
-  onSave: (id: string, data: { status?: string; transactionId?: string; paymentMethod?: string; notes?: string; rejectionReason?: string }) => void;
+  onSave: (id: string, data: { status?: string; transactionId?: string; paymentMethod?: string; notes?: string; rejectionReason?: string; newRank?: string }) => void;
+  isBeltTest: boolean;
 }) {
   const [formData, setFormData] = useState({
     status: registration.status || 'pending_payment',
@@ -890,6 +893,7 @@ function EditRegistrationModal({
     paymentMethod: registration.paymentMethod || '',
     notes: registration.notes || '',
     rejectionReason: registration.rejectionReason || '',
+    newRank: registration.newRank || '',
   });
   const [saving, setSaving] = useState(false);
 
@@ -943,6 +947,24 @@ function EditRegistrationModal({
                 <option value="cash">Cash</option>
               </select>
             </div>
+
+            {isBeltTest && (
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Belt Rank</label>
+                <select
+                  value={formData.newRank || ''}
+                  onChange={(e) => setFormData({ ...formData, newRank: e.target.value })}
+                  className="w-full px-3 py-2 border rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 border-gray-300 dark:border-gray-700 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                >
+                  <option value="">Select Belt Rank</option>
+                  {BELT_RANK_OPTIONS.map((opt) => (
+                    <option key={opt.value} value={opt.value}>
+                      {opt.label}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            )}
 
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Transaction ID</label>

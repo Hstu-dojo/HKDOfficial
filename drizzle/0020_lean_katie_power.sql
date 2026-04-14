@@ -1,0 +1,1 @@
+ALTER TABLE "program_certificates" ADD COLUMN "metadata" jsonb DEFAULT '{}'::jsonb;

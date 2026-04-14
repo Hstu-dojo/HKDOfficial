@@ -141,6 +141,13 @@
       "when": 1776193369441,
       "tag": "0019_amazing_vance_astro",
       "breakpoints": true
+    },
+    {
+      "idx": 20,
+      "version": "7",
+      "when": 1776198427964,
+      "tag": "0020_lean_katie_power",
+      "breakpoints": true
     }
   ]
 }

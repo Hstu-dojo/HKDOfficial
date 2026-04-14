@@ -1,4 +1,4 @@
-import { pgTable, text, boolean, timestamp, pgEnum } from "drizzle-orm/pg-core";
+import { pgTable, text, boolean, timestamp, pgEnum, jsonb } from "drizzle-orm/pg-core";
 import { sql } from "drizzle-orm";
 import { user } from "../auth";
 import { programs } from "./programs";
@@ -65,6 +65,9 @@ export const programCertificates = pgTable("program_certificates", {
   // Signatures used when issued
   trainerSignatureId: text("trainer_signature_id").references(() => certificateSignatures.id, { onDelete: "set null" }),
   coordinatorSignatureId: text("coordinator_signature_id").references(() => certificateSignatures.id, { onDelete: "set null" }),
+  
+  // Metadata for storing dynamic fields like manual belt rank or custom elements
+  metadata: jsonb("metadata").$type<Record<string, any>>().default(sql`'{}'::jsonb`),
   
   // Admin actions
   issuedBy: text("issued_by").references(() => user.id, { onDelete: "set null" }),

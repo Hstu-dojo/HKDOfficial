@@ -18,6 +18,8 @@
 import { PDFDocument, StandardFonts, rgb } from 'pdf-lib';
 import { readFile } from 'fs/promises';
 import { join } from 'path';
+import { headers } from 'next/headers';
+import type { ProgramCertificateFieldMapping } from '@/db/schemas/karate/program-types';
 
 // ---------------------------------------------------------------------------
 // Types
@@ -185,6 +187,88 @@ export async function generateCertificatePdf(data: CertificateData): Promise<Uin
 // ---------------------------------------------------------------------------
 // Merge multiple PDFs into one
 // ---------------------------------------------------------------------------
+
+// ---------------------------------------------------------------------------
+// Dynamic Certificate PDF Generation
+// ---------------------------------------------------------------------------
+
+export interface DynamicCertificateData {
+  templatePath: string;
+  fieldMappings: ProgramCertificateFieldMapping[];
+  resolvedValues: Record<string, string | { imageUrl: string }>;
+}
+
+export async function generateDynamicCertificatePdf({
+  templatePath,
+  fieldMappings,
+  resolvedValues,
+}: DynamicCertificateData): Promise<Uint8Array> {
+  const headersList = await headers();
+  const host = headersList.get('host') || 'localhost:3000';
+  const protocol = host.includes('localhost') ? 'http' : 'https';
+  const urlPath = templatePath.startsWith('/') ? templatePath : `/${templatePath}`;
+  const url = `${protocol}://${host}${urlPath}`;
+
+  const response = await fetch(url, { method: 'GET' });
+  if (!response.ok) throw new Error(`Failed to fetch template (${response.status}) from ${url}`);
+
+  const arrayBuffer = await response.arrayBuffer();
+  const pdfBytes = new Uint8Array(arrayBuffer);
+  
+  const pdfDoc = await PDFDocument.load(pdfBytes);
+  const form = pdfDoc.getForm();
+  const page = pdfDoc.getPages()[0];
+  
+  if (!page) throw new Error('Loaded PDF contains no pages.');
+
+  for (const mapping of fieldMappings) {
+    const fieldName = mapping.pdfFieldName;
+    const value = resolvedValues[fieldName];
+
+    if (!value) continue;
+
+    try {
+      const field = form.getTextField(fieldName);
+      const acroField = (field as any).acroField;
+      const widgets = acroField?.getWidgets?.() ?? [];
+      const widget = widgets[0];
+
+      let rect = { x: 0, y: 0, width: 0, height: 0 };
+      if (widget) {
+        const r = widget.getRectangle();
+        rect = { x: Number(r.x), y: Number(r.y), width: Number(r.width), height: Number(r.height) };
+      } else if (mapping.widgets && mapping.widgets.length > 0) {
+        rect = mapping.widgets[0];
+      } else {
+        console.warn(`[cert-pdf] Field "${fieldName}" has no rectangle to draw in, skipping.`);
+        continue;
+      }
+
+      if (typeof value === 'object' && 'imageUrl' in value) {
+        // Signature image
+        const imgUrl = value.imageUrl;
+        const { buffer, type } = await fetchImageBuffer(imgUrl);
+        const img = type === 'png' ? await pdfDoc.embedPng(buffer) : await pdfDoc.embedJpg(buffer);
+        page.drawImage(img, {
+          x: rect.x,
+          y: rect.y,
+          width: rect.width,
+          height: rect.height,
+        });
+      } else if (typeof value === 'string') {
+        const text = value.trim();
+        await drawCentredText(pdfDoc, page, text, { x: rect.x, y: rect.y, w: rect.width, h: rect.height }, 12);
+      }
+
+      field.setText('');
+    } catch (err) {
+      console.warn(`[cert-pdf] Failed mapping for field "${fieldName}":`, err);
+    }
+  }
+
+  try { form.flatten(); } catch { /* ignore if already flat */ }
+  return await pdfDoc.save();
+}
 
 export async function mergeCertificatePdfs(pdfBytesArray: Uint8Array[]): Promise<Uint8Array> {
   const mergedDoc = await PDFDocument.create();

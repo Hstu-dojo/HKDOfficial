@@ -68,6 +68,7 @@ export default function ProgramCertificateManagement() {
   const [programTitle, setProgramTitle] = useState('');
   const [programEndDate, setProgramEndDate] = useState<Date | null>(null);
   const [programType, setProgramType] = useState<string>('');
+  const [fieldMappings, setFieldMappings] = useState<any[]>([]);
   const [participants, setParticipants] = useState<ProgramParticipant[]>([]);
   const [certificates, setCertificates] = useState<CertRow[]>([]);
   const [signatures, setSignatures] = useState<CertificateSignature[]>([]);
@@ -100,6 +101,7 @@ export default function ProgramCertificateManagement() {
   const [manualName, setManualName] = useState('');
   const [manualTrainerSigId, setManualTrainerSigId] = useState('');
   const [manualCoordinatorSigId, setManualCoordinatorSigId] = useState('');
+  const [manualMetadata, setManualMetadata] = useState<Record<string, any>>({});
   const [creatingManual, setCreatingManual] = useState(false);
 
   // Attach profile modal
@@ -129,6 +131,7 @@ export default function ProgramCertificateManagement() {
         setProgramTitle(progRes.data.title);
         setProgramEndDate(progRes.data.endDate ? new Date(progRes.data.endDate) : null);
         setProgramType(progRes.data.type || '');
+        setFieldMappings((progRes.data as any).programType?.fieldMappings || []);
       } else if (!progRes.success) setFetchError(progRes.error || 'Failed to load program');
 
       if (partRes.success && partRes.data) setParticipants(partRes.data);
@@ -367,13 +370,15 @@ export default function ProgramCertificateManagement() {
         manualName.trim(),
         manualTrainerSigId || null,
         manualCoordinatorSigId || null,
-        programEndDate ?? undefined
+        programEndDate ?? undefined,
+        manualMetadata
       );
       if (result.success) {
         toast.success('Manual certificate created!');
         setManualName('');
         setManualTrainerSigId('');
         setManualCoordinatorSigId('');
+        setManualMetadata({});
         setShowManualCertForm(false);
         fetchData();
       } else {
@@ -751,54 +756,9 @@ export default function ProgramCertificateManagement() {
             <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
               Issue Certificates
             </h2>
-            <p className="text-sm text-gray-500 dark:text-gray-400">
-              {selectedCertIds.size} certificate(s) will be issued. Select signatures:
+            <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">
+              {selectedCertIds.size} certificate(s) will be issued. Signatures and templates will be automatically applied according to the selected Program Type's configuration.
             </p>
-
-            {/* Optional signatures note */}
-            <p className="text-xs text-gray-400 dark:text-gray-500 italic">
-              Signatures are optional. If not selected, the certificate will be issued without trainer/coordinator names and signature images.
-            </p>
-
-            {/* Trainer Signature */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                Trainer Signature <span className="text-xs font-normal text-gray-400">(optional)</span>
-              </label>
-              <select
-                value={trainerSigId}
-                onChange={(e) => setTrainerSigId(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 outline-none"
-              >
-                <option value="">— No trainer signature —</option>
-                {trainerSigs.map((s) => (
-                  <option key={s.id} value={s.id}>{s.name}{s.title ? ` — ${s.title}` : ''}</option>
-                ))}
-              </select>
-              {trainerSigs.length === 0 && (
-                <p className="mt-1 text-xs text-gray-400 dark:text-gray-500">No active trainer signatures. <Link href="/admin/programs/signatures" className="underline">Add one</Link></p>
-              )}
-            </div>
-
-            {/* Coordinator Signature */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                Coordinator Signature <span className="text-xs font-normal text-gray-400">(optional)</span>
-              </label>
-              <select
-                value={coordinatorSigId}
-                onChange={(e) => setCoordinatorSigId(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 outline-none"
-              >
-                <option value="">— No coordinator signature —</option>
-                {coordinatorSigs.map((s) => (
-                  <option key={s.id} value={s.id}>{s.name}{s.title ? ` — ${s.title}` : ''}</option>
-                ))}
-              </select>
-              {coordinatorSigs.length === 0 && (
-                <p className="mt-1 text-xs text-gray-400 dark:text-gray-500">No active coordinator signatures. <Link href="/admin/programs/signatures" className="underline">Add one</Link></p>
-              )}
-            </div>
 
             <div className="flex justify-end gap-3 pt-4 border-t">
               <button
@@ -952,6 +912,50 @@ export default function ProgramCertificateManagement() {
                 className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 outline-none"
               />
             </div>
+
+            {/* Dynamic Mapped Fields */}
+            {fieldMappings
+              .filter((mapping: any) => mapping.kind === 'dynamic' && mapping.dynamicSource !== 'participant_name' && mapping.dynamicSource !== 'certificate_number')
+              .map((mapping: any, idx: number) => (
+                <div key={mapping.dynamicSource + idx}>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1 capitalize">
+                    {mapping.dynamicSource.replace(/_/g, ' ')}
+                  </label>
+                  {mapping.dynamicSource === 'belt_test_rank' ? (
+                    <select
+                      value={manualMetadata[mapping.dynamicSource] || ''}
+                      onChange={(e) => setManualMetadata({ ...manualMetadata, [mapping.dynamicSource]: e.target.value })}
+                      className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 outline-none"
+                    >
+                      <option value="">Select Belt Rank</option>
+                      <option value="white">White</option>
+                      <option value="yellow">Yellow</option>
+                      <option value="orange">Orange</option>
+                      <option value="green">Green</option>
+                      <option value="blue">Blue</option>
+                      <option value="red">Red</option>
+                      <option value="brown_kyu3">Brown (Kyu 3)</option>
+                      <option value="brown_kyu2">Brown (Kyu 2)</option>
+                      <option value="brown_kyu1">Brown (Kyu 1)</option>
+                      <option value="black">Black</option>
+                    </select>
+                  ) : (
+                    <input
+                      type="text"
+                      value={manualMetadata[mapping.dynamicSource] || ''}
+                      onChange={(e) => setManualMetadata({ ...manualMetadata, [mapping.dynamicSource]: e.target.value })}
+                      placeholder={`Enter ${mapping.dynamicSource.replace(/_/g, ' ')}`}
+                      className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 outline-none"
+                    />
+                  )}
+                </div>
+              ))}
+
+            {/* General Signature Note */}
+            <p className="text-xs text-gray-500 dark:text-gray-400">
+              Signatures assigned here will override default program signatures. 
+              Leave empty to adhere to Program Type configuration (if any).
+            </p>
 
             {/* Trainer Signature */}
             <div>

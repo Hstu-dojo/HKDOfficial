@@ -151,6 +151,9 @@ export async function getProgramById(id: string) {
   try {
     const program = await db.query.programs.findFirst({
       where: eq(programs.id, id),
+      with: {
+        programType: true,
+      },
     });
     return { success: true, data: program };
   } catch (error) {
@@ -581,11 +584,15 @@ export async function updateRegistration(
     paymentMethod?: string;
     notes?: string;
     rejectionReason?: string;
+    newRank?: string;
   }
 ) {
   try {
+    const updatePayload: any = { ...data, updatedAt: new Date() };
+    if (data.newRank === '') updatePayload.newRank = null; // allow clearing
+
     const [updated] = await db.update(programRegistrations)
-      .set({ ...data, updatedAt: new Date() } as any)
+      .set(updatePayload)
       .where(eq(programRegistrations.id, registrationId))
       .returning();
       
