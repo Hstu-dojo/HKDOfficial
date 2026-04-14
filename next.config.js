@@ -60,7 +60,7 @@ const nextConfig = {
   experimental: {
     taint: true,
   },
-  serverExternalPackages: ["postgres", "bcrypt", "sharp"],
+  serverExternalPackages: ["postgres", "bcrypt", "sharp", "pdfjs-dist", "canvas"],
   turbopack: {
     resolveExtensions: [
       ".mdx",
@@ -78,6 +78,10 @@ const nextConfig = {
   },
   eslint: {
     ignoreDuringBuilds: true, // HYB
+  },
+  webpack: (config) => {
+    config.resolve.alias.canvas = false;
+    return config;
   },
   images: {
     remotePatterns: [

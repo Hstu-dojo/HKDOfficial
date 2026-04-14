@@ -1,11 +1,11 @@
-import * as pdfjsLib from 'pdfjs-dist';
 import { PDFDocument } from 'pdf-lib';
-
-// Use a stable CDN for the worker relative to the installed version
-pdfjsLib.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjsLib.version}/pdf.worker.min.js`;
 
 export async function rasterizeAndDownloadPdf(pdfUrl: string, fileName: string) {
   try {
+    // Dynamically import pdfjs-dist only on the client
+    const pdfjsLib = await import('pdfjs-dist');
+    pdfjsLib.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjsLib.version}/pdf.worker.min.js`;
+
     // Fetch the flattened PDF
     const res = await fetch(pdfUrl);
     if (!res.ok) throw new Error('Failed to fetch certificate PDF');

@@ -124,20 +124,6 @@ function CertVerifyContent() {
     }
   }
 
-  const handleDownloadRasterized = async () => {
-    if (!certificate) return;
-    setIsRasterizing(true);
-    try {
-      const url = `/api/certificates/${certificate.id}/download`;
-      await rasterizeAndDownloadPdf(url, `certificate-${certificate.certificateNumber}.pdf`);
-    } catch (err) {
-      console.error(err);
-      alert('Failed to download certificate image PDF.');
-    } finally {
-      setIsRasterizing(false);
-    }
-  }
-
   function programTypeLabel(type: string) {
     return type.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
   }
