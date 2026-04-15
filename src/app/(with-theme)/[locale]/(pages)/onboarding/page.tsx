@@ -27,8 +27,8 @@ export default async function OnboardingPage({
   }
 
   const { existing, data } = await getOnboardingStatus();
-  const params = await searchParams;
-  const isEditMode = params.edit === 'true';
+  const query = await searchParams;
+  const isEditMode = query.edit === "true";
 
   // If already registered and NOT in edit mode, show success state
   if (existing && !isEditMode) {
