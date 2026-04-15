@@ -132,20 +132,22 @@ async function getUserOnboardingData(): Promise<{
     return fallback;
   }
 }
+import { getI18n } from '@/locales/server';
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { slug } = await params;
+  const t = await getI18n();
   const course = await getCourse(slug);
   
   if (!course) {
     return {
-      title: 'Course Not Found',
+      title: t('courses.applyPage.notFoundTitle'),
     };
   }
   
   return {
-    title: `Apply for ${course.name} | HKD Dojo`,
-    description: `Apply for the ${course.name} karate course. ${course.shortDescription}`,
+    title: t('courses.applyPage.metaTitle', { course: course.name }),
+    description: t('courses.applyPage.metaDescription', { course: course.name, description: course.shortDescription }),
   };
 }
 
@@ -158,13 +160,15 @@ export default async function CourseApplicationPage({ params }: PageProps) {
   }
   
   if (!course.isEnrollmentOpen) {
+    const t = await getI18n();
+
     return (
       <>
         <Header />
         <main className="min-h-screen flex items-center justify-center pt-24 pb-16 bg-slate-50 dark:bg-slate-900">
           <div className="text-center">
-            <h1 className="text-2xl font-bold">Enrollment Closed</h1>
-            <p className="mt-2 text-muted-foreground">This course is not currently accepting applications.</p>
+            <h1 className="text-2xl font-bold">{t('courses.applyPage.enrollmentClosedTitle')}</h1>
+            <p className="mt-2 text-muted-foreground">{t('courses.applyPage.enrollmentClosedDescription')}</p>
           </div>
         </main>
         <Footer />
@@ -176,7 +180,7 @@ export default async function CourseApplicationPage({ params }: PageProps) {
   const { isAuthenticated, onboardingData, existingPartnerId, userEmail } = await getUserOnboardingData();
   
   if (!isAuthenticated) {
-    redirect(`/login?callbackUrl=/${locale}/karate/courses/${slug}/apply`);
+    redirect(`/${locale}/login?callbackUrl=/${locale}/karate/courses/${slug}/apply`);
   }
 
   // Block re-editing: if user already has an active (non-rejected/cancelled)

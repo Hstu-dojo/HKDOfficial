@@ -18,18 +18,40 @@ import {
   AcademicCapIcon,
   CheckCircleIcon
 } from '@heroicons/react/24/outline';
-
-export const metadata = {
-  title: 'Course Details | HKD Dojo',
-};
+import type { Metadata } from 'next';
+import { getI18n } from '@/locales/server';
 
 // ISR: revalidate every 120 seconds
 export const revalidate = 120;
 
-const dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-
-export default async function CourseDetailsPage({ params }: { params: Promise<{ slug: string }> }) {
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string; slug: string }>;
+}): Promise<Metadata> {
   const { slug } = await params;
+  const t = await getI18n();
+
+  const course = await db.query.courses.findFirst({
+    where: eq(courses.id, slug),
+  });
+
+  if (!course) {
+    return { title: t('courses.details.metaTitleFallback') };
+  }
+
+  return {
+    title: t('courses.details.metaTitle', { course: course.name }),
+  };
+}
+
+export default async function CourseDetailsPage({
+  params,
+}: {
+  params: Promise<{ locale: string; slug: string }>;
+}) {
+  const { locale, slug } = await params;
+  const t = await getI18n();
   
   // Using slug as ID since courses don't have a slug column
   const course = await db.query.courses.findFirst({
@@ -48,6 +70,16 @@ export default async function CourseDetailsPage({ params }: { params: Promise<{ 
   const canSeePricing = !!(viewerPartnerId && course.partnerId && course.partnerId === viewerPartnerId);
 
   const features = course.features as string[] || [];
+
+  const dayNames = [
+    t('days.sunday'),
+    t('days.monday'),
+    t('days.tuesday'),
+    t('days.wednesday'),
+    t('days.thursday'),
+    t('days.friday'),
+    t('days.saturday'),
+  ];
 
   return (
     <>
@@ -69,12 +101,12 @@ export default async function CourseDetailsPage({ params }: { params: Promise<{ 
                   <div className="flex items-center gap-2 mb-3">
                     {course.minimumBelt && (
                       <span className="bg-white/20 px-3 py-1.5 rounded-full text-xs font-semibold backdrop-blur-sm uppercase tracking-wide">
-                        {course.minimumBelt} Belt +
+                        {t('courses.details.minimumBelt', { belt: course.minimumBelt })}
                       </span>
                     )}
                     {course.isEnrollmentOpen && (
                       <span className="bg-green-500/80 px-3 py-1.5 rounded-full text-xs font-semibold backdrop-blur-sm">
-                        Enrollment Open
+                        {t('courses.details.enrollmentOpenBadge')}
                       </span>
                     )}
                   </div>
@@ -103,7 +135,7 @@ export default async function CourseDetailsPage({ params }: { params: Promise<{ 
                     {/* Features */}
                     {features.length > 0 && (
                       <div className="border-t border-slate-200 dark:border-slate-700 pt-6">
-                        <h3 className="font-semibold text-slate-900 dark:text-slate-100 mb-4">What&apos;s Included</h3>
+                        <h3 className="font-semibold text-slate-900 dark:text-slate-100 mb-4">{t('courses.details.whatsIncludedTitle')}</h3>
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                           {features.map((feature, idx) => (
                             <div key={idx} className="flex items-center gap-2 text-slate-600 dark:text-slate-300">
@@ -118,7 +150,7 @@ export default async function CourseDetailsPage({ params }: { params: Promise<{ 
                     {/* Schedule */}
                     {schedules.length > 0 && (
                       <div className="border-t border-slate-200 dark:border-slate-700 pt-6">
-                        <h3 className="font-semibold text-slate-900 dark:text-slate-100 mb-4">Class Schedule</h3>
+                        <h3 className="font-semibold text-slate-900 dark:text-slate-100 mb-4">{t('courses.details.classScheduleTitle')}</h3>
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                           {schedules.map((schedule) => (
                             <div 
@@ -145,27 +177,27 @@ export default async function CourseDetailsPage({ params }: { params: Promise<{ 
 
                     {/* Course Details */}
                     <div className="border-t border-slate-200 dark:border-slate-700 pt-6">
-                      <h3 className="font-semibold text-slate-900 dark:text-slate-100 mb-4">Course Details</h3>
+                      <h3 className="font-semibold text-slate-900 dark:text-slate-100 mb-4">{t('courses.details.courseDetailsTitle')}</h3>
                       <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
                         <div className="text-center p-4 rounded-xl bg-slate-50 dark:bg-slate-900/50">
                           <ClockIcon className="h-6 w-6 text-primary mx-auto mb-2" />
                           <p className="text-2xl font-bold text-slate-900 dark:text-slate-100">{course.duration}</p>
-                          <p className="text-xs text-slate-500 dark:text-slate-400">Months</p>
+                          <p className="text-xs text-slate-500 dark:text-slate-400">{t('courses.details.durationUnitMonths')}</p>
                         </div>
                         <div className="text-center p-4 rounded-xl bg-slate-50 dark:bg-slate-900/50">
                           <CalendarDaysIcon className="h-6 w-6 text-primary mx-auto mb-2" />
                           <p className="text-2xl font-bold text-slate-900 dark:text-slate-100">{course.sessionsPerWeek}</p>
-                          <p className="text-xs text-slate-500 dark:text-slate-400">Sessions/Week</p>
+                          <p className="text-xs text-slate-500 dark:text-slate-400">{t('courses.details.sessionsPerWeek')}</p>
                         </div>
                         <div className="text-center p-4 rounded-xl bg-slate-50 dark:bg-slate-900/50">
                           <ClockIcon className="h-6 w-6 text-primary mx-auto mb-2" />
                           <p className="text-2xl font-bold text-slate-900 dark:text-slate-100">{course.sessionDurationMinutes}</p>
-                          <p className="text-xs text-slate-500 dark:text-slate-400">Min/Session</p>
+                          <p className="text-xs text-slate-500 dark:text-slate-400">{t('courses.details.minutesPerSession')}</p>
                         </div>
                         <div className="text-center p-4 rounded-xl bg-slate-50 dark:bg-slate-900/50">
                           <UserGroupIcon className="h-6 w-6 text-primary mx-auto mb-2" />
                           <p className="text-2xl font-bold text-slate-900 dark:text-slate-100">{course.currentStudents || 0}/{course.maxStudents || '∞'}</p>
-                          <p className="text-xs text-slate-500 dark:text-slate-400">Students</p>
+                          <p className="text-xs text-slate-500 dark:text-slate-400">{t('courses.details.studentsLabel')}</p>
                         </div>
                       </div>
                     </div>
@@ -174,18 +206,18 @@ export default async function CourseDetailsPage({ params }: { params: Promise<{ 
                   {/* Sidebar / Pricing */}
                   <div className="lg:col-span-1">
                     <div className="sticky top-24 bg-slate-50 dark:bg-slate-900/50 rounded-xl p-6 border border-slate-200 dark:border-slate-700">
-                      <h3 className="text-lg font-semibold text-slate-900 dark:text-slate-100 mb-4">Pricing</h3>
+                      <h3 className="text-lg font-semibold text-slate-900 dark:text-slate-100 mb-4">{t('courses.details.pricingTitle')}</h3>
 
                       {canSeePricing ? (
                         <div className="space-y-4">
                           <div className="flex justify-between items-center pb-3 border-b border-slate-200 dark:border-slate-700">
-                            <span className="text-slate-500 dark:text-slate-400">Admission Fee</span>
+                            <span className="text-slate-500 dark:text-slate-400">{t('courses.details.admissionFee')}</span>
                             <span className="font-bold text-slate-900 dark:text-slate-100 text-xl">
                               ৳{course.admissionFee}
                             </span>
                           </div>
                           <div className="flex justify-between items-center">
-                            <span className="text-slate-500 dark:text-slate-400">Monthly Fee</span>
+                            <span className="text-slate-500 dark:text-slate-400">{t('courses.details.monthlyFee')}</span>
                             <span className="font-bold text-primary text-2xl">
                               ৳{course.monthlyFee}
                             </span>
@@ -193,7 +225,7 @@ export default async function CourseDetailsPage({ params }: { params: Promise<{ 
                         </div>
                       ) : (
                         <div className="rounded-lg border border-slate-200 dark:border-slate-700 bg-white/40 dark:bg-slate-900/40 p-4">
-                          <p className="text-sm text-slate-600 dark:text-slate-400">Pricing is hidden until onboarding is completed.</p>
+                          <p className="text-sm text-slate-600 dark:text-slate-400">{t('courses.details.pricingHidden')}</p>
                         </div>
                       )}
 
@@ -202,7 +234,7 @@ export default async function CourseDetailsPage({ params }: { params: Promise<{ 
                           <div className="flex items-center gap-2 text-sm">
                             <AcademicCapIcon className="h-5 w-5 text-primary" />
                             <span className="text-slate-700 dark:text-slate-300">
-                              Target: <strong className="text-primary capitalize">{course.targetBelt} Belt</strong>
+                              {t('courses.details.targetLabel')} <strong className="text-primary capitalize">{course.targetBelt} Belt</strong>
                             </span>
                           </div>
                         </div>
@@ -211,23 +243,23 @@ export default async function CourseDetailsPage({ params }: { params: Promise<{ 
                       <div className="mt-6">
                         {course.isEnrollmentOpen ? (
                           <Link
-                            href={`/karate/courses/${slug}/apply`}
+                            href={`/${locale}/karate/courses/${slug}/apply`}
                             className="block w-full text-center bg-primary text-white rounded-xl py-3 px-4 font-semibold hover:opacity-90 transition shadow-sm"
                           >
-                            Apply Now
+                            {t('courses.details.applyNow')}
                           </Link>
                         ) : (
                           <button 
                             disabled 
                             className="w-full bg-slate-300 dark:bg-slate-600 text-slate-500 dark:text-slate-400 rounded-xl py-3 px-4 font-semibold cursor-not-allowed"
                           >
-                            Enrollment Closed
+                            {t('courses.details.enrollmentClosedButton')}
                           </button>
                         )}
                       </div>
 
                       <p className="text-xs text-slate-500 dark:text-slate-400 text-center mt-3">
-                        Payment via bKash / Bank Transfer
+                        {t('courses.details.paymentInfo')}
                       </p>
                     </div>
                   </div>

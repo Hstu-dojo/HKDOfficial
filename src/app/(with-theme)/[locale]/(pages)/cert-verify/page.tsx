@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import Header from "@/components/layout/header";
 import Footer from "@/components/layout/footer";
+import { useCurrentLocale, useScopedI18n } from "@/locales/client";
 import {
   ShieldCheckIcon,
   MagnifyingGlassIcon,
@@ -45,6 +46,9 @@ interface CertificateData {
 }
 
 function CertVerifyContent() {
+  const t = useScopedI18n("certVerify");
+  const locale = useCurrentLocale();
+
   const searchParams = useSearchParams();
   const router = useRouter();
   const certIdParam = searchParams?.get("certId") ?? "";
@@ -84,23 +88,28 @@ function CertVerifyContent() {
       const data = await res.json();
 
       if (!res.ok || !data.valid) {
-        setError(data.error ?? "Certificate not found or has been revoked.");
+        setError(data.error ?? t("errorNotFoundOrRevoked"));
       } else {
         setCertificate(data.certificate);
       }
     } catch {
-      setError("Network error. Please try again.");
+      setError(t("errorNetwork"));
     } finally {
       setLoading(false);
     }
   }
 
   function handleShare() {
-    const url = `${window.location.origin}/en/cert-verify?certId=${encodeURIComponent(certificate?.certificateNumber ?? "")}`;
+    const url = `${window.location.origin}/${locale}/cert-verify?certId=${encodeURIComponent(certificate?.certificateNumber ?? "")}`;
     if (navigator.share) {
       navigator.share({
-        title: `Certificate Verification — ${certificate?.certificateNumber}`,
-        text: `Verify the certificate issued to ${certificate?.recipientName} for "${certificate?.program.title}" by HKD Official.`,
+        title: t("shareTitle", {
+          certificateNumber: certificate?.certificateNumber ?? "",
+        }),
+        text: t("shareText", {
+          recipientName: certificate?.recipientName ?? "",
+          programTitle: certificate?.program.title ?? "",
+        }),
         url,
       });
     } else {
@@ -118,7 +127,7 @@ function CertVerifyContent() {
       await rasterizeAndDownloadPdf(url, `certificate-${certificate.certificateNumber}.pdf`);
     } catch (err) {
       console.error(err);
-      alert('Failed to download certificate image PDF.');
+      alert(t("downloadFailed"));
     } finally {
       setIsRasterizing(false);
     }
@@ -139,11 +148,10 @@ function CertVerifyContent() {
               <ShieldCheckIcon className="h-8 w-8 text-primary" />
             </div>
             <h1 className="text-3xl sm:text-4xl font-extrabold text-slate-900 dark:text-slate-100 mb-3">
-              Certificate Verification
+              {t("title")}
             </h1>
             <p className="text-slate-500 dark:text-slate-400 text-base sm:text-lg max-w-xl mx-auto mb-8">
-              Verify the authenticity of certificates issued by HKD Official.
-              Enter the certificate ID below to check its validity.
+              {t("subtitle")}
             </p>
 
             {/* Search box */}
@@ -160,7 +168,7 @@ function CertVerifyContent() {
                   type="text"
                   value={searchValue}
                   onChange={(e) => setSearchValue(e.target.value.toUpperCase())}
-                  placeholder="e.g. HKD-P-A1B2C3"
+                  placeholder={t("searchPlaceholder")}
                   className="w-full pl-11 pr-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 text-sm font-mono tracking-wide focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary transition placeholder:text-slate-400"
                   autoFocus
                 />
@@ -175,7 +183,7 @@ function CertVerifyContent() {
                 ) : (
                   <ShieldCheckIcon className="h-4 w-4" />
                 )}
-                Verify
+                {t("verifyButton")}
               </button>
             </form>
           </div>
@@ -197,14 +205,17 @@ function CertVerifyContent() {
                 <XCircleIcon className="h-7 w-7 text-red-500" />
               </div>
               <h2 className="text-xl font-bold text-red-700 dark:text-red-400 mb-2">
-                Certificate Not Found
+                {t("errorTitle")}
               </h2>
               <p className="text-red-600/70 dark:text-red-400/70 text-sm max-w-md mx-auto">
                 {error}
               </p>
               <p className="text-slate-500 dark:text-slate-400 text-xs mt-4">
-                Double-check the certificate ID and try again. If you believe this is an error,
-                please <Link href="/contact" className="text-primary hover:underline">contact support</Link>.
+                {t("errorHelpPrefix")}{" "}
+                <Link href={`/${locale}/contact`} className="text-primary hover:underline">
+                  {t("contactSupport")}
+                </Link>
+                {t("errorHelpSuffix")}
               </p>
             </div>
           )}
@@ -219,10 +230,10 @@ function CertVerifyContent() {
                 </div>
                 <div className="text-center sm:text-left flex-1 min-w-0">
                   <h2 className="text-lg font-bold text-green-800 dark:text-green-300">
-                    Certificate Verified
+                    {t("verifiedTitle")}
                   </h2>
                   <p className="text-green-600/80 dark:text-green-400/70 text-sm">
-                    This certificate is authentic and was issued by HKD Official.
+                    {t("verifiedSubtitle")}
                   </p>
                 </div>
                 <span className="font-mono text-sm font-semibold text-green-700 dark:text-green-400 bg-green-100 dark:bg-green-900/40 px-3 py-1.5 rounded-lg flex-shrink-0">
@@ -235,7 +246,7 @@ function CertVerifyContent() {
                 {/* Recipient section */}
                 <div className="p-5 sm:p-6 border-b border-slate-100 dark:border-slate-700/50">
                   <h3 className="text-xs uppercase font-semibold tracking-wider text-slate-400 dark:text-slate-500 mb-3">
-                    Recipient
+                    {t("recipientTitle")}
                   </h3>
                   <div className="space-y-2.5">
                     <div className="flex items-center gap-3">
@@ -263,7 +274,7 @@ function CertVerifyContent() {
                 {/* Program section */}
                 <div className="p-5 sm:p-6 border-b border-slate-100 dark:border-slate-700/50">
                   <h3 className="text-xs uppercase font-semibold tracking-wider text-slate-400 dark:text-slate-500 mb-3">
-                    Program Details
+                    {t("programDetailsTitle")}
                   </h3>
                   <div className="space-y-3">
                     <div className="flex items-start gap-3">
@@ -308,18 +319,18 @@ function CertVerifyContent() {
                 {/* Issue info section */}
                 <div className="p-5 sm:p-6 border-b border-slate-100 dark:border-slate-700/50">
                   <h3 className="text-xs uppercase font-semibold tracking-wider text-slate-400 dark:text-slate-500 mb-3">
-                    Certificate Info
+                    {t("certificateInfoTitle")}
                   </h3>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
-                      <p className="text-xs text-slate-400 dark:text-slate-500 mb-1">Certificate Number</p>
+                      <p className="text-xs text-slate-400 dark:text-slate-500 mb-1">{t("certificateNumberLabel")}</p>
                       <p className="font-mono font-semibold text-sm text-slate-900 dark:text-slate-100">
                         {certificate.certificateNumber}
                       </p>
                     </div>
                     {certificate.issueDate && (
                       <div>
-                        <p className="text-xs text-slate-400 dark:text-slate-500 mb-1">Date of Issue</p>
+                        <p className="text-xs text-slate-400 dark:text-slate-500 mb-1">{t("issueDateLabel")}</p>
                         <p className="font-semibold text-sm text-slate-900 dark:text-slate-100">
                           {format(new Date(certificate.issueDate), "MMMM d, yyyy")}
                         </p>
@@ -332,7 +343,7 @@ function CertVerifyContent() {
                 {(certificate.signatures.trainer || certificate.signatures.coordinator) && (
                   <div className="p-5 sm:p-6">
                     <h3 className="text-xs uppercase font-semibold tracking-wider text-slate-400 dark:text-slate-500 mb-3">
-                      Authorized By
+                      {t("authorizedByTitle")}
                     </h3>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       {certificate.signatures.trainer && (
@@ -341,7 +352,7 @@ function CertVerifyContent() {
                             {certificate.signatures.trainer.name}
                           </p>
                           <p className="text-xs text-slate-500 dark:text-slate-400">
-                            {certificate.signatures.trainer.title ?? "Trainer"}
+                            {certificate.signatures.trainer.title ?? t("trainerFallback")}
                           </p>
                         </div>
                       )}
@@ -351,7 +362,7 @@ function CertVerifyContent() {
                             {certificate.signatures.coordinator.name}
                           </p>
                           <p className="text-xs text-slate-500 dark:text-slate-400">
-                            {certificate.signatures.coordinator.title ?? "Coordinator"}
+                            {certificate.signatures.coordinator.title ?? t("coordinatorFallback")}
                           </p>
                         </div>
                       )}
@@ -368,7 +379,7 @@ function CertVerifyContent() {
                   className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-primary text-white text-sm font-semibold hover:opacity-90 transition-opacity disabled:opacity-50"
                 >
                   <DocumentArrowDownIcon className={isRasterizing ? "h-4 w-4 animate-bounce" : "h-4 w-4"} />
-                  {isRasterizing ? "Generating..." : "Download"}
+                  {isRasterizing ? t("generating") : t("download")}
                 </button>
                 <button
                   onClick={handleShare}
@@ -377,12 +388,12 @@ function CertVerifyContent() {
                   {copied ? (
                     <>
                       <ClipboardDocumentIcon className="h-4 w-4 text-green-500" />
-                      Link Copied!
+                      {t("linkCopied")}
                     </>
                   ) : (
                     <>
                       <ShareIcon className="h-4 w-4" />
-                      Share
+                      {t("share")}
                     </>
                   )}
                 </button>
@@ -397,7 +408,7 @@ function CertVerifyContent() {
                       params.set("issueYear", String(d.getFullYear()));
                       params.set("issueMonth", String(d.getMonth() + 1));
                     }
-                    const verifyUrl = `${window.location.origin}/en/cert-verify?certId=${encodeURIComponent(certificate.certificateNumber)}`;
+                    const verifyUrl = `${window.location.origin}/${locale}/cert-verify?certId=${encodeURIComponent(certificate.certificateNumber)}`;
                     params.set("certUrl", verifyUrl);
                     params.set("certId", certificate.certificateNumber);
                     return `https://www.linkedin.com/profile/add?${params.toString()}`;
@@ -405,12 +416,12 @@ function CertVerifyContent() {
                   target="_blank"
                   rel="noopener noreferrer"
                   className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl border border-[#0A66C2]/30 text-[#0A66C2] bg-white dark:bg-slate-800 text-sm font-semibold hover:bg-[#0A66C2]/5 dark:hover:bg-[#0A66C2]/10 transition-colors"
-                  title="Add to LinkedIn"
+                  title={t("addToLinkedInTitle")}
                 >
                   <svg className="h-4 w-4" viewBox="0 0 24 24" fill="currentColor">
                     <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" />
                   </svg>
-                  Add to LinkedIn
+                  {t("addToLinkedIn")}
                 </a>
               </div>
             </div>
@@ -421,7 +432,7 @@ function CertVerifyContent() {
             <div className="text-center py-16">
               <ShieldCheckIcon className="h-16 w-16 text-slate-200 dark:text-slate-700 mx-auto mb-4" />
               <p className="text-slate-400 dark:text-slate-500 text-sm">
-                Enter a certificate ID above to verify its authenticity.
+                {t("initialHint")}
               </p>
             </div>
           )}

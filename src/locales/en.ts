@@ -237,6 +237,97 @@ export default {
       failedResend: "Failed to resend confirmation email",
       somethingWrong: "Something went wrong. Please try again.",
     },
+
+    authCodeError: {
+      titles: {
+        otpExpired: "Verification Link Expired",
+        noCode: "OAuth Authentication Failed",
+        default: "Authentication Failed",
+      },
+      messages: {
+        otpExpired:
+          "Your email verification link has expired. Please request a new one.",
+        accessDenied: "Authentication was denied or cancelled.",
+        noCode:
+          "No authentication code was received from the OAuth provider. Please try again.",
+        errorWithCode: "Error: {error}",
+        default: "An error occurred during authentication.",
+      },
+      actions: {
+        requestNewVerificationEmail: "Request New Verification Email",
+        backToLogin: "Back to Login",
+        goToHome: "Go to Home",
+      },
+      technicalDetailsTitle: "Technical Details",
+      technical: {
+        errorLabel: "Error:",
+        codeLabel: "Code:",
+        descriptionLabel: "Description:",
+      },
+    },
+
+    debug: {
+      title: "Auth Debug Information",
+      useAuthRaw: "useAuth() Raw Data:",
+      useSessionCompat: "useSession() Compatibility Layer:",
+      statusSummary: "Status Summary:",
+      labels: {
+        loading: "Loading:",
+        userAuthenticated: "User Authenticated:",
+        sessionExists: "Session Exists:",
+        compatibilityStatus: "Compatibility Status:",
+        userEmail: "User Email:",
+        emailConfirmed: "Email Confirmed:",
+      },
+      yes: "Yes",
+      no: "No",
+      notAvailable: "N/A",
+    },
+  },
+
+  certVerify: {
+    title: "Certificate Verification",
+    subtitle:
+      "Verify the authenticity of certificates issued by HKD Official. Enter the certificate ID below to check its validity.",
+    searchPlaceholder: "e.g. HKD-P-A1B2C3",
+    verifyButton: "Verify",
+
+    errorTitle: "Certificate Not Found",
+    errorNotFoundOrRevoked: "Certificate not found or has been revoked.",
+    errorNetwork: "Network error. Please try again.",
+    errorHelpPrefix:
+      "Double-check the certificate ID and try again. If you believe this is an error, please",
+    contactSupport: "contact support",
+    errorHelpSuffix: ".",
+
+    verifiedTitle: "Certificate Verified",
+    verifiedSubtitle:
+      "This certificate is authentic and was issued by HKD Official.",
+
+    recipientTitle: "Recipient",
+    programDetailsTitle: "Program Details",
+    certificateInfoTitle: "Certificate Info",
+    certificateNumberLabel: "Certificate Number",
+    issueDateLabel: "Date of Issue",
+    authorizedByTitle: "Authorized By",
+
+    trainerFallback: "Trainer",
+    coordinatorFallback: "Coordinator",
+
+    generating: "Generating...",
+    download: "Download",
+    downloadFailed: "Failed to download certificate image PDF.",
+
+    linkCopied: "Link Copied!",
+    share: "Share",
+    addToLinkedIn: "Add to LinkedIn",
+    addToLinkedInTitle: "Add to LinkedIn",
+
+    shareTitle: "Certificate Verification — {certificateNumber}",
+    shareText:
+      "Verify the certificate issued to {recipientName} for \"{programTitle}\" by HKD Official.",
+
+    initialHint: "Enter a certificate ID above to verify its authenticity.",
   },
 
   onboarding: {
@@ -252,6 +343,21 @@ export default {
       editDetails: "Edit Details",
       goToDashboard: "Go to Dashboard",
       backToStatus: "<- Back to Status",
+    },
+  },
+
+  notFound: {
+    imageAlt: "Page not found",
+    title: "Sorry, we can't find that page!",
+    description:
+      "The page you are looking for was moved, removed, renamed or never existed.",
+    homeCta: "Take me Home",
+  },
+
+  templates: {
+    posts: {
+      metaTitle: "Blog posts",
+      metaDescription: "Blog posts page",
     },
   },
 
@@ -670,6 +776,38 @@ export default {
     intermediate: "Intermediate",
     advanced: "Advanced",
     allLevels: "All Levels",
+
+    details: {
+      metaTitleFallback: "Course Details | HKD Dojo",
+      metaTitle: "{course} | Course Details",
+      minimumBelt: "{belt} Belt +",
+      enrollmentOpenBadge: "Enrollment Open",
+      whatsIncludedTitle: "What's Included",
+      classScheduleTitle: "Class Schedule",
+      courseDetailsTitle: "Course Details",
+      durationUnitMonths: "Months",
+      sessionsPerWeek: "Sessions/Week",
+      minutesPerSession: "Min/Session",
+      studentsLabel: "Students",
+      pricingTitle: "Pricing",
+      admissionFee: "Admission Fee",
+      monthlyFee: "Monthly Fee",
+      pricingHidden: "Pricing is hidden until onboarding is completed.",
+      targetLabel: "Target:",
+      applyNow: "Apply Now",
+      enrollmentClosedButton: "Enrollment Closed",
+      paymentInfo: "Payment via bKash / Bank Transfer",
+    },
+
+    applyPage: {
+      notFoundTitle: "Course Not Found",
+      metaTitle: "Apply for {course} | HKD Dojo",
+      metaDescription: "Apply for the {course} karate course. {description}",
+      enrollmentClosedTitle: "Enrollment Closed",
+      enrollmentClosedDescription:
+        "This course is not currently accepting applications.",
+    },
+
     applySuccess: {
       title: "Application Submitted!",
       applicationId: "Application ID",
@@ -696,6 +834,16 @@ export default {
       browseMoreCourses: "Browse More Courses",
       goToDashboard: "Go to Dashboard",
     },
+  },
+
+  days: {
+    sunday: "Sunday",
+    monday: "Monday",
+    tuesday: "Tuesday",
+    wednesday: "Wednesday",
+    thursday: "Thursday",
+    friday: "Friday",
+    saturday: "Saturday",
   },
 
   programs: {

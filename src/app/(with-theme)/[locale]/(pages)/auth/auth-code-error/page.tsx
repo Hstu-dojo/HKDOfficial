@@ -4,8 +4,12 @@ import { useEffect, useState } from 'react'
 import { Button } from '@/components/ui/button'
 import Link from 'next/link'
 import { useSearchParams } from 'next/navigation'
+import { useCurrentLocale, useScopedI18n } from '@/locales/client'
 
 export default function AuthCodeErrorPage() {
+  const t = useScopedI18n('auth.authCodeError')
+  const locale = useCurrentLocale()
+
   const [errorDetails, setErrorDetails] = useState<{
     error?: string
     error_description?: string
@@ -26,31 +30,31 @@ export default function AuthCodeErrorPage() {
 
   const getErrorMessage = () => {
     if (errorDetails.error_code === 'otp_expired') {
-      return 'Your email verification link has expired. Please request a new one.'
+      return t('messages.otpExpired')
     }
     if (errorDetails.error === 'access_denied') {
-      return 'Authentication was denied or cancelled.'
+      return t('messages.accessDenied')
     }
     if (errorDetails.error === 'no_code') {
-      return 'No authentication code was received from the OAuth provider. Please try again.'
+      return t('messages.noCode')
     }
     if (errorDetails.error_description) {
       return errorDetails.error_description
     }
     if (errorDetails.error) {
-      return `Error: ${errorDetails.error}`
+      return t('messages.errorWithCode', { error: errorDetails.error })
     }
-    return 'An error occurred during authentication.'
+    return t('messages.default')
   }
 
   const getErrorTitle = () => {
     if (errorDetails.error_code === 'otp_expired') {
-      return 'Verification Link Expired'
+      return t('titles.otpExpired')
     }
     if (errorDetails.error === 'no_code') {
-      return 'OAuth Authentication Failed'
+      return t('titles.noCode')
     }
-    return 'Authentication Failed'
+    return t('titles.default')
   }
 
   return (
@@ -80,22 +84,22 @@ export default function AuthCodeErrorPage() {
 
         <div className="space-y-3">
           {errorDetails.error_code === 'otp_expired' && (
-            <Link href="/en/auth/resend-confirmation">
+            <Link href={`/${locale}/auth/resend-confirmation`}>
               <Button className="w-full">
-                Request New Verification Email
+                {t('actions.requestNewVerificationEmail')}
               </Button>
             </Link>
           )}
           
-          <Link href="/en/login">
+          <Link href={`/${locale}/login`}>
             <Button variant="outline" className="w-full">
-              Back to Login
+              {t('actions.backToLogin')}
             </Button>
           </Link>
           
-          <Link href="/en">
+          <Link href={`/${locale}`}>
             <Button variant="ghost" className="w-full">
-              Go to Home
+              {t('actions.goToHome')}
             </Button>
           </Link>
         </div>
@@ -103,13 +107,13 @@ export default function AuthCodeErrorPage() {
         {errorDetails.error && (
           <details className="mt-4 text-left">
             <summary className="cursor-pointer text-sm text-gray-500">
-              Technical Details
+              {t('technicalDetailsTitle')}
             </summary>
             <div className="mt-2 text-xs text-gray-400 font-mono">
-              <p>Error: {errorDetails.error}</p>
-              {errorDetails.error_code && <p>Code: {errorDetails.error_code}</p>}
+              <p>{t('technical.errorLabel')} {errorDetails.error}</p>
+              {errorDetails.error_code && <p>{t('technical.codeLabel')} {errorDetails.error_code}</p>}
               {errorDetails.error_description && (
-                <p>Description: {errorDetails.error_description}</p>
+                <p>{t('technical.descriptionLabel')} {errorDetails.error_description}</p>
               )}
             </div>
           </details>

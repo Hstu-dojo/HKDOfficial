@@ -3,8 +3,16 @@ import Footer from "@/components/layout/footer";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
+import { getI18n } from "@/locales/server";
 
-export default function NotFound() {
+export default async function NotFound({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}) {
+  const { locale } = await params;
+  const t = await getI18n();
+
   return (
     <>
       <Header />
@@ -15,16 +23,15 @@ export default function NotFound() {
               src="/not_found.png"
               width={340}
               height={340}
-              alt="not found"
+              alt={t("notFound.imageAlt")}
               className="mb-12 inline-block"
             />
-            <h1 className="mb-4">Sorry We {`Can't`} Find That Page!</h1>
+            <h1 className="mb-4">{t("notFound.title")}</h1>
             <p className="mb-12">
-              The page you are looking for was moved, removed, renamed or never
-              existed.
+              {t("notFound.description")}
             </p>
             <Button size="lg" asChild>
-              <Link href="/">Take me Home</Link>
+              <Link href={`/${locale}`}>{t("notFound.homeCta")}</Link>
             </Button>
           </div>
         </section>

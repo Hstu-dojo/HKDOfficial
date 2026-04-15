@@ -233,6 +233,98 @@ export default {
       failedResend: "কনফার্মেশন ইমেইল পুনরায় পাঠানো যায়নি",
       somethingWrong: "কিছু সমস্যা হয়েছে। অনুগ্রহ করে আবার চেষ্টা করুন।",
     },
+
+    authCodeError: {
+      titles: {
+        otpExpired: "ভেরিফিকেশন লিংক মেয়াদোত্তীর্ণ",
+        noCode: "OAuth অথেন্টিকেশন ব্যর্থ",
+        default: "অথেন্টিকেশন ব্যর্থ",
+      },
+      messages: {
+        otpExpired:
+          "আপনার ইমেইল ভেরিফিকেশন লিংকের মেয়াদ শেষ হয়ে গেছে। অনুগ্রহ করে নতুনটি অনুরোধ করুন।",
+        accessDenied: "অথেন্টিকেশন বাতিল বা অস্বীকৃত হয়েছে।",
+        noCode:
+          "OAuth প্রদানকারী থেকে কোনো অথেন্টিকেশন কোড পাওয়া যায়নি। অনুগ্রহ করে আবার চেষ্টা করুন।",
+        errorWithCode: "ত্রুটি: {error}",
+        default: "অথেন্টিকেশনের সময় একটি সমস্যা হয়েছে।",
+      },
+      actions: {
+        requestNewVerificationEmail: "নতুন ভেরিফিকেশন ইমেইল অনুরোধ করুন",
+        backToLogin: "লগইনে ফিরে যান",
+        goToHome: "হোমে যান",
+      },
+      technicalDetailsTitle: "প্রযুক্তিগত বিস্তারিত",
+      technical: {
+        errorLabel: "ত্রুটি:",
+        codeLabel: "কোড:",
+        descriptionLabel: "বিবরণ:",
+      },
+    },
+
+    debug: {
+      title: "Auth ডিবাগ তথ্য",
+      useAuthRaw: "useAuth() কাঁচা ডেটা:",
+      useSessionCompat: "useSession() কম্প্যাটিবিলিটি লেয়ার:",
+      statusSummary: "স্ট্যাটাস সারাংশ:",
+      labels: {
+        loading: "লোড হচ্ছে:",
+        userAuthenticated: "ইউজার অথেন্টিকেটেড:",
+        sessionExists: "সেশন আছে:",
+        compatibilityStatus: "কম্প্যাটিবিলিটি স্ট্যাটাস:",
+        userEmail: "ইউজার ইমেইল:",
+        emailConfirmed: "ইমেইল কনফার্মড:",
+      },
+      yes: "হ্যাঁ",
+      no: "না",
+      notAvailable: "প্রযোজ্য নয়",
+    },
+
+    authCodeError: {
+      titles: {
+        otpExpired: "ভেরিফিকেশন লিংক মেয়াদোত্তীর্ণ",
+        noCode: "OAuth অথেন্টিকেশন ব্যর্থ",
+        default: "অথেন্টিকেশন ব্যর্থ",
+      },
+      messages: {
+        otpExpired:
+          "আপনার ইমেইল ভেরিফিকেশন লিংকের মেয়াদ শেষ হয়ে গেছে। অনুগ্রহ করে নতুনটি অনুরোধ করুন।",
+        accessDenied: "অথেন্টিকেশন বাতিল বা অস্বীকৃত হয়েছে।",
+        noCode:
+          "OAuth প্রদানকারী থেকে কোনো অথেন্টিকেশন কোড পাওয়া যায়নি। অনুগ্রহ করে আবার চেষ্টা করুন।",
+        errorWithCode: "ত্রুটি: {error}",
+        default: "অথেন্টিকেশনের সময় একটি সমস্যা হয়েছে।",
+      },
+      actions: {
+        requestNewVerificationEmail: "নতুন ভেরিফিকেশন ইমেইল অনুরোধ করুন",
+        backToLogin: "লগইনে ফিরে যান",
+        goToHome: "হোমে যান",
+      },
+      technicalDetailsTitle: "প্রযুক্তিগত বিস্তারিত",
+      technical: {
+        errorLabel: "ত্রুটি:",
+        codeLabel: "কোড:",
+        descriptionLabel: "বিবরণ:",
+      },
+    },
+
+    debug: {
+      title: "Auth ডিবাগ তথ্য",
+      useAuthRaw: "useAuth() কাঁচা ডেটা:",
+      useSessionCompat: "useSession() কম্প্যাটিবিলিটি লেয়ার:",
+      statusSummary: "স্ট্যাটাস সারাংশ:",
+      labels: {
+        loading: "লোড হচ্ছে:",
+        userAuthenticated: "ইউজার অথেন্টিকেটেড:",
+        sessionExists: "সেশন আছে:",
+        compatibilityStatus: "কম্প্যাটিবিলিটি স্ট্যাটাস:",
+        userEmail: "ইউজার ইমেইল:",
+        emailConfirmed: "ইমেইল কনফার্মড:",
+      },
+      yes: "হ্যাঁ",
+      no: "না",
+      notAvailable: "প্রযোজ্য নয়",
+    },
   },
 
   // প্রোফাইল পেজ
@@ -357,6 +449,65 @@ export default {
       goToDashboard: "ড্যাশবোর্ডে যান",
       backToStatus: "← স্ট্যাটাসে ফিরে যান",
     },
+  },
+
+  notFound: {
+    imageAlt: "পেজ পাওয়া যায়নি",
+    title: "দুঃখিত, আমরা পেজটি খুঁজে পাইনি!",
+    description:
+      "আপনি যে পৃষ্ঠাটি খুঁজছেন সেটি সরানো হয়েছে, মুছে ফেলা হয়েছে, নাম পরিবর্তন করা হয়েছে অথবা কখনও ছিল না।",
+    homeCta: "হোমে ফিরে যান",
+  },
+
+  templates: {
+    posts: {
+      metaTitle: "ব্লগ পোস্টসমূহ",
+      metaDescription: "ব্লগ পোস্টের পৃষ্ঠা",
+    },
+  },
+
+  certVerify: {
+    title: "সার্টিফিকেট যাচাই",
+    subtitle:
+      "HKD Official দ্বারা ইস্যু করা সার্টিফিকেটের সত্যতা যাচাই করুন। নিচে সার্টিফিকেট আইডি লিখে বৈধতা পরীক্ষা করুন।",
+    searchPlaceholder: "যেমন: HKD-P-A1B2C3",
+    verifyButton: "যাচাই করুন",
+
+    errorTitle: "সার্টিফিকেট পাওয়া যায়নি",
+    errorNotFoundOrRevoked: "সার্টিফিকেট পাওয়া যায়নি বা বাতিল করা হয়েছে।",
+    errorNetwork: "নেটওয়ার্ক ত্রুটি। অনুগ্রহ করে আবার চেষ্টা করুন।",
+    errorHelpPrefix:
+      "সার্টিফিকেট আইডি যাচাই করে আবার চেষ্টা করুন। আপনি যদি মনে করেন এটি ভুল, তাহলে",
+    contactSupport: "সাপোর্টে যোগাযোগ করুন",
+    errorHelpSuffix: "।",
+
+    verifiedTitle: "সার্টিফিকেট যাচাইকৃত",
+    verifiedSubtitle: "এই সার্টিফিকেটটি আসল এবং HKD Official দ্বারা ইস্যু করা হয়েছে।",
+
+    recipientTitle: "প্রাপক",
+    programDetailsTitle: "প্রোগ্রামের বিস্তারিত",
+    certificateInfoTitle: "সার্টিফিকেট তথ্য",
+    certificateNumberLabel: "সার্টিফিকেট নম্বর",
+    issueDateLabel: "ইস্যুর তারিখ",
+    authorizedByTitle: "অনুমোদনকারী",
+
+    trainerFallback: "প্রশিক্ষক",
+    coordinatorFallback: "সমন্বয়কারী",
+
+    generating: "তৈরি হচ্ছে...",
+    download: "ডাউনলোড",
+    downloadFailed: "সার্টিফিকেট ইমেজ PDF ডাউনলোড ব্যর্থ হয়েছে।",
+
+    linkCopied: "লিংক কপি হয়েছে!",
+    share: "শেয়ার",
+    addToLinkedIn: "LinkedIn-এ যোগ করুন",
+    addToLinkedInTitle: "LinkedIn-এ যোগ করুন",
+
+    shareTitle: "সার্টিফিকেট যাচাই — {certificateNumber}",
+    shareText:
+      "HKD Official কর্তৃক \"{programTitle}\" প্রোগ্রামের জন্য {recipientName}-এর সার্টিফিকেট যাচাই করুন।",
+
+    initialHint: "উপরের সার্টিফিকেট আইডি লিখে সত্যতা যাচাই করুন।",
   },
 
   // ড্যাশবোর্ড পেজ
@@ -671,6 +822,37 @@ export default {
     intermediate: "মধ্যবর্তী",
     advanced: "উন্নত",
     allLevels: "সব স্তর",
+
+    details: {
+      metaTitleFallback: "কোর্সের বিস্তারিত | HKD Dojo",
+      metaTitle: "{course} | কোর্সের বিস্তারিত",
+      minimumBelt: "{belt} বেল্ট +",
+      enrollmentOpenBadge: "ভর্তি খোলা",
+      whatsIncludedTitle: "কী কী অন্তর্ভুক্ত",
+      classScheduleTitle: "ক্লাসের সময়সূচি",
+      courseDetailsTitle: "কোর্সের বিস্তারিত",
+      durationUnitMonths: "মাস",
+      sessionsPerWeek: "সেশন/সপ্তাহ",
+      minutesPerSession: "মিনিট/সেশন",
+      studentsLabel: "শিক্ষার্থী",
+      pricingTitle: "ফি",
+      admissionFee: "ভর্তি ফি",
+      monthlyFee: "মাসিক ফি",
+      pricingHidden: "অনবোর্ডিং সম্পন্ন না হওয়া পর্যন্ত ফি দেখা যাবে না।",
+      targetLabel: "লক্ষ্য:",
+      applyNow: "এখনই আবেদন করুন",
+      enrollmentClosedButton: "ভর্তি বন্ধ",
+      paymentInfo: "পেমেন্ট: bKash / ব্যাংক ট্রান্সফার",
+    },
+
+    applyPage: {
+      notFoundTitle: "কোর্স পাওয়া যায়নি",
+      metaTitle: "{course} কোর্সে আবেদন | HKD Dojo",
+      metaDescription: "{course} কারাতে কোর্সে আবেদন করুন। {description}",
+      enrollmentClosedTitle: "ভর্তি বন্ধ",
+      enrollmentClosedDescription: "এই কোর্সে বর্তমানে আবেদন গ্রহণ করা হচ্ছে না।",
+    },
+
     applySuccess: {
       title: "আবেদন জমা হয়েছে!",
       applicationId: "আবেদন আইডি",
@@ -697,6 +879,16 @@ export default {
       browseMoreCourses: "আরও কোর্স দেখুন",
       goToDashboard: "ড্যাশবোর্ডে যান",
     },
+  },
+
+  days: {
+    sunday: "রবিবার",
+    monday: "সোমবার",
+    tuesday: "মঙ্গলবার",
+    wednesday: "বুধবার",
+    thursday: "বৃহস্পতিবার",
+    friday: "শুক্রবার",
+    saturday: "শনিবার",
   },
 
   programs: {

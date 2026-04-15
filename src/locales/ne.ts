@@ -237,6 +237,52 @@ export default {
       failedResend: "पुष्टिकरण इमेल पुन: पठाउन असफल",
       somethingWrong: "केही गलत भयो। कृपया फेरि प्रयास गर्नुहोस्।",
     },
+
+    authCodeError: {
+      titles: {
+        otpExpired: "प्रमाणीकरण लिङ्कको म्याद सकियो",
+        noCode: "OAuth प्रमाणीकरण असफल",
+        default: "प्रमाणीकरण असफल",
+      },
+      messages: {
+        otpExpired:
+          "तपाईंको इमेल प्रमाणीकरण लिङ्कको म्याद सकिएको छ। कृपया नयाँ लिङ्क अनुरोध गर्नुहोस्।",
+        accessDenied: "प्रमाणीकरण अस्वीकार वा रद्द गरियो।",
+        noCode:
+          "OAuth प्रदायकबाट कुनै प्रमाणीकरण कोड प्राप्त भएन। कृपया फेरि प्रयास गर्नुहोस्।",
+        errorWithCode: "त्रुटि: {error}",
+        default: "प्रमाणीकरण गर्दा त्रुटि भयो।",
+      },
+      actions: {
+        requestNewVerificationEmail: "नयाँ प्रमाणीकरण इमेल अनुरोध गर्नुहोस्",
+        backToLogin: "लगइनमा फर्कनुहोस्",
+        goToHome: "होममा जानुहोस्",
+      },
+      technicalDetailsTitle: "प्राविधिक विवरण",
+      technical: {
+        errorLabel: "त्रुटि:",
+        codeLabel: "कोड:",
+        descriptionLabel: "विवरण:",
+      },
+    },
+
+    debug: {
+      title: "Auth डिबग जानकारी",
+      useAuthRaw: "useAuth() कच्चा डाटा:",
+      useSessionCompat: "useSession() कम्प्याटिबिलिटी लेयर:",
+      statusSummary: "स्थिति सारांश:",
+      labels: {
+        loading: "लोड हुँदैछ:",
+        userAuthenticated: "प्रयोगकर्ता प्रमाणित:",
+        sessionExists: "सेसन छ:",
+        compatibilityStatus: "कम्प्याटिबिलिटी स्थिति:",
+        userEmail: "प्रयोगकर्ता इमेल:",
+        emailConfirmed: "इमेल पुष्टि:",
+      },
+      yes: "हो",
+      no: "होइन",
+      notAvailable: "उपलब्ध छैन",
+    },
   },
 
   // प्रोफाइल पृष्ठ
@@ -360,6 +406,65 @@ export default {
       goToDashboard: "ड्यासबोर्डमा जानुहोस्",
       backToStatus: "← स्थितिमा फर्कनुहोस्",
     },
+  },
+
+  notFound: {
+    imageAlt: "पृष्ठ भेटिएन",
+    title: "माफ गर्नुहोस्, हामी त्यो पृष्ठ भेट्टाउन सकेनौँ!",
+    description:
+      "तपाईंले खोज्नुभएको पृष्ठ सारिएको, हटाइएको, पुनःनामकरण गरिएको वा कहिल्यै अस्तित्वमा नभएको हुन सक्छ।",
+    homeCta: "होममा जानुहोस्",
+  },
+
+  templates: {
+    posts: {
+      metaTitle: "ब्लग पोस्टहरू",
+      metaDescription: "ब्लग पोस्ट पृष्ठ",
+    },
+  },
+
+  certVerify: {
+    title: "सर्टिफिकेट प्रमाणीकरण",
+    subtitle:
+      "HKD Official द्वारा जारी गरिएका सर्टिफिकेटहरूको प्रामाणिकता जाँच गर्नुहोस्। तल सर्टिफिकेट आईडी प्रविष्ट गरेर वैधता जाँच गर्नुहोस्।",
+    searchPlaceholder: "जस्तै: HKD-P-A1B2C3",
+    verifyButton: "जाँच गर्नुहोस्",
+
+    errorTitle: "सर्टिफिकेट भेटिएन",
+    errorNotFoundOrRevoked: "सर्टिफिकेट भेटिएन वा रद्द गरिएको छ।",
+    errorNetwork: "नेटवर्क त्रुटि। कृपया फेरि प्रयास गर्नुहोस्।",
+    errorHelpPrefix:
+      "सर्टिफिकेट आईडी पुन: जाँच गरेर फेरि प्रयास गर्नुहोस्। यदि तपाईंलाई यो त्रुटि जस्तो लाग्छ भने",
+    contactSupport: "समर्थनमा सम्पर्क गर्नुहोस्",
+    errorHelpSuffix: "।",
+
+    verifiedTitle: "सर्टिफिकेट प्रमाणित भयो",
+    verifiedSubtitle: "यो सर्टिफिकेट प्रामाणिक हो र HKD Official द्वारा जारी गरिएको हो।",
+
+    recipientTitle: "प्राप्तकर्ता",
+    programDetailsTitle: "कार्यक्रम विवरण",
+    certificateInfoTitle: "सर्टिफिकेट जानकारी",
+    certificateNumberLabel: "सर्टिफिकेट नम्बर",
+    issueDateLabel: "जारी मिति",
+    authorizedByTitle: "अनुमोदनकर्ता",
+
+    trainerFallback: "प्रशिक्षक",
+    coordinatorFallback: "समन्वयक",
+
+    generating: "तयार हुँदै...",
+    download: "डाउनलोड",
+    downloadFailed: "सर्टिफिकेट छवि PDF डाउनलोड गर्न असफल भयो।",
+
+    linkCopied: "लिङ्क कपी भयो!",
+    share: "सेयर",
+    addToLinkedIn: "LinkedIn मा थप्नुहोस्",
+    addToLinkedInTitle: "LinkedIn मा थप्नुहोस्",
+
+    shareTitle: "सर्टिफिकेट प्रमाणीकरण — {certificateNumber}",
+    shareText:
+      "HKD Official द्वारा \"{programTitle}\" का लागि {recipientName} लाई जारी गरिएको सर्टिफिकेट जाँच गर्नुहोस्।",
+
+    initialHint: "माथि सर्टिफिकेट आईडी प्रविष्ट गरेर प्रामाणिकता जाँच गर्नुहोस्।",
   },
 
   // सम्पर्क पृष्ठ
@@ -673,6 +778,37 @@ export default {
     intermediate: "मध्यम",
     advanced: "उन्नत",
     allLevels: "सबै स्तर",
+
+    details: {
+      metaTitleFallback: "कोर्स विवरण | HKD Dojo",
+      metaTitle: "{course} | कोर्स विवरण",
+      minimumBelt: "{belt} बेल्ट +",
+      enrollmentOpenBadge: "भर्ना खुला",
+      whatsIncludedTitle: "के समावेश छ",
+      classScheduleTitle: "कक्षा तालिका",
+      courseDetailsTitle: "कोर्स विवरण",
+      durationUnitMonths: "महिना",
+      sessionsPerWeek: "सत्र/हप्ता",
+      minutesPerSession: "मिनेट/सत्र",
+      studentsLabel: "विद्यार्थी",
+      pricingTitle: "शुल्क",
+      admissionFee: "प्रवेश शुल्क",
+      monthlyFee: "मासिक शुल्क",
+      pricingHidden: "अनबोर्डिङ पूरा नभएसम्म शुल्क देखाइँदैन।",
+      targetLabel: "लक्ष्य:",
+      applyNow: "अहिले आवेदन गर्नुहोस्",
+      enrollmentClosedButton: "भर्ना बन्द",
+      paymentInfo: "भुक्तानी: bKash / बैंक ट्रान्सफर",
+    },
+
+    applyPage: {
+      notFoundTitle: "कोर्स भेटिएन",
+      metaTitle: "{course} का लागि आवेदन | HKD Dojo",
+      metaDescription: "{course} कराते कोर्सका लागि आवेदन गर्नुहोस्। {description}",
+      enrollmentClosedTitle: "भर्ना बन्द",
+      enrollmentClosedDescription: "यो कोर्सले हाल आवेदन स्वीकार गरिरहेको छैन।",
+    },
+
     applySuccess: {
       title: "आवेदन पेश भयो!",
       applicationId: "आवेदन ID",
@@ -699,6 +835,16 @@ export default {
       browseMoreCourses: "थप पाठ्यक्रम हेर्नुहोस्",
       goToDashboard: "ड्यासबोर्डमा जानुहोस्",
     },
+  },
+
+  days: {
+    sunday: "आइतबार",
+    monday: "सोमबार",
+    tuesday: "मङ्गलबार",
+    wednesday: "बुधबार",
+    thursday: "बिहिबार",
+    friday: "शुक्रबार",
+    saturday: "शनिबार",
   },
 
   programs: {
