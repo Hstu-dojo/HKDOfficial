@@ -1,0 +1,10 @@
+const fs = require('fs');
+let s = fs.readFileSync('src/app/sitemap.ts', 'utf8');
+s = s.replace(/\\\`\\\$\\{BASE_URL\\}\\\/\\\$\\{locale\\}\\\$\\{route\\}\\\`/g, '\`${BASE_URL}/${locale}${route}\`');
+s = s.replace(/\\\`\\\$\\{BASE_URL\\}\\\/\\\$\\{locale\\}\\\/karate\\\/courses\\\/\\\$\\{course\\.id\\}\\\`/g, '\`${BASE_URL}/${locale}/karate/courses/${course.id}\`');
+s = s.replace(/\\\`\\\$\\{BASE_URL\\}\\\/\\\$\\{locale\\}\\\/karate\\\/programs\\\/\\\$\\{program\\.slug\\}\\\`/g, '\`${BASE_URL}/${locale}/karate/programs/${program.slug}\`');
+s = s.replace(/\\\`\\\$\\{BASE_URL\\}\\\/\\\$\\{locale\\}\\\/partner\\\/\\\$\\{partner\\.slug\\}\\\`/g, '\`${BASE_URL}/${locale}/partner/${partner.slug}\`');
+s = s.replace(/\\\`\\\$\\{BASE_URL\\}\\\/blog\\\`/g, '\`${BASE_URL}/blog\`');
+s = s.replace(/\\\`\\\$\\{BASE_URL\\}\\\/blog\\\/\\\$\\{blog\\.slug\\}\\\`/g, '\`${BASE_URL}/blog/${blog.slug}\`');
+s = s.replace(/\\\`\\\$\\{BASE_URL\\}\\\$\\{doc\\}\\\`/g, '\`${BASE_URL}${doc}\`');
+fs.writeFileSync('src/app/sitemap.ts', s);

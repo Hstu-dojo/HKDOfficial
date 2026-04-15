@@ -20,7 +20,6 @@
     "db:verify-rbac": "tsx scripts/verify-rbac.ts",
     "db:check-user-roles": "tsx scripts/check-user-roles.ts",
     "test:partner-assignment": "tsx scripts/test-partner-assignment.ts",
-    "postbuild": "next-sitemap",
     "start": "next start",
     "lint": "next lint",
     "email:dev": "email dev --dir src/components/emails -p 3001"
