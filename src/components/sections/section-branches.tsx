@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
 import MaxWidthWrapper from "../maxWidthWrapper";
+import { useScopedI18n } from "@/locales/client";
 
 export interface BranchData {
   id: string;
@@ -34,6 +35,7 @@ interface SectionBranchesProps {
 }
 
 const SectionBranches = ({ branches }: SectionBranchesProps) => {
+  const t = useScopedI18n("homepage.branches");
   const [visible, setVisible] = useState(false);
 
   // Intersection observer via callback ref
@@ -87,15 +89,15 @@ const SectionBranches = ({ branches }: SectionBranchesProps) => {
           <div className="inline-flex items-center gap-3 mb-4">
             <div className="h-px w-8 bg-primary" />
             <span className="text-xs font-semibold tracking-[0.25em] text-primary uppercase">
-              Our Network
+              {t("kicker")}
             </span>
             <div className="h-px w-8 bg-primary" />
           </div>
           <h2 className="text-3xl lg:text-5xl font-bold mb-4">
-            Training <span className="text-primary">Branches</span>
+            {t("titlePrefix")} <span className="text-primary">{t("titleAccent")}</span>
           </h2>
           <p className="text-base text-muted-foreground max-w-lg mx-auto">
-            Discover our affiliated training venues across the region. Each branch upholds the same standard of excellence.
+            {t("description")}
           </p>
         </motion.div>
 
@@ -182,7 +184,9 @@ const SectionBranches = ({ branches }: SectionBranchesProps) => {
                               <path strokeLinecap="round" strokeLinejoin="round" d="M4.26 10.147a60.436 60.436 0 00-.491 6.347A48.627 48.627 0 0112 20.904a48.627 48.627 0 018.232-4.41 60.46 60.46 0 00-.491-6.347m-15.482 0a50.57 50.57 0 00-2.658-.813A59.905 59.905 0 0112 3.493a59.902 59.902 0 0110.399 5.84c-.896.248-1.783.52-2.658.814m-15.482 0A50.697 50.697 0 0112 13.489a50.702 50.702 0 017.74-3.342" />
                             </svg>
                             <span className="text-[11px] font-semibold text-slate-700 dark:text-slate-200">
-                              {branch.courseCount} {branch.courseCount === 1 ? "program" : "programs"}
+                                {branch.courseCount === 1
+                                  ? t("programCountOne", { count: branch.courseCount })
+                                  : t("programCountMany", { count: branch.courseCount })}
                             </span>
                           </div>
                         )}
@@ -229,7 +233,7 @@ const SectionBranches = ({ branches }: SectionBranchesProps) => {
 
                       {/* Visit link */}
                       <div className="flex items-center gap-2 text-primary text-sm font-medium group-hover:gap-3 transition-all duration-300">
-                        <span>Visit Branch</span>
+                        <span>{t("visitBranch")}</span>
                         <svg
                           className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1"
                           fill="none"

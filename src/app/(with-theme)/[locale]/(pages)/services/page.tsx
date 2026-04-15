@@ -6,20 +6,27 @@ import SectionIconBoxes from "@/components/sections/section-icon-boxes";
 import SectionCTALayout4 from "@/components/sections/section-cta-layout-4";
 import SectionPromoVideo from "@/components/sections/section-promo-video";
 import SectionIconBoxesLayout3 from "@/components/sections/section-icon-boxes-layout-3";
+import { getI18n } from "@/locales/server";
 
-export const metadata: Metadata = {
-  metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL!),
-  title: "Services",
-  description: "Services page",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getI18n();
 
-export default function PageServices() {
+  return {
+    metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL!),
+    title: t("services.metadataTitle"),
+    description: t("services.metadataDescription"),
+  };
+}
+
+export default async function PageServices() {
+  const t = await getI18n();
+
   return (
     <>
       <Header />
       <main className="relative">
-        <SectionPageTitle subtitle="We offer a variety of services here to get you started and successfully suite every need using Margin. Choose the services that’s right for you.">
-          Services
+        <SectionPageTitle subtitle={t("services.pageSubtitle")}>
+          {t("services.pageTitle")}
         </SectionPageTitle>
         <SectionIconBoxes noTitle />
         <SectionPromoVideo />

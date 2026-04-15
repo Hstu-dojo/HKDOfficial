@@ -14,6 +14,7 @@ import { useScopedI18n } from "@/locales/client";
 
 const SectionFAQ = () => {
     const t = useScopedI18n("homepage.faq");
+  const tStats = useScopedI18n("homepage.stats");
     const accordionItems = [
       {
         title: t('q1'),
@@ -121,12 +122,12 @@ const SectionFAQ = () => {
                 />
                 <div className="relative mb-8 max-w-[13.125rem] self-end rounded-xl bg-white bg-gradient-to-b from-secondary/70 to-quaternary/70 p-8 shadow-lg">
                   <span className="mb-4 block text-base font-semibold text-white">
-                    Members Trained
+                    {tStats("membersTrained")}
                   </span>
                   <span className="mb-4 block text-3xl font-bold text-white">
-                    150+
+                    {tStats("membersCount")}
                   </span>
-                  <span className="block text-base text-white">Since 2022</span>
+                  <span className="block text-base text-white">{tStats("since")}</span>
                 </div>
               </div>
               <div className="relative">
@@ -146,13 +147,13 @@ const SectionFAQ = () => {
 
                   <div className="text-left">
                     <span className="mb-4 block text-base font-semibold text-white">
-                      Competitions Participated
+                      {tStats("competitions")}
                     </span>
                     <span className="mb-4 block text-3xl font-bold text-white">
-                      10+
+                      {tStats("competitionsCount")}
                     </span>
                     <span className="block text-base text-white">
-                      Intra and inter-university
+                      {tStats("competitionsType")}
                     </span>
                   </div>
                 </div>

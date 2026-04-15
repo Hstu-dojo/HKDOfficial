@@ -53,7 +53,7 @@ const FeaturedPostsClient: React.FC<FeaturedPostsClientProps> = ({ featuredPosts
                 {post.coverImage ? (
                   <Image
                     src={urlForImage(post.coverImage)?.width(600).height(400).url() || ""}
-                    alt={post.title || "Featured post"}
+                    alt={post.title || t("imageAlt")}
                     fill
                     className="object-cover group-hover:scale-105 transition-transform duration-300"
                   />
@@ -114,7 +114,7 @@ const FeaturedPostsClient: React.FC<FeaturedPostsClientProps> = ({ featuredPosts
                       </div>
                     )}
                     <span className="text-sm text-gray-500 dark:text-gray-400 font-medium">
-                      {post.author?.name || "Anonymous"}
+                      {post.author?.name || t("anonymous")}
                     </span>
                   </div>
                   

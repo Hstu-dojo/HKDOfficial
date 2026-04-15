@@ -50,6 +50,7 @@ export default {
       subscribing: "Subscribing...",
     },
     joinDojo: "Are you ready to join our dojo? Discover the path to excellence in karate.",
+    seeMore: "See More",
   },
 
   // Homepage Sections
@@ -108,6 +109,8 @@ export default {
       topFeatured: "🌟 TOP FEATURED",
       readMore: "Read More",
       viewAll: "View All Posts",
+      imageAlt: "Featured post",
+      anonymous: "Anonymous",
       posts: {
         beltTest: {
           title: "First belt test (stripe-orange)",
@@ -125,6 +128,16 @@ export default {
           tags: ["about", "karate"],
         },
       },
+    },
+    branches: {
+      kicker: "Our Network",
+      titlePrefix: "Training",
+      titleAccent: "Branches",
+      description:
+        "Discover our affiliated training venues across the region. Each branch upholds the same standard of excellence.",
+      programCountOne: "{count} program",
+      programCountMany: "{count} programs",
+      visitBranch: "Visit Branch",
     },
     faq: {
       title: "Frequently Asked Questions",
@@ -211,6 +224,34 @@ export default {
       registerButton: "Register with Email",
       existingMember: "existing member?",
       loginLink: "Login",
+    },
+    resendConfirmation: {
+      title: "Resend Confirmation Email",
+      subtitle: "Enter your email address to receive a new confirmation link",
+      emailLabel: "Email",
+      emailPlaceholder: "your@email.com",
+      button: "Resend Confirmation Email",
+      sending: "Sending...",
+      backToLogin: "Back to Login",
+      validationEmailRequired: "Please enter your email address",
+      failedResend: "Failed to resend confirmation email",
+      somethingWrong: "Something went wrong. Please try again.",
+    },
+  },
+
+  onboarding: {
+    status: {
+      registrationComplete: "Registration Complete!",
+      registrationDescription:
+        "Your registration has been submitted and is being reviewed. We will notify you once it is approved.",
+      yourDetails: "Your Details",
+      name: "Name:",
+      email: "Email:",
+      phone: "Phone:",
+      notAvailable: "N/A",
+      editDetails: "Edit Details",
+      goToDashboard: "Go to Dashboard",
+      backToStatus: "<- Back to Status",
     },
   },
 
@@ -359,6 +400,51 @@ export default {
     cta: {
       title: "Get, keep and grow more customers. We're here to help.",
       button: "Let's Work Together",
+    },
+  },
+
+  services: {
+    metadataTitle: "Services",
+    metadataDescription: "Services page",
+    pageTitle: "Services",
+    pageSubtitle:
+      "We offer a variety of services here to get you started and successfully suit every need. Choose the services that are right for you.",
+    reasons: {
+      title: "Top 6 reasons why we are the best",
+      subtitle:
+        "We offer a variety of services here to get you started and successfully suit every need.",
+      items: {
+        fastResults: {
+          title: "Fast Results",
+          description:
+            "We provide tangible results and measurable long-term business value.",
+        },
+        awardWinning: {
+          title: "Award Winning Agency",
+          description:
+            "We provide tangible results and measurable long-term business value.",
+        },
+        competitionAnalysis: {
+          title: "Competition Analysis",
+          description:
+            "We provide tangible results and measurable long-term business value.",
+        },
+        customerSupport: {
+          title: "Friendly Customer Support",
+          description:
+            "We provide tangible results and measurable long-term business value.",
+        },
+        moneyBack: {
+          title: "100% Money Back Guarantee",
+          description:
+            "We provide tangible results and measurable long-term business value.",
+        },
+        customerLoyalty: {
+          title: "Customer Loyalty",
+          description:
+            "We provide tangible results and measurable long-term business value.",
+        },
+      },
     },
   },
 
@@ -669,6 +755,20 @@ export default {
     tryAgain: "Try again",
     goBack: "Go back",
     goHome: "Go home",
+  },
+
+  oauthError: {
+    profileRequiredTitle: "Profile Required",
+    profileRequiredDescription:
+      "To access this external application, you need to complete your profile registration and enroll in a course.",
+    completeProfile: "Complete Profile & Enroll",
+    goToDashboard: "Go to Dashboard",
+    roleRequiredTitle: "Role Required",
+    roleRequiredDescription:
+      "Your profile is pending approval or has no assigned training role. Please contact your administrator.",
+    authenticationErrorTitle: "Authentication Error",
+    authenticationErrorDescription:
+      "There was a problem authenticating with the external application. Please try again.",
   },
 
   // Success Messages

@@ -6,8 +6,11 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { toast } from 'sonner'
 import Link from 'next/link'
+import { useCurrentLocale, useI18n } from '@/locales/client'
 
 export default function ResendConfirmationPage() {
+  const t = useI18n()
+  const locale = useCurrentLocale()
   const [email, setEmail] = useState('')
   const [isLoading, setIsLoading] = useState(false)
 
@@ -15,7 +18,7 @@ export default function ResendConfirmationPage() {
     e.preventDefault()
     
     if (!email) {
-      toast.error('Please enter your email address')
+      toast.error(t('auth.resendConfirmation.validationEmailRequired'))
       return
     }
 
@@ -36,10 +39,10 @@ export default function ResendConfirmationPage() {
         toast.success(result.message)
         setEmail('')
       } else {
-        toast.error(result.error || 'Failed to resend confirmation email')
+        toast.error(result.error || t('auth.resendConfirmation.failedResend'))
       }
     } catch (error) {
-      toast.error('Something went wrong. Please try again.')
+      toast.error(t('auth.resendConfirmation.somethingWrong'))
     } finally {
       setIsLoading(false)
     }
@@ -49,19 +52,19 @@ export default function ResendConfirmationPage() {
     <div className="flex min-h-screen items-center justify-center">
       <div className="w-full max-w-md space-y-6 rounded-lg border p-6 shadow-lg">
         <div className="text-center">
-          <h1 className="text-2xl font-bold">Resend Confirmation Email</h1>
+          <h1 className="text-2xl font-bold">{t('auth.resendConfirmation.title')}</h1>
           <p className="mt-2 text-sm text-muted-foreground">
-            Enter your email address to receive a new confirmation link
+            {t('auth.resendConfirmation.subtitle')}
           </p>
         </div>
 
         <form onSubmit={handleResend} className="space-y-4">
           <div>
-            <Label htmlFor="email">Email</Label>
+            <Label htmlFor="email">{t('auth.resendConfirmation.emailLabel')}</Label>
             <Input
               id="email"
               type="email"
-              placeholder="your@email.com"
+              placeholder={t('auth.resendConfirmation.emailPlaceholder')}
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
@@ -69,16 +72,16 @@ export default function ResendConfirmationPage() {
           </div>
 
           <Button type="submit" className="w-full" disabled={isLoading}>
-            {isLoading ? 'Sending...' : 'Resend Confirmation Email'}
+            {isLoading ? t('auth.resendConfirmation.sending') : t('auth.resendConfirmation.button')}
           </Button>
         </form>
 
         <div className="text-center">
           <Link 
-            href="/login" 
+            href={`/${locale}/login`} 
             className="text-sm text-muted-foreground hover:underline"
           >
-            Back to Login
+            {t('auth.resendConfirmation.backToLogin')}
           </Link>
         </div>
       </div>
