@@ -670,6 +670,32 @@ export default {
     intermediate: "Intermediate",
     advanced: "Advanced",
     allLevels: "All Levels",
+    applySuccess: {
+      title: "Application Submitted!",
+      applicationId: "Application ID",
+      thankYou:
+        "Thank you for applying! Your application and payment have been submitted for review.",
+      nextTitle: "What happens next?",
+      steps: {
+        submitted: {
+          title: "Application Submitted",
+          description: "Your application is now in our system",
+        },
+        verification: {
+          title: "Payment Verification",
+          description: "Our team will verify your payment (1-2 business days)",
+        },
+        approval: {
+          title: "Approval & Confirmation",
+          description: "You will receive an email with your admission details",
+        },
+      },
+      questions: "Questions?",
+      contactPrefix: "Contact us at",
+      orCall: "or call",
+      browseMoreCourses: "Browse More Courses",
+      goToDashboard: "Go to Dashboard",
+    },
   },
 
   programs: {

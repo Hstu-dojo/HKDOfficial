@@ -671,6 +671,32 @@ export default {
     intermediate: "মধ্যবর্তী",
     advanced: "উন্নত",
     allLevels: "সব স্তর",
+    applySuccess: {
+      title: "আবেদন জমা হয়েছে!",
+      applicationId: "আবেদন আইডি",
+      thankYou:
+        "আবেদন করার জন্য ধন্যবাদ! আপনার আবেদন এবং পেমেন্ট পর্যালোচনার জন্য জমা হয়েছে।",
+      nextTitle: "এখন কী হবে?",
+      steps: {
+        submitted: {
+          title: "আবেদন জমা হয়েছে",
+          description: "আপনার আবেদন এখন আমাদের সিস্টেমে সংরক্ষিত",
+        },
+        verification: {
+          title: "পেমেন্ট যাচাই",
+          description: "আমাদের টিম আপনার পেমেন্ট যাচাই করবে (১-২ কর্মদিবস)",
+        },
+        approval: {
+          title: "অনুমোদন ও নিশ্চিতকরণ",
+          description: "আপনার ভর্তি সংক্রান্ত তথ্যসহ একটি ইমেইল পাবেন",
+        },
+      },
+      questions: "প্রশ্ন আছে?",
+      contactPrefix: "যোগাযোগ করুন",
+      orCall: "অথবা কল করুন",
+      browseMoreCourses: "আরও কোর্স দেখুন",
+      goToDashboard: "ড্যাশবোর্ডে যান",
+    },
   },
 
   programs: {

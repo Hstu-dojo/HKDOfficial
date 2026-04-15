@@ -673,6 +673,32 @@ export default {
     intermediate: "मध्यम",
     advanced: "उन्नत",
     allLevels: "सबै स्तर",
+    applySuccess: {
+      title: "आवेदन पेश भयो!",
+      applicationId: "आवेदन ID",
+      thankYou:
+        "आवेदन गर्नु भएकोमा धन्यवाद! तपाईंको आवेदन र भुक्तानी समीक्षा लागि पेश गरिएको छ।",
+      nextTitle: "अब के हुन्छ?",
+      steps: {
+        submitted: {
+          title: "आवेदन पेश भयो",
+          description: "तपाईंको आवेदन अहिले हाम्रो प्रणालीमा छ",
+        },
+        verification: {
+          title: "भुक्तानी प्रमाणीकरण",
+          description: "हाम्रो टोलीले तपाईंको भुक्तानी प्रमाणीकरण गर्नेछ (१-२ कार्यदिवस)",
+        },
+        approval: {
+          title: "स्वीकृति र पुष्टि",
+          description: "तपाईंले भर्ना विवरण सहित इमेल प्राप्त गर्नुहुनेछ",
+        },
+      },
+      questions: "प्रश्नहरू छन्?",
+      contactPrefix: "हामीलाई सम्पर्क गर्नुहोस्",
+      orCall: "वा कल गर्नुहोस्",
+      browseMoreCourses: "थप पाठ्यक्रम हेर्नुहोस्",
+      goToDashboard: "ड्यासबोर्डमा जानुहोस्",
+    },
   },
 
   programs: {

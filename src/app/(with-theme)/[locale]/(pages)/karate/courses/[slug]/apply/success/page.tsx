@@ -4,6 +4,7 @@ import Header from '@/components/layout/header';
 import Footer from '@/components/layout/footer';
 import MaxWidthWrapper from '@/components/maxWidthWrapper';
 import SuccessPdfDownload from '@/components/karate/SuccessPdfDownload';
+import { getI18n } from '@/locales/server';
 
 interface PageProps {
   searchParams: Promise<{
@@ -17,7 +18,8 @@ interface PageProps {
 
 export default async function ApplicationSuccessPage({ searchParams, params }: PageProps) {
   const { applicationId } = await searchParams;
-  const { slug } = await params;
+  const { slug, locale } = await params;
+  const t = await getI18n();
 
   return (
     <>
@@ -31,17 +33,17 @@ export default async function ApplicationSuccessPage({ searchParams, params }: P
             </div>
 
             <h1 className="text-2xl font-bold mb-2">
-              Application Submitted!
+              {t('courses.applySuccess.title')}
             </h1>
             
             {applicationId && (
               <p className="text-sm text-muted-foreground mb-4">
-                Application ID: <span className="font-mono font-medium">{applicationId.slice(0, 8)}...</span>
+                {t('courses.applySuccess.applicationId')}: <span className="font-mono font-medium">{applicationId.slice(0, 8)}...</span>
               </p>
             )}
 
             <p className="text-muted-foreground mb-6">
-              Thank you for applying! Your application and payment have been submitted for review.
+              {t('courses.applySuccess.thankYou')}
             </p>
 
             {/* PDF Download */}
@@ -49,15 +51,15 @@ export default async function ApplicationSuccessPage({ searchParams, params }: P
 
             {/* Timeline */}
             <div className="bg-slate-50 dark:bg-slate-900/50 rounded-lg p-6 text-left mb-6">
-              <h3 className="font-semibold mb-4">What happens next?</h3>
+              <h3 className="font-semibold mb-4">{t('courses.applySuccess.nextTitle')}</h3>
               <ol className="space-y-4">
                 <li className="flex items-start gap-3">
                   <div className="w-6 h-6 bg-green-500 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
                     <CheckCircleIcon className="h-4 w-4 text-white" />
                   </div>
                   <div>
-                    <p className="font-medium">Application Submitted</p>
-                    <p className="text-sm text-muted-foreground">Your application is now in our system</p>
+                    <p className="font-medium">{t('courses.applySuccess.steps.submitted.title')}</p>
+                    <p className="text-sm text-muted-foreground">{t('courses.applySuccess.steps.submitted.description')}</p>
                   </div>
                 </li>
                 <li className="flex items-start gap-3">
@@ -65,8 +67,8 @@ export default async function ApplicationSuccessPage({ searchParams, params }: P
                     <ClockIcon className="h-4 w-4 text-white" />
                   </div>
                   <div>
-                    <p className="font-medium">Payment Verification</p>
-                    <p className="text-sm text-muted-foreground">Our team will verify your payment (1-2 business days)</p>
+                    <p className="font-medium">{t('courses.applySuccess.steps.verification.title')}</p>
+                    <p className="text-sm text-muted-foreground">{t('courses.applySuccess.steps.verification.description')}</p>
                   </div>
                 </li>
                 <li className="flex items-start gap-3">
@@ -74,8 +76,8 @@ export default async function ApplicationSuccessPage({ searchParams, params }: P
                     <EnvelopeIcon className="h-4 w-4 text-white" />
                   </div>
                   <div>
-                    <p className="font-medium">Approval & Confirmation</p>
-                    <p className="text-sm text-muted-foreground">You&apos;ll receive an email with your admission details</p>
+                    <p className="font-medium">{t('courses.applySuccess.steps.approval.title')}</p>
+                    <p className="text-sm text-muted-foreground">{t('courses.applySuccess.steps.approval.description')}</p>
                   </div>
                 </li>
               </ol>
@@ -84,25 +86,25 @@ export default async function ApplicationSuccessPage({ searchParams, params }: P
             {/* Contact Info */}
             <div className="bg-primary/5 dark:bg-primary/10 rounded-lg p-4 mb-6">
               <p className="text-sm text-primary dark:text-primary/80">
-                <strong>Questions?</strong> Contact us at{' '}
+                <strong>{t('courses.applySuccess.questions')}</strong> {t('courses.applySuccess.contactPrefix')}{' '}
                 <a href="mailto:info@hkddojo.com" className="underline">info@hkddojo.com</a>
-                {' '}or call <a href="tel:+8801XXXXXXXXX" className="underline">+880 1XXX-XXXXXX</a>
+                {' '}{t('courses.applySuccess.orCall')} <a href="tel:+8801XXXXXXXXX" className="underline">+880 1XXX-XXXXXX</a>
               </p>
             </div>
 
             {/* Actions */}
             <div className="flex flex-col sm:flex-row gap-3">
               <Link
-                href="/karate/courses"
+                href={`/${locale}/karate/courses`}
                 className="flex-1 px-4 py-2.5 border border-slate-200 dark:border-slate-700 text-foreground rounded-lg hover:bg-slate-50 dark:hover:bg-slate-700/50 text-center text-sm font-medium transition-colors"
               >
-                Browse More Courses
+                {t('courses.applySuccess.browseMoreCourses')}
               </Link>
               <Link
-                href="/dashboard"
+                href={`/${locale}/dashboard`}
                 className="flex-1 px-4 py-2.5 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 text-center text-sm font-medium transition-colors"
               >
-                Go to Dashboard
+                {t('courses.applySuccess.goToDashboard')}
               </Link>
             </div>
           </div>
