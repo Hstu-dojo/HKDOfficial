@@ -92,6 +92,11 @@ export function MobileNav({
                    session?.user?.email?.split('@')[0] || 
                    'User';
 
+  const labelFor = (item: NavItem) => {
+    if (item.i18nKey) return t(item.i18nKey as any);
+    return item.title;
+  };
+
   return (
     <Sheet open={isOpen} onOpenChange={setIsOpen}>
       {triggerIcon === "default" && (
@@ -157,7 +162,7 @@ export function MobileNav({
                   {item?.items ? (
                     <AccordionItem value={item.title}>
                       <AccordionTrigger className="text-sm">
-                        {item.title}
+                        {labelFor(item)}
                       </AccordionTrigger>
                       <AccordionContent>
                         <div className="flex flex-col space-y-2">
@@ -170,14 +175,14 @@ export function MobileNav({
                                 setIsOpen={setIsOpen}
                                 disabled={subItem.disabled}
                               >
-                                {subItem.title}
+                                {labelFor(subItem)}
                               </MobileLink>
                             ) : (
                               <div
                                 key={subIndex}
                                 className="text-muted-foreground transition-colors"
                               >
-                                {subItem.title}
+                                {labelFor(subItem)}
                               </div>
                             ),
                           )}
@@ -192,7 +197,7 @@ export function MobileNav({
                           className="block border-b py-4 text-sm transition-colors hover:text-primary focus:text-primary"
                           onClick={() => setIsOpen(false)}
                         >
-                          {item.title}
+                          {labelFor(item)}
                         </Link>
                       </div>
                     )

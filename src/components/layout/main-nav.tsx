@@ -3,7 +3,7 @@
 import * as React from "react";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
-import { useCurrentLocale, useChangeLocale } from "@/locales/client";
+import { useCurrentLocale, useI18n } from "@/locales/client";
 import { usePathname } from "next/navigation";
 
 import {
@@ -42,6 +42,12 @@ const getItemHref = (item: NavItem, locale: string, currentPath: string): string
 export default function MainNav({ items }: MainNavProps) {
   const locale = useCurrentLocale();
   const pathname = usePathname() ?? '/';
+  const t = useI18n();
+
+  const labelFor = (item: NavItem) => {
+    if (item.i18nKey) return t(item.i18nKey as any);
+    return item.title;
+  };
   
   return (
     <>
@@ -51,14 +57,14 @@ export default function MainNav({ items }: MainNavProps) {
             items.map((item) => (
               <NavigationMenuItem key={item.title}>
                 {item?.items ? (
-                  <NavigationMenuTrigger>{item.title}</NavigationMenuTrigger>
+                  <NavigationMenuTrigger>{labelFor(item)}</NavigationMenuTrigger>
                 ) : (
                   item.href && (
                     <Link href={getItemHref(item, locale, pathname)}>
                       <NavigationMenuLink
                         className={navigationMenuTriggerStyle()}
                       >
-                        {item.title}
+                        {labelFor(item)}
                       </NavigationMenuLink>
                     </Link>
                   )
@@ -70,7 +76,7 @@ export default function MainNav({ items }: MainNavProps) {
                         <ListItem
                           key={subItem.title}
                           href={getItemHref(subItem, locale, pathname)}
-                          title={subItem.title}
+                          title={labelFor(subItem)}
                         ></ListItem>
                       ))}
                     </ul>

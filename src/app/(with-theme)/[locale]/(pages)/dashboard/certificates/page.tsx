@@ -9,6 +9,7 @@ import {
 import { format } from "date-fns";
 import { getMyCertificates } from "@/actions/certificate-actions";
 import { createClient } from "@/lib/supabase/server";
+import { getI18n } from "@/locales/server";
 import CertificateActions from "./certificate-actions-client";
 
 export const metadata = {
@@ -17,6 +18,7 @@ export const metadata = {
 };
 
 export default async function CertificatesPage() {
+  const t = await getI18n();
   // Auth guard
   const supabase = await createClient();
   const {
@@ -37,15 +39,17 @@ export default async function CertificatesPage() {
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
           <h1 className="text-2xl font-extrabold text-slate-900 dark:text-slate-100">
-            My Certificates
+            {t("certificates.title")}
           </h1>
           <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">
-            View, download, and share certificates you&apos;ve earned.
+            {t("certificates.subtitle")}
           </p>
         </div>
         {certificates.length > 0 && (
           <span className="inline-flex items-center px-3 py-1.5 rounded-full text-xs font-semibold bg-primary/10 text-primary border border-primary/20 flex-shrink-0">
-            {certificates.length} Certificate{certificates.length !== 1 ? "s" : ""}
+            {certificates.length === 1
+              ? t("certificates.countOne", { count: certificates.length })
+              : t("certificates.countMany", { count: certificates.length })}
           </span>
         )}
       </div>
@@ -106,18 +110,17 @@ export default async function CertificatesPage() {
               <DocumentCheckIcon className="h-8 w-8 text-slate-300 dark:text-slate-600" />
             </div>
             <h2 className="text-lg font-bold text-slate-900 dark:text-slate-100 mb-2">
-              No Certificates Yet
+              {t("certificates.emptyTitle")}
             </h2>
             <p className="text-sm text-slate-500 dark:text-slate-400 max-w-sm mb-6">
-              Certificates will appear here once they are issued for programs
-              you&apos;ve completed.
+              {t("certificates.emptyDescription")}
             </p>
             <Link
               href="/karate/programs"
               className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-primary text-white text-sm font-semibold hover:opacity-90 transition-opacity"
             >
               <AcademicCapIcon className="h-4 w-4" />
-              Browse Programs
+              {t("dashboard.browsePrograms")}
             </Link>
           </div>
         </div>
@@ -129,18 +132,17 @@ export default async function CertificatesPage() {
           <ShieldCheckIcon className="h-5 w-5 text-primary mt-0.5 flex-shrink-0" />
           <div>
             <h3 className="text-sm font-semibold text-slate-900 dark:text-slate-100 mb-1">
-              Certificate Verification
+              {t("certificates.verificationTitle")}
             </h3>
             <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
-              All certificates can be publicly verified at{" "}
+              {t("certificates.verificationPrefix")}{" "}
               <Link
                 href="/cert-verify"
                 className="text-primary hover:underline font-medium"
               >
                 hstuma.com/cert-verify
               </Link>
-              . Share the verification link with employers or institutions to
-              confirm authenticity.
+              {t("certificates.verificationSuffix")}
             </p>
           </div>
         </div>

@@ -15,6 +15,7 @@ import { format } from 'date-fns';
 import { getUserDashboardData } from '@/actions/dashboard-actions';
 import { getMyCertificates } from '@/actions/certificate-actions';
 import { ProfileCompletionCard } from '@/components/dashboard/profile-completion-card';
+import { getI18n } from '@/locales/server';
 
 import { DashboardCertificateDownloadButton } from './dashboard-certificate-download-button';
 
@@ -74,12 +75,13 @@ const statusStyles: Record<string, string> = {
   waived:            'bg-slate-100 text-slate-600 dark:bg-slate-700 dark:text-slate-300',
 };
 
-function StatusBadge({ status }: { status: string }) {
-  const label =
-    status === 'pending_payment'   ? 'Payment Pending'  :
-    status === 'payment_submitted' ? 'Under Review'     :
-    status === 'payment_verified'  ? 'Verified'         :
-    status.replace(/_/g, ' ');
+function StatusBadge({
+  status,
+  label,
+}: {
+  status: string;
+  label: string;
+}) {
   return (
     <span
       className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold capitalize ${statusStyles[status] ?? 'bg-slate-100 text-slate-700 dark:bg-slate-700 dark:text-slate-300'}`}
@@ -89,8 +91,49 @@ function StatusBadge({ status }: { status: string }) {
   );
 }
 
+function getStatusLabel(
+  status: string,
+  t: (key: string, params?: Record<string, unknown>) => string,
+) {
+  switch (status) {
+    case 'pending_payment':
+      return t('dashboard.paymentPending');
+    case 'payment_submitted':
+      return t('dashboard.underReview');
+    case 'payment_verified':
+      return t('dashboard.verified');
+    case 'approved':
+      return t('dashboard.approved');
+    case 'rejected':
+      return t('dashboard.rejected');
+    case 'pending':
+      return t('dashboard.pending');
+    case 'active':
+      return t('common.active');
+    case 'paid':
+      return t('enrollments.paid');
+    case 'waived':
+      return t('enrollments.waived');
+    case 'overdue':
+      return t('enrollments.overdue');
+    default:
+      return status.replace(/_/g, ' ');
+  }
+}
+
+function LocalizedStatusBadge({
+  status,
+  t,
+}: {
+  status: string;
+  t: (key: string, params?: Record<string, unknown>) => string;
+}) {
+  return <StatusBadge status={status} label={getStatusLabel(status, t)} />;
+}
+
 // ── Page ────────────────────────────────────────────────────────────────────
 export default async function DashboardPage() {
+  const t = await getI18n();
   const data = await getUserDashboardData();
 
   if ('error' in data) {
@@ -98,11 +141,11 @@ export default async function DashboardPage() {
     return (
       <div className="text-center py-20">
         <h1 className="text-2xl font-bold text-slate-900 dark:text-slate-100 mb-4">
-          Something went wrong
+          {t('dashboard.somethingWentWrong')}
         </h1>
         <p className="text-slate-600 dark:text-slate-400">{data.error}</p>
         <Link href="/contact" className="text-primary hover:underline mt-4 inline-block">
-          Contact Support
+          {t('dashboard.contactSupport')}
         </Link>
       </div>
     );
@@ -141,17 +184,17 @@ export default async function DashboardPage() {
           {/* Info */}
           <div className="text-center sm:text-left flex-1 min-w-0">
             <h1 className="text-xl font-bold text-slate-900 dark:text-slate-100 truncate">
-              {user.name ?? 'Member'}
+              {user.name ?? t('dashboard.member')}
             </h1>
             <p className="text-sm text-slate-500 dark:text-slate-400 truncate">{user.email}</p>
             <div className="mt-2 flex flex-wrap justify-center sm:justify-start gap-2">
               {user.profileId ? (
                 <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-primary/10 text-primary border border-primary/20">
-                  Member ID: {user.profileId}
+                  {t('dashboard.memberId')}: {user.profileId}
                 </span>
               ) : user.registrationStatus ? (
                 <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400 border border-yellow-200 dark:border-yellow-800/40">
-                  Membership: {user.registrationStatus}
+                  {t('dashboard.membership')}: {user.registrationStatus}
                 </span>
               ) : null}
             </div>
@@ -170,7 +213,7 @@ export default async function DashboardPage() {
 
           {/* Active Enrollments */}
           <Card className="p-5">
-            <CardHeader icon={AcademicCapIcon} title="My Classes" />
+            <CardHeader icon={AcademicCapIcon} title={t('dashboard.myClasses')} />
             {enrollments.length > 0 ? (
               <div className="space-y-3">
                 {enrollments.map((enrollment: any) => (
@@ -183,15 +226,21 @@ export default async function DashboardPage() {
                         {enrollment.courseName}
                       </h3>
                       <div className="flex items-center gap-3 mt-1 text-xs text-slate-500 dark:text-slate-400">
-                        <span>Since {format(new Date(enrollment.joinedAt), 'MMM yyyy')}</span>
-                        {enrollment.level && <span>• {enrollment.level} Level</span>}
+                        <span>
+                          {t('dashboard.since')} {format(new Date(enrollment.joinedAt), 'MMM yyyy')}
+                        </span>
+                        {enrollment.level && (
+                          <span>
+                            • {enrollment.level} {t('dashboard.level')}
+                          </span>
+                        )}
                       </div>
                     </div>
                     <Link
                       href={`/karate/courses/${enrollment.courseSlug}`}
                       className="flex-shrink-0 px-4 py-2 text-xs font-semibold text-slate-700 dark:text-slate-200 bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-600 transition-colors"
                     >
-                      View Course
+                      {t('dashboard.viewCourse')}
                     </Link>
                   </div>
                 ))}
@@ -200,13 +249,13 @@ export default async function DashboardPage() {
               <div className="text-center py-10">
                 <AcademicCapIcon className="h-12 w-12 text-slate-200 dark:text-slate-700 mx-auto mb-3" />
                 <p className="text-slate-500 dark:text-slate-400 text-sm mb-4">
-                  You are not enrolled in any classes yet.
+                  {t('dashboard.noClasses')}
                 </p>
                 <Link
                   href="/karate/courses"
                   className="inline-flex items-center justify-center px-4 py-2 rounded-lg bg-primary text-white text-sm font-semibold hover:opacity-90 transition-opacity"
                 >
-                  Browse Courses
+                  {t('dashboard.browseCourses')}
                 </Link>
               </div>
             )}
@@ -214,29 +263,29 @@ export default async function DashboardPage() {
 
           {/* Applications */}
           <Card className="p-5">
-            <CardHeader icon={ClipboardDocumentCheckIcon} title="Applications" />
+            <CardHeader icon={ClipboardDocumentCheckIcon} title={t('dashboard.applications')} />
             {applications.length > 0 ? (
               <div className="overflow-x-auto -mx-1">
                 <table className="w-full text-left text-sm">
                   <thead>
                     <tr className="text-xs uppercase text-slate-500 dark:text-slate-400 bg-slate-50 dark:bg-slate-700/50">
-                      <th className="px-4 py-3 rounded-l-xl font-semibold">Course</th>
-                      <th className="px-4 py-3 font-semibold">Date</th>
-                      <th className="px-4 py-3 font-semibold">Status</th>
-                      <th className="px-4 py-3 rounded-r-xl font-semibold text-right">Action</th>
+                      <th className="px-4 py-3 rounded-l-xl font-semibold">{t('dashboard.programCourse')}</th>
+                      <th className="px-4 py-3 font-semibold">{t('dashboard.date')}</th>
+                      <th className="px-4 py-3 font-semibold">{t('dashboard.status')}</th>
+                      <th className="px-4 py-3 rounded-r-xl font-semibold text-right">{t('dashboard.action')}</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-slate-100 dark:divide-slate-700/50">
                     {applications.map((app: any) => (
                       <tr key={app.id} className="hover:bg-slate-50/50 dark:hover:bg-slate-700/20 transition-colors">
                         <td className="px-4 py-3 font-medium text-slate-900 dark:text-slate-100">
-                          {app.courseName || `App #${app.applicationNumber}`}
+                          {app.courseName || t('dashboard.applicationNumber', { number: app.applicationNumber })}
                         </td>
                         <td className="px-4 py-3 text-slate-500 dark:text-slate-400 text-xs whitespace-nowrap">
                           {format(new Date(app.appliedAt), 'MMM d, yyyy')}
                         </td>
                         <td className="px-4 py-3">
-                          <StatusBadge status={app.status} />
+                          <LocalizedStatusBadge status={app.status} t={t} />
                         </td>
                         <td className="px-4 py-3 text-right">
                           {app.status === 'pending_payment' && (
@@ -244,7 +293,7 @@ export default async function DashboardPage() {
                               href={`/onboarding/payment?appId=${app.id}`}
                               className="text-xs font-semibold text-primary hover:underline"
                             >
-                              Pay Now
+                              {t('dashboard.payNow')}
                             </Link>
                           )}
                         </td>
@@ -255,14 +304,14 @@ export default async function DashboardPage() {
               </div>
             ) : (
               <p className="text-slate-500 dark:text-slate-400 text-sm text-center py-6">
-                No recent applications.
+                {t('dashboard.noApplications')}
               </p>
             )}
           </Card>
 
           {/* Program Registrations */}
           <Card className="p-5">
-            <CardHeader icon={TrophyIcon} title="Program Registrations" />
+            <CardHeader icon={TrophyIcon} title={t('dashboard.programRegistrations')} />
             {programRegistrations.length > 0 ? (
               <div className="space-y-3">
                 {programRegistrations.map((reg: any) => (
@@ -289,7 +338,7 @@ export default async function DashboardPage() {
                         </div>
                       </div>
                       <div className="flex flex-col items-start sm:items-end gap-1.5">
-                        <StatusBadge status={reg.status} />
+                        <LocalizedStatusBadge status={reg.status} t={t} />
                         {reg.transactionId && (
                           <span className="text-[10px] text-slate-400 dark:text-slate-500 font-mono">
                             TXN: {reg.transactionId}
@@ -300,7 +349,7 @@ export default async function DashboardPage() {
                     {reg.status === 'approved' && (
                       <div className="mt-3 pt-3 border-t border-slate-200 dark:border-slate-600/50">
                         <p className="text-xs text-green-600 dark:text-green-400 font-medium">
-                          ✓ You are registered for this program. See you there!
+                          {t('dashboard.registeredMessage')}
                         </p>
                       </div>
                     )}
@@ -311,13 +360,13 @@ export default async function DashboardPage() {
               <div className="text-center py-10">
                 <TrophyIcon className="h-12 w-12 text-slate-200 dark:text-slate-700 mx-auto mb-3" />
                 <p className="text-slate-500 dark:text-slate-400 text-sm mb-4">
-                  No program registrations yet.
+                  {t('dashboard.noProgramRegistrations')}
                 </p>
                 <Link
                   href="/karate/programs"
                   className="inline-flex items-center justify-center px-4 py-2 rounded-lg bg-primary text-white text-sm font-semibold hover:opacity-90 transition-opacity"
                 >
-                  Browse Programs
+                  {t('dashboard.browsePrograms')}
                 </Link>
               </div>
             )}
@@ -331,10 +380,10 @@ export default async function DashboardPage() {
           <Card className="p-5">
             <CardHeader
               icon={CurrencyBangladeshiIcon}
-              title="Billing"
+              title={t('dashboard.billing')}
               action={
                 <Link href="/dashboard/payments" className="text-xs text-primary hover:underline font-medium">
-                  View All
+                  {t('dashboard.viewAll')}
                 </Link>
               }
             />
@@ -360,13 +409,13 @@ export default async function DashboardPage() {
                       )}
                     </div>
                     <div className="flex justify-between items-center">
-                      <StatusBadge status={payment.status} />
+                      <LocalizedStatusBadge status={payment.status} t={t} />
                       {payment.status !== 'paid' && payment.status !== 'waived' && (
                         <Link
                           href={`/dashboard/payments/${payment.id}`}
                           className="text-xs font-semibold text-primary hover:underline"
                         >
-                          Pay
+                          {t('dashboard.pay')}
                         </Link>
                       )}
                     </div>
@@ -375,7 +424,7 @@ export default async function DashboardPage() {
               </div>
             ) : (
               <p className="text-slate-500 dark:text-slate-400 text-sm text-center py-6">
-                No payment history.
+                {t('dashboard.noPaymentHistory')}
               </p>
             )}
           </Card>
@@ -385,10 +434,10 @@ export default async function DashboardPage() {
             <Card className="p-5">
               <CardHeader
                 icon={DocumentCheckIcon}
-                title="My Certificates"
+                title={t('certificates.title')}
                 action={
                   <Link href="/dashboard/certificates" className="text-xs text-primary hover:underline font-medium">
-                    View All
+                    {t('dashboard.viewAll')}
                   </Link>
                 }
               />
@@ -423,15 +472,15 @@ export default async function DashboardPage() {
           <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-slate-100 to-slate-50 dark:from-slate-900 dark:to-slate-800 p-5 shadow-sm dark:shadow-md border border-slate-200 dark:border-slate-700/50">
             <div className="absolute -top-8 -right-8 h-28 w-28 rounded-full bg-primary opacity-10 dark:opacity-20 blur-2xl pointer-events-none" />
             <div className="relative z-10">
-              <h3 className="font-bold text-base mb-1.5 text-slate-900 dark:text-white">Need Help?</h3>
+              <h3 className="font-bold text-base mb-1.5 text-slate-900 dark:text-white">{t('dashboard.needHelp')}</h3>
               <p className="text-slate-500 dark:text-slate-300 text-xs leading-relaxed mb-4">
-                Contact our support team if you have questions about your classes or billing.
+                {t('dashboard.needHelpDescription')}
               </p>
               <Link
                 href="/contact"
                 className="inline-block px-4 py-2 bg-primary text-white dark:bg-white dark:text-slate-900 rounded-lg text-xs font-bold hover:opacity-90 dark:hover:bg-slate-100 transition-colors"
               >
-                Contact Support
+                {t('dashboard.contactSupport')}
               </Link>
             </div>
           </div>

@@ -5,6 +5,7 @@ import { useSession } from '@/hooks/useSessionCompat';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
+import { useCurrentLocale, useI18n } from '@/locales/client';
 import {
   ArrowLeftIcon,
   BanknotesIcon,
@@ -33,6 +34,10 @@ interface FeeDetails {
 }
 
 export default function PayFeeForm({ feeId }: { feeId: string }) {
+  const t = useI18n();
+  const locale = useCurrentLocale();
+  const intlLocale = locale === 'bn' ? 'bn-BD' : locale === 'ne' ? 'ne-NP' : 'en-BD';
+
   const { data: session, status: authStatus } = useSession();
   const router = useRouter();
   const [feeDetails, setFeeDetails] = useState<FeeDetails | null>(null);
@@ -53,7 +58,7 @@ export default function PayFeeForm({ feeId }: { feeId: string }) {
         const response = await fetch(`/api/student/monthly-fees/${feeId}`);
         if (!response.ok) {
           if (response.status === 404) {
-            toast.error('Fee not found');
+            toast.error(t('feePayment.feeNotFound'));
             router.push('/dashboard/enrollments');
             return;
           }
@@ -63,17 +68,17 @@ export default function PayFeeForm({ feeId }: { feeId: string }) {
         setFeeDetails(data);
       } catch (error) {
         console.error('Error:', error);
-        toast.error('Failed to load fee details');
+        toast.error(t('feePayment.failedToLoadFeeDetails'));
       } finally {
         setLoading(false);
       }
     };
 
     fetchFeeDetails();
-  }, [feeId, authStatus, router]);
+  }, [feeId, authStatus, router, t]);
 
   const formatCurrency = (amount: number, currency: string) => {
-    return new Intl.NumberFormat('en-BD', {
+    return new Intl.NumberFormat(intlLocale, {
       style: 'currency',
       currency: currency,
       minimumFractionDigits: 0,
@@ -83,11 +88,11 @@ export default function PayFeeForm({ feeId }: { feeId: string }) {
   const formatMonth = (monthStr: string) => {
     const [year, month] = monthStr.split('-');
     const date = new Date(parseInt(year), parseInt(month) - 1);
-    return date.toLocaleDateString('en-BD', { year: 'numeric', month: 'long' });
+    return date.toLocaleDateString(intlLocale, { year: 'numeric', month: 'long' });
   };
 
   const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('en-BD', {
+    return new Date(dateString).toLocaleDateString(intlLocale, {
       year: 'numeric',
       month: 'short',
       day: 'numeric',
@@ -96,7 +101,7 @@ export default function PayFeeForm({ feeId }: { feeId: string }) {
 
   const handleSubmitPayment = async () => {
     if (!paymentInfo.transactionId) {
-      toast.error('Please enter the transaction ID');
+      toast.error(t('feePayment.pleaseEnterTransactionId'));
       return;
     }
 
@@ -113,10 +118,12 @@ export default function PayFeeForm({ feeId }: { feeId: string }) {
         throw new Error(error.error || 'Payment submission failed');
       }
 
-      toast.success('Payment submitted for verification!');
+      toast.success(t('feePayment.paymentSubmitted'));
       router.push('/dashboard/enrollments');
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : 'Payment submission failed');
+      toast.error(
+        error instanceof Error ? error.message : t('feePayment.paymentSubmissionFailed'),
+      );
     } finally {
       setSubmitting(false);
     }
@@ -139,10 +146,12 @@ export default function PayFeeForm({ feeId }: { feeId: string }) {
       <div className="max-w-md mx-auto text-center py-12">
         <CheckCircleIcon className="h-16 w-16 mx-auto text-green-500 mb-4" />
         <h2 className="text-xl font-bold text-gray-900 mb-2">
-          {feeDetails.status === 'paid' ? 'Fee Already Paid' : 'Fee Status: ' + feeDetails.status}
+          {feeDetails.status === 'paid'
+            ? t('feePayment.feeAlreadyPaid')
+            : t('feePayment.feeStatus', { status: feeDetails.status })}
         </h2>
         <Link href="/dashboard/enrollments" className="text-red-600 hover:underline">
-          Back to Dashboard
+          {t('feePayment.backToDashboard')}
         </Link>
       </div>
     );
@@ -159,9 +168,9 @@ export default function PayFeeForm({ feeId }: { feeId: string }) {
           className="inline-flex items-center text-gray-600 hover:text-gray-900 mb-4"
         >
           <ArrowLeftIcon className="h-4 w-4 mr-2" />
-          Back to Dashboard
+          {t('feePayment.backToDashboard')}
         </Link>
-        <h1 className="text-2xl font-bold text-gray-900">Pay Monthly Fee</h1>
+        <h1 className="text-2xl font-bold text-gray-900">{t('feePayment.payMonthlyFee')}</h1>
       </div>
 
       {/* Fee Summary */}
@@ -178,42 +187,42 @@ export default function PayFeeForm({ feeId }: { feeId: string }) {
 
         <div className="border-t pt-4 space-y-2">
           <div className="flex justify-between text-sm">
-            <span className="text-gray-500">Monthly Fee</span>
+            <span className="text-gray-500">{t('feePayment.monthlyFee')}</span>
             <span>{formatCurrency(feeDetails.feeAmount, feeDetails.currency)}</span>
           </div>
           {feeDetails.discountAmount > 0 && (
             <div className="flex justify-between text-sm text-green-600">
-              <span>Discount</span>
+              <span>{t('feePayment.discount')}</span>
               <span>-{formatCurrency(feeDetails.discountAmount, feeDetails.currency)}</span>
             </div>
           )}
           {feeDetails.lateFeePenalty > 0 && (
             <div className="flex justify-between text-sm text-red-600">
-              <span>Late Fee</span>
+              <span>{t('feePayment.lateFee')}</span>
               <span>+{formatCurrency(feeDetails.lateFeePenalty, feeDetails.currency)}</span>
             </div>
           )}
           {feeDetails.paidAmount > 0 && (
             <div className="flex justify-between text-sm text-green-600">
-              <span>Already Paid</span>
+              <span>{t('feePayment.alreadyPaid')}</span>
               <span>-{formatCurrency(feeDetails.paidAmount, feeDetails.currency)}</span>
             </div>
           )}
           <div className="flex justify-between font-semibold text-lg pt-2 border-t">
-            <span>Amount Due</span>
+            <span>{t('feePayment.amountDue')}</span>
             <span className="text-red-600">{formatCurrency(amountDue, feeDetails.currency)}</span>
           </div>
         </div>
 
         <div className="mt-4 flex items-center gap-2 text-sm text-gray-500">
           <CalendarIcon className="h-4 w-4" />
-          <span>Due by: {formatDate(feeDetails.dueDate)}</span>
+          <span>{t('feePayment.dueBy', { date: formatDate(feeDetails.dueDate) })}</span>
         </div>
       </div>
 
       {/* Payment Method Selection */}
       <div className="bg-white rounded-lg border p-6 mb-6">
-        <h3 className="font-semibold text-gray-900 mb-4">Select Payment Method</h3>
+        <h3 className="font-semibold text-gray-900 mb-4">{t('feePayment.selectPaymentMethod')}</h3>
         
         <div className="grid grid-cols-3 gap-4 mb-6">
           {feeDetails.bkashNumber && (
@@ -263,19 +272,28 @@ export default function PayFeeForm({ feeId }: { feeId: string }) {
         {/* bKash Instructions */}
         {paymentInfo.paymentMethod === 'bkash' && feeDetails.bkashNumber && (
           <div className="bg-pink-50 rounded-lg p-4 mb-6">
-            <h4 className="font-semibold text-pink-900 mb-3">bKash Payment Instructions</h4>
+            <h4 className="font-semibold text-pink-900 mb-3">{t('feePayment.bkashInstructionsTitle')}</h4>
             <ol className="list-decimal list-inside text-sm text-pink-800 space-y-2">
-              <li>Open bKash App</li>
-              <li>Go to &quot;Send Money&quot;</li>
-              <li>Enter number: <span className="font-mono font-bold">{feeDetails.bkashNumber}</span></li>
-              <li>Enter amount: {formatCurrency(amountDue, feeDetails.currency)}</li>
-              <li>Add reference: {formatMonth(feeDetails.billingMonth)} Fee</li>
-              <li>Complete the payment and note the Transaction ID</li>
+              <li>{t('feePayment.bkashSteps.openApp')}</li>
+              <li>{t('feePayment.bkashSteps.goToSendMoney')}</li>
+              <li>
+                {t('feePayment.bkashSteps.enterNumberLabel')}{' '}
+                <span className="font-mono font-bold">{feeDetails.bkashNumber}</span>
+              </li>
+              <li>
+                {t('feePayment.bkashSteps.enterAmountLabel')}{' '}
+                {formatCurrency(amountDue, feeDetails.currency)}
+              </li>
+              <li>
+                {t('feePayment.bkashSteps.addReferenceLabel')}{' '}
+                {formatMonth(feeDetails.billingMonth)} {t('feePayment.bkashSteps.referenceSuffix')}
+              </li>
+              <li>{t('feePayment.bkashSteps.completePayment')}</li>
             </ol>
             
             {feeDetails.bkashQrCodeUrl && (
               <div className="mt-4">
-                <p className="text-sm text-pink-800 mb-2">Or scan QR code:</p>
+                <p className="text-sm text-pink-800 mb-2">{t('feePayment.orScanQr')}</p>
                 <div className="bg-white p-3 rounded-lg inline-block">
                   <Image
                     src={feeDetails.bkashQrCodeUrl}
@@ -293,31 +311,31 @@ export default function PayFeeForm({ feeId }: { feeId: string }) {
         <div className="space-y-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Transaction ID *
+              {t('feePayment.transactionIdLabel')} *
             </label>
             <input
               type="text"
               value={paymentInfo.transactionId}
               onChange={(e) => setPaymentInfo(p => ({ ...p, transactionId: e.target.value }))}
               className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-red-500 font-mono"
-              placeholder="Enter transaction ID"
+              placeholder={t('feePayment.transactionIdPlaceholder')}
               required
             />
           </div>
           
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Payment Screenshot URL
+              {t('feePayment.paymentScreenshotUrlLabel')}
             </label>
             <input
               type="url"
               value={paymentInfo.paymentProofUrl}
               onChange={(e) => setPaymentInfo(p => ({ ...p, paymentProofUrl: e.target.value }))}
               className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-red-500"
-              placeholder="https://imgur.com/..."
+              placeholder={t('feePayment.paymentScreenshotUrlPlaceholder')}
             />
             <p className="text-xs text-gray-500 mt-1">
-              Upload screenshot to imgur.com and paste the link here
+              {t('feePayment.paymentScreenshotUrlHint')}
             </p>
           </div>
         </div>
@@ -332,12 +350,12 @@ export default function PayFeeForm({ feeId }: { feeId: string }) {
         {submitting ? (
           <>
             <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
-            Submitting...
+            {t('feePayment.submitting')}
           </>
         ) : (
           <>
             <BanknotesIcon className="h-5 w-5" />
-            Submit Payment
+            {t('feePayment.submitPayment')}
           </>
         )}
       </button>

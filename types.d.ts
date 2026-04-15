@@ -1,5 +1,6 @@
 interface NavItem {
   title: string;
+  i18nKey?: string;
   href?: string;
   disabled?: boolean;
   external?: boolean;
@@ -22,10 +23,13 @@ type MainNavItem = NavItemWithOptionalChildren;
 
 interface FooterItem {
   title: string;
+  i18nKey?: string;
   items: {
     title: string;
+    i18nKey?: string;
     href: string;
     external?: boolean;
+    skipLocale?: boolean;
   }[];
 }
 

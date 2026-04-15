@@ -49,9 +49,11 @@ export const siteConfig = {
 export const mainNav = [
   {
     title: "Pages",
+    i18nKey: "header.pages",
     items: [
       {
         title: "About",
+        i18nKey: "header.about",
         href: "/about",
         items: [],
       },
@@ -67,26 +69,31 @@ export const mainNav = [
       // },
       {
         title: "Contact",
+        i18nKey: "header.contact",
         href: "/contact",
         items: [],
       },
       {
         title: "Programs",
+        i18nKey: "header.programs",
         href: "/karate/programs",
         items: [],
       },
       {
         title: "Courses",
+        i18nKey: "header.courses",
         href: "/karate/courses",
         items: [],
       },
       {
         title: "Download App",
+        i18nKey: "header.downloadApp",
         href: "/dashboard/apk-download",
         items: [],
       },
       {
         title: "Developer",
+        i18nKey: "header.developer",
         href: "/dev",
         items: [],
       },
@@ -125,20 +132,24 @@ export const mainNav = [
   // },
   {
     title: "EN / বাং / ने",
+    i18nKey: "header.language",
     isLocaleSwitcher: true,
     items: [
       {
         title: "English",
+        i18nKey: "header.languageEnglish",
         locale: "en",
         items: [],
       },
       {
         title: "বাংলা",
+        i18nKey: "header.languageBangla",
         locale: "bn",
         items: [],
       },
       {
         title: "नेपाली",
+        i18nKey: "header.languageNepali",
         locale: "ne",
         items: [],
       },
@@ -146,6 +157,7 @@ export const mainNav = [
   },
   {
     title: "Blog",
+    i18nKey: "header.blog",
     href: "/blog",
     skipLocale: true,
   },
@@ -154,9 +166,11 @@ export const mainNav = [
 export const footerNav = [
   {
     title: "Resources",
+    i18nKey: "footer.resources",
     items: [
       {
         title: "About",
+        i18nKey: "header.about",
         href: "/about",
         external: false,
       },
@@ -172,11 +186,14 @@ export const footerNav = [
       // },
       {
         title: "Blog",
+        i18nKey: "header.blog",
         href: "/blog",
         external: false,
+        skipLocale: true,
       },
       {
         title: "Contact",
+        i18nKey: "header.contact",
         href: "/contact",
         external: false,
       },
@@ -184,9 +201,11 @@ export const footerNav = [
   },
   {
     title: "Updates",
+    i18nKey: "footer.updates",
     items: [
       {
         title: "Gallery",
+        i18nKey: "header.gallery",
         href: "/gallery",
         external: false,
       },

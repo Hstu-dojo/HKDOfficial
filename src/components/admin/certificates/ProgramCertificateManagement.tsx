@@ -757,7 +757,7 @@ export default function ProgramCertificateManagement() {
               Issue Certificates
             </h2>
             <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">
-              {selectedCertIds.size} certificate(s) will be issued. Signatures and templates will be automatically applied according to the selected Program Type's configuration.
+              {selectedCertIds.size} certificate(s) will be issued. Signatures and templates will be automatically applied according to the selected Program Type&apos;s configuration.
             </p>
 
             <div className="flex justify-end gap-3 pt-4 border-t">

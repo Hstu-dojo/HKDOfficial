@@ -13,7 +13,7 @@ import {
   ArrowDownTrayIcon,
 } from "@heroicons/react/24/outline";
 import { useEffect, useCallback } from "react";
-import { useCurrentLocale } from "@/locales/client";
+import { useCurrentLocale, useI18n } from "@/locales/client";
 import { useSidebar } from "./dashboard-shell";
 import {
   Sheet,
@@ -25,17 +25,23 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
 
 const navItems = [
-  { title: "Overview",         href: "/dashboard",              icon: HomeIcon,          exact: true  },
-  { title: "My Enrollments",   href: "/dashboard/enrollments",  icon: AcademicCapIcon                  },
-  { title: "Certificates",     href: "/dashboard/certificates", icon: DocumentCheckIcon                 },
-  { title: "Download App",     href: "/dashboard/apk-download", icon: ArrowDownTrayIcon                 },
-  { title: "Account Settings", href: "/dashboard/profile",      icon: Cog6ToothIcon                    },
+  { title: "Overview",         i18nKey: "dashboardSidebar.overview",        href: "/dashboard",              icon: HomeIcon,          exact: true  },
+  { title: "My Enrollments",   i18nKey: "enrollments.title",                href: "/dashboard/enrollments",  icon: AcademicCapIcon                  },
+  { title: "Certificates",     i18nKey: "certificates.title",               href: "/dashboard/certificates", icon: DocumentCheckIcon                 },
+  { title: "Download App",     i18nKey: "header.downloadApp",               href: "/dashboard/apk-download", icon: ArrowDownTrayIcon                 },
+  { title: "Account Settings", i18nKey: "dashboardSidebar.accountSettings", href: "/dashboard/profile",      icon: Cog6ToothIcon                    },
 ];
 
 export default function DashboardSidebar() {
   const pathname = usePathname();
   const locale = useCurrentLocale();
+  const t = useI18n();
   const { isMobileOpen, openMobile, closeMobile } = useSidebar();
+
+  const labelFor = (item: (typeof navItems)[number]) => {
+    if (item.i18nKey) return t(item.i18nKey as any);
+    return item.title;
+  };
 
   // Close mobile menu on route change
   useEffect(() => { closeMobile(); }, [pathname]); // eslint-disable-line react-hooks/exhaustive-deps
@@ -82,7 +88,7 @@ export default function DashboardSidebar() {
                         : "text-slate-400 dark:text-slate-500 group-hover:text-slate-600 dark:group-hover:text-slate-300",
                     )}
                   />
-                  <span className="truncate">{item.title}</span>
+                  <span className="truncate">{labelFor(item)}</span>
                 </Link>
               );
             })}
@@ -98,7 +104,7 @@ export default function DashboardSidebar() {
             className="group flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-700 dark:hover:text-slate-200 transition-all duration-150"
           >
             <ArrowLeftOnRectangleIcon className="h-[18px] w-[18px] shrink-0" />
-            <span>Back to Site</span>
+            <span>{t("dashboardSidebar.backToSite" as any)}</span>
           </Link>
         </div>
       </div>
@@ -112,8 +118,12 @@ export default function DashboardSidebar() {
         <HomeIcon className="h-4 w-4 text-primary" />
       </div>
       <div className="flex flex-col leading-none">
-        <span className="text-sm font-bold text-slate-900 dark:text-slate-100">Dashboard</span>
-        <span className="text-xs text-slate-500 dark:text-slate-400">Member Portal</span>
+        <span className="text-sm font-bold text-slate-900 dark:text-slate-100">
+          {t("header.dashboard" as any)}
+        </span>
+        <span className="text-xs text-slate-500 dark:text-slate-400">
+          {t("dashboardSidebar.memberPortal" as any)}
+        </span>
       </div>
     </div>
   );
@@ -131,7 +141,7 @@ export default function DashboardSidebar() {
           <Bars3Icon className="h-5 w-5 text-slate-600 dark:text-slate-300" />
         </button>
         <span className="text-sm font-semibold text-slate-800 dark:text-slate-100">
-          {navItems.find((n) => isActive(n.href, n.exact))?.title ?? "Dashboard"}
+          {labelFor(navItems.find((n) => isActive(n.href, n.exact)) ?? navItems[0])}
         </span>
       </div>
 

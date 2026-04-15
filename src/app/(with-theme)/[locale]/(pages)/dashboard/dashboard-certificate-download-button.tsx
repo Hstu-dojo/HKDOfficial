@@ -3,8 +3,10 @@
 import { useState } from "react";
 import { ArrowDownTrayIcon } from "@heroicons/react/24/outline";
 import { rasterizeAndDownloadPdf } from "@/lib/pdf/rasterize-client";
+import { useI18n } from "@/locales/client";
 
 export function DashboardCertificateDownloadButton({ certId, certNumber }: { certId: string; certNumber: string }) {
+  const t = useI18n();
   const [isDownloading, setIsDownloading] = useState(false);
 
   const handleDownload = async () => {
@@ -28,7 +30,7 @@ export function DashboardCertificateDownloadButton({ certId, certNumber }: { cer
       className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-primary bg-primary/10 rounded-lg hover:bg-primary/20 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
     >
       <ArrowDownTrayIcon className="h-3.5 w-3.5" />
-      {isDownloading ? "Processing..." : "Download PDF"}
+      {isDownloading ? t('certificates.actions.processing') : t('certificates.actions.downloadTitle')}
     </button>
   );
 }

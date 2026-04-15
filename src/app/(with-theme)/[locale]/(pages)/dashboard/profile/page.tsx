@@ -1,6 +1,7 @@
 "use client";
 import { useState, useEffect, Suspense } from "react";
 import { useAuth, supabase } from "@/context/AuthContext";
+import { useCurrentLocale, useI18n } from "@/locales/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -29,6 +30,11 @@ function ProfileSettingsContent() {
   const { user, loading, signOut } = useAuth();
   const router = useRouter();
   const searchParams = useSearchParams();
+  const t = useI18n();
+  const currentLocale = useCurrentLocale();
+
+  const intlLocale =
+    currentLocale === "bn" ? "bn-BD" : currentLocale === "ne" ? "ne-NP" : "en-BD";
 
   const buildEmailChangeRedirectTo = () => {
     if (typeof window === 'undefined') return undefined;
@@ -101,7 +107,7 @@ function ProfileSettingsContent() {
       
       if (shouldSyncEmail === 'true') {
         const oldEmail = localStorage.getItem('email_change_old');
-        setEmailChangeMessage('Syncing email to database...');
+        setEmailChangeMessage(t('profile.emailSyncing'));
         
         fetch('/api/sync-email', { 
           method: 'POST',
@@ -111,15 +117,19 @@ function ProfileSettingsContent() {
           .then(res => res.json())
           .then(data => {
             if (data.success) {
-              setEmailChangeMessage(`✅ Email updated successfully to ${data.email}! Database synced. Refreshing...`);
+              setEmailChangeMessage(
+                t('profile.emailSyncSuccess', { email: data.email }),
+              );
               localStorage.removeItem('email_change_old');
               setTimeout(() => window.location.reload(), 2000);
             } else {
-              setEmailChangeError(`Database sync failed: ${data.error}`);
+              setEmailChangeError(
+                t('profile.emailSyncFailed', { error: data.error }),
+              );
             }
           })
           .catch(err => {
-            setEmailChangeError('Failed to sync email to database. Please contact support.');
+            setEmailChangeError(t('profile.emailSyncNetworkError'));
           });
       }
       
@@ -138,7 +148,7 @@ function ProfileSettingsContent() {
       window.history.replaceState({}, '', newUrl.toString());
       setTimeout(() => setEmailChangeError(""), 5000);
     }
-  }, [searchParams]);
+  }, [searchParams, t]);
 
   // Handle hash fragment from email confirmation
   useEffect(() => {
@@ -148,17 +158,17 @@ function ProfileSettingsContent() {
       const hashMessage = hashParams.get('message');
       
       if (hashMessage) {
-        setEmailChangeMessage('Email confirmation received. Please check if your email has been updated.');
+        setEmailChangeMessage(t('profile.emailConfirmationReceived'));
         window.history.replaceState({}, '', window.location.pathname + window.location.search);
         
         supabase.auth.getUser().then(({ data }) => {
           if (data.user && user && data.user.email !== user.email) {
-            setEmailChangeMessage('Email updated successfully! Please refresh the page to see changes.');
+            setEmailChangeMessage(t('profile.emailUpdatedRefresh'));
           }
         });
       }
     }
-  }, [user]);
+  }, [t, user]);
 
   // Initialize form with current user data
   useEffect(() => {
@@ -203,13 +213,13 @@ function ProfileSettingsContent() {
   useEffect(() => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event) => {
       if (event === 'USER_UPDATED') {
-        setEmailChangeMessage("Profile updated successfully!");
+        setEmailChangeMessage(t('profile.profileUpdatedSuccessfully'));
         setTimeout(() => setEmailChangeMessage(""), 5000);
       }
     });
 
     return () => subscription.unsubscribe();
-  }, []);
+  }, [t]);
 
 
 
@@ -218,7 +228,7 @@ function ProfileSettingsContent() {
       <div className="flex min-h-[400px] items-center justify-center">
         <div className="flex flex-col items-center gap-2">
           <Loader2 className="h-8 w-8 animate-spin text-primary" />
-          <p className="text-muted-foreground">Loading profile...</p>
+          <p className="text-muted-foreground">{t('profile.loadingProfile')}</p>
         </div>
       </div>
     );
@@ -228,12 +238,12 @@ function ProfileSettingsContent() {
     return (
       <Card className="max-w-md mx-auto">
         <CardHeader>
-          <CardTitle>Access Denied</CardTitle>
-          <CardDescription>Please sign in to view your profile</CardDescription>
+          <CardTitle>{t('profile.accessDeniedTitle')}</CardTitle>
+          <CardDescription>{t('profile.accessDeniedSubtitle')}</CardDescription>
         </CardHeader>
         <CardContent>
-          <Button onClick={() => router.push('/login')} className="w-full">
-            Sign In
+          <Button onClick={() => router.push(`/${currentLocale}/login`)} className="w-full">
+            {t('profile.signInButton')}
           </Button>
         </CardContent>
       </Card>
@@ -242,7 +252,7 @@ function ProfileSettingsContent() {
 
   const handleSignOut = async () => {
     await signOut();
-    router.push('/');
+    router.push(`/${currentLocale}`);
   };
 
   const handleEmailChange = async (e: React.FormEvent) => {
@@ -265,10 +275,10 @@ function ProfileSettingsContent() {
 
       if (error) throw error;
 
-      setEmailChangeMessage("Confirmation email sent! Please check your new email address.");
+      setEmailChangeMessage(t('profile.confirmationEmailSent'));
       setNewEmail("");
     } catch (error: any) {
-      setEmailChangeError(error.message || "Failed to update email");
+      setEmailChangeError(error.message || t('profile.failedToUpdateEmail'));
     } finally {
       setIsEmailChanging(false);
     }
@@ -292,7 +302,7 @@ function ProfileSettingsContent() {
       }
 
       if (Object.keys(updates).length === 0) {
-        setProfileUpdateMessage("No changes to save");
+        setProfileUpdateMessage(t('profile.noChangesToSave'));
         setIsProfileUpdating(false);
         return;
       }
@@ -301,10 +311,10 @@ function ProfileSettingsContent() {
 
       if (error) throw error;
 
-      setProfileUpdateMessage("Profile updated successfully!");
+      setProfileUpdateMessage(t('profile.profileUpdatedSuccessfully'));
       setTimeout(() => setProfileUpdateMessage(""), 5000);
     } catch (error: any) {
-      setProfileUpdateError(error.message || "Failed to update profile");
+      setProfileUpdateError(error.message || t('profile.failedToUpdateProfile'));
     } finally {
       setIsProfileUpdating(false);
     }
@@ -318,16 +328,16 @@ function ProfileSettingsContent() {
 
     try {
       if (newPassword.length < 6) {
-        throw new Error("Password must be at least 6 characters long");
+        throw new Error(t('profile.errors.passwordTooShort', { min: 6 }));
       }
 
       if (newPassword !== confirmPassword) {
-        throw new Error("Passwords do not match");
+        throw new Error(t('profile.errors.passwordsDoNotMatch'));
       }
 
       if (hasPassword) {
         if (!currentPassword) {
-          throw new Error("Please enter your current password");
+          throw new Error(t('profile.errors.currentPasswordRequired'));
         }
 
         const { error: verifyError } = await supabase.auth.signInWithPassword({
@@ -336,7 +346,7 @@ function ProfileSettingsContent() {
         });
 
         if (verifyError) {
-          throw new Error("Current password is incorrect");
+          throw new Error(t('profile.errors.currentPasswordIncorrect'));
         }
       }
 
@@ -360,7 +370,7 @@ function ProfileSettingsContent() {
       }
 
       setPasswordChangeMessage(
-        hasPassword ? "Password changed successfully!" : "Password set successfully!"
+        hasPassword ? t('profile.passwordChangedSuccess') : t('profile.passwordSetSuccess'),
       );
       
       setCurrentPassword("");
@@ -373,13 +383,19 @@ function ProfileSettingsContent() {
       
       setTimeout(() => setPasswordChangeMessage(""), 5000);
     } catch (error: any) {
-      setPasswordChangeError(error.message || "Failed to update password");
+      setPasswordChangeError(error.message || t('profile.failedToUpdatePassword'));
     } finally {
       setIsPasswordChanging(false);
     }
   };
 
-  const createdAt = user.created_at ? new Date(user.created_at).toLocaleDateString() : "N/A";
+  const createdAt = user.created_at
+    ? new Date(user.created_at).toLocaleDateString(intlLocale, {
+        year: "numeric",
+        month: "short",
+        day: "numeric",
+      })
+    : t('profile.notAvailable');
   const emailVerified = user.email_confirmed_at ? true : false;
   const phoneVerified = user.phone_confirmed_at ? true : false;
 
@@ -389,18 +405,18 @@ function ProfileSettingsContent() {
       <div className="flex items-center justify-between border-b border-slate-200 dark:border-slate-700 pb-6">
         <div className="flex items-center gap-4">
           <Link 
-            href="/dashboard" 
+            href={`/${currentLocale}/dashboard`} 
             className="p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
           >
             <ArrowLeft className="h-5 w-5 text-slate-600 dark:text-slate-400" />
           </Link>
           <div>
-            <h1 className="text-2xl font-bold text-slate-900 dark:text-slate-100">Account Settings</h1>
-            <p className="text-slate-600 dark:text-slate-400">Manage your profile and security settings</p>
+            <h1 className="text-2xl font-bold text-slate-900 dark:text-slate-100">{t('dashboardSidebar.accountSettings')}</h1>
+            <p className="text-slate-600 dark:text-slate-400">{t('profile.accountSettingsSubtitle')}</p>
           </div>
         </div>
         <Button onClick={handleSignOut} variant="outline" size="sm">
-          Sign Out
+          {t('header.signOut')}
         </Button>
       </div>
 
@@ -409,15 +425,15 @@ function ProfileSettingsContent() {
         <TabsList className="grid w-full grid-cols-3 lg:w-[400px]">
           <TabsTrigger value="account" className="flex items-center gap-2">
             <User className="h-4 w-4" />
-            <span className="hidden sm:inline">Account</span>
+            <span className="hidden sm:inline">{t('profile.tabs.account')}</span>
           </TabsTrigger>
           <TabsTrigger value="security" className="flex items-center gap-2">
             <KeyRound className="h-4 w-4" />
-            <span className="hidden sm:inline">Security</span>
+            <span className="hidden sm:inline">{t('profile.tabs.security')}</span>
           </TabsTrigger>
           <TabsTrigger value="membership" className="flex items-center gap-2">
             <FileText className="h-4 w-4" />
-            <span className="hidden sm:inline">Membership</span>
+            <span className="hidden sm:inline">{t('profile.tabs.membership')}</span>
           </TabsTrigger>
         </TabsList>
 
@@ -428,16 +444,16 @@ function ProfileSettingsContent() {
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <User className="h-5 w-5" />
-                Account Information
+                {t('profile.accountInformation')}
               </CardTitle>
-              <CardDescription>Your current account details</CardDescription>
+              <CardDescription>{t('profile.accountDetails')}</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="grid gap-4 md:grid-cols-2">
                 <div className="space-y-2">
                   <div className="flex items-center gap-2 text-sm font-medium">
                     <Mail className="h-4 w-4 text-muted-foreground" />
-                    <span>Email</span>
+                    <span>{t('profile.email')}</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <p className="text-sm">{user.email}</p>
@@ -452,7 +468,7 @@ function ProfileSettingsContent() {
                 <div className="space-y-2">
                   <div className="flex items-center gap-2 text-sm font-medium">
                     <Calendar className="h-4 w-4 text-muted-foreground" />
-                    <span>Member Since</span>
+                    <span>{t('profile.createdAt')}</span>
                   </div>
                   <p className="text-sm">{createdAt}</p>
                 </div>
@@ -460,10 +476,10 @@ function ProfileSettingsContent() {
                 <div className="space-y-2">
                   <div className="flex items-center gap-2 text-sm font-medium">
                     <Phone className="h-4 w-4 text-muted-foreground" />
-                    <span>Phone</span>
+                    <span>{t('profile.phone')}</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <p className="text-sm">{user.phone || "Not provided"}</p>
+                    <p className="text-sm">{user.phone || t('profile.notProvided')}</p>
                     {phoneVerified && user.phone && (
                       <Check className="h-4 w-4 text-green-600" />
                     )}
@@ -473,7 +489,7 @@ function ProfileSettingsContent() {
                 <div className="space-y-2">
                   <div className="flex items-center gap-2 text-sm font-medium">
                     <Shield className="h-4 w-4 text-muted-foreground" />
-                    <span>User ID</span>
+                    <span>{t('profile.userId')}</span>
                   </div>
                   <p className="text-xs font-mono text-slate-500">{user.id}</p>
                 </div>
@@ -485,7 +501,7 @@ function ProfileSettingsContent() {
                   <div className="space-y-2">
                     <div className="flex items-center gap-2 text-sm font-medium">
                       <User className="h-4 w-4 text-muted-foreground" />
-                      <span>Display Name</span>
+                      <span>{t('profile.displayName')}</span>
                     </div>
                     <p className="text-sm">{user.user_metadata.name}</p>
                   </div>
@@ -497,34 +513,34 @@ function ProfileSettingsContent() {
           {/* Update Profile Card */}
           <Card>
             <CardHeader>
-              <CardTitle>Update Profile</CardTitle>
-              <CardDescription>Update your display name and phone number</CardDescription>
+              <CardTitle>{t('profile.updateProfile')}</CardTitle>
+              <CardDescription>{t('profile.updateProfileSubtitle')}</CardDescription>
             </CardHeader>
             <CardContent>
               <form onSubmit={handleProfileUpdate} className="space-y-4">
                 <div className="grid gap-4 sm:grid-cols-2">
                   <div className="space-y-2">
-                    <Label htmlFor="name">Display Name</Label>
+                    <Label htmlFor="name">{t('profile.displayNameLabel')}</Label>
                     <Input
                       id="name"
                       type="text"
                       value={name}
                       onChange={(e) => setName(e.target.value)}
-                      placeholder="Enter your name"
+                      placeholder={t('profile.displayNamePlaceholder')}
                     />
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="phone">Phone Number</Label>
+                    <Label htmlFor="phone">{t('profile.phoneLabel')}</Label>
                     <Input
                       id="phone"
                       type="tel"
                       value={phone}
                       onChange={(e) => setPhone(e.target.value)}
-                      placeholder="+1234567890"
+                      placeholder={t('profile.phonePlaceholder')}
                     />
                     <p className="text-xs text-muted-foreground">
-                      Include country code
+                      {t('profile.includeCountryCode')}
                     </p>
                   </div>
                 </div>
@@ -549,10 +565,10 @@ function ProfileSettingsContent() {
                   {isProfileUpdating ? (
                     <>
                       <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                      Updating...
+                      {t('profile.updating')}
                     </>
                   ) : (
-                    "Update Profile"
+                    t('profile.updateButton')
                   )}
                 </Button>
               </form>
@@ -565,11 +581,13 @@ function ProfileSettingsContent() {
           {/* Change/Set Password Card */}
           <Card>
             <CardHeader>
-              <CardTitle>{hasPassword ? "Change Password" : "Set Password"}</CardTitle>
+              <CardTitle>
+                {hasPassword ? t('profile.changePasswordButton') : t('profile.setPasswordButton')}
+              </CardTitle>
               <CardDescription>
                 {hasPassword 
-                  ? "Update your password to keep your account secure" 
-                  : "Set a password to enable email/password login"
+                  ? t('profile.passwordChangeSubtitle')
+                  : t('profile.passwordSetSubtitle')
                 }
               </CardDescription>
             </CardHeader>
@@ -577,19 +595,19 @@ function ProfileSettingsContent() {
               {isCheckingPassword ? (
                 <div className="flex items-center gap-2 text-sm text-muted-foreground">
                   <Loader2 className="h-4 w-4 animate-spin" />
-                  <span>Loading password settings...</span>
+                  <span>{t('profile.loadingPasswordSettings')}</span>
                 </div>
               ) : (
                 <form onSubmit={handlePasswordChange} className="space-y-4">
                   {hasPassword && (
                     <div className="space-y-2">
-                      <Label htmlFor="current-password">Current Password</Label>
+                      <Label htmlFor="current-password">{t('profile.currentPasswordLabel')}</Label>
                       <Input
                         id="current-password"
                         type="password"
                         value={currentPassword}
                         onChange={(e) => setCurrentPassword(e.target.value)}
-                        placeholder="Enter current password"
+                        placeholder={t('profile.currentPasswordPlaceholder')}
                         required
                       />
                     </div>
@@ -597,28 +615,28 @@ function ProfileSettingsContent() {
 
                   <div className="grid gap-4 sm:grid-cols-2">
                     <div className="space-y-2">
-                      <Label htmlFor="new-password">New Password</Label>
+                      <Label htmlFor="new-password">{t('profile.newPasswordLabel')}</Label>
                       <Input
                         id="new-password"
                         type="password"
                         value={newPassword}
                         onChange={(e) => setNewPassword(e.target.value)}
-                        placeholder="Enter new password"
+                        placeholder={t('profile.newPasswordPlaceholder')}
                         required
                       />
                       <p className="text-xs text-muted-foreground">
-                        Minimum 6 characters
+                        {t('profile.minimumCharacters', { count: 6 })}
                       </p>
                     </div>
 
                     <div className="space-y-2">
-                      <Label htmlFor="confirm-password">Confirm Password</Label>
+                      <Label htmlFor="confirm-password">{t('profile.confirmPasswordLabel')}</Label>
                       <Input
                         id="confirm-password"
                         type="password"
                         value={confirmPassword}
                         onChange={(e) => setConfirmPassword(e.target.value)}
-                        placeholder="Confirm new password"
+                        placeholder={t('profile.confirmPasswordPlaceholder')}
                         required
                       />
                     </div>
@@ -652,10 +670,10 @@ function ProfileSettingsContent() {
                     {isPasswordChanging ? (
                       <>
                         <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                        {hasPassword ? "Changing..." : "Setting..."}
+                        {hasPassword ? t('profile.changingPassword') : t('profile.settingPassword')}
                       </>
                     ) : (
-                      hasPassword ? "Change Password" : "Set Password"
+                      hasPassword ? t('profile.changePasswordButton') : t('profile.setPasswordButton')
                     )}
                   </Button>
 
@@ -663,7 +681,7 @@ function ProfileSettingsContent() {
                     <Alert className="bg-blue-50 dark:bg-blue-950 border-blue-200 dark:border-blue-800">
                       <Shield className="h-4 w-4 text-blue-600" />
                       <AlertDescription className="text-blue-800 dark:text-blue-200 text-sm">
-                        You signed in with OAuth. Setting a password allows email/password login.
+                        {t('profile.oauthNote')}
                       </AlertDescription>
                     </Alert>
                   )}
@@ -675,16 +693,16 @@ function ProfileSettingsContent() {
           {/* Change Email Card */}
           <Card>
             <CardHeader>
-              <CardTitle>Change Email Address</CardTitle>
+              <CardTitle>{t('profile.emailManagement')}</CardTitle>
               <CardDescription>
-                You will receive confirmation emails to verify the change
+                {t('profile.emailChangeHint')}
               </CardDescription>
             </CardHeader>
             <CardContent>
               <form onSubmit={handleEmailChange} className="space-y-4">
                 <div className="grid gap-4 sm:grid-cols-2">
                   <div className="space-y-2">
-                    <Label htmlFor="current-email">Current Email</Label>
+                    <Label htmlFor="current-email">{t('profile.currentEmail')}</Label>
                     <Input
                       id="current-email"
                       type="email"
@@ -695,13 +713,13 @@ function ProfileSettingsContent() {
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="new-email">New Email</Label>
+                    <Label htmlFor="new-email">{t('profile.newEmailLabel')}</Label>
                     <Input
                       id="new-email"
                       type="email"
                       value={newEmail}
                       onChange={(e) => setNewEmail(e.target.value)}
-                      placeholder="Enter new email"
+                      placeholder={t('profile.newEmailPlaceholder')}
                       required
                     />
                   </div>
@@ -727,10 +745,10 @@ function ProfileSettingsContent() {
                   {isEmailChanging ? (
                     <>
                       <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                      Sending...
+                      {t('profile.sending')}
                     </>
                   ) : (
-                    "Change Email"
+                    t('profile.changeEmailButton')
                   )}
                 </Button>
               </form>
@@ -744,33 +762,33 @@ function ProfileSettingsContent() {
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <FileText className="h-5 w-5" />
-                Membership Details
+                {t('profile.membershipDetailsTitle')}
               </CardTitle>
               <CardDescription>
-                View and manage your dojo membership information
+                {t('profile.membershipDetailsSubtitle')}
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="flex flex-col sm:flex-row gap-4">
                 <Link 
-                  href="/onboarding?edit=true"
+                  href={`/${currentLocale}/onboarding?edit=true`}
                   className="flex-1 inline-flex items-center justify-center gap-2 px-4 py-3 rounded-lg border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
                 >
                   <Settings className="h-5 w-5 text-slate-600 dark:text-slate-400" />
                   <div className="text-left">
-                    <p className="font-medium text-slate-900 dark:text-slate-100">Edit Registration</p>
-                    <p className="text-xs text-slate-500 dark:text-slate-400">Update your member details</p>
+                    <p className="font-medium text-slate-900 dark:text-slate-100">{t('profile.registration.editTitle')}</p>
+                    <p className="text-xs text-slate-500 dark:text-slate-400">{t('profile.registration.editSubtitle')}</p>
                   </div>
                 </Link>
                 
                 <Link 
-                  href="/onboarding"
+                  href={`/${currentLocale}/onboarding`}
                   className="flex-1 inline-flex items-center justify-center gap-2 px-4 py-3 rounded-lg border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
                 >
                   <FileText className="h-5 w-5 text-slate-600 dark:text-slate-400" />
                   <div className="text-left">
-                    <p className="font-medium text-slate-900 dark:text-slate-100">View Registration</p>
-                    <p className="text-xs text-slate-500 dark:text-slate-400">See your registration status</p>
+                    <p className="font-medium text-slate-900 dark:text-slate-100">{t('profile.registration.viewTitle')}</p>
+                    <p className="text-xs text-slate-500 dark:text-slate-400">{t('profile.registration.viewSubtitle')}</p>
                   </div>
                 </Link>
               </div>
@@ -778,11 +796,7 @@ function ProfileSettingsContent() {
               <Separator />
 
               <div className="text-sm text-slate-600 dark:text-slate-400">
-                <p>
-                  Your membership registration contains your personal details, emergency contacts, 
-                  and other information required for dojo membership. You can edit these details 
-                  at any time.
-                </p>
+                <p>{t('profile.membershipInfo')}</p>
               </div>
             </CardContent>
           </Card>
@@ -790,59 +804,59 @@ function ProfileSettingsContent() {
           {/* Quick Links */}
           <Card>
             <CardHeader>
-              <CardTitle>Quick Actions</CardTitle>
+              <CardTitle>{t('profile.quickActionsTitle')}</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="grid gap-3 sm:grid-cols-2">
                 <Link 
-                  href="/dashboard/pay-fee"
+                  href={`/${currentLocale}/dashboard/enrollments`}
                   className="flex items-center gap-3 p-3 rounded-lg border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
                 >
                   <div className="p-2 rounded-lg bg-green-100 dark:bg-green-900/50">
                     <CurrencyBangladeshiIcon className="h-5 w-5 text-green-600" />
                   </div>
                   <div>
-                    <p className="font-medium text-slate-900 dark:text-slate-100">Pay Fees</p>
-                    <p className="text-xs text-slate-500">Make monthly payments</p>
+                    <p className="font-medium text-slate-900 dark:text-slate-100">{t('profile.quickActions.payFeesTitle')}</p>
+                    <p className="text-xs text-slate-500">{t('profile.quickActions.payFeesSubtitle')}</p>
                   </div>
                 </Link>
                 
                 <Link 
-                  href="/dashboard/enrollments"
+                  href={`/${currentLocale}/dashboard/enrollments`}
                   className="flex items-center gap-3 p-3 rounded-lg border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
                 >
                   <div className="p-2 rounded-lg bg-blue-100 dark:bg-blue-900/50">
                     <AcademicCapIcon className="h-5 w-5 text-blue-600" />
                   </div>
                   <div>
-                    <p className="font-medium text-slate-900 dark:text-slate-100">Enrollments</p>
-                    <p className="text-xs text-slate-500">View your courses</p>
+                    <p className="font-medium text-slate-900 dark:text-slate-100">{t('profile.quickActions.enrollmentsTitle')}</p>
+                    <p className="text-xs text-slate-500">{t('profile.quickActions.enrollmentsSubtitle')}</p>
                   </div>
                 </Link>
 
                 <Link 
-                  href="/programs"
+                  href={`/${currentLocale}/karate/programs`}
                   className="flex items-center gap-3 p-3 rounded-lg border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
                 >
                   <div className="p-2 rounded-lg bg-purple-100 dark:bg-purple-900/50">
                     <TrophyIcon className="h-5 w-5 text-purple-600" />
                   </div>
                   <div>
-                    <p className="font-medium text-slate-900 dark:text-slate-100">Programs</p>
-                    <p className="text-xs text-slate-500">Browse events & tests</p>
+                    <p className="font-medium text-slate-900 dark:text-slate-100">{t('profile.quickActions.programsTitle')}</p>
+                    <p className="text-xs text-slate-500">{t('profile.quickActions.programsSubtitle')}</p>
                   </div>
                 </Link>
 
                 <Link 
-                  href="/courses"
+                  href={`/${currentLocale}/karate/courses`}
                   className="flex items-center gap-3 p-3 rounded-lg border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
                 >
                   <div className="p-2 rounded-lg bg-orange-100 dark:bg-orange-900/50">
                     <ClipboardDocumentCheckIcon className="h-5 w-5 text-orange-600" />
                   </div>
                   <div>
-                    <p className="font-medium text-slate-900 dark:text-slate-100">Courses</p>
-                    <p className="text-xs text-slate-500">Explore training</p>
+                    <p className="font-medium text-slate-900 dark:text-slate-100">{t('profile.quickActions.coursesTitle')}</p>
+                    <p className="text-xs text-slate-500">{t('profile.quickActions.coursesSubtitle')}</p>
                   </div>
                 </Link>
               </div>
