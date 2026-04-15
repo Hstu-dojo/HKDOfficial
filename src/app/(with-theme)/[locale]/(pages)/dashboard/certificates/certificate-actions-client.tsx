@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { rasterizeAndDownloadPdf } from "@/lib/pdf/rasterize-client";
+import { rasterizeAndDownloadPdf, rasterizePdfToBlobUrl } from "@/lib/pdf/rasterize-client";
 import {
   ArrowDownTrayIcon,
   EyeIcon,
@@ -70,13 +70,11 @@ export default function CertificateActions({
     if (pdfBlobUrl) return; // already fetched
     setPdfLoading(true);
     try {
-      const res = await fetch(`${downloadUrl}?inline=true`);
-      if (!res.ok) throw new Error("Failed to load PDF");
-      const blob = await res.blob();
-      const url = URL.createObjectURL(blob);
+      // Instead of downloading text-based PDF directly, we generate a rasterized blob URL for preview
+      const url = await rasterizePdfToBlobUrl(downloadUrl);
       setPdfBlobUrl(url);
     } catch (err) {
-      console.error("Error loading certificate PDF:", err);
+      console.error("Error loading rasterized certificate PDF for preview:", err);
     } finally {
       setPdfLoading(false);
     }
@@ -192,15 +190,18 @@ export default function CertificateActions({
                     <p className="text-sm text-slate-500 dark:text-slate-400">
                       Unable to display PDF in browser.
                     </p>
-                    <a
-                      href={downloadUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex items-center gap-1.5 px-4 py-2 text-xs font-semibold rounded-lg text-white bg-primary hover:opacity-90 transition-opacity"
+                    <button
+                      onClick={handleDownloadRasterized}
+                      disabled={isRasterizing}
+                      className="inline-flex items-center gap-1.5 px-4 py-2 text-xs font-semibold rounded-lg text-white bg-primary hover:opacity-90 transition-opacity disabled:opacity-50"
                     >
-                      <ArrowDownTrayIcon className="h-3.5 w-3.5" />
-                      Download Instead
-                    </a>
+                      {isRasterizing ? (
+                        <span className="h-3.5 w-3.5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                      ) : (
+                        <ArrowDownTrayIcon className="h-3.5 w-3.5" />
+                      )}
+                      {isRasterizing ? "Processing..." : "Download Instead"}
+                    </button>
                   </div>
                 </object>
               ) : (
