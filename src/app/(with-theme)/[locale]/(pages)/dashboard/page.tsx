@@ -16,6 +16,8 @@ import { getUserDashboardData } from '@/actions/dashboard-actions';
 import { getMyCertificates } from '@/actions/certificate-actions';
 import { ProfileCompletionCard } from '@/components/dashboard/profile-completion-card';
 
+import { DashboardCertificateDownloadButton } from './dashboard-certificate-download-button';
+
 export const metadata = {
   title: 'My Dashboard | HKD Dojo',
   description: 'Manage your martial arts journey, view enrollments, and track progress.',
@@ -410,15 +412,7 @@ export default async function DashboardPage() {
                         </>
                       )}
                     </div>
-                    <a
-                      href={`/api/certificates/${cert.id}/download`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-primary bg-primary/10 rounded-lg hover:bg-primary/20 transition-colors"
-                    >
-                      <ArrowDownTrayIcon className="h-3.5 w-3.5" />
-                      Download PDF
-                    </a>
+                    <DashboardCertificateDownloadButton certId={cert.id} certNumber={cert.certificateNumber} />
                   </div>
                 ))}
               </div>
