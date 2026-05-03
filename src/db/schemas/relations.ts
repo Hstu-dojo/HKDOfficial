@@ -18,7 +18,7 @@ import {
 import { billableItems, bills, payments } from "./billing";
 import { 
   blogs, notices, photoGroups, photos, systemSettings,
-  galleryFolders, galleryImages 
+  galleryFolders, galleryImages, committees, committeeMembers
 } from "./content";
 import { partners, partnerBills, partnerPageSettings } from "./partner";
 
@@ -614,5 +614,36 @@ export const programCertificatesRelations = relations(programCertificates, ({ on
     fields: [programCertificates.revokedBy],
     references: [user.id],
     relationName: "certRevoker",
+  }),
+}));
+
+// Committee Relations
+export const committeesRelations = relations(committees, ({ one }) => ({
+  createdBy: one(user, {
+    fields: [committees.createdBy],
+    references: [user.id],
+  }),
+}));
+
+export const committeeMembersRelations = relations(committeeMembers, ({ one }) => ({
+  committee: one(committees, {
+    fields: [committeeMembers.committeeId],
+    references: [committees.id],
+  }),
+  user: one(user, {
+    fields: [committeeMembers.userId],
+    references: [user.id],
+  }),
+  profile: one(profiles, {
+    fields: [committeeMembers.profileId],
+    references: [profiles.id],
+  }),
+  rbacRole: one(role, {
+    fields: [committeeMembers.rbacRoleId],
+    references: [role.id],
+  }),
+  approvedBy: one(user, {
+    fields: [committeeMembers.approvedBy],
+    references: [user.id],
   }),
 }));

@@ -132,4 +132,4 @@ export type NewSystemSetting = typeof systemSettings.$inferInsert;
 export type GalleryFolder = typeof galleryFolders.$inferSelect;
 export type NewGalleryFolder = typeof galleryFolders.$inferInsert;
 export type GalleryImage = typeof galleryImages.$inferSelect;
-export type NewGalleryImage = typeof galleryImages.$inferInsert;
+export type NewGalleryImage = typeof galleryImages.$inferInsert;export * from './committees';

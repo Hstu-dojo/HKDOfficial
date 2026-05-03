@@ -8,6 +8,7 @@ import {
   certificateSignatures,
   programCertificates,
   programTypes,
+  beltProgressions,
 } from '@/db/schemas/karate';
 import { user } from '@/db/schemas/auth';
 import { revalidatePath } from 'next/cache';
@@ -349,6 +350,7 @@ export async function issueCertificates(
           .select({
             profileId: programRegistrations.profileId,
             newRank: programRegistrations.newRank,
+            programId: programRegistrations.programId,
           })
           .from(programRegistrations)
           .where(
@@ -358,14 +360,39 @@ export async function issueCertificates(
             )
           );
 
+        const profilesData = await db
+          .select({
+            id: profiles.id,
+            beltRank: profiles.beltRank,
+          })
+          .from(profiles)
+          .where(inArray(profiles.id, beltTestProfileIds));
+        
+        const profileBeltMap = new Map(profilesData.map(p => [p.id, p.beltRank]));
+
         for (const row of regRows) {
           if (!row.profileId) continue;
           if (!row.newRank) continue;
 
-          await db
-            .update(profiles)
-            .set({ beltRank: row.newRank, updatedAt: new Date() })
-            .where(eq(profiles.id, row.profileId));
+          const oldRank = profileBeltMap.get(row.profileId) || 'white';
+
+          // Skip if the rank hasn't changed.
+          if (oldRank === row.newRank) continue;
+
+          await db.transaction(async (tx) => {
+            await tx
+              .update(profiles)
+              .set({ beltRank: row.newRank, updatedAt: new Date() })
+              .where(eq(profiles.id, row.profileId!));
+
+            await tx.insert(beltProgressions).values({
+              profileId: row.profileId!,
+              fromBelt: oldRank as any,
+              toBelt: row.newRank as any,
+              testDate: now,
+              awardedBy: userId,
+            });
+          });
         }
       }
     }
