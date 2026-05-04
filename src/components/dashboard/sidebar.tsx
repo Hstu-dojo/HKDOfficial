@@ -163,8 +163,8 @@ export default function DashboardSidebar() {
 
       {/* ── Desktop sidebar ────────────────────────────────────────────────
            Not fixed — a real flex column inside the lg:flex-row layout.
-           sticky top-24 keeps it in view while the page body scrolls. */}
-      <aside className="hidden lg:flex sticky top-0 flex-col w-64 shrink-0 border-r border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 h-screen overflow-y-auto">
+           sticky top-0 keeps it in view while the page body scrolls. */}
+      <aside className="hidden lg:flex sticky top-0 flex-col w-64 shrink-0 border-r border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 max-h-screen overflow-y-auto">
         <div className="border-b border-slate-200 dark:border-slate-800 shrink-0">
           <SidebarBrand />
         </div>
