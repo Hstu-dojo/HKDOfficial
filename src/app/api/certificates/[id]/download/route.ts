@@ -53,21 +53,13 @@ export async function GET(
     const month = monthNames[issueDate.getMonth()];
     const year = issueDate.getFullYear().toString();
 
-    // Map Belt ranks from 'brown_kyu1' -> 'Brown (Kyu 1)' etc.
-    const mapBeltRank = (rank: string | null | undefined): string => {
-      if (!rank) return '';
-      const parts = rank.split('_');
-      if (parts.length === 1) return rank.charAt(0).toUpperCase() + rank.slice(1);
-      return `${parts[0].charAt(0).toUpperCase() + parts[0].slice(1)} (${parts[1].charAt(0).toUpperCase() + parts[1].slice(1, 4)} ${parts[1].slice(4)})`;
-    };
-
     let pdfBytes: Uint8Array;
 
     if (cert.certificatePdfPath && cert.fieldMappings && cert.fieldMappings.length > 0) {
       // Dynamic mapped generation
       const resolvedValues: Record<string, string | { imageUrl: string }> = {};
 
-              resolvedValues[fieldName] = formatBeltRankLabel(cert.newRank ?? (cert.metadata as any)?.belt_test_rank, '');
+      for (const mapping of (cert.fieldMappings as any[])) {
         const fieldName = mapping.pdfFieldName;
         if (mapping.kind === 'static') {
           switch (mapping.staticSource) {
@@ -86,7 +78,7 @@ export async function GET(
               resolvedValues[fieldName] = cert.certificateNumber || '';
               break;
             case 'belt_test_rank':
-              resolvedValues[fieldName] = mapBeltRank(cert.newRank ?? (cert.metadata as any)?.belt_test_rank);
+              resolvedValues[fieldName] = formatBeltRankLabel(cert.newRank ?? (cert.metadata as any)?.belt_test_rank, '');
               break;
           }
         } else if (mapping.kind === 'signature' && mapping.signatureId) {
