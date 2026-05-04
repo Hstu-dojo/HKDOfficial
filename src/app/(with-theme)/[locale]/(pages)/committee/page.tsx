@@ -55,7 +55,8 @@ export default async function CommitteePublicPage({
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 {(currentCommittee.members || []).map((member: any) => {
                   const imageSrc = member.profile?.picture || member.additionalData?.photoUrl;
-                  const phone = member.additionalData?.phone || '—';
+                  
+
                   return (
                     <div
                       key={member.id}
@@ -91,12 +92,8 @@ export default async function CommitteePublicPage({
                             <span className="ml-2 block text-gray-700 dark:text-gray-300">{member.profile.memberNumber}</span>
                           </div>
                         )}
-                        {phone !== '—' && (
-                          <div className="pb-2">
-                            <span className="font-semibold text-gray-900 dark:text-gray-100">Phone:</span>
-                            <span className="ml-2 block text-gray-700 dark:text-gray-300">{phone}</span>
-                          </div>
-                        )}
+                        
+
                       </div>
                     </div>
                   );
