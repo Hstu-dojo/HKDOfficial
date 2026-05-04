@@ -11,6 +11,7 @@ import {
 } from '@heroicons/react/24/outline';
 import { toast } from 'sonner';
 import { getAllCertificates } from '@/actions/certificate-actions';
+import { formatBeltRankLabel } from '@/lib/belt-rank';
 
 interface CertOverview {
   id: string;
@@ -28,19 +29,7 @@ interface CertOverview {
 }
 
 function formatBeltRank(rank?: string | null) {
-  if (!rank) return '—';
-  switch (rank) {
-    case 'brown_kyu3':
-      return 'Brown (Kyu 3)';
-    case 'brown_kyu2':
-      return 'Brown (Kyu 2)';
-    case 'brown_kyu1':
-      return 'Brown (Kyu 1)';
-    case 'brown':
-      return 'Brown';
-    default:
-      return rank.charAt(0).toUpperCase() + rank.slice(1);
-  }
+  return formatBeltRankLabel(rank, '—');
 }
 
 export default function CertificatesOverview() {

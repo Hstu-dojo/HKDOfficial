@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 import { getCertificateForPdf } from '@/actions/certificate-actions';
 import { generateDynamicCertificatePdf, generateCertificatePdf } from '@/lib/pdf/cert-pdf-server';
+import { formatBeltRankLabel } from '@/lib/belt-rank';
 
 /**
  * GET /api/certificates/[id]/download
@@ -40,13 +41,7 @@ export async function GET(
 
     const cert = result.data;
 
-    // Only allow download of ISSUED certificates
-    if (cert.status !== 'ISSUED') {
-      return NextResponse.json(
-        { error: 'Certificate has not been issued yet' },
-        { status: 400 }
-      );
-    }
+    
 
     // Parse the issue date for PDF fields
     const issueDate = cert.issueDate ? new Date(cert.issueDate) : new Date();
@@ -72,7 +67,7 @@ export async function GET(
       // Dynamic mapped generation
       const resolvedValues: Record<string, string | { imageUrl: string }> = {};
 
-      for (const mapping of (cert.fieldMappings as any[])) {
+              resolvedValues[fieldName] = formatBeltRankLabel(cert.newRank ?? (cert.metadata as any)?.belt_test_rank, '');
         const fieldName = mapping.pdfFieldName;
         if (mapping.kind === 'static') {
           switch (mapping.staticSource) {

@@ -36,6 +36,7 @@ import {
 import { getProgramById } from '@/actions/program-actions';
 import type { CertificateSignature } from '@/db/schemas/karate/certificates';
 import Link from 'next/link';
+import { BELT_RANK_OPTIONS, formatBeltRankLabel } from '@/lib/belt-rank';
 
 // ---------------------------------------------------------------------------
 // Types
@@ -184,21 +185,7 @@ export default function ProgramCertificateManagement() {
   // Handlers
   // ---------------------------------------------------------------------------
 
-  const formatBeltRank = (rank?: string | null) => {
-    if (!rank) return '—';
-    switch (rank) {
-      case 'brown_kyu3':
-        return 'Brown (Kyu 3)';
-      case 'brown_kyu2':
-        return 'Brown (Kyu 2)';
-      case 'brown_kyu1':
-        return 'Brown (Kyu 1)';
-      case 'brown':
-        return 'Brown';
-      default:
-        return rank.charAt(0).toUpperCase() + rank.slice(1);
-    }
-  };
+  const formatBeltRank = (rank?: string | null) => formatBeltRankLabel(rank, '—');
 
   const handleAutoMark = () => {
     // Select all uncertified participants with approved or payment_verified status — frontend only
@@ -928,16 +915,9 @@ export default function ProgramCertificateManagement() {
                       className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 outline-none"
                     >
                       <option value="">Select Belt Rank</option>
-                      <option value="white">White</option>
-                      <option value="yellow">Yellow</option>
-                      <option value="orange">Orange</option>
-                      <option value="green">Green</option>
-                      <option value="blue">Blue</option>
-                      <option value="red">Red</option>
-                      <option value="brown_kyu3">Brown (Kyu 3)</option>
-                      <option value="brown_kyu2">Brown (Kyu 2)</option>
-                      <option value="brown_kyu1">Brown (Kyu 1)</option>
-                      <option value="black">Black</option>
+                      {BELT_RANK_OPTIONS.map((option) => (
+                        <option key={option.value} value={option.value}>{option.label}</option>
+                      ))}
                     </select>
                   ) : (
                     <input
@@ -1159,21 +1139,7 @@ function CertTable({
 
   const showSigColumns = !!signatures && signatures.length > 0;
 
-  const formatBeltRankLocal = (rank?: string | null) => {
-    if (!rank) return '—';
-    switch (rank) {
-      case 'brown_kyu3':
-        return 'Brown (Kyu 3)';
-      case 'brown_kyu2':
-        return 'Brown (Kyu 2)';
-      case 'brown_kyu1':
-        return 'Brown (Kyu 1)';
-      case 'brown':
-        return 'Brown';
-      default:
-        return rank.charAt(0).toUpperCase() + rank.slice(1);
-    }
-  };
+  const formatBeltRankLocal = (rank?: string | null) => formatBeltRankLabel(rank, '—');
 
   return (
     <div className="bg-white dark:bg-gray-800 rounded-lg border shadow-sm overflow-hidden">

@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 import { getProgramCertificates, getCertificateForPdf } from '@/actions/certificate-actions';
 import { generateDynamicCertificatePdf, generateCertificatePdf, mergeCertificatePdfs } from '@/lib/pdf/cert-pdf-server';
+import { formatBeltRankLabel } from '@/lib/belt-rank';
 
 /**
  * GET /api/certificates/bulk-download?programId=xxx
@@ -60,12 +61,6 @@ export async function GET(request: NextRequest) {
       const month = monthNames[issueDate.getMonth()];
       const year = issueDate.getFullYear().toString();
 
-      const mapBeltRank = (rank: string | null | undefined): string => {
-        if (!rank) return '';
-        const parts = rank.split('_');
-        if (parts.length === 1) return rank.charAt(0).toUpperCase() + rank.slice(1);
-        return `${parts[0].charAt(0).toUpperCase() + parts[0].slice(1)} (${parts[1].charAt(0).toUpperCase() + parts[1].slice(1, 4)} ${parts[1].slice(4)})`;
-      };
 
       let pdfBytes: Uint8Array;
 
@@ -91,7 +86,7 @@ export async function GET(request: NextRequest) {
                 resolvedValues[fieldName] = c.certificateNumber || '';
                 break;
               case 'belt_test_rank':
-                resolvedValues[fieldName] = mapBeltRank(c.newRank ?? (c.metadata as any)?.belt_test_rank);
+                resolvedValues[fieldName] = formatBeltRankLabel(c.newRank ?? (c.metadata as any)?.belt_test_rank, '');
                 break;
             }
           } else if (mapping.kind === 'signature' && mapping.signatureId) {
