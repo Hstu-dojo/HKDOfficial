@@ -2,6 +2,7 @@ import { pgTable, text, boolean, timestamp, jsonb, pgEnum } from "drizzle-orm/pg
 import { sql } from "drizzle-orm";
 import { user, role } from "../auth";
 import { profiles } from "../karate/members";
+import { certificateSignatures } from "../karate/certificates";
 
 export const committeeStatusEnum = pgEnum("committee_status", ["pending", "approved", "rejected"]);
 
@@ -11,6 +12,8 @@ export const committees = pgTable("committees", {
   year: text("year").notNull(),   // e.g. "2026"
   isActive: boolean("is_active").notNull().default(false),
   description: text("description"),
+  trainerSignatureId: text("trainer_signature_id").references(() => certificateSignatures.id, { onDelete: "set null" }),
+  coordinatorSignatureId: text("coordinator_signature_id").references(() => certificateSignatures.id, { onDelete: "set null" }),
   createdBy: text("created_by").references(() => user.id, { onDelete: "set null" }),
   createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
   updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow().notNull(),

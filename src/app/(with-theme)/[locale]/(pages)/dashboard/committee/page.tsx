@@ -51,7 +51,9 @@ export default async function DashboardCommitteePage({
               committeeTitle={current.committee?.title || 'Committee'}
               year={current.committee?.year || ''}
               memberNumber={current.profile?.memberNumber || null}
-              photoUrl={current.profile?.picture || null}
+              photoUrl={current.profile?.picture || current.additionalData?.photoUrl || null}
+              trainerSignature={current.committee?.trainerSignature || null}
+              coordinatorSignature={current.committee?.coordinatorSignature || null}
             />
           )}
         </div>

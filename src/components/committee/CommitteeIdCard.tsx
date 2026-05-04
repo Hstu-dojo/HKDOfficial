@@ -10,6 +10,17 @@ interface CommitteeIdCardProps {
   year: string;
   memberNumber?: string | null;
   photoUrl?: string | null;
+  logoUrl?: string;
+  trainerSignature?: {
+    name?: string | null;
+    title?: string | null;
+    signatureImageUrl?: string | null;
+  } | null;
+  coordinatorSignature?: {
+    name?: string | null;
+    title?: string | null;
+    signatureImageUrl?: string | null;
+  } | null;
 }
 
 export default function CommitteeIdCard({
@@ -19,6 +30,9 @@ export default function CommitteeIdCard({
   year,
   memberNumber,
   photoUrl,
+  logoUrl = '/logo.png',
+  trainerSignature,
+  coordinatorSignature,
 }: CommitteeIdCardProps) {
   const dataUrlToUint8Array = (dataUrl: string) => {
     const base64 = dataUrl.split(',')[1];
@@ -64,16 +78,30 @@ export default function CommitteeIdCard({
       borderColor: rgb(0.82, 0.85, 0.9),
     });
 
+    try {
+      const logoBytes = await getImageBytes(logoUrl);
+      const logoIsPng = logoUrl.includes('image/png') || logoUrl.toLowerCase().endsWith('.png');
+      const logoImage = logoIsPng ? await pdfDoc.embedPng(logoBytes) : await pdfDoc.embedJpg(logoBytes);
+      page.drawImage(logoImage, {
+        x: 24,
+        y: 170,
+        width: 48,
+        height: 48,
+      });
+    } catch (error) {
+      console.warn('Could not embed dojo logo in committee ID card', error);
+    }
+
     page.drawText('HSTU Karate Dojo', {
-      x: 24,
+      x: 78,
       y: 185,
       size: 12,
       font: fontBold,
       color: rgb(0.18, 0.29, 0.45),
     });
 
-    page.drawText(`Committee ID Card`, {
-      x: 24,
+    page.drawText('Committee ID Card', {
+      x: 78,
       y: 168,
       size: 10,
       font,
@@ -138,6 +166,47 @@ export default function CommitteeIdCard({
       }
     }
 
+    const signatureBlocks = [
+      { data: trainerSignature, x: 24 },
+      { data: coordinatorSignature, x: 150 },
+    ];
+
+    for (const block of signatureBlocks) {
+      if (!block.data?.signatureImageUrl) continue;
+      try {
+        const sigBytes = await getImageBytes(block.data.signatureImageUrl);
+        const sigIsPng = block.data.signatureImageUrl.includes('image/png') || block.data.signatureImageUrl.toLowerCase().endsWith('.png');
+        const sigImage = sigIsPng ? await pdfDoc.embedPng(sigBytes) : await pdfDoc.embedJpg(sigBytes);
+        page.drawImage(sigImage, {
+          x: block.x,
+          y: 22,
+          width: 110,
+          height: 28,
+        });
+      } catch (error) {
+        console.warn('Could not embed committee signature', error);
+      }
+
+      if (block.data?.name) {
+        page.drawText(block.data.name, {
+          x: block.x,
+          y: 12,
+          size: 8,
+          font,
+          color: rgb(0.2, 0.2, 0.2),
+        });
+      }
+      if (block.data?.title) {
+        page.drawText(block.data.title, {
+          x: block.x,
+          y: 4,
+          size: 7,
+          font,
+          color: rgb(0.3, 0.3, 0.3),
+        });
+      }
+    }
+
     const bytes = await pdfDoc.save();
     downloadPdf(bytes, `committee-id-${year}.pdf`);
   };
@@ -160,11 +229,46 @@ export default function CommitteeIdCard({
       </div>
 
       <div className="mt-5 rounded-lg border border-dashed border-blue-200 dark:border-blue-700 bg-blue-50/60 dark:bg-blue-900/20 p-4">
-        <p className="text-sm text-blue-900 dark:text-blue-100 font-semibold">{name}</p>
-        <p className="text-xs text-blue-700 dark:text-blue-200">{position}</p>
-        <p className="text-xs text-blue-700 dark:text-blue-200">{committeeTitle} • {year}</p>
+        <div className="flex items-center gap-3">
+          <img src={logoUrl} alt="Dojo logo" className="h-10 w-10 rounded bg-white p-1" />
+          <div>
+            <p className="text-sm text-blue-900 dark:text-blue-100 font-semibold">{name}</p>
+            <p className="text-xs text-blue-700 dark:text-blue-200">{position}</p>
+          </div>
+          {photoUrl && (
+            <img src={photoUrl} alt="Profile" className="ml-auto h-12 w-12 rounded object-cover border border-blue-200" />
+          )}
+        </div>
+        <div className="mt-2 text-xs text-blue-700 dark:text-blue-200">
+          {committeeTitle} • {year}
+        </div>
         {memberNumber && (
           <p className="text-xs text-blue-700 dark:text-blue-200">Member No: {memberNumber}</p>
+        )}
+
+        {(trainerSignature?.signatureImageUrl || coordinatorSignature?.signatureImageUrl) && (
+          <div className="mt-3 flex gap-4 text-[10px] text-blue-700 dark:text-blue-200">
+            {trainerSignature?.signatureImageUrl && (
+              <div>
+                <img
+                  src={trainerSignature.signatureImageUrl}
+                  alt="Trainer signature"
+                  className="h-6 object-contain"
+                />
+                <p>{trainerSignature.name}</p>
+              </div>
+            )}
+            {coordinatorSignature?.signatureImageUrl && (
+              <div>
+                <img
+                  src={coordinatorSignature.signatureImageUrl}
+                  alt="Coordinator signature"
+                  className="h-6 object-contain"
+                />
+                <p>{coordinatorSignature.name}</p>
+              </div>
+            )}
+          </div>
         )}
       </div>
     </div>

@@ -10,7 +10,9 @@ import {
   getCommitteeMembers,
   approveApplication,
   rejectApplication,
+  updateCommittee,
 } from '@/actions/committee-actions';
+import { getActiveSignatures } from '@/actions/certificate-actions';
 
 interface Committee {
   id: string;
@@ -18,6 +20,8 @@ interface Committee {
   year: string;
   description?: string | null;
   isActive: boolean;
+  trainerSignatureId?: string | null;
+  coordinatorSignatureId?: string | null;
   createdAt?: string | Date;
 }
 
@@ -66,6 +70,7 @@ export default function CommitteesManagement() {
   const [applicationsLoading, setApplicationsLoading] = useState(false);
   const [statusFilter, setStatusFilter] = useState<string>('');
   const [roles, setRoles] = useState<RoleOption[]>([]);
+  const [signatureOptions, setSignatureOptions] = useState<RoleOption[]>([]);
   const [exporting, setExporting] = useState(false);
 
   const [formData, setFormData] = useState({
@@ -73,6 +78,11 @@ export default function CommitteesManagement() {
     year: new Date().getFullYear().toString(),
     description: '',
   });
+  const [createTrainerSigId, setCreateTrainerSigId] = useState('');
+  const [createCoordinatorSigId, setCreateCoordinatorSigId] = useState('');
+  const [editTrainerSigId, setEditTrainerSigId] = useState('');
+  const [editCoordinatorSigId, setEditCoordinatorSigId] = useState('');
+  const [updatingSignatures, setUpdatingSignatures] = useState(false);
 
   const [approveModalOpen, setApproveModalOpen] = useState(false);
   const [approving, setApproving] = useState(false);
@@ -131,9 +141,22 @@ export default function CommitteesManagement() {
     }
   };
 
+  const fetchSignatures = async () => {
+    try {
+      const result = await getActiveSignatures();
+      if (result.success && result.data) {
+        setSignatureOptions(result.data as RoleOption[]);
+      }
+    } catch (error) {
+      console.error(error);
+      toast.error('Failed to load signatures');
+    }
+  };
+
   useEffect(() => {
     fetchCommittees();
     fetchRoles();
+    fetchSignatures();
   }, []);
 
   useEffect(() => {
@@ -141,6 +164,12 @@ export default function CommitteesManagement() {
       fetchApplications(selectedCommitteeId);
     }
   }, [selectedCommitteeId]);
+
+  useEffect(() => {
+    const selected = committees.find((c) => c.id === selectedCommitteeId);
+    setEditTrainerSigId(selected?.trainerSignatureId || '');
+    setEditCoordinatorSigId(selected?.coordinatorSignatureId || '');
+  }, [committees, selectedCommitteeId]);
 
   const filteredApplications = useMemo(() => {
     if (!statusFilter) return applications;
@@ -167,6 +196,8 @@ export default function CommitteesManagement() {
       title: formData.title.trim(),
       year: formData.year.trim(),
       description: formData.description.trim() || undefined,
+      trainerSignatureId: createTrainerSigId || null,
+      coordinatorSignatureId: createCoordinatorSigId || null,
     });
 
     if (result.success) {
@@ -176,9 +207,28 @@ export default function CommitteesManagement() {
         year: new Date().getFullYear().toString(),
         description: '',
       });
+      setCreateTrainerSigId('');
+      setCreateCoordinatorSigId('');
       await fetchCommittees();
     } else {
       toast.error(result.error || 'Failed to create committee');
+    }
+  };
+
+  const handleUpdateSignatures = async () => {
+    if (!selectedCommitteeId) return;
+    setUpdatingSignatures(true);
+    const result = await updateCommittee(selectedCommitteeId, {
+      trainerSignatureId: editTrainerSigId || null,
+      coordinatorSignatureId: editCoordinatorSigId || null,
+    });
+    setUpdatingSignatures(false);
+
+    if (result.success) {
+      toast.success('Signatures updated');
+      await fetchCommittees();
+    } else {
+      toast.error(result.error || 'Failed to update signatures');
     }
   };
 
@@ -344,6 +394,36 @@ export default function CommitteesManagement() {
                   rows={3}
                 />
               </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Trainer Signature</label>
+                <select
+                  value={createTrainerSigId}
+                  onChange={(e) => setCreateTrainerSigId(e.target.value)}
+                  className="mt-1 w-full rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 px-3 py-2 text-sm"
+                >
+                  <option value="">Select signature</option>
+                  {signatureOptions.map((sig) => (
+                    <option key={sig.id} value={sig.id}>
+                      {sig.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Coordinator Signature</label>
+                <select
+                  value={createCoordinatorSigId}
+                  onChange={(e) => setCreateCoordinatorSigId(e.target.value)}
+                  className="mt-1 w-full rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 px-3 py-2 text-sm"
+                >
+                  <option value="">Select signature</option>
+                  {signatureOptions.map((sig) => (
+                    <option key={sig.id} value={sig.id}>
+                      {sig.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
               <button
                 type="submit"
                 className="w-full rounded-lg bg-blue-600 text-white py-2 text-sm font-medium hover:bg-blue-700"
@@ -352,6 +432,52 @@ export default function CommitteesManagement() {
               </button>
             </form>
           </div>
+
+          {selectedCommitteeId && (
+            <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-5">
+              <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">ID Card Signatures</h2>
+              <div className="space-y-3">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Trainer Signature</label>
+                  <select
+                    value={editTrainerSigId}
+                    onChange={(e) => setEditTrainerSigId(e.target.value)}
+                    className="mt-1 w-full rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 px-3 py-2 text-sm"
+                  >
+                    <option value="">Select signature</option>
+                    {signatureOptions.map((sig) => (
+                      <option key={sig.id} value={sig.id}>
+                        {sig.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Coordinator Signature</label>
+                  <select
+                    value={editCoordinatorSigId}
+                    onChange={(e) => setEditCoordinatorSigId(e.target.value)}
+                    className="mt-1 w-full rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 px-3 py-2 text-sm"
+                  >
+                    <option value="">Select signature</option>
+                    {signatureOptions.map((sig) => (
+                      <option key={sig.id} value={sig.id}>
+                        {sig.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <button
+                  type="button"
+                  onClick={handleUpdateSignatures}
+                  disabled={updatingSignatures}
+                  className="w-full rounded-lg bg-gray-900 text-white py-2 text-sm font-medium hover:bg-gray-800 disabled:opacity-50"
+                >
+                  {updatingSignatures ? 'Updating...' : 'Update Signatures'}
+                </button>
+              </div>
+            </div>
+          )}
 
           <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-5">
             <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Committees</h2>

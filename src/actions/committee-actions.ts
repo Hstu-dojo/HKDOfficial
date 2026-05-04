@@ -1,7 +1,7 @@
 'use server';
 
 import { db } from '@/lib/connect-db';
-import { committees, committeeMembers, userRole, profiles } from '@/db/schema';
+import { committees, committeeMembers, userRole, profiles, certificateSignatures } from '@/db/schema';
 import { user } from '@/db/schemas/auth';
 import { revalidatePath } from 'next/cache';
 import { eq, and, desc, inArray } from 'drizzle-orm';
@@ -29,7 +29,7 @@ export async function getCommittees() {
   }
 }
 
-export async function createCommittee(data: { title: string; year: string; description?: string }) {
+export async function createCommittee(data: { title: string; year: string; description?: string; trainerSignatureId?: string | null; coordinatorSignatureId?: string | null }) {
   const userId = await getAuthUserId();
   if (!userId) return { success: false, error: 'Unauthorized' };
 
@@ -38,11 +38,36 @@ export async function createCommittee(data: { title: string; year: string; descr
       title: data.title,
       year: data.year,
       description: data.description,
+      trainerSignatureId: data.trainerSignatureId || null,
+      coordinatorSignatureId: data.coordinatorSignatureId || null,
       createdBy: userId,
     }).returning();
     
     revalidatePath('/admin/committees');
     return { success: true, data: inserted };
+  } catch (error: any) {
+    return { success: false, error: error.message };
+  }
+}
+
+export async function updateCommittee(committeeId: string, data: { description?: string | null; trainerSignatureId?: string | null; coordinatorSignatureId?: string | null }) {
+  const userId = await getAuthUserId();
+  if (!userId) return { success: false, error: 'Unauthorized' };
+
+  try {
+    const [updated] = await db
+      .update(committees)
+      .set({
+        description: data.description ?? null,
+        trainerSignatureId: data.trainerSignatureId || null,
+        coordinatorSignatureId: data.coordinatorSignatureId || null,
+        updatedAt: new Date(),
+      })
+      .where(eq(committees.id, committeeId))
+      .returning();
+
+    revalidatePath('/admin/committees');
+    return { success: true, data: updated };
   } catch (error: any) {
     return { success: false, error: error.message };
   }
@@ -210,6 +235,49 @@ export async function applyForCommittee(data: { committeeId: string; profileId?:
   }
 }
 
+export async function updateCommitteeApplication(applicationId: string, data: { institution?: string; department?: string; statement?: string; additionalData?: Record<string, any>; photoUrl?: string | null }) {
+  const userId = await getAuthUserId();
+  if (!userId) return { success: false, error: 'Unauthorized' };
+
+  try {
+    const existing = await db.query.committeeMembers.findFirst({
+      where: and(eq(committeeMembers.id, applicationId), eq(committeeMembers.userId, userId)),
+      with: { profile: true },
+    });
+
+    if (!existing) {
+      return { success: false, error: 'Application not found.' };
+    }
+
+    const mergedAdditional = {
+      ...(existing.additionalData || {}),
+      ...(data.additionalData || {}),
+    };
+
+    if (data.photoUrl) {
+      mergedAdditional.photoUrl = data.photoUrl;
+    }
+
+    await db.update(committeeMembers).set({
+      institution: data.institution ?? existing.institution,
+      department: data.department ?? existing.department,
+      statement: data.statement ?? existing.statement,
+      additionalData: mergedAdditional,
+      updatedAt: new Date(),
+    }).where(eq(committeeMembers.id, applicationId));
+
+    if (data.photoUrl && existing.profile && !existing.profile.picture) {
+      await db.update(profiles).set({ picture: data.photoUrl, updatedAt: new Date() }).where(eq(profiles.id, existing.profile.id));
+    }
+
+    revalidatePath('/committee');
+    revalidatePath('/dashboard/committee');
+    return { success: true };
+  } catch (error: any) {
+    return { success: false, error: error.message };
+  }
+}
+
 export async function approveApplication(id: string, positionTitle: string, rbacRoleId: string | null) {
   const userId = await getAuthUserId();
   if (!userId) return { success: false, error: 'Unauthorized' };
@@ -304,6 +372,36 @@ export async function getActiveCommittee() {
   }
 }
 
+export async function getMyProfileSummary() {
+  const userId = await getAuthUserId();
+  if (!userId) return { success: false, error: 'Unauthorized' };
+
+  try {
+    const profile = await db.query.profiles.findFirst({
+      where: eq(profiles.userId, userId),
+    });
+
+    if (!profile) return { success: true, data: null };
+
+    return {
+      success: true,
+      data: {
+        profileId: profile.id,
+        username: profile.fullNameEnglish,
+        email: profile.email,
+        phone: profile.phoneNumber,
+        institute: profile.institute,
+        dept: profile.department,
+        address: profile.presentAddress,
+        nid: profile.nid,
+        picture: profile.picture,
+      },
+    };
+  } catch (error: any) {
+    return { success: false, error: error.message };
+  }
+}
+
 export async function getCommitteeDirectory() {
   try {
     const allCommittees = await db.query.committees.findMany({
@@ -349,9 +447,39 @@ export async function getMyCommitteeStatus() {
       with: { committee: true, profile: true, user: true },
     });
 
-    const current = memberships.find((m) => m.committee?.isActive) ?? null;
+    const signatureIds = new Set<string>();
+    for (const membership of memberships) {
+      if (membership.committee?.trainerSignatureId) signatureIds.add(membership.committee.trainerSignatureId);
+      if (membership.committee?.coordinatorSignatureId) signatureIds.add(membership.committee.coordinatorSignatureId);
+    }
 
-    return { success: true, data: { current, history: memberships } };
+    let signatureMap = new Map<string, typeof certificateSignatures.$inferSelect>();
+    if (signatureIds.size > 0) {
+      const signatures = await db.query.certificateSignatures.findMany({
+        where: inArray(certificateSignatures.id, Array.from(signatureIds)),
+      });
+      signatureMap = new Map(signatures.map((sig) => [sig.id, sig]));
+    }
+
+    const enriched = memberships.map((membership) => {
+      if (membership.committee) {
+        const trainer = membership.committee.trainerSignatureId
+          ? signatureMap.get(membership.committee.trainerSignatureId) ?? null
+          : null;
+        const coordinator = membership.committee.coordinatorSignatureId
+          ? signatureMap.get(membership.committee.coordinatorSignatureId) ?? null
+          : null;
+        membership.committee = {
+          ...membership.committee,
+          trainerSignature: trainer,
+          coordinatorSignature: coordinator,
+        } as any;
+      }
+      return membership;
+    });
+    const current = enriched.find((m) => m.committee?.isActive) ?? null;
+
+    return { success: true, data: { current, history: enriched } };
   } catch (error: any) {
     return { success: false, error: error.message };
   }

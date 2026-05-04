@@ -155,6 +155,13 @@
       "when": 1777821459089,
       "tag": "0021_living_morbius",
       "breakpoints": true
+    },
+    {
+      "idx": 22,
+      "version": "7",
+      "when": 1777886945280,
+      "tag": "0022_lazy_warpath",
+      "breakpoints": true
     }
   ]
 }

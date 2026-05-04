@@ -623,6 +623,16 @@ export const committeesRelations = relations(committees, ({ one }) => ({
     fields: [committees.createdBy],
     references: [user.id],
   }),
+  trainerSignature: one(certificateSignatures, {
+    fields: [committees.trainerSignatureId],
+    references: [certificateSignatures.id],
+    relationName: "committeeTrainerSignature",
+  }),
+  coordinatorSignature: one(certificateSignatures, {
+    fields: [committees.coordinatorSignatureId],
+    references: [certificateSignatures.id],
+    relationName: "committeeCoordinatorSignature",
+  }),
 }));
 
 export const committeeMembersRelations = relations(committeeMembers, ({ one }) => ({
