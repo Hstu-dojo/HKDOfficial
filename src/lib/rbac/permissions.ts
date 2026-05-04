@@ -1,6 +1,6 @@
 import { db } from "@/lib/connect-db";
-import { role, permission, rolePermission, userRole, user } from "@/db/schema";
-import { eq, and, inArray } from "drizzle-orm";
+import { role, permission, rolePermission, userRole, user, committeeMembers, committees } from "@/db/schema";
+import { eq, and, inArray, isNotNull } from "drizzle-orm";
 import type { ResourceType, ActionType, Permission, Role, UserPermissions } from "./types";
 
 /**
@@ -26,7 +26,37 @@ export async function getUserPermissions(userId: string): Promise<UserPermission
       return { userId, roles: [], permissions: [] };
     }
 
-    const roleIds = userRoles.map((ur) => ur.role.id);
+    // Gate committee-assigned roles to active committee membership only
+    const committeeRoleRows = await db
+      .select({
+        roleId: committeeMembers.rbacRoleId,
+        isActive: committees.isActive,
+      })
+      .from(committeeMembers)
+      .innerJoin(committees, eq(committeeMembers.committeeId, committees.id))
+      .where(
+        and(
+          eq(committeeMembers.userId, userId),
+          eq(committeeMembers.status, "approved"),
+          isNotNull(committeeMembers.rbacRoleId)
+        )
+      );
+
+    const committeeRoleIds = new Set(committeeRoleRows.map((row) => row.roleId));
+    const activeCommitteeRoleIds = new Set(
+      committeeRoleRows.filter((row) => row.isActive).map((row) => row.roleId)
+    );
+
+    const filteredUserRoles = userRoles.filter((ur) => {
+      if (!committeeRoleIds.has(ur.role.id)) return true;
+      return activeCommitteeRoleIds.has(ur.role.id);
+    });
+
+    if (filteredUserRoles.length === 0) {
+      return { userId, roles: [], permissions: [] };
+    }
+
+    const roleIds = filteredUserRoles.map((ur) => ur.role.id);
 
     // Get permissions for these roles
     const rolePermissions = await db
@@ -53,7 +83,7 @@ export async function getUserPermissions(userId: string): Promise<UserPermission
 
     return {
       userId,
-      roles: userRoles.map((ur) => ur.role),
+      roles: filteredUserRoles.map((ur) => ur.role),
       permissions: uniquePermissions,
     };
   } catch (error) {

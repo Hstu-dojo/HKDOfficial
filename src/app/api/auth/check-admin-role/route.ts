@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/connect-db';
-import { user, userRole, role, rolePermission, permission } from '@/db/schema';
-import { eq, and } from 'drizzle-orm';
+import { user } from '@/db/schema';
+import { eq } from 'drizzle-orm';
+import { getUserPermissionsWithFallback } from '@/lib/rbac/permissions';
 
 /**
  * API endpoint to check if a user has admin panel access
@@ -33,92 +34,12 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ hasAdminRole: false, error: 'User not found' }, { status: 404 });
     }
 
-    // Get user's assigned roles
-    const userRoles = await db
-      .select({
-        roleId: role.id,
-        roleName: role.name,
-      })
-      .from(userRole)
-      .innerJoin(role, eq(userRole.roleId, role.id))
-      .where(
-        and(
-          eq(userRole.userId, localUser[0].id),
-          eq(userRole.isActive, true),
-          eq(role.isActive, true)
-        )
-      );
+    const userPerms = await getUserPermissionsWithFallback(localUser[0].id);
+    const hasAdminAccess = userPerms.permissions.some(
+      (p) => p.resource === 'ADMIN_PANEL' && (p.action === 'ACCESS' || p.action === 'MANAGE')
+    );
 
-    const assignedRoles = userRoles.map(ur => ur.roleName);
-    const assignedRoleIds = userRoles.map(ur => ur.roleId);
-
-    // Check if any assigned role has ADMIN_PANEL:ACCESS permission
-    let hasAdminAccess = false;
-
-    if (assignedRoleIds.length > 0) {
-      const adminPermCheck = await db
-        .select({ permId: permission.id })
-        .from(rolePermission)
-        .innerJoin(permission, eq(rolePermission.permissionId, permission.id))
-        .where(
-          and(
-            eq(permission.resource, 'ADMIN_PANEL'),
-            eq(permission.action, 'ACCESS')
-          )
-        )
-        .limit(1);
-
-      if (adminPermCheck.length > 0) {
-        // Check if any of the user's roles have this permission
-        for (const roleId of assignedRoleIds) {
-          const hasIt = await db
-            .select({ id: rolePermission.id })
-            .from(rolePermission)
-            .where(
-              and(
-                eq(rolePermission.roleId, roleId),
-                eq(rolePermission.permissionId, adminPermCheck[0].permId)
-              )
-            )
-            .limit(1);
-          if (hasIt.length > 0) {
-            hasAdminAccess = true;
-            break;
-          }
-        }
-      }
-    }
-
-    // Fallback: check defaultRole if no explicit userRole assignments grant access
-    if (!hasAdminAccess && localUser[0].defaultRole) {
-      const defaultRoleData = await db
-        .select({ id: role.id })
-        .from(role)
-        .where(and(eq(role.name, localUser[0].defaultRole), eq(role.isActive, true)))
-        .limit(1);
-
-      if (defaultRoleData.length > 0) {
-        const defaultRolePerms = await db
-          .select({ permId: permission.id })
-          .from(rolePermission)
-          .innerJoin(permission, eq(rolePermission.permissionId, permission.id))
-          .where(
-            and(
-              eq(rolePermission.roleId, defaultRoleData[0].id),
-              eq(permission.resource, 'ADMIN_PANEL'),
-              eq(permission.action, 'ACCESS')
-            )
-          )
-          .limit(1);
-
-        if (defaultRolePerms.length > 0) {
-          hasAdminAccess = true;
-        }
-      }
-    }
-
-    // Combine roles (include defaultRole if not already in assignedRoles)
-    const roles = [...assignedRoles];
+    const roles = userPerms.roles.map((r) => r.name);
     if (localUser[0].defaultRole && !roles.includes(localUser[0].defaultRole)) {
       roles.push(localUser[0].defaultRole);
     }
