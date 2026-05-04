@@ -50,7 +50,6 @@ function getRuntimeAnchorDirs() {
 
   // When bundled, the module directory can be a useful anchor (e.g. .next/server/app/...).
   try {
-    // eslint-disable-next-line no-undef
     if (typeof __dirname === 'string' && __dirname) anchors.push(__dirname);
   } catch {
     // ignore
@@ -131,9 +130,39 @@ function assertSafeCertPath(publicRelativePath: string) {
 
 export async function listCertificateTemplates() {
   try {
-    // Vercel Serverless environment does not bundle the 'public' directory to disk on Lambda.
-    // Therefore, we hardcode the known production certificates instead of using fs.readdir()
-    const pdfs = [
+    const pdfs: AvailableCertificateTemplate[] = [];
+
+    // Try to dynamically scan the certs directory (works in dev, Docker, local deployments)
+    try {
+      const certsDir = await resolvePublicCertsDir();
+      const files = await readdir(certsDir);
+      
+      for (const file of files) {
+        if (file.toLowerCase().endsWith('.pdf')) {
+          pdfs.push({
+            value: `certs/${file}`,
+            label: file,
+          });
+        }
+      }
+      
+      // Sort alphabetically
+      pdfs.sort((a, b) => a.label.localeCompare(b.label));
+      
+      if (pdfs.length > 0) {
+        return { success: true as const, data: pdfs };
+      }
+    } catch (scanError) {
+      console.warn('[program-types] Could not scan certs directory:', scanError);
+    }
+
+    // Fallback: hardcoded list for Vercel Serverless (where public/ is not on disk)
+    // This is a fallback only when dynamic scan fails
+    const fallbackPdfs = [
+      {
+        value: 'certs/HKD-BELTTEST-26.pdf',
+        label: 'HKD-BELTTEST-26.pdf',
+      },
       {
         value: 'certs/fillable - Final Belt Test Certificates.pdf',
         label: 'fillable - Final Belt Test Certificates.pdf',
@@ -144,7 +173,7 @@ export async function listCertificateTemplates() {
       },
     ] satisfies AvailableCertificateTemplate[];
 
-    return { success: true as const, data: pdfs };
+    return { success: true as const, data: fallbackPdfs };
   } catch (error: any) {
     console.error('[program-types] listCertificateTemplates error:', error);
     const msg = error?.message ? String(error.message) : String(error);
