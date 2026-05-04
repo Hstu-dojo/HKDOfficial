@@ -11,6 +11,7 @@ import {
   approveApplication,
   rejectApplication,
   updateCommittee,
+  updateCommitteeApplicationAdmin,
 } from '@/actions/committee-actions';
 import { getActiveSignatures } from '@/actions/certificate-actions';
 
@@ -34,6 +35,7 @@ interface CommitteeMember {
   institution?: string | null;
   department?: string | null;
   statement?: string | null;
+  additionalData?: Record<string, any> | null;
   createdAt?: string | Date;
   profile?: {
     id?: string;
@@ -79,16 +81,28 @@ export default function CommitteesManagement() {
     description: '',
   });
   const [createTrainerSigId, setCreateTrainerSigId] = useState('');
-  const [createCoordinatorSigId, setCreateCoordinatorSigId] = useState('');
-  const [editTrainerSigId, setEditTrainerSigId] = useState('');
-  const [editCoordinatorSigId, setEditCoordinatorSigId] = useState('');
-  const [updatingSignatures, setUpdatingSignatures] = useState(false);
+  const [editCommitteeOpen, setEditCommitteeOpen] = useState(false);
+  const [selectedCommittee, setSelectedCommittee] = useState<Committee | null>(null);
+  const [editCommitteeTitle, setEditCommitteeTitle] = useState('');
+  const [editCommitteeYear, setEditCommitteeYear] = useState('');
+  const [editCommitteeDescription, setEditCommitteeDescription] = useState('');
+  const [editingCommittee, setEditingCommittee] = useState(false);
 
   const [approveModalOpen, setApproveModalOpen] = useState(false);
   const [approving, setApproving] = useState(false);
   const [selectedApplication, setSelectedApplication] = useState<CommitteeMember | null>(null);
   const [positionTitle, setPositionTitle] = useState('');
   const [selectedRoleId, setSelectedRoleId] = useState('');
+  const [editModalOpen, setEditModalOpen] = useState(false);
+  const [editing, setEditing] = useState(false);
+  const [editInstitution, setEditInstitution] = useState('');
+  const [editDepartment, setEditDepartment] = useState('');
+  const [editStatement, setEditStatement] = useState('');
+  const [editPhone, setEditPhone] = useState('');
+  const [editAddress, setEditAddress] = useState('');
+  const [editNid, setEditNid] = useState('');
+  const [editPhotoUrl, setEditPhotoUrl] = useState('');
+  const [photoUploading, setPhotoUploading] = useState(false);
 
   const fetchCommittees = async () => {
     try {
@@ -165,12 +179,6 @@ export default function CommitteesManagement() {
     }
   }, [selectedCommitteeId]);
 
-  useEffect(() => {
-    const selected = committees.find((c) => c.id === selectedCommitteeId);
-    setEditTrainerSigId(selected?.trainerSignatureId || '');
-    setEditCoordinatorSigId(selected?.coordinatorSignatureId || '');
-  }, [committees, selectedCommitteeId]);
-
   const filteredApplications = useMemo(() => {
     if (!statusFilter) return applications;
     return applications.filter((app) => app.status === statusFilter);
@@ -197,7 +205,7 @@ export default function CommitteesManagement() {
       year: formData.year.trim(),
       description: formData.description.trim() || undefined,
       trainerSignatureId: createTrainerSigId || null,
-      coordinatorSignatureId: createCoordinatorSigId || null,
+      coordinatorSignatureId: null,
     });
 
     if (result.success) {
@@ -208,27 +216,9 @@ export default function CommitteesManagement() {
         description: '',
       });
       setCreateTrainerSigId('');
-      setCreateCoordinatorSigId('');
       await fetchCommittees();
     } else {
       toast.error(result.error || 'Failed to create committee');
-    }
-  };
-
-  const handleUpdateSignatures = async () => {
-    if (!selectedCommitteeId) return;
-    setUpdatingSignatures(true);
-    const result = await updateCommittee(selectedCommitteeId, {
-      trainerSignatureId: editTrainerSigId || null,
-      coordinatorSignatureId: editCoordinatorSigId || null,
-    });
-    setUpdatingSignatures(false);
-
-    if (result.success) {
-      toast.success('Signatures updated');
-      await fetchCommittees();
-    } else {
-      toast.error(result.error || 'Failed to update signatures');
     }
   };
 
@@ -258,6 +248,26 @@ export default function CommitteesManagement() {
     setPositionTitle(application.positionTitle || '');
     setSelectedRoleId(application.rbacRoleId || '');
     setApproveModalOpen(true);
+  };
+
+  const openEditModal = (application: CommitteeMember) => {
+    setSelectedApplication(application);
+    setEditInstitution(application.institution || '');
+    setEditDepartment(application.department || '');
+    setEditStatement(application.statement || '');
+    setEditPhone(application.additionalData?.phone || '');
+    setEditAddress(application.additionalData?.address || '');
+    setEditNid(application.additionalData?.nid || '');
+    setEditPhotoUrl(application.additionalData?.photoUrl || '');
+    setEditModalOpen(true);
+  };
+
+  const openCommitteeEdit = (committee: Committee) => {
+    setSelectedCommittee(committee);
+    setEditCommitteeTitle(committee.title || '');
+    setEditCommitteeYear(committee.year || '');
+    setEditCommitteeDescription(committee.description || '');
+    setEditCommitteeOpen(true);
   };
 
   const handleApprove = async () => {
@@ -294,6 +304,98 @@ export default function CommitteesManagement() {
       }
     } else {
       toast.error(result.error || 'Failed to reject');
+    }
+  };
+
+  const handlePhotoUpload = async (file: File) => {
+    if (!file.type.startsWith('image/')) {
+      toast.error('Please select an image file');
+      return;
+    }
+    if (file.size > 4 * 1024 * 1024) {
+      toast.error('File too large. Max 4MB.');
+      return;
+    }
+
+    setPhotoUploading(true);
+    try {
+      const reader = new FileReader();
+      const dataUrl = await new Promise<string>((resolve, reject) => {
+        reader.onload = () => resolve(reader.result as string);
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
+      });
+
+      const res = await fetch('/api/enrollments/upload-image', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ dataUrl, type: 'photo', courseId: 'committee' }),
+      });
+
+      if (!res.ok) {
+        throw new Error('Upload failed');
+      }
+
+      const result = await res.json();
+      setEditPhotoUrl(result.secureUrl);
+      toast.success('Photo uploaded');
+    } catch (error) {
+      console.error(error);
+      toast.error('Failed to upload photo');
+    } finally {
+      setPhotoUploading(false);
+    }
+  };
+
+  const handleUpdateApplication = async () => {
+    if (!selectedApplication) return;
+    setEditing(true);
+    const result = await updateCommitteeApplicationAdmin(selectedApplication.id, {
+      institution: editInstitution.trim(),
+      department: editDepartment.trim(),
+      statement: editStatement.trim(),
+      additionalData: {
+        phone: editPhone,
+        address: editAddress,
+        nid: editNid,
+      },
+      photoUrl: editPhotoUrl || undefined,
+    });
+    setEditing(false);
+
+    if (result.success) {
+      toast.success('Application updated');
+      setEditModalOpen(false);
+      if (selectedCommitteeId) {
+        await fetchApplications(selectedCommitteeId);
+      }
+    } else {
+      toast.error(result.error || 'Failed to update application');
+    }
+  };
+
+  const handleUpdateCommittee = async () => {
+    if (!selectedCommittee) return;
+    if (!editCommitteeTitle.trim() || !editCommitteeYear.trim()) {
+      toast.error('Title and year are required');
+      return;
+    }
+
+    setEditingCommittee(true);
+    const result = await updateCommittee(selectedCommittee.id, {
+      title: editCommitteeTitle.trim(),
+      year: editCommitteeYear.trim(),
+      description: editCommitteeDescription.trim() || null,
+    });
+    setEditingCommittee(false);
+
+    if (result.success) {
+      toast.success('Committee updated');
+      setEditCommitteeOpen(false);
+      setSelectedCommittee(null);
+      await fetchCommittees();
+    } else {
+      toast.error(result.error || 'Failed to update committee');
     }
   };
 
@@ -409,21 +511,6 @@ export default function CommitteesManagement() {
                   ))}
                 </select>
               </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Coordinator Signature</label>
-                <select
-                  value={createCoordinatorSigId}
-                  onChange={(e) => setCreateCoordinatorSigId(e.target.value)}
-                  className="mt-1 w-full rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 px-3 py-2 text-sm"
-                >
-                  <option value="">Select signature</option>
-                  {signatureOptions.map((sig) => (
-                    <option key={sig.id} value={sig.id}>
-                      {sig.name}
-                    </option>
-                  ))}
-                </select>
-              </div>
               <button
                 type="submit"
                 className="w-full rounded-lg bg-blue-600 text-white py-2 text-sm font-medium hover:bg-blue-700"
@@ -432,52 +519,6 @@ export default function CommitteesManagement() {
               </button>
             </form>
           </div>
-
-          {selectedCommitteeId && (
-            <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-5">
-              <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">ID Card Signatures</h2>
-              <div className="space-y-3">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Trainer Signature</label>
-                  <select
-                    value={editTrainerSigId}
-                    onChange={(e) => setEditTrainerSigId(e.target.value)}
-                    className="mt-1 w-full rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 px-3 py-2 text-sm"
-                  >
-                    <option value="">Select signature</option>
-                    {signatureOptions.map((sig) => (
-                      <option key={sig.id} value={sig.id}>
-                        {sig.name}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Coordinator Signature</label>
-                  <select
-                    value={editCoordinatorSigId}
-                    onChange={(e) => setEditCoordinatorSigId(e.target.value)}
-                    className="mt-1 w-full rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 px-3 py-2 text-sm"
-                  >
-                    <option value="">Select signature</option>
-                    {signatureOptions.map((sig) => (
-                      <option key={sig.id} value={sig.id}>
-                        {sig.name}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-                <button
-                  type="button"
-                  onClick={handleUpdateSignatures}
-                  disabled={updatingSignatures}
-                  className="w-full rounded-lg bg-gray-900 text-white py-2 text-sm font-medium hover:bg-gray-800 disabled:opacity-50"
-                >
-                  {updatingSignatures ? 'Updating...' : 'Update Signatures'}
-                </button>
-              </div>
-            </div>
-          )}
 
           <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-5">
             <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Committees</h2>
@@ -514,6 +555,16 @@ export default function CommitteesManagement() {
                       className="text-xs px-2 py-1 rounded bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200"
                     >
                       Set Active
+                    </button>
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        openCommitteeEdit(committee);
+                      }}
+                      className="text-xs px-2 py-1 rounded bg-blue-100 text-blue-700"
+                    >
+                      Edit
                     </button>
                     <button
                       type="button"
@@ -625,6 +676,12 @@ export default function CommitteesManagement() {
                                 Approve
                               </button>
                               <button
+                                className="text-xs px-2 py-1 rounded bg-blue-100 text-blue-700"
+                                onClick={() => openEditModal(application)}
+                              >
+                                Edit
+                              </button>
+                              <button
                                 className="text-xs px-2 py-1 rounded bg-red-100 text-red-700"
                                 onClick={() => handleReject(application.id)}
                               >
@@ -642,6 +699,64 @@ export default function CommitteesManagement() {
           </div>
         </div>
       </div>
+
+      {editCommitteeOpen && selectedCommittee && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
+          <div className="bg-white dark:bg-gray-800 rounded-lg w-full max-w-md p-6 space-y-4">
+            <div>
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">Edit Committee</h3>
+              <p className="text-sm text-gray-500">Update committee details.</p>
+            </div>
+
+            <div className="space-y-3">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Title</label>
+                <input
+                  value={editCommitteeTitle}
+                  onChange={(e) => setEditCommitteeTitle(e.target.value)}
+                  className="mt-1 w-full rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 px-3 py-2 text-sm"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Year</label>
+                <input
+                  value={editCommitteeYear}
+                  onChange={(e) => setEditCommitteeYear(e.target.value)}
+                  className="mt-1 w-full rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 px-3 py-2 text-sm"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Description</label>
+                <textarea
+                  value={editCommitteeDescription}
+                  onChange={(e) => setEditCommitteeDescription(e.target.value)}
+                  className="mt-1 w-full rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 px-3 py-2 text-sm"
+                  rows={3}
+                />
+              </div>
+            </div>
+
+            <div className="flex justify-end gap-2">
+              <button
+                onClick={() => {
+                  setEditCommitteeOpen(false);
+                  setSelectedCommittee(null);
+                }}
+                className="px-4 py-2 text-sm rounded border border-gray-300 dark:border-gray-600"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleUpdateCommittee}
+                disabled={editingCommittee}
+                className="px-4 py-2 text-sm rounded bg-blue-600 text-white disabled:opacity-50"
+              >
+                {editingCommittee ? 'Saving...' : 'Save Changes'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {approveModalOpen && selectedApplication && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
@@ -689,6 +804,112 @@ export default function CommitteesManagement() {
                 className="px-4 py-2 text-sm rounded bg-blue-600 text-white disabled:opacity-50"
               >
                 {approving ? 'Approving...' : 'Approve'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {editModalOpen && selectedApplication && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
+          <div className="bg-white dark:bg-gray-800 rounded-lg w-full max-w-lg p-6 space-y-4">
+            <div>
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">Edit Application</h3>
+              <p className="text-sm text-gray-500">Update details for this applicant.</p>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Institution</label>
+                <input
+                  value={editInstitution}
+                  onChange={(e) => setEditInstitution(e.target.value)}
+                  className="mt-1 w-full rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 px-3 py-2 text-sm"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Department</label>
+                <input
+                  value={editDepartment}
+                  onChange={(e) => setEditDepartment(e.target.value)}
+                  className="mt-1 w-full rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 px-3 py-2 text-sm"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Phone</label>
+                <input
+                  value={editPhone}
+                  onChange={(e) => setEditPhone(e.target.value)}
+                  className="mt-1 w-full rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 px-3 py-2 text-sm"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">NID</label>
+                <input
+                  value={editNid}
+                  onChange={(e) => setEditNid(e.target.value)}
+                  className="mt-1 w-full rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 px-3 py-2 text-sm"
+                />
+              </div>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Address</label>
+              <input
+                value={editAddress}
+                onChange={(e) => setEditAddress(e.target.value)}
+                className="mt-1 w-full rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 px-3 py-2 text-sm"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Statement</label>
+              <textarea
+                value={editStatement}
+                onChange={(e) => setEditStatement(e.target.value)}
+                className="mt-1 w-full rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 px-3 py-2 text-sm"
+                rows={3}
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Photo</label>
+              <div className="mt-2 flex items-center gap-4">
+                {editPhotoUrl ? (
+                  <img src={editPhotoUrl} alt="Applicant" className="h-16 w-16 rounded object-cover border" />
+                ) : (
+                  <div className="h-16 w-16 rounded border border-dashed flex items-center justify-center text-xs text-gray-400">
+                    No Photo
+                  </div>
+                )}
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={(e) => {
+                    const file = e.target.files?.[0];
+                    if (file) {
+                      handlePhotoUpload(file);
+                    }
+                  }}
+                  className="text-sm text-gray-600"
+                />
+                {photoUploading && <span className="text-xs text-gray-500">Uploading...</span>}
+              </div>
+            </div>
+
+            <div className="flex justify-end gap-2">
+              <button
+                onClick={() => setEditModalOpen(false)}
+                className="px-4 py-2 text-sm rounded border border-gray-300 dark:border-gray-600"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleUpdateApplication}
+                disabled={editing}
+                className="px-4 py-2 text-sm rounded bg-blue-600 text-white disabled:opacity-50"
+              >
+                {editing ? 'Saving...' : 'Save Changes'}
               </button>
             </div>
           </div>

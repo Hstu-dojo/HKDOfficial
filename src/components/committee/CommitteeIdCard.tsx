@@ -16,11 +16,6 @@ interface CommitteeIdCardProps {
     title?: string | null;
     signatureImageUrl?: string | null;
   } | null;
-  coordinatorSignature?: {
-    name?: string | null;
-    title?: string | null;
-    signatureImageUrl?: string | null;
-  } | null;
 }
 
 export default function CommitteeIdCard({
@@ -32,7 +27,6 @@ export default function CommitteeIdCard({
   photoUrl,
   logoUrl = '/logo.png',
   trainerSignature,
-  coordinatorSignature,
 }: CommitteeIdCardProps) {
   const dataUrlToUint8Array = (dataUrl: string) => {
     const base64 = dataUrl.split(',')[1];
@@ -58,22 +52,35 @@ export default function CommitteeIdCard({
     const page = pdfDoc.addPage([360, 220]);
     const font = await pdfDoc.embedFont(StandardFonts.Helvetica);
     const fontBold = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
+    const card = { x: 12, y: 12, width: 336, height: 196 };
+    const rightColumn = { x: 244, width: 92 };
+    const photoBox = { x: rightColumn.x, y: 104, width: 92, height: 96 };
+    const signatureBox = { x: rightColumn.x, y: 30, width: 92, height: 32 };
 
     page.drawRectangle({
-      x: 10,
-      y: 10,
-      width: 340,
-      height: 200,
+      x: card.x,
+      y: card.y,
+      width: card.width,
+      height: card.height,
       borderWidth: 2,
       borderColor: rgb(0.18, 0.29, 0.45),
       color: rgb(0.97, 0.98, 1),
     });
 
     page.drawRectangle({
-      x: 252,
-      y: 98,
-      width: 84,
-      height: 100,
+      x: photoBox.x,
+      y: photoBox.y,
+      width: photoBox.width,
+      height: photoBox.height,
+      borderWidth: 1,
+      borderColor: rgb(0.82, 0.85, 0.9),
+    });
+
+    page.drawRectangle({
+      x: signatureBox.x,
+      y: signatureBox.y,
+      width: signatureBox.width,
+      height: signatureBox.height,
       borderWidth: 1,
       borderColor: rgb(0.82, 0.85, 0.9),
     });
@@ -84,24 +91,24 @@ export default function CommitteeIdCard({
       const logoImage = logoIsPng ? await pdfDoc.embedPng(logoBytes) : await pdfDoc.embedJpg(logoBytes);
       page.drawImage(logoImage, {
         x: 24,
-        y: 170,
-        width: 48,
-        height: 48,
+        y: 160,
+        width: 42,
+        height: 42,
       });
     } catch (error) {
       console.warn('Could not embed dojo logo in committee ID card', error);
     }
 
     page.drawText('HSTU Karate Dojo', {
-      x: 78,
-      y: 185,
+      x: 72,
+      y: 186,
       size: 12,
       font: fontBold,
       color: rgb(0.18, 0.29, 0.45),
     });
 
     page.drawText('Committee ID Card', {
-      x: 78,
+      x: 72,
       y: 168,
       size: 10,
       font,
@@ -110,32 +117,32 @@ export default function CommitteeIdCard({
 
     page.drawText(name, {
       x: 24,
-      y: 132,
-      size: 16,
+      y: 140,
+      size: 14,
       font: fontBold,
       color: rgb(0.1, 0.1, 0.1),
     });
 
     page.drawText(`Position: ${position}`, {
       x: 24,
-      y: 110,
-      size: 11,
+      y: 122,
+      size: 10,
       font,
       color: rgb(0.2, 0.2, 0.2),
     });
 
     page.drawText(`Committee: ${committeeTitle}`, {
       x: 24,
-      y: 92,
-      size: 10,
+      y: 106,
+      size: 9,
       font,
       color: rgb(0.2, 0.2, 0.2),
     });
 
     page.drawText(`Year: ${year}`, {
       x: 24,
-      y: 76,
-      size: 10,
+      y: 92,
+      size: 9,
       font,
       color: rgb(0.2, 0.2, 0.2),
     });
@@ -143,8 +150,8 @@ export default function CommitteeIdCard({
     if (memberNumber) {
       page.drawText(`Member No: ${memberNumber}`, {
         x: 24,
-        y: 60,
-        size: 10,
+        y: 78,
+        size: 9,
         font,
         color: rgb(0.2, 0.2, 0.2),
       });
@@ -156,55 +163,49 @@ export default function CommitteeIdCard({
         const isPng = photoUrl.includes('image/png') || photoUrl.toLowerCase().endsWith('.png');
         const image = isPng ? await pdfDoc.embedPng(bytes) : await pdfDoc.embedJpg(bytes);
         page.drawImage(image, {
-          x: 252,
-          y: 98,
-          width: 84,
-          height: 100,
+          x: photoBox.x,
+          y: photoBox.y,
+          width: photoBox.width,
+          height: photoBox.height,
         });
       } catch (error) {
         console.warn('Could not embed profile photo in committee ID card', error);
       }
     }
 
-    const signatureBlocks = [
-      { data: trainerSignature, x: 24 },
-      { data: coordinatorSignature, x: 150 },
-    ];
-
-    for (const block of signatureBlocks) {
-      if (!block.data?.signatureImageUrl) continue;
+    if (trainerSignature?.signatureImageUrl) {
       try {
-        const sigBytes = await getImageBytes(block.data.signatureImageUrl);
-        const sigIsPng = block.data.signatureImageUrl.includes('image/png') || block.data.signatureImageUrl.toLowerCase().endsWith('.png');
+        const sigBytes = await getImageBytes(trainerSignature.signatureImageUrl);
+        const sigIsPng = trainerSignature.signatureImageUrl.includes('image/png') || trainerSignature.signatureImageUrl.toLowerCase().endsWith('.png');
         const sigImage = sigIsPng ? await pdfDoc.embedPng(sigBytes) : await pdfDoc.embedJpg(sigBytes);
         page.drawImage(sigImage, {
-          x: block.x,
-          y: 22,
-          width: 110,
-          height: 28,
+          x: signatureBox.x + 6,
+          y: signatureBox.y + 6,
+          width: signatureBox.width - 12,
+          height: signatureBox.height - 12,
         });
       } catch (error) {
         console.warn('Could not embed committee signature', error);
       }
+    }
 
-      if (block.data?.name) {
-        page.drawText(block.data.name, {
-          x: block.x,
-          y: 12,
-          size: 8,
-          font,
-          color: rgb(0.2, 0.2, 0.2),
-        });
-      }
-      if (block.data?.title) {
-        page.drawText(block.data.title, {
-          x: block.x,
-          y: 4,
-          size: 7,
-          font,
-          color: rgb(0.3, 0.3, 0.3),
-        });
-      }
+    if (trainerSignature?.name) {
+      page.drawText(trainerSignature.name, {
+        x: signatureBox.x,
+        y: signatureBox.y - 8,
+        size: 8,
+        font,
+        color: rgb(0.2, 0.2, 0.2),
+      });
+    }
+    if (trainerSignature?.title) {
+      page.drawText(trainerSignature.title, {
+        x: signatureBox.x,
+        y: signatureBox.y - 16,
+        size: 7,
+        font,
+        color: rgb(0.3, 0.3, 0.3),
+      });
     }
 
     const bytes = await pdfDoc.save();
@@ -246,28 +247,16 @@ export default function CommitteeIdCard({
           <p className="text-xs text-blue-700 dark:text-blue-200">Member No: {memberNumber}</p>
         )}
 
-        {(trainerSignature?.signatureImageUrl || coordinatorSignature?.signatureImageUrl) && (
+        {trainerSignature?.signatureImageUrl && (
           <div className="mt-3 flex gap-4 text-[10px] text-blue-700 dark:text-blue-200">
-            {trainerSignature?.signatureImageUrl && (
-              <div>
-                <img
-                  src={trainerSignature.signatureImageUrl}
-                  alt="Trainer signature"
-                  className="h-6 object-contain"
-                />
-                <p>{trainerSignature.name}</p>
-              </div>
-            )}
-            {coordinatorSignature?.signatureImageUrl && (
-              <div>
-                <img
-                  src={coordinatorSignature.signatureImageUrl}
-                  alt="Coordinator signature"
-                  className="h-6 object-contain"
-                />
-                <p>{coordinatorSignature.name}</p>
-              </div>
-            )}
+            <div>
+              <img
+                src={trainerSignature.signatureImageUrl}
+                alt="Trainer signature"
+                className="h-6 object-contain"
+              />
+              <p>{trainerSignature.name}</p>
+            </div>
           </div>
         )}
       </div>

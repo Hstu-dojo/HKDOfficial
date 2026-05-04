@@ -53,7 +53,6 @@ export default async function DashboardCommitteePage({
               memberNumber={current.profile?.memberNumber || null}
               photoUrl={current.profile?.picture || current.additionalData?.photoUrl || null}
               trainerSignature={current.committee?.trainerSignature || null}
-              coordinatorSignature={current.committee?.coordinatorSignature || null}
             />
           )}
         </div>

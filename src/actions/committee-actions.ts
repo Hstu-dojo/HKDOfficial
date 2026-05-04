@@ -50,23 +50,38 @@ export async function createCommittee(data: { title: string; year: string; descr
   }
 }
 
-export async function updateCommittee(committeeId: string, data: { description?: string | null; trainerSignatureId?: string | null; coordinatorSignatureId?: string | null }) {
+export async function updateCommittee(
+  committeeId: string,
+  data: { title?: string; year?: string; description?: string | null }
+) {
   const userId = await getAuthUserId();
   if (!userId) return { success: false, error: 'Unauthorized' };
 
   try {
+    const updateData: Record<string, any> = {
+      updatedAt: new Date(),
+    };
+
+    if (typeof data.title === 'string') {
+      updateData.title = data.title;
+    }
+
+    if (typeof data.year === 'string') {
+      updateData.year = data.year;
+    }
+
+    if (data.description !== undefined) {
+      updateData.description = data.description;
+    }
+
     const [updated] = await db
       .update(committees)
-      .set({
-        description: data.description ?? null,
-        trainerSignatureId: data.trainerSignatureId || null,
-        coordinatorSignatureId: data.coordinatorSignatureId || null,
-        updatedAt: new Date(),
-      })
+      .set(updateData)
       .where(eq(committees.id, committeeId))
       .returning();
 
     revalidatePath('/admin/committees');
+    revalidatePath('/committee');
     return { success: true, data: updated };
   } catch (error: any) {
     return { success: false, error: error.message };
@@ -272,6 +287,48 @@ export async function updateCommitteeApplication(applicationId: string, data: { 
 
     revalidatePath('/committee');
     revalidatePath('/dashboard/committee');
+    return { success: true };
+  } catch (error: any) {
+    return { success: false, error: error.message };
+  }
+}
+
+export async function updateCommitteeApplicationAdmin(applicationId: string, data: { institution?: string; department?: string; statement?: string; additionalData?: Record<string, any>; photoUrl?: string | null }) {
+  const userId = await getAuthUserId();
+  if (!userId) return { success: false, error: 'Unauthorized' };
+
+  try {
+    const existing = await db.query.committeeMembers.findFirst({
+      where: eq(committeeMembers.id, applicationId),
+      with: { profile: true },
+    });
+
+    if (!existing) {
+      return { success: false, error: 'Application not found.' };
+    }
+
+    const mergedAdditional = {
+      ...(existing.additionalData || {}),
+      ...(data.additionalData || {}),
+    };
+
+    if (data.photoUrl) {
+      mergedAdditional.photoUrl = data.photoUrl;
+    }
+
+    await db.update(committeeMembers).set({
+      institution: data.institution ?? existing.institution,
+      department: data.department ?? existing.department,
+      statement: data.statement ?? existing.statement,
+      additionalData: mergedAdditional,
+      updatedAt: new Date(),
+    }).where(eq(committeeMembers.id, applicationId));
+
+    if (data.photoUrl && existing.profile && !existing.profile.picture) {
+      await db.update(profiles).set({ picture: data.photoUrl, updatedAt: new Date() }).where(eq(profiles.id, existing.profile.id));
+    }
+
+    revalidatePath('/admin/committees');
     return { success: true };
   } catch (error: any) {
     return { success: false, error: error.message };
