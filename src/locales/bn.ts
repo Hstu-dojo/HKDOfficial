@@ -19,6 +19,7 @@ export default {
     completeProfile: "প্রোফাইল সম্পূর্ণ করুন",
     programs: "প্রোগ্রামসমূহ",
     courses: "কোর্সসমূহ",
+    committee: "কমিটি",
     gallery: "গ্যালারি",
     downloadApp: "অ্যাপ ডাউনলোড",
     language: "ভাষা",
@@ -553,6 +554,7 @@ export default {
 
   dashboardSidebar: {
     overview: "ওভারভিউ",
+    committee: "কমিটি",
     accountSettings: "অ্যাকাউন্ট সেটিংস",
     backToSite: "সাইটে ফিরে যান",
     memberPortal: "মেম্বার পোর্টাল",

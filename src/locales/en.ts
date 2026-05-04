@@ -12,6 +12,7 @@ export default {
     pages: "Pages",
     programs: "Programs",
     courses: "Courses",
+    committee: "Committee",
     gallery: "Gallery",
     downloadApp: "Download App",
     language: "Language",
@@ -617,6 +618,7 @@ export default {
 
   dashboardSidebar: {
     overview: "Overview",
+    committee: "Committee",
     accountSettings: "Account Settings",
     backToSite: "Back to Site",
     memberPortal: "Member Portal",

@@ -12,6 +12,7 @@ export default {
     pages: "पृष्ठहरू",
     programs: "कार्यक्रमहरू",
     courses: "पाठ्यक्रमहरू",
+    committee: "समिति",
     gallery: "ग्यालेरी",
     downloadApp: "एप डाउनलोड गर्नुहोस्",
     language: "भाषा",
@@ -620,6 +621,7 @@ export default {
 
   dashboardSidebar: {
     overview: "अवलोकन",
+    committee: "समिति",
     accountSettings: "खाता सेटिङहरू",
     backToSite: "साइटमा फर्कनुहोस्",
     memberPortal: "सदस्य पोर्टल",

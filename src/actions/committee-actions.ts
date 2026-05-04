@@ -1,12 +1,11 @@
 'use server';
 
 import { db } from '@/lib/connect-db';
-import { committees, committeeMembers, userRole } from '@/db/schema';
+import { committees, committeeMembers, userRole, profiles } from '@/db/schema';
 import { user } from '@/db/schemas/auth';
 import { revalidatePath } from 'next/cache';
-import { eq, and, desc, not } from 'drizzle-orm';
+import { eq, and, desc, inArray } from 'drizzle-orm';
 import { createClient } from '@/lib/supabase/server';
-import crypto from 'crypto';
 
 async function getAuthUserId(): Promise<string | null> {
   const supabase = await createClient();
@@ -67,15 +66,15 @@ export async function setCommitteeActive(committeeId: string) {
         // 2. Fetch members of those active committees that have RBAC roles
         const pastMembers = await tx.query.committeeMembers.findMany({
           where: and(
-            eq(committeeMembers.status, "approved"),
-            not(eq(committeeMembers.committeeId, committeeId)) // safety
+            inArray(committeeMembers.committeeId, activeIds),
+            eq(committeeMembers.status, "approved")
           )
         });
 
-        // 3. Remove their RBAC assignments from userRole 
+        // 3. Deactivate their RBAC assignments instead of deleting
         for (const member of pastMembers) {
           if (member.rbacRoleId && member.userId) {
-            await tx.delete(userRole).where(
+            await tx.update(userRole).set({ isActive: false }).where(
               and(
                 eq(userRole.userId, member.userId),
                 eq(userRole.roleId, member.rbacRoleId)
@@ -84,7 +83,7 @@ export async function setCommitteeActive(committeeId: string) {
           }
         }
 
-        // 4. Deactivate them
+        // 4. Deactivate committees
         for (const id of activeIds) {
           await tx.update(committees).set({ isActive: false, updatedAt: new Date() }).where(eq(committees.id, id));
         }
@@ -103,19 +102,23 @@ export async function setCommitteeActive(committeeId: string) {
 
       for (const member of newMembers) {
         if (member.rbacRoleId && member.userId) {
-          // Check if it already exists to bypass issues
           const existing = await tx.query.userRole.findFirst({
             where: and(
               eq(userRole.userId, member.userId),
               eq(userRole.roleId, member.rbacRoleId)
             )
           });
-          
-          if (!existing) {
+
+          if (existing) {
+            if (!existing.isActive) {
+              await tx.update(userRole).set({ isActive: true }).where(eq(userRole.id, existing.id));
+            }
+          } else {
             await tx.insert(userRole).values({
-               userId: member.userId,
-               roleId: member.rbacRoleId,
-               assignedBy: userId,
+              userId: member.userId,
+              roleId: member.rbacRoleId,
+              assignedBy: userId,
+              isActive: true,
             });
           }
         }
@@ -159,11 +162,23 @@ export async function getCommitteeMembers(committeeId: string) {
   }
 }
 
-export async function applyForCommittee(data: { committeeId: string; profileId: string; institution: string; department: string; statement: string; additionalData?: any }) {
+export async function applyForCommittee(data: { committeeId: string; profileId?: string; institution: string; department: string; statement: string; additionalData?: any }) {
   const userId = await getAuthUserId();
   if (!userId) return { success: false, error: 'Unauthorized' };
 
   try {
+    let profileId = data.profileId;
+    if (!profileId) {
+      const profile = await db.query.profiles.findFirst({
+        where: eq(profiles.userId, userId),
+      });
+      profileId = profile?.id ?? '';
+    }
+
+    if (!profileId) {
+      return { success: false, error: 'Please complete your member profile first.' };
+    }
+
     // Check for existing application
     const existing = await db.query.committeeMembers.findFirst({
       where: and(
@@ -179,7 +194,7 @@ export async function applyForCommittee(data: { committeeId: string; profileId: 
     const [inserted] = await db.insert(committeeMembers).values({
       committeeId: data.committeeId,
       userId,
-      profileId: data.profileId,
+      profileId,
       institution: data.institution,
       department: data.department,
       statement: data.statement,
@@ -226,11 +241,16 @@ export async function approveApplication(id: string, positionTitle: string, rbac
             )
           });
 
-          if (!existingToken) {
+          if (existingToken) {
+            if (!existingToken.isActive) {
+              await tx.update(userRole).set({ isActive: true }).where(eq(userRole.id, existingToken.id));
+            }
+          } else {
             await tx.insert(userRole).values({
               userId: updated.userId,
               roleId: rbacRoleId,
               assignedBy: userId,
+              isActive: true,
             });
           }
         }
@@ -279,6 +299,59 @@ export async function getActiveCommittee() {
     });
 
     return { success: true, data: { ...committee, members: membersList } };
+  } catch (error: any) {
+    return { success: false, error: error.message };
+  }
+}
+
+export async function getCommitteeDirectory() {
+  try {
+    const allCommittees = await db.query.committees.findMany({
+      orderBy: [desc(committees.createdAt)],
+    });
+
+    if (!allCommittees.length) return { success: true, data: [] };
+
+    const committeeIds = allCommittees.map((c) => c.id);
+    const approvedMembers = await db.query.committeeMembers.findMany({
+      where: and(
+        inArray(committeeMembers.committeeId, committeeIds),
+        eq(committeeMembers.status, "approved")
+      ),
+      with: { profile: true, user: true },
+    });
+
+    const membersByCommittee = new Map<string, typeof approvedMembers>();
+    for (const member of approvedMembers) {
+      const list = membersByCommittee.get(member.committeeId) ?? [];
+      list.push(member);
+      membersByCommittee.set(member.committeeId, list);
+    }
+
+    const directory = allCommittees.map((committee) => ({
+      ...committee,
+      members: membersByCommittee.get(committee.id) ?? [],
+    }));
+
+    return { success: true, data: directory };
+  } catch (error: any) {
+    return { success: false, error: error.message };
+  }
+}
+
+export async function getMyCommitteeStatus() {
+  const userId = await getAuthUserId();
+  if (!userId) return { success: false, error: 'Unauthorized' };
+
+  try {
+    const memberships = await db.query.committeeMembers.findMany({
+      where: eq(committeeMembers.userId, userId),
+      with: { committee: true, profile: true, user: true },
+    });
+
+    const current = memberships.find((m) => m.committee?.isActive) ?? null;
+
+    return { success: true, data: { current, history: memberships } };
   } catch (error: any) {
     return { success: false, error: error.message };
   }

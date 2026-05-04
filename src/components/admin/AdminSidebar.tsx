@@ -65,6 +65,16 @@ const navigation: NavItem[] = [
     },
   },
   {
+    name: 'Committees',
+    href: '/admin/committees',
+    icon: UserGroupIcon,
+    description: 'Manage committee terms and applications',
+    requiredPermission: {
+      resource: 'MEMBER',
+      action: 'READ',
+    },
+  },
+  {
     name: 'Class Schedule',
     href: '/admin/class-schedule',
     icon: CalendarIcon,

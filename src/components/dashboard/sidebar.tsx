@@ -6,6 +6,7 @@ import { cn } from "@/lib/utils";
 import {
   HomeIcon,
   AcademicCapIcon,
+  UserGroupIcon,
   Cog6ToothIcon,
   Bars3Icon,
   ArrowLeftOnRectangleIcon,
@@ -28,6 +29,7 @@ const navItems = [
   { title: "Overview",         i18nKey: "dashboardSidebar.overview",        href: "/dashboard",              icon: HomeIcon,          exact: true  },
   { title: "My Enrollments",   i18nKey: "enrollments.title",                href: "/dashboard/enrollments",  icon: AcademicCapIcon                  },
   { title: "Certificates",     i18nKey: "certificates.title",               href: "/dashboard/certificates", icon: DocumentCheckIcon                 },
+  { title: "Committee",        i18nKey: "dashboardSidebar.committee",       href: "/dashboard/committee",    icon: UserGroupIcon                    },
   { title: "Download App",     i18nKey: "header.downloadApp",               href: "/dashboard/apk-download", icon: ArrowDownTrayIcon                 },
   { title: "Account Settings", i18nKey: "dashboardSidebar.accountSettings", href: "/dashboard/profile",      icon: Cog6ToothIcon                    },
 ];

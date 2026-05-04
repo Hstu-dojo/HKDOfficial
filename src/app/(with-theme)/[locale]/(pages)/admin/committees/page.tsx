@@ -1,10 +1,10 @@
-import React from 'react';
+import CommitteesManagement from '@/components/admin/committees/CommitteesManagement';
+
+export const metadata = {
+  title: 'Committee Management | Admin',
+  description: 'Create committee terms and manage applications',
+};
 
 export default function CommitteesAdminPage() {
-  return (
-    <div className="p-6">
-      <h1 className="text-2xl font-bold mb-4">Committee Management</h1>
-      <p>This section is under construction. It will contain committee term creation and application approval workflows.</p>
-    </div>
-  );
+  return <CommitteesManagement />;
 }

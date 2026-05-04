@@ -86,6 +86,12 @@ export const mainNav = [
         items: [],
       },
       {
+        title: "Committee",
+        i18nKey: "header.committee",
+        href: "/committee",
+        items: [],
+      },
+      {
         title: "Download App",
         i18nKey: "header.downloadApp",
         href: "/dashboard/apk-download",
