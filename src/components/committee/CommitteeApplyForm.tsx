@@ -60,8 +60,8 @@ export default function CommitteeApplyForm({
       toast.error('Please log in to apply.');
       return;
     }
-    if (!institution.trim() || !department.trim()) {
-      toast.error('Institution and department are required.');
+    if (!institution.trim() || !department.trim() || !phone.trim() || !address.trim() || !nid.trim() || !photoUrl.trim()) {
+      toast.error('Please fill all required fields: Institution, Faculty / Department, Phone, NID, Address, Photo.');
       return;
     }
 
@@ -189,18 +189,20 @@ export default function CommitteeApplyForm({
             <input
               value={phone}
               onChange={(e) => setPhone(e.target.value)}
+              required
               className="mt-1 w-full rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 px-3 py-2 text-sm"
               placeholder="Phone number"
             />
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">NID</label>
-            <input
-              value={nid}
-              onChange={(e) => setNid(e.target.value)}
-              className="mt-1 w-full rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 px-3 py-2 text-sm"
-              placeholder="National ID"
-            />
+          <input
+            value={nid}
+            onChange={(e) => setNid(e.target.value)}
+            required
+            className="mt-1 w-full rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 px-3 py-2 text-sm"
+            placeholder="National ID"
+          />
           </div>
         </div>
 
@@ -210,17 +212,19 @@ export default function CommitteeApplyForm({
             <input
               value={institution}
               onChange={(e) => setInstitution(e.target.value)}
+              required
               className="mt-1 w-full rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 px-3 py-2 text-sm"
               placeholder="University / College"
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Department</label>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Faculty / Department</label>
             <input
               value={department}
               onChange={(e) => setDepartment(e.target.value)}
+              required
               className="mt-1 w-full rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 px-3 py-2 text-sm"
-              placeholder="Department Name"
+              placeholder="Faculty / Department Name"
             />
           </div>
         </div>
@@ -230,6 +234,7 @@ export default function CommitteeApplyForm({
           <input
             value={address}
             onChange={(e) => setAddress(e.target.value)}
+            required
             className="mt-1 w-full rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 px-3 py-2 text-sm"
             placeholder="Current address"
           />
