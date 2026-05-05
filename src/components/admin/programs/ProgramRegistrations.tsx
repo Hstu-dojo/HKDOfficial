@@ -111,16 +111,16 @@ const STATUS_CONFIG: Record<string, { label: string; color: string; bgColor: str
 };
 
 const BELT_RANK_OPTIONS = [
-  { value: 'white', label: 'White' },
-  { value: 'yellow', label: 'Yellow' },
-  { value: 'orange', label: 'Orange' },
-  { value: 'green', label: 'Green' },
-  { value: 'blue', label: 'Blue' },
-  { value: 'red', label: 'Red' },
-  { value: 'brown_kyu3', label: 'Brown (Kyu 3)' },
-  { value: 'brown_kyu2', label: 'Brown (Kyu 2)' },
-  { value: 'brown_kyu1', label: 'Brown (Kyu 1)' },
-  { value: 'black', label: 'Black' },
+  { value: 'white', label: 'White Belt' },
+  { value: 'yellow', label: 'Yellow Belt' },
+  { value: 'orange', label: 'Orange Belt' },
+  { value: 'green', label: 'Green Belt' },
+  { value: 'blue', label: 'Blue Belt' },
+  { value: 'red', label: 'Red Belt' },
+  { value: 'brown_kyu3', label: 'Brown Belt (Kyu 3)' },
+  { value: 'brown_kyu2', label: 'Brown Belt (Kyu 2)' },
+  { value: 'brown_kyu1', label: 'Brown Belt (Kyu 1)' },
+  { value: 'black', label: 'Black Belt' },
 ];
 
 export default function ProgramRegistrations() {
@@ -381,15 +381,15 @@ export default function ProgramRegistrations() {
     if (!rank) return '-';
     switch (rank) {
       case 'brown_kyu3':
-        return 'Brown (Kyu 3)';
+        return 'Brown Belt (Kyu 3)';
       case 'brown_kyu2':
-        return 'Brown (Kyu 2)';
+        return 'Brown Belt (Kyu 2)';
       case 'brown_kyu1':
-        return 'Brown (Kyu 1)';
+        return 'Brown Belt (Kyu 1)';
       case 'brown':
-        return 'Brown';
+        return 'Brown Belt';
       default:
-        return rank.charAt(0).toUpperCase() + rank.slice(1);
+        return `${rank.charAt(0).toUpperCase() + rank.slice(1)} Belt`;
     }
   };
 
