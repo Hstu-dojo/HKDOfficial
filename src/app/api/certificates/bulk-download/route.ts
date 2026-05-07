@@ -80,7 +80,7 @@ export async function GET(request: NextRequest) {
           } else if (mapping.kind === 'dynamic') {
             switch (mapping.dynamicSource) {
               case 'participant_name':
-                resolvedValues[fieldName] = c.profileName ?? c.profileNameBangla ?? c.participantName ?? 'Participant';
+                resolvedValues[fieldName] = c.participantName ?? c.profileName ?? c.profileNameBangla ?? 'Participant';
                 break;
               case 'certificate_number':
                 resolvedValues[fieldName] = c.certificateNumber || '';
@@ -113,7 +113,7 @@ export async function GET(request: NextRequest) {
         });
       } else {
         pdfBytes = await generateCertificatePdf({
-          name: c.profileName ?? c.profileNameBangla ?? c.participantName ?? 'Participant',
+          name: c.participantName ?? c.profileName ?? c.profileNameBangla ?? 'Participant',
           programName: c.programTitle,
           date: day,
           month,

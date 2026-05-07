@@ -580,9 +580,31 @@ export async function attachProfileToCertificate(
     });
     if (existing) return { success: false, error: 'This profile already has a certificate for this program' };
 
+    // Fetch profile to identify related registration and program
+    const profile = await db.query.profiles.findFirst({ where: eq(profiles.id, profileId) });
+
+    // Determine if we should set newRank on the certificate (for BELT_TEST programs)
+    let newRankToSet: string | null = null;
+    if (profile) {
+      const reg = await db.query.programRegistrations.findFirst({
+        where: and(
+          eq(programRegistrations.programId, cert.programId),
+          eq(programRegistrations.userId, profile.userId),
+        ),
+      });
+
+      const programRow = await db.query.programs.findFirst({ where: eq(programs.id, cert.programId) });
+      if (programRow && programRow.type === 'BELT_TEST' && reg && reg.newRank) {
+        newRankToSet = reg.newRank;
+      }
+    }
+
+    const updatePayload: any = { profileId, updatedAt: new Date() };
+    if (newRankToSet) updatePayload.newRank = newRankToSet;
+
     const [updated] = await db
       .update(programCertificates)
-      .set({ profileId, updatedAt: new Date() })
+      .set(updatePayload)
       .where(eq(programCertificates.id, certificateId))
       .returning();
 

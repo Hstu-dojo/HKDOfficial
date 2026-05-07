@@ -72,7 +72,7 @@ export async function GET(
         } else if (mapping.kind === 'dynamic') {
           switch (mapping.dynamicSource) {
             case 'participant_name':
-              resolvedValues[fieldName] = cert.profileName ?? cert.profileNameBangla ?? cert.participantName ?? 'Participant';
+              resolvedValues[fieldName] = cert.participantName ?? cert.profileName ?? cert.profileNameBangla ?? 'Participant';
               break;
             case 'certificate_number':
               resolvedValues[fieldName] = cert.certificateNumber || '';
@@ -109,7 +109,7 @@ export async function GET(
     } else {
       // Fallback legacy PDF generator
       pdfBytes = await generateCertificatePdf({
-        name: cert.profileName ?? cert.profileNameBangla ?? cert.participantName ?? 'Participant',
+          name: cert.participantName ?? cert.profileName ?? cert.profileNameBangla ?? 'Participant',
         programName: cert.programTitle,
         date: day,
         month,
