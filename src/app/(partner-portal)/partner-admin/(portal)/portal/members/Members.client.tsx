@@ -134,32 +134,32 @@ export default function Members() {
         '/api/partner-portal/members',
         {
           method: 'POST',
-        setForm({
-          fullNameEnglish: '',
-          fullNameBangla: '',
-          phoneNumber: '',
-          email: '',
-          password: '',
-          userName: '',
-          userAvatar: '/image/avatar/Milo.svg',
-          sex: '',
-          dateOfBirth: '',
-          nid: '',
-          occupation: '',
-          institute: '',
-          faculty: '',
-          address: '',
-          emergencyContact: '',
-          emergencyPhone: '',
-          bloodGroup: '',
-          fatherName: '',
-          motherName: '',
-          agreement: false,
-        })
+          body: JSON.stringify(payload),
         }
       )
       setMessage(`Member created: ${data.member.memberNumber}`)
-      setForm({ fullNameEnglish: '', phoneNumber: '', email: '', password: '', userName: '' })
+      setForm({
+        fullNameEnglish: '',
+        fullNameBangla: '',
+        phoneNumber: '',
+        email: '',
+        password: '',
+        userName: '',
+        userAvatar: '/image/avatar/Milo.svg',
+        sex: '',
+        dateOfBirth: '',
+        nid: '',
+        occupation: '',
+        institute: '',
+        faculty: '',
+        address: '',
+        emergencyContact: '',
+        emergencyPhone: '',
+        bloodGroup: '',
+        fatherName: '',
+        motherName: '',
+        agreement: false,
+      })
       setShowCreate(false)
       await fetchMembers()
     } catch (e) {
