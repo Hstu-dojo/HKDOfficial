@@ -585,17 +585,22 @@ export async function attachProfileToCertificate(
 
     // Determine if we should set newRank on the certificate (for BELT_TEST programs)
     let newRankToSet: string | null = null;
+    let shouldUpdateProfileBelt = false;
     if (profile) {
       const reg = await db.query.programRegistrations.findFirst({
         where: and(
           eq(programRegistrations.programId, cert.programId),
-          eq(programRegistrations.userId, profile.userId),
+          or(
+            eq(programRegistrations.profileId, profile.id),
+            eq(programRegistrations.userId, profile.userId),
+          ),
         ),
       });
 
       const programRow = await db.query.programs.findFirst({ where: eq(programs.id, cert.programId) });
       if (programRow && programRow.type === 'BELT_TEST' && reg && reg.newRank) {
         newRankToSet = reg.newRank;
+        shouldUpdateProfileBelt = true;
       }
     }
 
@@ -607,6 +612,28 @@ export async function attachProfileToCertificate(
       .set(updatePayload)
       .where(eq(programCertificates.id, certificateId))
       .returning();
+
+    // When linking an already issued manual certificate for a BELT_TEST program,
+    // immediately sync the linked profile belt rank.
+    if (profile && shouldUpdateProfileBelt && newRankToSet) {
+      const oldRank = profile.beltRank || 'white';
+      if (oldRank !== newRankToSet) {
+        await db.transaction(async (tx) => {
+          await tx
+            .update(profiles)
+            .set({ beltRank: newRankToSet as any, updatedAt: new Date() })
+            .where(eq(profiles.id, profile.id));
+
+          await tx.insert(beltProgressions).values({
+            profileId: profile.id,
+            fromBelt: oldRank as any,
+            toBelt: newRankToSet as any,
+            testDate: new Date(),
+            awardedBy: userId,
+          });
+        });
+      }
+    }
 
     revalidatePath('/admin/programs');
     revalidatePath('/admin/certificates');
