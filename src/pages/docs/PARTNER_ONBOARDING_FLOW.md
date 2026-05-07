@@ -24,18 +24,30 @@ Pricing redaction is applied in both:
 - Public APIs: `src/app/api/courses/*`
 - Public pages: `src/app/(with-theme)/*/karate/courses/*` and `src/app/(with-theme)/*/partner/[slug]`
 
-## Partner portal: creating members + optional auth provisioning
+## Partner portal: creating members + auth provisioning
 
 Partners can add new members via:
 
 - `POST /api/partner-portal/members`
 
-If `email` is provided and there is no existing local user with that email, the endpoint will:
+The endpoint now treats account provisioning as a full onboarding flow. Partner admins must provide:
 
-1. Create a Supabase Auth user with a **random password** (service role key required)
+- `email`
+- `password`
+- core onboarding details such as name, phone, sex, date of birth, agreement, and the rest of the profile data collected during registration
+
+`userName` and `userAvatar` can still be omitted; the backend will generate sensible defaults when needed.
+
+If the email is new, the endpoint will:
+
+1. Create a Supabase Auth user using the partner admin-entered password as the temporary initial password (service role key required)
 2. Insert a local `user` row linked by `supabaseUserId`
 3. Create the member/profile record under the partner
-4. Best-effort email the credentials via Resend
+4. Send a Supabase password reset email so the user can set their own password
+
+If the email already exists in the local user table, the endpoint links the profile to that user and still triggers the reset-password flow.
+
+The password entered by the partner admin is now treated as the temporary initial password. It is not emailed back in plaintext.
 
 > **Note on Direct Approval:** By design, members added via `POST /api/partner-portal/members` bypass the "pending registration" flow (`registrations` row). Since the partner admin is directly creating them, they are assumed to be immediately approved and jump straight to having an active member profile.
 

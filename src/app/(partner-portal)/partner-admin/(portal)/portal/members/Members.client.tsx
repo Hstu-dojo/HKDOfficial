@@ -6,6 +6,10 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import avatarsData from '@/db/avatars.json'
+import Image from 'next/image'
+import { Checkbox } from '@/components/ui/checkbox'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 
 type Member = {
   id: string
@@ -52,10 +56,25 @@ export default function Members() {
   const [creating, setCreating] = React.useState(false)
   const [form, setForm] = React.useState({
     fullNameEnglish: '',
+    fullNameBangla: '',
     phoneNumber: '',
     email: '',
     password: '',
     userName: '',
+    userAvatar: '/image/avatar/Milo.svg',
+    sex: '',
+    dateOfBirth: '',
+    nid: '',
+    occupation: '',
+    institute: '',
+    faculty: '',
+    address: '',
+    emergencyContact: '',
+    emergencyPhone: '',
+    bloodGroup: '',
+    fatherName: '',
+    motherName: '',
+    agreement: false,
   })
 
   const fetchMembers = React.useCallback(async () => {
@@ -91,16 +110,52 @@ export default function Members() {
     try {
       const payload = {
         fullNameEnglish: form.fullNameEnglish.trim(),
+        fullNameBangla: form.fullNameBangla.trim() || null,
         phoneNumber: form.phoneNumber.trim(),
-        email: form.email.trim() ? form.email.trim() : null,
-        password: form.password.trim() ? form.password.trim() : null,
+        email: form.email.trim(),
+        password: form.password.trim(),
         userName: form.userName.trim() ? form.userName.trim() : null,
+        userAvatar: form.userAvatar,
+        sex: form.sex,
+        dateOfBirth: form.dateOfBirth,
+        nid: form.nid.trim() || null,
+        occupation: form.occupation.trim() || null,
+        institute: form.institute.trim() || null,
+        faculty: form.faculty.trim() || null,
+        address: form.address.trim() || null,
+        emergencyContact: form.emergencyContact.trim() || null,
+        emergencyPhone: form.emergencyPhone.trim() || null,
+        bloodGroup: form.bloodGroup.trim() || null,
+        fatherName: form.fatherName.trim() || null,
+        motherName: form.motherName.trim() || null,
+        agreement: form.agreement,
       }
       const data = await apiJSON<{ member: { memberNumber: string } }>(
         '/api/partner-portal/members',
         {
           method: 'POST',
-          body: JSON.stringify(payload),
+        setForm({
+          fullNameEnglish: '',
+          fullNameBangla: '',
+          phoneNumber: '',
+          email: '',
+          password: '',
+          userName: '',
+          userAvatar: '/image/avatar/Milo.svg',
+          sex: '',
+          dateOfBirth: '',
+          nid: '',
+          occupation: '',
+          institute: '',
+          faculty: '',
+          address: '',
+          emergencyContact: '',
+          emergencyPhone: '',
+          bloodGroup: '',
+          fatherName: '',
+          motherName: '',
+          agreement: false,
+        })
         }
       )
       setMessage(`Member created: ${data.member.memberNumber}`)
@@ -175,52 +230,203 @@ export default function Members() {
             <CardTitle className="text-base">Create member</CardTitle>
           </CardHeader>
           <CardContent>
-            <form onSubmit={onCreate} className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-              <div className="space-y-2 sm:col-span-2">
-                <Label htmlFor="fullNameEnglish">Full name *</Label>
-                <Input
-                  id="fullNameEnglish"
-                  required
-                  value={form.fullNameEnglish}
-                  onChange={(e) => setForm((p) => ({ ...p, fullNameEnglish: e.target.value }))}
-                />
+            <form onSubmit={onCreate} className="space-y-5">
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                <div className="space-y-2">
+                  <Label htmlFor="fullNameEnglish">Full name *</Label>
+                  <Input
+                    id="fullNameEnglish"
+                    required
+                    value={form.fullNameEnglish}
+                    onChange={(e) => setForm((p) => ({ ...p, fullNameEnglish: e.target.value }))}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="fullNameBangla">Bangla name</Label>
+                  <Input
+                    id="fullNameBangla"
+                    value={form.fullNameBangla}
+                    onChange={(e) => setForm((p) => ({ ...p, fullNameBangla: e.target.value }))}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="phoneNumber">Phone *</Label>
+                  <Input
+                    id="phoneNumber"
+                    required
+                    value={form.phoneNumber}
+                    onChange={(e) => setForm((p) => ({ ...p, phoneNumber: e.target.value }))}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="email">Email *</Label>
+                  <Input
+                    id="email"
+                    type="email"
+                    required
+                    value={form.email}
+                    onChange={(e) => setForm((p) => ({ ...p, email: e.target.value }))}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="password">Password *</Label>
+                  <Input
+                    id="password"
+                    type="password"
+                    required
+                    value={form.password}
+                    onChange={(e) => setForm((p) => ({ ...p, password: e.target.value }))}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="userName">Username (optional)</Label>
+                  <Input
+                    id="userName"
+                    value={form.userName}
+                    onChange={(e) => setForm((p) => ({ ...p, userName: e.target.value }))}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="userAvatar">Avatar</Label>
+                  <Select value={form.userAvatar} onValueChange={(value) => setForm((p) => ({ ...p, userAvatar: value }))}>
+                    <SelectTrigger id="userAvatar">
+                      <SelectValue placeholder="Select avatar" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {(avatarsData as Array<{ name: string; icon: string }>).map((avatar) => (
+                        <SelectItem key={avatar.icon} value={avatar.icon}>
+                          <span className="flex items-center gap-2">
+                            <Image src={avatar.icon} alt={avatar.name} width={20} height={20} className="rounded-full" />
+                            {avatar.name}
+                          </span>
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="sex">Sex *</Label>
+                  <select
+                    id="sex"
+                    required
+                    value={form.sex}
+                    onChange={(e) => setForm((p) => ({ ...p, sex: e.target.value }))}
+                    className="mt-2 w-full rounded-md border bg-background px-3 py-2 text-sm"
+                  >
+                    <option value="">Select sex</option>
+                    <option value="male">Male</option>
+                    <option value="female">Female</option>
+                    <option value="other">Other</option>
+                  </select>
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="dateOfBirth">Date of birth *</Label>
+                  <Input
+                    id="dateOfBirth"
+                    type="date"
+                    required
+                    value={form.dateOfBirth}
+                    onChange={(e) => setForm((p) => ({ ...p, dateOfBirth: e.target.value }))}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="bloodGroup">Blood group</Label>
+                  <Input
+                    id="bloodGroup"
+                    value={form.bloodGroup}
+                    onChange={(e) => setForm((p) => ({ ...p, bloodGroup: e.target.value }))}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="nid">NID</Label>
+                  <Input
+                    id="nid"
+                    value={form.nid}
+                    onChange={(e) => setForm((p) => ({ ...p, nid: e.target.value }))}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="occupation">Occupation</Label>
+                  <Input
+                    id="occupation"
+                    value={form.occupation}
+                    onChange={(e) => setForm((p) => ({ ...p, occupation: e.target.value }))}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="institute">Institute</Label>
+                  <Input
+                    id="institute"
+                    value={form.institute}
+                    onChange={(e) => setForm((p) => ({ ...p, institute: e.target.value }))}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="faculty">Faculty</Label>
+                  <Input
+                    id="faculty"
+                    value={form.faculty}
+                    onChange={(e) => setForm((p) => ({ ...p, faculty: e.target.value }))}
+                  />
+                </div>
+                <div className="space-y-2 sm:col-span-2">
+                  <Label htmlFor="address">Address</Label>
+                  <Input
+                    id="address"
+                    value={form.address}
+                    onChange={(e) => setForm((p) => ({ ...p, address: e.target.value }))}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="fatherName">Father&apos;s name</Label>
+                  <Input
+                    id="fatherName"
+                    value={form.fatherName}
+                    onChange={(e) => setForm((p) => ({ ...p, fatherName: e.target.value }))}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="motherName">Mother&apos;s name</Label>
+                  <Input
+                    id="motherName"
+                    value={form.motherName}
+                    onChange={(e) => setForm((p) => ({ ...p, motherName: e.target.value }))}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="emergencyContact">Emergency contact</Label>
+                  <Input
+                    id="emergencyContact"
+                    value={form.emergencyContact}
+                    onChange={(e) => setForm((p) => ({ ...p, emergencyContact: e.target.value }))}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="emergencyPhone">Emergency phone</Label>
+                  <Input
+                    id="emergencyPhone"
+                    value={form.emergencyPhone}
+                    onChange={(e) => setForm((p) => ({ ...p, emergencyPhone: e.target.value }))}
+                  />
+                </div>
               </div>
-              <div className="space-y-2">
-                <Label htmlFor="phoneNumber">Phone *</Label>
-                <Input
-                  id="phoneNumber"
-                  required
-                  value={form.phoneNumber}
-                  onChange={(e) => setForm((p) => ({ ...p, phoneNumber: e.target.value }))}
-                />
+
+              <div className="rounded-md border bg-muted/20 p-4 text-sm text-muted-foreground">
+                Username and avatar can be generated automatically if left empty. A password reset email will be sent after the account is created.
               </div>
-              <div className="space-y-2">
-                <Label htmlFor="email">Email (optional)</Label>
-                <Input
-                  id="email"
-                  type="email"
-                  value={form.email}
-                  onChange={(e) => setForm((p) => ({ ...p, email: e.target.value }))}
+
+              <div className="flex items-start gap-2">
+                <Checkbox
+                  id="agreement"
+                  checked={form.agreement}
+                  onCheckedChange={(checked) => setForm((p) => ({ ...p, agreement: checked === true }))}
                 />
+                <Label htmlFor="agreement" className="text-sm leading-6">
+                  Member agrees to the terms and onboarding details are correct.
+                </Label>
               </div>
-              <div className="space-y-2">
-                <Label htmlFor="password">Password (optional)</Label>
-                <Input
-                  id="password"
-                  type="password"
-                  value={form.password}
-                  onChange={(e) => setForm((p) => ({ ...p, password: e.target.value }))}
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="userName">Username (optional)</Label>
-                <Input
-                  id="userName"
-                  value={form.userName}
-                  onChange={(e) => setForm((p) => ({ ...p, userName: e.target.value }))}
-                />
-              </div>
-              <div className="sm:col-span-2 flex gap-2">
+
+              <div className="flex gap-2">
                 <Button type="submit" disabled={creating}>
                   {creating ? 'Creating…' : 'Create'}
                 </Button>
