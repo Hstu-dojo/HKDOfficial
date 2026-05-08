@@ -485,6 +485,7 @@ export async function PATCH(request: Request) {
       'fullNameEnglish',
       'fullNameBangla',
       'phoneNumber',
+      'beltRank',
       'sex',
       'dateOfBirth',
       'nid',
@@ -506,6 +507,8 @@ export async function PATCH(request: Request) {
         // Map field names to DB column names
         if (field === 'sex') {
           updateData.gender = updates[field]
+        } else if (field === 'beltRank') {
+          updateData.beltRank = updates[field]
         } else if (field === 'occupation') {
           updateData.profession = updates[field]
         } else if (field === 'address') {

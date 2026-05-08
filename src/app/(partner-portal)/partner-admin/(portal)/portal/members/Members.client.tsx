@@ -6,7 +6,6 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Checkbox } from '@/components/ui/checkbox'
-import { useMediaQuery } from '@/hooks/use-media-query'
 import {
   Dialog,
   DialogContent,
@@ -15,16 +14,6 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog'
-import {
-  Drawer,
-  DrawerClose,
-  DrawerContent,
-  DrawerDescription,
-  DrawerFooter,
-  DrawerHeader,
-  DrawerTitle,
-  DrawerTrigger,
-} from '@/components/ui/drawer'
 
 type Member = {
   id: string
@@ -83,7 +72,6 @@ export default function Members() {
   const [open, setOpen] = React.useState(false)
   const [editOpen, setEditOpen] = React.useState(false)
   const [editingMember, setEditingMember] = React.useState<Member | null>(null)
-  const isDesktop = useMediaQuery('(min-width: 768px)')
 
   const fetchMembers = React.useCallback(async () => {
     setLoading(true)
@@ -163,6 +151,7 @@ export default function Members() {
         fullNameEnglish: form.fullNameEnglish.trim(),
         fullNameBangla: form.fullNameBangla.trim() || null,
         phoneNumber: form.phoneNumber.trim(),
+        beltRank: form.beltRank,
         sex: form.sex,
         dateOfBirth: form.dateOfBirth,
         nid: form.nid.trim() || null,
@@ -207,74 +196,43 @@ export default function Members() {
           <h1 className="text-2xl font-bold text-foreground">Members</h1>
           <p className="text-sm text-muted-foreground">{pagination.total} total</p>
         </div>
-        {isDesktop ? (
-          <Dialog open={open} onOpenChange={setOpen}>
-            <DialogTrigger asChild>
-              <Button>Add Member</Button>
-            </DialogTrigger>
-            <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-[600px]">
-              <DialogHeader>
-                <DialogTitle>Create Member</DialogTitle>
-                <DialogDescription>
-                  Add a new member with their onboarding details. A password reset email will be sent after creation.
-                </DialogDescription>
-              </DialogHeader>
-              <MemberForm onSubmit={onCreate} />
-            </DialogContent>
-          </Dialog>
-        ) : (
-          <Drawer open={open} onOpenChange={setOpen}>
-            <DrawerTrigger asChild>
-              <Button>Add Member</Button>
-            </DrawerTrigger>
-            <DrawerContent>
-              <DrawerHeader className="text-left">
-                <DrawerTitle>Create Member</DrawerTitle>
-                <DrawerDescription>
-                  Add a new member with their onboarding details. A password reset email will be sent after creation.
-                </DrawerDescription>
-              </DrawerHeader>
-              <MemberForm onSubmit={onCreate} className="px-4" />
-              <DrawerFooter className="pt-2">
-                <DrawerClose asChild>
-                  <Button variant="outline">Cancel</Button>
-                </DrawerClose>
-              </DrawerFooter>
-            </DrawerContent>
-          </Drawer>
-        )}
-      </div>
-
-      {isDesktop ? (
-        <Dialog open={editOpen} onOpenChange={setEditOpen}>
+        <Dialog open={open} onOpenChange={setOpen}>
+          <DialogTrigger asChild>
+            <Button>Add Member</Button>
+          </DialogTrigger>
           <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-[600px]">
             <DialogHeader>
-              <DialogTitle>Edit Member</DialogTitle>
+              <DialogTitle>Create Member</DialogTitle>
               <DialogDescription>
-                Update member details. Email cannot be changed.
+                Add a new member with their onboarding details. A password reset email will be sent after creation.
               </DialogDescription>
             </DialogHeader>
-            {editingMember && <EditMemberForm member={editingMember} onSubmit={onUpdate} />}
+            <MemberForm onSubmit={onCreate} />
+            <div className="flex justify-end gap-2 pt-2">
+              <Button type="button" variant="outline" onClick={() => setOpen(false)}>
+                Cancel
+              </Button>
+            </div>
           </DialogContent>
         </Dialog>
-      ) : (
-        <Drawer open={editOpen} onOpenChange={setEditOpen}>
-          <DrawerContent>
-            <DrawerHeader className="text-left">
-              <DrawerTitle>Edit Member</DrawerTitle>
-              <DrawerDescription>
-                Update member details. Email cannot be changed.
-              </DrawerDescription>
-            </DrawerHeader>
-            {editingMember && <EditMemberForm member={editingMember} onSubmit={onUpdate} className="px-4" />}
-            <DrawerFooter className="pt-2">
-              <DrawerClose asChild>
-                <Button variant="outline">Cancel</Button>
-              </DrawerClose>
-            </DrawerFooter>
-          </DrawerContent>
-        </Drawer>
-      )}
+      </div>
+
+      <Dialog open={editOpen} onOpenChange={setEditOpen}>
+        <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-[600px]">
+          <DialogHeader>
+            <DialogTitle>Edit Member</DialogTitle>
+            <DialogDescription>
+              Update member details. Email cannot be changed.
+            </DialogDescription>
+          </DialogHeader>
+          {editingMember && <EditMemberForm member={editingMember} onSubmit={onUpdate} />}
+          <div className="flex justify-end gap-2 pt-2">
+            <Button type="button" variant="outline" onClick={() => setEditOpen(false)}>
+              Cancel
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
 
       <div className="flex flex-col gap-3 sm:flex-row">
         <div className="flex-1">
@@ -632,6 +590,7 @@ function EditMemberForm({ member, onSubmit, className }: EditMemberFormProps) {
     fullNameEnglish: member.fullNameEnglish || '',
     fullNameBangla: member.fullNameBangla || '',
     phoneNumber: member.phoneNumber || '',
+    beltRank: member.beltRank || '',
     sex: member.sex || '',
     dateOfBirth: member.dateOfBirth || '',
     nid: member.nid || '',
@@ -685,6 +644,26 @@ function EditMemberForm({ member, onSubmit, className }: EditMemberFormProps) {
             value={form.phoneNumber}
             onChange={(e) => setForm((p) => ({ ...p, phoneNumber: e.target.value }))}
           />
+        </div>
+        <div className="space-y-2">
+          <Label htmlFor="edit_beltRank">Belt rank</Label>
+          <select
+            id="edit_beltRank"
+            value={form.beltRank}
+            onChange={(e) => setForm((p) => ({ ...p, beltRank: e.target.value }))}
+            className="mt-2 w-full rounded-md border bg-background px-3 py-2 text-sm"
+          >
+            <option value="">Select belt rank</option>
+            <option value="white">White</option>
+            <option value="yellow">Yellow</option>
+            <option value="orange">Orange</option>
+            <option value="green">Green</option>
+            <option value="blue">Blue</option>
+            <option value="purple">Purple</option>
+            <option value="brown">Brown</option>
+            <option value="red">Red</option>
+            <option value="black">Black</option>
+          </select>
         </div>
         <div className="space-y-2">
           <Label htmlFor="edit_sex">Sex *</Label>
