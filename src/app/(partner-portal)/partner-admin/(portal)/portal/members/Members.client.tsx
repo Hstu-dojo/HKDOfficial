@@ -32,12 +32,25 @@ type Member = {
   fullNameEnglish: string | null
   fullNameBangla: string | null
   phoneNumber: string | null
+  email: string | null
+  sex: string | null
+  dateOfBirth: string | null
+  nid: string | null
+  bloodGroup: string | null
+  fatherName: string | null
+  motherName: string | null
+  occupation: string | null
+  institute: string | null
+  faculty: string | null
+  address: string | null
+  emergencyContact: string | null
+  emergencyPhone: string | null
+  picture: string | null
   beltRank: string | null
   studentLevel: string | null
   isActive: boolean
   isProfileComplete?: boolean
   hasAccount?: boolean
-  email: string | null
   joinDate: string | null
 }
 
@@ -68,6 +81,8 @@ export default function Members() {
   })
 
   const [open, setOpen] = React.useState(false)
+  const [editOpen, setEditOpen] = React.useState(false)
+  const [editingMember, setEditingMember] = React.useState<Member | null>(null)
   const isDesktop = useMediaQuery('(min-width: 768px)')
 
   const fetchMembers = React.useCallback(async () => {
@@ -134,6 +149,50 @@ export default function Members() {
     }
   }
 
+  const onEdit = (member: Member) => {
+    setEditingMember(member)
+    setEditOpen(true)
+  }
+
+  const onUpdate = async (form: any) => {
+    if (!editingMember) return
+    setError(null)
+    try {
+      const payload = {
+        memberId: editingMember.id,
+        fullNameEnglish: form.fullNameEnglish.trim(),
+        fullNameBangla: form.fullNameBangla.trim() || null,
+        phoneNumber: form.phoneNumber.trim(),
+        sex: form.sex,
+        dateOfBirth: form.dateOfBirth,
+        nid: form.nid.trim() || null,
+        occupation: form.occupation.trim() || null,
+        institute: form.institute.trim() || null,
+        faculty: form.faculty.trim() || null,
+        address: form.address.trim() || null,
+        emergencyContact: form.emergencyContact.trim() || null,
+        emergencyPhone: form.emergencyPhone.trim() || null,
+        bloodGroup: form.bloodGroup.trim() || null,
+        fatherName: form.fatherName.trim() || null,
+        motherName: form.motherName.trim() || null,
+      }
+      const data = await apiJSON<{ member: Member }>(
+        '/api/partner-portal/members',
+        {
+          method: 'PATCH',
+          body: JSON.stringify(payload),
+        }
+      )
+      setMessage(`Member updated: ${data.member.memberNumber}`)
+      setEditOpen(false)
+      setEditingMember(null)
+      await fetchMembers()
+    } catch (e) {
+      setError(e instanceof Error ? e.message : 'Failed to update member')
+      throw e
+    }
+  }
+
   const formatDate = (value: string | null) => {
     if (!value) return '—'
     const d = new Date(value)
@@ -186,6 +245,37 @@ export default function Members() {
         )}
       </div>
 
+      {isDesktop ? (
+        <Dialog open={editOpen} onOpenChange={setEditOpen}>
+          <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-[600px]">
+            <DialogHeader>
+              <DialogTitle>Edit Member</DialogTitle>
+              <DialogDescription>
+                Update member details. Email cannot be changed.
+              </DialogDescription>
+            </DialogHeader>
+            {editingMember && <EditMemberForm member={editingMember} onSubmit={onUpdate} />}
+          </DialogContent>
+        </Dialog>
+      ) : (
+        <Drawer open={editOpen} onOpenChange={setEditOpen}>
+          <DrawerContent>
+            <DrawerHeader className="text-left">
+              <DrawerTitle>Edit Member</DrawerTitle>
+              <DrawerDescription>
+                Update member details. Email cannot be changed.
+              </DrawerDescription>
+            </DrawerHeader>
+            {editingMember && <EditMemberForm member={editingMember} onSubmit={onUpdate} className="px-4" />}
+            <DrawerFooter className="pt-2">
+              <DrawerClose asChild>
+                <Button variant="outline">Cancel</Button>
+              </DrawerClose>
+            </DrawerFooter>
+          </DrawerContent>
+        </Drawer>
+      )}
+
       <div className="flex flex-col gap-3 sm:flex-row">
         <div className="flex-1">
           <Label htmlFor="search">Search</Label>
@@ -233,18 +323,19 @@ export default function Members() {
               <th className="px-3 py-2">Level</th>
               <th className="px-3 py-2">Active</th>
               <th className="px-3 py-2">Joined</th>
+              <th className="px-3 py-2">Actions</th>
             </tr>
           </thead>
           <tbody>
             {loading ? (
               <tr>
-                <td colSpan={7} className="px-3 py-6 text-center text-muted-foreground">
+                <td colSpan={8} className="px-3 py-6 text-center text-muted-foreground">
                   Loading…
                 </td>
               </tr>
             ) : members.length === 0 ? (
               <tr>
-                <td colSpan={7} className="px-3 py-6 text-center text-muted-foreground">
+                <td colSpan={8} className="px-3 py-6 text-center text-muted-foreground">
                   No members found.
                 </td>
               </tr>
@@ -261,6 +352,11 @@ export default function Members() {
                   <td className="px-3 py-2">{m.studentLevel || '—'}</td>
                   <td className="px-3 py-2">{m.isActive ? 'Yes' : 'No'}</td>
                   <td className="px-3 py-2">{formatDate(m.joinDate)}</td>
+                  <td className="px-3 py-2">
+                    <Button variant="ghost" size="sm" onClick={() => onEdit(m)}>
+                      Edit
+                    </Button>
+                  </td>
                 </tr>
               ))
             )}
@@ -520,6 +616,185 @@ function MemberForm({ onSubmit, className }: MemberFormProps) {
 
       <Button type="submit" disabled={creating} className="w-full">
         {creating ? 'Creating…' : 'Create Member'}
+      </Button>
+    </form>
+  )
+}
+
+interface EditMemberFormProps {
+  member: Member
+  onSubmit: (form: any) => Promise<void>
+  className?: string
+}
+
+function EditMemberForm({ member, onSubmit, className }: EditMemberFormProps) {
+  const [form, setForm] = React.useState({
+    fullNameEnglish: member.fullNameEnglish || '',
+    fullNameBangla: member.fullNameBangla || '',
+    phoneNumber: member.phoneNumber || '',
+    sex: member.sex || '',
+    dateOfBirth: member.dateOfBirth || '',
+    nid: member.nid || '',
+    occupation: member.occupation || '',
+    institute: member.institute || '',
+    faculty: member.faculty || '',
+    address: member.address || '',
+    emergencyContact: member.emergencyContact || '',
+    emergencyPhone: member.emergencyPhone || '',
+    bloodGroup: member.bloodGroup || '',
+    fatherName: member.fatherName || '',
+    motherName: member.motherName || '',
+  })
+  const [updating, setUpdating] = React.useState(false)
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setUpdating(true)
+    try {
+      await onSubmit(form)
+    } finally {
+      setUpdating(false)
+    }
+  }
+
+  return (
+    <form onSubmit={handleSubmit} className={`space-y-5 ${className || ''}`}>
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+        <div className="space-y-2">
+          <Label htmlFor="edit_fullNameEnglish">Full name *</Label>
+          <Input
+            id="edit_fullNameEnglish"
+            required
+            value={form.fullNameEnglish}
+            onChange={(e) => setForm((p) => ({ ...p, fullNameEnglish: e.target.value }))}
+          />
+        </div>
+        <div className="space-y-2">
+          <Label htmlFor="edit_fullNameBangla">Bangla name</Label>
+          <Input
+            id="edit_fullNameBangla"
+            value={form.fullNameBangla}
+            onChange={(e) => setForm((p) => ({ ...p, fullNameBangla: e.target.value }))}
+          />
+        </div>
+        <div className="space-y-2">
+          <Label htmlFor="edit_phoneNumber">Phone *</Label>
+          <Input
+            id="edit_phoneNumber"
+            required
+            value={form.phoneNumber}
+            onChange={(e) => setForm((p) => ({ ...p, phoneNumber: e.target.value }))}
+          />
+        </div>
+        <div className="space-y-2">
+          <Label htmlFor="edit_sex">Sex *</Label>
+          <select
+            id="edit_sex"
+            required
+            value={form.sex}
+            onChange={(e) => setForm((p) => ({ ...p, sex: e.target.value }))}
+            className="mt-2 w-full rounded-md border bg-background px-3 py-2 text-sm"
+          >
+            <option value="">Select sex</option>
+            <option value="male">Male</option>
+            <option value="female">Female</option>
+            <option value="other">Other</option>
+          </select>
+        </div>
+        <div className="space-y-2">
+          <Label htmlFor="edit_dateOfBirth">Date of birth *</Label>
+          <Input
+            id="edit_dateOfBirth"
+            type="date"
+            required
+            value={form.dateOfBirth}
+            onChange={(e) => setForm((p) => ({ ...p, dateOfBirth: e.target.value }))}
+          />
+        </div>
+        <div className="space-y-2">
+          <Label htmlFor="edit_bloodGroup">Blood group</Label>
+          <Input
+            id="edit_bloodGroup"
+            value={form.bloodGroup}
+            onChange={(e) => setForm((p) => ({ ...p, bloodGroup: e.target.value }))}
+          />
+        </div>
+        <div className="space-y-2">
+          <Label htmlFor="edit_nid">Nid/ Birth certificate</Label>
+          <Input
+            id="edit_nid"
+            value={form.nid}
+            onChange={(e) => setForm((p) => ({ ...p, nid: e.target.value }))}
+          />
+        </div>
+        <div className="space-y-2">
+          <Label htmlFor="edit_occupation">Occupation</Label>
+          <Input
+            id="edit_occupation"
+            value={form.occupation}
+            onChange={(e) => setForm((p) => ({ ...p, occupation: e.target.value }))}
+          />
+        </div>
+        <div className="space-y-2">
+          <Label htmlFor="edit_institute">Institute / School</Label>
+          <Input
+            id="edit_institute"
+            value={form.institute}
+            onChange={(e) => setForm((p) => ({ ...p, institute: e.target.value }))}
+          />
+        </div>
+        <div className="space-y-2">
+          <Label htmlFor="edit_faculty">Faculty/ Class</Label>
+          <Input
+            id="edit_faculty"
+            value={form.faculty}
+            onChange={(e) => setForm((p) => ({ ...p, faculty: e.target.value }))}
+          />
+        </div>
+        <div className="space-y-2 sm:col-span-2">
+          <Label htmlFor="edit_address">Address</Label>
+          <Input
+            id="edit_address"
+            value={form.address}
+            onChange={(e) => setForm((p) => ({ ...p, address: e.target.value }))}
+          />
+        </div>
+        <div className="space-y-2">
+          <Label htmlFor="edit_fatherName">Father&apos;s name</Label>
+          <Input
+            id="edit_fatherName"
+            value={form.fatherName}
+            onChange={(e) => setForm((p) => ({ ...p, fatherName: e.target.value }))}
+          />
+        </div>
+        <div className="space-y-2">
+          <Label htmlFor="edit_motherName">Mother&apos;s name</Label>
+          <Input
+            id="edit_motherName"
+            value={form.motherName}
+            onChange={(e) => setForm((p) => ({ ...p, motherName: e.target.value }))}
+          />
+        </div>
+        <div className="space-y-2">
+          <Label htmlFor="edit_emergencyContact">Emergency contact</Label>
+          <Input
+            id="edit_emergencyContact"
+            value={form.emergencyContact}
+            onChange={(e) => setForm((p) => ({ ...p, emergencyContact: e.target.value }))}
+          />
+        </div>
+        <div className="space-y-2">
+          <Label htmlFor="edit_emergencyPhone">Emergency phone</Label>
+          <Input
+            id="edit_emergencyPhone"
+            value={form.emergencyPhone}
+            onChange={(e) => setForm((p) => ({ ...p, emergencyPhone: e.target.value }))}
+          />
+        </div>
+      </div>
+
+      <Button type="submit" disabled={updating} className="w-full">
+        {updating ? 'Updating…' : 'Update Member'}
       </Button>
     </form>
   )

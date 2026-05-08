@@ -3,6 +3,7 @@
  * 
  * GET  /api/partner-portal/members — List members for the partner
  * POST /api/partner-portal/members — Add a new member (simplified enrollment)
+ * PATCH /api/partner-portal/members — Update member details
  */
 import { NextResponse } from 'next/server'
 import { requirePartnerAdminUser } from '@/lib/partner-admin/auth'
@@ -135,13 +136,25 @@ export async function GET(request: Request) {
         fullNameEnglish: members.fullNameEnglish,
         fullNameBangla: members.fullNameBangla,
         phoneNumber: members.phoneNumber,
+        email: user.email,
+        sex: members.gender,
+        dateOfBirth: members.dateOfBirth,
+        nid: members.nid,
+        bloodGroup: members.bloodGroup,
+        fatherName: members.fatherName,
+        motherName: members.motherName,
+        occupation: members.profession,
+        institute: members.institute,
+        faculty: members.faculty,
+        address: members.presentAddress,
+        emergencyContact: members.emergencyContact,
+        emergencyPhone: members.emergencyPhone,
+        picture: members.picture,
         beltRank: members.beltRank,
         studentLevel: members.studentLevel,
         isActive: members.isActive,
         isProfileComplete: members.isProfileComplete,
         joinDate: members.joinDate,
-        picture: members.picture,
-        email: user.email,
         hasAccount: sql<boolean>`(${members.userId} is not null)`,
       })
       .from(members)
@@ -443,5 +456,181 @@ export async function POST(request: Request) {
   } catch (err) {
     console.error('[PartnerPortal] Members POST error:', err)
     return NextResponse.json({ error: 'Failed to create member' }, { status: 500 })
+  }
+}
+
+export async function PATCH(request: Request) {
+  const { user: partnerUser, error } = await requirePartnerAdminUser()
+  if (error) return error
+
+  try {
+    const body = await request.json()
+    const { memberId, ...updates } = body
+
+    // Validate memberId
+    if (!memberId) return NextResponse.json({ error: 'Member ID required' }, { status: 400 })
+
+    // Check member belongs to partner
+    const existingMember = await db
+      .select({ id: members.id })
+      .from(members)
+      .where(and(eq(members.id, memberId), eq(members.partnerId, partnerUser.partnerId)))
+      .limit(1)
+
+    if (!existingMember.length) return NextResponse.json({ error: 'Member not found' }, { status: 404 })
+
+    // Build update data - map field names to DB columns
+    const updateData: any = {}
+    const allowedFields = [
+      'fullNameEnglish',
+      'fullNameBangla',
+      'phoneNumber',
+      'sex',
+      'dateOfBirth',
+      'nid',
+      'bloodGroup',
+      'fatherName',
+      'motherName',
+      'occupation',
+      'institute',
+      'faculty',
+      'address',
+      'emergencyContact',
+      'emergencyPhone',
+    ]
+
+    const newPassword = typeof updates.newPassword === 'string' ? updates.newPassword.trim() : ''
+
+    for (const field of allowedFields) {
+      if (field in updates) {
+        // Map field names to DB column names
+        if (field === 'sex') {
+          updateData.gender = updates[field]
+        } else if (field === 'occupation') {
+          updateData.profession = updates[field]
+        } else if (field === 'address') {
+          updateData.presentAddress = updates[field]
+        } else {
+          updateData[field] = updates[field]
+        }
+      }
+    }
+
+    // Always update the updatedAt timestamp
+    updateData.updatedAt = new Date()
+
+    const memberUser = await db
+      .select({
+        email: user.email,
+        supabaseUserId: user.supabaseUserId,
+      })
+      .from(members)
+      .leftJoin(user, eq(members.userId, user.id))
+      .where(eq(members.id, memberId))
+      .limit(1)
+
+    const targetEmail = memberUser[0]?.email || ''
+    const targetSupabaseUserId = memberUser[0]?.supabaseUserId || null
+
+    if (newPassword) {
+      if (newPassword.length < 6) {
+        return NextResponse.json({ error: 'Password must be at least 6 characters' }, { status: 400 })
+      }
+
+      if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.SUPABASE_SERVICE_ROLE_KEY) {
+        return NextResponse.json(
+          { error: 'Auth provisioning is not configured on the server' },
+          { status: 500 }
+        )
+      }
+
+      const supabaseAdmin = createSupabaseAdminClient(
+        process.env.NEXT_PUBLIC_SUPABASE_URL,
+        process.env.SUPABASE_SERVICE_ROLE_KEY,
+        {
+          auth: {
+            autoRefreshToken: false,
+            persistSession: false,
+          },
+        }
+      )
+
+      if (targetSupabaseUserId) {
+        const { error: updatePasswordError } = await supabaseAdmin.auth.admin.updateUserById(
+          targetSupabaseUserId,
+          {
+            password: newPassword,
+          }
+        )
+
+        if (updatePasswordError) {
+          console.error('[PartnerPortal] Supabase password update error:', updatePasswordError)
+          return NextResponse.json(
+            { error: 'Failed to update member password' },
+            { status: 500 }
+          )
+        }
+      }
+
+      if (targetEmail) {
+        const supabaseClient = createSupabaseClient(
+          process.env.NEXT_PUBLIC_SUPABASE_URL,
+          process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || ''
+        )
+
+        const { error: resetErr } = await supabaseClient.auth.resetPasswordForEmail(targetEmail, {
+          redirectTo: buildResetRedirectUrl(request),
+        })
+
+        if (resetErr) {
+          console.error('[PartnerPortal] Reset email send failed after password change:', resetErr)
+        }
+      }
+    }
+
+    // Update member record
+    const [updated] = await db
+      .update(members)
+      .set(updateData)
+      .where(eq(members.id, memberId))
+      .returning()
+
+    // Fetch full member data with all fields to return
+    const [fullMember] = await db
+      .select({
+        id: members.id,
+        memberNumber: members.memberNumber,
+        fullNameEnglish: members.fullNameEnglish,
+        fullNameBangla: members.fullNameBangla,
+        phoneNumber: members.phoneNumber,
+        email: user.email,
+        sex: members.gender,
+        dateOfBirth: members.dateOfBirth,
+        nid: members.nid,
+        bloodGroup: members.bloodGroup,
+        fatherName: members.fatherName,
+        motherName: members.motherName,
+        occupation: members.profession,
+        institute: members.institute,
+        faculty: members.faculty,
+        address: members.presentAddress,
+        emergencyContact: members.emergencyContact,
+        emergencyPhone: members.emergencyPhone,
+        picture: members.picture,
+        beltRank: members.beltRank,
+        studentLevel: members.studentLevel,
+        isActive: members.isActive,
+        isProfileComplete: members.isProfileComplete,
+        joinDate: members.joinDate,
+        hasAccount: sql<boolean>`(${members.userId} is not null)`,
+      })
+      .from(members)
+      .leftJoin(user, eq(members.userId, user.id))
+      .where(eq(members.id, memberId))
+
+    return NextResponse.json({ member: fullMember }, { status: 200 })
+  } catch (err) {
+    console.error('[PartnerPortal] Members PATCH error:', err)
+    return NextResponse.json({ error: 'Failed to update member' }, { status: 500 })
   }
 }
