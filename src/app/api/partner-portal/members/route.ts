@@ -466,6 +466,7 @@ export async function PATCH(request: Request) {
   try {
     const body = await request.json()
     const { memberId, ...updates } = body
+    console.log('[PartnerPortal] PATCH Update received:', { memberId, updates })
 
     // Validate memberId
     if (!memberId) return NextResponse.json({ error: 'Member ID required' }, { status: 400 })
@@ -508,7 +509,8 @@ export async function PATCH(request: Request) {
         if (field === 'sex') {
           updateData.gender = updates[field]
         } else if (field === 'beltRank') {
-          updateData.beltRank = updates[field]
+          // Handle beltRank - can be null or a valid value
+          updateData.beltRank = updates[field] || 'white'  // Default to white if not provided
         } else if (field === 'occupation') {
           updateData.profession = updates[field]
         } else if (field === 'address') {
@@ -524,6 +526,7 @@ export async function PATCH(request: Request) {
 
     // Always update the updatedAt timestamp
     updateData.updatedAt = new Date()
+    console.log('[PartnerPortal] PATCH updateData:', updateData)
 
     const memberUser = await db
       .select({
@@ -600,6 +603,8 @@ export async function PATCH(request: Request) {
       .set(updateData)
       .where(eq(members.id, memberId))
       .returning()
+    
+    console.log('[PartnerPortal] PATCH Updated record:', updated)
 
     // Fetch full member data with all fields to return
     const [fullMember] = await db
@@ -634,6 +639,7 @@ export async function PATCH(request: Request) {
       .leftJoin(user, eq(members.userId, user.id))
       .where(eq(members.id, memberId))
 
+    console.log('[PartnerPortal] PATCH Full member data:', fullMember)
     return NextResponse.json({ member: fullMember }, { status: 200 })
   } catch (err) {
     console.error('[PartnerPortal] Members PATCH error:', err)
