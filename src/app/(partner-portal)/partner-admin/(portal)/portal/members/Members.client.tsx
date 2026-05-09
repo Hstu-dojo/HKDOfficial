@@ -586,13 +586,20 @@ interface EditMemberFormProps {
 }
 
 function EditMemberForm({ member, onSubmit, className }: EditMemberFormProps) {
+  // Format dateOfBirth for HTML date input (requires YYYY-MM-DD format)
+  const formatDateForInput = (dateStr: string | null): string => {
+    if (!dateStr) return ''
+    // Extract just the date part (YYYY-MM-DD) from ISO timestamp
+    return dateStr.split('T')[0] || ''
+  }
+
   const [form, setForm] = React.useState({
     fullNameEnglish: member.fullNameEnglish || '',
     fullNameBangla: member.fullNameBangla || '',
     phoneNumber: member.phoneNumber || '',
     beltRank: member.beltRank || '',
     sex: member.sex || '',
-    dateOfBirth: member.dateOfBirth || '',
+    dateOfBirth: formatDateForInput(member.dateOfBirth),
     nid: member.nid || '',
     occupation: member.occupation || '',
     institute: member.institute || '',
