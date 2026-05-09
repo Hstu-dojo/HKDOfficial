@@ -4,7 +4,7 @@ import SectionBranches from "@/components/sections/section-branches";
 import type { BranchData } from "@/components/sections/section-branches";
 import { db } from "@/lib/connect-db";
 import { partners, partnerPageSettings } from "@/db/schemas/partner";
-import { members, courses } from "@/db/schema";
+import { profiles, courses } from "@/db/schemas/karate/members";
 import { eq, asc, and, count, inArray } from "drizzle-orm";
 
 // Pre-build locale pages at build time so first visit from external links works instantly
@@ -42,12 +42,12 @@ async function getBranches(): Promise<BranchData[]> {
     const [memberCounts, courseCounts] = await Promise.all([
       partnerIds.length > 0
         ? db
-            .select({ partnerId: members.partnerId, count: count() })
-            .from(members)
+            .select({ partnerId: profiles.partnerId, count: count() })
+            .from(profiles)
             .where(
               and(
-                eq(members.isActive, true),
-                inArray(members.partnerId, partnerIds)
+                eq(profiles.isActive, true),
+                inArray(profiles.partnerId, partnerIds)
               )
             )
             .groupBy(members.partnerId)
@@ -77,7 +77,9 @@ async function getBranches(): Promise<BranchData[]> {
   }
 }
 
-export default async function OrgLandingPage() {
+export default async function OrgLandingPage({ params }: { params: Promise<{ locale: string }> }) {
+  // Params are handled by the layout, but we need to accept them here
+  // to avoid Next.js routing errors with dynamic segments
   const branches = await getBranches();
 
   return (

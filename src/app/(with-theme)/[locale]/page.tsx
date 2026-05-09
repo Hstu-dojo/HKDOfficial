@@ -17,7 +17,7 @@ import SectionBranches from "@/components/sections/section-branches";
 import type { BranchData } from "@/components/sections/section-branches";
 import { db } from "@/lib/connect-db";
 import { partners, partnerPageSettings } from "@/db/schemas/partner";
-import { members, courses } from "@/db/schema";
+import { profiles, courses } from "@/db/schemas/karate/members";
 import { eq, asc, and, count, inArray } from "drizzle-orm";
 // import SectionIconBoxesLayout2 from "@/components/sections/section-icon-boxes-layout-2";
 
@@ -108,10 +108,10 @@ async function getBranches(): Promise<BranchData[]> {
     const [memberCounts, courseCounts] = await Promise.all([
       partnerIds.length > 0
         ? db
-            .select({ partnerId: members.partnerId, count: count() })
-            .from(members)
-            .where(and(eq(members.isActive, true), inArray(members.partnerId, partnerIds)))
-            .groupBy(members.partnerId)
+            .select({ partnerId: profiles.partnerId, count: count() })
+            .from(profiles)
+            .where(and(eq(profiles.isActive, true), inArray(profiles.partnerId, partnerIds)))
+            .groupBy(profiles.partnerId)
         : Promise.resolve([]),
       partnerIds.length > 0
         ? db
@@ -136,7 +136,9 @@ async function getBranches(): Promise<BranchData[]> {
   }
 }
 
-export default async function Home() {
+export default async function Home({ params }: { params: Promise<{ locale: string }> }) {
+  // Params are handled by the layout, but we need to accept them here
+  // to avoid Next.js routing errors with dynamic segments
   const [heroImages, branches] = await Promise.all([getHeroImages(), getBranches()]);
 
   return (

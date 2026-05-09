@@ -513,6 +513,9 @@ export async function PATCH(request: Request) {
           updateData.profession = updates[field]
         } else if (field === 'address') {
           updateData.presentAddress = updates[field]
+        } else if (field === 'dateOfBirth') {
+          // Convert date string to Date object for timestamp field
+          updateData.dateOfBirth = updates[field] ? new Date(updates[field]) : null
         } else {
           updateData[field] = updates[field]
         }
