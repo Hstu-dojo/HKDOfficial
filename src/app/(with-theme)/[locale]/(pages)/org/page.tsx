@@ -50,7 +50,7 @@ async function getBranches(): Promise<BranchData[]> {
                 inArray(profiles.partnerId, partnerIds)
               )
             )
-            .groupBy(members.partnerId)
+            .groupBy(profiles.partnerId)
         : Promise.resolve([]),
       partnerIds.length > 0
         ? db
