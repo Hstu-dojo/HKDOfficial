@@ -165,7 +165,6 @@ export default function Members() {
         fatherName: form.fatherName.trim() || null,
         motherName: form.motherName.trim() || null,
       }
-      console.log('Submitting member update:', payload)
       const data = await apiJSON<{ member: Member }>(
         '/api/partner-portal/members',
         {
@@ -173,7 +172,6 @@ export default function Members() {
           body: JSON.stringify(payload),
         }
       )
-      console.log('Member updated response:', data)
       setMessage(`Member updated: ${data.member.memberNumber}`)
       setEditOpen(false)
       setEditingMember(null)
@@ -659,10 +657,7 @@ function EditMemberForm({ member, onSubmit, className }: EditMemberFormProps) {
           <select
             id="edit_beltRank"
             value={form.beltRank}
-            onChange={(e) => {
-              console.log('Belt rank changed to:', e.target.value)
-              setForm((p) => ({ ...p, beltRank: e.target.value }))
-            }}
+            onChange={(e) => setForm((p) => ({ ...p, beltRank: e.target.value }))}
             className="mt-2 w-full rounded-md border bg-background px-3 py-2 text-sm"
           >
             <option value="">Select belt rank</option>
