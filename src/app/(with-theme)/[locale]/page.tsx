@@ -17,7 +17,7 @@ import SectionBranches from "@/components/sections/section-branches";
 import type { BranchData } from "@/components/sections/section-branches";
 import { db } from "@/lib/connect-db";
 import { partners, partnerPageSettings } from "@/db/schemas/partner";
-import { profiles, courses } from "@/db/schemas/karate/members";
+import { profiles, courses } from "@/db/schemas/karate";
 import { eq, asc, and, count, inArray } from "drizzle-orm";
 // import SectionIconBoxesLayout2 from "@/components/sections/section-icon-boxes-layout-2";
 

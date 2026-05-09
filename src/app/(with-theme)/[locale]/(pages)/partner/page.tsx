@@ -4,7 +4,7 @@ import SectionBranches from "@/components/sections/section-branches";
 import type { BranchData } from "@/components/sections/section-branches";
 import { db } from "@/lib/connect-db";
 import { partners, partnerPageSettings } from "@/db/schemas/partner";
-import { profiles, courses } from "@/db/schemas/karate/members";
+import { profiles, courses } from "@/db/schemas/karate";
 import { eq, asc, and, count, inArray } from "drizzle-orm";
 
 // Pre-build locale pages at build time so first visit from external links works instantly
