@@ -14,6 +14,8 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog'
+import { AcademicCapIcon } from '@heroicons/react/24/outline'
+import DirectEnrollmentModal from '@/components/partner/DirectEnrollmentModal'
 
 type Member = {
   id: string
@@ -72,6 +74,8 @@ export default function Members() {
   const [open, setOpen] = React.useState(false)
   const [editOpen, setEditOpen] = React.useState(false)
   const [editingMember, setEditingMember] = React.useState<Member | null>(null)
+  const [enrollOpen, setEnrollOpen] = React.useState(false)
+  const [selectedMemberForEnroll, setSelectedMemberForEnroll] = React.useState<Member | null>(null)
 
   const fetchMembers = React.useCallback(async () => {
     setLoading(true)
@@ -311,9 +315,22 @@ export default function Members() {
                   <td className="px-3 py-2">{m.isActive ? 'Yes' : 'No'}</td>
                   <td className="px-3 py-2">{formatDate(m.joinDate)}</td>
                   <td className="px-3 py-2">
-                    <Button variant="ghost" size="sm" onClick={() => onEdit(m)}>
-                      Edit
-                    </Button>
+                    <div className="flex items-center gap-2">
+                      <Button variant="ghost" size="sm" onClick={() => onEdit(m)}>
+                        Edit
+                      </Button>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="flex items-center gap-1 text-xs"
+                        onClick={() => {
+                          setSelectedMemberForEnroll(m)
+                          setEnrollOpen(true)
+                        }}
+                      >
+                        <AcademicCapIcon className="h-4 w-4" /> Enroll
+                      </Button>
+                    </div>
                   </td>
                 </tr>
               ))
@@ -343,6 +360,21 @@ export default function Members() {
           </Button>
         </div>
       </div>
+
+      {selectedMemberForEnroll && (
+        <DirectEnrollmentModal
+          isOpen={enrollOpen}
+          onClose={() => {
+            setEnrollOpen(false)
+            setSelectedMemberForEnroll(null)
+          }}
+          member={selectedMemberForEnroll}
+          onSuccess={() => {
+            setMessage('Member enrolled successfully!')
+            fetchMembers()
+          }}
+        />
+      )}
     </div>
   )
 }

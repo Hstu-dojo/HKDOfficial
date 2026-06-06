@@ -14,6 +14,8 @@ import {
   ArrowDownTrayIcon,
   TrashIcon,
   PencilSquareIcon,
+  CheckIcon,
+  XMarkIcon,
 } from "@heroicons/react/24/outline";
 import { toast } from "sonner";
 import ApplicationDetailModal from "./ApplicationDetailModal";
@@ -773,18 +775,20 @@ export default function EnrollmentsManagement() {
                             {app.application.status === "payment_submitted" && canVerify && (
                               <button
                                 onClick={() => handleAction(app.application.id, "verify_payment")}
-                                className="rounded bg-blue-100 px-2.5 py-1 text-xs font-semibold text-blue-700 hover:bg-blue-200 dark:bg-blue-900/30 dark:text-blue-300"
+                                className="rounded p-1 text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors"
+                                title="Verify Payment"
                               >
-                                Verify
+                                <CheckIcon className="h-5 w-5" />
                               </button>
                             )}
                             {app.application.status === "payment_verified" && canApprove && (
                               <>
                                 <button
                                   onClick={() => handleAction(app.application.id, "approve")}
-                                  className="bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300 hover:bg-green-200 rounded px-2.5 py-1 text-xs font-semibold"
+                                  className="rounded p-1 text-green-600 hover:text-green-800 dark:text-green-400 dark:hover:text-green-300 hover:bg-green-50 dark:hover:bg-green-900/20 transition-colors"
+                                  title="Approve Enrollment"
                                 >
-                                  Approve
+                                  <CheckIcon className="h-5 w-5" />
                                 </button>
                                 <button
                                   onClick={() => {
@@ -793,9 +797,10 @@ export default function EnrollmentsManagement() {
                                       handleAction(app.application.id, "reject", { rejectionReason: reason });
                                     }
                                   }}
-                                  className="rounded bg-red-100 px-2.5 py-1 text-xs font-semibold text-red-700 hover:bg-red-200 dark:bg-red-900/30 dark:text-red-300"
+                                  className="rounded p-1 text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-300 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors"
+                                  title="Reject Application"
                                 >
-                                  Reject
+                                  <XMarkIcon className="h-5 w-5" />
                                 </button>
                               </>
                             )}

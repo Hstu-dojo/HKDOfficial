@@ -7,6 +7,13 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import EnrollmentFormModal from '@/components/admin/enrollments/EnrollmentFormModal'
+import {
+  EyeIcon,
+  CheckIcon,
+  XMarkIcon,
+  TrashIcon,
+  ArrowTopRightOnSquareIcon,
+} from '@heroicons/react/24/outline'
 
 type Pagination = {
   page: number
@@ -266,10 +273,8 @@ function ApplicationsTab({
                   </td>
                   <td className="px-3 py-2">{fmtDate(r.createdAt)}</td>
                   <td className="px-3 py-2">
-                    <div className="flex flex-wrap gap-2 items-center">
-                      <Button
-                        size="sm"
-                        variant="outline"
+                    <div className="flex gap-1.5 items-center justify-end">
+                      <button
                         onClick={() => onViewForm({
                           applicationId: r.id,
                           courseId: r.courseId,
@@ -284,31 +289,58 @@ function ApplicationsTab({
                             currency: r.currency,
                           }
                         })}
+                        className="p-1 text-gray-500 hover:text-gray-750 dark:text-gray-400 dark:hover:text-gray-200 rounded hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+                        title="View & Edit Form"
                       >
-                        View Form
-                      </Button>
-                      {r.status === 'payment_submitted' ? (
-                        <Button size="sm" onClick={() => act(r.id, 'verify_payment')}>Verify</Button>
-                      ) : null}
-                      {r.status === 'payment_verified' ? (
-                        <Button size="sm" onClick={() => act(r.id, 'approve')}>Approve</Button>
-                      ) : null}
-                      {r.status !== 'approved' && r.status !== 'rejected' ? (
-                        <Button size="sm" variant="destructive" onClick={() => act(r.id, 'reject')}>Reject</Button>
-                      ) : null}
-                      {r.status !== 'approved' && r.status !== 'cancelled' ? (
-                        <Button size="sm" variant="outline" onClick={() => act(r.id, 'cancel')}>Cancel</Button>
-                      ) : null}
-                      {r.paymentProofUrl ? (
+                        <EyeIcon className="h-5 w-5" />
+                      </button>
+                      {r.status === 'payment_submitted' && (
+                        <button
+                          onClick={() => act(r.id, 'verify_payment')}
+                          className="p-1 text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 rounded hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors"
+                          title="Verify Payment"
+                        >
+                          <CheckIcon className="h-5 w-5" />
+                        </button>
+                      )}
+                      {r.status === 'payment_verified' && (
+                        <button
+                          onClick={() => act(r.id, 'approve')}
+                          className="p-1 text-green-600 hover:text-green-800 dark:text-green-400 dark:hover:text-green-300 rounded hover:bg-green-50 dark:hover:bg-green-900/20 transition-colors"
+                          title="Approve Enrollment"
+                        >
+                          <CheckIcon className="h-5 w-5" />
+                        </button>
+                      )}
+                      {r.status !== 'approved' && r.status !== 'rejected' && (
+                        <button
+                          onClick={() => act(r.id, 'reject')}
+                          className="p-1 text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-300 rounded hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors"
+                          title="Reject Application"
+                        >
+                          <XMarkIcon className="h-5 w-5" />
+                        </button>
+                      )}
+                      {r.status !== 'approved' && r.status !== 'cancelled' && (
+                        <button
+                          onClick={() => act(r.id, 'cancel')}
+                          className="p-1 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 rounded hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+                          title="Cancel Application"
+                        >
+                          <XMarkIcon className="h-5 w-5" />
+                        </button>
+                      )}
+                      {r.paymentProofUrl && (
                         <a
-                          className="text-xs underline text-muted-foreground"
                           href={r.paymentProofUrl}
                           target="_blank"
                           rel="noreferrer"
+                          className="p-1 text-gray-500 hover:text-gray-755 dark:text-gray-400 dark:hover:text-gray-200 rounded hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+                          title="View Payment Proof"
                         >
-                          proof
+                          <ArrowTopRightOnSquareIcon className="h-5 w-5" />
                         </a>
-                      ) : null}
+                      )}
                     </div>
                   </td>
                 </tr>
@@ -449,11 +481,9 @@ function EnrollmentsTab({
                   <td className="px-3 py-2">{r.isActive ? 'active' : r.droppedAt ? 'dropped' : r.completedAt ? 'completed' : 'inactive'}</td>
                   <td className="px-3 py-2">{r.transactionId || '—'}</td>
                   <td className="px-3 py-2">
-                    <div className="flex flex-wrap gap-2 items-center">
+                    <div className="flex gap-1.5 items-center justify-end">
                       {r.applicationId ? (
-                        <Button
-                          size="sm"
-                          variant="outline"
+                        <button
                           onClick={() => onViewForm({
                             applicationId: r.applicationId!,
                             courseId: r.courseId,
@@ -467,14 +497,22 @@ function EnrollmentsTab({
                               currency: r.currency,
                             }
                           })}
+                          className="p-1 text-gray-500 hover:text-gray-750 dark:text-gray-400 dark:hover:text-gray-200 rounded hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+                          title="View & Edit Form"
                         >
-                          View Form
-                        </Button>
+                          <EyeIcon className="h-5 w-5" />
+                        </button>
                       ) : null}
                       {r.isActive ? (
-                        <Button size="sm" variant="destructive" onClick={() => drop(r.id)}>Drop</Button>
+                        <button
+                          onClick={() => drop(r.id)}
+                          className="p-1 text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-300 rounded hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors"
+                          title="Drop Student"
+                        >
+                          <TrashIcon className="h-5 w-5" />
+                        </button>
                       ) : (
-                        <span className="text-xs text-muted-foreground">—</span>
+                        <span className="text-xs text-muted-foreground px-2">—</span>
                       )}
                     </div>
                   </td>

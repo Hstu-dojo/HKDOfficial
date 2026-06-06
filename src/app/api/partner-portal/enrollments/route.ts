@@ -10,6 +10,7 @@ import { courseEnrollments } from '@/db/schemas/karate/enrollments'
 import { enrollmentApplications } from '@/db/schemas/karate/enrollments'
 import { members } from '@/db/schemas/karate/members'
 import { courses } from '@/db/schemas/karate/courses'
+import { monthlyFees } from '@/db/schemas/karate/monthly-payments'
 import { eq, and, desc, count, sql } from 'drizzle-orm'
 
 export async function GET(request: Request) {
@@ -194,5 +195,151 @@ export async function PATCH(request: Request) {
   } catch (err) {
     console.error('[PartnerPortal] Enrollments PATCH error:', err)
     return NextResponse.json({ error: 'Failed to update enrollment' }, { status: 500 })
+  }
+}
+
+export async function POST(request: Request) {
+  const { user: partnerUser, error } = await requirePartnerAdminUser()
+  if (error) return error
+
+  try {
+    const body = await request.json()
+    const { memberId, courseId, studentInfo, paymentMethod, transactionId, paymentProofUrl } = body as {
+      memberId?: string
+      courseId?: string
+      studentInfo?: any
+      paymentMethod?: string
+      transactionId?: string
+      paymentProofUrl?: string
+    }
+
+    if (!memberId || !courseId || !studentInfo || !paymentMethod) {
+      return NextResponse.json(
+        { error: 'memberId, courseId, studentInfo, and paymentMethod are required' },
+        { status: 400 }
+      )
+    }
+
+    // 1. Verify course ownership
+    const [course] = await db
+      .select()
+      .from(courses)
+      .where(and(eq(courses.id, courseId), eq(courses.partnerId, partnerUser.partnerId)))
+      .limit(1)
+
+    if (!course) {
+      return NextResponse.json({ error: 'Course not found' }, { status: 404 })
+    }
+
+    // 2. Verify member ownership
+    const [member] = await db
+      .select()
+      .from(members)
+      .where(and(eq(members.id, memberId), eq(members.partnerId, partnerUser.partnerId)))
+      .limit(1)
+
+    if (!member) {
+      return NextResponse.json({ error: 'Member not found' }, { status: 404 })
+    }
+
+    // 3. Prevent duplicate enrollment
+    const [existingEnrollment] = await db
+      .select()
+      .from(courseEnrollments)
+      .where(
+        and(
+          eq(courseEnrollments.profileId, memberId),
+          eq(courseEnrollments.courseId, courseId),
+          eq(courseEnrollments.isActive, true)
+        )
+      )
+      .limit(1)
+
+    if (existingEnrollment) {
+      return NextResponse.json({ error: 'Member is already active in this course' }, { status: 400 })
+    }
+
+    // 4. Generate application number
+    const applicationNumber = `APP-DIR-${new Date().getFullYear()}${String(new Date().getMonth() + 1).padStart(2, '0')}-${Math.random().toString(36).substring(2, 8).toUpperCase()}`
+
+    // 5. Create approved enrollment application
+    const [newApp] = await db
+      .insert(enrollmentApplications)
+      .values({
+        applicationNumber,
+        userId: member.userId,
+        courseId,
+        studentInfo,
+        admissionFeeAmount: course.admissionFee,
+        currency: course.currency,
+        status: 'approved',
+        paymentMethod,
+        transactionId: transactionId || null,
+        paymentProofUrl: paymentProofUrl || null,
+        paymentVerifiedAt: new Date(),
+        paymentVerificationNotes: `Enrolled directly by partner admin: ${partnerUser.name}`,
+        reviewedAt: new Date(),
+        reviewedById: partnerUser.id || null,
+        profileId: memberId,
+        updatedAt: new Date(),
+      } as any)
+      .returning({ id: enrollmentApplications.id })
+
+    // 6. Create active course enrollment
+    const startDate = new Date()
+    const expectedEndDate = new Date(startDate)
+    expectedEndDate.setMonth(expectedEndDate.getMonth() + Number(course.duration || 0))
+
+    const [enrollment] = await db
+      .insert(courseEnrollments)
+      .values({
+        courseId,
+        profileId: memberId,
+        applicationId: newApp.id,
+        startDate,
+        expectedEndDate: Number(course.duration || 0) > 0 ? expectedEndDate : null,
+        monthlyFee: course.monthlyFee,
+        currency: course.currency,
+        isActive: true,
+        updatedAt: new Date(),
+      } as any)
+      .returning({ id: courseEnrollments.id })
+
+    // 7. Create first month's fee as pending
+    const billingMonth = `${startDate.getFullYear()}-${String(startDate.getMonth() + 1).padStart(2, '0')}`
+    const dueDate = new Date(startDate.getFullYear(), startDate.getMonth() + 1, 10)
+
+    try {
+      await db.insert(monthlyFees).values({
+        enrollmentId: enrollment.id,
+        profileId: memberId,
+        billingMonth,
+        billingYear: startDate.getFullYear(),
+        amount: course.monthlyFee,
+        currency: course.currency,
+        dueDate,
+        status: 'pending',
+      } as any)
+    } catch (feeErr) {
+      console.error('[PartnerPortal] DirectEnrollment: failed to create monthly fee:', feeErr)
+    }
+
+    // 8. Increment student count
+    await db
+      .update(courses)
+      .set({
+        currentStudents: sql`${courses.currentStudents} + 1`,
+        updatedAt: new Date(),
+      })
+      .where(eq(courses.id, courseId))
+
+    return NextResponse.json({
+      success: true,
+      enrollmentId: enrollment.id,
+      applicationId: newApp.id,
+    })
+  } catch (err) {
+    console.error('[PartnerPortal] DirectEnrollment POST error:', err)
+    return NextResponse.json({ error: 'Failed to process enrollment' }, { status: 500 })
   }
 }
