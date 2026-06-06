@@ -162,6 +162,13 @@
       "when": 1777886945280,
       "tag": "0022_lazy_warpath",
       "breakpoints": true
+    },
+    {
+      "idx": 23,
+      "version": "7",
+      "when": 1780762796828,
+      "tag": "0023_wise_xavin",
+      "breakpoints": true
     }
   ]
 }
