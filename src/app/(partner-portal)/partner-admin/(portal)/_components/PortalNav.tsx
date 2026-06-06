@@ -65,41 +65,56 @@ const groups = [
   },
 ]
 
+import {
+  SidebarGroup,
+  SidebarGroupLabel,
+  SidebarGroupContent,
+  SidebarMenu,
+  SidebarMenuItem,
+  SidebarMenuButton,
+} from "@/components/ui/sidebar"
+
 export default function PortalNav({ currentPath, onClick }: { currentPath: string; onClick?: () => void }) {
   return (
-    <div className="space-y-6">
+    <div className="space-y-4">
       {groups.map((group) => (
-        <div key={group.title} className="space-y-2">
-          <h3 className="px-3 text-[10px] font-bold uppercase tracking-wider text-muted-foreground/60">
+        <SidebarGroup key={group.title} className="p-0">
+          <SidebarGroupLabel className="px-3 text-[10px] font-bold uppercase tracking-wider text-muted-foreground/60 select-none">
             {group.title}
-          </h3>
-          <nav className="space-y-1">
-            {group.items.map((item) => {
-              const active = currentPath === item.href
-              const IconComponent = iconMap[item.icon as keyof typeof iconMap]
-              return (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  onClick={onClick}
-                  className={cn(
-                    'flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition-all duration-200 hover:translate-x-0.5',
-                    active
-                      ? 'bg-primary/10 text-primary border-l-2 border-primary pl-2.5 font-semibold'
-                      : 'text-muted-foreground hover:bg-accent/50 hover:text-foreground'
-                  )}
-                >
-                  {IconComponent && (
-                    <IconComponent
-                      className={cn('h-4 w-4 shrink-0', active ? 'text-primary' : 'text-muted-foreground')}
-                    />
-                  )}
-                  <span>{item.label}</span>
-                </Link>
-              )
-            })}
-          </nav>
-        </div>
+          </SidebarGroupLabel>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              {group.items.map((item) => {
+                const active = currentPath === item.href
+                const IconComponent = iconMap[item.icon as keyof typeof iconMap]
+                return (
+                  <SidebarMenuItem key={item.href}>
+                    <SidebarMenuButton
+                      asChild
+                      isActive={active}
+                      tooltip={item.label}
+                      className={cn(
+                        'transition-all duration-200 hover:translate-x-0.5 w-full flex items-center gap-3',
+                        active
+                          ? 'bg-primary/10 text-primary border-l-2 border-primary pl-2.5 font-semibold'
+                          : 'text-muted-foreground hover:bg-accent/50 hover:text-foreground'
+                      )}
+                    >
+                      <Link href={item.href} onClick={onClick}>
+                        {IconComponent && (
+                          <IconComponent
+                            className={cn('h-4 w-4 shrink-0', active ? 'text-primary' : 'text-muted-foreground')}
+                          />
+                        )}
+                        <span>{item.label}</span>
+                      </Link>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                )
+              })}
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
       ))}
     </div>
   )
