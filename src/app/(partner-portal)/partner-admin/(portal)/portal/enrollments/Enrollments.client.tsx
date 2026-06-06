@@ -7,13 +7,7 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import EnrollmentFormModal from '@/components/admin/enrollments/EnrollmentFormModal'
-import {
-  EyeIcon,
-  CheckIcon,
-  XMarkIcon,
-  TrashIcon,
-  ArrowTopRightOnSquareIcon,
-} from '@heroicons/react/24/outline'
+import { Eye, CheckCircle2, XCircle, Ban, ExternalLink, Search, Trash2 } from 'lucide-react'
 
 type Pagination = {
   page: number
@@ -95,10 +89,12 @@ export default function Enrollments() {
   }
 
   return (
-    <div className="space-y-4">
-      <div>
-        <h1 className="text-2xl font-bold text-foreground">Enrollments</h1>
-        <p className="text-sm text-muted-foreground">Review applications and manage active enrollments.</p>
+    <div className="space-y-6">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <div>
+          <h1 className="text-3xl font-bold tracking-tight text-foreground">Enrollments</h1>
+          <p className="text-sm text-muted-foreground mt-1">Review applications and manage active enrollments.</p>
+        </div>
       </div>
 
       <Tabs defaultValue="applications">
@@ -197,9 +193,9 @@ function ApplicationsTab({
   }
 
   return (
-    <div className="space-y-3">
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-end">
-        <div className="w-full sm:w-56">
+    <div className="space-y-4">
+      <div className="rounded-xl border bg-card p-4 shadow-sm flex flex-col gap-4 sm:flex-row sm:items-end">
+        <div className="w-full sm:w-56 space-y-1.5">
           <Label htmlFor="app_status">Status</Label>
           <select
             id="app_status"
@@ -208,9 +204,9 @@ function ApplicationsTab({
               setPage(1)
               setStatus(e.target.value)
             }}
-            className="mt-2 w-full rounded-md border bg-background px-3 py-2 text-sm"
+            className="flex h-10 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
           >
-            <option value="all">All</option>
+            <option value="all">All Statuses</option>
             <option value="payment_submitted">Payment submitted</option>
             <option value="payment_verified">Payment verified</option>
             <option value="approved">Approved</option>
@@ -218,28 +214,38 @@ function ApplicationsTab({
             <option value="cancelled">Cancelled</option>
           </select>
         </div>
-        <div className="flex-1">
+        <div className="flex-1 space-y-1.5">
           <Label htmlFor="app_q">Search</Label>
-          <Input id="app_q" value={q} onChange={(e) => setQ(e.target.value)} placeholder="Course, application #, txn…" />
+          <div className="relative">
+            <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+            <Input
+              id="app_q"
+              value={q}
+              onChange={(e) => setQ(e.target.value)}
+              placeholder="Course, application #, txn…"
+              className="pl-9"
+            />
+          </div>
         </div>
-        <Button variant="secondary" onClick={() => fetchRows()}>Apply</Button>
+        <Button variant="secondary" className="w-full sm:w-auto" onClick={() => fetchRows()}>Apply Filter</Button>
       </div>
 
-      {message ? <p className="text-sm text-primary">{message}</p> : null}
-      {error ? <p className="text-sm text-destructive">{error}</p> : null}
+      {message ? <div className="rounded-md bg-primary/10 px-4 py-3 text-sm text-primary font-medium">{message}</div> : null}
+      {error ? <div className="rounded-md bg-destructive/10 px-4 py-3 text-sm text-destructive font-medium">{error}</div> : null}
 
-      <div className="overflow-x-auto rounded-md border">
-        <table className="w-full text-left text-sm">
-          <thead className="bg-muted/50">
+      <div className="rounded-xl border bg-card text-card-foreground shadow-sm overflow-hidden">
+        <div className="overflow-x-auto">
+          <table className="w-full text-left text-sm whitespace-nowrap">
+          <thead className="border-b bg-muted/50">
             <tr className="text-muted-foreground">
-              <th className="px-3 py-2">Application #</th>
-              <th className="px-3 py-2">Student Details</th>
-              <th className="px-3 py-2">Course</th>
-              <th className="px-3 py-2">Fee</th>
-              <th className="px-3 py-2">Status</th>
-              <th className="px-3 py-2">Payment Info</th>
-              <th className="px-3 py-2">Created</th>
-              <th className="px-3 py-2">Actions</th>
+              <th className="px-4 py-3 font-medium">Application #</th>
+              <th className="px-4 py-3 font-medium">Student Details</th>
+              <th className="px-4 py-3 font-medium">Course</th>
+              <th className="px-4 py-3 font-medium">Fee</th>
+              <th className="px-4 py-3 font-medium">Status</th>
+              <th className="px-4 py-3 font-medium">Payment Info</th>
+              <th className="px-4 py-3 font-medium">Created</th>
+              <th className="px-4 py-3 font-medium text-right">Actions</th>
             </tr>
           </thead>
           <tbody>
@@ -249,15 +255,15 @@ function ApplicationsTab({
               <tr><td colSpan={8} className="px-3 py-6 text-center text-muted-foreground">No applications found.</td></tr>
             ) : (
               rows.map((r) => (
-                <tr key={r.id} className="border-t">
-                  <td className="px-3 py-2 text-foreground font-medium">{r.applicationNumber}</td>
-                  <td className="px-3 py-2">
-                    <div className="font-semibold text-foreground">{r.studentInfo?.fullNameEnglish || r.studentInfo?.name_en || '—'}</div>
-                    <div className="text-xs text-muted-foreground">{r.studentInfo?.email || '—'}</div>
-                    <div className="text-xs text-muted-foreground">{r.studentInfo?.phoneNumber || r.studentInfo?.mobile || '—'}</div>
+                <tr key={r.id} className="border-b last:border-0 transition-colors hover:bg-muted/30">
+                  <td className="px-4 py-3 text-foreground font-medium">{r.applicationNumber}</td>
+                  <td className="px-4 py-3">
+                    <div className="font-medium text-foreground">{r.studentInfo?.fullNameEnglish || r.studentInfo?.name_en || '—'}</div>
+                    <div className="text-xs text-muted-foreground mt-0.5">{r.studentInfo?.email || '—'}</div>
+                    <div className="text-xs text-muted-foreground mt-0.5">{r.studentInfo?.phoneNumber || r.studentInfo?.mobile || '—'}</div>
                   </td>
-                  <td className="px-3 py-2">{r.courseName}</td>
-                  <td className="px-3 py-2">
+                  <td className="px-4 py-3">{r.courseName}</td>
+                  <td className="px-4 py-3">
                     {r.admissionFeeAmount != null ? (
                       new Intl.NumberFormat('en-BD', {
                         style: 'currency',
@@ -266,15 +272,21 @@ function ApplicationsTab({
                       }).format(r.admissionFeeAmount / 100)
                     ) : '—'}
                   </td>
-                  <td className="px-3 py-2 font-medium capitalize text-xs">{r.status.replace('_', ' ')}</td>
-                  <td className="px-3 py-2">
-                    <div className="text-xs capitalize font-semibold">{r.paymentMethod || '—'}</div>
-                    <div className="text-xs font-mono text-muted-foreground">{r.transactionId || '—'}</div>
+                  <td className="px-4 py-3">
+                    <span className="inline-flex items-center rounded-full bg-secondary px-2 py-0.5 text-xs font-medium capitalize">
+                      {r.status.replace('_', ' ')}
+                    </span>
                   </td>
-                  <td className="px-3 py-2">{fmtDate(r.createdAt)}</td>
-                  <td className="px-3 py-2">
-                    <div className="flex gap-1.5 items-center justify-end">
-                      <button
+                  <td className="px-4 py-3">
+                    <div className="text-xs capitalize font-medium">{r.paymentMethod || '—'}</div>
+                    <div className="text-xs font-mono text-muted-foreground mt-0.5">{r.transactionId || '—'}</div>
+                  </td>
+                  <td className="px-4 py-3">{fmtDate(r.createdAt)}</td>
+                  <td className="px-4 py-3 text-right">
+                    <div className="flex gap-1 items-center justify-end">
+                      <Button
+                        variant="ghost"
+                        size="icon"
                         onClick={() => onViewForm({
                           applicationId: r.id,
                           courseId: r.courseId,
@@ -289,56 +301,64 @@ function ApplicationsTab({
                             currency: r.currency,
                           }
                         })}
-                        className="p-1 text-gray-500 hover:text-gray-750 dark:text-gray-400 dark:hover:text-gray-200 rounded hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+                        className="h-8 w-8 text-muted-foreground hover:text-foreground"
                         title="View & Edit Form"
                       >
-                        <EyeIcon className="h-5 w-5" />
-                      </button>
+                        <Eye className="h-4 w-4" />
+                      </Button>
                       {r.status === 'payment_submitted' && (
-                        <button
+                        <Button
+                          variant="ghost"
+                          size="icon"
                           onClick={() => act(r.id, 'verify_payment')}
-                          className="p-1 text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 rounded hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors"
+                          className="h-8 w-8 text-blue-600 hover:text-blue-700 hover:bg-blue-50 dark:hover:bg-blue-900/20"
                           title="Verify Payment"
                         >
-                          <CheckIcon className="h-5 w-5" />
-                        </button>
+                          <CheckCircle2 className="h-4 w-4" />
+                        </Button>
                       )}
                       {r.status === 'payment_verified' && (
-                        <button
+                        <Button
+                          variant="ghost"
+                          size="icon"
                           onClick={() => act(r.id, 'approve')}
-                          className="p-1 text-green-600 hover:text-green-800 dark:text-green-400 dark:hover:text-green-300 rounded hover:bg-green-50 dark:hover:bg-green-900/20 transition-colors"
+                          className="h-8 w-8 text-emerald-600 hover:text-emerald-700 hover:bg-emerald-50 dark:hover:bg-emerald-900/20"
                           title="Approve Enrollment"
                         >
-                          <CheckIcon className="h-5 w-5" />
-                        </button>
+                          <CheckCircle2 className="h-4 w-4" />
+                        </Button>
                       )}
                       {r.status !== 'approved' && r.status !== 'rejected' && (
-                        <button
+                        <Button
+                          variant="ghost"
+                          size="icon"
                           onClick={() => act(r.id, 'reject')}
-                          className="p-1 text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-300 rounded hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors"
+                          className="h-8 w-8 text-rose-600 hover:text-rose-700 hover:bg-rose-50 dark:hover:bg-rose-900/20"
                           title="Reject Application"
                         >
-                          <XMarkIcon className="h-5 w-5" />
-                        </button>
+                          <XCircle className="h-4 w-4" />
+                        </Button>
                       )}
                       {r.status !== 'approved' && r.status !== 'cancelled' && (
-                        <button
+                        <Button
+                          variant="ghost"
+                          size="icon"
                           onClick={() => act(r.id, 'cancel')}
-                          className="p-1 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 rounded hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+                          className="h-8 w-8 text-muted-foreground hover:text-foreground"
                           title="Cancel Application"
                         >
-                          <XMarkIcon className="h-5 w-5" />
-                        </button>
+                          <Ban className="h-4 w-4" />
+                        </Button>
                       )}
                       {r.paymentProofUrl && (
                         <a
                           href={r.paymentProofUrl}
                           target="_blank"
                           rel="noreferrer"
-                          className="p-1 text-gray-500 hover:text-gray-755 dark:text-gray-400 dark:hover:text-gray-200 rounded hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+                          className="inline-flex items-center justify-center h-8 w-8 rounded-md text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
                           title="View Payment Proof"
                         >
-                          <ArrowTopRightOnSquareIcon className="h-5 w-5" />
+                          <ExternalLink className="h-4 w-4" />
                         </a>
                       )}
                     </div>
@@ -348,6 +368,7 @@ function ApplicationsTab({
             )}
           </tbody>
         </table>
+        </div>
       </div>
 
       <div className="flex items-center justify-between gap-2">
@@ -423,9 +444,9 @@ function EnrollmentsTab({
   }
 
   return (
-    <div className="space-y-3">
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-end">
-        <div className="w-full sm:w-56">
+    <div className="space-y-4">
+      <div className="rounded-xl border bg-card p-4 shadow-sm flex flex-col gap-4 sm:flex-row sm:items-end">
+        <div className="w-full sm:w-56 space-y-1.5">
           <Label htmlFor="en_status">Status</Label>
           <select
             id="en_status"
@@ -434,7 +455,7 @@ function EnrollmentsTab({
               setPage(1)
               setStatus(e.target.value)
             }}
-            className="mt-2 w-full rounded-md border bg-background px-3 py-2 text-sm"
+            className="flex h-10 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
           >
             <option value="all">All</option>
             <option value="active">Active</option>
@@ -442,26 +463,30 @@ function EnrollmentsTab({
             <option value="dropped">Dropped</option>
           </select>
         </div>
-        <div className="flex-1">
+        <div className="flex-1 space-y-1.5">
           <Label htmlFor="en_q">Search</Label>
-          <Input id="en_q" value={q} onChange={(e) => setQ(e.target.value)} placeholder="Member, course, txn…" />
+          <div className="relative">
+            <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+            <Input id="en_q" className="pl-9" value={q} onChange={(e) => setQ(e.target.value)} placeholder="Member, course, txn…" />
+          </div>
         </div>
-        <Button variant="secondary" onClick={() => fetchRows()}>Apply</Button>
+        <Button variant="secondary" className="w-full sm:w-auto" onClick={() => fetchRows()}>Apply Filter</Button>
       </div>
 
-      {message ? <p className="text-sm text-primary">{message}</p> : null}
-      {error ? <p className="text-sm text-destructive">{error}</p> : null}
+      {message ? <div className="rounded-md bg-primary/10 px-4 py-3 text-sm text-primary font-medium">{message}</div> : null}
+      {error ? <div className="rounded-md bg-destructive/10 px-4 py-3 text-sm text-destructive font-medium">{error}</div> : null}
 
-      <div className="overflow-x-auto rounded-md border">
-        <table className="w-full text-left text-sm">
-          <thead className="bg-muted/50">
+      <div className="rounded-xl border bg-card text-card-foreground shadow-sm overflow-hidden">
+        <div className="overflow-x-auto">
+          <table className="w-full text-left text-sm whitespace-nowrap">
+          <thead className="border-b bg-muted/50">
             <tr className="text-muted-foreground">
-              <th className="px-3 py-2">Member</th>
-              <th className="px-3 py-2">Course</th>
-              <th className="px-3 py-2">Enrolled</th>
-              <th className="px-3 py-2">Status</th>
-              <th className="px-3 py-2">Txn</th>
-              <th className="px-3 py-2">Actions</th>
+              <th className="px-4 py-3 font-medium">Member</th>
+              <th className="px-4 py-3 font-medium">Course</th>
+              <th className="px-4 py-3 font-medium">Enrolled</th>
+              <th className="px-4 py-3 font-medium">Status</th>
+              <th className="px-4 py-3 font-medium">Txn</th>
+              <th className="px-4 py-3 font-medium text-right">Actions</th>
             </tr>
           </thead>
           <tbody>
@@ -471,19 +496,29 @@ function EnrollmentsTab({
               <tr><td colSpan={6} className="px-3 py-6 text-center text-muted-foreground">No enrollments found.</td></tr>
             ) : (
               rows.map((r) => (
-                <tr key={r.id} className="border-t">
-                  <td className="px-3 py-2">
+                <tr key={r.id} className="border-b last:border-0 transition-colors hover:bg-muted/30">
+                  <td className="px-4 py-3">
                     <div className="text-foreground font-medium">{r.memberName}</div>
-                    <div className="text-xs text-muted-foreground">{r.memberNumber || '—'} · {r.memberPhone || '—'}</div>
+                    <div className="text-xs text-muted-foreground mt-0.5">{r.memberNumber || '—'} · {r.memberPhone || '—'}</div>
                   </td>
-                  <td className="px-3 py-2">{r.courseName}</td>
-                  <td className="px-3 py-2">{fmtDate(r.enrolledAt)}</td>
-                  <td className="px-3 py-2">{r.isActive ? 'active' : r.droppedAt ? 'dropped' : r.completedAt ? 'completed' : 'inactive'}</td>
-                  <td className="px-3 py-2">{r.transactionId || '—'}</td>
-                  <td className="px-3 py-2">
-                    <div className="flex gap-1.5 items-center justify-end">
+                  <td className="px-4 py-3">{r.courseName}</td>
+                  <td className="px-4 py-3">{fmtDate(r.enrolledAt)}</td>
+                  <td className="px-4 py-3">
+                    <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ${
+                      r.isActive ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400' :
+                      r.completedAt ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400' :
+                      'bg-rose-100 text-rose-700 dark:bg-rose-900/30 dark:text-rose-400'
+                    }`}>
+                      {r.isActive ? 'Active' : r.droppedAt ? 'Dropped' : r.completedAt ? 'Completed' : 'Inactive'}
+                    </span>
+                  </td>
+                  <td className="px-4 py-3 text-muted-foreground font-mono text-xs">{r.transactionId || '—'}</td>
+                  <td className="px-4 py-3 text-right">
+                    <div className="flex gap-1 items-center justify-end">
                       {r.applicationId ? (
-                        <button
+                        <Button
+                          variant="ghost"
+                          size="icon"
                           onClick={() => onViewForm({
                             applicationId: r.applicationId!,
                             courseId: r.courseId,
@@ -497,20 +532,22 @@ function EnrollmentsTab({
                               currency: r.currency,
                             }
                           })}
-                          className="p-1 text-gray-500 hover:text-gray-750 dark:text-gray-400 dark:hover:text-gray-200 rounded hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+                          className="h-8 w-8 text-muted-foreground hover:text-foreground"
                           title="View & Edit Form"
                         >
-                          <EyeIcon className="h-5 w-5" />
-                        </button>
+                          <Eye className="h-4 w-4" />
+                        </Button>
                       ) : null}
                       {r.isActive ? (
-                        <button
+                        <Button
+                          variant="ghost"
+                          size="icon"
                           onClick={() => drop(r.id)}
-                          className="p-1 text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-300 rounded hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors"
+                          className="h-8 w-8 text-rose-600 hover:text-rose-700 hover:bg-rose-50 dark:hover:bg-rose-900/20"
                           title="Drop Student"
                         >
-                          <TrashIcon className="h-5 w-5" />
-                        </button>
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
                       ) : (
                         <span className="text-xs text-muted-foreground px-2">—</span>
                       )}
@@ -521,6 +558,7 @@ function EnrollmentsTab({
             )}
           </tbody>
         </table>
+        </div>
       </div>
 
       <div className="flex items-center justify-between gap-2">

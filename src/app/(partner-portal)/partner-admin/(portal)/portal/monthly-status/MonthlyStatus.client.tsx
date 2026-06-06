@@ -95,24 +95,28 @@ export default function MonthlyStatus() {
   }
 
   return (
-    <div className="space-y-4">
-      <div>
-        <h1 className="text-2xl font-bold text-foreground">Monthly Status</h1>
-        <p className="text-sm text-muted-foreground">Mark members active/inactive for a given month.</p>
+    <div className="space-y-6">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <div>
+          <h1 className="text-3xl font-bold tracking-tight text-foreground">Monthly Status</h1>
+          <p className="text-sm text-muted-foreground mt-1">Mark members active/inactive for a given month.</p>
+        </div>
       </div>
 
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-3 sm:items-end">
-        <div className="space-y-2">
-          <Label htmlFor="month">Month</Label>
-          <Input id="month" inputMode="numeric" value={month} onChange={(e) => setMonth(e.target.value)} />
-        </div>
-        <div className="space-y-2">
-          <Label htmlFor="year">Year</Label>
-          <Input id="year" inputMode="numeric" value={year} onChange={(e) => setYear(e.target.value)} />
-        </div>
-        <div className="flex gap-2">
-          <Button variant="secondary" onClick={() => fetchData()} disabled={loading}>Load</Button>
-          <Button onClick={() => onSave()} disabled={saving || loading || !data}>{saving ? 'Saving…' : 'Save'}</Button>
+      <div className="rounded-xl border bg-card p-5 shadow-sm">
+        <div className="grid grid-cols-1 gap-5 sm:grid-cols-3 sm:items-end">
+          <div className="space-y-1.5">
+            <Label htmlFor="month">Month</Label>
+            <Input id="month" className="h-10" inputMode="numeric" value={month} onChange={(e) => setMonth(e.target.value)} />
+          </div>
+          <div className="space-y-1.5">
+            <Label htmlFor="year">Year</Label>
+            <Input id="year" className="h-10" inputMode="numeric" value={year} onChange={(e) => setYear(e.target.value)} />
+          </div>
+          <div className="flex gap-2">
+            <Button variant="secondary" className="h-10 w-full sm:w-auto" onClick={() => fetchData()} disabled={loading}>Load Data</Button>
+            <Button className="h-10 w-full sm:w-auto" onClick={() => onSave()} disabled={saving || loading || !data}>{saving ? 'Saving…' : 'Save Changes'}</Button>
+          </div>
         </div>
       </div>
 
@@ -125,44 +129,55 @@ export default function MonthlyStatus() {
         <p className="text-sm text-muted-foreground">No data.</p>
       ) : (
         <>
-          <div className="rounded-md border p-3 text-sm">
-            <span className="text-muted-foreground">Total:</span> {data.summary.total} ·{' '}
-            <span className="text-muted-foreground">Active:</span> {data.summary.activeThisMonth} ·{' '}
-            <span className="text-muted-foreground">Inactive:</span> {data.summary.inactiveThisMonth}
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <div className="rounded-xl border bg-card p-4 shadow-sm flex flex-col justify-center">
+              <p className="text-sm font-medium text-muted-foreground">Total Members</p>
+              <p className="text-2xl font-bold mt-1">{data.summary.total}</p>
+            </div>
+            <div className="rounded-xl border bg-card p-4 shadow-sm flex flex-col justify-center">
+              <p className="text-sm font-medium text-muted-foreground">Active This Month</p>
+              <p className="text-2xl font-bold text-emerald-600 dark:text-emerald-500 mt-1">{data.summary.activeThisMonth}</p>
+            </div>
+            <div className="rounded-xl border bg-card p-4 shadow-sm flex flex-col justify-center">
+              <p className="text-sm font-medium text-muted-foreground">Inactive This Month</p>
+              <p className="text-2xl font-bold text-rose-600 dark:text-rose-500 mt-1">{data.summary.inactiveThisMonth}</p>
+            </div>
           </div>
 
-          <div className="overflow-x-auto rounded-md border">
-            <table className="w-full text-left text-sm">
-              <thead className="bg-muted/50">
-                <tr className="text-muted-foreground">
-                  <th className="px-3 py-2">Member</th>
-                  <th className="px-3 py-2">Active this month</th>
-                </tr>
-              </thead>
-              <tbody>
-                {(data.members || []).length === 0 ? (
-                  <tr><td colSpan={2} className="px-3 py-6 text-center text-muted-foreground">No members found.</td></tr>
-                ) : (
-                  data.members.map((m) => (
-                    <tr key={m.profileId} className="border-t">
-                      <td className="px-3 py-2">
-                        <div className="text-foreground font-medium">{m.memberName || '—'}</div>
-                        <div className="text-xs text-muted-foreground">{m.memberNumber || '—'}</div>
-                      </td>
-                      <td className="px-3 py-2">
-                        <label className="flex items-center gap-2">
-                          <Checkbox
-                            checked={!!local[m.profileId]}
-                            onCheckedChange={(v) => setLocal((p) => ({ ...p, [m.profileId]: v === true }))}
-                          />
-                          <span className="text-sm">{local[m.profileId] ? 'Active' : 'Inactive'}</span>
-                        </label>
-                      </td>
-                    </tr>
-                  ))
-                )}
-              </tbody>
-            </table>
+          <div className="rounded-xl border bg-card text-card-foreground shadow-sm overflow-hidden">
+            <div className="overflow-x-auto">
+              <table className="w-full text-left text-sm whitespace-nowrap">
+                <thead className="border-b bg-muted/50">
+                  <tr className="text-muted-foreground">
+                    <th className="px-4 py-3 font-medium">Member</th>
+                    <th className="px-4 py-3 font-medium">Status</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {(data.members || []).length === 0 ? (
+                    <tr><td colSpan={2} className="px-4 py-6 text-center text-muted-foreground">No members found.</td></tr>
+                  ) : (
+                    data.members.map((m) => (
+                      <tr key={m.profileId} className="border-b last:border-0 transition-colors hover:bg-muted/30">
+                        <td className="px-4 py-3">
+                          <div className="font-medium text-foreground">{m.memberName || '—'}</div>
+                          <div className="text-xs text-muted-foreground mt-0.5">{m.memberNumber || '—'}</div>
+                        </td>
+                        <td className="px-4 py-3">
+                          <label className="flex items-center gap-2 cursor-pointer">
+                            <Checkbox
+                              checked={!!local[m.profileId]}
+                              onCheckedChange={(v) => setLocal((p) => ({ ...p, [m.profileId]: v === true }))}
+                            />
+                            <span className="text-sm select-none">{local[m.profileId] ? 'Active' : 'Inactive'}</span>
+                          </label>
+                        </td>
+                      </tr>
+                    ))
+                  )}
+                </tbody>
+              </table>
+            </div>
           </div>
         </>
       )}

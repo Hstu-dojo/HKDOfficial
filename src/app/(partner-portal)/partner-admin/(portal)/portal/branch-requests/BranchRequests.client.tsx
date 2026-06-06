@@ -11,9 +11,8 @@ import {
   DialogDescription,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from '@/components/ui/dialog'
-import { ArrowLeftRightIcon, CheckCircleIcon, XCircleIcon, XIcon } from 'lucide-react'
+import { ArrowLeftRightIcon, CheckCircleIcon, XCircleIcon, XIcon, Ban, CheckIcon } from 'lucide-react'
 
 type BranchRequest = {
   id: string
@@ -233,13 +232,13 @@ export default function BranchRequests() {
       {/* Header */}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-foreground">Branch Change</h1>
-          <p className="text-sm text-muted-foreground">
+          <h1 className="text-3xl font-bold tracking-tight text-foreground">Branch Change</h1>
+          <p className="text-sm text-muted-foreground mt-1">
             Manage student transfers between training venues and approve incoming venue changes.
           </p>
         </div>
         {activeTab === 'outgoing' && (
-          <Button onClick={openTransferModal} className="flex items-center gap-2">
+          <Button onClick={openTransferModal} className="h-10 flex items-center gap-2">
             <ArrowLeftRightIcon className="h-4 w-4" /> Transfer Student
           </Button>
         )}
@@ -270,8 +269,8 @@ export default function BranchRequests() {
       </div>
 
       {/* Filters */}
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-end">
-        <div className="w-full sm:w-56">
+      <div className="rounded-xl border bg-card p-4 shadow-sm flex flex-col gap-4 sm:flex-row sm:items-end">
+        <div className="w-full sm:w-56 space-y-1.5">
           <Label htmlFor="statusFilter">Filter Status</Label>
           <select
             id="statusFilter"
@@ -280,7 +279,7 @@ export default function BranchRequests() {
               setPage(1)
               setStatus(e.target.value as any)
             }}
-            className="mt-2 w-full rounded-md border bg-background px-3 py-2 text-sm"
+            className="flex h-10 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
           >
             <option value="pending">Pending</option>
             <option value="completed">Completed / Approved</option>
@@ -289,8 +288,8 @@ export default function BranchRequests() {
             <option value="all">All</option>
           </select>
         </div>
-        <Button onClick={() => fetchRows()} variant="secondary">
-          Refresh
+        <Button onClick={() => fetchRows()} variant="secondary" className="h-10 w-full sm:w-auto">
+          Apply Filter
         </Button>
       </div>
 
@@ -355,13 +354,12 @@ export default function BranchRequests() {
                     <div className="flex flex-col gap-2 min-w-[200px] w-full md:w-auto">
                       {activeTab === 'outgoing' ? (
                         <Button
-                          size="sm"
-                          variant="destructive"
+                          variant="ghost"
+                          className="w-full md:w-auto text-rose-600 hover:text-rose-700 hover:bg-rose-50 dark:hover:bg-rose-900/20"
                           disabled={actionLoading === r.id}
                           onClick={() => handleAction(r.id, 'cancel')}
-                          className="w-full md:w-auto"
                         >
-                          Cancel Request
+                          <Ban className="mr-2 h-4 w-4" /> Cancel Request
                         </Button>
                       ) : (
                         <div className="space-y-2 w-full">
@@ -371,16 +369,16 @@ export default function BranchRequests() {
                             placeholder="Enter approval/rejection comments…"
                             value={notes[r.id] || ''}
                             onChange={(e) => setNotes((p) => ({ ...p, [r.id]: e.target.value }))}
-                            className="h-16 text-xs"
+                            className="h-16 text-xs resize-none"
                           />
                           <div className="flex gap-2">
                             <Button
                               size="sm"
                               disabled={actionLoading === r.id}
                               onClick={() => handleAction(r.id, 'approve')}
-                              className="flex-1 bg-green-700 hover:bg-green-800 text-white"
+                              className="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white"
                             >
-                              Approve
+                              <CheckIcon className="mr-1 h-4 w-4" /> Approve
                             </Button>
                             <Button
                               size="sm"
@@ -389,7 +387,7 @@ export default function BranchRequests() {
                               onClick={() => handleAction(r.id, 'reject')}
                               className="flex-1"
                             >
-                              Reject
+                              <XIcon className="mr-1 h-4 w-4" /> Reject
                             </Button>
                           </div>
                         </div>
@@ -442,7 +440,7 @@ export default function BranchRequests() {
               </p>
             )}
 
-            <div className="space-y-2">
+            <div className="space-y-1.5">
               <Label htmlFor="studentSelect">Select Student *</Label>
               {membersLoading ? (
                 <p className="text-xs text-muted-foreground">Loading student list…</p>
@@ -452,7 +450,7 @@ export default function BranchRequests() {
                   required
                   value={formSelectedMember}
                   onChange={(e) => setFormSelectedMember(e.target.value)}
-                  className="w-full rounded-md border bg-background px-3 py-2 text-sm"
+                  className="flex h-10 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
                 >
                   <option value="">Select a student</option>
                   {membersList.map((m) => (
@@ -464,7 +462,7 @@ export default function BranchRequests() {
               )}
             </div>
 
-            <div className="space-y-2">
+            <div className="space-y-1.5">
               <Label htmlFor="branchSelect">Destination Branch *</Label>
               {partnersLoading ? (
                 <p className="text-xs text-muted-foreground">Loading active branches…</p>
@@ -474,7 +472,7 @@ export default function BranchRequests() {
                   required
                   value={formSelectedPartner}
                   onChange={(e) => setFormSelectedPartner(e.target.value)}
-                  className="w-full rounded-md border bg-background px-3 py-2 text-sm"
+                  className="flex h-10 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
                 >
                   <option value="">Select target branch</option>
                   {partnersList

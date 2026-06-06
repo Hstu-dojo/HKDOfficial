@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Plus, Power, PowerOff } from 'lucide-react'
 
 type Admin = {
   id: string
@@ -92,14 +93,14 @@ export default function AdminManagement() {
   }
 
   return (
-    <div className="space-y-4">
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+    <div className="space-y-6">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-foreground">Admin Management</h1>
-          <p className="text-sm text-muted-foreground">Manage portal administrators for your organization.</p>
+          <h1 className="text-3xl font-bold tracking-tight text-foreground">Admin Management</h1>
+          <p className="text-sm text-muted-foreground mt-1">Manage portal administrators for your organization.</p>
         </div>
-        <Button onClick={() => setShowAdd((v) => !v)} variant={showAdd ? 'outline' : 'default'}>
-          {showAdd ? 'Cancel' : 'Add Admin'}
+        <Button onClick={() => setShowAdd((v) => !v)} variant={showAdd ? 'outline' : 'default'} className="h-10">
+          {showAdd ? 'Cancel' : <><Plus className="mr-2 h-4 w-4" /> Add Admin</>}
         </Button>
       </div>
 
@@ -107,89 +108,98 @@ export default function AdminManagement() {
       {error ? <p className="text-sm text-destructive">{error}</p> : null}
 
       {showAdd ? (
-        <Card>
+        <Card className="shadow-sm">
           <CardHeader>
-            <CardTitle className="text-base">Add admin</CardTitle>
+            <CardTitle className="text-lg">Add Admin</CardTitle>
           </CardHeader>
           <CardContent>
-            <form onSubmit={onAdd} className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-              <div className="space-y-2">
+            <form onSubmit={onAdd} className="grid grid-cols-1 gap-5 sm:grid-cols-2">
+              <div className="space-y-1.5">
                 <Label htmlFor="name">Name *</Label>
-                <Input id="name" required value={form.name} onChange={(e) => setForm((p) => ({ ...p, name: e.target.value }))} />
+                <Input id="name" className="h-10" required value={form.name} onChange={(e) => setForm((p) => ({ ...p, name: e.target.value }))} />
               </div>
-              <div className="space-y-2">
+              <div className="space-y-1.5">
                 <Label htmlFor="email">Email *</Label>
-                <Input id="email" type="email" required value={form.email} onChange={(e) => setForm((p) => ({ ...p, email: e.target.value }))} />
+                <Input id="email" type="email" className="h-10" required value={form.email} onChange={(e) => setForm((p) => ({ ...p, email: e.target.value }))} />
               </div>
-              <div className="space-y-2">
+              <div className="space-y-1.5">
                 <Label htmlFor="password">Password *</Label>
-                <Input id="password" type="password" required value={form.password} onChange={(e) => setForm((p) => ({ ...p, password: e.target.value }))} />
+                <Input id="password" type="password" className="h-10" required value={form.password} onChange={(e) => setForm((p) => ({ ...p, password: e.target.value }))} />
               </div>
-              <div className="space-y-2">
+              <div className="space-y-1.5">
                 <Label htmlFor="phone">Phone</Label>
-                <Input id="phone" value={form.phone} onChange={(e) => setForm((p) => ({ ...p, phone: e.target.value }))} />
+                <Input id="phone" className="h-10" value={form.phone} onChange={(e) => setForm((p) => ({ ...p, phone: e.target.value }))} />
               </div>
-              <div className="sm:col-span-2 flex gap-2">
-                <Button type="submit" disabled={saving}>{saving ? 'Adding…' : 'Add'}</Button>
-                <Button type="button" variant="outline" onClick={() => setShowAdd(false)} disabled={saving}>Close</Button>
+              <div className="sm:col-span-2 flex gap-2 pt-2">
+                <Button type="submit" disabled={saving} className="h-10">{saving ? 'Adding…' : 'Add Admin'}</Button>
+                <Button type="button" variant="outline" className="h-10" onClick={() => setShowAdd(false)} disabled={saving}>Close</Button>
               </div>
             </form>
           </CardContent>
         </Card>
       ) : null}
 
-      <div className="overflow-x-auto rounded-md border">
-        <table className="w-full text-left text-sm">
-          <thead className="bg-muted/50">
-            <tr className="text-muted-foreground">
-              <th className="px-3 py-2">Name</th>
-              <th className="px-3 py-2">Email</th>
-              <th className="px-3 py-2">Phone</th>
-              <th className="px-3 py-2">Active</th>
-              <th className="px-3 py-2">Created</th>
-              <th className="px-3 py-2">Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {loading ? (
-              <tr><td colSpan={6} className="px-3 py-6 text-center text-muted-foreground">Loading…</td></tr>
-            ) : admins.length === 0 ? (
-              <tr><td colSpan={6} className="px-3 py-6 text-center text-muted-foreground">No admins found.</td></tr>
-            ) : (
-              admins.map((a) => (
-                <tr key={a.id} className="border-t">
-                  <td className="px-3 py-2 text-foreground">
-                    {a.name}{a.isCurrentUser ? ' (you)' : ''}
-                  </td>
-                  <td className="px-3 py-2">{a.email}</td>
-                  <td className="px-3 py-2">{a.phone || '—'}</td>
-                  <td className="px-3 py-2">{a.isActive ? 'Yes' : 'No'}</td>
-                  <td className="px-3 py-2">{fmtDate(a.createdAt)}</td>
-                  <td className="px-3 py-2">
-                    {a.isCurrentUser ? (
-                      <span className="text-xs text-muted-foreground">—</span>
-                    ) : (
-                      <div className="flex gap-2">
-                        <Button
-                          type="button"
-                          size="sm"
-                          variant="outline"
-                          onClick={() => setActive(a.id, !a.isActive)}
-                        >
-                          {a.isActive ? 'Deactivate' : 'Activate'}
-                        </Button>
-                      </div>
-                    )}
-                  </td>
-                </tr>
-              ))
-            )}
-          </tbody>
-        </table>
+      <div className="rounded-xl border bg-card text-card-foreground shadow-sm overflow-hidden">
+        <div className="overflow-x-auto">
+          <table className="w-full text-left text-sm whitespace-nowrap">
+            <thead className="border-b bg-muted/50">
+              <tr className="text-muted-foreground">
+                <th className="px-4 py-3 font-medium">Name</th>
+                <th className="px-4 py-3 font-medium">Email</th>
+                <th className="px-4 py-3 font-medium">Phone</th>
+                <th className="px-4 py-3 font-medium">Status</th>
+                <th className="px-4 py-3 font-medium">Created</th>
+                <th className="px-4 py-3 font-medium text-right">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {loading ? (
+                <tr><td colSpan={6} className="px-4 py-6 text-center text-muted-foreground">Loading…</td></tr>
+              ) : admins.length === 0 ? (
+                <tr><td colSpan={6} className="px-4 py-6 text-center text-muted-foreground">No admins found.</td></tr>
+              ) : (
+                admins.map((a) => (
+                  <tr key={a.id} className="border-b last:border-0 transition-colors hover:bg-muted/30">
+                    <td className="px-4 py-3 font-medium text-foreground">
+                      {a.name}{a.isCurrentUser ? ' (you)' : ''}
+                    </td>
+                    <td className="px-4 py-3">{a.email}</td>
+                    <td className="px-4 py-3 text-muted-foreground">{a.phone || '—'}</td>
+                    <td className="px-4 py-3">
+                      <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${
+                        a.isActive ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400' : 'bg-rose-100 text-rose-700 dark:bg-rose-900/30 dark:text-rose-400'
+                      }`}>
+                        {a.isActive ? 'Active' : 'Inactive'}
+                      </span>
+                    </td>
+                    <td className="px-4 py-3 text-muted-foreground">{fmtDate(a.createdAt)}</td>
+                    <td className="px-4 py-3 text-right">
+                      {a.isCurrentUser ? (
+                        <span className="text-xs text-muted-foreground">—</span>
+                      ) : (
+                        <div className="flex justify-end gap-1.5">
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className={`h-8 w-8 ${a.isActive ? 'text-rose-600 hover:text-rose-700 hover:bg-rose-50 dark:hover:bg-rose-900/20' : 'text-emerald-600 hover:text-emerald-700 hover:bg-emerald-50 dark:hover:bg-emerald-900/20'}`}
+                            onClick={() => setActive(a.id, !a.isActive)}
+                            title={a.isActive ? 'Deactivate' : 'Activate'}
+                          >
+                            {a.isActive ? <PowerOff className="h-4 w-4" /> : <Power className="h-4 w-4" />}
+                          </Button>
+                        </div>
+                      )}
+                    </td>
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
+        </div>
       </div>
 
       <div>
-        <Button variant="secondary" onClick={() => fetchAdmins()} disabled={loading}>Reload</Button>
+        <Button variant="secondary" onClick={() => fetchAdmins()} disabled={loading} className="h-10">Reload</Button>
       </div>
     </div>
   )

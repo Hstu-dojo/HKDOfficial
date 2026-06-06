@@ -75,14 +75,16 @@ export default function Bills() {
   }
 
   return (
-    <div className="space-y-4">
-      <div>
-        <h1 className="text-2xl font-bold text-foreground">Bills</h1>
-        <p className="text-sm text-muted-foreground">Partner billing history.</p>
+    <div className="space-y-6">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <div>
+          <h1 className="text-3xl font-bold tracking-tight text-foreground">Bills</h1>
+          <p className="text-sm text-muted-foreground mt-1">Partner billing history and invoices.</p>
+        </div>
       </div>
 
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-end">
-        <div className="w-full sm:w-56">
+      <div className="rounded-xl border bg-card p-4 shadow-sm flex flex-col gap-4 sm:flex-row sm:items-end">
+        <div className="w-full sm:w-56 space-y-1.5">
           <Label htmlFor="status">Status</Label>
           <select
             id="status"
@@ -91,55 +93,69 @@ export default function Bills() {
               setPage(1)
               setStatus(e.target.value)
             }}
-            className="mt-2 w-full rounded-md border bg-background px-3 py-2 text-sm"
+            className="flex h-10 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
           >
-            <option value="">All</option>
+            <option value="">All Statuses</option>
             <option value="pending">Pending</option>
             <option value="paid">Paid</option>
             <option value="overdue">Overdue</option>
             <option value="cancelled">Cancelled</option>
           </select>
         </div>
-        <Button onClick={() => fetchBills()} variant="secondary">Apply</Button>
+        <Button onClick={() => fetchBills()} variant="secondary" className="w-full sm:w-auto h-10">Apply Filter</Button>
       </div>
 
       {error ? <p className="text-sm text-destructive">{error}</p> : null}
 
-      <div className="overflow-x-auto rounded-md border">
-        <table className="w-full text-left text-sm">
-          <thead className="bg-muted/50">
-            <tr className="text-muted-foreground">
-              <th className="px-3 py-2">Period</th>
-              <th className="px-3 py-2">Amount</th>
-              <th className="px-3 py-2">Status</th>
-              <th className="px-3 py-2">Due</th>
-              <th className="px-3 py-2">Paid</th>
-              <th className="px-3 py-2">Description</th>
-            </tr>
-          </thead>
-          <tbody>
-            {loading ? (
-              <tr>
-                <td colSpan={6} className="px-3 py-6 text-center text-muted-foreground">Loading…</td>
+      <div className="rounded-xl border bg-card text-card-foreground shadow-sm overflow-hidden">
+        <div className="overflow-x-auto">
+          <table className="w-full text-left text-sm whitespace-nowrap">
+            <thead className="border-b bg-muted/50">
+              <tr className="text-muted-foreground">
+                <th className="px-4 py-3 font-medium">Period</th>
+                <th className="px-4 py-3 font-medium">Amount</th>
+                <th className="px-4 py-3 font-medium">Status</th>
+                <th className="px-4 py-3 font-medium">Due Date</th>
+                <th className="px-4 py-3 font-medium">Paid At</th>
+                <th className="px-4 py-3 font-medium">Description</th>
               </tr>
-            ) : bills.length === 0 ? (
-              <tr>
-                <td colSpan={6} className="px-3 py-6 text-center text-muted-foreground">No bills found.</td>
-              </tr>
-            ) : (
-              bills.map((b) => (
-                <tr key={b.id} className="border-t">
-                  <td className="px-3 py-2 text-foreground">{String(b.year)}-{String(b.month).padStart(2, '0')}</td>
-                  <td className="px-3 py-2">{fmtAmount(b.amount, b.currency)}</td>
-                  <td className="px-3 py-2">{b.status}</td>
-                  <td className="px-3 py-2">{fmtDate(b.dueDate)}</td>
-                  <td className="px-3 py-2">{fmtDate(b.paidAt)}</td>
-                  <td className="px-3 py-2">{b.description || '—'}</td>
+            </thead>
+            <tbody>
+              {loading ? (
+                <tr>
+                  <td colSpan={6} className="px-4 py-6 text-center text-muted-foreground">Loading…</td>
                 </tr>
-              ))
-            )}
-          </tbody>
-        </table>
+              ) : bills.length === 0 ? (
+                <tr>
+                  <td colSpan={6} className="px-4 py-6 text-center text-muted-foreground">No bills found.</td>
+                </tr>
+              ) : (
+                bills.map((b) => {
+                  const isOverdue = b.status === 'overdue' || (b.status === 'pending' && b.dueDate && new Date(b.dueDate) < new Date());
+                  return (
+                    <tr key={b.id} className={`border-b last:border-0 transition-colors hover:bg-muted/30 ${isOverdue ? 'bg-red-50/50 dark:bg-red-900/10' : ''}`}>
+                      <td className="px-4 py-3 font-medium text-foreground">{String(b.year)}-{String(b.month).padStart(2, '0')}</td>
+                      <td className="px-4 py-3 font-medium">{fmtAmount(b.amount, b.currency)}</td>
+                      <td className="px-4 py-3">
+                        <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium capitalize ${
+                          b.status === 'paid' ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400' :
+                          b.status === 'pending' ? 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400' :
+                          isOverdue ? 'bg-rose-100 text-rose-700 dark:bg-rose-900/30 dark:text-rose-400' :
+                          'bg-secondary text-secondary-foreground'
+                        }`}>
+                          {b.status}
+                        </span>
+                      </td>
+                      <td className="px-4 py-3 text-muted-foreground">{fmtDate(b.dueDate)}</td>
+                      <td className="px-4 py-3 text-muted-foreground">{fmtDate(b.paidAt)}</td>
+                      <td className="px-4 py-3 text-muted-foreground">{b.description || '—'}</td>
+                    </tr>
+                  )
+                })
+              )}
+            </tbody>
+          </table>
+        </div>
       </div>
 
       <div className="flex items-center justify-between gap-2">

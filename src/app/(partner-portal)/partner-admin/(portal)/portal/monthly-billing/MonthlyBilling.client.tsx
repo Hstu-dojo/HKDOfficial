@@ -4,6 +4,7 @@ import * as React from 'react'
 import { apiJSON } from '../../_lib/api.client'
 import { Button } from '@/components/ui/button'
 import { Label } from '@/components/ui/label'
+import { Search, CheckCircle2, XCircle, HandCoins, CheckSquare } from 'lucide-react'
 
 type FeeRecord = {
   fee: {
@@ -184,86 +185,89 @@ export default function MonthlyBilling() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-foreground">Monthly Billing</h1>
-          <p className="text-sm text-muted-foreground">
+          <h1 className="text-3xl font-bold tracking-tight text-foreground">Monthly Billing</h1>
+          <p className="text-sm text-muted-foreground mt-1">
             Generate and manage monthly fee billing for enrolled students.
           </p>
         </div>
       </div>
 
       {/* Generate Section */}
-      <div className="rounded-lg border bg-card p-4">
-        <h2 className="text-sm font-semibold text-foreground mb-3">Generate Monthly Bills</h2>
-        <div className="flex flex-col gap-3 sm:flex-row sm:items-end">
-          <div className="w-full sm:w-48">
+      <div className="rounded-xl border bg-card p-5 shadow-sm">
+        <h2 className="text-base font-semibold text-foreground mb-4">Generate Monthly Bills</h2>
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-end">
+          <div className="w-full sm:w-64 space-y-1.5">
             <Label htmlFor="generateMonth">Billing Month</Label>
             <input
               id="generateMonth"
               type="month"
               value={generateMonth}
               onChange={(e) => setGenerateMonth(e.target.value)}
-              className="mt-1 w-full rounded-md border bg-background px-3 py-2 text-sm"
+              className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
             />
           </div>
-          <Button onClick={handleGenerate} disabled={generating || !generateMonth}>
+          <Button onClick={handleGenerate} disabled={generating || !generateMonth} className="w-full sm:w-auto h-10">
             {generating ? 'Generating…' : 'Generate Bills'}
           </Button>
         </div>
-        <p className="mt-2 text-xs text-muted-foreground">
+        <p className="mt-3 text-sm text-muted-foreground">
           This will create pending fee records for all active enrolled students who don&apos;t already have a bill for the selected month.
         </p>
       </div>
 
       {/* Stats */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
-        <div className="rounded-lg border bg-card p-3">
-          <p className="text-xs text-muted-foreground">Total (this page)</p>
-          <p className="text-xl font-semibold">{fees.length}</p>
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
+        <div className="rounded-xl border bg-card p-4 shadow-sm flex flex-col justify-center">
+          <p className="text-sm font-medium text-muted-foreground">Total (page)</p>
+          <p className="text-2xl font-bold mt-1">{fees.length}</p>
         </div>
-        <div className="rounded-lg border bg-card p-3">
-          <p className="text-xs text-muted-foreground">Pending/Due</p>
-          <p className="text-xl font-semibold text-yellow-600">{stats.pending}</p>
+        <div className="rounded-xl border bg-card p-4 shadow-sm flex flex-col justify-center">
+          <p className="text-sm font-medium text-muted-foreground">Pending/Due</p>
+          <p className="text-2xl font-bold text-yellow-600 dark:text-yellow-500 mt-1">{stats.pending}</p>
         </div>
-        <div className="rounded-lg border bg-card p-3">
-          <p className="text-xs text-muted-foreground">Awaiting Verification</p>
-          <p className="text-xl font-semibold text-blue-600">{stats.submitted}</p>
+        <div className="rounded-xl border bg-card p-4 shadow-sm flex flex-col justify-center">
+          <p className="text-sm font-medium text-muted-foreground">Awaiting Verif.</p>
+          <p className="text-2xl font-bold text-blue-600 dark:text-blue-500 mt-1">{stats.submitted}</p>
         </div>
-        <div className="rounded-lg border bg-card p-3">
-          <p className="text-xs text-muted-foreground">Paid</p>
-          <p className="text-xl font-semibold text-green-600">{stats.paid}</p>
+        <div className="rounded-xl border bg-card p-4 shadow-sm flex flex-col justify-center">
+          <p className="text-sm font-medium text-muted-foreground">Paid</p>
+          <p className="text-2xl font-bold text-emerald-600 dark:text-emerald-500 mt-1">{stats.paid}</p>
         </div>
-        <div className="rounded-lg border bg-card p-3">
-          <p className="text-xs text-muted-foreground">Overdue</p>
-          <p className="text-xl font-semibold text-red-600">{stats.overdue}</p>
+        <div className="rounded-xl border bg-card p-4 shadow-sm flex flex-col justify-center">
+          <p className="text-sm font-medium text-muted-foreground">Overdue</p>
+          <p className="text-2xl font-bold text-rose-600 dark:text-rose-500 mt-1">{stats.overdue}</p>
         </div>
-        <div className="rounded-lg border bg-card p-3">
-          <p className="text-xs text-muted-foreground">Collected</p>
-          <p className="text-xl font-semibold text-green-600">{fmtAmount(stats.collected, 'BDT')}</p>
+        <div className="rounded-xl border bg-card p-4 shadow-sm flex flex-col justify-center">
+          <p className="text-sm font-medium text-muted-foreground">Collected</p>
+          <p className="text-2xl font-bold text-emerald-600 dark:text-emerald-500 mt-1">{fmtAmount(stats.collected, 'BDT')}</p>
         </div>
       </div>
 
       {/* Filters */}
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:flex-wrap">
-        <div className="flex-1 min-w-[180px]">
+      <div className="rounded-xl border bg-card p-4 shadow-sm flex flex-col gap-4 sm:flex-row sm:items-end sm:flex-wrap">
+        <div className="flex-1 min-w-[180px] space-y-1.5">
           <Label htmlFor="search">Search</Label>
-          <input
-            id="search"
-            type="text"
-            placeholder="Name, email, member #..."
-            value={searchQuery}
-            onChange={(e) => { setPage(1); setSearchQuery(e.target.value) }}
-            className="mt-1 w-full rounded-md border bg-background px-3 py-2 text-sm"
-          />
+          <div className="relative">
+            <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+            <input
+              id="search"
+              type="text"
+              placeholder="Name, email, member #..."
+              value={searchQuery}
+              onChange={(e) => { setPage(1); setSearchQuery(e.target.value) }}
+              className="flex h-10 w-full rounded-md border border-input bg-background pl-9 pr-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+            />
+          </div>
         </div>
-        <div className="w-full sm:w-44">
+        <div className="w-full sm:w-44 space-y-1.5">
           <Label htmlFor="monthFilter">Month</Label>
           <select
             id="monthFilter"
             value={monthFilter}
             onChange={(e) => { setPage(1); setMonthFilter(e.target.value) }}
-            className="mt-1 w-full rounded-md border bg-background px-3 py-2 text-sm"
+            className="flex h-10 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
           >
             <option value="">All Months</option>
             {monthOptions.map((m) => (
@@ -271,143 +275,149 @@ export default function MonthlyBilling() {
             ))}
           </select>
         </div>
-        <div className="w-full sm:w-44">
+        <div className="w-full sm:w-44 space-y-1.5">
           <Label htmlFor="statusFilter">Status</Label>
           <select
             id="statusFilter"
             value={statusFilter}
             onChange={(e) => { setPage(1); setStatusFilter(e.target.value) }}
-            className="mt-1 w-full rounded-md border bg-background px-3 py-2 text-sm"
+            className="flex h-10 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
           >
-            <option value="">All Status</option>
+            <option value="">All Statuses</option>
             {Object.entries(STATUS_CONFIG).map(([key, cfg]) => (
               <option key={key} value={key}>{cfg.label}</option>
             ))}
           </select>
         </div>
-        <Button variant="secondary" onClick={() => fetchFees()}>
-          Refresh
+        <Button variant="secondary" onClick={() => fetchFees()} className="h-10">
+          Apply Filters
         </Button>
       </div>
 
       {error ? <p className="text-sm text-destructive">{error}</p> : null}
 
       {/* Table */}
-      <div className="overflow-x-auto rounded-md border">
-        <table className="w-full text-left text-sm">
-          <thead className="bg-muted/50">
-            <tr className="text-muted-foreground">
-              <th className="px-3 py-2">Student</th>
-              <th className="px-3 py-2">Course</th>
-              <th className="px-3 py-2">Month</th>
-              <th className="px-3 py-2">Amount</th>
-              <th className="px-3 py-2">Due</th>
-              <th className="px-3 py-2">Status</th>
-              <th className="px-3 py-2 text-right">Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {loading ? (
-              <tr>
-                <td colSpan={7} className="px-3 py-6 text-center text-muted-foreground">
-                  Loading…
-                </td>
+      <div className="rounded-xl border bg-card text-card-foreground shadow-sm overflow-hidden">
+        <div className="overflow-x-auto">
+          <table className="w-full text-left text-sm whitespace-nowrap">
+            <thead className="border-b bg-muted/50">
+              <tr className="text-muted-foreground">
+                <th className="px-4 py-3 font-medium">Student</th>
+                <th className="px-4 py-3 font-medium">Course</th>
+                <th className="px-4 py-3 font-medium">Month</th>
+                <th className="px-4 py-3 font-medium">Amount</th>
+                <th className="px-4 py-3 font-medium">Due</th>
+                <th className="px-4 py-3 font-medium">Status</th>
+                <th className="px-4 py-3 font-medium text-right">Actions</th>
               </tr>
-            ) : fees.length === 0 ? (
-              <tr>
-                <td colSpan={7} className="px-3 py-6 text-center text-muted-foreground">
-                  No fees found. Generate bills for a month to get started.
-                </td>
-              </tr>
-            ) : (
-              fees.map((item) => {
-                const statusCfg = STATUS_CONFIG[item.fee.status]
-                const isOverdue =
-                  new Date(item.fee.dueDate) < new Date() &&
-                  !['paid', 'waived'].includes(item.fee.status)
-                return (
-                  <tr
-                    key={item.fee.id}
-                    className={`border-t cursor-pointer hover:bg-muted/30 ${isOverdue ? 'bg-red-50 dark:bg-red-900/10' : ''}`}
-                    onClick={() => setSelectedFee(item)}
-                  >
-                    <td className="px-3 py-2">
-                      <div className="font-medium text-foreground">
-                        {item.member?.fullNameEnglish || item.member?.fullNameBangla || '—'}
-                      </div>
-                      <div className="text-xs text-muted-foreground">
-                        {item.member?.memberNumber || item.member?.email || ''}
-                      </div>
-                    </td>
-                    <td className="px-3 py-2 text-foreground">{item.course?.name || '—'}</td>
-                    <td className="px-3 py-2 text-foreground">{fmtMonth(item.fee.billingMonth)}</td>
-                    <td className="px-3 py-2">{fmtAmount(item.fee.amount, item.fee.currency)}</td>
-                    <td className="px-3 py-2 text-muted-foreground">{fmtDate(item.fee.dueDate)}</td>
-                    <td className="px-3 py-2">
-                      <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${statusCfg?.color || 'bg-gray-100 text-gray-700'}`}>
-                        {statusCfg?.label || item.fee.status}
-                      </span>
-                    </td>
-                    <td className="px-3 py-2 text-right">
-                      <div className="flex justify-end gap-1" onClick={(e) => e.stopPropagation()}>
-                        {item.fee.status === 'payment_submitted' && (
-                          <>
-                            <Button
-                              size="sm"
-                              variant="outline"
-                              className="text-green-700 border-green-200 hover:bg-green-50 hover:text-green-800 dark:text-green-400 dark:border-green-800/50 dark:hover:bg-green-950/50 dark:hover:text-green-300 text-xs h-7 px-2"
-                              disabled={actionLoading}
-                              onClick={() => handleAction(item.fee.id, 'verify_payment')}
-                            >
-                              Verify
-                            </Button>
-                            <Button
-                              size="sm"
-                              variant="outline"
-                              className="text-red-700 border-red-200 hover:bg-red-50 hover:text-red-800 dark:text-red-400 dark:border-red-800/50 dark:hover:bg-red-950/50 dark:hover:text-red-300 text-xs h-7 px-2"
-                              disabled={actionLoading}
-                              onClick={() => {
-                                const notes = prompt('Rejection reason:')
-                                if (notes) handleAction(item.fee.id, 'reject_payment', { notes })
-                              }}
-                            >
-                              Reject
-                            </Button>
-                          </>
-                        )}
-                        {['pending', 'due', 'overdue'].includes(item.fee.status) && (
-                          <>
-                            <Button
-                              size="sm"
-                              variant="outline"
-                              className="text-xs h-7 px-2"
-                              disabled={actionLoading}
-                              onClick={() => handleAction(item.fee.id, 'mark_paid')}
-                            >
-                              Mark Paid
-                            </Button>
-                            <Button
-                              size="sm"
-                              variant="outline"
-                              className="text-purple-700 border-purple-200 hover:bg-purple-50 hover:text-purple-800 dark:text-purple-400 dark:border-purple-800/50 dark:hover:bg-purple-950/50 dark:hover:text-purple-300 text-xs h-7 px-2"
-                              disabled={actionLoading}
-                              onClick={() => {
-                                const reason = prompt('Waiver reason:')
-                                if (reason) handleAction(item.fee.id, 'waive', { waiverReason: reason })
-                              }}
-                            >
-                              Waive
-                            </Button>
-                          </>
-                        )}
-                      </div>
-                    </td>
-                  </tr>
-                )
-              })
-            )}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {loading ? (
+                <tr>
+                  <td colSpan={7} className="px-4 py-6 text-center text-muted-foreground">
+                    Loading…
+                  </td>
+                </tr>
+              ) : fees.length === 0 ? (
+                <tr>
+                  <td colSpan={7} className="px-4 py-6 text-center text-muted-foreground">
+                    No fees found. Generate bills for a month to get started.
+                  </td>
+                </tr>
+              ) : (
+                fees.map((item) => {
+                  const statusCfg = STATUS_CONFIG[item.fee.status]
+                  const isOverdue =
+                    new Date(item.fee.dueDate) < new Date() &&
+                    !['paid', 'waived'].includes(item.fee.status)
+                  return (
+                    <tr
+                      key={item.fee.id}
+                      className={`border-b last:border-0 cursor-pointer transition-colors hover:bg-muted/30 ${isOverdue ? 'bg-red-50/50 dark:bg-red-900/10' : ''}`}
+                      onClick={() => setSelectedFee(item)}
+                    >
+                      <td className="px-4 py-3">
+                        <div className="font-medium text-foreground">
+                          {item.member?.fullNameEnglish || item.member?.fullNameBangla || '—'}
+                        </div>
+                        <div className="text-xs text-muted-foreground mt-0.5">
+                          {item.member?.memberNumber || item.member?.email || ''}
+                        </div>
+                      </td>
+                      <td className="px-4 py-3 text-foreground">{item.course?.name || '—'}</td>
+                      <td className="px-4 py-3 text-foreground font-medium">{fmtMonth(item.fee.billingMonth)}</td>
+                      <td className="px-4 py-3 font-medium">{fmtAmount(item.fee.amount, item.fee.currency)}</td>
+                      <td className="px-4 py-3 text-muted-foreground">{fmtDate(item.fee.dueDate)}</td>
+                      <td className="px-4 py-3">
+                        <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${statusCfg?.color || 'bg-gray-100 text-gray-700'}`}>
+                          {statusCfg?.label || item.fee.status}
+                        </span>
+                      </td>
+                      <td className="px-4 py-3 text-right">
+                        <div className="flex justify-end gap-1.5" onClick={(e) => e.stopPropagation()}>
+                          {item.fee.status === 'payment_submitted' && (
+                            <>
+                              <Button
+                                size="icon"
+                                variant="ghost"
+                                className="h-8 w-8 text-emerald-600 hover:text-emerald-700 hover:bg-emerald-50 dark:hover:bg-emerald-900/20"
+                                disabled={actionLoading}
+                                onClick={() => handleAction(item.fee.id, 'verify_payment')}
+                                title="Verify Payment"
+                              >
+                                <CheckCircle2 className="h-4 w-4" />
+                              </Button>
+                              <Button
+                                size="icon"
+                                variant="ghost"
+                                className="h-8 w-8 text-rose-600 hover:text-rose-700 hover:bg-rose-50 dark:hover:bg-rose-900/20"
+                                disabled={actionLoading}
+                                onClick={() => {
+                                  const notes = prompt('Rejection reason:')
+                                  if (notes) handleAction(item.fee.id, 'reject_payment', { notes })
+                                }}
+                                title="Reject Payment"
+                              >
+                                <XCircle className="h-4 w-4" />
+                              </Button>
+                            </>
+                          )}
+                          {['pending', 'due', 'overdue'].includes(item.fee.status) && (
+                            <>
+                              <Button
+                                size="icon"
+                                variant="ghost"
+                                className="h-8 w-8 text-blue-600 hover:text-blue-700 hover:bg-blue-50 dark:hover:bg-blue-900/20"
+                                disabled={actionLoading}
+                                onClick={() => handleAction(item.fee.id, 'mark_paid')}
+                                title="Mark as Paid"
+                              >
+                                <CheckSquare className="h-4 w-4" />
+                              </Button>
+                              <Button
+                                size="icon"
+                                variant="ghost"
+                                className="h-8 w-8 text-purple-600 hover:text-purple-700 hover:bg-purple-50 dark:hover:bg-purple-900/20"
+                                disabled={actionLoading}
+                                onClick={() => {
+                                  const reason = prompt('Waiver reason:')
+                                  if (reason) handleAction(item.fee.id, 'waive', { waiverReason: reason })
+                                }}
+                                title="Waive Fee"
+                              >
+                                <HandCoins className="h-4 w-4" />
+                              </Button>
+                            </>
+                          )}
+                        </div>
+                      </td>
+                    </tr>
+                  )
+                })
+              )}
+            </tbody>
+          </table>
+        </div>
       </div>
 
       {/* Pagination */}

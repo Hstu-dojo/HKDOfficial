@@ -5,6 +5,7 @@ import { apiJSON } from '../../_lib/api.client'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import { Pencil, Trash2 } from 'lucide-react'
 
 type Course = {
   id: string
@@ -158,26 +159,30 @@ export default function Schedules() {
   }
 
   return (
-    <div className="space-y-4">
-      <div>
-        <h1 className="text-2xl font-bold text-foreground">Schedules</h1>
-        <p className="text-sm text-muted-foreground">Create and manage course schedule entries.</p>
+    <div className="space-y-6">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <div>
+          <h1 className="text-3xl font-bold tracking-tight text-foreground">Schedules</h1>
+          <p className="text-sm text-muted-foreground mt-1">Create and manage course schedule entries.</p>
+        </div>
       </div>
 
-      {message ? <p className="text-sm text-primary">{message}</p> : null}
-      {error ? <p className="text-sm text-destructive">{error}</p> : null}
+      {message ? <div className="rounded-md bg-primary/10 px-4 py-3 text-sm text-primary font-medium">{message}</div> : null}
+      {error ? <div className="rounded-md bg-destructive/10 px-4 py-3 text-sm text-destructive font-medium">{error}</div> : null}
 
-      <form onSubmit={onSubmit} className="rounded-md border p-4 space-y-4">
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-          <div className="space-y-2 sm:col-span-2">
-            <Label htmlFor="courseId">Course</Label>
-            <select
-              id="courseId"
-              value={form.courseId}
-              onChange={(e) => setForm((p) => ({ ...p, courseId: e.target.value }))}
-              className="mt-2 w-full rounded-md border bg-background px-3 py-2 text-sm"
-              disabled={!!editingId}
-            >
+      <div className="rounded-xl border bg-card p-5 shadow-sm">
+        <h2 className="text-base font-semibold text-foreground mb-4">{editingId ? 'Edit Schedule' : 'Add New Schedule'}</h2>
+        <form onSubmit={onSubmit} className="space-y-4">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+            <div className="space-y-1.5 sm:col-span-2">
+              <Label htmlFor="courseId">Course</Label>
+              <select
+                id="courseId"
+                value={form.courseId}
+                onChange={(e) => setForm((p) => ({ ...p, courseId: e.target.value }))}
+                className="flex h-10 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:opacity-50"
+                disabled={!!editingId}
+              >
               {data.courses.map((c) => (
                 <option key={c.id} value={c.id}>
                   {c.name}
@@ -189,13 +194,13 @@ export default function Schedules() {
             ) : null}
           </div>
 
-          <div className="space-y-2">
+          <div className="space-y-1.5">
             <Label htmlFor="dayOfWeek">Day</Label>
             <select
               id="dayOfWeek"
               value={String(form.dayOfWeek)}
               onChange={(e) => setForm((p) => ({ ...p, dayOfWeek: Number(e.target.value) }))}
-              className="mt-2 w-full rounded-md border bg-background px-3 py-2 text-sm"
+              className="flex h-10 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
             >
               {DAY_OPTIONS.map((d) => (
                 <option key={d.value} value={String(d.value)}>
@@ -205,48 +210,50 @@ export default function Schedules() {
             </select>
           </div>
 
-          <div className="space-y-2">
+          <div className="space-y-1.5">
             <Label htmlFor="location">Location</Label>
-            <Input id="location" value={form.location} onChange={(e) => setForm((p) => ({ ...p, location: e.target.value }))} />
+            <Input id="location" className="h-10" value={form.location} onChange={(e) => setForm((p) => ({ ...p, location: e.target.value }))} />
           </div>
 
-          <div className="space-y-2">
+          <div className="space-y-1.5">
             <Label htmlFor="startTime">Start</Label>
-            <Input id="startTime" type="time" value={form.startTime} onChange={(e) => setForm((p) => ({ ...p, startTime: e.target.value }))} />
+            <Input id="startTime" type="time" className="h-10" value={form.startTime} onChange={(e) => setForm((p) => ({ ...p, startTime: e.target.value }))} />
           </div>
-          <div className="space-y-2">
+          <div className="space-y-1.5">
             <Label htmlFor="endTime">End</Label>
-            <Input id="endTime" type="time" value={form.endTime} onChange={(e) => setForm((p) => ({ ...p, endTime: e.target.value }))} />
+            <Input id="endTime" type="time" className="h-10" value={form.endTime} onChange={(e) => setForm((p) => ({ ...p, endTime: e.target.value }))} />
           </div>
         </div>
 
-        <div className="flex gap-2">
-          <Button type="submit" disabled={saving || loading}>
-            {saving ? 'Saving…' : editingId ? 'Update' : 'Create'}
-          </Button>
-          {editingId ? (
-            <Button type="button" variant="outline" onClick={() => resetForm()} disabled={saving}>
-              Cancel edit
+          <div className="flex gap-2 pt-2">
+            <Button type="submit" disabled={saving || loading} className="h-10">
+              {saving ? 'Saving…' : editingId ? 'Update Schedule' : 'Create Schedule'}
             </Button>
-          ) : null}
-          <Button type="button" variant="secondary" onClick={() => fetchData()} disabled={saving}>
-            Reload
-          </Button>
-        </div>
-      </form>
+            {editingId ? (
+              <Button type="button" variant="outline" onClick={() => resetForm()} disabled={saving} className="h-10">
+                Cancel edit
+              </Button>
+            ) : null}
+            <Button type="button" variant="secondary" onClick={() => fetchData()} disabled={saving} className="h-10">
+              Reload
+            </Button>
+          </div>
+        </form>
+      </div>
 
-      <div className="overflow-x-auto rounded-md border">
-        <table className="w-full text-left text-sm">
-          <thead className="bg-muted/50">
-            <tr className="text-muted-foreground">
-              <th className="px-3 py-2">Course</th>
-              <th className="px-3 py-2">Day</th>
-              <th className="px-3 py-2">Time</th>
-              <th className="px-3 py-2">Location</th>
-              <th className="px-3 py-2">Actions</th>
-            </tr>
-          </thead>
-          <tbody>
+      <div className="rounded-xl border bg-card text-card-foreground shadow-sm overflow-hidden">
+        <div className="overflow-x-auto">
+          <table className="w-full text-left text-sm whitespace-nowrap">
+            <thead className="border-b bg-muted/50">
+              <tr className="text-muted-foreground">
+                <th className="px-4 py-3 font-medium">Course</th>
+                <th className="px-4 py-3 font-medium">Day</th>
+                <th className="px-4 py-3 font-medium">Time</th>
+                <th className="px-4 py-3 font-medium">Location</th>
+                <th className="px-4 py-3 font-medium text-right">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
             {loading ? (
               <tr>
                 <td colSpan={5} className="px-3 py-6 text-center text-muted-foreground">Loading…</td>
@@ -257,18 +264,22 @@ export default function Schedules() {
               </tr>
             ) : (
               data.schedules.map((s) => (
-                <tr key={s.id} className="border-t">
-                  <td className="px-3 py-2">
-                    <div className="text-foreground">{s.courseName}</div>
-                    {s.courseNameBangla ? <div className="text-xs text-muted-foreground">{s.courseNameBangla}</div> : null}
+                <tr key={s.id} className="border-b last:border-0 transition-colors hover:bg-muted/30">
+                  <td className="px-4 py-3">
+                    <div className="font-medium text-foreground">{s.courseName}</div>
+                    {s.courseNameBangla ? <div className="text-xs text-muted-foreground mt-0.5">{s.courseNameBangla}</div> : null}
                   </td>
-                  <td className="px-3 py-2">{s.dayName}</td>
-                  <td className="px-3 py-2">{s.startTime}–{s.endTime}</td>
-                  <td className="px-3 py-2">{s.location || '—'}</td>
-                  <td className="px-3 py-2">
-                    <div className="flex gap-2">
-                      <Button type="button" variant="outline" size="sm" onClick={() => startEdit(s)}>Edit</Button>
-                      <Button type="button" variant="destructive" size="sm" onClick={() => onDelete(s.id)}>Delete</Button>
+                  <td className="px-4 py-3 font-medium">{s.dayName}</td>
+                  <td className="px-4 py-3 text-muted-foreground">{s.startTime} – {s.endTime}</td>
+                  <td className="px-4 py-3 text-muted-foreground">{s.location || '—'}</td>
+                  <td className="px-4 py-3 text-right">
+                    <div className="flex gap-1 items-center justify-end">
+                      <Button variant="ghost" size="icon" onClick={() => startEdit(s)} className="h-8 w-8 text-muted-foreground hover:text-foreground" title="Edit">
+                        <Pencil className="h-4 w-4" />
+                      </Button>
+                      <Button variant="ghost" size="icon" onClick={() => onDelete(s.id)} className="h-8 w-8 text-rose-600 hover:text-rose-700 hover:bg-rose-50 dark:hover:bg-rose-900/20" title="Delete">
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
                     </div>
                   </td>
                 </tr>
@@ -276,6 +287,7 @@ export default function Schedules() {
             )}
           </tbody>
         </table>
+        </div>
       </div>
     </div>
   )

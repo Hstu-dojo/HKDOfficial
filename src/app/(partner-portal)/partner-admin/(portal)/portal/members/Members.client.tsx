@@ -14,7 +14,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog'
-import { AcademicCapIcon } from '@heroicons/react/24/outline'
+import { Pencil, UserPlus, Search } from 'lucide-react'
 import DirectEnrollmentModal from '@/components/partner/DirectEnrollmentModal'
 
 type Member = {
@@ -195,15 +195,17 @@ export default function Members() {
   }
 
   return (
-    <div className="space-y-4">
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+    <div className="space-y-6">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-foreground">Members</h1>
-          <p className="text-sm text-muted-foreground">{pagination.total} total</p>
+          <h1 className="text-3xl font-bold tracking-tight text-foreground">Members</h1>
+          <p className="text-sm text-muted-foreground mt-1">Manage venue members and handle direct enrollments</p>
         </div>
         <Dialog open={open} onOpenChange={setOpen}>
           <DialogTrigger asChild>
-            <Button>Add Member</Button>
+            <Button className="shrink-0 gap-2">
+              <UserPlus className="h-4 w-4" /> Add Member
+            </Button>
           </DialogTrigger>
           <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-[600px]">
             <DialogHeader>
@@ -239,54 +241,63 @@ export default function Members() {
         </DialogContent>
       </Dialog>
 
-      <div className="flex flex-col gap-3 sm:flex-row">
-        <div className="flex-1">
+      <div className="rounded-xl border bg-card p-4 shadow-sm flex flex-col gap-4 sm:flex-row sm:items-end">
+        <div className="flex-1 space-y-1.5">
           <Label htmlFor="search">Search</Label>
-          <Input
-            id="search"
-            placeholder="Name, member no, phone…"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            onKeyDown={(e) => {
-              if (e.key === 'Enter') fetchMembers()
-            }}
-          />
+          <div className="relative">
+            <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+            <Input
+              id="search"
+              placeholder="Name, member no, phone…"
+              className="pl-9"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') fetchMembers()
+              }}
+            />
+          </div>
         </div>
-        <div className="w-full sm:w-56">
+        <div className="w-full sm:w-56 space-y-1.5">
           <Label htmlFor="status">Status</Label>
           <select
             id="status"
             value={status}
             onChange={(e) => setStatus(e.target.value as any)}
-            className="mt-2 w-full rounded-md border bg-background px-3 py-2 text-sm"
+            className="flex h-10 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
           >
-            <option value="all">All</option>
-            <option value="active">Active</option>
-            <option value="inactive">Inactive</option>
+            <option value="all">All Statuses</option>
+            <option value="active">Active Only</option>
+            <option value="inactive">Inactive Only</option>
           </select>
         </div>
-        <div className="sm:pt-7">
-          <Button onClick={() => fetchMembers()} variant="secondary">
-            Apply
+        <div>
+          <Button onClick={() => fetchMembers()} variant="secondary" className="w-full sm:w-auto">
+            Apply Filter
           </Button>
         </div>
       </div>
 
-      {message ? <p className="text-sm text-primary">{message}</p> : null}
-      {error ? <p className="text-sm text-destructive">{error}</p> : null}
+      {message ? (
+        <div className="rounded-md bg-primary/10 px-4 py-3 text-sm text-primary font-medium">{message}</div>
+      ) : null}
+      {error ? (
+        <div className="rounded-md bg-destructive/10 px-4 py-3 text-sm text-destructive font-medium">{error}</div>
+      ) : null}
 
-      <div className="overflow-x-auto rounded-md border">
-        <table className="w-full text-left text-sm">
-          <thead className="bg-muted/50">
+      <div className="rounded-xl border bg-card text-card-foreground shadow-sm overflow-hidden">
+        <div className="overflow-x-auto">
+          <table className="w-full text-left text-sm whitespace-nowrap">
+          <thead className="border-b bg-muted/50">
             <tr className="text-muted-foreground">
-              <th className="px-3 py-2">Member #</th>
-              <th className="px-3 py-2">Name</th>
-              <th className="px-3 py-2">Phone</th>
-              <th className="px-3 py-2">Belt</th>
-              <th className="px-3 py-2">Level</th>
-              <th className="px-3 py-2">Active</th>
-              <th className="px-3 py-2">Joined</th>
-              <th className="px-3 py-2">Actions</th>
+              <th className="px-4 py-3 font-medium">Member #</th>
+              <th className="px-4 py-3 font-medium">Name</th>
+              <th className="px-4 py-3 font-medium">Phone</th>
+              <th className="px-4 py-3 font-medium">Belt</th>
+              <th className="px-4 py-3 font-medium">Level</th>
+              <th className="px-4 py-3 font-medium">Status</th>
+              <th className="px-4 py-3 font-medium">Joined</th>
+              <th className="px-4 py-3 font-medium text-right">Actions</th>
             </tr>
           </thead>
           <tbody>
@@ -304,33 +315,50 @@ export default function Members() {
               </tr>
             ) : (
               members.map((m) => (
-                <tr key={m.id} className="border-t">
-                  <td className="px-3 py-2 font-medium text-foreground">{m.memberNumber}</td>
-                  <td className="px-3 py-2">
-                    <div className="text-foreground">{m.fullNameEnglish || m.fullNameBangla || '—'}</div>
-                    {m.email ? <div className="text-xs text-muted-foreground">{m.email}</div> : null}
+                <tr key={m.id} className="border-b last:border-0 transition-colors hover:bg-muted/30">
+                  <td className="px-4 py-3 font-medium text-foreground">{m.memberNumber}</td>
+                  <td className="px-4 py-3">
+                    <div className="font-medium text-foreground">{m.fullNameEnglish || m.fullNameBangla || '—'}</div>
+                    {m.email ? <div className="text-xs text-muted-foreground mt-0.5">{m.email}</div> : null}
                   </td>
-                  <td className="px-3 py-2">{m.phoneNumber || '—'}</td>
-                  <td className="px-3 py-2">{m.beltRank || '—'}</td>
-                  <td className="px-3 py-2">{m.studentLevel || '—'}</td>
-                  <td className="px-3 py-2">{m.isActive ? 'Yes' : 'No'}</td>
-                  <td className="px-3 py-2">{formatDate(m.joinDate)}</td>
-                  <td className="px-3 py-2">
+                  <td className="px-4 py-3 text-muted-foreground">{m.phoneNumber || '—'}</td>
+                  <td className="px-4 py-3">
+                    {m.beltRank ? (
+                      <span className="inline-flex items-center rounded-md bg-secondary px-2 py-1 text-xs font-medium capitalize">
+                        {m.beltRank}
+                      </span>
+                    ) : '—'}
+                  </td>
+                  <td className="px-4 py-3 text-muted-foreground">{m.studentLevel || '—'}</td>
+                  <td className="px-4 py-3">
+                    <span
+                      className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ${
+                        m.isActive
+                          ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400'
+                          : 'bg-rose-100 text-rose-700 dark:bg-rose-900/30 dark:text-rose-400'
+                      }`}
+                    >
+                      {m.isActive ? 'Active' : 'Inactive'}
+                    </span>
+                  </td>
+                  <td className="px-4 py-3">{formatDate(m.joinDate)}</td>
+                  <td className="px-4 py-3">
                     <div className="flex items-center gap-2">
-                      <Button variant="ghost" size="sm" onClick={() => onEdit(m)}>
-                        Edit
+                      <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-foreground" title="Edit Member" onClick={() => onEdit(m)}>
+                        <Pencil className="h-4 w-4" />
                       </Button>
                       {!m.hasActiveEnrollment && (
                         <Button
                           variant="outline"
-                          size="sm"
-                          className="flex items-center gap-1 text-xs"
+                          size="icon"
+                          className="h-8 w-8 text-primary border-primary/20 hover:bg-primary/10"
+                          title="Direct Enroll"
                           onClick={() => {
                             setSelectedMemberForEnroll(m)
                             setEnrollOpen(true)
                           }}
                         >
-                          <AcademicCapIcon className="h-4 w-4" /> Enroll
+                          <UserPlus className="h-4 w-4" />
                         </Button>
                       )}
                     </div>
@@ -340,6 +368,7 @@ export default function Members() {
             )}
           </tbody>
         </table>
+        </div>
       </div>
 
       <div className="flex items-center justify-between gap-2">
