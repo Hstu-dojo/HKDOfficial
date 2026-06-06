@@ -12,7 +12,7 @@ const items = [
   { href: '/partner-admin/portal/page-settings', label: 'Page Settings' },
   { href: '/partner-admin/portal/pending-students', label: 'Pending Students' },
   { href: '/partner-admin/portal/monthly-status', label: 'Monthly Status' },
-  { href: '/partner-admin/portal/branch-requests', label: 'Branch Requests' },
+  { href: '/partner-admin/portal/branch-requests', label: 'Branch Change' },
   { href: '/partner-admin/portal/admin-management', label: 'Admin Management' },
 ]
 
