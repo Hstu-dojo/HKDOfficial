@@ -105,7 +105,7 @@ export async function PATCH(request: Request) {
 
   try {
     const body = await request.json()
-    const { applicationId, action, notes, rejectionReason, studentInfo } = body as {
+    const { applicationId, action, notes, rejectionReason, studentInfo: payloadStudentInfo } = body as {
       applicationId?: string
       action?: 'verify_payment' | 'approve' | 'reject' | 'cancel' | 'update_info'
       notes?: string
@@ -213,14 +213,14 @@ export async function PATCH(request: Request) {
     }
 
     if (action === 'update_info') {
-      if (!studentInfo) {
+      if (!payloadStudentInfo) {
         return NextResponse.json({ error: 'studentInfo is required' }, { status: 400 })
       }
 
       const [updated] = await db
         .update(enrollmentApplications)
         .set({
-          studentInfo,
+          studentInfo: payloadStudentInfo,
           updatedAt: new Date(),
         })
         .where(eq(enrollmentApplications.id, applicationId))
@@ -228,7 +228,7 @@ export async function PATCH(request: Request) {
 
       // Sync to profiles/members table if profileId is present
       if (updated.profileId) {
-        const studentData = (studentInfo || {}) as any
+        const studentData = (payloadStudentInfo || {}) as any
         const fullNameEnglish =
           studentData.fullNameEnglish || studentData.username || studentData.fullName || studentData.name || null
         const phoneNumber = studentData.phoneNumber || studentData.phone || studentData.mobile || null

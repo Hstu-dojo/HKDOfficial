@@ -124,7 +124,13 @@ export default function Enrollments() {
   )
 }
 
-function ApplicationsTab() {
+function ApplicationsTab({
+  onViewForm,
+  refreshTrigger,
+}: {
+  onViewForm: (app: any) => void
+  refreshTrigger: number
+}) {
   const [loading, setLoading] = React.useState(true)
   const [error, setError] = React.useState<string | null>(null)
   const [message, setMessage] = React.useState<string | null>(null)
@@ -153,7 +159,7 @@ function ApplicationsTab() {
 
   React.useEffect(() => {
     fetchRows()
-  }, [fetchRows])
+  }, [fetchRows, refreshTrigger])
 
   const act = async (applicationId: string, action: 'verify_payment' | 'approve' | 'reject' | 'cancel') => {
     setMessage(null)
@@ -219,29 +225,68 @@ function ApplicationsTab() {
         <table className="w-full text-left text-sm">
           <thead className="bg-muted/50">
             <tr className="text-muted-foreground">
-              <th className="px-3 py-2">Application</th>
+              <th className="px-3 py-2">Application #</th>
+              <th className="px-3 py-2">Student Details</th>
               <th className="px-3 py-2">Course</th>
+              <th className="px-3 py-2">Fee</th>
               <th className="px-3 py-2">Status</th>
-              <th className="px-3 py-2">Txn</th>
+              <th className="px-3 py-2">Payment Info</th>
               <th className="px-3 py-2">Created</th>
               <th className="px-3 py-2">Actions</th>
             </tr>
           </thead>
           <tbody>
             {loading ? (
-              <tr><td colSpan={6} className="px-3 py-6 text-center text-muted-foreground">Loading…</td></tr>
+              <tr><td colSpan={8} className="px-3 py-6 text-center text-muted-foreground">Loading…</td></tr>
             ) : rows.length === 0 ? (
-              <tr><td colSpan={6} className="px-3 py-6 text-center text-muted-foreground">No applications found.</td></tr>
+              <tr><td colSpan={8} className="px-3 py-6 text-center text-muted-foreground">No applications found.</td></tr>
             ) : (
               rows.map((r) => (
                 <tr key={r.id} className="border-t">
                   <td className="px-3 py-2 text-foreground font-medium">{r.applicationNumber}</td>
+                  <td className="px-3 py-2">
+                    <div className="font-semibold text-foreground">{r.studentInfo?.fullNameEnglish || r.studentInfo?.name_en || '—'}</div>
+                    <div className="text-xs text-muted-foreground">{r.studentInfo?.email || '—'}</div>
+                    <div className="text-xs text-muted-foreground">{r.studentInfo?.phoneNumber || r.studentInfo?.mobile || '—'}</div>
+                  </td>
                   <td className="px-3 py-2">{r.courseName}</td>
-                  <td className="px-3 py-2">{r.status}</td>
-                  <td className="px-3 py-2">{r.transactionId || '—'}</td>
+                  <td className="px-3 py-2">
+                    {r.admissionFeeAmount != null ? (
+                      new Intl.NumberFormat('en-BD', {
+                        style: 'currency',
+                        currency: r.currency || 'BDT',
+                        minimumFractionDigits: 0
+                      }).format(r.admissionFeeAmount / 100)
+                    ) : '—'}
+                  </td>
+                  <td className="px-3 py-2 font-medium capitalize text-xs">{r.status.replace('_', ' ')}</td>
+                  <td className="px-3 py-2">
+                    <div className="text-xs capitalize font-semibold">{r.paymentMethod || '—'}</div>
+                    <div className="text-xs font-mono text-muted-foreground">{r.transactionId || '—'}</div>
+                  </td>
                   <td className="px-3 py-2">{fmtDate(r.createdAt)}</td>
                   <td className="px-3 py-2">
-                    <div className="flex flex-wrap gap-2">
+                    <div className="flex flex-wrap gap-2 items-center">
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => onViewForm({
+                          applicationId: r.id,
+                          courseId: r.courseId,
+                          courseName: r.courseName,
+                          studentInfo: r.studentInfo,
+                          status: r.status,
+                          paymentInfo: {
+                            method: r.paymentMethod,
+                            transactionId: r.transactionId,
+                            proofUrl: r.paymentProofUrl,
+                            amount: r.admissionFeeAmount,
+                            currency: r.currency,
+                          }
+                        })}
+                      >
+                        View Form
+                      </Button>
                       {r.status === 'payment_submitted' ? (
                         <Button size="sm" onClick={() => act(r.id, 'verify_payment')}>Verify</Button>
                       ) : null}
@@ -284,7 +329,13 @@ function ApplicationsTab() {
   )
 }
 
-function EnrollmentsTab() {
+function EnrollmentsTab({
+  onViewForm,
+  refreshTrigger,
+}: {
+  onViewForm: (app: any) => void
+  refreshTrigger: number
+}) {
   const [loading, setLoading] = React.useState(true)
   const [error, setError] = React.useState<string | null>(null)
   const [message, setMessage] = React.useState<string | null>(null)
@@ -314,7 +365,7 @@ function EnrollmentsTab() {
 
   React.useEffect(() => {
     fetchRows()
-  }, [fetchRows])
+  }, [fetchRows, refreshTrigger])
 
   const drop = async (enrollmentId: string) => {
     const reason = prompt('Drop reason (optional):') || ''
@@ -398,11 +449,34 @@ function EnrollmentsTab() {
                   <td className="px-3 py-2">{r.isActive ? 'active' : r.droppedAt ? 'dropped' : r.completedAt ? 'completed' : 'inactive'}</td>
                   <td className="px-3 py-2">{r.transactionId || '—'}</td>
                   <td className="px-3 py-2">
-                    {r.isActive ? (
-                      <Button size="sm" variant="destructive" onClick={() => drop(r.id)}>Drop</Button>
-                    ) : (
-                      <span className="text-xs text-muted-foreground">—</span>
-                    )}
+                    <div className="flex flex-wrap gap-2 items-center">
+                      {r.applicationId ? (
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => onViewForm({
+                            applicationId: r.applicationId!,
+                            courseId: r.courseId,
+                            courseName: r.courseName,
+                            studentInfo: null, // Will lazy-load
+                            status: r.isActive ? 'active' : r.droppedAt ? 'dropped' : r.completedAt ? 'completed' : 'inactive',
+                            paymentInfo: {
+                              transactionId: r.transactionId,
+                              proofUrl: r.paymentProofUrl,
+                              amount: r.monthlyFee,
+                              currency: r.currency,
+                            }
+                          })}
+                        >
+                          View Form
+                        </Button>
+                      ) : null}
+                      {r.isActive ? (
+                        <Button size="sm" variant="destructive" onClick={() => drop(r.id)}>Drop</Button>
+                      ) : (
+                        <span className="text-xs text-muted-foreground">—</span>
+                      )}
+                    </div>
                   </td>
                 </tr>
               ))
