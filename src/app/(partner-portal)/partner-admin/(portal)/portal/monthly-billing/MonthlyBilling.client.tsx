@@ -4,7 +4,7 @@ import * as React from 'react'
 import { apiJSON } from '../../_lib/api.client'
 import { Button } from '@/components/ui/button'
 import { Label } from '@/components/ui/label'
-import { Search, CheckCircle2, XCircle, HandCoins, CheckSquare } from 'lucide-react'
+import { Search, CheckCircle2, XCircle, Coins, CheckSquare } from 'lucide-react'
 
 type FeeRecord = {
   fee: {
@@ -405,7 +405,7 @@ export default function MonthlyBilling() {
                                 }}
                                 title="Waive Fee"
                               >
-                                <HandCoins className="h-4 w-4" />
+                                <Coins className="h-4 w-4" />
                               </Button>
                             </>
                           )}

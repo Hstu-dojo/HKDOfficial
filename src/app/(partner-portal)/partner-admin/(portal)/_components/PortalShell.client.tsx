@@ -60,9 +60,9 @@ export default function PortalShell({
         {/* Desktop & Mobile Sidebar */}
         <Sidebar collapsible="icon" className="border-r">
           {/* Header */}
-          <SidebarHeader className="border-b p-4 select-none shrink-0 overflow-hidden">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-full bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 flex items-center justify-center text-white font-bold tracking-wider shrink-0 text-sm shadow-md">
+          <SidebarHeader className="border-b p-4 group-data-[state=collapsed]:p-1 group-data-[state=collapsed]:py-4 select-none shrink-0 overflow-hidden transition-all duration-200">
+            <div className="flex items-center gap-3 w-full group-data-[state=collapsed]:justify-center">
+              <div className="w-10 h-10 group-data-[state=collapsed]:w-8 group-data-[state=collapsed]:h-8 rounded-full bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 flex items-center justify-center text-white font-bold tracking-wider shrink-0 text-sm group-data-[state=collapsed]:text-xs shadow-md transition-all duration-200">
                 {initials}
               </div>
               <div className="min-w-0 group-data-[state=collapsed]:hidden">
@@ -81,7 +81,7 @@ export default function PortalShell({
           </SidebarContent>
 
           {/* Footer & Logout */}
-          <SidebarFooter className="border-t p-4 shrink-0 overflow-hidden">
+          <SidebarFooter className="border-t p-4 group-data-[state=collapsed]:p-2 shrink-0 overflow-hidden transition-all duration-200">
             <div className="px-3 group-data-[state=collapsed]:hidden mb-4">
               <div className="text-[10px] text-muted-foreground uppercase tracking-wider font-bold">Admin User</div>
               <div className="text-xs text-foreground font-semibold truncate mt-0.5">{userName || '—'}</div>
