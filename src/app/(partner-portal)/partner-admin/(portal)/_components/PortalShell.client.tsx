@@ -104,10 +104,10 @@ export default function PortalShell({
       <div className="w-full mx-auto max-w-[1600px] px-4 md:px-8 py-4 md:py-6">
         <div className="grid grid-cols-1 md:grid-cols-[280px_1fr] md:gap-8">
           {/* Desktop Sidebar */}
-          <aside className="hidden md:flex flex-col rounded-lg border bg-card p-5 self-start sticky top-6 h-[calc(100vh-3rem)] overflow-y-auto justify-between shadow-sm">
-            <div className="space-y-6">
+          <aside className="hidden md:flex flex-col rounded-lg border bg-card p-5 self-start sticky top-6 h-[calc(100vh-3rem)] overflow-hidden justify-between shadow-sm">
+            <div className="flex-1 flex flex-col min-h-0 space-y-6">
               {/* Profile Card */}
-              <div className="flex items-center gap-3 border-b pb-5">
+              <div className="flex items-center gap-3 border-b pb-5 shrink-0">
                 <div className="w-10 h-10 rounded-full bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 flex items-center justify-center text-white font-bold tracking-wider shrink-0 text-sm shadow-md">
                   {initials}
                 </div>
@@ -121,7 +121,7 @@ export default function PortalShell({
               </div>
               
               {/* Navigation */}
-              <div className="flex-1 overflow-y-auto pr-1 max-h-[calc(100vh-14rem)]">
+              <div className="flex-1 overflow-y-auto pr-1 min-h-0">
                 <PortalNav currentPath={pathname ?? ''} />
               </div>
             </div>
