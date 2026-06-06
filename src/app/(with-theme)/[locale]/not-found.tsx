@@ -5,12 +5,9 @@ import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { getI18n } from "@/locales/server";
 
-export default async function NotFound({
-  params,
-}: {
-  params: Promise<{ locale: string }>;
-}) {
-  const { locale } = await params;
+export default async function NotFound() {
+  // not-found components do not receive params in Next.js App Router
+  const locale = "en";
   const t = await getI18n();
 
   return (
