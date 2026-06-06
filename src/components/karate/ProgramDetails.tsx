@@ -44,7 +44,7 @@ export default function ProgramDetails({ slug, initialProgram }: ProgramDetailsP
     { value: 'orange', label: 'Orange Belt' },
     { value: 'green', label: 'Green Belt' },
     { value: 'blue', label: 'Blue Belt' },
-    { value: 'red', label: 'Red Belt' },
+    { value: 'purple', label: 'Purple Belt' },
     { value: 'brown_kyu3', label: 'Brown Belt (Kyu 3)' },
     { value: 'brown_kyu2', label: 'Brown Belt (Kyu 2)' },
     { value: 'brown_kyu1', label: 'Brown Belt (Kyu 1)' },

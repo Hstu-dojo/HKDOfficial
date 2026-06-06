@@ -23,7 +23,7 @@ export const beltRankEnum = pgEnum('belt_rank', [
   'orange',
   'green',
   'blue',
-  'red',
+  'purple',
   'brown',
   'black',
   'brown_kyu3',

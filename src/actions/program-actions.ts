@@ -35,7 +35,7 @@ const BELT_TEST_ALLOWED_RANKS = [
   'orange',
   'green',
   'blue',
-  'red',
+  'purple',
   'brown', // legacy
   'brown_kyu3',
   'brown_kyu2',
@@ -217,7 +217,7 @@ export async function registerForProgram(data: NewProgramRegistration) {
         'orange',
         'green',
         'blue',
-        'red',
+        'purple',
         'brown', // legacy
         'brown_kyu3',
         'brown_kyu2',

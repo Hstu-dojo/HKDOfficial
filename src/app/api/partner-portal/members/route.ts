@@ -21,7 +21,7 @@ function escapeLikeWildcards(input: string): string {
 
 /** Valid belt rank values — reject anything not in this set. */
 const VALID_BELT_RANKS = new Set([
-  'white', 'yellow', 'orange', 'green', 'blue', 'red',
+  'white', 'yellow', 'orange', 'green', 'blue', 'purple',
   'brown', 'black', 'brown_kyu3', 'brown_kyu2', 'brown_kyu1',
 ]);
 

@@ -505,6 +505,24 @@ export function normalizeStudentLevel(input: unknown): StudentLevel | null {
   return resolveStudentLevel(normalized);
 }
 
+export function mapBeltToExternalRole(beltRank: string | null | undefined): ExternalSystemRole {
+  if (!beltRank) return 'student_9th_kyu';
+  switch (beltRank.toLowerCase()) {
+    case 'white': return 'student_9th_kyu';
+    case 'yellow': return 'student_8th_kyu';
+    case 'orange': return 'student_7th_kyu';
+    case 'green': return 'student_6th_kyu';
+    case 'blue': return 'student_5th_kyu';
+    case 'purple': return 'student_4th_kyu';
+    case 'brown': return 'student_3rd_kyu';
+    case 'brown_kyu3': return 'student_3rd_kyu';
+    case 'brown_kyu2': return 'student_2nd_kyu';
+    case 'brown_kyu1': return 'student_1st_kyu';
+    case 'black': return 'black_belt';
+    default: return 'student_9th_kyu';
+  }
+}
+
 export async function resolveExternalRoleBySupabaseUserId(supabaseUserId: string): Promise<{
   profileId: string | null;
   email: string;
@@ -549,12 +567,7 @@ export async function resolveExternalRoleBySupabaseUserId(supabaseUserId: string
   if (roleNames.some((r) => ['STUDENT', 'MEMBER'].includes(r))) {
     // Check belt rank from the onboarding profile data
     const beltRank = linkedProfile[0]?.beltRank;
-    
-    if (beltRank === 'black') {
-      return { profileId, email, role: 'black_belt' };
-    }
-    
-    return { profileId, email, role: "student_9th_kyu" };
+    return { profileId, email, role: mapBeltToExternalRole(beltRank) };
   }
 
   return { profileId, email, role: null };
@@ -605,8 +618,7 @@ export async function resolveExternalRoleByProfileId(profileId: string): Promise
 
   if (roleNames.some((r) => ['STUDENT', 'MEMBER'].includes(r))) {
     const beltRank = linked[0]!.beltRank
-    if (beltRank === 'black') return { profileId, email, role: 'black_belt' }
-    return { profileId, email, role: 'student_9th_kyu' }
+    return { profileId, email, role: mapBeltToExternalRole(beltRank) }
   }
 
   return { profileId, email, role: null }

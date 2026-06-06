@@ -668,7 +668,6 @@ function EditMemberForm({ member, onSubmit, className }: EditMemberFormProps) {
             <option value="blue">Blue</option>
             <option value="purple">Purple</option>
             <option value="brown">Brown</option>
-            <option value="red">Red</option>
             <option value="black">Black</option>
           </select>
         </div>
