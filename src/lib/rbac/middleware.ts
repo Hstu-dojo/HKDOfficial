@@ -30,32 +30,32 @@ export async function getLocalUserId(supabaseUserId: string): Promise<string | n
 export async function getRBACContext(): Promise<RBACContext | null> {
   try {
     const supabase = await createClient();
-    const { data: { session }, error } = await supabase.auth.getSession();
+    const { data: { user }, error } = await supabase.auth.getUser();
     
     console.log("[getRBACContext] Session check:", { 
-      hasSession: !!session, 
-      hasUser: !!session?.user,
-      userId: session?.user?.id,
+      hasSession: !!user, 
+      hasUser: !!user,
+      userId: user?.id,
       error: error?.message 
     });
     
-    if (error || !session?.user?.id) {
+    if (error || !user?.id) {
       console.log("[getRBACContext] No valid session");
       return null;
     }
 
     // Get local DB user ID from Supabase user ID
-    const localUserId = await getLocalUserId(session.user.id);
-    console.log("[getRBACContext] Local user lookup:", { supabaseId: session.user.id, localUserId });
+    const localUserId = await getLocalUserId(user.id);
+    console.log("[getRBACContext] Local user lookup:", { supabaseId: user.id, localUserId });
     
     if (!localUserId) {
-      console.error("[getRBACContext] Local user not found for Supabase ID:", session.user.id);
+      console.error("[getRBACContext] Local user not found for Supabase ID:", user.id);
       return null;
     }
 
     return {
       userId: localUserId, // Use local DB user ID
-      email: session.user.email!,
+      email: user.email!,
       roles: [], // Will be populated by getUserPermissions
     };
   } catch (error) {
