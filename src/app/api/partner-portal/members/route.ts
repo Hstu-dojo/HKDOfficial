@@ -9,6 +9,7 @@ import { NextResponse } from 'next/server'
 import { requirePartnerAdminUser } from '@/lib/partner-admin/auth'
 import { db } from '@/lib/connect-db'
 import { members } from '@/db/schemas/karate/members'
+import { courseEnrollments } from '@/db/schemas/karate/enrollments'
 import { user } from '@/db/schemas/auth'
 import { eq, and, ilike, or, desc, sql, count } from 'drizzle-orm'
 import avatarsData from '@/db/avatars.json'
@@ -168,6 +169,11 @@ export async function GET(request: Request) {
         isProfileComplete: members.isProfileComplete,
         joinDate: members.joinDate,
         hasAccount: sql<boolean>`(${members.userId} is not null)`,
+        hasActiveEnrollment: sql<boolean>`EXISTS (
+          SELECT 1 FROM ${courseEnrollments}
+          WHERE ${courseEnrollments.profileId} = ${members.id}
+          AND ${courseEnrollments.isActive} = true
+        )`,
       })
       .from(members)
       .leftJoin(user, eq(members.userId, user.id))
@@ -666,6 +672,11 @@ export async function PATCH(request: Request) {
         isProfileComplete: members.isProfileComplete,
         joinDate: members.joinDate,
         hasAccount: sql<boolean>`(${members.userId} is not null)`,
+        hasActiveEnrollment: sql<boolean>`EXISTS (
+          SELECT 1 FROM ${courseEnrollments}
+          WHERE ${courseEnrollments.profileId} = ${members.id}
+          AND ${courseEnrollments.isActive} = true
+        )`,
       })
       .from(members)
       .leftJoin(user, eq(members.userId, user.id))

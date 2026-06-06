@@ -355,7 +355,7 @@ export default function MonthlyBilling() {
                             <Button
                               size="sm"
                               variant="outline"
-                              className="text-green-700 border-green-200 hover:bg-green-50 text-xs h-7 px-2"
+                              className="text-green-700 border-green-200 hover:bg-green-50 hover:text-green-800 dark:text-green-400 dark:border-green-800/50 dark:hover:bg-green-950/50 dark:hover:text-green-300 text-xs h-7 px-2"
                               disabled={actionLoading}
                               onClick={() => handleAction(item.fee.id, 'verify_payment')}
                             >
@@ -364,7 +364,7 @@ export default function MonthlyBilling() {
                             <Button
                               size="sm"
                               variant="outline"
-                              className="text-red-700 border-red-200 hover:bg-red-50 text-xs h-7 px-2"
+                              className="text-red-700 border-red-200 hover:bg-red-50 hover:text-red-800 dark:text-red-400 dark:border-red-800/50 dark:hover:bg-red-950/50 dark:hover:text-red-300 text-xs h-7 px-2"
                               disabled={actionLoading}
                               onClick={() => {
                                 const notes = prompt('Rejection reason:')
@@ -389,7 +389,7 @@ export default function MonthlyBilling() {
                             <Button
                               size="sm"
                               variant="outline"
-                              className="text-purple-700 border-purple-200 hover:bg-purple-50 text-xs h-7 px-2"
+                              className="text-purple-700 border-purple-200 hover:bg-purple-50 hover:text-purple-800 dark:text-purple-400 dark:border-purple-800/50 dark:hover:bg-purple-950/50 dark:hover:text-purple-300 text-xs h-7 px-2"
                               disabled={actionLoading}
                               onClick={() => {
                                 const reason = prompt('Waiver reason:')
@@ -508,7 +508,7 @@ export default function MonthlyBilling() {
                 <>
                   <Button
                     variant="outline"
-                    className="text-red-700"
+                    className="text-red-700 border-red-200 hover:bg-red-50 hover:text-red-800 dark:text-red-400 dark:border-red-800/50 dark:hover:bg-red-950/50 dark:hover:text-red-300"
                     disabled={actionLoading}
                     onClick={() => {
                       const notes = prompt('Rejection reason:')
@@ -529,7 +529,7 @@ export default function MonthlyBilling() {
                 <>
                   <Button
                     variant="outline"
-                    className="text-purple-700"
+                    className="text-purple-700 border-purple-200 hover:bg-purple-50 hover:text-purple-800 dark:text-purple-400 dark:border-purple-800/50 dark:hover:bg-purple-950/50 dark:hover:text-purple-300"
                     disabled={actionLoading}
                     onClick={() => {
                       const reason = prompt('Waiver reason:')

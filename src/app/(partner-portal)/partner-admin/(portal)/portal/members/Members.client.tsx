@@ -42,6 +42,7 @@ type Member = {
   isActive: boolean
   isProfileComplete?: boolean
   hasAccount?: boolean
+  hasActiveEnrollment?: boolean
   joinDate: string | null
 }
 
@@ -319,17 +320,19 @@ export default function Members() {
                       <Button variant="ghost" size="sm" onClick={() => onEdit(m)}>
                         Edit
                       </Button>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        className="flex items-center gap-1 text-xs"
-                        onClick={() => {
-                          setSelectedMemberForEnroll(m)
-                          setEnrollOpen(true)
-                        }}
-                      >
-                        <AcademicCapIcon className="h-4 w-4" /> Enroll
-                      </Button>
+                      {!m.hasActiveEnrollment && (
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="flex items-center gap-1 text-xs"
+                          onClick={() => {
+                            setSelectedMemberForEnroll(m)
+                            setEnrollOpen(true)
+                          }}
+                        >
+                          <AcademicCapIcon className="h-4 w-4" /> Enroll
+                        </Button>
+                      )}
                     </div>
                   </td>
                 </tr>
