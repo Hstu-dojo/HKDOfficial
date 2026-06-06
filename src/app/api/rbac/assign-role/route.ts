@@ -8,7 +8,7 @@ import { eq, and } from 'drizzle-orm';
 export async function POST(request: Request) {
   try {
     const supabase = createRouteHandlerClient({ cookies });
-    const { data: { session } } = await supabase.auth.getSession();
+    const { data: { user } } = await supabase.auth.getUser();
 
     if (!session) {
       return NextResponse.json(
@@ -61,7 +61,7 @@ export async function POST(request: Request) {
     const currentUser = await db
       .select()
       .from(user)
-      .where(eq(user.email, session.user.email!));
+      .where(eq(user.email, user.email!));
 
     if (currentUser.length === 0) {
       return NextResponse.json(

@@ -11,7 +11,7 @@ import { eq } from "drizzle-orm";
 export async function GET(request: NextRequest) {
   try {
     const supabase = createRouteHandlerClient({ cookies });
-    const { data: { session } } = await supabase.auth.getSession();
+    const { data: { user } } = await supabase.auth.getUser();
 
     if (!session) {
       return NextResponse.json(
@@ -31,7 +31,7 @@ export async function GET(request: NextRequest) {
     }
 
     // Verify the requesting user is asking for their own ID or has admin rights
-    if (session.user.id !== supabaseId) {
+    if (user.id !== supabaseId) {
       // TODO: Add admin permission check here
       return NextResponse.json(
         { error: 'Forbidden: Can only get your own user ID' },

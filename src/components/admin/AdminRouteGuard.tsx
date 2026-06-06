@@ -20,18 +20,18 @@ export async function AdminRouteGuard({
 }: AdminRouteGuardProps) {
   const cookieStore = cookies();
   const supabase = createRouteHandlerClient({ cookies: () => cookieStore });
-  const { data: { session }, error } = await supabase.auth.getSession();
+  const { data: { user }, error } = await supabase.auth.getUser();
 
   // Redirect if not authenticated
-  if (error || !session?.user?.id) {
+  if (error || !user?.id) {
     redirect('/login?callbackUrl=/admin');
   }
 
   // Get local DB user ID from Supabase user ID
-  const localUserId = await getLocalUserId(session.user.id);
+  const localUserId = await getLocalUserId(user.id);
   
   if (!localUserId) {
-    console.error('Local user not found for Supabase ID:', session.user.id);
+    console.error('Local user not found for Supabase ID:', user.id);
     redirect('/login?callbackUrl=/admin&error=user_not_found');
   }
 

@@ -48,9 +48,9 @@ export default function ResetPasswordForm() {
           return;
         }
 
-        const { data: { session } } = await supabase.auth.getSession();
+        const { data: { user } } = await supabase.auth.getUser();
         
-        if (session) {
+        if (user) {
           hasResetCodeRef.current = true;
           if (mounted) setIsValidToken(true);
         }
@@ -118,9 +118,9 @@ export default function ResetPasswordForm() {
     setIsLoading(true);
 
     try {
-      const { data: { session } } = await supabase.auth.getSession();
+      const { data: { user } } = await supabase.auth.getUser();
       
-      if (session) {
+      if (user) {
         const { error: updateError } = await supabase.auth.updateUser({
           password: password
         });

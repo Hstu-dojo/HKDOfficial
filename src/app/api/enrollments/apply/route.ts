@@ -19,13 +19,13 @@ export async function POST(request: NextRequest) {
   try {
     // Get auth context
     const supabase = await createClient();
-    const { data: { session } } = await supabase.auth.getSession();
+    const { data: { user } } = await supabase.auth.getUser();
     
-    if (!session?.user?.id) {
+    if (!user?.id) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
     
-    const localUserId = await getLocalUserId(session.user.id);
+    const localUserId = await getLocalUserId(user.id);
     if (!localUserId) {
       return NextResponse.json({ error: 'User not found' }, { status: 404 });
     }
@@ -135,7 +135,7 @@ export async function POST(request: NextRequest) {
             dateOfBirth: (onboardingData as Record<string,string>).dob
               ? new Date((onboardingData as Record<string,string>).dob)
               : new Date('2000-01-01'),
-            email: (onboardingData as Record<string,string>).email || session.user.email || '',
+            email: (onboardingData as Record<string,string>).email || user.email || '',
             firstName,
             lastName,
             phoneNumber: (onboardingData as Record<string,string>).phone || '',
@@ -176,7 +176,7 @@ export async function POST(request: NextRequest) {
         courseId,
         studentInfo: {
           ...studentInfo,
-          email: studentInfo.email || session.user.email,
+          email: studentInfo.email || user.email,
         },
         admissionFeeAmount: course[0].admissionFee,
         currency: course[0].currency,
@@ -204,13 +204,13 @@ export async function GET(request: NextRequest) {
   try {
     // Get auth context
     const supabase = await createClient();
-    const { data: { session } } = await supabase.auth.getSession();
+    const { data: { user } } = await supabase.auth.getUser();
     
-    if (!session?.user?.id) {
+    if (!user?.id) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
     
-    const localUserId = await getLocalUserId(session.user.id);
+    const localUserId = await getLocalUserId(user.id);
     if (!localUserId) {
       return NextResponse.json({ error: 'User not found' }, { status: 404 });
     }

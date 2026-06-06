@@ -27,9 +27,9 @@ export async function POST(req: NextRequest) {
     // Verify the user is authenticated via Supabase
     const cookieStore = cookies();
     const supabase = createRouteHandlerClient({ cookies: () => cookieStore });
-    const { data: { session }, error: authError } = await supabase.auth.getSession();
+    const { data: { user }, error: authError } = await supabase.auth.getUser();
 
-    if (authError || !session?.user || session.user.email !== email) {
+    if (authError || !session?.user || user.email !== email) {
       return NextResponse.json(
         { error: "Unauthorized or session mismatch" },
         { status: 401 }

@@ -9,13 +9,13 @@ import { createClient } from '@/lib/supabase/server';
 export async function GET(request: NextRequest) {
   try {
     const supabase = await createClient();
-    const { data: { session } } = await supabase.auth.getSession();
+    const { data: { user } } = await supabase.auth.getUser();
     
-    if (!session?.user?.id) {
+    if (!user?.id) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const localUserId = await getLocalUserId(session.user.id);
+    const localUserId = await getLocalUserId(user.id);
     if (!localUserId) {
       return NextResponse.json([]);
     }

@@ -99,11 +99,11 @@ async function getAuthUserId(): Promise<string | null> {
   const supabase = await createClient();
   const {
     data: { session },
-  } = await supabase.auth.getSession();
-  if (!session?.user?.id) return null;
+  } = await supabase.auth.getUser();
+  if (!user?.id) return null;
 
   const localUser = await db.query.user.findFirst({
-    where: eq(user.supabaseUserId, session.user.id),
+    where: eq(user.supabaseUserId, user.id),
   });
   return localUser?.id ?? null;
 }

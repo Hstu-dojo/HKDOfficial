@@ -7,7 +7,7 @@ export const GET = async (req: NextRequest) => {
     const cookieStore = cookies();
     const supabase = createRouteHandlerClient({ cookies: () => cookieStore });
     
-    const { data: { session }, error } = await supabase.auth.getSession();
+    const { data: { user }, error } = await supabase.auth.getUser();
     
     if (error) {
       console.error("Auth error:", error);
@@ -25,11 +25,11 @@ export const GET = async (req: NextRequest) => {
       return NextResponse.json({
         message: "Success!",
         data: {
-          id: session.user.id,
-          email: session.user.email,
+          id: user.id,
+          email: user.email,
           name: session.user.user_metadata?.full_name || session.user.user_metadata?.user_name,
           image: session.user.user_metadata?.avatar_url,
-          emailVerified: !!session.user.email_confirmed_at,
+          emailVerified: !!user.email_confirmed_at,
         },
       });
     } else {

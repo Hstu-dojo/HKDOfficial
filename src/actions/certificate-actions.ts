@@ -27,11 +27,11 @@ import { createClient } from '@/lib/supabase/server';
 
 async function getAuthUserId(): Promise<string | null> {
   const supabase = await createClient();
-  const { data: { session } } = await supabase.auth.getSession();
-  if (!session?.user?.id) return null;
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user?.id) return null;
 
   const localUser = await db.query.user.findFirst({
-    where: eq(user.supabaseUserId, session.user.id),
+    where: eq(user.supabaseUserId, user.id),
   });
   return localUser?.id ?? null;
 }
@@ -800,11 +800,11 @@ export async function getAllCertificates() {
 export async function getMyCertificates() {
   try {
     const supabase = await createClient();
-    const { data: { session } } = await supabase.auth.getSession();
-    if (!session?.user?.id) return { success: false, error: 'Unauthorized' };
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user?.id) return { success: false, error: 'Unauthorized' };
 
     const localUser = await db.query.user.findFirst({
-      where: eq(user.supabaseUserId, session.user.id),
+      where: eq(user.supabaseUserId, user.id),
     });
     if (!localUser) return { success: false, error: 'User not found' };
 

@@ -17,9 +17,9 @@ export async function POST(request: NextRequest) {
     const supabase = await createClient();
     const {
       data: { session },
-    } = await supabase.auth.getSession();
+    } = await supabase.auth.getUser();
 
-    if (!session?.user?.id) {
+    if (!user?.id) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
@@ -45,7 +45,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Build a unique public_id so files are easy to locate later
-    const userId = session.user.id;
+    const userId = user.id;
     const timestamp = Date.now();
     const folder = 'enrollment-images';
     const publicId = `${folder}/${userId}_${type}_${courseId ?? 'general'}_${timestamp}`;

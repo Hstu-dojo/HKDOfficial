@@ -23,8 +23,8 @@ export default async function CertificatesPage() {
   const supabase = await createClient();
   const {
     data: { session },
-  } = await supabase.auth.getSession();
-  if (!session?.user?.id) redirect("/login");
+  } = await supabase.auth.getUser();
+  if (!user?.id) redirect("/login");
 
   // Fetch certificates
   const result = await getMyCertificates();
