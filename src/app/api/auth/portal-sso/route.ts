@@ -34,11 +34,19 @@ export async function GET(request: NextRequest) {
       clientId: 'dojo-app',
     });
 
-    // 4. Redirect to the portal with the token
-    const targetUrl = new URL('https://portal.hstuma.com/');
-    targetUrl.searchParams.set('access_token', tokenPayload.token);
+    // 4. Determine redirect strategy (Deep link vs Web)
+    const webUrl = `https://portal.hstuma.com/?access_token=${tokenPayload.token}`;
+    const userAgent = request.headers.get('user-agent') || '';
+    const isAndroid = /android/i.test(userAgent);
 
-    return NextResponse.redirect(targetUrl);
+    if (isAndroid) {
+      // Android Intent scheme: gracefully falls back to webUrl if app is not installed
+      const fallbackUrl = encodeURIComponent(webUrl);
+      const intentUrl = `intent://?access_token=${tokenPayload.token}#Intent;scheme=dojoapprebuild;package=com.anonymous.dojo_app_rebuild;S.browser_fallback_url=${fallbackUrl};end`;
+      return NextResponse.redirect(intentUrl);
+    }
+
+    return NextResponse.redirect(webUrl);
   } catch (error) {
     console.error('[portal-sso] Error generating SSO token:', error);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
