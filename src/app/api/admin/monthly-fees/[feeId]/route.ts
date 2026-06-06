@@ -285,6 +285,67 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
         return NextResponse.json(updated);
       }
 
+      case "mark_paid": {
+        // Admin manually marking fee as paid (cash payment)
+        const canManagePaid = await hasPermission(context.userId, "MONTHLY_FEE", "MANAGE");
+        if (!canManagePaid) {
+          return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+        }
+
+        if (!["pending", "due", "overdue"].includes(fee.fee.status)) {
+          return NextResponse.json(
+            { error: "Can only mark pending/due/overdue fees as paid" },
+            { status: 400 }
+          );
+        }
+
+        const [updated] = await db
+          .update(monthlyFees)
+          .set({
+            status: "paid",
+            amountPaid: fee.fee.amount,
+            paidAt: new Date(),
+            paymentMethod: "cash",
+            verifiedBy: context.userId,
+            verifiedAt: new Date(),
+            verificationNotes: notes || "Marked as paid by admin",
+            updatedAt: new Date(),
+          })
+          .where(eq(monthlyFees.id, feeId))
+          .returning();
+
+        return NextResponse.json(updated);
+      }
+
+      case "mark_unpaid": {
+        // Admin reverting a paid fee to pending
+        const canManageUnpaid = await hasPermission(context.userId, "MONTHLY_FEE", "MANAGE");
+        if (!canManageUnpaid) {
+          return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+        }
+
+        if (fee.fee.status !== "paid") {
+          return NextResponse.json(
+            { error: "Can only revert paid fees" },
+            { status: 400 }
+          );
+        }
+
+        const [updated] = await db
+          .update(monthlyFees)
+          .set({
+            status: "pending",
+            amountPaid: 0,
+            paidAt: null,
+            verificationNotes: notes || `Reverted from paid by admin at ${new Date().toISOString()}`,
+            updatedAt: new Date(),
+          })
+          .where(eq(monthlyFees.id, feeId))
+          .returning();
+
+        return NextResponse.json(updated);
+      }
+
       default:
         return NextResponse.json(
           { error: "Invalid action" },

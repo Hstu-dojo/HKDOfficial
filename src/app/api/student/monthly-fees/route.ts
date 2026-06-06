@@ -49,11 +49,24 @@ export async function GET(request: NextRequest) {
       id: fee.id,
       billingMonth: fee.billingMonth,
       amount: fee.amount,
+      totalAmount: fee.amount,
       amountPaid: fee.amountPaid,
+      paidAmount: fee.amountPaid || 0,
       currency: fee.currency,
       dueDate: fee.dueDate,
       status: fee.status,
       courseName: course?.name,
+      // Payment details
+      paymentMethod: fee.paymentMethod,
+      transactionId: fee.transactionId,
+      paymentProofUrl: fee.paymentProofUrl,
+      paymentSubmittedAt: fee.paymentSubmittedAt,
+      paidAt: fee.paidAt,
+      verificationNotes: fee.verificationNotes,
+      // Fee breakdown (for PayFeeForm compatibility)
+      feeAmount: fee.amount,
+      discountAmount: 0,
+      lateFeePenalty: 0,
     }));
 
     return NextResponse.json(result);

@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/connect-db";
 import { monthlyFees, courseEnrollments, members, courses, user } from "@/db/schema";
+import { partners } from "@/db/schemas/partner";
 import { eq, desc, and, or, gte, lte, sql } from "drizzle-orm";
 import { hasPermission } from "@/lib/rbac/permissions";
 import { getRBACContext } from "@/lib/rbac/middleware";
@@ -49,6 +50,7 @@ export async function GET(request: NextRequest) {
     const memberIdFilter = searchParams.get("memberId");
     const billingMonthFilter = searchParams.get("billingMonth");
     const enrollmentIdFilter = searchParams.get("enrollmentId");
+    const partnerIdFilter = searchParams.get("partnerId");
 
     const conditions = [];
 
@@ -87,23 +89,33 @@ export async function GET(request: NextRequest) {
       conditions.push(eq(monthlyFees.enrollmentId, enrollmentIdFilter));
     }
 
+    if (partnerIdFilter) {
+      conditions.push(eq(courses.partnerId, partnerIdFilter));
+    }
+
     const fees = await db
       .select({
         fee: monthlyFees,
         member: {
           id: members.id,
           fullNameEnglish: members.fullNameEnglish,
+          fullNameBangla: members.fullNameBangla,
+          email: members.email,
           memberNumber: members.memberNumber,
           phoneNumber: members.phoneNumber,
         },
-        enrollment: {
-          id: courseEnrollments.id,
-          courseId: courseEnrollments.courseId,
+        course: {
+          id: courses.id,
+          name: courses.name,
+          partnerId: courses.partnerId,
         },
+        partnerName: partners.name,
       })
       .from(monthlyFees)
       .leftJoin(members, eq(monthlyFees.profileId, members.id))
       .leftJoin(courseEnrollments, eq(monthlyFees.enrollmentId, courseEnrollments.id))
+      .leftJoin(courses, eq(courseEnrollments.courseId, courses.id))
+      .leftJoin(partners, eq(courses.partnerId, partners.id))
       .where(conditions.length > 0 ? and(...conditions) : undefined)
       .orderBy(desc(monthlyFees.dueDate));
 

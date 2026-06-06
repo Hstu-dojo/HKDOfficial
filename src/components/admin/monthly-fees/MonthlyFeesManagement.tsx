@@ -41,11 +41,14 @@ interface MonthlyFee {
     fullNameBangla?: string;
     email?: string;
     phoneNumber?: string;
+    memberNumber?: string;
   } | null;
   course: {
     id: string;
     name: string;
+    partnerId?: string;
   } | null;
+  partnerName?: string;
 }
 
 const STATUS_CONFIG: Record<string, { label: string; color: string; icon: React.ComponentType<{ className?: string }> }> = {
@@ -65,8 +68,18 @@ export default function MonthlyFeesManagement() {
   const [statusFilter, setStatusFilter] = useState<string>('');
   const [monthFilter, setMonthFilter] = useState<string>('');
   const [searchQuery, setSearchQuery] = useState('');
+  const [partnerFilter, setPartnerFilter] = useState<string>('');
+  const [partnersList, setPartnersList] = useState<{ id: string; name: string }[]>([]);
 
   const canVerify = hasPermission('MONTHLY_FEE', 'VERIFY');
+
+  // Fetch partners list for the filter
+  useEffect(() => {
+    fetch('/api/admin/partners')
+      .then(res => res.ok ? res.json() : { partners: [] })
+      .then(data => setPartnersList(data.partners || data || []))
+      .catch(() => {});
+  }, []);
 
   const fetchFees = useCallback(async () => {
     try {
@@ -74,6 +87,7 @@ export default function MonthlyFeesManagement() {
       const params = new URLSearchParams();
       if (statusFilter) params.set('status', statusFilter);
       if (monthFilter) params.set('billingMonth', monthFilter);
+      if (partnerFilter) params.set('partnerId', partnerFilter);
       
       const url = `/api/admin/monthly-fees?${params.toString()}`;
       const response = await fetch(url);
@@ -86,7 +100,7 @@ export default function MonthlyFeesManagement() {
     } finally {
       setLoading(false);
     }
-  }, [statusFilter, monthFilter]);
+  }, [statusFilter, monthFilter, partnerFilter]);
 
   useEffect(() => {
     if (!rbacLoading) {
@@ -134,6 +148,27 @@ export default function MonthlyFeesManagement() {
       fetchFees();
     } catch (error) {
       toast.error(error instanceof Error ? error.message : 'Waiver failed');
+    }
+  };
+
+  const handleTogglePaid = async (feeId: string, currentStatus: string) => {
+    const newAction = currentStatus === 'paid' ? 'mark_unpaid' : 'mark_paid';
+    try {
+      const response = await fetch(`/api/admin/monthly-fees/${feeId}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: newAction }),
+      });
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error || 'Update failed');
+      }
+
+      toast.success(`Fee ${newAction === 'mark_paid' ? 'marked as paid' : 'reverted to pending'}`);
+      fetchFees();
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : 'Update failed');
     }
   };
 
@@ -300,6 +335,17 @@ export default function MonthlyFeesManagement() {
             <option key={opt.value} value={opt.value}>{opt.label}</option>
           ))}
         </select>
+
+        <select
+          value={partnerFilter}
+          onChange={(e) => setPartnerFilter(e.target.value)}
+          className="w-full sm:w-auto px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
+        >
+          <option value="">All Organizations</option>
+          {partnersList.map((p) => (
+            <option key={p.id} value={p.id}>{p.name}</option>
+          ))}
+        </select>
         
         <select
           value={statusFilter}
@@ -336,7 +382,7 @@ export default function MonthlyFeesManagement() {
                     Student
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                    Course
+                    Course / Org
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                     Month
@@ -379,8 +425,15 @@ export default function MonthlyFeesManagement() {
                           </div>
                         </div>
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">
-                        {item.course?.name || 'Unknown'}
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <div className="text-sm text-gray-900 dark:text-gray-100">
+                          {item.course?.name || 'Unknown'}
+                        </div>
+                        {item.partnerName && (
+                          <div className="text-xs text-gray-500 dark:text-gray-400">
+                            {item.partnerName}
+                          </div>
+                        )}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="flex items-center text-sm text-gray-900 dark:text-gray-100">
@@ -418,11 +471,27 @@ export default function MonthlyFeesManagement() {
                             </button>
                           )}
                           {['pending', 'due', 'overdue'].includes(item.fee.status) && canVerify && (
+                            <>
+                              <button
+                                onClick={() => handleTogglePaid(item.fee.id, item.fee.status)}
+                                className="px-2 py-1 text-xs bg-green-100 dark:bg-green-900/30 text-green-700 rounded hover:bg-green-200"
+                              >
+                                Mark Paid
+                              </button>
+                              <button
+                                onClick={() => handleWaiveFee(item.fee.id)}
+                                className="px-2 py-1 text-xs bg-purple-100 dark:bg-purple-900/30 text-purple-700 rounded hover:bg-purple-200"
+                              >
+                                Waive
+                              </button>
+                            </>
+                          )}
+                          {item.fee.status === 'paid' && canVerify && (
                             <button
-                              onClick={() => handleWaiveFee(item.fee.id)}
-                              className="px-2 py-1 text-xs bg-purple-100 dark:bg-purple-900/30 text-purple-700 rounded hover:bg-purple-200"
+                              onClick={() => handleTogglePaid(item.fee.id, item.fee.status)}
+                              className="px-2 py-1 text-xs bg-yellow-100 dark:bg-yellow-900/30 text-yellow-700 rounded hover:bg-yellow-200"
                             >
-                              Waive
+                              Revert
                             </button>
                           )}
                         </div>

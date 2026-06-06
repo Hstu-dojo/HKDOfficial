@@ -4,6 +4,7 @@ import { pgEnum } from "drizzle-orm/pg-core";
 import { user } from "../auth";
 import { profiles } from "./members";
 import { courseEnrollments } from "./enrollments";
+import { partners } from "../partner";
 
 // Monthly Fee Status Enum
 export const monthlyFeeStatusEnum = pgEnum('monthly_fee_status', [
@@ -125,6 +126,9 @@ export const paymentScopeEnum = pgEnum('payment_scope', [
 // Payment Accounts - admin configurable payment accounts with scopes
 export const paymentAccounts = pgTable("payment_accounts", {
   id: text("id").primaryKey().default(sql`gen_random_uuid()`),
+  
+  // Organization scope — when set, this account is specific to a partner org; when null, it's the global fallback
+  partnerId: text("partner_id").references(() => partners.id, { onDelete: 'set null' }),
   
   // Account details
   name: text("name").notNull(), // e.g., "Main bKash Account", "HKD Nagad"

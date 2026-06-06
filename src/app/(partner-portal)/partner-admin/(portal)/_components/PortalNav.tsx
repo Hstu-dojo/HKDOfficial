@@ -6,6 +6,7 @@ const items = [
   { href: '/partner-admin/portal/members', label: 'Members' },
   { href: '/partner-admin/portal/enrollments', label: 'Enrollments' },
   { href: '/partner-admin/portal/bills', label: 'Bills' },
+  { href: '/partner-admin/portal/monthly-billing', label: 'Monthly Billing' },
   { href: '/partner-admin/portal/schedules', label: 'Schedules' },
   { href: '/partner-admin/portal/profile', label: 'Profile' },
   { href: '/partner-admin/portal/page-settings', label: 'Page Settings' },

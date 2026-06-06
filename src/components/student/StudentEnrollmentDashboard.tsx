@@ -62,6 +62,12 @@ interface MonthlyFee {
   dueDate: string;
   status: string;
   courseName?: string;
+  transactionId?: string;
+  paymentMethod?: string;
+  paymentProofUrl?: string;
+  paymentSubmittedAt?: string;
+  paidAt?: string;
+  verificationNotes?: string;
 }
 
 const APP_STATUS_CONFIG: Record<
@@ -415,6 +421,16 @@ export default function StudentEnrollmentDashboard() {
                         </span>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-right">
+                        {fee.status === 'payment_submitted' && fee.transactionId && (
+                          <span className="text-xs text-blue-600 dark:text-blue-400 mr-2" title={`TxID: ${fee.transactionId}`}>
+                            TxID: {fee.transactionId.slice(0, 12)}{fee.transactionId.length > 12 ? '…' : ''}
+                          </span>
+                        )}
+                        {fee.status === 'paid' && fee.paidAt && (
+                          <span className="text-xs text-green-600 dark:text-green-400 mr-2">
+                            Paid {new Date(fee.paidAt).toLocaleDateString()}
+                          </span>
+                        )}
                         {['pending', 'due', 'overdue'].includes(fee.status) && (
                           <Link
                             href={`/dashboard/pay-fee/${fee.id}`}
@@ -422,6 +438,11 @@ export default function StudentEnrollmentDashboard() {
                           >
                             {t('dashboard.payNow')}
                           </Link>
+                        )}
+                        {fee.status === 'payment_submitted' && (
+                          <span className="text-xs text-blue-600 dark:text-blue-400 font-medium">
+                            {t('dashboard.underReview')}
+                          </span>
                         )}
                       </td>
                     </tr>

@@ -1,0 +1,556 @@
+'use client'
+
+import * as React from 'react'
+import { apiJSON } from '../../_lib/api.client'
+import { Button } from '@/components/ui/button'
+import { Label } from '@/components/ui/label'
+
+type FeeRecord = {
+  fee: {
+    id: string
+    billingMonth: string
+    billingYear: number
+    amount: number
+    amountPaid: number | null
+    currency: string
+    dueDate: string
+    status: string
+    paymentMethod?: string | null
+    transactionId?: string | null
+    paymentProofUrl?: string | null
+    paymentSubmittedAt?: string | null
+    paidAt?: string | null
+    verificationNotes?: string | null
+  }
+  member: {
+    id: string
+    fullNameEnglish: string | null
+    fullNameBangla?: string | null
+    email: string | null
+    phoneNumber: string | null
+    memberNumber: string | null
+  }
+  course: {
+    id: string
+    name: string
+  } | null
+}
+
+type FeesResponse = {
+  fees: FeeRecord[]
+  pagination: {
+    page: number
+    limit: number
+    total: number
+    totalPages: number
+  }
+}
+
+const STATUS_CONFIG: Record<string, { label: string; color: string }> = {
+  pending: { label: 'Pending', color: 'bg-gray-100 text-gray-700' },
+  due: { label: 'Due', color: 'bg-yellow-100 text-yellow-700' },
+  payment_submitted: { label: 'Payment Submitted', color: 'bg-blue-100 text-blue-700' },
+  paid: { label: 'Paid', color: 'bg-green-100 text-green-700' },
+  overdue: { label: 'Overdue', color: 'bg-red-100 text-red-700' },
+  waived: { label: 'Waived', color: 'bg-purple-100 text-purple-700' },
+  partial: { label: 'Partial', color: 'bg-orange-100 text-orange-700' },
+}
+
+export default function MonthlyBilling() {
+  const [loading, setLoading] = React.useState(true)
+  const [error, setError] = React.useState<string | null>(null)
+  const [fees, setFees] = React.useState<FeeRecord[]>([])
+  const [page, setPage] = React.useState(1)
+  const [pagination, setPagination] = React.useState<FeesResponse['pagination']>({
+    page: 1, limit: 20, total: 0, totalPages: 0,
+  })
+
+  // Filters
+  const [statusFilter, setStatusFilter] = React.useState('')
+  const [monthFilter, setMonthFilter] = React.useState('')
+  const [searchQuery, setSearchQuery] = React.useState('')
+
+  // Generate modal
+  const [generating, setGenerating] = React.useState(false)
+  const [generateMonth, setGenerateMonth] = React.useState(
+    new Date().toISOString().slice(0, 7)
+  )
+
+  // Detail modal
+  const [selectedFee, setSelectedFee] = React.useState<FeeRecord | null>(null)
+  const [actionLoading, setActionLoading] = React.useState(false)
+
+  const fetchFees = React.useCallback(async () => {
+    setLoading(true)
+    setError(null)
+    try {
+      const params = new URLSearchParams({ page: String(page), limit: '20' })
+      if (statusFilter) params.set('status', statusFilter)
+      if (monthFilter) params.set('billingMonth', monthFilter)
+      if (searchQuery) params.set('q', searchQuery)
+      const data = await apiJSON<FeesResponse>(
+        `/api/partner-portal/monthly-fees?${params.toString()}`
+      )
+      setFees(data.fees || [])
+      setPagination(data.pagination)
+    } catch (e) {
+      setError(e instanceof Error ? e.message : 'Failed to load fees')
+    } finally {
+      setLoading(false)
+    }
+  }, [page, statusFilter, monthFilter, searchQuery])
+
+  React.useEffect(() => {
+    fetchFees()
+  }, [fetchFees])
+
+  // Stats
+  const stats = {
+    total: pagination.total,
+    pending: fees.filter(f => ['pending', 'due'].includes(f.fee.status)).length,
+    submitted: fees.filter(f => f.fee.status === 'payment_submitted').length,
+    paid: fees.filter(f => f.fee.status === 'paid').length,
+    overdue: fees.filter(f => f.fee.status === 'overdue').length,
+    collected: fees
+      .filter(f => f.fee.status === 'paid')
+      .reduce((sum, f) => sum + (f.fee.amountPaid || 0), 0),
+  }
+
+  const handleGenerate = async () => {
+    if (!generateMonth) return
+    setGenerating(true)
+    try {
+      const result = await apiJSON<{ success: boolean; count: number; skipped: number; message: string }>(
+        '/api/partner-portal/monthly-fees',
+        {
+          method: 'POST',
+          body: JSON.stringify({ billingMonth: generateMonth }),
+        }
+      )
+      alert(`${result.message}${result.skipped ? ` (${result.skipped} already existed)` : ''}`)
+      fetchFees()
+    } catch (e) {
+      alert(e instanceof Error ? e.message : 'Generation failed')
+    } finally {
+      setGenerating(false)
+    }
+  }
+
+  const handleAction = async (
+    feeId: string,
+    action: string,
+    extraData?: Record<string, string>
+  ) => {
+    setActionLoading(true)
+    try {
+      await apiJSON(`/api/partner-portal/monthly-fees/${feeId}`, {
+        method: 'PATCH',
+        body: JSON.stringify({ action, ...extraData }),
+      })
+      setSelectedFee(null)
+      fetchFees()
+    } catch (e) {
+      alert(e instanceof Error ? e.message : 'Action failed')
+    } finally {
+      setActionLoading(false)
+    }
+  }
+
+  const fmtDate = (value: string | null | undefined) => {
+    if (!value) return '—'
+    const d = new Date(value)
+    if (Number.isNaN(d.getTime())) return '—'
+    return d.toLocaleDateString()
+  }
+
+  const fmtAmount = (amount: number, currency: string) => {
+    const value = typeof amount === 'number' ? amount / 100 : 0
+    return `${value.toFixed(0)} ${currency || 'BDT'}`
+  }
+
+  const fmtMonth = (monthStr: string) => {
+    const [year, month] = monthStr.split('-')
+    const date = new Date(parseInt(year), parseInt(month) - 1)
+    return date.toLocaleDateString('en-BD', { year: 'numeric', month: 'long' })
+  }
+
+  // Month options for filters
+  const monthOptions = Array.from({ length: 12 }, (_, i) => {
+    const date = new Date()
+    date.setMonth(date.getMonth() - i + 1) // Include next month too
+    return date.toISOString().slice(0, 7)
+  })
+
+  return (
+    <div className="space-y-6">
+      {/* Header */}
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+        <div>
+          <h1 className="text-2xl font-bold text-foreground">Monthly Billing</h1>
+          <p className="text-sm text-muted-foreground">
+            Generate and manage monthly fee billing for enrolled students.
+          </p>
+        </div>
+      </div>
+
+      {/* Generate Section */}
+      <div className="rounded-lg border bg-card p-4">
+        <h2 className="text-sm font-semibold text-foreground mb-3">Generate Monthly Bills</h2>
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-end">
+          <div className="w-full sm:w-48">
+            <Label htmlFor="generateMonth">Billing Month</Label>
+            <input
+              id="generateMonth"
+              type="month"
+              value={generateMonth}
+              onChange={(e) => setGenerateMonth(e.target.value)}
+              className="mt-1 w-full rounded-md border bg-background px-3 py-2 text-sm"
+            />
+          </div>
+          <Button onClick={handleGenerate} disabled={generating || !generateMonth}>
+            {generating ? 'Generating…' : 'Generate Bills'}
+          </Button>
+        </div>
+        <p className="mt-2 text-xs text-muted-foreground">
+          This will create pending fee records for all active enrolled students who don&apos;t already have a bill for the selected month.
+        </p>
+      </div>
+
+      {/* Stats */}
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
+        <div className="rounded-lg border bg-card p-3">
+          <p className="text-xs text-muted-foreground">Total (this page)</p>
+          <p className="text-xl font-semibold">{fees.length}</p>
+        </div>
+        <div className="rounded-lg border bg-card p-3">
+          <p className="text-xs text-muted-foreground">Pending/Due</p>
+          <p className="text-xl font-semibold text-yellow-600">{stats.pending}</p>
+        </div>
+        <div className="rounded-lg border bg-card p-3">
+          <p className="text-xs text-muted-foreground">Awaiting Verification</p>
+          <p className="text-xl font-semibold text-blue-600">{stats.submitted}</p>
+        </div>
+        <div className="rounded-lg border bg-card p-3">
+          <p className="text-xs text-muted-foreground">Paid</p>
+          <p className="text-xl font-semibold text-green-600">{stats.paid}</p>
+        </div>
+        <div className="rounded-lg border bg-card p-3">
+          <p className="text-xs text-muted-foreground">Overdue</p>
+          <p className="text-xl font-semibold text-red-600">{stats.overdue}</p>
+        </div>
+        <div className="rounded-lg border bg-card p-3">
+          <p className="text-xs text-muted-foreground">Collected</p>
+          <p className="text-xl font-semibold text-green-600">{fmtAmount(stats.collected, 'BDT')}</p>
+        </div>
+      </div>
+
+      {/* Filters */}
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:flex-wrap">
+        <div className="flex-1 min-w-[180px]">
+          <Label htmlFor="search">Search</Label>
+          <input
+            id="search"
+            type="text"
+            placeholder="Name, email, member #..."
+            value={searchQuery}
+            onChange={(e) => { setPage(1); setSearchQuery(e.target.value) }}
+            className="mt-1 w-full rounded-md border bg-background px-3 py-2 text-sm"
+          />
+        </div>
+        <div className="w-full sm:w-44">
+          <Label htmlFor="monthFilter">Month</Label>
+          <select
+            id="monthFilter"
+            value={monthFilter}
+            onChange={(e) => { setPage(1); setMonthFilter(e.target.value) }}
+            className="mt-1 w-full rounded-md border bg-background px-3 py-2 text-sm"
+          >
+            <option value="">All Months</option>
+            {monthOptions.map((m) => (
+              <option key={m} value={m}>{fmtMonth(m)}</option>
+            ))}
+          </select>
+        </div>
+        <div className="w-full sm:w-44">
+          <Label htmlFor="statusFilter">Status</Label>
+          <select
+            id="statusFilter"
+            value={statusFilter}
+            onChange={(e) => { setPage(1); setStatusFilter(e.target.value) }}
+            className="mt-1 w-full rounded-md border bg-background px-3 py-2 text-sm"
+          >
+            <option value="">All Status</option>
+            {Object.entries(STATUS_CONFIG).map(([key, cfg]) => (
+              <option key={key} value={key}>{cfg.label}</option>
+            ))}
+          </select>
+        </div>
+        <Button variant="secondary" onClick={() => fetchFees()}>
+          Refresh
+        </Button>
+      </div>
+
+      {error ? <p className="text-sm text-destructive">{error}</p> : null}
+
+      {/* Table */}
+      <div className="overflow-x-auto rounded-md border">
+        <table className="w-full text-left text-sm">
+          <thead className="bg-muted/50">
+            <tr className="text-muted-foreground">
+              <th className="px-3 py-2">Student</th>
+              <th className="px-3 py-2">Course</th>
+              <th className="px-3 py-2">Month</th>
+              <th className="px-3 py-2">Amount</th>
+              <th className="px-3 py-2">Due</th>
+              <th className="px-3 py-2">Status</th>
+              <th className="px-3 py-2 text-right">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {loading ? (
+              <tr>
+                <td colSpan={7} className="px-3 py-6 text-center text-muted-foreground">
+                  Loading…
+                </td>
+              </tr>
+            ) : fees.length === 0 ? (
+              <tr>
+                <td colSpan={7} className="px-3 py-6 text-center text-muted-foreground">
+                  No fees found. Generate bills for a month to get started.
+                </td>
+              </tr>
+            ) : (
+              fees.map((item) => {
+                const statusCfg = STATUS_CONFIG[item.fee.status]
+                const isOverdue =
+                  new Date(item.fee.dueDate) < new Date() &&
+                  !['paid', 'waived'].includes(item.fee.status)
+                return (
+                  <tr
+                    key={item.fee.id}
+                    className={`border-t cursor-pointer hover:bg-muted/30 ${isOverdue ? 'bg-red-50 dark:bg-red-900/10' : ''}`}
+                    onClick={() => setSelectedFee(item)}
+                  >
+                    <td className="px-3 py-2">
+                      <div className="font-medium text-foreground">
+                        {item.member?.fullNameEnglish || item.member?.fullNameBangla || '—'}
+                      </div>
+                      <div className="text-xs text-muted-foreground">
+                        {item.member?.memberNumber || item.member?.email || ''}
+                      </div>
+                    </td>
+                    <td className="px-3 py-2 text-foreground">{item.course?.name || '—'}</td>
+                    <td className="px-3 py-2 text-foreground">{fmtMonth(item.fee.billingMonth)}</td>
+                    <td className="px-3 py-2">{fmtAmount(item.fee.amount, item.fee.currency)}</td>
+                    <td className="px-3 py-2 text-muted-foreground">{fmtDate(item.fee.dueDate)}</td>
+                    <td className="px-3 py-2">
+                      <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${statusCfg?.color || 'bg-gray-100 text-gray-700'}`}>
+                        {statusCfg?.label || item.fee.status}
+                      </span>
+                    </td>
+                    <td className="px-3 py-2 text-right">
+                      <div className="flex justify-end gap-1" onClick={(e) => e.stopPropagation()}>
+                        {item.fee.status === 'payment_submitted' && (
+                          <>
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              className="text-green-700 border-green-200 hover:bg-green-50 text-xs h-7 px-2"
+                              disabled={actionLoading}
+                              onClick={() => handleAction(item.fee.id, 'verify_payment')}
+                            >
+                              Verify
+                            </Button>
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              className="text-red-700 border-red-200 hover:bg-red-50 text-xs h-7 px-2"
+                              disabled={actionLoading}
+                              onClick={() => {
+                                const notes = prompt('Rejection reason:')
+                                if (notes) handleAction(item.fee.id, 'reject_payment', { notes })
+                              }}
+                            >
+                              Reject
+                            </Button>
+                          </>
+                        )}
+                        {['pending', 'due', 'overdue'].includes(item.fee.status) && (
+                          <>
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              className="text-xs h-7 px-2"
+                              disabled={actionLoading}
+                              onClick={() => handleAction(item.fee.id, 'mark_paid')}
+                            >
+                              Mark Paid
+                            </Button>
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              className="text-purple-700 border-purple-200 hover:bg-purple-50 text-xs h-7 px-2"
+                              disabled={actionLoading}
+                              onClick={() => {
+                                const reason = prompt('Waiver reason:')
+                                if (reason) handleAction(item.fee.id, 'waive', { waiverReason: reason })
+                              }}
+                            >
+                              Waive
+                            </Button>
+                          </>
+                        )}
+                      </div>
+                    </td>
+                  </tr>
+                )
+              })
+            )}
+          </tbody>
+        </table>
+      </div>
+
+      {/* Pagination */}
+      <div className="flex items-center justify-between gap-2">
+        <p className="text-xs text-muted-foreground">
+          Page {pagination.page} of {pagination.totalPages || 1} — {pagination.total} total records
+        </p>
+        <div className="flex gap-2">
+          <Button variant="outline" disabled={page <= 1 || loading} onClick={() => setPage((p) => Math.max(1, p - 1))}>
+            Previous
+          </Button>
+          <Button variant="outline" disabled={loading || (pagination.totalPages ? page >= pagination.totalPages : false)} onClick={() => setPage((p) => p + 1)}>
+            Next
+          </Button>
+        </div>
+      </div>
+
+      {/* Detail Modal */}
+      {selectedFee && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50" onClick={() => setSelectedFee(null)}>
+          <div className="bg-card rounded-lg border shadow-lg max-w-lg w-full mx-4 p-6 max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
+            <div className="flex justify-between items-start mb-4">
+              <h2 className="text-lg font-bold text-foreground">Fee Details</h2>
+              <button onClick={() => setSelectedFee(null)} className="text-muted-foreground hover:text-foreground text-xl">&times;</button>
+            </div>
+
+            <div className="space-y-3 text-sm">
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <p className="text-muted-foreground">Student</p>
+                  <p className="font-medium">{selectedFee.member?.fullNameEnglish || '—'}</p>
+                </div>
+                <div>
+                  <p className="text-muted-foreground">Member #</p>
+                  <p className="font-medium">{selectedFee.member?.memberNumber || '—'}</p>
+                </div>
+                <div>
+                  <p className="text-muted-foreground">Course</p>
+                  <p className="font-medium">{selectedFee.course?.name || '—'}</p>
+                </div>
+                <div>
+                  <p className="text-muted-foreground">Billing Month</p>
+                  <p className="font-medium">{fmtMonth(selectedFee.fee.billingMonth)}</p>
+                </div>
+                <div>
+                  <p className="text-muted-foreground">Amount</p>
+                  <p className="font-medium">{fmtAmount(selectedFee.fee.amount, selectedFee.fee.currency)}</p>
+                </div>
+                <div>
+                  <p className="text-muted-foreground">Status</p>
+                  <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${STATUS_CONFIG[selectedFee.fee.status]?.color || 'bg-gray-100'}`}>
+                    {STATUS_CONFIG[selectedFee.fee.status]?.label || selectedFee.fee.status}
+                  </span>
+                </div>
+                <div>
+                  <p className="text-muted-foreground">Due Date</p>
+                  <p className="font-medium">{fmtDate(selectedFee.fee.dueDate)}</p>
+                </div>
+                <div>
+                  <p className="text-muted-foreground">Paid At</p>
+                  <p className="font-medium">{fmtDate(selectedFee.fee.paidAt)}</p>
+                </div>
+              </div>
+
+              {/* Payment proof section */}
+              {selectedFee.fee.status === 'payment_submitted' && (
+                <div className="mt-4 p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
+                  <h3 className="font-semibold text-blue-900 dark:text-blue-200 mb-2">Payment Proof</h3>
+                  <div className="space-y-2 text-blue-800 dark:text-blue-300">
+                    <p><span className="font-medium">Method:</span> {selectedFee.fee.paymentMethod || '—'}</p>
+                    <p><span className="font-medium">Transaction ID:</span> {selectedFee.fee.transactionId || '—'}</p>
+                    <p><span className="font-medium">Submitted:</span> {fmtDate(selectedFee.fee.paymentSubmittedAt)}</p>
+                    {selectedFee.fee.paymentProofUrl && (
+                      <a
+                        href={selectedFee.fee.paymentProofUrl}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="inline-block mt-1 text-blue-600 underline"
+                      >
+                        View Screenshot →
+                      </a>
+                    )}
+                  </div>
+                </div>
+              )}
+
+              {selectedFee.fee.verificationNotes && (
+                <div className="p-3 bg-muted/50 rounded-lg">
+                  <p className="text-xs text-muted-foreground">Notes</p>
+                  <p className="text-sm">{selectedFee.fee.verificationNotes}</p>
+                </div>
+              )}
+            </div>
+
+            {/* Modal actions */}
+            <div className="mt-6 flex justify-end gap-2">
+              {selectedFee.fee.status === 'payment_submitted' && (
+                <>
+                  <Button
+                    variant="outline"
+                    className="text-red-700"
+                    disabled={actionLoading}
+                    onClick={() => {
+                      const notes = prompt('Rejection reason:')
+                      if (notes) handleAction(selectedFee.fee.id, 'reject_payment', { notes })
+                    }}
+                  >
+                    Reject
+                  </Button>
+                  <Button
+                    disabled={actionLoading}
+                    onClick={() => handleAction(selectedFee.fee.id, 'verify_payment')}
+                  >
+                    Verify & Approve
+                  </Button>
+                </>
+              )}
+              {['pending', 'due', 'overdue'].includes(selectedFee.fee.status) && (
+                <>
+                  <Button
+                    variant="outline"
+                    className="text-purple-700"
+                    disabled={actionLoading}
+                    onClick={() => {
+                      const reason = prompt('Waiver reason:')
+                      if (reason) handleAction(selectedFee.fee.id, 'waive', { waiverReason: reason })
+                    }}
+                  >
+                    Waive
+                  </Button>
+                  <Button
+                    disabled={actionLoading}
+                    onClick={() => handleAction(selectedFee.fee.id, 'mark_paid')}
+                  >
+                    Mark as Paid
+                  </Button>
+                </>
+              )}
+              <Button variant="ghost" onClick={() => setSelectedFee(null)}>Close</Button>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  )
+}

@@ -10,7 +10,7 @@ import {
   beltProgressions, equipment, equipmentCheckouts,
   courses, courseSchedules, courseInstructors,
   enrollmentApplications, courseEnrollments,
-  monthlyFees, paymentReminders, paymentSettings,
+  monthlyFees, paymentReminders, paymentSettings, paymentAccounts,
   programs, programRegistrations, programTypes,
   profileMonthlyStatus, memberMonthlyStatus, branchChangeRequests,
   certificateSignatures, programCertificates
@@ -423,6 +423,18 @@ export const paymentSettingsRelations = relations(paymentSettings, ({ one }) => 
   }),
 }));
 
+export const paymentAccountsRelations = relations(paymentAccounts, ({ one }) => ({
+  partner: one(partners, {
+    fields: [paymentAccounts.partnerId],
+    references: [partners.id],
+  }),
+  creator: one(user, {
+    fields: [paymentAccounts.createdBy],
+    references: [user.id],
+    relationName: "paymentAccountCreator",
+  }),
+}));
+
 // Gallery Relations
 export const galleryFoldersRelations = relations(galleryFolders, ({ one, many }) => ({
   parent: one(galleryFolders, {
@@ -510,6 +522,7 @@ export const partnersRelations = relations(partners, ({ one, many }) => ({
   registrations: many(registrations),
   monthlyStatuses: many(profileMonthlyStatus),
   branchChangeRequestsTo: many(branchChangeRequests, { relationName: "toPartner" }),
+  paymentAccounts: many(paymentAccounts),
   pageSettings: one(partnerPageSettings, {
     fields: [partners.id],
     references: [partnerPageSettings.partnerId],

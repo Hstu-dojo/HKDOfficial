@@ -125,6 +125,16 @@ const navigation: NavItem[] = [
     },
   },
   {
+    name: 'Org Billing',
+    href: '/admin/org-billing',
+    icon: BuildingOffice2Icon,
+    description: 'Organization billing overview',
+    requiredPermission: {
+      resource: 'PARTNER_BILL',
+      action: 'READ',
+    },
+  },
+  {
     name: 'Payment Settings',
     href: '/admin/payment-settings',
     icon: CreditCardIcon,
