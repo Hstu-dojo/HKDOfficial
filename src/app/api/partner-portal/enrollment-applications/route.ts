@@ -105,18 +105,19 @@ export async function PATCH(request: Request) {
 
   try {
     const body = await request.json()
-    const { applicationId, action, notes, rejectionReason } = body as {
+    const { applicationId, action, notes, rejectionReason, studentInfo } = body as {
       applicationId?: string
-      action?: 'verify_payment' | 'approve' | 'reject' | 'cancel'
+      action?: 'verify_payment' | 'approve' | 'reject' | 'cancel' | 'update_info'
       notes?: string
       rejectionReason?: string
+      studentInfo?: any
     }
 
     if (!applicationId || !action) {
       return NextResponse.json({ error: 'applicationId and action are required' }, { status: 400 })
     }
 
-    if (!['verify_payment', 'approve', 'reject', 'cancel'].includes(action)) {
+    if (!['verify_payment', 'approve', 'reject', 'cancel', 'update_info'].includes(action)) {
       return NextResponse.json({ error: 'Invalid action' }, { status: 400 })
     }
 
@@ -207,6 +208,67 @@ export async function PATCH(request: Request) {
         })
         .where(eq(enrollmentApplications.id, applicationId))
         .returning()
+
+      return NextResponse.json({ success: true, application: updated })
+    }
+
+    if (action === 'update_info') {
+      if (!studentInfo) {
+        return NextResponse.json({ error: 'studentInfo is required' }, { status: 400 })
+      }
+
+      const [updated] = await db
+        .update(enrollmentApplications)
+        .set({
+          studentInfo,
+          updatedAt: new Date(),
+        })
+        .where(eq(enrollmentApplications.id, applicationId))
+        .returning()
+
+      // Sync to profiles/members table if profileId is present
+      if (updated.profileId) {
+        const studentData = (studentInfo || {}) as any
+        const fullNameEnglish =
+          studentData.fullNameEnglish || studentData.username || studentData.fullName || studentData.name || null
+        const phoneNumber = studentData.phoneNumber || studentData.phone || studentData.mobile || null
+        const email = studentData.email || null
+        const dateOfBirthRaw = studentData.dateOfBirth || studentData.dob || null
+        const gender = studentData.gender || studentData.sex || null
+        const presentAddress = studentData.presentAddress || studentData.address || null
+        const emergencyContactName = studentData.emergencyContactName || studentData.emergencyContact || null
+        const emergencyContactPhone = studentData.emergencyContactPhone || studentData.emergencyPhone || null
+
+        await db
+          .update(members)
+          .set({
+            fullNameEnglish,
+            fullNameBangla: studentData.fullNameBangla || null,
+            fatherName: studentData.fatherName || null,
+            fatherNameBangla: studentData.fatherNameBangla || null,
+            motherName: studentData.motherName || null,
+            motherNameBangla: studentData.motherNameBangla || null,
+            dateOfBirth: dateOfBirthRaw ? new Date(dateOfBirthRaw) : undefined,
+            gender,
+            bloodGroup: studentData.bloodGroup || null,
+            religion: studentData.religion || null,
+            nationality: studentData.nationality || null,
+            phoneNumber,
+            email,
+            presentAddress,
+            permanentAddress: studentData.permanentAddress || null,
+            nid: studentData.nid || null,
+            birthCertificateNo: studentData.birthCertificateNo || null,
+            passportNo: studentData.passportNo || null,
+            profession: studentData.profession || null,
+            educationQualification: studentData.educationQualification || null,
+            emergencyContact: emergencyContactName,
+            emergencyPhone: emergencyContactPhone,
+            picture: studentData.profilePhotoUrl || null,
+            updatedAt: new Date(),
+          })
+          .where(eq(members.id, updated.profileId))
+      }
 
       return NextResponse.json({ success: true, application: updated })
     }

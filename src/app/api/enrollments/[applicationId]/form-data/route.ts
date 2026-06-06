@@ -8,9 +8,13 @@
 import { NextResponse } from 'next/server';
 import { db } from '@/lib/connect-db';
 import { enrollmentApplications } from '@/db/schemas/karate/enrollments';
+import { courses } from '@/db/schemas/karate/courses';
 import { user as userSchema } from '@/db/schemas/auth';
 import { eq } from 'drizzle-orm';
 import { createClient } from '@/lib/supabase/server';
+import { getPartnerAdminUser } from '@/lib/partner-admin/auth';
+import { getRBACContext } from '@/lib/rbac/middleware';
+import { hasPermission } from '@/lib/rbac/permissions';
 
 export async function GET(
   _request: Request,
@@ -19,33 +23,17 @@ export async function GET(
   try {
     const { applicationId } = await params;
 
-    // Auth
-    const supabase = await createClient();
-    const {
-      data: { user: authUser },
-    } = await supabase.auth.getUser();
-
-    if (!authUser) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
-
-    const publicUser = await db.query.user.findFirst({
-      where: eq(userSchema.supabaseUserId, authUser.id),
-    });
-
-    if (!publicUser) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
-
-    // Fetch application
+    // Fetch application with course partnerId
     const [app] = await db
       .select({
         id: enrollmentApplications.id,
         userId: enrollmentApplications.userId,
         studentInfo: enrollmentApplications.studentInfo,
         applicationNumber: enrollmentApplications.applicationNumber,
+        partnerId: courses.partnerId,
       })
       .from(enrollmentApplications)
+      .innerJoin(courses, eq(enrollmentApplications.courseId, courses.id))
       .where(eq(enrollmentApplications.id, applicationId))
       .limit(1);
 
@@ -53,8 +41,45 @@ export async function GET(
       return NextResponse.json({ error: 'Application not found' }, { status: 404 });
     }
 
-    // Only the owner can access
-    if (app.userId !== publicUser.id) {
+    // Determine authorization
+    let isAuthorized = false;
+
+    // 1. Check if student (owner)
+    const supabase = await createClient();
+    const {
+      data: { user: authUser },
+    } = await supabase.auth.getUser();
+
+    if (authUser) {
+      const publicUser = await db.query.user.findFirst({
+        where: eq(userSchema.supabaseUserId, authUser.id),
+      });
+
+      if (publicUser && app.userId === publicUser.id) {
+        isAuthorized = true;
+      }
+    }
+
+    // 2. Check if central admin
+    if (!isAuthorized) {
+      const context = await getRBACContext();
+      if (context) {
+        const canRead = await hasPermission(context.userId, "ENROLLMENT", "READ");
+        if (canRead) {
+          isAuthorized = true;
+        }
+      }
+    }
+
+    // 3. Check if partner admin
+    if (!isAuthorized) {
+      const partnerAdmin = await getPartnerAdminUser();
+      if (partnerAdmin && partnerAdmin.partnerId === app.partnerId) {
+        isAuthorized = true;
+      }
+    }
+
+    if (!isAuthorized) {
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
     }
 

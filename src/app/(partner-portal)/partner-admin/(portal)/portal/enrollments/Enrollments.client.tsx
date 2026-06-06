@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import EnrollmentFormModal from '@/components/admin/enrollments/EnrollmentFormModal'
 
 type Pagination = {
   page: number
@@ -25,6 +26,7 @@ type EnrollmentRow = {
   droppedAt: string | null
   transactionId: string | null
   paymentProofUrl: string | null
+  applicationId: string | null
   memberName: string
   memberNumber: string | null
   memberPhone: string | null
@@ -50,6 +52,7 @@ type ApplicationRow = {
   currency: string
   studentInfo: any
   courseName: string
+  courseId: string
 }
 
 type ApplicationsResponse = {
@@ -58,6 +61,32 @@ type ApplicationsResponse = {
 }
 
 export default function Enrollments() {
+  const [selectedApp, setSelectedApp] = React.useState<{
+    applicationId: string
+    courseId: string
+    courseName: string
+    studentInfo: any
+    status: string
+    paymentInfo?: any
+  } | null>(null)
+  const [refreshTrigger, setRefreshTrigger] = React.useState(0)
+
+  const handleSaveForm = async (updatedInfo: any) => {
+    if (!selectedApp) return
+    await apiJSON('/api/partner-portal/enrollment-applications', {
+      method: 'PATCH',
+      body: JSON.stringify({
+        applicationId: selectedApp.applicationId,
+        action: 'update_info',
+        studentInfo: updatedInfo,
+      }),
+    })
+    setRefreshTrigger((prev) => prev + 1)
+    
+    // Also update the local state so the modal updates immediately
+    setSelectedApp(prev => prev ? { ...prev, studentInfo: updatedInfo } : null)
+  }
+
   return (
     <div className="space-y-4">
       <div>
@@ -71,12 +100,26 @@ export default function Enrollments() {
           <TabsTrigger value="enrollments">Enrollments</TabsTrigger>
         </TabsList>
         <TabsContent value="applications" className="mt-4">
-          <ApplicationsTab />
+          <ApplicationsTab onViewForm={setSelectedApp} refreshTrigger={refreshTrigger} />
         </TabsContent>
         <TabsContent value="enrollments" className="mt-4">
-          <EnrollmentsTab />
+          <EnrollmentsTab onViewForm={setSelectedApp} refreshTrigger={refreshTrigger} />
         </TabsContent>
       </Tabs>
+
+      {selectedApp && (
+        <EnrollmentFormModal
+          isOpen={true}
+          onClose={() => setSelectedApp(null)}
+          applicationId={selectedApp.applicationId}
+          courseId={selectedApp.courseId}
+          courseName={selectedApp.courseName}
+          initialStudentInfo={selectedApp.studentInfo}
+          status={selectedApp.status}
+          onSave={handleSaveForm}
+          paymentInfo={selectedApp.paymentInfo}
+        />
+      )}
     </div>
   )
 }

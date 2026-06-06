@@ -69,6 +69,7 @@ export async function GET(request: Request) {
           droppedAt: courseEnrollments.droppedAt,
           transactionId: enrollmentApplications.transactionId,
           paymentProofUrl: enrollmentApplications.paymentProofUrl,
+          applicationId: courseEnrollments.applicationId,
           // Member info
           memberName: sql<string>`COALESCE(
             ${members.fullNameEnglish},

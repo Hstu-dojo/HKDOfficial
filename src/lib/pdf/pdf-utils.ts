@@ -193,6 +193,45 @@ export function downloadBlankForm() {
   document.body.removeChild(a);
 }
 
+export async function downloadEnrollmentFormPdf(applicationId: string, courseNameSlug: string) {
+  const res = await fetch(`/api/enrollments/${applicationId}/form-data`);
+  if (!res.ok) {
+    throw new Error('Could not retrieve application data');
+  }
+  const data = await res.json();
+  const formData = data.formData || {};
+  let images: ImageData = {};
+
+  const fetchImageAsDataUrl = async (url: string): Promise<string> => {
+    const resp = await fetch(url);
+    const blob = await resp.blob();
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onloadend = () => resolve(reader.result as string);
+      reader.onerror = reject;
+      reader.readAsDataURL(blob);
+    });
+  };
+
+  if (data.profilePhotoUrl) {
+    try {
+      images.photo = await fetchImageAsDataUrl(data.profilePhotoUrl);
+    } catch (err) {
+      console.warn('Failed to fetch photo as data URL:', err);
+    }
+  }
+  if (data.signatureUrl) {
+    try {
+      images.signature = await fetchImageAsDataUrl(data.signatureUrl);
+    } catch (err) {
+      console.warn('Failed to fetch signature as data URL:', err);
+    }
+  }
+
+  const pdfBytes = await fillPdfForm(formData, images);
+  downloadPdf(pdfBytes, `HKD_Registration_${courseNameSlug.toLowerCase().replace(/[^a-z0-9]/g, '_')}.pdf`);
+}
+
 // ---------------------------------------------------------------------------
 // Image validation
 // ---------------------------------------------------------------------------
