@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/connect-db';
 import { user } from '@/db/schema';
 import { eq } from 'drizzle-orm';
+import { createClient } from '@/lib/supabase/server';
 
 interface CreateOAuthUserRequest {
   supabaseUserId: string;
@@ -13,12 +14,25 @@ interface CreateOAuthUserRequest {
 }
 
 /**
- * Create or update user record for OAuth authenticated users
- * This endpoint is called after OAuth signup/signin to sync with local database
+ * Create or update user record for OAuth authenticated users.
+ * This endpoint is called after OAuth signup/signin to sync with local database.
+ *
+ * SECURITY: Validates Supabase session server-side and ensures the
+ * supabaseUserId in the body matches the authenticated user.
  */
 export async function POST(request: NextRequest) {
   try {
-    console.log('🔷 create-oauth-user API called');
+    // ── Authenticate via Supabase session ──
+    const supabase = await createClient();
+    const { data: { user: authUser }, error: authError } = await supabase.auth.getUser();
+
+    if (authError || !authUser?.id) {
+      return NextResponse.json(
+        { error: 'Unauthorized — valid Supabase session required' },
+        { status: 401 }
+      );
+    }
+
     const body: CreateOAuthUserRequest = await request.json();
     const {
       supabaseUserId,
@@ -29,14 +43,19 @@ export async function POST(request: NextRequest) {
       hasPassword
     } = body;
 
-    console.log('📦 Request body:', { supabaseUserId, email, provider, hasPassword, fullName: !!fullName, avatarUrl: !!avatarUrl });
-
     // Validation
     if (!supabaseUserId || !email || !provider) {
-      console.error('❌ Validation failed: Missing required fields');
       return NextResponse.json(
         { error: 'Missing required fields: supabaseUserId, email, provider' },
         { status: 400 }
+      );
+    }
+
+    // ── Security: ensure user is only creating/updating their own record ──
+    if (authUser.id !== supabaseUserId) {
+      return NextResponse.json(
+        { error: 'Forbidden — supabaseUserId must match authenticated user' },
+        { status: 403 }
       );
     }
 

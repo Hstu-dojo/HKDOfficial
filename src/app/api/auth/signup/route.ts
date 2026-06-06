@@ -10,6 +10,7 @@ import accountVerify from "@/actions/emailSend/accountVerify";
 import { handleCors, handleOptions } from "@/lib/cors";
 
 export const POST = async (req: NextRequest) => {
+  const origin = req.headers.get('origin');
   const id = uid(5);
   // console.log(id);
   const data = await req.json();
@@ -28,7 +29,7 @@ export const POST = async (req: NextRequest) => {
       },
       { status: 400, statusText: "User already exists! try logging in" },
     );
-    return handleCors(response);
+    return handleCors(response, origin);
   }
   const existingUserName = await db.select().from(user).where(eq(user.userName, userName)).limit(1);
 
@@ -42,7 +43,7 @@ export const POST = async (req: NextRequest) => {
         statusText: "Username already taken! try different username",
       },
     );
-    return handleCors(response);
+    return handleCors(response, origin);
   }
 
   const hashedPassword = await hash(password);
@@ -65,9 +66,9 @@ export const POST = async (req: NextRequest) => {
     data: newUser,
   });
   
-  return handleCors(response);
+  return handleCors(response, origin);
 };
 
-export async function OPTIONS() {
-  return handleOptions();
+export async function OPTIONS(req: NextRequest) {
+  return handleOptions(req.headers.get('origin'));
 }

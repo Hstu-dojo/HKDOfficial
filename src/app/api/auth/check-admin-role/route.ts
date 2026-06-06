@@ -5,18 +5,23 @@ import { eq } from 'drizzle-orm';
 import { getUserPermissionsWithFallback } from '@/lib/rbac/permissions';
 
 /**
- * API endpoint to check if a user has admin panel access
- * Called from middleware (Edge Runtime can't do direct DB queries)
- * 
- * Checks for the ADMIN_PANEL:ACCESS permission via:
- *  1. Roles assigned in the userRole table
- *  2. Fallback to user.defaultRole
- * 
- * Which roles can access the admin panel is controlled by toggling
- * the "access_admin_panel" permission in the RBAC permission matrix.
+ * Internal-only API endpoint to check if a user has admin panel access.
+ * Called from middleware (Edge Runtime can't do direct DB queries).
+ *
+ * SECURITY: Protected by a shared internal secret so external callers
+ * cannot probe admin status or enumerate roles.
  */
+
+const INTERNAL_SECRET = process.env.NEXTAUTH_SECRET || process.env.JWT_SECRET || '';
+
 export async function GET(request: NextRequest) {
   try {
+    // ── Security: verify the request comes from our own middleware ──
+    const internalSecret = request.headers.get('x-internal-secret');
+    if (!INTERNAL_SECRET || internalSecret !== INTERNAL_SECRET) {
+      return NextResponse.json({ hasAdminRole: false }, { status: 403 });
+    }
+
     const supabaseUserId = request.headers.get('x-supabase-user-id');
     
     if (!supabaseUserId) {
@@ -31,7 +36,7 @@ export async function GET(request: NextRequest) {
       .limit(1);
 
     if (localUser.length === 0) {
-      return NextResponse.json({ hasAdminRole: false, error: 'User not found' }, { status: 404 });
+      return NextResponse.json({ hasAdminRole: false }, { status: 404 });
     }
 
     const userPerms = await getUserPermissionsWithFallback(localUser[0].id);
@@ -44,11 +49,10 @@ export async function GET(request: NextRequest) {
       roles.push(localUser[0].defaultRole);
     }
 
+    // Return only what the middleware needs — no internal IDs
     return NextResponse.json({ 
       hasAdminRole: hasAdminAccess, 
       roles,
-      localUserId: localUser[0].id,
-      defaultRole: localUser[0].defaultRole,
     });
   } catch (error) {
     console.error('[check-admin-role] Error:', error);

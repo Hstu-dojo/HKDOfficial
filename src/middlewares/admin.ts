@@ -55,10 +55,12 @@ export async function withAdminMiddleware(request: NextRequest) {
 
     // Check admin role via API route (Edge Runtime can't do direct DB queries)
     const baseUrl = request.nextUrl.origin;
+    const internalSecret = process.env.NEXTAUTH_SECRET || process.env.JWT_SECRET || '';
     const checkRoleResponse = await fetch(`${baseUrl}/api/auth/check-admin-role`, {
       method: 'GET',
       headers: {
         'x-supabase-user-id': authUser.id,
+        'x-internal-secret': internalSecret,
       },
     });
 

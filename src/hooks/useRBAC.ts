@@ -64,14 +64,12 @@ export function useRBAC() {
         if (!lastFetchedUserIdRef.current) {
           setLoading(true);
         }
-        console.log('[useRBAC] Fetching RBAC data for Supabase ID:', userId);
         
-        // Use the dedicated API endpoint that accepts Supabase ID via header
+        // The API now validates the Supabase session via cookies (server-side).
+        // No need to send user ID as a header — it's derived from the session.
         const response = await fetch('/api/auth/get-user-rbac', {
           method: 'GET',
-          headers: {
-            'x-supabase-user-id': userId!,
-          },
+          credentials: 'same-origin',
         });
 
         if (response.ok) {

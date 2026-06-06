@@ -71,6 +71,29 @@ export async function POST(request: Request) {
     const token = newToken()
     const expiresAt = new Date(Date.now() + 1000 * 60 * 60 * 24) // 24h
 
+    // ── Cleanup: prune expired sessions globally & limit concurrent sessions ──
+    try {
+      // Delete all globally-expired sessions
+      await db.delete(partnerAdminSessions).where(
+        sql`${partnerAdminSessions.expiresAt} < now()`
+      )
+      // Delete old sessions for this admin (keep most recent 2, we're about to add 1 more)
+      const existingSessions = await db
+        .select({ token: partnerAdminSessions.token })
+        .from(partnerAdminSessions)
+        .where(eq(partnerAdminSessions.partnerAdminId, admin.id))
+        .orderBy(sql`${partnerAdminSessions.createdAt} DESC`)
+      if (existingSessions.length >= 3) {
+        const tokensToDelete = existingSessions.slice(2).map(s => s.token)
+        for (const t of tokensToDelete) {
+          await db.delete(partnerAdminSessions).where(eq(partnerAdminSessions.token, t))
+        }
+      }
+    } catch (cleanupErr) {
+      // Non-fatal — log and continue with login
+      console.warn('[PartnerAdminLogin] Session cleanup failed:', cleanupErr)
+    }
+
     await db.insert(partnerAdminSessions).values({
       token,
       partnerAdminId: admin.id,

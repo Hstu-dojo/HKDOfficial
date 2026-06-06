@@ -14,6 +14,17 @@ import { eq, and, ilike, or, desc, sql, count } from 'drizzle-orm'
 import avatarsData from '@/db/avatars.json'
 import { createClient as createSupabaseAdminClient, createClient as createSupabaseClient } from '@supabase/supabase-js'
 
+/** Escape LIKE/ILIKE wildcard characters to prevent pattern injection. */
+function escapeLikeWildcards(input: string): string {
+  return input.replace(/[%_\\]/g, (ch) => `\\${ch}`)
+}
+
+/** Valid belt rank values — reject anything not in this set. */
+const VALID_BELT_RANKS = new Set([
+  'white', 'yellow', 'orange', 'green', 'blue', 'red',
+  'brown', 'black', 'brown_kyu3', 'brown_kyu2', 'brown_kyu1',
+]);
+
 function getLocaleFromReferer(request: Request): string | null {
   const referer = request.headers.get('referer')
   if (!referer) return null
@@ -119,12 +130,13 @@ export async function GET(request: Request) {
     // Build the query
     // Apply search filter — merge into conditions before single .where()
     if (search) {
+      const safeSearch = escapeLikeWildcards(search)
       conditions.push(
         or(
-          ilike(members.fullNameEnglish, `%${search}%`),
-          ilike(members.fullNameBangla, `%${search}%`),
-          ilike(members.memberNumber, `%${search}%`),
-          ilike(members.phoneNumber, `%${search}%`),
+          ilike(members.fullNameEnglish, `%${safeSearch}%`),
+          ilike(members.fullNameBangla, `%${safeSearch}%`),
+          ilike(members.memberNumber, `%${safeSearch}%`),
+          ilike(members.phoneNumber, `%${safeSearch}%`),
         )!
       )
     }
@@ -508,8 +520,12 @@ export async function PATCH(request: Request) {
         if (field === 'sex') {
           updateData.gender = updates[field]
         } else if (field === 'beltRank') {
-          // Handle beltRank - can be null or a valid value
-          updateData.beltRank = updates[field] || 'white'  // Default to white if not provided
+          // Validate beltRank against the Postgres enum values
+          const rank = updates[field] || 'white'
+          if (!VALID_BELT_RANKS.has(rank)) {
+            return NextResponse.json({ error: `Invalid belt rank: ${rank}` }, { status: 400 })
+          }
+          updateData.beltRank = rank
         } else if (field === 'occupation') {
           updateData.profession = updates[field]
         } else if (field === 'address') {
@@ -542,6 +558,26 @@ export async function PATCH(request: Request) {
     if (newPassword) {
       if (newPassword.length < 6) {
         return NextResponse.json({ error: 'Password must be at least 6 characters' }, { status: 400 })
+      }
+
+      // Security: only allow password changes for accounts created by partner portal,
+      // not pre-existing global accounts (prevents cross-boundary account takeover).
+      const memberProfile = await db
+        .select({ notes: members.notes, userId: members.userId })
+        .from(members)
+        .where(eq(members.id, memberId))
+        .limit(1)
+      let profileNotes: any = {}
+      try {
+        profileNotes = typeof memberProfile[0]?.notes === 'string'
+          ? JSON.parse(memberProfile[0].notes)
+          : (memberProfile[0]?.notes || {})
+      } catch {}
+      if (!profileNotes.createdByPartnerAdmin) {
+        return NextResponse.json(
+          { error: 'Cannot change password for accounts not created through the partner portal. The member should use the "Forgot Password" flow instead.' },
+          { status: 403 }
+        )
       }
 
       if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.SUPABASE_SERVICE_ROLE_KEY) {

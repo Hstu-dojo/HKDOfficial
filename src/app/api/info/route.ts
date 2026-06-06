@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { handleCors, handleOptions } from "@/lib/cors";
 
-export async function GET() {
+export async function GET(req: NextRequest) {
   const response = NextResponse.json({
     message: "Karate Dojo API is running",
     version: "1.0.0",
@@ -24,9 +24,9 @@ export async function GET() {
     timestamp: new Date().toISOString()
   });
   
-  return handleCors(response);
+  return handleCors(response, req.headers.get('origin'));
 }
 
-export async function OPTIONS() {
-  return handleOptions();
+export async function OPTIONS(req: NextRequest) {
+  return handleOptions(req.headers.get('origin'));
 }
