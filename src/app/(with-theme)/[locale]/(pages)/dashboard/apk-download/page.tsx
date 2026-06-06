@@ -159,11 +159,14 @@ export default function APKDownloadPage() {
                     className="flex-1 flex items-center justify-center gap-3 bg-white hover:bg-slate-50 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-900 dark:text-white border-2 border-slate-200 dark:border-slate-700 py-3.5 px-6 rounded-xl font-semibold transition-all active:scale-[0.98] shadow-sm"
                   >
                     <GlobeAltIcon className="h-5 w-5 text-primary" />
-                    Open Web Portal
+                    <div className="flex flex-col items-start">
+                      <span>Open Web Portal</span>
+                      <span className="text-[10px] font-normal text-slate-500 dark:text-slate-400">portal.hstuma.com</span>
+                    </div>
                   </a>
                 </div>
                 <p className="text-center text-xs text-slate-400 mt-4">
-                  {t('apkDownload.androidDirectDownload')} &bull; Web portal requires no installation
+                  {t('apkDownload.androidDirectDownload')} &bull; Prioritizes App if installed, otherwise opens Web Portal
                 </p>
               </div>
             </Card>

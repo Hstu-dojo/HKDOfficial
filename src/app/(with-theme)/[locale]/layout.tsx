@@ -68,7 +68,8 @@ export default async function RootLayout({
   loginDialogue: React.ReactNode;
   params: Promise<{ locale: string }>;
 }) {
-  const { locale } = await params;
+  const resolvedParams = await params;
+  const locale = resolvedParams?.locale || "en";
   
   return (
     <div

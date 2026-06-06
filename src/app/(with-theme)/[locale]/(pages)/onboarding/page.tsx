@@ -17,7 +17,8 @@ export default async function OnboardingPage({
   params: Promise<{ locale: string }>;
   searchParams: Promise<{ edit?: string }>;
 }) {
-  const { locale } = await params;
+  const resolvedParams = await params;
+  const locale = resolvedParams?.locale || "en";
   const t = await getI18n();
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();

@@ -7,7 +7,8 @@ export default async function DashboardCommitteePage({
 }: {
   params: Promise<{ locale: string }>;
 }) {
-  const { locale } = await params;
+  const resolvedParams = await params;
+  const locale = resolvedParams?.locale || "en";
   const result = await getMyCommitteeStatus();
 
   if (!result.success) {
@@ -51,8 +52,8 @@ export default async function DashboardCommitteePage({
               committeeTitle={current.committee?.title || 'Committee'}
               year={current.committee?.year || ''}
               memberNumber={current.profile?.memberNumber || null}
-              photoUrl={current.profile?.picture || current.additionalData?.photoUrl || null}
-              trainerSignature={current.committee?.trainerSignature || null}
+              photoUrl={current.profile?.picture || (current.additionalData as any)?.photoUrl || null}
+              trainerSignature={(current.committee as any)?.trainerSignature || null}
             />
           )}
         </div>

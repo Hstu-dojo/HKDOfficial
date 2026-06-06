@@ -10,7 +10,8 @@ export default async function CommitteePublicPage({
 }: {
   params: Promise<{ locale: string }>;
 }) {
-  const { locale } = await params;
+  const resolvedParams = await params;
+  const locale = resolvedParams?.locale || "en";
   const directoryRes = await getCommitteeDirectory();
   const directory = directoryRes.success && directoryRes.data ? directoryRes.data : [];
   const currentCommittee = directory.find((c: any) => c.isActive) || null;
