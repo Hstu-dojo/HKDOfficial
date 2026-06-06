@@ -47,40 +47,35 @@ export default function APKDownloadPage() {
 
   useEffect(() => {
     const fetchAPKInfo = async () => {
+      setLoading(true);
+      let data: APKInfo;
       try {
-        setLoading(true);
-        let data: APKInfo;
-        try {
-          const controller = new AbortController();
-          const timeoutId = setTimeout(() => controller.abort(), 5000);
-          
-          const response = await fetch('https://hstukarate.vercel.app/apk-download', {
-            cache: 'no-store',
-            signal: controller.signal
-          });
-          
-          clearTimeout(timeoutId);
-          if (!response.ok) throw new Error('FETCH_FAILED');
-          data = await response.json();
-        } catch (fetchErr) {
-          console.warn('Primary APK fetch failed, using fallback:', fetchErr);
-          data = {
-            id: 'fallback-001',
-            version: '1.0.0 (Fallback)',
-            downloadUrl: 'https://github.com', // Example fallback link
-            releaseNotes: 'The main update server is currently unreachable. You can use the Web Portal instead, or contact support for the latest Android APK.',
-            isActive: true,
-            createdAt: new Date().toISOString()
-          };
-        }
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 5000);
         
-        setApkInfo(data);
-        setError(null);
-      } catch (err) {
-        setError(t('apkDownload.errors.failedToLoad'));
-      } finally {
-        setLoading(false);
+        const response = await fetch('https://hstukarate.vercel.app/apk-download', {
+          cache: 'no-store',
+          signal: controller.signal
+        });
+        
+        clearTimeout(timeoutId);
+        if (!response.ok) throw new Error('FETCH_FAILED');
+        data = await response.json();
+      } catch (fetchErr) {
+        console.warn('Primary APK fetch failed, using fallback:', fetchErr);
+        data = {
+          id: 'fallback-001',
+          version: '1.0.0 (Fallback)',
+          downloadUrl: 'https://github.com', // Example fallback link
+          releaseNotes: 'The main update server is currently unreachable. You can use the Web Portal instead, or contact support for the latest Android APK.',
+          isActive: true,
+          createdAt: new Date().toISOString()
+        };
       }
+      
+      setApkInfo(data);
+      setError(null);
+      setLoading(false);
     };
 
     fetchAPKInfo();

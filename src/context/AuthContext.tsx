@@ -40,12 +40,12 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const currentUserIdRef = useRef<string | null>(null)
 
   useEffect(() => {
-    // Get initial session
     const getInitialSession = async () => {
       const { data: { session } } = await supabase.auth.getSession()
-      currentUserIdRef.current = session?.user?.id ?? null
+      const { data: { user } } = await supabase.auth.getUser()
+      currentUserIdRef.current = user?.id ?? null
       setSession(session)
-      setUser(session?.user ?? null)
+      setUser(user ?? null)
       setLoading(false)
     }
 
@@ -90,10 +90,18 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
         // For actual auth changes (SIGNED_IN, SIGNED_OUT, USER_UPDATED, etc.)
         // update everything normally
-        currentUserIdRef.current = newUserId
-        setSession(newSession)
-        setUser(newSession?.user ?? null)
-        setLoading(false)
+        if (event === 'SIGNED_OUT') {
+          currentUserIdRef.current = null
+          setSession(null)
+          setUser(null)
+          setLoading(false)
+        } else {
+          const { data: { user } } = await supabase.auth.getUser()
+          currentUserIdRef.current = user?.id ?? null
+          setSession(newSession)
+          setUser(user ?? null)
+          setLoading(false)
+        }
       }
     )
 
