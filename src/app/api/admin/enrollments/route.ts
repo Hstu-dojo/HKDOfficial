@@ -48,6 +48,8 @@ export async function GET(request: NextRequest) {
     const searchParams = request.nextUrl.searchParams;
     const statusFilter = searchParams.get("status");
     const courseIdFilter = searchParams.get("courseId");
+    const partnerIdFilter = searchParams.get("partnerId");
+    const q = (searchParams.get("q") || "").trim();
     const userId = searchParams.get("userId"); // For students viewing their own
 
     const conditions = [];
@@ -70,6 +72,24 @@ export async function GET(request: NextRequest) {
     
     if (courseIdFilter) {
       conditions.push(eq(enrollmentApplications.courseId, courseIdFilter));
+    }
+
+    if (partnerIdFilter) {
+      conditions.push(eq(courses.partnerId, partnerIdFilter));
+    }
+
+    if (q) {
+      const pattern = `%${q}%`;
+      conditions.push(
+        or(
+          sql`coalesce(${enrollmentApplications.applicationNumber}, '') ILIKE ${pattern}`,
+          sql`coalesce(${enrollmentApplications.transactionId}, '') ILIKE ${pattern}`,
+          sql`coalesce(${sql`${enrollmentApplications.studentInfo}->>'fullNameEnglish'`}, '') ILIKE ${pattern}`,
+          sql`coalesce(${sql`${enrollmentApplications.studentInfo}->>'email'`}, '') ILIKE ${pattern}`,
+          sql`coalesce(${sql`${enrollmentApplications.studentInfo}->>'phoneNumber'`}, '') ILIKE ${pattern}`,
+          sql`coalesce(${courses.name}, '') ILIKE ${pattern}`
+        )
+      );
     }
 
     const applications = await db

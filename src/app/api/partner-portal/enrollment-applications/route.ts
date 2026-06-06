@@ -285,24 +285,24 @@ export async function PATCH(request: Request) {
       .where(eq(members.userId, application.userId))
       .limit(1)
 
-    let studentInfo: Record<string, any> = (application.studentInfo || {}) as any
-    if (typeof studentInfo === 'string') {
+    let approvedStudentInfo: Record<string, any> = (application.studentInfo || {}) as any
+    if (typeof approvedStudentInfo === 'string') {
       try {
-        studentInfo = JSON.parse(studentInfo) as any
+        approvedStudentInfo = JSON.parse(approvedStudentInfo) as any
       } catch {
-        studentInfo = {}
+        approvedStudentInfo = {}
       }
     }
 
     const fullNameEnglish =
-      studentInfo.fullNameEnglish || studentInfo.username || studentInfo.fullName || studentInfo.name || null
-    const phoneNumber = studentInfo.phoneNumber || studentInfo.phone || studentInfo.mobile || null
-    const email = studentInfo.email || null
-    const dateOfBirthRaw = studentInfo.dateOfBirth || studentInfo.dob || null
-    const gender = studentInfo.gender || studentInfo.sex || null
-    const presentAddress = studentInfo.presentAddress || studentInfo.address || null
-    const emergencyContactName = studentInfo.emergencyContactName || studentInfo.emergencyContact || null
-    const emergencyContactPhone = studentInfo.emergencyContactPhone || studentInfo.emergencyPhone || null
+      approvedStudentInfo.fullNameEnglish || approvedStudentInfo.username || approvedStudentInfo.fullName || approvedStudentInfo.name || null
+    const phoneNumber = approvedStudentInfo.phoneNumber || approvedStudentInfo.phone || approvedStudentInfo.mobile || null
+    const email = approvedStudentInfo.email || null
+    const dateOfBirthRaw = approvedStudentInfo.dateOfBirth || approvedStudentInfo.dob || null
+    const gender = approvedStudentInfo.gender || approvedStudentInfo.sex || null
+    const presentAddress = approvedStudentInfo.presentAddress || approvedStudentInfo.address || null
+    const emergencyContactName = approvedStudentInfo.emergencyContactName || approvedStudentInfo.emergencyContact || null
+    const emergencyContactPhone = approvedStudentInfo.emergencyContactPhone || approvedStudentInfo.emergencyPhone || null
 
     if (!memberProfile) {
       const prefix = `HKD-${partnerUser.partnerSlug.toUpperCase().slice(0, 8)}`
@@ -319,28 +319,28 @@ export async function PATCH(request: Request) {
           userId: application.userId,
           memberNumber,
           fullNameEnglish,
-          fullNameBangla: studentInfo.fullNameBangla || null,
-          fatherName: studentInfo.fatherName || null,
-          fatherNameBangla: studentInfo.fatherNameBangla || null,
-          motherName: studentInfo.motherName || null,
-          motherNameBangla: studentInfo.motherNameBangla || null,
+          fullNameBangla: approvedStudentInfo.fullNameBangla || null,
+          fatherName: approvedStudentInfo.fatherName || null,
+          fatherNameBangla: approvedStudentInfo.fatherNameBangla || null,
+          motherName: approvedStudentInfo.motherName || null,
+          motherNameBangla: approvedStudentInfo.motherNameBangla || null,
           dateOfBirth: dateOfBirthRaw ? new Date(dateOfBirthRaw) : undefined,
           gender,
-          bloodGroup: studentInfo.bloodGroup || null,
-          religion: studentInfo.religion || null,
-          nationality: studentInfo.nationality || null,
+          bloodGroup: approvedStudentInfo.bloodGroup || null,
+          religion: approvedStudentInfo.religion || null,
+          nationality: approvedStudentInfo.nationality || null,
           phoneNumber,
           email,
           presentAddress,
-          permanentAddress: studentInfo.permanentAddress || null,
-          nid: studentInfo.nid || null,
-          birthCertificateNo: studentInfo.birthCertificateNo || null,
-          passportNo: studentInfo.passportNo || null,
-          profession: studentInfo.profession || null,
-          educationQualification: studentInfo.educationQualification || null,
+          permanentAddress: approvedStudentInfo.permanentAddress || null,
+          nid: approvedStudentInfo.nid || null,
+          birthCertificateNo: approvedStudentInfo.birthCertificateNo || null,
+          passportNo: approvedStudentInfo.passportNo || null,
+          profession: approvedStudentInfo.profession || null,
+          educationQualification: approvedStudentInfo.educationQualification || null,
           emergencyContact: emergencyContactName,
           emergencyPhone: emergencyContactPhone,
-          picture: studentInfo.profilePhotoUrl || null,
+          picture: approvedStudentInfo.profilePhotoUrl || null,
           beltRank: (course.minimumBelt as any) || 'white',
           partnerId: partnerUser.partnerId,
           isActive: true,

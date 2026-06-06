@@ -449,16 +449,22 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
       }
 
       case "update_info": {
-        // User updating their student info before payment submission
-        if (application.userId !== context.userId) {
-          return NextResponse.json({ error: "Forbidden" }, { status: 403 });
-        }
+        const canManage = await hasPermission(context.userId, "ENROLLMENT", "MANAGE");
+        const canApprove = await hasPermission(context.userId, "ENROLLMENT", "APPROVE");
+        const isAdmin = canManage || canApprove;
 
-        if (application.status !== "pending_payment") {
-          return NextResponse.json(
-            { error: "Cannot update info after payment submission" },
-            { status: 400 }
-          );
+        if (!isAdmin) {
+          // Regular user updating their student info before payment submission
+          if (application.userId !== context.userId) {
+            return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+          }
+
+          if (application.status !== "pending_payment") {
+            return NextResponse.json(
+              { error: "Cannot update info after payment submission" },
+              { status: 400 }
+            );
+          }
         }
 
         if (!studentInfo) {
@@ -476,6 +482,60 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
           })
           .where(eq(enrollmentApplications.id, applicationId))
           .returning();
+
+        // Sync to profiles/members table if profileId is present
+        if (updated.profileId) {
+          const studentData = (studentInfo || {}) as any;
+          const fullNameEnglish =
+            studentData.fullNameEnglish || studentData.username || studentData.fullName || studentData.name || studentData.name_en || null;
+          const fullNameBangla = studentData.fullNameBangla || studentData.name_bn || null;
+          const phoneNumber = studentData.phoneNumber || studentData.phone || studentData.mobile || null;
+          const email = studentData.email || null;
+          const dateOfBirthRaw = studentData.dateOfBirth || studentData.dob || null;
+          const gender = studentData.gender || studentData.sex || null;
+          const bloodGroup = studentData.bloodGroup || studentData.blood_group || null;
+          const religion = studentData.religion || null;
+          const nationality = studentData.nationality || null;
+          const presentAddress = studentData.presentAddress || studentData.address || studentData.present_address || null;
+          const permanentAddress = studentData.permanentAddress || studentData.permanent_address || null;
+          const nid = studentData.nid || studentData.nationalIdNumber || null;
+          const birthCertificateNo = studentData.birthCertificateNo || null;
+          const passportNo = studentData.passportNo || null;
+          const profession = studentData.profession || studentData.occupation || null;
+          const educationQualification = studentData.educationQualification || null;
+          const emergencyContactName = studentData.emergencyContactName || studentData.emergencyContact || null;
+          const emergencyContactPhone = studentData.emergencyContactPhone || studentData.emergencyPhone || studentData.emergency_contact || null;
+
+          await db
+            .update(members)
+            .set({
+              fullNameEnglish,
+              fullNameBangla,
+              fatherName: studentData.fatherName || null,
+              fatherNameBangla: studentData.fatherNameBangla || null,
+              motherName: studentData.motherName || null,
+              motherNameBangla: studentData.motherNameBangla || null,
+              dateOfBirth: dateOfBirthRaw ? new Date(dateOfBirthRaw) : undefined,
+              gender,
+              bloodGroup,
+              religion,
+              nationality,
+              phoneNumber,
+              email,
+              presentAddress,
+              permanentAddress,
+              nid,
+              birthCertificateNo,
+              passportNo,
+              profession,
+              educationQualification,
+              emergencyContact: emergencyContactName,
+              emergencyPhone: emergencyContactPhone,
+              picture: studentData.profilePhotoUrl || null,
+              updatedAt: new Date(),
+            })
+            .where(eq(members.id, updated.profileId));
+        }
 
         return NextResponse.json(updated);
       }
