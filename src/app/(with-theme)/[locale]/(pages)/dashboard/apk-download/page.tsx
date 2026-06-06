@@ -7,7 +7,8 @@ import {
   ExclamationTriangleIcon,
   SparklesIcon,
   DevicePhoneMobileIcon,
-  CheckCircleIcon
+  CheckCircleIcon,
+  GlobeAltIcon
 } from '@heroicons/react/24/outline';
 
 interface APKInfo {
@@ -120,17 +121,29 @@ export default function APKDownloadPage() {
                   </span>
                 </div>
 
-                <a
-                  href={apkInfo.downloadUrl}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="w-full flex items-center justify-center gap-3 bg-primary hover:bg-primary/90 text-white py-3.5 px-6 rounded-xl font-semibold transition-all active:scale-[0.98] shadow-sm shadow-primary/20"
-                >
-                  <ArrowDownTrayIcon className="h-5 w-5" />
-                  {t('apkDownload.downloadApk')}
-                </a>
+                <div className="flex flex-col sm:flex-row gap-4 w-full">
+                  <a
+                    href={apkInfo.downloadUrl}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="flex-1 flex items-center justify-center gap-3 bg-primary hover:bg-primary/90 text-white py-3.5 px-6 rounded-xl font-semibold transition-all active:scale-[0.98] shadow-sm shadow-primary/20"
+                  >
+                    <ArrowDownTrayIcon className="h-5 w-5" />
+                    {t('apkDownload.downloadApk')}
+                  </a>
+                  
+                  <a
+                    href="/api/auth/portal-sso"
+                    target="_blank"
+                    rel="noreferrer"
+                    className="flex-1 flex items-center justify-center gap-3 bg-white hover:bg-slate-50 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-900 dark:text-white border-2 border-slate-200 dark:border-slate-700 py-3.5 px-6 rounded-xl font-semibold transition-all active:scale-[0.98] shadow-sm"
+                  >
+                    <GlobeAltIcon className="h-5 w-5 text-primary" />
+                    Open Web Portal
+                  </a>
+                </div>
                 <p className="text-center text-xs text-slate-400 mt-4">
-                  {t('apkDownload.androidDirectDownload')}
+                  {t('apkDownload.androidDirectDownload')} &bull; Web portal requires no installation
                 </p>
               </div>
             </Card>
