@@ -25,11 +25,15 @@ export async function GET(request: Request) {
   const limit = Math.min(parseInt(url.searchParams.get('limit') || '20', 10), 100)
   const status = url.searchParams.get('status') || 'all'
   const q = (url.searchParams.get('q') || '').trim()
+  const applicationId = url.searchParams.get('id')
 
   try {
     const offset = (page - 1) * limit
 
     const conditions = [eq(courses.partnerId, partnerUser.partnerId)]
+    if (applicationId) {
+      conditions.push(eq(enrollmentApplications.id, applicationId))
+    }
     if (status !== 'all') {
       conditions.push(eq(enrollmentApplications.status, status as any))
     }
@@ -105,18 +109,19 @@ export async function PATCH(request: Request) {
 
   try {
     const body = await request.json()
-    const { applicationId, action, notes, rejectionReason } = body as {
+    const { applicationId, action, notes, rejectionReason, studentInfo: updateStudentInfo } = body as {
       applicationId?: string
-      action?: 'verify_payment' | 'approve' | 'reject' | 'cancel'
+      action?: 'verify_payment' | 'approve' | 'reject' | 'cancel' | 'update_info'
       notes?: string
       rejectionReason?: string
+      studentInfo?: any
     }
 
     if (!applicationId || !action) {
       return NextResponse.json({ error: 'applicationId and action are required' }, { status: 400 })
     }
 
-    if (!['verify_payment', 'approve', 'reject', 'cancel'].includes(action)) {
+    if (!['verify_payment', 'approve', 'reject', 'cancel', 'update_info'].includes(action)) {
       return NextResponse.json({ error: 'Invalid action' }, { status: 400 })
     }
 
@@ -203,6 +208,32 @@ export async function PATCH(request: Request) {
           status: 'cancelled',
           reviewedAt: new Date(),
           reviewNotes: notes || `Cancelled by partner admin: ${partnerUser.name}`,
+          updatedAt: new Date(),
+        })
+        .where(eq(enrollmentApplications.id, applicationId))
+        .returning()
+
+      return NextResponse.json({ success: true, application: updated })
+    }
+
+    if (action === 'update_info') {
+      if (!updateStudentInfo) {
+        return NextResponse.json({ error: 'Student info is required' }, { status: 400 })
+      }
+      
+      let parsedInfo = updateStudentInfo;
+      if (typeof updateStudentInfo === 'string') {
+        try {
+          parsedInfo = JSON.parse(updateStudentInfo);
+        } catch (e) {
+          // ignore
+        }
+      }
+
+      const [updated] = await db
+        .update(enrollmentApplications)
+        .set({
+          studentInfo: parsedInfo,
           updatedAt: new Date(),
         })
         .where(eq(enrollmentApplications.id, applicationId))

@@ -85,6 +85,7 @@ export async function GET(request: Request) {
           // Course info
           courseName: courses.name,
           courseId: courses.id,
+          applicationId: courseEnrollments.applicationId,
         })
         .from(courseEnrollments)
         .innerJoin(members, eq(courseEnrollments.profileId, members.id))

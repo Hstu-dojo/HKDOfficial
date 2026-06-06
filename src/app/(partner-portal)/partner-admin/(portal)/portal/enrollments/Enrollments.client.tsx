@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import ApplicationDetailModal from '@/components/admin/enrollments/ApplicationDetailModal'
 
 type Pagination = {
   page: number
@@ -31,6 +32,7 @@ type EnrollmentRow = {
   memberEmail: string | null
   courseName: string
   courseId: string
+  applicationId?: string
 }
 
 type EnrollmentsResponse = {
@@ -91,6 +93,31 @@ function ApplicationsTab() {
   const [status, setStatus] = React.useState('all')
   const [q, setQ] = React.useState('')
   const [page, setPage] = React.useState(1)
+  
+  const [selectedApplication, setSelectedApplication] = React.useState<any | null>(null)
+
+  const viewApplication = async (appId: string) => {
+    try {
+      const data = await apiJSON(`/api/partner-portal/enrollment-applications/${appId}`)
+      setSelectedApplication(data)
+    } catch (e) {
+      alert('Failed to load application details')
+    }
+  }
+
+  const handleAction = async (applicationId: string, action: string, data?: any) => {
+    try {
+      await apiJSON('/api/partner-portal/enrollment-applications', {
+        method: 'PATCH',
+        body: JSON.stringify({ applicationId, action, ...data }),
+      })
+      setSelectedApplication(null)
+      await fetchRows()
+      setMessage('Action completed successfully.')
+    } catch (e) {
+      alert(e instanceof Error ? e.message : 'Failed to perform action')
+    }
+  }
 
   const fetchRows = React.useCallback(async () => {
     setLoading(true)
@@ -199,6 +226,7 @@ function ApplicationsTab() {
                   <td className="px-3 py-2">{fmtDate(r.createdAt)}</td>
                   <td className="px-3 py-2">
                     <div className="flex flex-wrap gap-2">
+                      <Button size="sm" variant="outline" onClick={() => viewApplication(r.id)}>View Details</Button>
                       {r.status === 'payment_submitted' ? (
                         <Button size="sm" onClick={() => act(r.id, 'verify_payment')}>Verify</Button>
                       ) : null}
@@ -230,6 +258,16 @@ function ApplicationsTab() {
         </table>
       </div>
 
+      {selectedApplication && (
+        <ApplicationDetailModal
+          application={selectedApplication}
+          onClose={() => setSelectedApplication(null)}
+          onAction={handleAction}
+          canVerify={true}
+          canApprove={true}
+        />
+      )}
+
       <div className="flex items-center justify-between gap-2">
         <p className="text-xs text-muted-foreground">Page {pagination.page} of {pagination.totalPages || 1}</p>
         <div className="flex gap-2">
@@ -251,6 +289,31 @@ function EnrollmentsTab() {
   const [status, setStatus] = React.useState('active')
   const [q, setQ] = React.useState('')
   const [page, setPage] = React.useState(1)
+
+  const [selectedApplication, setSelectedApplication] = React.useState<any | null>(null)
+
+  const viewApplication = async (appId: string) => {
+    try {
+      const data = await apiJSON(`/api/partner-portal/enrollment-applications/${appId}`)
+      setSelectedApplication(data)
+    } catch (e) {
+      alert('Failed to load application details')
+    }
+  }
+
+  const handleAction = async (applicationId: string, action: string, data?: any) => {
+    try {
+      await apiJSON('/api/partner-portal/enrollment-applications', {
+        method: 'PATCH',
+        body: JSON.stringify({ applicationId, action, ...data }),
+      })
+      setSelectedApplication(null)
+      await fetchRows()
+      setMessage('Action completed successfully.')
+    } catch (e) {
+      alert(e instanceof Error ? e.message : 'Failed to perform action')
+    }
+  }
 
   const fetchRows = React.useCallback(async () => {
     setLoading(true)
@@ -355,11 +418,14 @@ function EnrollmentsTab() {
                   <td className="px-3 py-2">{r.isActive ? 'active' : r.droppedAt ? 'dropped' : r.completedAt ? 'completed' : 'inactive'}</td>
                   <td className="px-3 py-2">{r.transactionId || '—'}</td>
                   <td className="px-3 py-2">
-                    {r.isActive ? (
-                      <Button size="sm" variant="destructive" onClick={() => drop(r.id)}>Drop</Button>
-                    ) : (
-                      <span className="text-xs text-muted-foreground">—</span>
-                    )}
+                    <div className="flex flex-wrap gap-2">
+                      {r.applicationId && (
+                        <Button size="sm" variant="outline" onClick={() => viewApplication(r.applicationId!)}>View Details</Button>
+                      )}
+                      {r.isActive ? (
+                        <Button size="sm" variant="destructive" onClick={() => drop(r.id)}>Drop</Button>
+                      ) : null}
+                    </div>
                   </td>
                 </tr>
               ))
@@ -367,6 +433,16 @@ function EnrollmentsTab() {
           </tbody>
         </table>
       </div>
+
+      {selectedApplication && (
+        <ApplicationDetailModal
+          application={selectedApplication}
+          onClose={() => setSelectedApplication(null)}
+          onAction={handleAction}
+          canVerify={true}
+          canApprove={true}
+        />
+      )}
 
       <div className="flex items-center justify-between gap-2">
         <p className="text-xs text-muted-foreground">Page {pagination.page} of {pagination.totalPages || 1}</p>
