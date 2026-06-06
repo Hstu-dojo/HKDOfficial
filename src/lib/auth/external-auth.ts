@@ -25,7 +25,7 @@ export const STUDENT_LEVELS = [
 
 export type StudentLevel = (typeof STUDENT_LEVELS)[number];
 
-export const EXTERNAL_SYSTEM_ROLES = ['admin', 'teacher', 'partner', ...STUDENT_LEVELS] as const;
+export const EXTERNAL_SYSTEM_ROLES = ['admin', 'teacher', 'partner', 'none', ...STUDENT_LEVELS] as const;
 export type ExternalSystemRole = (typeof EXTERNAL_SYSTEM_ROLES)[number];
 
 type OAuthCodeCreateInput = {
@@ -570,7 +570,7 @@ export async function resolveExternalRoleBySupabaseUserId(supabaseUserId: string
     return { profileId, email, role: mapBeltToExternalRole(beltRank) };
   }
 
-  return { profileId, email, role: null };
+  return { profileId: profileId ?? localUserId, email, role: 'none' };
 }
 
 export async function resolveExternalRoleByProfileId(profileId: string): Promise<{
@@ -621,5 +621,5 @@ export async function resolveExternalRoleByProfileId(profileId: string): Promise
     return { profileId, email, role: mapBeltToExternalRole(beltRank) }
   }
 
-  return { profileId, email, role: null }
+  return { profileId, email, role: 'none' }
 }
