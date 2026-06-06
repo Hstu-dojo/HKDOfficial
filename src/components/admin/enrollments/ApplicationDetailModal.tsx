@@ -1,6 +1,6 @@
 'use client';
 
-import { Fragment, useState } from 'react';
+import { Fragment } from 'react';
 import { Dialog, Transition } from '@headlessui/react';
 import Image from 'next/image';
 import {
@@ -16,8 +16,6 @@ import {
   EnvelopeIcon,
   MapPinIcon,
   IdentificationIcon,
-  PrinterIcon,
-  PencilIcon,
 } from '@heroicons/react/24/outline';
 
 interface Application {
@@ -100,9 +98,6 @@ export default function ApplicationDetailModal({
 }: Props) {
   const { application: app, course, applicant } = application;
   const status = STATUS_CONFIG[app.status];
-  const [isEditing, setIsEditing] = useState(false);
-  const [editedInfo, setEditedInfo] = useState(app.studentInfo);
-  const [isSaving, setIsSaving] = useState(false);
 
   const formatCurrency = (amount: number, currency: string) => {
     return new Intl.NumberFormat('en-BD', {
@@ -128,85 +123,6 @@ export default function ApplicationDetailModal({
     if (reason) {
       onAction(app.id, 'reject', { rejectionReason: reason });
     }
-  };
-
-  const handleSaveInfo = async () => {
-    setIsSaving(true);
-    try {
-      await onAction(app.id, 'update_info', { studentInfo: JSON.stringify(editedInfo) });
-      setIsEditing(false);
-    } finally {
-      setIsSaving(false);
-    }
-  };
-
-  const handlePrint = () => {
-    const printWindow = window.open('', '_blank');
-    if (!printWindow) return;
-    
-    const html = `
-      <html>
-        <head>
-          <title>Application #${app.applicationNumber}</title>
-          <style>
-            body { font-family: sans-serif; padding: 20px; line-height: 1.5; color: #333; }
-            h1 { font-size: 24px; border-bottom: 2px solid #333; padding-bottom: 10px; margin-bottom: 20px; }
-            h2 { font-size: 18px; margin-top: 30px; border-bottom: 1px solid #ccc; padding-bottom: 5px; }
-            .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px; }
-            .full-width { grid-column: 1 / -1; }
-            .label { font-weight: bold; color: #666; font-size: 11px; text-transform: uppercase; margin-bottom: 2px; }
-            .value { font-size: 14px; }
-            img { max-width: 150px; border-radius: 8px; border: 1px solid #ddd; }
-          </style>
-        </head>
-        <body>
-          <h1>Application #${app.applicationNumber}</h1>
-          <div class="grid">
-            <div><div class="label">Status</div><div class="value">${app.status.replace('_', ' ').toUpperCase()}</div></div>
-            <div><div class="label">Applied On</div><div class="value">${formatDateTime(app.createdAt)}</div></div>
-          </div>
-          
-          <h2>Student Information</h2>
-          <div class="grid">
-            ${app.studentInfo.profilePhotoUrl ? `<div class="full-width"><img src="${app.studentInfo.profilePhotoUrl}" /></div>` : ''}
-            <div><div class="label">Full Name (English)</div><div class="value">${app.studentInfo.fullNameEnglish}</div></div>
-            <div><div class="label">Full Name (Bangla)</div><div class="value">${app.studentInfo.fullNameBangla || 'N/A'}</div></div>
-            <div><div class="label">Father's Name</div><div class="value">${app.studentInfo.fatherName || 'N/A'}</div></div>
-            <div><div class="label">Mother's Name</div><div class="value">${app.studentInfo.motherName || 'N/A'}</div></div>
-            <div><div class="label">Date of Birth</div><div class="value">${app.studentInfo.dateOfBirth || 'N/A'}</div></div>
-            <div><div class="label">Gender</div><div class="value">${app.studentInfo.gender || 'N/A'}</div></div>
-            <div><div class="label">Blood Group</div><div class="value">${app.studentInfo.bloodGroup || 'N/A'}</div></div>
-            <div><div class="label">NID/Birth Cert</div><div class="value">${app.studentInfo.nationalIdNumber || 'N/A'}</div></div>
-          </div>
-
-          <h2>Contact Information</h2>
-          <div class="grid">
-            <div><div class="label">Email</div><div class="value">${app.studentInfo.email}</div></div>
-            <div><div class="label">Phone Number</div><div class="value">${app.studentInfo.phoneNumber}</div></div>
-            <div><div class="label">Emergency Contact</div><div class="value">${app.studentInfo.emergencyContact || 'N/A'}</div></div>
-            <div class="full-width"><div class="label">Address</div><div class="value">${app.studentInfo.address || 'N/A'}</div></div>
-          </div>
-
-          <h2>Course Details</h2>
-          <div class="grid">
-            <div><div class="label">Course</div><div class="value">${course?.name || 'Unknown'}</div></div>
-            <div><div class="label">Admission Fee</div><div class="value">${app.admissionFeeAmount} ${app.currency}</div></div>
-          </div>
-          
-          <script>
-            window.onload = function() { 
-              setTimeout(function() { window.print(); window.close(); }, 500);
-            }
-          </script>
-        </body>
-      </html>
-    `;
-    printWindow.document.write(html);
-    printWindow.document.close();
-  };
-
-  const handleInfoChange = (field: keyof typeof editedInfo, value: string) => {
-    setEditedInfo((prev: any) => ({ ...prev, [field]: value }));
   };
 
   return (
@@ -239,47 +155,28 @@ export default function ApplicationDetailModal({
                 {/* Header */}
                 <div className="bg-gray-50 dark:bg-gray-800/50 px-6 py-4 border-b flex items-center justify-between">
                   <div>
-                    <Dialog.Title className="text-lg font-semibold text-gray-900 dark:text-gray-100 flex items-center gap-3">
+                    <Dialog.Title className="text-lg font-semibold text-gray-900 dark:text-gray-100">
                       Application #{app.applicationNumber}
-                      <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${status?.bgColor} ${status?.color}`}>
-                        {status?.label || app.status}
-                      </span>
                     </Dialog.Title>
+                    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${status?.bgColor} ${status?.color}`}>
+                      {status?.label || app.status}
+                    </span>
                   </div>
-                  <div className="flex items-center gap-3">
-                    <button
-                      onClick={handlePrint}
-                      className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
-                      title="Download as PDF"
-                    >
-                      <PrinterIcon className="h-5 w-5" />
-                    </button>
-                    <button
-                      onClick={onClose}
-                      className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200"
-                    >
-                      <XMarkIcon className="h-6 w-6" />
-                    </button>
-                  </div>
+                  <button
+                    onClick={onClose}
+                    className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200"
+                  >
+                    <XMarkIcon className="h-6 w-6" />
+                  </button>
                 </div>
 
                 <div className="px-6 py-4 flex-1 overflow-y-auto space-y-6">
                   {/* Student Info */}
-                  <div className="bg-gray-50 dark:bg-gray-800/50 rounded-lg p-4 relative">
-                    <div className="flex justify-between items-center mb-4">
-                      <h3 className="text-sm font-semibold text-gray-900 dark:text-gray-100 flex items-center">
-                        <UserIcon className="h-5 w-5 mr-2" />
-                        Student Information
-                      </h3>
-                      {!isEditing && (
-                        <button
-                          onClick={() => setIsEditing(true)}
-                          className="text-sm text-blue-600 hover:text-blue-800 dark:text-blue-400 flex items-center gap-1"
-                        >
-                          <PencilIcon className="h-4 w-4" /> Edit
-                        </button>
-                      )}
-                    </div>
+                  <div className="bg-gray-50 dark:bg-gray-800/50 rounded-lg p-4">
+                    <h3 className="text-sm font-semibold text-gray-900 dark:text-gray-100 mb-4 flex items-center">
+                      <UserIcon className="h-5 w-5 mr-2" />
+                      Student Information
+                    </h3>
                     <div className="flex flex-col sm:flex-row items-start gap-4">
                       {app.studentInfo.profilePhotoUrl ? (
                         <Image
@@ -297,112 +194,51 @@ export default function ApplicationDetailModal({
                       )}
                       <div className="flex-1 grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
                         <div>
-                          <label className="text-gray-500 dark:text-gray-400 text-xs">Full Name (English)</label>
-                          {isEditing ? (
-                            <input 
-                              type="text" 
-                              className="w-full mt-1 px-2 py-1 border rounded text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white"
-                              value={editedInfo.fullNameEnglish || ''} 
-                              onChange={(e) => handleInfoChange('fullNameEnglish', e.target.value)} 
-                            />
-                          ) : (
-                            <p className="font-medium">{app.studentInfo.fullNameEnglish}</p>
-                          )}
+                          <label className="text-gray-500 dark:text-gray-400">Full Name (English)</label>
+                          <p className="font-medium">{app.studentInfo.fullNameEnglish}</p>
                         </div>
-                        <div>
-                          <label className="text-gray-500 dark:text-gray-400 text-xs">Full Name (Bangla)</label>
-                          {isEditing ? (
-                            <input 
-                              type="text" 
-                              className="w-full mt-1 px-2 py-1 border rounded text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white"
-                              value={editedInfo.fullNameBangla || ''} 
-                              onChange={(e) => handleInfoChange('fullNameBangla', e.target.value)} 
-                            />
-                          ) : (
-                            <p className="font-medium">{app.studentInfo.fullNameBangla || '—'}</p>
-                          )}
-                        </div>
-                        <div>
-                          <label className="text-gray-500 dark:text-gray-400 text-xs">Father&apos;s Name</label>
-                          {isEditing ? (
-                            <input 
-                              type="text" 
-                              className="w-full mt-1 px-2 py-1 border rounded text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white"
-                              value={editedInfo.fatherName || ''} 
-                              onChange={(e) => handleInfoChange('fatherName', e.target.value)} 
-                            />
-                          ) : (
-                            <p className="font-medium">{app.studentInfo.fatherName || '—'}</p>
-                          )}
-                        </div>
-                        <div>
-                          <label className="text-gray-500 dark:text-gray-400 text-xs">Mother&apos;s Name</label>
-                          {isEditing ? (
-                            <input 
-                              type="text" 
-                              className="w-full mt-1 px-2 py-1 border rounded text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white"
-                              value={editedInfo.motherName || ''} 
-                              onChange={(e) => handleInfoChange('motherName', e.target.value)} 
-                            />
-                          ) : (
-                            <p className="font-medium">{app.studentInfo.motherName || '—'}</p>
-                          )}
-                        </div>
-                        <div>
-                          <label className="text-gray-500 dark:text-gray-400 text-xs">Date of Birth</label>
-                          {isEditing ? (
-                            <input 
-                              type="date" 
-                              className="w-full mt-1 px-2 py-1 border rounded text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white"
-                              value={editedInfo.dateOfBirth || ''} 
-                              onChange={(e) => handleInfoChange('dateOfBirth', e.target.value)} 
-                            />
-                          ) : (
-                            <p className="font-medium">{app.studentInfo.dateOfBirth || '—'}</p>
-                          )}
-                        </div>
-                        <div>
-                          <label className="text-gray-500 dark:text-gray-400 text-xs">Gender</label>
-                          {isEditing ? (
-                            <select 
-                              className="w-full mt-1 px-2 py-1 border rounded text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white"
-                              value={editedInfo.gender || ''} 
-                              onChange={(e) => handleInfoChange('gender', e.target.value)}
-                            >
-                              <option value="">Select...</option>
-                              <option value="male">Male</option>
-                              <option value="female">Female</option>
-                            </select>
-                          ) : (
-                            <p className="font-medium capitalize">{app.studentInfo.gender || '—'}</p>
-                          )}
-                        </div>
-                        <div>
-                          <label className="text-gray-500 dark:text-gray-400 text-xs">Blood Group</label>
-                          {isEditing ? (
-                            <input 
-                              type="text" 
-                              className="w-full mt-1 px-2 py-1 border rounded text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white"
-                              value={editedInfo.bloodGroup || ''} 
-                              onChange={(e) => handleInfoChange('bloodGroup', e.target.value)} 
-                            />
-                          ) : (
-                            <p className="font-medium">{app.studentInfo.bloodGroup || '—'}</p>
-                          )}
-                        </div>
-                        <div>
-                          <label className="text-gray-500 dark:text-gray-400 text-xs">NID Number</label>
-                          {isEditing ? (
-                            <input 
-                              type="text" 
-                              className="w-full mt-1 px-2 py-1 border rounded text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white"
-                              value={editedInfo.nationalIdNumber || ''} 
-                              onChange={(e) => handleInfoChange('nationalIdNumber', e.target.value)} 
-                            />
-                          ) : (
-                            <p className="font-medium">{app.studentInfo.nationalIdNumber || '—'}</p>
-                          )}
-                        </div>
+                        {app.studentInfo.fullNameBangla && (
+                          <div>
+                            <label className="text-gray-500 dark:text-gray-400">Full Name (Bangla)</label>
+                            <p className="font-medium">{app.studentInfo.fullNameBangla}</p>
+                          </div>
+                        )}
+                        {app.studentInfo.fatherName && (
+                          <div>
+                            <label className="text-gray-500 dark:text-gray-400">Father&apos;s Name</label>
+                            <p className="font-medium">{app.studentInfo.fatherName}</p>
+                          </div>
+                        )}
+                        {app.studentInfo.motherName && (
+                          <div>
+                            <label className="text-gray-500 dark:text-gray-400">Mother&apos;s Name</label>
+                            <p className="font-medium">{app.studentInfo.motherName}</p>
+                          </div>
+                        )}
+                        {app.studentInfo.dateOfBirth && (
+                          <div>
+                            <label className="text-gray-500 dark:text-gray-400">Date of Birth</label>
+                            <p className="font-medium">{app.studentInfo.dateOfBirth}</p>
+                          </div>
+                        )}
+                        {app.studentInfo.gender && (
+                          <div>
+                            <label className="text-gray-500 dark:text-gray-400">Gender</label>
+                            <p className="font-medium capitalize">{app.studentInfo.gender}</p>
+                          </div>
+                        )}
+                        {app.studentInfo.bloodGroup && (
+                          <div>
+                            <label className="text-gray-500 dark:text-gray-400">Blood Group</label>
+                            <p className="font-medium">{app.studentInfo.bloodGroup}</p>
+                          </div>
+                        )}
+                        {app.studentInfo.nationalIdNumber && (
+                          <div>
+                            <label className="text-gray-500 dark:text-gray-400">NID Number</label>
+                            <p className="font-medium">{app.studentInfo.nationalIdNumber}</p>
+                          </div>
+                        )}
                       </div>
                     </div>
                   </div>
@@ -414,58 +250,26 @@ export default function ApplicationDetailModal({
                       Contact Information
                     </h3>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
-                      <div>
-                        <label className="text-gray-500 dark:text-gray-400 text-xs flex items-center gap-1"><EnvelopeIcon className="h-3 w-3" /> Email</label>
-                        {isEditing ? (
-                          <input 
-                            type="email" 
-                            className="w-full mt-1 px-2 py-1 border rounded text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white"
-                            value={editedInfo.email || ''} 
-                            onChange={(e) => handleInfoChange('email', e.target.value)} 
-                          />
-                        ) : (
-                          <p className="font-medium">{app.studentInfo.email}</p>
-                        )}
+                      <div className="flex items-center gap-2">
+                        <EnvelopeIcon className="h-4 w-4 text-gray-400 dark:text-gray-500" />
+                        <span>{app.studentInfo.email}</span>
                       </div>
-                      <div>
-                        <label className="text-gray-500 dark:text-gray-400 text-xs flex items-center gap-1"><PhoneIcon className="h-3 w-3" /> Phone</label>
-                        {isEditing ? (
-                          <input 
-                            type="text" 
-                            className="w-full mt-1 px-2 py-1 border rounded text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white"
-                            value={editedInfo.phoneNumber || ''} 
-                            onChange={(e) => handleInfoChange('phoneNumber', e.target.value)} 
-                          />
-                        ) : (
-                          <p className="font-medium">{app.studentInfo.phoneNumber}</p>
-                        )}
+                      <div className="flex items-center gap-2">
+                        <PhoneIcon className="h-4 w-4 text-gray-400 dark:text-gray-500" />
+                        <span>{app.studentInfo.phoneNumber}</span>
                       </div>
-                      <div>
-                        <label className="text-gray-500 dark:text-gray-400 text-xs flex items-center gap-1"><PhoneIcon className="h-3 w-3 text-red-400" /> Emergency Contact</label>
-                        {isEditing ? (
-                          <input 
-                            type="text" 
-                            className="w-full mt-1 px-2 py-1 border rounded text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white"
-                            value={editedInfo.emergencyContact || ''} 
-                            onChange={(e) => handleInfoChange('emergencyContact', e.target.value)} 
-                          />
-                        ) : (
-                          <p className="font-medium">{app.studentInfo.emergencyContact || '—'}</p>
-                        )}
-                      </div>
-                      <div className="sm:col-span-2">
-                        <label className="text-gray-500 dark:text-gray-400 text-xs flex items-center gap-1"><MapPinIcon className="h-3 w-3" /> Address</label>
-                        {isEditing ? (
-                          <input 
-                            type="text" 
-                            className="w-full mt-1 px-2 py-1 border rounded text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white"
-                            value={editedInfo.address || ''} 
-                            onChange={(e) => handleInfoChange('address', e.target.value)} 
-                          />
-                        ) : (
-                          <p className="font-medium">{app.studentInfo.address || '—'}</p>
-                        )}
-                      </div>
+                      {app.studentInfo.emergencyContact && (
+                        <div className="flex items-center gap-2">
+                          <PhoneIcon className="h-4 w-4 text-red-400" />
+                          <span>Emergency: {app.studentInfo.emergencyContact}</span>
+                        </div>
+                      )}
+                      {app.studentInfo.address && (
+                        <div className="sm:col-span-2 flex items-start gap-2">
+                          <MapPinIcon className="h-4 w-4 text-gray-400 dark:text-gray-500 mt-1" />
+                          <span>{app.studentInfo.address}</span>
+                        </div>
+                      )}
                     </div>
                   </div>
 
@@ -621,69 +425,42 @@ export default function ApplicationDetailModal({
                 </div>
 
                 {/* Action Buttons */}
-                <div className="bg-gray-50 dark:bg-gray-800/50 px-6 py-4 border-t flex justify-between items-center gap-3">
-                  <div>
-                    {isEditing && (
-                      <div className="flex gap-2">
-                        <button
-                          onClick={() => {
-                            setEditedInfo(app.studentInfo);
-                            setIsEditing(false);
-                          }}
-                          className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 dark:text-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 rounded-lg"
-                        >
-                          Cancel
-                        </button>
-                        <button
-                          onClick={handleSaveInfo}
-                          disabled={isSaving}
-                          className="px-4 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 disabled:opacity-50 rounded-lg"
-                        >
-                          {isSaving ? 'Saving...' : 'Save Info'}
-                        </button>
-                      </div>
-                    )}
-                  </div>
-                  
-                  <div className="flex gap-3 items-center">
-                    {!isEditing && (
-                      <button
-                        onClick={onClose}
-                        className="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-lg"
-                      >
-                        Close
-                      </button>
-                    )}
+                <div className="bg-gray-50 dark:bg-gray-800/50 px-6 py-4 border-t flex justify-end gap-3">
+                  <button
+                    onClick={onClose}
+                    className="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-lg"
+                  >
+                    Close
+                  </button>
 
-                    {app.status === 'payment_submitted' && canVerify && (
-                      <button
-                        onClick={() => onAction(app.id, 'verify_payment')}
-                        className="px-4 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-lg flex items-center gap-2"
-                      >
-                        <DocumentCheckIcon className="h-4 w-4" />
-                        Verify Payment
-                      </button>
-                    )}
+                  {app.status === 'payment_submitted' && canVerify && (
+                    <button
+                      onClick={() => onAction(app.id, 'verify_payment')}
+                      className="px-4 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-lg flex items-center gap-2"
+                    >
+                      <DocumentCheckIcon className="h-4 w-4" />
+                      Verify Payment
+                    </button>
+                  )}
 
-                    {app.status === 'payment_verified' && canApprove && (
-                      <>
-                        <button
-                          onClick={handleReject}
-                          className="px-4 py-2 text-sm font-medium text-white bg-red-600 hover:bg-red-700 rounded-lg flex items-center gap-2"
-                        >
-                          <XCircleIcon className="h-4 w-4" />
-                          Reject
-                        </button>
-                        <button
-                          onClick={() => onAction(app.id, 'approve')}
-                          className="px-4 py-2 text-sm font-medium text-white bg-green-600 hover:bg-green-700 rounded-lg flex items-center gap-2"
-                        >
-                          <CheckCircleIcon className="h-4 w-4" />
-                          Approve
-                        </button>
-                      </>
-                    )}
-                  </div>
+                  {app.status === 'payment_verified' && canApprove && (
+                    <>
+                      <button
+                        onClick={handleReject}
+                        className="px-4 py-2 text-sm font-medium text-white bg-red-600 hover:bg-red-700 rounded-lg flex items-center gap-2"
+                      >
+                        <XCircleIcon className="h-4 w-4" />
+                        Reject
+                      </button>
+                      <button
+                        onClick={() => onAction(app.id, 'approve')}
+                        className="px-4 py-2 text-sm font-medium text-white bg-green-600 hover:bg-green-700 rounded-lg flex items-center gap-2"
+                      >
+                        <CheckCircleIcon className="h-4 w-4" />
+                        Approve
+                      </button>
+                    </>
+                  )}
                 </div>
               </Dialog.Panel>
             </Transition.Child>

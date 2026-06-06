@@ -449,18 +449,14 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
       }
 
       case "update_info": {
-        // User or Admin updating student info
-        const isAdmin = await hasPermission(context.userId, "ENROLLMENT", "MANAGE") || 
-                        await hasPermission(context.userId, "ENROLLMENT", "VERIFY") ||
-                        await hasPermission(context.userId, "ENROLLMENT", "APPROVE");
-                        
-        if (!isAdmin && application.userId !== context.userId) {
+        // User updating their student info before payment submission
+        if (application.userId !== context.userId) {
           return NextResponse.json({ error: "Forbidden" }, { status: 403 });
         }
 
-        if (!isAdmin && application.status !== "pending_payment") {
+        if (application.status !== "pending_payment") {
           return NextResponse.json(
-            { error: "Users cannot update info after payment submission" },
+            { error: "Cannot update info after payment submission" },
             { status: 400 }
           );
         }
@@ -472,19 +468,10 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
           );
         }
 
-        let parsedInfo = studentInfo;
-        if (typeof studentInfo === 'string') {
-          try {
-            parsedInfo = JSON.parse(studentInfo);
-          } catch (e) {
-            // keep string if invalid json
-          }
-        }
-
         const [updated] = await db
           .update(enrollmentApplications)
           .set({
-            studentInfo: parsedInfo,
+            studentInfo,
             updatedAt: new Date(),
           })
           .where(eq(enrollmentApplications.id, applicationId))
