@@ -1,6 +1,7 @@
 'use client'
 
 import * as React from 'react'
+import { useSearchParams } from 'next/navigation'
 import { apiJSON } from '../../_lib/api.client'
 import { Button } from '@/components/ui/button'
 import { Label } from '@/components/ui/label'
@@ -58,6 +59,7 @@ const STATUS_CONFIG: Record<string, { label: string; color: string }> = {
 }
 
 export default function MonthlyBilling() {
+  const searchParams = useSearchParams()
   const [loading, setLoading] = React.useState(true)
   const [error, setError] = React.useState<string | null>(null)
   const [fees, setFees] = React.useState<FeeRecord[]>([])
@@ -67,8 +69,8 @@ export default function MonthlyBilling() {
   })
 
   // Filters
-  const [statusFilter, setStatusFilter] = React.useState('')
-  const [monthFilter, setMonthFilter] = React.useState('')
+  const [statusFilter, setStatusFilter] = React.useState(searchParams.get('status') || '')
+  const [monthFilter, setMonthFilter] = React.useState(searchParams.get('billingMonth') || '')
   const [searchQuery, setSearchQuery] = React.useState('')
 
   // Generate modal

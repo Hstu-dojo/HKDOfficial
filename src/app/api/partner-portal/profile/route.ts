@@ -76,6 +76,7 @@ export async function GET() {
           amountPaid: monthlyFees.amountPaid,
           status: monthlyFees.status,
           billingMonth: monthlyFees.billingMonth,
+          profileId: monthlyFees.profileId,
         })
         .from(monthlyFees)
         .innerJoin(courseEnrollments, eq(monthlyFees.enrollmentId, courseEnrollments.id))
@@ -125,9 +126,15 @@ export async function GET() {
     let totalDueBalance = 0
     let thisMonthDue = 0
     let thisMonthCollected = 0
+    let prevMonthDue = 0
+    const prevMonthDueStudents = new Set<string>()
 
     const now = new Date()
     const currentMonthStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`
+
+    const prevMonthDate = new Date(now.getFullYear(), now.getMonth() - 1, 1)
+    const prevMonthStr = `${prevMonthDate.getFullYear()}-${String(prevMonthDate.getMonth() + 1).padStart(2, '0')}`
+    const prevMonthLabel = prevMonthDate.toLocaleDateString('en-US', { month: 'long' })
 
     // Last 6 months trend
     const monthlyTrend: Record<string, { month: string; collected: number; due: number }> = {}
@@ -159,6 +166,15 @@ export async function GET() {
         }
       }
 
+      if (record.billingMonth === prevMonthStr) {
+        if (['due', 'overdue', 'partial', 'pending'].includes(record.status) && outstanding > 0) {
+          prevMonthDue += outstanding
+          if (record.profileId) {
+            prevMonthDueStudents.add(record.profileId)
+          }
+        }
+      }
+
       if (record.billingMonth in monthlyTrend) {
         monthlyTrend[record.billingMonth].collected += paid
         if (['due', 'overdue', 'partial', 'pending'].includes(record.status)) {
@@ -166,6 +182,8 @@ export async function GET() {
         }
       }
     }
+
+    const prevMonthDueStudentCount = prevMonthDueStudents.size
 
     const trend = Object.keys(monthlyTrend)
       .sort()
@@ -186,6 +204,9 @@ export async function GET() {
         totalDueBalance: Math.round(totalDueBalance / 100),
         thisMonthDue: Math.round(thisMonthDue / 100),
         thisMonthCollected: Math.round(thisMonthCollected / 100),
+        prevMonthLabel,
+        prevMonthDue: Math.round(prevMonthDue / 100),
+        prevMonthDueStudentCount,
         trend,
         recentEnrollments: recentEnrollments.map((e) => ({
           ...e,

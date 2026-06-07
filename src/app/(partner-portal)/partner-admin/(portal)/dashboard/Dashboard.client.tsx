@@ -42,6 +42,9 @@ type ProfileResponse = {
     totalDueBalance: number
     thisMonthDue: number
     thisMonthCollected: number
+    prevMonthLabel: string
+    prevMonthDue: number
+    prevMonthDueStudentCount: number
     trend: {
       month: string
       collected: number
@@ -235,7 +238,7 @@ export default function Dashboard() {
           {/* Main Metric Cards Grid */}
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
             
-            {/* Card 1: Active Enrollments */}
+            {/* Card 1: Successful Enrollments */}
             <div className="relative overflow-hidden rounded-xl border bg-card p-5 shadow-sm transition-all hover:shadow-md hover:-translate-y-0.5 group">
               <div className="flex items-center justify-between">
                 <span className="text-sm font-semibold text-muted-foreground">Successful Enrollments</span>
@@ -244,9 +247,14 @@ export default function Dashboard() {
                 </div>
               </div>
               <div className="mt-4">
-                <div className="text-3xl font-extrabold tracking-tight text-foreground">{data.stats.activeEnrollments}</div>
-                <p className="text-xs text-muted-foreground mt-1 flex items-center gap-1">
-                  <span className="text-emerald-500 font-semibold">{data.stats.totalEnrollments}</span> total registration history
+                <div className="text-3xl font-extrabold tracking-tight text-foreground">
+                  {data.stats.totalEnrollments}{' '}
+                  <span className="text-sm font-medium text-muted-foreground">
+                    ({data.stats.activeEnrollments} Active / {data.stats.totalEnrollments - data.stats.activeEnrollments} Inactive)
+                  </span>
+                </div>
+                <p className="text-xs text-muted-foreground mt-1.5">
+                  Total registration history from onboarding
                 </p>
               </div>
               <div className="absolute bottom-0 left-0 right-0 h-1 bg-emerald-500/85" />
@@ -270,18 +278,18 @@ export default function Dashboard() {
               <div className="absolute bottom-0 left-0 right-0 h-1 bg-primary/85" />
             </div>
 
-            {/* Card 3: This Month Due */}
+            {/* Card 3: Previous Month Due */}
             <div className="relative overflow-hidden rounded-xl border bg-card p-5 shadow-sm transition-all hover:shadow-md hover:-translate-y-0.5 group">
               <div className="flex items-center justify-between">
-                <span className="text-sm font-semibold text-muted-foreground">This Month's Dues</span>
+                <span className="text-sm font-semibold text-muted-foreground capitalize">{data.stats.prevMonthLabel} Dues</span>
                 <div className="rounded-lg bg-amber-50 dark:bg-amber-950/30 p-2 text-amber-600 dark:text-amber-400 group-hover:scale-110 transition-transform">
                   <AlertTriangle className="h-5 w-5" />
                 </div>
               </div>
               <div className="mt-4">
-                <div className="text-3xl font-extrabold tracking-tight text-foreground">{formatCurrency(data.stats.thisMonthDue)}</div>
-                <p className="text-xs text-muted-foreground mt-1 flex items-center gap-1">
-                  <span className="text-amber-500 font-semibold">{formatCurrency(data.stats.thisMonthCollected)}</span> collected this month
+                <div className="text-3xl font-extrabold tracking-tight text-foreground">{formatCurrency(data.stats.prevMonthDue)}</div>
+                <p className="text-xs text-muted-foreground mt-1.5">
+                  for <span className="font-semibold text-amber-600 dark:text-amber-400">{data.stats.prevMonthDueStudentCount}</span> students with outstanding balance
                 </p>
               </div>
               <div className="absolute bottom-0 left-0 right-0 h-1 bg-amber-500/85" />
