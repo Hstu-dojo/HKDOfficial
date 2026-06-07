@@ -18,17 +18,17 @@ export const GET = async (req: NextRequest) => {
       }, { status: 401 });
     }
     
-    if (session?.user) {
-      console.log("Supabase user session:", session.user);
-      console.log("User data:", JSON.stringify(session.user, null, 2));
+    if (user) {
+      console.log("Supabase user:", user);
+      console.log("User data:", JSON.stringify(user, null, 2));
       
       return NextResponse.json({
         message: "Success!",
         data: {
           id: user.id,
           email: user.email,
-          name: session.user.user_metadata?.full_name || session.user.user_metadata?.user_name,
-          image: session.user.user_metadata?.avatar_url,
+          name: user.user_metadata?.full_name || user.user_metadata?.user_name || user.email?.split('@')[0],
+          image: user.user_metadata?.avatar_url,
           emailVerified: !!user.email_confirmed_at,
         },
       });

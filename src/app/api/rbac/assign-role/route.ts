@@ -8,9 +8,9 @@ import { eq, and } from 'drizzle-orm';
 export async function POST(request: Request) {
   try {
     const supabase = createRouteHandlerClient({ cookies });
-    const { data: { user } } = await supabase.auth.getUser();
+    const { data: { user: supabaseUser } } = await supabase.auth.getUser();
 
-    if (!session) {
+    if (!supabaseUser) {
       return NextResponse.json(
         { error: 'Unauthorized' },
         { status: 401 }
@@ -61,7 +61,7 @@ export async function POST(request: Request) {
     const currentUser = await db
       .select()
       .from(user)
-      .where(eq(user.email, user.email!));
+      .where(eq(user.email, supabaseUser.email!));
 
     if (currentUser.length === 0) {
       return NextResponse.json(

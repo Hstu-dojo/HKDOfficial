@@ -11,6 +11,7 @@ import {
 import { eq, and, sql } from "drizzle-orm";
 import { hasPermission } from "@/lib/rbac/permissions";
 import { getRBACContext } from "@/lib/rbac/middleware";
+import { syncProgramRegistrationsProfileId } from "@/lib/partner-assignment";
 
 interface RouteParams {
   params: Promise<{ applicationId: string }>;
@@ -324,6 +325,9 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
             })
             .returning();
         }
+
+        // Sync program registrations profileId
+        await syncProgramRegistrationsProfileId(application.userId, memberProfile.id);
 
         // Create course enrollment
         const startDate = new Date();

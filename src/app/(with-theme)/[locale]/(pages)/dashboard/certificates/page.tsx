@@ -22,7 +22,7 @@ export default async function CertificatesPage() {
   // Auth guard
   const supabase = await createClient();
   const {
-    data: { session },
+    data: { user },
   } = await supabase.auth.getUser();
   if (!user?.id) redirect("/login");
 

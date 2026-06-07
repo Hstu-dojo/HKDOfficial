@@ -278,8 +278,12 @@ export async function GET(request: Request) {
                       supabaseUser.user_metadata?.avatar,
           }
           
+          // Extract locale from nextUrl or default to 'en'
+          const segments = nextUrl.pathname.split('/').filter(Boolean);
+          const locale = ['en', 'bn', 'ne'].includes(segments[0]) ? segments[0] : 'en';
+
           // Redirect to password setup page
-          const setupUrl = new URL('/onboarding/set-password', requestUrl.origin)
+          const setupUrl = new URL(`/${locale}/auth/setup-password`, requestUrl.origin)
           setupUrl.searchParams.set('data', encodeURIComponent(JSON.stringify(providerData)))
           return clearNextCookie(NextResponse.redirect(setupUrl))
         }

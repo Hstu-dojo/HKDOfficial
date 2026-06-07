@@ -8,10 +8,11 @@
 import { NextResponse } from 'next/server'
 import { requirePartnerAdminUser } from '@/lib/partner-admin/auth'
 import { db } from '@/lib/connect-db'
-import { members } from '@/db/schemas/karate/members'
+import { members, registrations } from '@/db/schemas/karate/members'
 import { courseEnrollments } from '@/db/schemas/karate/enrollments'
 import { user } from '@/db/schemas/auth'
 import { eq, and, ilike, or, desc, sql, count } from 'drizzle-orm'
+import { sendCredentialsEmail } from '@/actions/emailSend/sendCredentials'
 import avatarsData from '@/db/avatars.json'
 import { createClient as createSupabaseAdminClient, createClient as createSupabaseClient } from '@supabase/supabase-js'
 
@@ -465,11 +466,77 @@ export async function POST(request: Request) {
       })
       .returning()
 
+    if (userId) {
+      const existingReg = await db
+        .select({ id: registrations.id })
+        .from(registrations)
+        .where(eq(registrations.userId, userId))
+        .limit(1)
+
+      const onboardingPayload = {
+        username: trimmedFullName,
+        sex: resolvedSex,
+        nid,
+        occupation,
+        institute,
+        faculty,
+        address,
+        phone: trimmedPhone,
+        dob: resolvedDateOfBirth,
+        partnerId: partnerUser.partnerId,
+        agreement: true,
+        email: trimmedEmail,
+        emergencyContact: emergencyContact || 'Not Provided',
+        emergencyPhone: emergencyPhone || trimmedPhone,
+      }
+
+      const nameParts = trimmedFullName.split(' ')
+      const firstName = nameParts[0] || 'Unknown'
+      const lastName = nameParts.slice(1).join(' ') || '.'
+
+      if (existingReg.length === 0) {
+        await db.insert(registrations).values({
+          userId,
+          firstName,
+          lastName,
+          email: trimmedEmail,
+          phoneNumber: trimmedPhone,
+          dateOfBirth: new Date(resolvedDateOfBirth),
+          emergencyContact: emergencyContact || 'Not Provided',
+          emergencyPhone: emergencyPhone || trimmedPhone,
+          partnerId: partnerUser.partnerId,
+          notes: JSON.stringify(onboardingPayload),
+          status: 'approved',
+          reviewedBy: partnerUser.id,
+          reviewedAt: new Date(),
+        })
+      } else {
+        await db
+          .update(registrations)
+          .set({
+            status: 'approved',
+            reviewedBy: partnerUser.id,
+            reviewedAt: new Date(),
+            updatedAt: new Date(),
+          })
+          .where(eq(registrations.id, existingReg[0].id))
+      }
+    }
+
+    let credentialsEmailSent = false
+    try {
+      const emailRes = await sendCredentialsEmail(trimmedEmail, trimmedPassword, trimmedFullName)
+      credentialsEmailSent = emailRes.success
+    } catch (emailErr) {
+      console.error('[PartnerPortal] Failed to send credentials email:', emailErr)
+    }
+
     return NextResponse.json(
       {
         member: newProfile,
         accountCreated,
         resetEmailSent,
+        credentialsEmailSent,
       },
       { status: 201 }
     )

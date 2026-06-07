@@ -98,12 +98,12 @@ async function resolvePublicFileAbsPath(publicRelativePath: string) {
 async function getAuthUserId(): Promise<string | null> {
   const supabase = await createClient();
   const {
-    data: { session },
+    data: { user: supabaseUser },
   } = await supabase.auth.getUser();
-  if (!user?.id) return null;
+  if (!supabaseUser?.id) return null;
 
   const localUser = await db.query.user.findFirst({
-    where: eq(user.supabaseUserId, user.id),
+    where: eq(user.supabaseUserId, supabaseUser.id),
   });
   return localUser?.id ?? null;
 }

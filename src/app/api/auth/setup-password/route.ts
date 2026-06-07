@@ -1,6 +1,6 @@
 import { NextResponse, NextRequest } from "next/server";
 import { db } from "../../../../lib/connect-db";
-import { user } from "../../../../db/schema";
+import { user as userTable } from "../../../../db/schema";
 import { eq } from "drizzle-orm";
 import { hash } from "../../../../lib/hash";
 import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs';
@@ -27,9 +27,9 @@ export async function POST(req: NextRequest) {
     // Verify the user is authenticated via Supabase
     const cookieStore = cookies();
     const supabase = createRouteHandlerClient({ cookies: () => cookieStore });
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
+    const { data: { user: supabaseUser }, error: authError } = await supabase.auth.getUser();
 
-    if (authError || !session?.user || user.email !== email) {
+    if (authError || !supabaseUser || supabaseUser.email !== email) {
       return NextResponse.json(
         { error: "Unauthorized or session mismatch" },
         { status: 401 }
@@ -41,11 +41,11 @@ export async function POST(req: NextRequest) {
 
     // Update the user's password in the database
     const updatedUser = await db
-      .update(user)
+      .update(userTable)
       .set({ 
         password: hashedPassword
       })
-      .where(eq(user.email, email))
+      .where(eq(userTable.email, email))
       .returning();
 
     if (updatedUser.length === 0) {

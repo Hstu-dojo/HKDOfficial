@@ -15,6 +15,7 @@ import {
   monthlyFees,
 } from '@/db/schemas/karate'
 import { eq, and, desc, count, sql } from 'drizzle-orm'
+import { syncProgramRegistrationsProfileId } from '@/lib/partner-assignment'
 
 export async function GET(request: Request) {
   const { user: partnerUser, error } = await requirePartnerAdminUser()
@@ -362,6 +363,9 @@ export async function PATCH(request: Request) {
         })
         .where(eq(members.id, memberProfile.id))
     }
+
+    // Sync program registrations profileId
+    await syncProgramRegistrationsProfileId(application.userId, memberProfile.id)
 
     // Create course enrollment
     const startDate = new Date()

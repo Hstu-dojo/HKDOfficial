@@ -1,7 +1,8 @@
 import { db } from '@/lib/connect-db'
 import { user, provider } from '@/db/schemas/auth/users'
 import { registrations, members } from '@/db/schemas/karate/members'
-import { and, desc, eq, inArray, isNotNull } from 'drizzle-orm'
+import { and, desc, eq, inArray, isNotNull, isNull } from 'drizzle-orm'
+import { programRegistrations } from '@/db/schemas/karate/programs'
 
 export function parseNotesRecord(notes: unknown): Record<string, unknown> {
   if (!notes) return {}
@@ -81,4 +82,25 @@ export async function getPartnerIdForSupabaseUser(supabaseUserId: string): Promi
   const localUserId = await findLocalUserIdBySupabaseUserId(supabaseUserId)
   if (!localUserId) return null
   return getPartnerIdForLocalUser(localUserId)
+}
+
+/**
+ * Syncs program registrations that were made while a user's onboarding was pending
+ * by setting their profileId once the member profile is approved/created.
+ */
+export async function syncProgramRegistrationsProfileId(userId: string, profileId: string): Promise<void> {
+  try {
+    await db
+      .update(programRegistrations)
+      .set({ profileId, updatedAt: new Date() })
+      .where(
+        and(
+          eq(programRegistrations.userId, userId),
+          isNull(programRegistrations.profileId)
+        )
+      )
+    console.log(`[Sync] Successfully linked program registrations to profile ID: ${profileId} for user ID: ${userId}`)
+  } catch (error) {
+    console.error(`[Sync] Failed to sync program registrations for user ID: ${userId}:`, error)
+  }
 }

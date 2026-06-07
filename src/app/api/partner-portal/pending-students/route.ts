@@ -8,7 +8,7 @@ import { NextResponse } from 'next/server'
 import { requirePartnerAdminUser } from '@/lib/partner-admin/auth'
 import { db } from '@/lib/connect-db'
 import { registrations, members } from '@/db/schemas/karate/members'
-import { getPartnerIdFromRegistrationRow, parseNotesRecord } from '@/lib/partner-assignment'
+import { getPartnerIdFromRegistrationRow, parseNotesRecord, syncProgramRegistrationsProfileId } from '@/lib/partner-assignment'
 import { eq, and, desc, count } from 'drizzle-orm'
 import { normalizeStudentLevel } from '@/lib/auth/external-auth'
 
@@ -136,6 +136,8 @@ export async function PATCH(request: Request) {
         .where(eq(members.userId, reg.userId))
         .limit(1)
 
+      let profileId: string
+
       if (existingMember.length === 0) {
         // Parse form data from notes for additional fields
         const formData = parseNotesRecord(reg.notes)
@@ -149,7 +151,7 @@ export async function PATCH(request: Request) {
 
         const memberNumber = `${prefix}-${String((existingCount[0]?.total || 0) + 1).padStart(4, '0')}`
 
-        await db.insert(members).values({
+        const [createdMember] = await db.insert(members).values({
           userId: reg.userId,
           memberNumber,
           fullNameEnglish: `${reg.firstName} ${reg.lastName}`.trim(),
@@ -174,8 +176,11 @@ export async function PATCH(request: Request) {
           isActive: true,
           isProfileComplete: true,
           notes: `Approved by partner admin: ${partnerUser.name}`,
-        })
+        }).returning({ id: members.id })
+
+        profileId = createdMember.id
       } else {
+        profileId = existingMember[0].id
         // Member exists — just update their partnerId if not set
         await db
           .update(members)
@@ -184,8 +189,11 @@ export async function PATCH(request: Request) {
             isActive: true,
             updatedAt: new Date(),
           })
-          .where(eq(members.id, existingMember[0].id))
+          .where(eq(members.id, profileId))
       }
+
+      // Sync program registrations profileId
+      await syncProgramRegistrationsProfileId(reg.userId, profileId)
     }
 
     return NextResponse.json({

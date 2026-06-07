@@ -7,6 +7,7 @@ import { eq, count } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import { partners } from "@/db/schemas/partner";
 import { normalizeStudentLevel } from '@/lib/auth/external-auth';
+import { syncProgramRegistrationsProfileId } from "@/lib/partner-assignment";
 
 // GET /api/admin/registrations/[registrationId]
 export async function GET(
@@ -166,6 +167,8 @@ export async function PUT(
         .where(eq(profiles.userId, existing.userId))
         .limit(1);
 
+      let profileId: string;
+
       if (existingProfile.length === 0) {
         // Parse form data from notes
         let noteData: Record<string, any> = {};
@@ -195,7 +198,7 @@ export async function PUT(
         const existingCount = await db.select({ total: count() }).from(profiles).where(eq(profiles.partnerId, partnerId));
         const memberNumber = `${prefix}-${String((existingCount[0]?.total || 0) + 1).padStart(4, '0')}`;
 
-        await db.insert(profiles).values({
+        const [createdProfile] = await db.insert(profiles).values({
           userId: existing.userId,
           memberNumber,
           fullNameEnglish: `${existing.firstName} ${existing.lastName}`.trim(),
@@ -228,8 +231,15 @@ export async function PUT(
           isActive: true,
           isProfileComplete: true,
           notes: `Approved by admin (userId: ${context.userId})`,
-        });
+        }).returning({ id: profiles.id });
+
+        profileId = createdProfile.id;
+      } else {
+        profileId = existingProfile[0].id;
       }
+
+      // Sync program registrations profileId
+      await syncProgramRegistrationsProfileId(existing.userId, profileId);
     }
 
     revalidatePath("/onboarding");

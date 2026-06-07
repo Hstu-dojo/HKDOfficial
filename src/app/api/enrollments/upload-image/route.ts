@@ -16,7 +16,7 @@ export async function POST(request: NextRequest) {
     // Auth check
     const supabase = await createClient();
     const {
-      data: { session },
+      data: { user },
     } = await supabase.auth.getUser();
 
     if (!user?.id) {

@@ -195,7 +195,7 @@ export async function registerForProgram(data: NewProgramRegistration) {
     }
 
     // 3. Resolve profile for this user (if exists)
-    const userProfile = await db.query.profiles.findFirst({
+    let userProfile = await db.query.profiles.findFirst({
       where: eq(profiles.userId, publicUserId),
     });
 
@@ -330,7 +330,7 @@ export async function registerForProgram(data: NewProgramRegistration) {
             const emergencyContactName = info.emergencyContactName || info.emergencyContact || null
             const emergencyContactPhone = info.emergencyContactPhone || info.emergencyPhone || null
 
-            await db.insert(members).values({
+            const [createdProfile] = await db.insert(members).values({
               userId: publicUserId,
               memberNumber,
               fullNameEnglish,
@@ -360,7 +360,9 @@ export async function registerForProgram(data: NewProgramRegistration) {
               isProfileComplete: true,
               notes: 'Auto-created from course application (belt test eligibility)',
               updatedAt: new Date(),
-            } as any)
+            } as any).returning()
+
+            userProfile = createdProfile as any
           }
         }
       }
