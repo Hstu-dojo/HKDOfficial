@@ -136,6 +136,7 @@ export async function GET(request: Request) {
         or(
           ilike(members.fullNameEnglish, `%${safeSearch}%`),
           ilike(members.fullNameBangla, `%${safeSearch}%`),
+          ilike(user.userName, `%${safeSearch}%`),
           ilike(members.memberNumber, `%${safeSearch}%`),
           ilike(members.phoneNumber, `%${safeSearch}%`),
         )!
@@ -150,6 +151,7 @@ export async function GET(request: Request) {
         fullNameBangla: members.fullNameBangla,
         phoneNumber: members.phoneNumber,
         email: user.email,
+        userName: user.userName,
         sex: members.gender,
         dateOfBirth: members.dateOfBirth,
         nid: members.nid,
@@ -653,6 +655,7 @@ export async function PATCH(request: Request) {
         fullNameBangla: members.fullNameBangla,
         phoneNumber: members.phoneNumber,
         email: user.email,
+        userName: user.userName,
         sex: members.gender,
         dateOfBirth: members.dateOfBirth,
         nid: members.nid,

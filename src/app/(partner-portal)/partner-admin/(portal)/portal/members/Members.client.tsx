@@ -22,6 +22,7 @@ type Member = {
   memberNumber: string
   fullNameEnglish: string | null
   fullNameBangla: string | null
+  userName: string | null
   phoneNumber: string | null
   email: string | null
   sex: string | null
@@ -318,7 +319,7 @@ export default function Members() {
                 <tr key={m.id} className="border-b last:border-0 transition-colors hover:bg-muted/30">
                   <td className="px-4 py-3 font-medium text-foreground">{m.memberNumber}</td>
                   <td className="px-4 py-3">
-                    <div className="font-medium text-foreground">{m.fullNameEnglish || m.fullNameBangla || '—'}</div>
+                    <div className="font-medium text-foreground">{m.fullNameEnglish || m.fullNameBangla || m.userName || '—'}</div>
                     {m.email ? <div className="text-xs text-muted-foreground mt-0.5">{m.email}</div> : null}
                   </td>
                   <td className="px-4 py-3 text-muted-foreground">{m.phoneNumber || '—'}</td>

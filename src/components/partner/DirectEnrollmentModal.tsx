@@ -17,6 +17,7 @@ interface Member {
   memberNumber: string;
   fullNameEnglish: string | null;
   fullNameBangla: string | null;
+  userName?: string | null;
   phoneNumber: string | null;
   email: string | null;
   sex: string | null;
@@ -107,7 +108,7 @@ export default function DirectEnrollmentModal({
     if (isOpen && member) {
       const formattedDob = member.dateOfBirth ? member.dateOfBirth.split('T')[0] || '' : '';
       const mapped: Record<string, string> = {
-        name_en: member.fullNameEnglish || '',
+        name_en: member.fullNameEnglish || member.userName || '',
         name_bn: member.fullNameBangla || '',
         dob: formattedDob,
         mobile: member.phoneNumber || '',
@@ -304,7 +305,7 @@ export default function DirectEnrollmentModal({
                       <p className="text-xs text-gray-500 dark:text-gray-400">
                         Select a course and enter payment details to enroll{' '}
                         <span className="font-semibold text-gray-700 dark:text-gray-300">
-                          {member.fullNameEnglish || 'this member'}
+                          {member.fullNameEnglish || member.userName || 'this member'}
                         </span>
                       </p>
                     </div>
