@@ -89,6 +89,12 @@ interface RegistrationWithProfile {
       image?: string;
     };
   };
+  profile?: {
+    id: string;
+    fullNameEnglish?: string | null;
+    fullNameBangla?: string | null;
+    memberNumber?: string | null;
+  } | null;
 }
 
 interface AdminRegistrantCandidate {
@@ -575,12 +581,14 @@ export default function ProgramRegistrations() {
                          })()}
                        </div>
                        <div className="ml-3">
-                         <div className="text-sm font-medium text-gray-900 dark:text-gray-100">
-                           {reg.user?.account?.name || reg.user?.userName || 'Unknown'}
-                         </div>
-                         {reg.user?.account?.nameBangla && (
-                           <div className="text-sm text-gray-500 dark:text-gray-400">{reg.user.account.nameBangla}</div>
-                         )}
+                          <div className="text-sm font-medium text-gray-900 dark:text-gray-100">
+                            {reg.profile?.fullNameEnglish || reg.user?.account?.name || reg.profile?.fullNameBangla || reg.user?.userName || 'Unknown'}
+                          </div>
+                          {(reg.profile?.fullNameBangla || reg.user?.account?.nameBangla) && (
+                            <div className="text-sm text-gray-500 dark:text-gray-400">
+                              {reg.profile?.fullNameBangla || reg.user?.account?.nameBangla}
+                            </div>
+                          )}
                          <div className="text-xs text-gray-400 dark:text-gray-500">{reg.user?.email}</div>
                        </div>
                     </div>
@@ -1170,8 +1178,14 @@ function RegistrationDetailModal({
                     );
                   })()}
                   <div>
-                    <p className="font-semibold text-gray-900 dark:text-gray-100">{account?.name || user?.userName || 'N/A'}</p>
-                    {account?.nameBangla && <p className="text-gray-600 dark:text-gray-400">{account.nameBangla}</p>}
+                    <p className="font-semibold text-gray-900 dark:text-gray-100">
+                      {registration.profile?.fullNameEnglish || account?.name || registration.profile?.fullNameBangla || user?.userName || 'N/A'}
+                    </p>
+                    {(registration.profile?.fullNameBangla || account?.nameBangla) && (
+                      <p className="text-gray-600 dark:text-gray-400">
+                        {registration.profile?.fullNameBangla || account?.nameBangla}
+                      </p>
+                    )}
                     <p className="text-sm text-gray-500 dark:text-gray-400">{user?.email}</p>
                   </div>
                 </div>

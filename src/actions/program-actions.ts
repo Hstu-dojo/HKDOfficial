@@ -414,6 +414,7 @@ export async function getProgramRegistrations(programId?: string) {
             account: true, // Include full profile details
           }
         },
+        profile: true, // Include member profile details
       },
       orderBy: [desc(programRegistrations.createdAt)],
     });
