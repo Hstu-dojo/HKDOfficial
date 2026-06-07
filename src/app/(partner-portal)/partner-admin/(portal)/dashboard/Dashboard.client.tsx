@@ -286,11 +286,25 @@ export default function Dashboard() {
                   <AlertTriangle className="h-5 w-5" />
                 </div>
               </div>
-              <div className="mt-4">
-                <div className="text-3xl font-extrabold tracking-tight text-foreground">{formatCurrency(data.stats.prevMonthDue)}</div>
-                <p className="text-xs text-muted-foreground mt-1.5">
-                  for <span className="font-semibold text-amber-600 dark:text-amber-400">{data.stats.prevMonthDueStudentCount}</span> students with outstanding balance
-                </p>
+              <div className="mt-4 flex items-end justify-between">
+                <div>
+                  <div className="text-3xl font-extrabold tracking-tight text-foreground">{formatCurrency(data.stats.prevMonthDue)}</div>
+                  <p className="text-xs text-muted-foreground mt-1.5">
+                    for <span className="font-semibold text-amber-600 dark:text-amber-400">{data.stats.prevMonthDueStudentCount}</span> students with dues
+                  </p>
+                </div>
+                
+                {/* Hover Details Button */}
+                <Link
+                  href={`/partner-admin/portal/monthly-billing?billingMonth=${(() => {
+                    const now = new Date()
+                    const prevMonthDate = new Date(now.getFullYear(), now.getMonth() - 1, 1)
+                    return `${prevMonthDate.getFullYear()}-${String(prevMonthDate.getMonth() + 1).padStart(2, '0')}`
+                  })()}&status=due`}
+                  className="opacity-0 group-hover:opacity-100 transition-opacity duration-200 inline-flex items-center gap-1 text-xs font-bold text-primary hover:text-primary/80 bg-primary/10 hover:bg-primary/20 px-2.5 py-1.5 rounded-lg shrink-0 shadow-sm"
+                >
+                  Details <ChevronRight className="h-3.5 w-3.5" />
+                </Link>
               </div>
               <div className="absolute bottom-0 left-0 right-0 h-1 bg-amber-500/85" />
             </div>
