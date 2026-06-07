@@ -300,7 +300,7 @@ export default function Dashboard() {
                     const now = new Date()
                     const prevMonthDate = new Date(now.getFullYear(), now.getMonth() - 1, 1)
                     return `${prevMonthDate.getFullYear()}-${String(prevMonthDate.getMonth() + 1).padStart(2, '0')}`
-                  })()}&status=due`}
+                  })()}&status=pending`}
                   className="opacity-0 group-hover:opacity-100 transition-opacity duration-200 inline-flex items-center gap-1 text-xs font-bold text-primary hover:text-primary/80 bg-primary/10 hover:bg-primary/20 px-2.5 py-1.5 rounded-lg shrink-0 shadow-sm"
                 >
                   Details <ChevronRight className="h-3.5 w-3.5" />
