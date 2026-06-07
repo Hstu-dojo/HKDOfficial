@@ -187,8 +187,14 @@ export async function GET() {
         thisMonthDue: Math.round(thisMonthDue / 100),
         thisMonthCollected: Math.round(thisMonthCollected / 100),
         trend,
-        recentEnrollments,
-        recentApplications,
+        recentEnrollments: recentEnrollments.map((e) => ({
+          ...e,
+          monthlyFee: Math.round(e.monthlyFee / 100),
+        })),
+        recentApplications: recentApplications.map((a) => ({
+          ...a,
+          admissionFeeAmount: Math.round(a.admissionFeeAmount / 100),
+        })),
       },
     })
   } catch (err) {
