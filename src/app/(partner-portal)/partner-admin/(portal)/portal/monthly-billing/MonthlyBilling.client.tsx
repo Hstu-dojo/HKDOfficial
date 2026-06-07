@@ -31,6 +31,8 @@ type FeeRecord = {
     email: string | null
     phoneNumber: string | null
     memberNumber: string | null
+    userEmail?: string | null
+    userName?: string | null
   }
   course: {
     id: string
@@ -338,12 +340,15 @@ export default function MonthlyBilling() {
                       className={`border-b last:border-0 cursor-pointer transition-colors hover:bg-muted/30 ${isOverdue ? 'bg-red-50/50 dark:bg-red-900/10' : ''}`}
                       onClick={() => setSelectedFee(item)}
                     >
-                      <td className="px-4 py-3">
+                      <td className="px-4 py-3 text-left">
                         <div className="font-medium text-foreground">
-                          {item.member?.fullNameEnglish || item.member?.fullNameBangla || '—'}
+                          {item.member?.fullNameEnglish || item.member?.fullNameBangla || item.member?.userName || '—'}
                         </div>
-                        <div className="text-xs text-muted-foreground mt-0.5">
-                          {item.member?.memberNumber || item.member?.email || ''}
+                        <div className="text-xs text-muted-foreground mt-0.5 flex flex-col gap-0.5">
+                          {item.member?.memberNumber && <span>No: {item.member.memberNumber}</span>}
+                          {(item.member?.email || item.member?.userEmail) && (
+                            <span className="text-muted-foreground/85">{item.member.email || item.member.userEmail}</span>
+                          )}
                         </div>
                       </td>
                       <td className="px-4 py-3 text-foreground">{item.course?.name || '—'}</td>
@@ -450,11 +455,15 @@ export default function MonthlyBilling() {
               <div className="grid grid-cols-2 gap-3">
                 <div>
                   <p className="text-muted-foreground">Student</p>
-                  <p className="font-medium">{selectedFee.member?.fullNameEnglish || '—'}</p>
+                  <p className="font-medium">{selectedFee.member?.fullNameEnglish || selectedFee.member?.fullNameBangla || selectedFee.member?.userName || '—'}</p>
                 </div>
                 <div>
                   <p className="text-muted-foreground">Member #</p>
                   <p className="font-medium">{selectedFee.member?.memberNumber || '—'}</p>
+                </div>
+                <div>
+                  <p className="text-muted-foreground">Email</p>
+                  <p className="font-medium">{selectedFee.member?.email || selectedFee.member?.userEmail || '—'}</p>
                 </div>
                 <div>
                   <p className="text-muted-foreground">Course</p>

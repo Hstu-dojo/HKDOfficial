@@ -11,6 +11,7 @@ import { monthlyFees } from '@/db/schemas/karate/monthly-payments'
 import { courseEnrollments } from '@/db/schemas/karate/enrollments'
 import { courses } from '@/db/schemas/karate/courses'
 import { profiles } from '@/db/schemas/karate/members'
+import { user as userTable } from '@/db/schemas/auth'
 import { eq, and } from 'drizzle-orm'
 
 async function getFeeWithAuth(feeId: string, partnerId: string) {
@@ -24,6 +25,8 @@ async function getFeeWithAuth(feeId: string, partnerId: string) {
         email: profiles.email,
         phoneNumber: profiles.phoneNumber,
         memberNumber: profiles.memberNumber,
+        userEmail: userTable.email,
+        userName: userTable.userName,
       },
       course: {
         id: courses.id,
@@ -35,6 +38,7 @@ async function getFeeWithAuth(feeId: string, partnerId: string) {
     .innerJoin(courseEnrollments, eq(monthlyFees.enrollmentId, courseEnrollments.id))
     .innerJoin(courses, eq(courseEnrollments.courseId, courses.id))
     .innerJoin(profiles, eq(monthlyFees.profileId, profiles.id))
+    .leftJoin(userTable, eq(profiles.userId, userTable.id))
     .where(eq(monthlyFees.id, feeId))
     .limit(1)
 

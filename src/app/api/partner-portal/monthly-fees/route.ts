@@ -11,6 +11,7 @@ import { monthlyFees } from '@/db/schemas/karate/monthly-payments'
 import { courseEnrollments } from '@/db/schemas/karate/enrollments'
 import { courses } from '@/db/schemas/karate/courses'
 import { profiles } from '@/db/schemas/karate/members'
+import { user as userTable } from '@/db/schemas/auth'
 import { eq, and, desc, count, sql, inArray } from 'drizzle-orm'
 
 export async function GET(request: NextRequest) {
@@ -44,6 +45,8 @@ export async function GET(request: NextRequest) {
           OR coalesce(${profiles.memberNumber}, '') ILIKE ${pattern}
           OR coalesce(${profiles.phoneNumber}, '') ILIKE ${pattern}
           OR coalesce(${profiles.email}, '') ILIKE ${pattern}
+          OR coalesce(${userTable.userName}, '') ILIKE ${pattern}
+          OR coalesce(${userTable.email}, '') ILIKE ${pattern}
           OR coalesce(${courses.name}, '') ILIKE ${pattern}
         )`
       )
@@ -62,6 +65,8 @@ export async function GET(request: NextRequest) {
             email: profiles.email,
             phoneNumber: profiles.phoneNumber,
             memberNumber: profiles.memberNumber,
+            userEmail: userTable.email,
+            userName: userTable.userName,
           },
           course: {
             id: courses.id,
@@ -72,6 +77,7 @@ export async function GET(request: NextRequest) {
         .innerJoin(courseEnrollments, eq(monthlyFees.enrollmentId, courseEnrollments.id))
         .innerJoin(courses, eq(courseEnrollments.courseId, courses.id))
         .innerJoin(profiles, eq(monthlyFees.profileId, profiles.id))
+        .leftJoin(userTable, eq(profiles.userId, userTable.id))
         .where(and(...conditions))
         .orderBy(desc(monthlyFees.billingMonth), profiles.fullNameEnglish)
         .limit(limit)
@@ -83,6 +89,7 @@ export async function GET(request: NextRequest) {
         .innerJoin(courseEnrollments, eq(monthlyFees.enrollmentId, courseEnrollments.id))
         .innerJoin(courses, eq(courseEnrollments.courseId, courses.id))
         .innerJoin(profiles, eq(monthlyFees.profileId, profiles.id))
+        .leftJoin(userTable, eq(profiles.userId, userTable.id))
         .where(and(...conditions)),
     ])
 
