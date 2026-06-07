@@ -185,42 +185,46 @@ export default function Dashboard() {
       </div>
 
       {/* Dashboard Sub-navigation Tabs */}
-      <div className="flex border-b dark:border-gray-800 px-2 bg-card rounded-xl border p-1 shadow-sm gap-1">
+      <div className="flex border-b dark:border-gray-800 p-1 bg-card rounded-xl border shadow-sm gap-1 overflow-x-auto scrollbar-none">
         <button
           onClick={() => setActiveTab('overview')}
-          className={`flex items-center gap-2 py-2 px-4 text-sm font-semibold rounded-lg transition-all ${
+          className={`flex-1 sm:flex-initial flex-shrink-0 shrink-0 flex items-center justify-center gap-2 py-2 px-3 sm:px-4 text-xs sm:text-sm font-semibold rounded-lg transition-all ${
             activeTab === 'overview'
               ? 'bg-primary text-white shadow-sm'
               : 'text-muted-foreground hover:text-foreground hover:bg-muted/50'
           }`}
         >
-          <Activity className="h-4 w-4" />
-          Overview
+          <Activity className="h-4 w-4 shrink-0" />
+          <span>Overview</span>
         </button>
         <button
           onClick={() => setActiveTab('activity')}
-          className={`flex items-center gap-2 py-2 px-4 text-sm font-semibold rounded-lg transition-all ${
+          className={`flex-1 sm:flex-initial flex-shrink-0 shrink-0 flex items-center justify-center gap-2 py-2 px-3 sm:px-4 text-xs sm:text-sm font-semibold rounded-lg transition-all ${
             activeTab === 'activity'
               ? 'bg-primary text-white shadow-sm'
               : 'text-muted-foreground hover:text-foreground hover:bg-muted/50'
           }`}
         >
-          <Clock className="h-4 w-4" />
-          Recent Activity
+          <Clock className="h-4 w-4 shrink-0" />
+          <span>
+            <span className="hidden sm:inline">Recent </span>Activity
+          </span>
           {(data.stats.recentApplications?.length > 0 || data.stats.recentEnrollments?.length > 0) && (
-            <span className="h-2 w-2 rounded-full bg-rose-500 animate-ping" />
+            <span className="h-2 w-2 rounded-full bg-rose-500 animate-pulse shrink-0 animate-ping" />
           )}
         </button>
         <button
           onClick={() => setActiveTab('actions')}
-          className={`flex items-center gap-2 py-2 px-4 text-sm font-semibold rounded-lg transition-all ${
+          className={`flex-1 sm:flex-initial flex-shrink-0 shrink-0 flex items-center justify-center gap-2 py-2 px-3 sm:px-4 text-xs sm:text-sm font-semibold rounded-lg transition-all ${
             activeTab === 'actions'
               ? 'bg-primary text-white shadow-sm'
               : 'text-muted-foreground hover:text-foreground hover:bg-muted/50'
           }`}
         >
-          <PlusCircle className="h-4 w-4" />
-          Quick Actions
+          <PlusCircle className="h-4 w-4 shrink-0" />
+          <span>
+            <span className="hidden sm:inline">Quick </span>Actions
+          </span>
         </button>
       </div>
 
