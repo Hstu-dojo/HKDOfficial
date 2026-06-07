@@ -15,6 +15,7 @@ import {
   monthlyFees,
   enrollmentApplications,
 } from '@/db/schemas/karate'
+import { user } from '@/db/schemas/auth'
 import { eq, and, count, desc, sql } from 'drizzle-orm'
 
 export async function GET() {
@@ -87,8 +88,9 @@ export async function GET() {
           id: courseEnrollments.id,
           enrolledAt: courseEnrollments.enrolledAt,
           memberName: sql<string>`COALESCE(
-            ${members.fullNameEnglish},
-            ${members.fullNameBangla},
+            NULLIF(TRIM(${members.fullNameEnglish}), ''),
+            NULLIF(TRIM(${members.fullNameBangla}), ''),
+            ${user.userName},
             ''
           )`,
           courseName: courses.name,
@@ -98,6 +100,7 @@ export async function GET() {
         .from(courseEnrollments)
         .innerJoin(members, eq(courseEnrollments.profileId, members.id))
         .innerJoin(courses, eq(courseEnrollments.courseId, courses.id))
+        .leftJoin(user, eq(members.userId, user.id))
         .where(eq(courses.partnerId, partner.id))
         .orderBy(desc(courseEnrollments.enrolledAt))
         .limit(5),
@@ -107,6 +110,9 @@ export async function GET() {
           createdAt: enrollmentApplications.createdAt,
           studentName: sql<string>`COALESCE(
             ${enrollmentApplications.studentInfo}->>'fullNameEnglish',
+            ${enrollmentApplications.studentInfo}->>'name_en',
+            ${enrollmentApplications.studentInfo}->>'fullNameBangla',
+            ${enrollmentApplications.studentInfo}->>'name_bn',
             ${enrollmentApplications.studentInfo}->>'username',
             ''
           )`,

@@ -510,7 +510,7 @@ export default function Dashboard() {
                   data.stats.recentEnrollments.map((enrollment) => (
                     <div key={enrollment.id} className="py-3 flex items-center justify-between hover:bg-muted/10 px-1 rounded-lg transition-colors">
                       <div className="space-y-1">
-                        <p className="text-sm font-semibold text-foreground">{enrollment.memberName}</p>
+                        <p className="text-sm font-semibold text-foreground">{enrollment.memberName || '—'}</p>
                         <p className="text-xs text-muted-foreground flex items-center gap-1.5">
                           <GraduationCap className="h-3.5 w-3.5 text-primary" />
                           {enrollment.courseName}
@@ -556,7 +556,7 @@ export default function Dashboard() {
                   data.stats.recentApplications.map((app) => (
                     <div key={app.id} className="py-3 flex items-center justify-between hover:bg-muted/10 px-1 rounded-lg transition-colors">
                       <div className="space-y-1">
-                        <p className="text-sm font-semibold text-foreground">{app.studentName}</p>
+                        <p className="text-sm font-semibold text-foreground">{app.studentName || '—'}</p>
                         <p className="text-xs text-muted-foreground flex items-center gap-1.5">
                           <Building className="h-3.5 w-3.5 text-primary" />
                           {app.courseName}
