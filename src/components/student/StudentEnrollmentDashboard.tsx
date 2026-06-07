@@ -115,7 +115,7 @@ const FEE_STATUS_CONFIG: Record<string, { labelKey: string; color: string }> = {
 };
 
 export default function StudentEnrollmentDashboard() {
-  const t = useI18n();
+  const t = useI18n() as any;
   const locale = useCurrentLocale();
   const intlLocale = locale === 'bn' ? 'bn-BD' : locale === 'ne' ? 'ne-NP' : 'en-BD';
 

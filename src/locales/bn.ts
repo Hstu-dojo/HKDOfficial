@@ -281,51 +281,6 @@ export default {
       notAvailable: "প্রযোজ্য নয়",
     },
 
-    authCodeError: {
-      titles: {
-        otpExpired: "ভেরিফিকেশন লিংক মেয়াদোত্তীর্ণ",
-        noCode: "OAuth অথেন্টিকেশন ব্যর্থ",
-        default: "অথেন্টিকেশন ব্যর্থ",
-      },
-      messages: {
-        otpExpired:
-          "আপনার ইমেইল ভেরিফিকেশন লিংকের মেয়াদ শেষ হয়ে গেছে। অনুগ্রহ করে নতুনটি অনুরোধ করুন।",
-        accessDenied: "অথেন্টিকেশন বাতিল বা অস্বীকৃত হয়েছে।",
-        noCode:
-          "OAuth প্রদানকারী থেকে কোনো অথেন্টিকেশন কোড পাওয়া যায়নি। অনুগ্রহ করে আবার চেষ্টা করুন।",
-        errorWithCode: "ত্রুটি: {error}",
-        default: "অথেন্টিকেশনের সময় একটি সমস্যা হয়েছে।",
-      },
-      actions: {
-        requestNewVerificationEmail: "নতুন ভেরিফিকেশন ইমেইল অনুরোধ করুন",
-        backToLogin: "লগইনে ফিরে যান",
-        goToHome: "হোমে যান",
-      },
-      technicalDetailsTitle: "প্রযুক্তিগত বিস্তারিত",
-      technical: {
-        errorLabel: "ত্রুটি:",
-        codeLabel: "কোড:",
-        descriptionLabel: "বিবরণ:",
-      },
-    },
-
-    debug: {
-      title: "Auth ডিবাগ তথ্য",
-      useAuthRaw: "useAuth() কাঁচা ডেটা:",
-      useSessionCompat: "useSession() কম্প্যাটিবিলিটি লেয়ার:",
-      statusSummary: "স্ট্যাটাস সারাংশ:",
-      labels: {
-        loading: "লোড হচ্ছে:",
-        userAuthenticated: "ইউজার অথেন্টিকেটেড:",
-        sessionExists: "সেশন আছে:",
-        compatibilityStatus: "কম্প্যাটিবিলিটি স্ট্যাটাস:",
-        userEmail: "ইউজার ইমেইল:",
-        emailConfirmed: "ইমেইল কনফার্মড:",
-      },
-      yes: "হ্যাঁ",
-      no: "না",
-      notAvailable: "প্রযোজ্য নয়",
-    },
   },
 
   // প্রোফাইল পেজ

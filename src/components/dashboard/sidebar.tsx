@@ -37,7 +37,7 @@ const navItems = [
 export default function DashboardSidebar() {
   const pathname = usePathname();
   const locale = useCurrentLocale();
-  const t = useI18n();
+  const t = useI18n() as any;
   const { isMobileOpen, openMobile, closeMobile } = useSidebar();
 
   const labelFor = (item: (typeof navItems)[number]) => {

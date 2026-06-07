@@ -52,7 +52,7 @@ export async function rasterizePdfToBlobUrl(pdfUrl: string): Promise<string> {
   }
 
   const newPdfBytes = await newPdfDoc.save();
-  const blob = new Blob([newPdfBytes.buffer], { type: 'application/pdf' });
+  const blob = new Blob([newPdfBytes as any], { type: 'application/pdf' });
   return URL.createObjectURL(blob);
 }
 

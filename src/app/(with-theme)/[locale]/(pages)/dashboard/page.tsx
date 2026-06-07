@@ -93,7 +93,7 @@ function StatusBadge({
 
 function getStatusLabel(
   status: string,
-  t: (key: string, params?: Record<string, unknown>) => string,
+  t: any,
 ) {
   switch (status) {
     case 'pending_payment':
@@ -126,7 +126,7 @@ function LocalizedStatusBadge({
   t,
 }: {
   status: string;
-  t: (key: string, params?: Record<string, unknown>) => string;
+  t: any;
 }) {
   return <StatusBadge status={status} label={getStatusLabel(status, t)} />;
 }

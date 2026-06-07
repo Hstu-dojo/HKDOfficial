@@ -21,7 +21,7 @@ import MaxWidthWrapper from "../maxWidthWrapper";
 
 const Footer = () => {
   const locale = useCurrentLocale();
-  const t = useI18n();
+  const t = useI18n() as any;
 
   const getItemHref = (href: string, opts?: { skipLocale?: boolean }) => {
     if (opts?.skipLocale) return href;

@@ -10,7 +10,7 @@ import {
   programTypes,
   beltProgressions,
 } from '@/db/schemas/karate';
-import { user } from '@/db/schemas/auth';
+import { user as userTable } from '@/db/schemas/auth';
 import { revalidatePath } from 'next/cache';
 import { eq, desc, and, inArray, sql, like, isNull, isNotNull, or } from 'drizzle-orm';
 import type {
@@ -31,7 +31,7 @@ async function getAuthUserId(): Promise<string | null> {
   if (!user?.id) return null;
 
   const localUser = await db.query.user.findFirst({
-    where: eq(user.supabaseUserId, user.id),
+    where: eq(userTable.supabaseUserId, user.id),
   });
   return localUser?.id ?? null;
 }
@@ -382,7 +382,7 @@ export async function issueCertificates(
           await db.transaction(async (tx) => {
             await tx
               .update(profiles)
-              .set({ beltRank: row.newRank, updatedAt: new Date() })
+              .set({ beltRank: row.newRank as any, updatedAt: new Date() })
               .where(eq(profiles.id, row.profileId!));
 
             await tx.insert(beltProgressions).values({
@@ -590,10 +590,12 @@ export async function attachProfileToCertificate(
       const reg = await db.query.programRegistrations.findFirst({
         where: and(
           eq(programRegistrations.programId, cert.programId),
-          or(
-            eq(programRegistrations.profileId, profile.id),
-            eq(programRegistrations.userId, profile.userId),
-          ),
+          profile.userId
+            ? or(
+                eq(programRegistrations.profileId, profile.id),
+                eq(programRegistrations.userId, profile.userId)
+              )
+            : eq(programRegistrations.profileId, profile.id)
         ),
       });
 
@@ -804,7 +806,7 @@ export async function getMyCertificates() {
     if (!user?.id) return { success: false, error: 'Unauthorized' };
 
     const localUser = await db.query.user.findFirst({
-      where: eq(user.supabaseUserId, user.id),
+      where: eq(userTable.supabaseUserId, user.id),
     });
     if (!localUser) return { success: false, error: 'User not found' };
 

@@ -2,7 +2,7 @@
 
 import { db } from '@/lib/connect-db';
 import { committees, committeeMembers, userRole, profiles, certificateSignatures } from '@/db/schema';
-import { user } from '@/db/schemas/auth';
+import { user as userTable } from '@/db/schemas/auth';
 import { revalidatePath } from 'next/cache';
 import { eq, and, desc, inArray } from 'drizzle-orm';
 import { createClient } from '@/lib/supabase/server';
@@ -13,7 +13,7 @@ async function getAuthUserId(): Promise<string | null> {
   if (!user?.id) return null;
 
   const localUser = await db.query.user.findFirst({
-    where: eq(user.supabaseUserId, user.id),
+    where: eq(userTable.supabaseUserId, user.id),
   });
   return localUser?.id ?? null;
 }

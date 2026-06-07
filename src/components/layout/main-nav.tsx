@@ -42,7 +42,7 @@ const getItemHref = (item: NavItem, locale: string, currentPath: string): string
 export default function MainNav({ items }: MainNavProps) {
   const locale = useCurrentLocale();
   const pathname = usePathname() ?? '/';
-  const t = useI18n();
+  const t = useI18n() as any;
 
   const labelFor = (item: NavItem) => {
     if (item.i18nKey) return t(item.i18nKey as any);
