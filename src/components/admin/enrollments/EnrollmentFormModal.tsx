@@ -63,7 +63,11 @@ export default function EnrollmentFormModal({
             return res.json();
           })
           .then((data) => {
-            setFormData(data.formData || {});
+            setFormData({
+              ...(data.formData || {}),
+              profilePhotoUrl: data.profilePhotoUrl,
+              signatureUrl: data.signatureUrl,
+            });
           })
           .catch((err) => {
             console.error(err);

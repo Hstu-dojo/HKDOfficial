@@ -27,6 +27,9 @@ type EnrollmentRow = {
   droppedAt: string | null
   transactionId: string | null
   paymentProofUrl: string | null
+  paymentMethod: string | null
+  admissionFeeAmount: number | null
+  paymentCurrency: string | null
   applicationId: string | null
   memberName: string
   memberNumber: string | null
@@ -526,10 +529,11 @@ function EnrollmentsTab({
                             studentInfo: null, // Will lazy-load
                             status: r.isActive ? 'active' : r.droppedAt ? 'dropped' : r.completedAt ? 'completed' : 'inactive',
                             paymentInfo: {
+                              method: r.paymentMethod,
                               transactionId: r.transactionId,
                               proofUrl: r.paymentProofUrl,
-                              amount: r.monthlyFee,
-                              currency: r.currency,
+                              amount: r.admissionFeeAmount ?? r.monthlyFee,
+                              currency: r.paymentCurrency || r.currency,
                             }
                           })}
                           className="h-8 w-8 text-muted-foreground hover:text-foreground"
