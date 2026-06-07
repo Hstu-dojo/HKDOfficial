@@ -349,6 +349,15 @@ export default function MonthlyBilling() {
                           {(item.member?.email || item.member?.userEmail) && (
                             <span className="text-muted-foreground/85">{item.member.email || item.member.userEmail}</span>
                           )}
+                          {item.member?.phoneNumber && (
+                            <a
+                              href={`tel:${item.member.phoneNumber}`}
+                              className="text-primary hover:underline hover:text-primary/80 inline-flex items-center gap-1 w-fit font-medium"
+                              onClick={(e) => e.stopPropagation()}
+                            >
+                              {item.member.phoneNumber}
+                            </a>
+                          )}
                         </div>
                       </td>
                       <td className="px-4 py-3 text-foreground">{item.course?.name || '—'}</td>
@@ -464,6 +473,19 @@ export default function MonthlyBilling() {
                 <div>
                   <p className="text-muted-foreground">Email</p>
                   <p className="font-medium">{selectedFee.member?.email || selectedFee.member?.userEmail || '—'}</p>
+                </div>
+                <div>
+                  <p className="text-muted-foreground">Phone Number</p>
+                  {selectedFee.member?.phoneNumber ? (
+                    <a
+                      href={`tel:${selectedFee.member.phoneNumber}`}
+                      className="font-medium text-primary hover:underline"
+                    >
+                      {selectedFee.member.phoneNumber}
+                    </a>
+                  ) : (
+                    <p className="font-medium">—</p>
+                  )}
                 </div>
                 <div>
                   <p className="text-muted-foreground">Course</p>
