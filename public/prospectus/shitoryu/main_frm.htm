@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Shito-Ryu Karate</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+
+        header {
+            height: 58px;
+            background-color: #000;
+        }
+
+        iframe {
+            width: 100%;
+            height: calc(100vh - 58px);
+            border: none;
+        }
+
+        .noframe-content {
+            text-align: center;
+            padding: 20px;
+        }
+
+        footer {
+            margin-top: 40px;
+            font-size: 12px;
+            color: #666;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Top banner -->
+    <header>
+        <iframe src="header.htm"></iframe>
+    </header>
+
+    <!-- Main content -->
+    <iframe src="home.htm"></iframe>
+
+    <!-- Fallback for very old browsers -->
+    <noscript>
+        <div class="noframe-content">
+            <img src="images/shitoryu.gif" alt="Shito-Ryu Logo" width="47" height="140">
+            
+            <footer>
+                © 1999–2022, Sam Moledzki.
+                <br>
+                <a href="terms.htm">Terms of Use</a>
+            </footer>
+        </div>
+    </noscript>
+
+</body>
+</html>

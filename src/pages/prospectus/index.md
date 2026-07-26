@@ -1,7 +1,11 @@
 ---
-title: Prospectus of HSTU Karate Dojo
+title: Prospectus Reference
 sidebar: false
 toc: false
 ---
 
-# Prospectus of HSTU Karate Dojo
+A documentation-style reference tree that organizes the skill archive into browsable sections and subpages.
+
+## Reference Structure
+
+- [Skills Overview](skills)
