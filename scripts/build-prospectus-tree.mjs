@@ -183,10 +183,14 @@ function extractText(html) {
     .replace(/<\/p>/gi, '\n\n')
     .replace(/<br\s*\/?>/gi, '\n')
     .replace(/<[^>]+>/g, ' ')
+    .replace(/&lt;\s*Back\s+to\s+Menu\s*&gt;/gi, ' ')
+    .replace(/&lt;\s*&gt;/g, ' ')
     .replace(/&nbsp;/gi, ' ')
     .replace(/&amp;/gi, '&')
     .replace(/&quot;/gi, '"')
     .replace(/&#39;/gi, "'")
+    .replace(/&lt;|&gt;/gi, ' ')
+    .replace(/Back\s+to\s+Menu/gi, ' ')
     .replace(/\s+/g, ' ')
     .trim();
 }
