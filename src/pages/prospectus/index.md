@@ -1,11 +1,17 @@
 ---
 title: Prospectus Reference
-sidebar: false
-toc: false
 ---
 
 A documentation-style reference tree that organizes the skill archive into browsable sections and subpages.
 
-## Reference Structure
+## Reference Notes
+
+A documentation-style reference tree that organizes the skill archive into browsable sections and subpages.
+
+## Images
+
+![Prospectus Reference](/prospectus/images/shitoryu.gif)
+
+## Included References
 
 - [Skills Overview](skills)
