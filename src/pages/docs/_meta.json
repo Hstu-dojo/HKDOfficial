@@ -1,8 +1,17 @@
 {
-  "readme": "Readme",
-  "index": "Index",
-  "api": "API Documentation",
-  "erd": "Erd Diagram",
-  "db_live": "Database Live View",
-  "dev": "Developer Info"
+  "readme": { "title": "Readme", "display": "hidden" },
+  "index": { "title": "Index", "display": "hidden" },
+  "api": { "title": "API Documentation", "display": "hidden" },
+  "erd": { "title": "Erd Diagram", "display": "hidden" },
+  "db_live": { "title": "Database Live View", "display": "hidden" },
+  "dev": { "title": "Developer Info", "display": "hidden" },
+  "database": { "title": "Database", "display": "hidden" },
+  "email-templates": { "title": "Email Templates", "display": "hidden" },
+  "rbac": { "title": "RBAC", "display": "hidden" },
+  "sitemap": { "title": "Sitemap", "display": "hidden" },
+  "socials": { "title": "Socials", "display": "hidden" },
+  "API_DOCUMENTATION": { "title": "API Documentation", "display": "hidden" },
+  "AUTH_SERVER_IMPLEMENTATION": { "title": "Auth Server Implementation", "display": "hidden" },
+  "PARTNER_ONBOARDING_FLOW": { "title": "Partner Onboarding Flow", "display": "hidden" },
+  "SUPABASE_MIGRATION": { "title": "Supabase Migration", "display": "hidden" }
 }

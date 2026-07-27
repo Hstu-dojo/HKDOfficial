@@ -1,0 +1,7 @@
+{
+  "GOOGLE_NEWS_SETUP": { "title": "Google News Setup", "display": "hidden" },
+  "PUBLISHER_CENTER_STATUS": { "title": "Publisher Center Status", "display": "hidden" },
+  "SOCIAL_AUTH_IMPLEMENTATION_PLAN": { "title": "Social Auth Implementation Plan", "display": "hidden" },
+  "SOCIAL_AUTH_QUICK_START": { "title": "Social Auth Quick Start", "display": "hidden" },
+  "SOCIAL_AUTH_RESEARCH_SUMMARY": { "title": "Social Auth Research Summary", "display": "hidden" }
+}

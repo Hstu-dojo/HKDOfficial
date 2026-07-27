@@ -1,4 +1,10 @@
 {
-  "index": "Interactive API Documentation",
-  "endpoints": "API Endpoints Overview"
+  "index": {
+    "title": "Interactive API Documentation",
+    "display": "hidden"
+  },
+  "endpoints": {
+    "title": "API Endpoints Overview",
+    "display": "hidden"
+  }
 }
