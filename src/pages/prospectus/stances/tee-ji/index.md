@@ -15,7 +15,7 @@ A stance where the feet form the shape of an **inverted letter "T"** — named a
 
 | Front View | Side View |
 |:---:|:---:|
-| ![Tee-Ji Dachi — front view](http://www.shitoryu.org/skills/stances/images/tee-jif.jpg) | ![Tee-Ji Dachi — side view](http://www.shitoryu.org/skills/stances/images/tee-jis.jpg) |
+| ![Tee-Ji Dachi — front view](/prospectus/skills/stances/images/tdachif.jpg) | ![Tee-Ji Dachi — side view](/prospectus/skills/stances/images/tdachis.jpg) |
 
 ## Key Points
 

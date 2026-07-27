@@ -15,7 +15,7 @@ The **"looking back" stance** — also called the back stance. "Kokutsu" means "
 
 | Front View | Side View |
 |:---:|:---:|
-| ![Kokutsu Dachi — front view](http://www.shitoryu.org/skills/stances/images/kokutsuf.jpg) | ![Kokutsu Dachi — side view](http://www.shitoryu.org/skills/stances/images/kokutsus.jpg) |
+| ![Kokutsu Dachi — front view](/prospectus/skills/stances/images/kokutsuf.jpg) | ![Kokutsu Dachi — side view](/prospectus/skills/stances/images/kokutsus.jpg) |
 
 ## Key Points
 

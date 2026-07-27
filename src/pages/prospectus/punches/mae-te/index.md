@@ -13,9 +13,11 @@ The **lead-hand (forward hand) jab-punch** — a fast, straight punch thrown wit
 
 ## Demonstration
 
-| Guard Position | Jab Extension |
-|:---:|:---:|
-| ![Mae Te Tsuki — guard](http://www.shitoryu.org/skills/punches/images/mae_tef.jpg) | ![Mae Te Tsuki — extended](http://www.shitoryu.org/skills/punches/images/mae_tes.jpg) |
+![Mae Te Tsuki Animation](/prospectus/skills/punches/images/mae_te_tzuki.GIF)
+
+| Step 1 (Front / Side) | Step 2 (Front / Side) | Step 3 (Front / Side) |
+|:---:|:---:|:---:|
+| ![Mae Te Front 1](/prospectus/skills/punches/images/maetef1.jpg) <br> ![Mae Te Side 1](/prospectus/skills/punches/images/maetes1.jpg) | ![Mae Te Front 2](/prospectus/skills/punches/images/maetef2.jpg) <br> ![Mae Te Side 2](/prospectus/skills/punches/images/maetes2.jpg) | ![Mae Te Front 3](/prospectus/skills/punches/images/maetef3.jpg) <br> ![Mae Te Side 3](/prospectus/skills/punches/images/maetes3.jpg) |
 
 ## Technique
 

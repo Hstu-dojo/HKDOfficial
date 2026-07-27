@@ -13,9 +13,11 @@ The **reverse hand punch** — punching with the **rear hand** while in forward 
 
 ## Demonstration
 
-| Start Position | Hip Drive | End Position |
+![Gyaku Tsuki Animation](/prospectus/skills/punches/images/gyaku_tzuki.GIF)
+
+| Step 1 (Front / Side) | Step 2 (Front / Side) | Step 3 (Front / Side) |
 |:---:|:---:|:---:|
-| ![Gyaku Tsuki — start](http://www.shitoryu.org/skills/punches/images/gyakuf.jpg) | ![Gyaku Tsuki — hip](http://www.shitoryu.org/skills/punches/images/gyakum.jpg) | ![Gyaku Tsuki — end](http://www.shitoryu.org/skills/punches/images/gyakus.jpg) |
+| ![Gyaku Front 1](/prospectus/skills/punches/images/gyakuf1.jpg) <br> ![Gyaku Side 1](/prospectus/skills/punches/images/gyakus1.jpg) | ![Gyaku Front 2](/prospectus/skills/punches/images/gyakuf2.jpg) <br> ![Gyaku Side 2](/prospectus/skills/punches/images/gyakus2.jpg) | ![Gyaku Front 3](/prospectus/skills/punches/images/gyakuf3.jpg) <br> ![Gyaku Side 3](/prospectus/skills/punches/images/gyakus3.jpg) |
 
 ## Technique
 

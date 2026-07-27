@@ -15,7 +15,7 @@ The **"heron foot" stance** — a one-legged balance stance named after the hero
 
 | Front View | Side View |
 |:---:|:---:|
-| ![Sagiashi Dachi — front view](http://www.shitoryu.org/skills/stances/images/sagiashif.jpg) | ![Sagiashi Dachi — side view](http://www.shitoryu.org/skills/stances/images/sagiashis.jpg) |
+| ![Sagiashi Dachi — front view](/prospectus/skills/stances/images/sagiashif1.jpg) | ![Sagiashi Dachi — side view](/prospectus/skills/stances/images/sagiashib1.jpg) |
 
 ## Key Points
 

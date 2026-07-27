@@ -17,7 +17,7 @@ Feet at shoulder width apart with toes pointing **inward at 45 degrees**. "Uchi"
 
 | Front View | Side View |
 |:---:|:---:|
-| ![Uchi-Hachiji Dachi — front view](http://www.shitoryu.org/skills/stances/images/uchi-hachijif.jpg) | ![Uchi-Hachiji Dachi — side view](http://www.shitoryu.org/skills/stances/images/uchi-hachijis.jpg) |
+| ![Uchi-Hachiji Dachi — front view](/prospectus/skills/stances/images/naihanchif.jpg) | ![Uchi-Hachiji Dachi — side view](/prospectus/skills/stances/images/naihanchis.jpg) |
 
 ## Key Points
 

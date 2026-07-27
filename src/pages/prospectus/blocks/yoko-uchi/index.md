@@ -15,13 +15,13 @@ Block moving **from outside toward the inside** (centre of body) — the opposit
 
 ## Demonstration
 
-![Yoko Uchi Animation](http://www.shitoryu.org/skills/blocks/images/uchiuke.gif)
+![Yoko Uchi Animation](/prospectus/skills/blocks/images/uchiuke.gif)
 
 | Step 1 (Front / Side) | Step 2 (Front / Side) | Step 3 (Front / Side) | Step 4 (Front / Side) |
 |:---:|:---:|:---:|:---:|
-| ![Uchi Front 1](http://www.shitoryu.org/skills/blocks/images/uchif1.jpg) <br> ![Uchi Side 1](http://www.shitoryu.org/skills/blocks/images/uchis1.jpg) | ![Uchi Front 2](http://www.shitoryu.org/skills/blocks/images/uchif2.jpg) <br> ![Uchi Side 2](http://www.shitoryu.org/skills/blocks/images/uchis2.jpg) | ![Uchi Front 3](http://www.shitoryu.org/skills/blocks/images/uchif3.jpg) <br> ![Uchi Side 3](http://www.shitoryu.org/skills/blocks/images/uchis3.jpg) | ![Uchi Front 4](http://www.shitoryu.org/skills/blocks/images/uchif4.jpg) <br> ![Uchi Side 4](http://www.shitoryu.org/skills/blocks/images/uchis4.jpg) |
+| ![Uchi Front 1](/prospectus/skills/blocks/images/uchif1.jpg) <br> ![Uchi Side 1](/prospectus/skills/blocks/images/uchis1.jpg) | ![Uchi Front 2](/prospectus/skills/blocks/images/uchif2.jpg) <br> ![Uchi Side 2](/prospectus/skills/blocks/images/uchis2.jpg) | ![Uchi Front 3](/prospectus/skills/blocks/images/uchif3.jpg) <br> ![Uchi Side 3](/prospectus/skills/blocks/images/uchis3.jpg) | ![Uchi Front 4](/prospectus/skills/blocks/images/uchif4.jpg) <br> ![Uchi Side 4](/prospectus/skills/blocks/images/uchis4.jpg) |
 
-![Uchi Back View](http://www.shitoryu.org/skills/blocks/images/uchib.jpg)
+![Uchi Back View](/prospectus/skills/blocks/images/uchib.jpg)
 
 ## Technique
 

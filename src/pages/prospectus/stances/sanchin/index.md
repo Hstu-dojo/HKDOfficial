@@ -15,7 +15,7 @@ The **inward tension stance** — also called the "hourglass" stance. "Sanchin" 
 
 | Front View | Side View |
 |:---:|:---:|
-| ![Sanchin Dachi — front view](http://www.shitoryu.org/skills/stances/images/sanchinf.jpg) | ![Sanchin Dachi — side view](http://www.shitoryu.org/skills/stances/images/sanchins.jpg) |
+| ![Sanchin Dachi — front view](/prospectus/skills/stances/images/sanchinf.jpg) | ![Sanchin Dachi — side view](/prospectus/skills/stances/images/sanchins.jpg) |
 
 ## Key Points
 

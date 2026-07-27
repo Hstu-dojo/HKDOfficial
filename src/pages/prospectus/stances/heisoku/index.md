@@ -15,7 +15,7 @@ Toes and heels together — the "closed foot stance." This is the formal **atten
 
 | Front View | Side View |
 |:---:|:---:|
-| ![Heisoku Dachi — front view](http://www.shitoryu.org/skills/stances/images/heisokuf.jpg) | ![Heisoku Dachi — side view](http://www.shitoryu.org/skills/stances/images/heisokus.jpg) |
+| ![Heisoku Dachi — front view](/prospectus/skills/stances/images/heisokuf.jpg) | ![Heisoku Dachi — side view](/prospectus/skills/stances/images/heisokus.jpg) |
 
 ## Key Points
 

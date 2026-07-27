@@ -13,11 +13,11 @@ The **U-shape punch** — both fists punch **simultaneously** at different heigh
 
 ## Demonstration
 
-![Morote Tsuki Animation](http://www.shitoryu.org/skills/punches/images/morote_tzuki.GIF)
+![Morote Tsuki Animation](/prospectus/skills/punches/images/morote_tzuki.GIF)
 
 | Step 1 (Front / Side) | Step 2 (Front / Side) |
 |:---:|:---:|
-| ![Morote Front 1](http://www.shitoryu.org/skills/punches/images/morotef1.jpg) <br> ![Morote Side 1](http://www.shitoryu.org/skills/punches/images/morotes1.jpg) | ![Morote Front 2](http://www.shitoryu.org/skills/punches/images/morotef2.jpg) <br> ![Morote Side 2](http://www.shitoryu.org/skills/punches/images/morotes2.jpg) |
+| ![Morote Front 1](/prospectus/skills/punches/images/morotef1.jpg) <br> ![Morote Side 1](/prospectus/skills/punches/images/morotes1.jpg) | ![Morote Front 2](/prospectus/skills/punches/images/morotef2.jpg) <br> ![Morote Side 2](/prospectus/skills/punches/images/morotes2.jpg) |
 
 ## Technique
 

@@ -13,9 +13,13 @@ The **rising upper-level block** — one of the most fundamental blocks in karat
 
 ## Demonstration
 
-| Start Position | End Position |
-|:---:|:---:|
-| ![Age Uke — start](http://www.shitoryu.org/skills/blocks/images/age_ukef.jpg) | ![Age Uke — end](http://www.shitoryu.org/skills/blocks/images/age_ukes.jpg) |
+![Age Uke Animation](/prospectus/skills/blocks/images/ageuke.gif)
+
+| Step 1 (Front / Side) | Step 2 (Front / Side) | Step 3 (Front / Side) | Step 4 (Front / Side) |
+|:---:|:---:|:---:|:---:|
+| ![Age Front 1](/prospectus/skills/blocks/images/ageukef1.jpg) <br> ![Age Side 1](/prospectus/skills/blocks/images/ageukes1.jpg) | ![Age Front 2](/prospectus/skills/blocks/images/ageukef2.jpg) <br> ![Age Side 2](/prospectus/skills/blocks/images/ageukes2.jpg) | ![Age Front 3](/prospectus/skills/blocks/images/ageukef3.jpg) <br> ![Age Side 3](/prospectus/skills/blocks/images/ageukes3.jpg) | ![Age Front 4](/prospectus/skills/blocks/images/ageukef4.jpg) <br> ![Age Side 4](/prospectus/skills/blocks/images/ageukes4.jpg) |
+
+![Age Back View](/prospectus/skills/blocks/images/ageukesb.jpg)
 
 ## Technique
 

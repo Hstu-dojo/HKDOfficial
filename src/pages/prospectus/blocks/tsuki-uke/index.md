@@ -17,13 +17,13 @@ Tsuki Uke is the physical expression of **HANGEKI** — the 5th principle of Shi
 
 ## Demonstration
 
-![Tsuki Uke Animation](http://www.shitoryu.org/skills/blocks/images/tsuke.gif)
+![Tsuki Uke Animation](/prospectus/skills/blocks/images/tsuke.gif)
 
 | Step 1 (Front / Side) | Step 2 (Front / Side) |
 |:---:|:---:|
-| ![Tsuki Front 1](http://www.shitoryu.org/skills/blocks/images/tsukif1.jpg) <br> ![Tsuki Side 1](http://www.shitoryu.org/skills/blocks/images/tsukis1.jpg) | ![Tsuki Front 2](http://www.shitoryu.org/skills/blocks/images/tsukif2.jpg) <br> ![Tsuki Side 2](http://www.shitoryu.org/skills/blocks/images/tsukis2.jpg) |
+| ![Tsuki Front 1](/prospectus/skills/blocks/images/tsukif1.jpg) <br> ![Tsuki Side 1](/prospectus/skills/blocks/images/tsukis1.jpg) | ![Tsuki Front 2](/prospectus/skills/blocks/images/tsukif2.jpg) <br> ![Tsuki Side 2](/prospectus/skills/blocks/images/tsukis2.jpg) |
 
-![Tsuki Back View](http://www.shitoryu.org/skills/blocks/images/tsukib.jpg)
+![Tsuki Back View](/prospectus/skills/blocks/images/tsukib.jpg)
 
 ## Technique
 

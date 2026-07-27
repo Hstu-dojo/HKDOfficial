@@ -15,7 +15,7 @@ Feet apart and **parallel** — an open stance at hip width. "Heiko" means paral
 
 | Front View | Side View |
 |:---:|:---:|
-| ![Heiko Dachi — front view](http://www.shitoryu.org/skills/stances/images/heikof.jpg) | ![Heiko Dachi — side view](http://www.shitoryu.org/skills/stances/images/heikos.jpg) |
+| ![Heiko Dachi — front view](/prospectus/skills/stances/images/heikof.jpg) | ![Heiko Dachi — side view](/prospectus/skills/stances/images/heikos.jpg) |
 
 ## Key Points
 

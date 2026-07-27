@@ -15,9 +15,13 @@ The **low-level, downward sweeping block** — one of the first and most fundame
 
 ## Demonstration
 
-| Start Position | Mid Execution | End Position |
-|:---:|:---:|:---:|
-| ![Gedan Barai Uke — start](http://www.shitoryu.org/skills/blocks/images/gedan_baraif.jpg) | ![Gedan Barai Uke — mid](http://www.shitoryu.org/skills/blocks/images/gedan_baraim.jpg) | ![Gedan Barai Uke — end](http://www.shitoryu.org/skills/blocks/images/gedan_barais.jpg) |
+![Gedan Barai Uke Animation](/prospectus/skills/blocks/images/gedanbari.gif)
+
+| Step 1 (Front / Side) | Step 2 (Front / Side) | Step 3 (Front / Side) | Step 4 (Front / Side) |
+|:---:|:---:|:---:|:---:|
+| ![Gedan Front 1](/prospectus/skills/blocks/images/gedanbf1.jpg) <br> ![Gedan Side 1](/prospectus/skills/blocks/images/gedanbs1.jpg) | ![Gedan Front 2](/prospectus/skills/blocks/images/gedanbf2.jpg) <br> ![Gedan Side 2](/prospectus/skills/blocks/images/gedanbs2.jpg) | ![Gedan Front 3](/prospectus/skills/blocks/images/gedanbf3.jpg) <br> ![Gedan Side 3](/prospectus/skills/blocks/images/gedanbs3.jpg) | ![Gedan Front 4](/prospectus/skills/blocks/images/gedanbf4.jpg) <br> ![Gedan Side 4](/prospectus/skills/blocks/images/gedanbs4.jpg) |
+
+![Gedan Back View](/prospectus/skills/blocks/images/gedanbb.jpg)
 
 ## Technique
 

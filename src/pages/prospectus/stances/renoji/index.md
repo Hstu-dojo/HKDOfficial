@@ -15,7 +15,7 @@ A stance where the feet are arranged in the shape of the **letter "L"** — name
 
 | Front View | Side View |
 |:---:|:---:|
-| ![Renoji Dachi — front view](http://www.shitoryu.org/skills/stances/images/renojif.jpg) | ![Renoji Dachi — side view](http://www.shitoryu.org/skills/stances/images/renojis.jpg) |
+| ![Renoji Dachi — front view](/prospectus/skills/stances/images/renojif.jpg) | ![Renoji Dachi — side view](/prospectus/skills/stances/images/renojis.jpg) |
 
 ## Key Points
 

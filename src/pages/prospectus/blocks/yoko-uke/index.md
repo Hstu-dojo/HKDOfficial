@@ -15,9 +15,13 @@ Block moving **from inside (the centre of the body) toward the outside** — swe
 
 ## Demonstration
 
-| Start Position | End Position |
-|:---:|:---:|
-| ![Yoko Uke — start](http://www.shitoryu.org/skills/blocks/images/yoko_ukef.jpg) | ![Yoko Uke — end](http://www.shitoryu.org/skills/blocks/images/yoko_ukes.jpg) |
+![Yoko Uke Animation](/prospectus/skills/blocks/images/sotouke.gif)
+
+| Step 1 (Front / Side) | Step 2 (Front / Side) | Step 3 (Front / Side) | Step 4 (Front / Side) |
+|:---:|:---:|:---:|:---:|
+| ![Yoko Front 1](/prospectus/skills/blocks/images/sotof1.jpg) <br> ![Yoko Side 1](/prospectus/skills/blocks/images/sotos1.jpg) | ![Yoko Front 2](/prospectus/skills/blocks/images/sotof2.jpg) <br> ![Yoko Side 2](/prospectus/skills/blocks/images/sotos2.jpg) | ![Yoko Front 3](/prospectus/skills/blocks/images/sotof3.jpg) <br> ![Yoko Side 3](/prospectus/skills/blocks/images/sotos3.jpg) | ![Yoko Front 4](/prospectus/skills/blocks/images/sotof4.jpg) <br> ![Yoko Side 4](/prospectus/skills/blocks/images/sotos4.jpg) |
+
+![Yoko Back View](/prospectus/skills/blocks/images/sotob.jpg)
 
 ## Technique
 

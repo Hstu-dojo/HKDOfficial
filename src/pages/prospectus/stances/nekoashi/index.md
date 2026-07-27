@@ -15,7 +15,7 @@ The **"cat foot" stance** — weight is placed almost entirely on the rear foot,
 
 | Front View | Side View |
 |:---:|:---:|
-| ![Nekoashi Dachi — front view](http://www.shitoryu.org/skills/stances/images/nekoashif.jpg) | ![Nekoashi Dachi — side view](http://www.shitoryu.org/skills/stances/images/nekoashis.jpg) |
+| ![Nekoashi Dachi — front view](/prospectus/skills/stances/images/nekof.jpg) | ![Nekoashi Dachi — side view](/prospectus/skills/stances/images/nekos.jpg) |
 
 ## Key Points
 

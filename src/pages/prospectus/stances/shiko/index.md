@@ -15,7 +15,7 @@ A wide straddle-leg stance with deep knee bend — often called the **"Sumo" sta
 
 | Front View | Side View |
 |:---:|:---:|
-| ![Shiko Dachi — front view](http://www.shitoryu.org/skills/stances/images/shikof.jpg) | ![Shiko Dachi — side view](http://www.shitoryu.org/skills/stances/images/shikos.jpg) |
+| ![Shiko Dachi — front view](/prospectus/skills/stances/images/shikof.jpg) | ![Shiko Dachi — side view](/prospectus/skills/stances/images/shikos.jpg) |
 
 ## Key Points
 

@@ -15,7 +15,7 @@ A forward stance with the front knee **partially bent** — shorter and more upr
 
 | Front View | Side View |
 |:---:|:---:|
-| ![Moto Dachi — front view](http://www.shitoryu.org/skills/stances/images/motof.jpg) | ![Moto Dachi — side view](http://www.shitoryu.org/skills/stances/images/motos.jpg) |
+| ![Moto Dachi — front view](/prospectus/skills/stances/images/motof.jpg) | ![Moto Dachi — side view](/prospectus/skills/stances/images/motos.jpg) |
 
 ## Key Points
 

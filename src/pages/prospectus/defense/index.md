@@ -26,8 +26,8 @@ The concept of striking at the **base of a tree** with such tremendous force tha
 *Think: a single devastating counter-force that neutralises the attack completely.*
 
 **Demonstration:**
-![Rakka 1](http://www.shitoryu.org/skills/defense/images/s_rakka1.jpg)
-![Rakka 2](http://www.shitoryu.org/skills/defense/images/S_rakka.2.jpg)
+![Rakka 1](/prospectus/skills/defense/images/s_rakka1.jpg)
+![Rakka 2](/prospectus/skills/defense/images/S_rakka.2.jpg)
 
 
 ---
@@ -41,9 +41,9 @@ The concept of **soft blocking** — absorbing the attack and re-directing it us
 *Think: yield, redirect, and re-channel the incoming force.*
 
 **Demonstration:**
-![Ryusu 1](http://www.shitoryu.org/skills/defense/images/s_rusui1.jpg)
-![Ryusu 2](http://www.shitoryu.org/skills/defense/images/s_rusui2.jpg)
-![Ryusu 3](http://www.shitoryu.org/skills/defense/images/s_rusui3.jpg)
+![Ryusu 1](/prospectus/skills/defense/images/s_rusui1.jpg)
+![Ryusu 2](/prospectus/skills/defense/images/s_rusui2.jpg)
+![Ryusu 3](/prospectus/skills/defense/images/s_rusui3.jpg)
 
 
 ---
@@ -57,7 +57,7 @@ The concept of **shifting or turning away** from the opponent's attack — avoid
 *Think: if you are not where the attack is going, it cannot hit you.*
 
 **Demonstration:**
-![Teni 1](http://www.shitoryu.org/skills/defense/images/s_teni.jpg)
+![Teni 1](/prospectus/skills/defense/images/s_teni.jpg)
 
 
 ---
@@ -71,12 +71,12 @@ The concept of **immediate shifting of stance** — from one type to another (e.
 *Think: the elastic quality of a coiled spring — compress to avoid, release to counter.*
 
 **Demonstration:**
-![Kushin 1](http://www.shitoryu.org/skills/defense/images/S_kusshin1.jpg)
-![Kushin 2](http://www.shitoryu.org/skills/defense/images/S_kusshin2.jpg)
-![Kushin 2b](http://www.shitoryu.org/skills/defense/images/S_kusshin2b.jpg)
-![Kushin 3](http://www.shitoryu.org/skills/defense/images/S_KUSSHIN3.JPG)
-![Kushin 4](http://www.shitoryu.org/skills/defense/images/S_KUSSHIN4.JPG)
-![Kushin 4b](http://www.shitoryu.org/skills/defense/images/S_kusshin4b.jpg)
+![Kushin 1](/prospectus/skills/defense/images/S_kusshin1.jpg)
+![Kushin 2](/prospectus/skills/defense/images/S_kusshin2.jpg)
+![Kushin 2b](/prospectus/skills/defense/images/S_kusshin2b.jpg)
+![Kushin 3](/prospectus/skills/defense/images/S_KUSSHIN3.JPG)
+![Kushin 4](/prospectus/skills/defense/images/S_KUSSHIN4.JPG)
+![Kushin 4b](/prospectus/skills/defense/images/S_kusshin4b.jpg)
 
 
 ---
@@ -90,9 +90,9 @@ The concept of generating a **powerful attacking action as an effective counter 
 *Think: the best defense is a perfectly timed, devastating offense.*
 
 **Demonstration:**
-![Hangeki 1](http://www.shitoryu.org/skills/defense/images/S_hangeki1.jpg)
-![Hangeki 2](http://www.shitoryu.org/skills/defense/images/S_hangeki3.jpg)
-![Hangeki 3](http://www.shitoryu.org/skills/defense/images/S_hangeki4.jpg)
+![Hangeki 1](/prospectus/skills/defense/images/S_hangeki1.jpg)
+![Hangeki 2](/prospectus/skills/defense/images/S_hangeki3.jpg)
+![Hangeki 3](/prospectus/skills/defense/images/S_hangeki4.jpg)
 
 
 ---

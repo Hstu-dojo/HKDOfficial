@@ -15,7 +15,7 @@ The **"hooked leg" stance** — one leg is crossed behind the other with both kn
 
 | Front View | Side View |
 |:---:|:---:|
-| ![Kosa Dachi — front view](http://www.shitoryu.org/skills/stances/images/kosaf.jpg) | ![Kosa Dachi — side view](http://www.shitoryu.org/skills/stances/images/kosas.jpg) |
+| ![Kosa Dachi — front view](/prospectus/skills/stances/images/kosadachif.jpg) | ![Kosa Dachi — side view](/prospectus/skills/stances/images/kosadachis.jpg) |
 
 ## Key Points
 

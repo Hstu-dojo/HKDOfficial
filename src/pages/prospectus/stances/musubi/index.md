@@ -15,7 +15,7 @@ Heels together with toes apart, forming the shape of a **"knot"** (musubi). This
 
 | Front View | Side View |
 |:---:|:---:|
-| ![Musubi Dachi — front view](http://www.shitoryu.org/skills/stances/images/musubif.jpg) | ![Musubi Dachi — side view](http://www.shitoryu.org/skills/stances/images/musubis.jpg) |
+| ![Musubi Dachi — front view](/prospectus/skills/stances/images/musubif.jpg) | ![Musubi Dachi — side view](/prospectus/skills/stances/images/musubis.jpg) |
 
 ## Key Points
 

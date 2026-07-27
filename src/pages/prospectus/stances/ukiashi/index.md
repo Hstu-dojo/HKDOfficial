@@ -15,7 +15,7 @@ A stance **similar to Nekoashi Dachi** but more upright, with the front foot in 
 
 | Front View | Side View |
 |:---:|:---:|
-| ![Ukiashi Dachi — front view](http://www.shitoryu.org/skills/stances/images/ukiashif.jpg) | ![Ukiashi Dachi — side view](http://www.shitoryu.org/skills/stances/images/ukiashis.jpg) |
+| ![Ukiashi Dachi — front view](/prospectus/skills/stances/images/ukiashidachif.jpg) | ![Ukiashi Dachi — side view](/prospectus/skills/stances/images/ukiashidachis.jpg) |
 
 ## Key Points
 

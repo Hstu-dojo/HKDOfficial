@@ -13,11 +13,11 @@ The **circular swinging punch** — also called the "roundhouse punch." "Furi" m
 
 ## Demonstration
 
-![Furi Tsuki Animation](http://www.shitoryu.org/skills/punches/images/furi_tzuki.GIF)
+![Furi Tsuki Animation](/prospectus/skills/punches/images/furi_tzuki.GIF)
 
 | Step 1 (Front / Side) | Step 2 (Front / Side) | Step 3 (Front / Side) |
 |:---:|:---:|:---:|
-| ![Furi Front 1](http://www.shitoryu.org/skills/punches/images/furif1.jpg) <br> ![Furi Side 1](http://www.shitoryu.org/skills/punches/images/furis1.jpg) | ![Furi Front 2](http://www.shitoryu.org/skills/punches/images/furif2.jpg) <br> ![Furi Side 2](http://www.shitoryu.org/skills/punches/images/furis2.jpg) | ![Furi Front 3](http://www.shitoryu.org/skills/punches/images/furif3.jpg) <br> ![Furi Side 3](http://www.shitoryu.org/skills/punches/images/furis3.jpg) |
+| ![Furi Front 1](/prospectus/skills/punches/images/furif1.jpg) <br> ![Furi Side 1](/prospectus/skills/punches/images/furis1.jpg) | ![Furi Front 2](/prospectus/skills/punches/images/furif2.jpg) <br> ![Furi Side 2](/prospectus/skills/punches/images/furis2.jpg) | ![Furi Front 3](/prospectus/skills/punches/images/furif3.jpg) <br> ![Furi Side 3](/prospectus/skills/punches/images/furis3.jpg) |
 
 ## Technique
 

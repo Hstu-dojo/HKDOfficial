@@ -15,7 +15,7 @@ Feet at shoulder width apart with toes pointing **outward at 45 degrees**. "Hach
 
 | Front View | Side View |
 |:---:|:---:|
-| ![Hachiji Dachi — front view](http://www.shitoryu.org/skills/stances/images/hachijif.jpg) | ![Hachiji Dachi — side view](http://www.shitoryu.org/skills/stances/images/hachijis.jpg) |
+| ![Hachiji Dachi — front view](/prospectus/skills/stances/images/hachijif.jpg) | ![Hachiji Dachi — side view](/prospectus/skills/stances/images/hachijis.jpg) |
 
 ## Key Points
 

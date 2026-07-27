@@ -13,9 +13,11 @@ The **stepping lunge punch** — the front hand punches as the front foot steps 
 
 ## Demonstration
 
-| Start Position | Lunge Step | End Position |
+![Oi Tsuki Animation](/prospectus/skills/punches/images/oi_tzuki.gif)
+
+| Step 1 (Front / Side) | Step 2 (Front / Side) | Step 3 (Front / Side) |
 |:---:|:---:|:---:|
-| ![Oi Tsuki — start](http://www.shitoryu.org/skills/punches/images/oif.jpg) | ![Oi Tsuki — step](http://www.shitoryu.org/skills/punches/images/oim.jpg) | ![Oi Tsuki — end](http://www.shitoryu.org/skills/punches/images/ois.jpg) |
+| ![Oi Front 1](/prospectus/skills/punches/images/oif1.jpg) <br> ![Oi Side 1](/prospectus/skills/punches/images/ois1.jpg) | ![Oi Front 2](/prospectus/skills/punches/images/oif2.jpg) <br> ![Oi Side 2](/prospectus/skills/punches/images/ois2.jpg) | ![Oi Front 3](/prospectus/skills/punches/images/oif3.jpg) <br> ![Oi Side 3](/prospectus/skills/punches/images/ois3.jpg) |
 
 ## Technique
 

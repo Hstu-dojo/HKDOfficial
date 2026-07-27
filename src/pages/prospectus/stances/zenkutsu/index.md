@@ -15,7 +15,7 @@ A long forward stance with the front knee **deeply bent** and the rear leg fully
 
 | Front View | Side View |
 |:---:|:---:|
-| ![Zenkutsu Dachi — front view](http://www.shitoryu.org/skills/stances/images/zenkutsuf.jpg) | ![Zenkutsu Dachi — side view](http://www.shitoryu.org/skills/stances/images/zenkutsus.jpg) |
+| ![Zenkutsu Dachi — front view](/prospectus/skills/stances/images/zenkutsuf.jpg) | ![Zenkutsu Dachi — side view](/prospectus/skills/stances/images/zenkutsus.jpg) |
 
 ## Key Points
 
