@@ -11,6 +11,14 @@ description: Inverted palm-up close punch — a short-range punch delivered with
 
 The **inverted (palm-up) close punch** — the fist is delivered with the **palm facing upward** at the moment of impact. "Ura" means reverse or underside. This is a short-range technique used when very close to the opponent.
 
+## Demonstration
+
+![Ura Tsuki Animation](http://www.shitoryu.org/skills/punches/images/ura_tzuki.GIF)
+
+| Step 1 (Front / Side) | Step 2 (Front / Side) |
+|:---:|:---:|
+| ![Ura Front 1](http://www.shitoryu.org/skills/punches/images/uraf1.jpg) <br> ![Ura Side 1](http://www.shitoryu.org/skills/punches/images/uras1.jpg) | ![Ura Front 2](http://www.shitoryu.org/skills/punches/images/uraf2.jpg) <br> ![Ura Side 2](http://www.shitoryu.org/skills/punches/images/uras2.jpg) |
+
 ## Technique
 
 **Execution:**

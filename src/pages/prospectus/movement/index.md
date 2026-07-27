@@ -15,6 +15,8 @@ description: The fundamental ability to apply offensive and defensive techniques
 
 Movement in Shito-Ryu is trained to be effective in all cardinal and intercardinal directions:
 
+![Tenshin-Happo Diagram](http://www.shitoryu.org/skills/images/tenshin.gif)
+
 ```
         ↑ (1) Forward
    ↖          ↗

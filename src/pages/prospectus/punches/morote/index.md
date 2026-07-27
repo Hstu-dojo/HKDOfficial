@@ -11,6 +11,14 @@ description: U-shape double punch — both fists punch simultaneously to differe
 
 The **U-shape punch** — both fists punch **simultaneously** at different heights, with the fists forming a "U" shape. "Morote" means "both hands." One fist targets a high level while the other targets a low level, creating a two-point simultaneous attack that is difficult to defend against.
 
+## Demonstration
+
+![Morote Tsuki Animation](http://www.shitoryu.org/skills/punches/images/morote_tzuki.GIF)
+
+| Step 1 (Front / Side) | Step 2 (Front / Side) |
+|:---:|:---:|
+| ![Morote Front 1](http://www.shitoryu.org/skills/punches/images/morotef1.jpg) <br> ![Morote Side 1](http://www.shitoryu.org/skills/punches/images/morotes1.jpg) | ![Morote Front 2](http://www.shitoryu.org/skills/punches/images/morotef2.jpg) <br> ![Morote Side 2](http://www.shitoryu.org/skills/punches/images/morotes2.jpg) |
+
 ## Technique
 
 **Execution:**
