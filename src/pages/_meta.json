@@ -1,7 +1,11 @@
 {
-  "prospectus": "Prospectus",
+  "prospectus": {
+    "title": "Prospectus",
+    "type": "page"
+  },
   "docs": {
     "title": "Documentation",
+    "type": "page",
     "display": "hidden"
   }
 }
