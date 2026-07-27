@@ -161,4 +161,4 @@ Following are the karate-do kata taught at various belt levels in the **Karate-d
 
 ## Related References
 
-- [Kata Requirements for Grading](../grading)
+- [Kata Requirements for Grading](/prospectus/grading)

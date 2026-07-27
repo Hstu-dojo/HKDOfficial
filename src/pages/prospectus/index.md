@@ -17,17 +17,17 @@ Shito-Ryu is one of the four major styles of Japanese karate, known for its larg
 
 | Section | Japanese | Description |
 |---|---|---|
-| [Stances](stances) | Dachi-Kata | Basic foot positions and posture shapes |
-| [Movement](movement) | Tenshin-Happo | 8-directional offensive & defensive movement |
-| [Defense](defense) | Uke No Gogensoku | Shito-Ryu's Five Special Principles of Defense |
-| [Blocks](blocks) | Uke-Waza | Blocking techniques |
-| [Punches](punches) | Tsuki-Waza | Punching and hand-thrusting techniques |
-| [Strikes](strikes) | Uchi-Waza | Hand striking techniques |
-| [Kicks](kicks) | Keri-Waza | Kicking techniques |
-| [Kata](kata) | — | Forms catalogue by lineage |
-| [Kumite Footwork](kumite-footwork) | — | Fighting footwork patterns |
-| [In the Dojo](in-the-dojo) | — | Dojo rules and exercise program |
-| [Grading](grading) | — | Belt progression and kata requirements |
+| [Stances](/prospectus/stances) | Dachi-Kata | Basic foot positions and posture shapes |
+| [Movement](/prospectus/movement) | Tenshin-Happo | 8-directional offensive & defensive movement |
+| [Defense](/prospectus/defense) | Uke No Gogensoku | Shito-Ryu's Five Special Principles of Defense |
+| [Blocks](/prospectus/blocks) | Uke-Waza | Blocking techniques |
+| [Punches](/prospectus/punches) | Tsuki-Waza | Punching and hand-thrusting techniques |
+| [Strikes](/prospectus/strikes) | Uchi-Waza | Hand striking techniques |
+| [Kicks](/prospectus/kicks) | Keri-Waza | Kicking techniques |
+| [Kata](/prospectus/kata) | — | Forms catalogue by lineage |
+| [Kumite Footwork](/prospectus/kumite-footwork) | — | Fighting footwork patterns |
+| [In the Dojo](/prospectus/in-the-dojo) | — | Dojo rules and exercise program |
+| [Grading](/prospectus/grading) | — | Belt progression and kata requirements |
 
 ---
 

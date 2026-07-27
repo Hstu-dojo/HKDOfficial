@@ -73,5 +73,5 @@ The minimum waiting period ensures that students have adequate time to:
 
 ## Related References
 
-- [Full Kata Catalogue](../kata) — Complete list of all Shito-Ryu kata by lineage
+- [Full Kata Catalogue](/prospectus/kata) — Complete list of all Shito-Ryu kata by lineage
 - [In the Dojo](../in-the-dojo) — Dojo rules and training standards

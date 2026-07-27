@@ -11,5 +11,5 @@ The dojo is more than a gym or a sports hall. It is the place where the art of k
 
 ## Contents
 
-- [Dojo Rules](dojo-rules) — The fifteen rules of conduct for Karate-do Shito-Kai practitioners
-- [Basic Exercise Program](exercises) — The standard 24-exercise warm-up and conditioning program
+- [Dojo Rules](/prospectus/in-the-dojo/dojo-rules) — The fifteen rules of conduct for Karate-do Shito-Kai practitioners
+- [Basic Exercise Program](/prospectus/in-the-dojo/exercises) — The standard 24-exercise warm-up and conditioning program

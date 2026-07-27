@@ -22,14 +22,14 @@ Shito-Ryu punching techniques are driven by coordinated hip rotation (koshi), co
 | Japanese Name | English Name | Description |
 |---|---|---|
 | Seiken Tsuki | Fore-Fist Punch | Basic fore-fist straight punch — used for fundamental practice. |
-| [Oi Tsuki](oi) | Lunge Punch | Stepping forward lunge punch — front hand matches front foot. |
-| [Gyaku Tsuki](gyaku) | Reverse Punch | Reverse hand punch — rear hand punches with a step or in stance. The most powerful basic punch. |
-| [Furi Tsuki](furi) | Roundhouse Punch | Circular/swinging punch — a roundhouse punch from the side. |
-| [Age Tsuki](age) | Rising Punch | Rising punch — the fist rises upward to strike the chin or jaw. |
+| [Oi Tsuki](/prospectus/punches/oi) | Lunge Punch | Stepping forward lunge punch — front hand matches front foot. |
+| [Gyaku Tsuki](/prospectus/punches/gyaku) | Reverse Punch | Reverse hand punch — rear hand punches with a step or in stance. The most powerful basic punch. |
+| [Furi Tsuki](/prospectus/punches/furi) | Roundhouse Punch | Circular/swinging punch — a roundhouse punch from the side. |
+| [Age Tsuki](/prospectus/punches/age) | Rising Punch | Rising punch — the fist rises upward to strike the chin or jaw. |
 | Kagi Tsuki | Hook Punch | Hook punch — a close-range punch with a bent elbow following a circular path. |
-| [Mae Te Tsuki](mae-te) | Jab | Lead-hand (forward hand) jab-punch — a fast, straight flicker punch. |
-| [Ura Tsuki](ura) | Inverted Punch | Inverted (palm up) close punch — palm faces upward at impact. |
-| [Morote Tsuki](morote) | U-Punch | U-shape punch — both fists punch simultaneously at different heights. |
+| [Mae Te Tsuki](/prospectus/punches/mae-te) | Jab | Lead-hand (forward hand) jab-punch — a fast, straight flicker punch. |
+| [Ura Tsuki](/prospectus/punches/ura) | Inverted Punch | Inverted (palm up) close punch — palm faces upward at impact. |
+| [Morote Tsuki](/prospectus/punches/morote) | U-Punch | U-shape punch — both fists punch simultaneously at different heights. |
 | Tate Tsuki | Vertical Fist Punch | Vertical fist punch — the fist is vertical at impact (thumb up). |
 | Nihon Tsuki | Double Punch | Double punch — two simultaneous or rapid successive punches. |
 
