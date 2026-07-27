@@ -1,11 +1,12 @@
 {
-  "gedan-barai": "Gedan Barai",
-  "yoko-uke": "Yoko Uke",
-  "yoko-uchi": "Yoko Uchi",
+  "index": "Overview",
+  "gedan-barai": "Gedan Barai Uke",
+  "yoko-uke": "Yoko Uke (Soto Uke)",
+  "yoko-uchi": "Yoko Uchi (Uchi Uke)",
   "age-uke": "Age Uke",
-  "yoko-bari-uke": "Yoko Bari Uke",
-  "uchi-otoshi-uke": "Uchi Otoshi Uke",
+  "yoko-bari": "Yoko Bari Uke",
+  "uchi-otoshi": "Uchi Otoshi Uke",
   "tsuki-uke": "Tsuki Uke",
-  "te-kubi-sasae-uke": "Te Kubi Sasae Uke",
-  "sukui-uke": "Sukui Uke"
+  "te-kubi-sasae": "Te Kubi Sasae Uke",
+  "sukui": "Sukui Uke"
 }

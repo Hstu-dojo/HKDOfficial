@@ -1,45 +1,34 @@
 ---
-title: Prospectus Reference
+title: Karate-do Prospectus
+description: A comprehensive reference archive for Shito-Ryu Karate-do — covering stances, movement, defense principles, blocking, punching, striking, kicking techniques, kata, kumite footwork, dojo rules, and grading requirements.
 ---
 
-A documentation-style reference tree that organizes the skill archive into browsable sections and subpages.
+# Karate-do Prospectus
 
-## Reference Notes
+A documentation-style reference for **Shito-Ryu Karate-do** — the traditional Japanese martial art founded by **Kenwa Mabuni** (1889–1952). This prospectus organises the complete skill archive into browsable sections covering all technical aspects of Shito-Ryu practice.
 
-A documentation-style reference tree that organizes the skill archive into browsable sections and subpages.
+## About Shito-Ryu
 
-## Images
+Shito-Ryu is one of the four major styles of Japanese karate, known for its large number of kata (over 50), its balance between the power of Naha-te and the speed of Shuri-te, and its comprehensive system of techniques rooted in Okinawan martial tradition.
 
-![Prospectus Reference](/prospectus/images/shitoryu.gif)
+> "Karate-do is not merely a sport or fighting technique. It is training in the ways of the spirit." — *Kenwa Mabuni*
 
-## Included References
-Top-level entry point for the reference tree. Use this page to jump into the section you want to study.
+## Sections
 
-## Images
+| Section | Japanese | Description |
+|---|---|---|
+| [Stances](stances) | Dachi-Kata | Basic foot positions and posture shapes |
+| [Movement](movement) | Tenshin-Happo | 8-directional offensive & defensive movement |
+| [Defense](defense) | Uke No Gogensoku | Shito-Ryu's Five Special Principles of Defense |
+| [Blocks](blocks) | Uke-Waza | Blocking techniques |
+| [Punches](punches) | Tsuki-Waza | Punching and hand-thrusting techniques |
+| [Strikes](strikes) | Uchi-Waza | Hand striking techniques |
+| [Kicks](kicks) | Keri-Waza | Kicking techniques |
+| [Kata](kata) | — | Forms catalogue by lineage |
+| [Kumite Footwork](kumite-footwork) | — | Fighting footwork patterns |
+| [In the Dojo](in-the-dojo) | — | Dojo rules and exercise program |
+| [Grading](grading) | — | Belt progression and kata requirements |
 
-![&quot;Shito-Ryu&quot;](/prospectus/images/shitoryu.gif)
-![Stances](/prospectus/skills/stances/_derived/stances.htm_cmp_shitoryu-rice-110_hbtn.gif)
-![Movement](/prospectus/skills/_derived/tenshin.htm_cmp_shitoryu-rice-110_hbtn.gif)
-![Defense](/prospectus/skills/defense/_derived/defense.htm_cmp_shitoryu-rice-110_hbtn.gif)
-![Blocks](/prospectus/skills/blocks/_derived/blocks.htm_cmp_shitoryu-rice-110_hbtn.gif)
-![Punches](/prospectus/skills/punches/_derived/punches.htm_cmp_shitoryu-rice-110_hbtn.gif)
-![Strikes](/prospectus/skills/strikes/_derived/strikes.htm_cmp_shitoryu-rice-110_hbtn.gif)
-![Kicks](/prospectus/skills/kicks/_derived/kicks.htm_cmp_shitoryu-rice-110_hbtn.gif)
-![Kata](/prospectus/skills/_derived/kata.htm_cmp_shitoryu-rice-110_hbtn.gif)
-![Kumite Feet...](/prospectus/skills/_derived/kumite_footwork.htm_cmp_shitoryu-rice-110_hbtn.gif)
-![In the Dojo...](/prospectus/skills/in_the_dojo/_derived/in_the_dojo.htm_cmp_shitoryu-rice-110_hbtn.gif)
-![Grading](/prospectus/skills/_derived/grading.htm_cmp_shitoryu-rice-110_hbtn.gif)
+---
 
-## Included References
-
-- [Stances](stances)
-- [Movement](movement)
-- [Defense](defense)
-- [Blocks](blocks)
-- [Punches](punches)
-- [Strikes](strikes)
-- [Kicks](kicks)
-- [Kata](kata)
-- [Kumite Footwork](kumite-footwork)
-- [In the Dojo](in-the-dojo)
-- [Grading](grading)
+*Content sourced from the Karate-do Shito-kai Canada reference archive. Terms of use apply.*
