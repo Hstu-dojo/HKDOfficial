@@ -11,6 +11,12 @@ description: Open foot stance — heels together with toes apart, forming a "kno
 
 Heels together with toes apart, forming the shape of a **"knot"** (musubi). This open-foot stance is used as a formal ready position and in ceremonial bowing.
 
+## Demonstration
+
+| Front View | Side View |
+|:---:|:---:|
+| ![Musubi Dachi — front view](http://www.shitoryu.org/skills/stances/images/musubif.jpg) | ![Musubi Dachi — side view](http://www.shitoryu.org/skills/stances/images/musubis.jpg) |
+
 ## Key Points
 
 - Heels are touching together

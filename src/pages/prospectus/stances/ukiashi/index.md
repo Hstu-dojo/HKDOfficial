@@ -11,6 +11,12 @@ description: Floating foot stance — similar to Nekoashi Dachi but more upright
 
 A stance **similar to Nekoashi Dachi** but more upright, with the front foot in a looser, more relaxed "floating" position. "Uki" means "floating." The front leg is held lightly without the committed forward-lean of Nekoashi Dachi.
 
+## Demonstration
+
+| Front View | Side View |
+|:---:|:---:|
+| ![Ukiashi Dachi — front view](http://www.shitoryu.org/skills/stances/images/ukiashif.jpg) | ![Ukiashi Dachi — side view](http://www.shitoryu.org/skills/stances/images/ukiashis.jpg) |
+
 ## Key Points
 
 - Similar structure to Nekoashi Dachi — rear foot flat, front foot on ball

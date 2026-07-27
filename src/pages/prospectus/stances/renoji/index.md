@@ -11,6 +11,12 @@ description: L-shape stance — feet arranged in the shape of the Japanese katak
 
 A stance where the feet are arranged in the shape of the **letter "L"** — named after the Japanese katakana character レ (Re). One foot points forward while the other is positioned 90 degrees to the side, creating the L-shape.
 
+## Demonstration
+
+| Front View | Side View |
+|:---:|:---:|
+| ![Renoji Dachi — front view](http://www.shitoryu.org/skills/stances/images/renojif.jpg) | ![Renoji Dachi — side view](http://www.shitoryu.org/skills/stances/images/renojis.jpg) |
+
 ## Key Points
 
 - One foot points directly forward

@@ -31,4 +31,4 @@ Shito-Ryu is one of the four major styles of Japanese karate, known for its larg
 
 ---
 
-*Content sourced from the Karate-do Shito-kai Canada reference archive. Terms of use apply.*
+*HSTU Karate Dojo - Terms of use apply.*

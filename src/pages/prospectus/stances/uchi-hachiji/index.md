@@ -13,6 +13,12 @@ Also known as: **Niafanchi Dachi**
 
 Feet at shoulder width apart with toes pointing **inward at 45 degrees**. "Uchi" means inner/inside, inverting the Hachiji Dachi pattern. This stance creates strong internal hip tension and is associated with Naifanchi/Naihanchi kata.
 
+## Demonstration
+
+| Front View | Side View |
+|:---:|:---:|
+| ![Uchi-Hachiji Dachi — front view](http://www.shitoryu.org/skills/stances/images/uchi-hachijif.jpg) | ![Uchi-Hachiji Dachi — side view](http://www.shitoryu.org/skills/stances/images/uchi-hachijis.jpg) |
+
 ## Key Points
 
 - Feet are shoulder-width apart

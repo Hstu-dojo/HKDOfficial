@@ -11,6 +11,12 @@ description: Straddle leg stance — the wide "Sumo" stance with deep knee bend 
 
 A wide straddle-leg stance with deep knee bend — often called the **"Sumo" stance** due to its resemblance to the sumo wrestling base position. This is one of the most demanding stances in terms of leg strength and flexibility.
 
+## Demonstration
+
+| Front View | Side View |
+|:---:|:---:|
+| ![Shiko Dachi — front view](http://www.shitoryu.org/skills/stances/images/shikof.jpg) | ![Shiko Dachi — side view](http://www.shitoryu.org/skills/stances/images/shikos.jpg) |
+
 ## Key Points
 
 - Feet are wider than shoulder-width (approximately 1.5–2x shoulder width)

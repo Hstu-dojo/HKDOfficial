@@ -11,6 +11,12 @@ description: Closed foot stance — toes and heels together, the formal attentio
 
 Toes and heels together — the "closed foot stance." This is the formal **attention stance** used at the beginning and end of class, when bowing to the Sensei, and at the start of kata.
 
+## Demonstration
+
+| Front View | Side View |
+|:---:|:---:|
+| ![Heisoku Dachi — front view](http://www.shitoryu.org/skills/stances/images/heisokuf.jpg) | ![Heisoku Dachi — side view](http://www.shitoryu.org/skills/stances/images/heisokus.jpg) |
+
 ## Key Points
 
 - Both feet are placed together with heels touching and toes touching

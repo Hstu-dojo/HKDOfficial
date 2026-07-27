@@ -11,6 +11,12 @@ description: Natural open stance — feet at shoulder width with toes pointing o
 
 Feet at shoulder width apart with toes pointing **outward at 45 degrees**. "Hachiji" refers to the kanji character "8" (八), which the shape of the feet resembles. This is the primary **natural open stance** used throughout training.
 
+## Demonstration
+
+| Front View | Side View |
+|:---:|:---:|
+| ![Hachiji Dachi — front view](http://www.shitoryu.org/skills/stances/images/hachijif.jpg) | ![Hachiji Dachi — side view](http://www.shitoryu.org/skills/stances/images/hachijis.jpg) |
+
 ## Key Points
 
 - Feet are shoulder-width apart

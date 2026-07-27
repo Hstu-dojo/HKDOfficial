@@ -11,6 +11,12 @@ description: Hooked leg stance — one leg crossed behind the other, creating a 
 
 The **"hooked leg" stance** — one leg is crossed behind the other with both knees bent. "Kosa" means "cross" or "intersection." This stance appears during dynamic spinning or direction-changing movements in kata.
 
+## Demonstration
+
+| Front View | Side View |
+|:---:|:---:|
+| ![Kosa Dachi — front view](http://www.shitoryu.org/skills/stances/images/kosaf.jpg) | ![Kosa Dachi — side view](http://www.shitoryu.org/skills/stances/images/kosas.jpg) |
+
 ## Key Points
 
 - One leg crosses behind the other (the stepping leg moves behind)

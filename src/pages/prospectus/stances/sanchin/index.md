@@ -11,6 +11,12 @@ description: Hourglass stance — an inward-tension stance with feet in a pigeon
 
 The **inward tension stance** — also called the "hourglass" stance. "Sanchin" means "three battles" or "three conflicts" (mind, body, spirit). This stance generates intense muscular tension throughout the entire body through opposing force vectors.
 
+## Demonstration
+
+| Front View | Side View |
+|:---:|:---:|
+| ![Sanchin Dachi — front view](http://www.shitoryu.org/skills/stances/images/sanchinf.jpg) | ![Sanchin Dachi — side view](http://www.shitoryu.org/skills/stances/images/sanchins.jpg) |
+
 ## Key Points
 
 - One foot is placed approximately one step ahead of the other

@@ -11,6 +11,12 @@ description: T-shape stance — feet arranged in the shape of an inverted letter
 
 A stance where the feet form the shape of an **inverted letter "T"** — named after the Japanese katakana character テ (Te). The front foot points forward while the rear foot is perpendicular and positioned behind the front heel.
 
+## Demonstration
+
+| Front View | Side View |
+|:---:|:---:|
+| ![Tee-Ji Dachi — front view](http://www.shitoryu.org/skills/stances/images/tee-jif.jpg) | ![Tee-Ji Dachi — side view](http://www.shitoryu.org/skills/stances/images/tee-jis.jpg) |
+
 ## Key Points
 
 - Front foot points directly forward

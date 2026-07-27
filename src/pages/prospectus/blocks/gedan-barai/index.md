@@ -13,6 +13,12 @@ Also known as: **Hari Uke** (sweeping block)
 
 The **low-level, downward sweeping block** — one of the first and most fundamental blocks taught in karate training. "Gedan" means lower level, "barai" means to sweep. The blocking arm sweeps downward and across the body to deflect attacks aimed at the groin, thigh, or lower abdomen.
 
+## Demonstration
+
+| Start Position | Mid Execution | End Position |
+|:---:|:---:|:---:|
+| ![Gedan Barai Uke — start](http://www.shitoryu.org/skills/blocks/images/gedan_baraif.jpg) | ![Gedan Barai Uke — mid](http://www.shitoryu.org/skills/blocks/images/gedan_baraim.jpg) | ![Gedan Barai Uke — end](http://www.shitoryu.org/skills/blocks/images/gedan_barais.jpg) |
+
 ## Technique
 
 **Starting Position:**

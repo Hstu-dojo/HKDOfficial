@@ -11,6 +11,12 @@ description: Back stance — weight predominantly on the rear leg, with the body
 
 The **"looking back" stance** — also called the back stance. "Kokutsu" means "looking back" or "leaning back." Weight is loaded heavily on the rear leg, making this a primary **defensive and counter-attacking stance**.
 
+## Demonstration
+
+| Front View | Side View |
+|:---:|:---:|
+| ![Kokutsu Dachi — front view](http://www.shitoryu.org/skills/stances/images/kokutsuf.jpg) | ![Kokutsu Dachi — side view](http://www.shitoryu.org/skills/stances/images/kokutsus.jpg) |
+
 ## Key Points
 
 - Approximately 70–80% of weight on rear foot

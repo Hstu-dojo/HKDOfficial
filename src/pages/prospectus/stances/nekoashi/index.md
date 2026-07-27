@@ -11,6 +11,12 @@ description: Cat foot stance — almost all weight on the rear foot, front foot 
 
 The **"cat foot" stance** — weight is placed almost entirely on the rear foot, with the front foot resting lightly on the ball of the foot. Like a cat ready to spring or step, this stance allows instant movement in any direction.
 
+## Demonstration
+
+| Front View | Side View |
+|:---:|:---:|
+| ![Nekoashi Dachi — front view](http://www.shitoryu.org/skills/stances/images/nekoashif.jpg) | ![Nekoashi Dachi — side view](http://www.shitoryu.org/skills/stances/images/nekoashis.jpg) |
+
 ## Key Points
 
 - Approximately 90% of weight on rear foot

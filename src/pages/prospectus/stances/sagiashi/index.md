@@ -11,6 +11,12 @@ description: Heron foot stance — a one-legged balance stance with the free leg
 
 The **"heron foot" stance** — a one-legged balance stance named after the heron (*sagi*) bird, which characteristically stands on one leg. The free leg is raised with the knee lifted and the foot tucked near the supporting knee.
 
+## Demonstration
+
+| Front View | Side View |
+|:---:|:---:|
+| ![Sagiashi Dachi — front view](http://www.shitoryu.org/skills/stances/images/sagiashif.jpg) | ![Sagiashi Dachi — side view](http://www.shitoryu.org/skills/stances/images/sagiashis.jpg) |
+
 ## Key Points
 
 - All weight balanced on a single supporting leg

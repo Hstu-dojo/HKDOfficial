@@ -11,6 +11,12 @@ description: Lead-hand forward-hand jab-punch — a fast, straight flicker punch
 
 The **lead-hand (forward hand) jab-punch** — a fast, straight punch thrown with the front hand without stepping. "Mae te" means front/forward hand. This is the karate jab — used for speed, range control, and to set up the more powerful Gyaku Tsuki.
 
+## Demonstration
+
+| Guard Position | Jab Extension |
+|:---:|:---:|
+| ![Mae Te Tsuki — guard](http://www.shitoryu.org/skills/punches/images/mae_tef.jpg) | ![Mae Te Tsuki — extended](http://www.shitoryu.org/skills/punches/images/mae_tes.jpg) |
+
 ## Technique
 
 **Execution:**

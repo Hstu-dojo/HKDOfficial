@@ -11,6 +11,12 @@ description: Basic forward stance — front knee partially bent, a shorter forwa
 
 A forward stance with the front knee **partially bent** — shorter and more upright than Zenkutsu Dachi. "Moto" means "basic" or "original." This is the fundamental forward stance used most frequently in Shito-Ryu kumite and basic training.
 
+## Demonstration
+
+| Front View | Side View |
+|:---:|:---:|
+| ![Moto Dachi — front view](http://www.shitoryu.org/skills/stances/images/motof.jpg) | ![Moto Dachi — side view](http://www.shitoryu.org/skills/stances/images/motos.jpg) |
+
 ## Key Points
 
 - Front foot points forward

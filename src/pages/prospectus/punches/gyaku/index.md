@@ -11,6 +11,12 @@ description: The reverse hand punch — punching with the rear hand while in for
 
 The **reverse hand punch** — punching with the **rear hand** while in forward stance. "Gyaku" means reverse or opposite. Gyaku Tsuki is considered the most powerful punch in karate because it drives the rear hip fully forward, generating maximum rotational force.
 
+## Demonstration
+
+| Start Position | Hip Drive | End Position |
+|:---:|:---:|:---:|
+| ![Gyaku Tsuki — start](http://www.shitoryu.org/skills/punches/images/gyakuf.jpg) | ![Gyaku Tsuki — hip](http://www.shitoryu.org/skills/punches/images/gyakum.jpg) | ![Gyaku Tsuki — end](http://www.shitoryu.org/skills/punches/images/gyakus.jpg) |
+
 ## Technique
 
 **Execution:**

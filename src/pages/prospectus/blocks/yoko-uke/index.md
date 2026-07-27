@@ -13,6 +13,12 @@ Also known as: **Soto Uke** (outside block)
 
 Block moving **from inside (the centre of the body) toward the outside** — sweeping an incoming attack away from the centreline. "Soto" means outside, indicating the direction the block travels.
 
+## Demonstration
+
+| Start Position | End Position |
+|:---:|:---:|
+| ![Yoko Uke — start](http://www.shitoryu.org/skills/blocks/images/yoko_ukef.jpg) | ![Yoko Uke — end](http://www.shitoryu.org/skills/blocks/images/yoko_ukes.jpg) |
+
 ## Technique
 
 **Starting Position:**

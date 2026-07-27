@@ -11,6 +11,12 @@ description: Parallel stance — feet apart and parallel at hip width. The funda
 
 Feet apart and **parallel** — an open stance at hip width. "Heiko" means parallel, and the defining feature of this stance is that both feet point directly forward with even spacing.
 
+## Demonstration
+
+| Front View | Side View |
+|:---:|:---:|
+| ![Heiko Dachi — front view](http://www.shitoryu.org/skills/stances/images/heikof.jpg) | ![Heiko Dachi — side view](http://www.shitoryu.org/skills/stances/images/heikos.jpg) |
+
 ## Key Points
 
 - Feet are approximately hip-width apart

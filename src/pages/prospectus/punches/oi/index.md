@@ -11,6 +11,12 @@ description: The fundamental stepping lunge punch — stepping forward with the 
 
 The **stepping lunge punch** — the front hand punches as the front foot steps forward, creating a coordinated full-body driving strike. "Oi" means "chasing" or "following" — the hand chases the stepping foot.
 
+## Demonstration
+
+| Start Position | Lunge Step | End Position |
+|:---:|:---:|:---:|
+| ![Oi Tsuki — start](http://www.shitoryu.org/skills/punches/images/oif.jpg) | ![Oi Tsuki — step](http://www.shitoryu.org/skills/punches/images/oim.jpg) | ![Oi Tsuki — end](http://www.shitoryu.org/skills/punches/images/ois.jpg) |
+
 ## Technique
 
 **Execution:**

@@ -11,6 +11,12 @@ description: The rising upper-level block — deflects attacks aimed at the head
 
 The **rising upper-level block** — one of the most fundamental blocks in karate, designed to deflect attacks aimed at the head. "Age" means rising or rising upward.
 
+## Demonstration
+
+| Start Position | End Position |
+|:---:|:---:|
+| ![Age Uke — start](http://www.shitoryu.org/skills/blocks/images/age_ukef.jpg) | ![Age Uke — end](http://www.shitoryu.org/skills/blocks/images/age_ukes.jpg) |
+
 ## Technique
 
 **Starting Position:**

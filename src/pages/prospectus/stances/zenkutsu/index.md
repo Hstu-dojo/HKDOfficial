@@ -11,6 +11,12 @@ description: Long forward stance — deep front knee bend with extended rear leg
 
 A long forward stance with the front knee **deeply bent** and the rear leg fully extended. "Zenkutsu" means "forward leaning." This is the primary power stance in karate and drives the majority of forward-moving strikes and blocks.
 
+## Demonstration
+
+| Front View | Side View |
+|:---:|:---:|
+| ![Zenkutsu Dachi — front view](http://www.shitoryu.org/skills/stances/images/zenkutsuf.jpg) | ![Zenkutsu Dachi — side view](http://www.shitoryu.org/skills/stances/images/zenkutsus.jpg) |
+
 ## Key Points
 
 - Front foot points forward
