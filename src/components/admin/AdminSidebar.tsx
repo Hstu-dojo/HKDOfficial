@@ -183,9 +183,9 @@ const navigation: NavItem[] = [
   },
   {
     name: 'Documentation',
-    href: '/docs',
+    href: '/admin/docs',
     icon: BookOpenIcon,
-    description: 'Developer & API docs',
+    description: 'Developer & API docs index',
     requiredRole: 'ADMIN',
   },
   {
