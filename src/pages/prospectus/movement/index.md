@@ -1,50 +1,50 @@
 ---
-title: Movement (Tenshin-Happo)
-description: The fundamental ability to apply offensive and defensive techniques in eight directions — the core of Shito-Ryu's mobile fighting strategy.
+title: মুভমেন্ট (Tenshin-Happo)
+description: আটটি নির্দেশিত দিকে আক্রমণাত্মক ও প্রতিরক্ষামূলক কৌশল প্রয়োগের মৌলিক ক্ষমতা — শিটো-রিউ ফাইটিং কৌশলের মূল ভিত্তি।
 ---
 
-# Movement — Tenshin-Happo
+# মুভমেন্ট — Tenshin-Happo
 
-**Eight-Directional Movement**
+**অষ্ট-মুখী মুভমেন্ট (Eight-Directional Movement)**
 
-## Overview
+## সংক্ষিপ্ত বিবরণ
 
-**Tenshin-Happo** (転身八方) — "eight-directional body movement" — is the fundamental ability to apply offensive and defensive techniques in **eight different directions**. Mastery of directional movement is essential to Shito-Ryu's fighting strategy, as every technique must be executable from any angle.
+**Tenshin-Happo** (転身八方) — "আট-মুখী বডি মুভমেন্ট" — হলো **আটটি ভিন্ন দিকে** আক্রমণাত্মক এবং প্রতিরক্ষামূলক উভয় কৌশল প্রয়োগ করার মৌলিক দক্ষতা। যেকোনো দিক বা কোণ থেকে আক্রমণ ও প্রতিরোধ করতে সক্ষম হওয়া শিটো-রিউ কৌশলের অন্যতম গুরুত্বপূর্ণ অঙ্গ।
 
-## The Eight Directions
+## আটটি দিক (The Eight Directions)
 
-Movement in Shito-Ryu is trained to be effective in all cardinal and intercardinal directions:
+শিটো-রিউ ক্যারাটেতে নিচে উল্লেখিত আটটি মূল এবং অন্তর্বর্তী দিকে মুভমেন্ট অনুশীলন করা হয়:
 
 ![Tenshin-Happo Diagram](/prospectus/skills/images/tenshin.gif)
 
 ```
-        ↑ (1) Forward
+        ↑ (১) সামনে (Forward)
    ↖          ↗
-(8) NW      (2) NE
-  ←  (Centre)  →
-(7) SW      (3) SE
+(৮) উত্তর-পশ্চিম (NW)      (২) উত্তর-পূর্ব (NE)
+  ←  (কেন্দ্র/Centre)  →
+(৭) দক্ষিণ-পশ্চিম (SW)      (৩) দক্ষিণ-পূর্ব (SE)
    ↙          ↘
-        ↓ (4) Backward
+        ↓ (৪) পেছনে (Backward)
 ```
 
-| Direction | Description |
-|---|---|
-| 1 — Forward (Mae) | Direct advance toward the opponent |
-| 2 — Forward-Right (Mae-Migi) | Diagonal advance to the right |
-| 3 — Right-Rear (Ushiro-Migi) | Diagonal retreat to the right |
-| 4 — Backward (Ushiro) | Direct retreat away from opponent |
-| 5 — Left-Rear (Ushiro-Hidari) | Diagonal retreat to the left |
-| 6 — Forward-Left (Mae-Hidari) | Diagonal advance to the left |
-| 7 — Left (Hidari) | Direct lateral movement left |
-| 8 — Right (Migi) | Direct lateral movement right |
+| নম্বর | দিক (Direction) | বিবরণ (Description) |
+|---|---|---|
+| ১ — সামনে (Mae) | সোজাসুজি প্রতিপক্ষের দিকে এগিয়ে যাওয়া |
+| ২ — সামনে-ডানে (Mae-Migi) | ডান দিকে কোণাকুণি এগিয়ে যাওয়া |
+| ৩ — পেছনে-ডানে (Ushiro-Migi) | ডান দিকে কোণাকুণি পেছনে সরে যাওয়া |
+| ৪ — পেছনে (Ushiro) | সোজা প্রতিপক্ষ থেকে পেছনে সরে যাওয়া |
+| ৫ — পেছনে-বামে (Ushiro-Hidari) | বাম দিকে কোণাকুণি পেছনে সরে যাওয়া |
+| ৬ — সামনে-বামে (Mae-Hidari) | বাম দিকে কোণাকুণি এগিয়ে যাওয়া |
+| ৭ — বামে (Hidari) | বাম দিকে পার্শ্ববর্তী সরে যাওয়া |
+| ৮ — ডানে (Migi) | ডান দিকে পার্শ্ববর্তী সরে যাওয়া |
 
-## Taisabaki — Body Shifting
+## Taisabaki — শরীর স্থানান্তর (Body Shifting)
 
-**Taisabaki** (体捌き) is the art of body management — shifting the body off the line of attack while positioning for counter-attack. Tenshin-Happo develops the ability to apply taisabaki in any of the eight directions.
+**Taisabaki** (体捌き) হলো শরীর নিয়ন্ত্রণের একটি শিল্প — প্রতিপক্ষের আক্রমণের লাইন থেকে শরীরকে সরিয়ে নিয়ে সাথে সাথে পাল্টা আক্রমণের পজিশনে চলে যাওয়া। Tenshin-Happo আটটি দিকের যেকোনোটিতে Taisabaki প্রয়োগের দক্ষতা বাড়ায়।
 
-The principle: *move the body to create safety, then immediately counter.*
+মূলনীতি: *নিরাপত্তা নিশ্চিত করতে শরীর সরিয়ে নিন, এবং সাথে সাথে পাল্টা আক্রমণ করুন।*
 
-## References & Bibliography
+## রেফারেন্স (References & Bibliography)
 
 1. Mabuni Kenei / Nakahashi Hidetoshi. *Karate-do Shito-ryu.* Paris, France: SEDIREP, 1989.
 2. Mabuni Kenei / Kassis Con. *Shito-ryu Karate-do.* Victoria, Australia: Dominie Press, 1997.

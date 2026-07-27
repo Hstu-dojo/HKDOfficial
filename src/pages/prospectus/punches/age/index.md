@@ -1,39 +1,24 @@
 ---
 title: Age Tsuki — Rising Punch
-description: Rising punch — the fist travels upward to strike the chin or jaw from below, an effective close-range counter.
+description: উর্ধ্বমুখী রাইজিং পাঞ্চ — নিচ থেকে ওপরের দিকে থুতনি বা চোয়াল লক্ষ্য করে আপারকাটের মতো ঘুসি।
 ---
 
 # Age Tsuki — Rising Punch
 
-**Reading:** *A-ge Tsoo-ki*
+**উচ্চারণ:** *আ-গে তসুকি*
 
-## Description
+## বিবরণ
 
-The **rising punch** — the fist travels **upward** to strike the chin, jaw, or face from below. "Age" means rising. This is the karate equivalent of an uppercut, used at close range when straight punches are blocked.
+**উর্ধ্বমুখী ঘুসি** — যা নিচ থেকে **ওপরের দিকে** উঠে প্রতিপক্ষের থুতনি বা মুখমণ্ডল লক্ষ্য করে আঘাত হানে। "Age" অর্থ ওপরের দিকে ওঠা। এটি ক্যারাটের আপারকাট।
 
-## Demonstration
+## ডেমোনস্ট্রেশন (Demonstration)
 
 ![Age Tsuki Animation](/prospectus/skills/punches/images/age_tsuki.GIF)
 
-| Step 1 (Front / Side) | Step 2 (Front / Side) | Step 3 (Front / Side) |
+| স্টেপ ১ (সামনে / পাশে) | স্টেপ ২ (সামনে / পাশে) | স্টেপ ৩ (সামনে / পাশে) |
 |:---:|:---:|:---:|
 | ![Age Front 1](/prospectus/skills/punches/images/agef1.jpg) <br> ![Age Side 1](/prospectus/skills/punches/images/ages1.jpg) | ![Age Front 2](/prospectus/skills/punches/images/agef2.jpg) <br> ![Age Side 2](/prospectus/skills/punches/images/ages2.jpg) | ![Age Front 3](/prospectus/skills/punches/images/agef3.jpg) <br> ![Age Side 3](/prospectus/skills/punches/images/ages3.jpg) |
 
-## Technique
+## ব্যবহার
 
-**Execution:**
-- Begin with the punching fist chambered low
-- Drive the fist **upward** from below — palm typically facing the punching side or inward
-- The fist rises in a vertical arc targeting the chin or jaw
-- The elbow bends and then drives upward, followed by forearm extension
-- Hip rotation (on the punching side) contributes upward force
-
-**Contact Area:** Seiken (top two knuckles)
-
-**Range:** Close to medium range
-
-## Application
-
-- Targets: chin, jaw, underside of nose
-- Effective when opponent is in close range and a straight punch cannot be fully extended
-- Can follow a mid-level block as a close-range counter
+- কাছে এসে খুব শর্ট রেঞ্জে থুতনির নিচে আঘাত করার জন্য।

@@ -1,27 +1,23 @@
 ---
-title: Kata
-description: The complete catalogue of Shito-Ryu kata taught at Karate-do Shito-Kai Canada, organized by historical lineage.
+title: কাটা — Kata
+description: ক্যারাটে-দো শিটো-কাই ক্যানাডা डोजোতে শিক্ষা দেওয়া বিভিন্ন গুরু-পরম্পরা বা লাইন অনুযায়ী শিটো-রিউ কাটার সম্পূর্ণ তালিকা।
 ---
 
-# Kata
+# কাটা — Kata
 
-**型** — Pre-arranged sequences of technique that encode the combative knowledge of Shito-Ryu.
+**型** — পূর্ব-নির্ধারিত আত্মরক্ষা ও আক্রমণের সুসংগঠিত ক্যারাটে ফর্ম।
 
-Kata are the living encyclopedia of karate. Each kata is a set sequence of defensive and offensive techniques — combined with specific stances, movements, breathing, and focused power (kime) — that preserves and transmits the combative principles of the masters who created them.
+কাটা হলো ক্যারাটের জীবন্ত বিশ্বকোষ। প্রতিটি কাটা হলো নির্দিষ্ট স্ট্যান্স, ডিফেন্স, আক্রমণ, শ্বাসপ্রশ্বাস এবং ফোকাসড পাওয়ার (Kime) এর সমন্বয়ে গঠিত একটি ধারাবাহিক ফর্মুলা, যা বহু প্রাচীন ওকিনাওয়ান ও জাপানি মাস্টারদের যুদ্ধকৌশল ধারণ করে রেখেছে।
 
-> "Kata is not a performance or a dance. Kata is a systematic, scientific study of karate." — *Kenwa Mabuni*
+> "কাটা কোনো নাচ বা নাটकीय প্রদর্শন নয়। কাটা হলো ক্যারাটের একটি বৈজ্ঞানিক ও সুনির্দিষ্ট অনুশীলন।" — *কেনওয়া মাবুনি*
 
-## About Shito-Ryu's Kata System
+## শিটো-রিউয়ের কাটা পদ্ধতি
 
-Shito-Ryu has the largest kata repertoire of any major karate style — over **50 kata** — drawn from both the Naha-te and Shuri-te traditions of Okinawan karate. These are organized below by their historical master lineage.
-
-Following are the karate-do kata taught at various belt levels in the **Karate-do Shito-kai Canada** dojos. The kata are listed in alphabetical order under each lineage.
+শিটো-রিউ ক্যারাটেতে যেকোনো বড় শৈলীর তুলনায় সবচেয়ে বেশি **৫০টিরও বেশি কাটা** রয়েছে — যা ওকিনাওয়ার নাহা-তে (Naha-te) এবং সুরি-তে (Shuri-te) উভয় ঐতিহ্যের সংমিশ্রণ। নিচে ঐতিহাসিক মাস্টারদের লাইন অনুযায়ী কাটার তালিকা দেওয়া হলো।
 
 ---
 
-## ARAGAKI Lineage
-
-*From Seisho Aragaki, an Okinawan master who studied in China.*
+## ARAGAKI ঐতিহ্য
 
 - Niseishi
 - Sochin
@@ -29,17 +25,13 @@ Following are the karate-do kata taught at various belt levels in the **Karate-d
 
 ---
 
-## CHATANYARA Lineage
-
-*From Sokon "Bushi" Matsumura / Chatanyara.*
+## CHATANYARA ঐতিহ্য
 
 - Kusanku
 
 ---
 
-## GOKENKI Lineage
-
-*From Wu Xianhui (Go Kenki), a Chinese tea merchant and martial artist in Okinawa.*
+## GOKENKI ঐতিহ্য
 
 - Hakucho
 - Nipaipo
@@ -47,9 +39,7 @@ Following are the karate-do kata taught at various belt levels in the **Karate-d
 
 ---
 
-## HIGASHIONNA Lineage
-
-*From Kanryo Higashionna (Higaonna), founder of Naha-te.*
+## HIGASHIONNA ঐতিহ্য
 
 - Kururunfa
 - Saifa
@@ -63,24 +53,22 @@ Following are the karate-do kata taught at various belt levels in the **Karate-d
 
 ---
 
-## ISHIMINE Lineage
+## ISHIMINE ঐতিহ্য
 
 - Bassai
 
 ---
 
-## ITOSU Lineage
+## ITOSU ঐতিহ্য
 
-*From Yasutsune "Ankoh" Itosu, master of Shuri-te who created the Pinan/Heian series.*
-
-### Heian (Pinan) Series
+### Heian (Pinan) সিরিজ
 - Heian (Pinan) Shodan
 - Heian (Pinan) Nidan
 - Heian (Pinan) Sandan
 - Heian (Pinan) Yondan
 - Heian (Pinan) Godan
 
-### Advanced Kata
+### উন্নত কাটা (Advanced Kata)
 - Bassai Dai
 - Bassai Sho
 - Chintei
@@ -92,24 +80,22 @@ Following are the karate-do kata taught at various belt levels in the **Karate-d
 - Kosokun Dai
 - Kosokun Sho
 
-### Naihanchi Series
+### Naihanchi সিরিজ
 - Naifuanchin Shodan (Naihanchi Shodan)
 - Naifuanchin Nidan
 - Naifuanchin Sandan
 
-### Rohai Series
+### Rohai সিরিজ
 - Rohai Shodan
 - Rohai Nidan
 - Rohai Sandan
 
-### Other
+### অন্যান্য
 - Shiho-Kosokun
 
 ---
 
-## MABUNI KENWA Lineage
-
-*Kata created or preserved by Kenwa Mabuni, founder of Shito-Ryu.*
+## MABUNI KENWA ঐতিহ্য
 
 - Aoyagi
 - Juroku
@@ -117,15 +103,13 @@ Following are the karate-do kata taught at various belt levels in the **Karate-d
 
 ---
 
-## MATSUBAYASHI (Shorin Ryu) Lineage
+## MATSUBAYASHI (Shorin Ryu) ঐতিহ্য
 
 - Annanko
 
 ---
 
-## MATSUMURA Lineage
-
-*From Sokon "Bushi" Matsumura, a legendary Okinawan master.*
+## MATSUMURA ঐতিহ্য
 
 - Bassai
 - Seisan
@@ -133,9 +117,7 @@ Following are the karate-do kata taught at various belt levels in the **Karate-d
 
 ---
 
-## MATSUMORA Lineage
-
-*From Kosaku Matsumora of Tomari-te.*
+## MATSUMORA ঐতিহ্য
 
 - Rohai
 - Wankan (Matsukaze)
@@ -143,9 +125,7 @@ Following are the karate-do kata taught at various belt levels in the **Karate-d
 
 ---
 
-## MIYAGI Lineage
-
-*From Chojun Miyagi, founder of Goju-Ryu.*
+## MIYAGI ঐতিহ্য
 
 - Gekisai Ichi
 - Gekisai Ni
@@ -153,12 +133,12 @@ Following are the karate-do kata taught at various belt levels in the **Karate-d
 
 ---
 
-## UECHI / MABUNI Lineage
+## UECHI / MABUNI ঐতিহ্য
 
 - Shinpa
 
 ---
 
-## Related References
+## সম্পর্কিত লিংক
 
-- [Kata Requirements for Grading](/prospectus/grading)
+- [গ্রেডিংয়ের জন্য কাটার প্রয়োজনীয়তা](/prospectus/grading)

@@ -1,98 +1,67 @@
 ---
-title: Kumite Footwork
-description: Shito-Ryu's four fundamental fighting footwork patterns — Yori-Ashi, Okuri-Ashi, Sugi-Ashi, and Oi-Ashi — with combination exercises.
+title: কুমিতে ফুটওয়ার্ক (Kumite Footwork)
+description: শিটো-রিউ ক্যারাটে ফাইট বা স্পারিংয়ের চারটি মৌলিক ফুটওয়ার্ক প্যাটার্ন — Yori-Ashi, Okuri-Ashi, Sugi-Ashi, এবং Oi-Ashi।
 ---
 
-# Kumite Footwork
+# কুমিতে ফুটওয়ার্ক — Kumite Footwork
 
-**組手 足捌き** — The four fundamental footwork patterns of Shito-Ryu fighting.
+**組手 足捌き** — শিটো-রিউ ফাইটিং বা স্পারিংয়ের ৪টি মৌলিক ফুটওয়ার্ক পদ্ধতি।
 
-Shito-Ryu's basic fighting style utilizes **four fundamental footwork patterns**, among others. Mastery of these footwork patterns is essential — a karate-ka who cannot move efficiently cannot fight effectively. Techniques alone are not enough without the footwork to position them correctly.
-
----
-
-## The Four Footwork Patterns
-
-### 1. YORI-ASHI — 寄り足
-**Front foot stepping forward**
-
-The front foot steps forward while the rear foot slides up to maintain correct kumite-kamae (sparring posture) distance.
-
-*Use: Advancing on the opponent while maintaining the kumite stance.*
+শিটো-রিউ ফাইটিং শৈলীতে ৪টি মৌলিক ফুটওয়ার্ক প্যাটার্ন ব্যবহার করা হয়। সঠিক ফুটওয়ার্ক না থাকলে আক্রমণ বা প্রতিরক্ষা কোনোটিই সঠিক দূরত্ব থেকে প্রয়োগ করা সম্ভব নয়।
 
 ---
 
-### 2. OKURI-ASHI — 送り足
-**Rear foot stepping over front foot**
+## ৪টি মৌলিক ফুটওয়ার্ক প্যাটার্ন
 
-The rear foot steps over and past the front foot — a skipping/crossing step that closes distance rapidly.
+### ১. YORI-ASHI — 寄り足
+**সামনের পা আগে বাড়িয়ে কদম ফেলা**
 
-*Use: Quick distance-closing to get inside the opponent's range.*
-
----
-
-### 3. SUGI-ASHI — 過ぎ足
-**Rear foot meeting front foot**
-
-The rear foot slides forward to meet the front foot — a short, controlled step that adjusts distance without committing.
-
-*Use: Fine-tuning distance; a small adjustment step.*
+সামনের পা সামনের দিকে কদম ফেলে এবং পেছনের পা অনুসরণ করে সাথে সাথে চলে আসে যাতে কুমিতে স্ট্যান্সের সঠিক দূরত্ব বজায় থাকে।
 
 ---
 
-### 4. OI-ASHI — 追い足
-**Rear foot taking a large step past front foot**
+### ২. OKURI-ASHI — 送り足
+**পেছনের পা সামনের পা অতিক্রম করে ক্রস করা**
 
-The rear foot takes a large step past the front foot — a full long-range advancing step.
-
-*Use: Large-scale advance to cover maximum distance; used with Oi Tsuki.*
+পেছনের পা দ্রুত সামনের পাকে ডিঙ্গিয়ে সামনে চলে যায় — দ্রুত প্রতিপক্ষের কাছাকাছি পৌঁছাতে এটি ব্যবহৃত হয়।
 
 ---
 
-## Training Purpose
+### ৩. SUGI-ASHI — 過ぎ足
+**পেছনের পা সামনের পায়ের কাছে নিয়ে আসা**
 
-> *Students must successfully blend as well as combine the footwork concepts with offensive and defensive techniques to become better skilled fighters.*
-
-> *The intention of these examples is to provide the Shito-ryu student with a simple reference/guideline method of remembering the previously learned footwork.*
-
-> *Students are encouraged to develop their own series of combinations using different footwork patterns.*
+পেছনের পা হালকা স্লাইড করে সামনের পায়ের কাছে আসে — সূক্ষ্ম দূরত্ব সমন্বয় করার ছোট কদম।
 
 ---
 
-## Yori-Ashi Exercise Set
+### ৪. OI-ASHI — 追い足
+**পেছনের পা দিয়ে বড় কদম ফেলে সামনে যাওয়া**
 
-Starting position: Right or left **kumite-kamae** (sparring posture).
+পেছনের পা দিয়ে একটি দীর্ঘ কদম ফেলে সামনে অতিক্রম করা — বড় দূরত্ব পার হতে Oi Tsuki-র সাথে এটি ব্যবহৃত হয়।
 
-Step with the front foot ahead while sliding the rear foot forward to maintain the correct kumite-kamae distance. Execute each of the following combinations:
+---
 
-| # | Combination |
+## অনুশীলনের নিয়মাবলী
+
+> *শিক্ষার্থীদের অবশ্যই এই ফুটওয়ার্কের সাথে আক্রমণ ও ব্লকের সঠিক সংমিশ্রণ ঘটাতে হবে।*
+
+---
+
+## Yori-Ashi অনুশীলনী সেট (Exercise Set)
+
+ডান বা বাম **Kumite-kamae** (স্পারিং প্রস্তুত ভঙ্গি) থেকে শুরু করুন। সামনের পা বাড়িয়ে পেছনের পা টেনে এনে সমন্বয় করুন:
+
+| # | কম্বিনেশন (Combination) |
 |---|---|
-| 1 | YORI-ASHI with MAE TE TSUKI jodan |
-| 2 | YORI-ASHI with GYAKU TSUKI chudan (or jodan) |
-| 3 | YORI-ASHI, MAE TE TSUKI jodan & GYAKU TSUKI chudan |
-| 4 | YORI-ASHI, GYAKU TSUKI chudan & MAE TE TSUKI jodan |
-| 5 | YORI-ASHI, MAE TE TSUKI jodan & GYAKU TSUKI chudan, taisabaki & MAE TE TSUKI jodan |
-| 6 | YORI-ASHI, GYAKU TSUKI chudan & URA UCHI jodan |
-| 7 | YORI-ASHI, MAE TE TSUKI jodan & GYAKU TSUKI jodan & MAE GERI chudan |
-| 8 | YORI-ASHI, GYAKU TSUKI jodan & MAE GERI chudan |
-| 9 | YORI-ASHI, MAE TE TSUKI jodan, taisabaki, GYAKU TSUKI jodan, MAWASHI GERI chudan & GYAKU USHIRO MAWASHI GERI jodan |
-| 10 | YORI-ASHI, GYAKU TSUKI jodan, taisabaki, MAWASHI GERI chudan & GYAKU USHIRO MAWASHI GERI jodan |
+| ১ | YORI-ASHI এর সাথে MAE TE TSUKI jodan |
+| ২ | YORI-ASHI এর সাথে GYAKU TSUKI chudan (বা jodan) |
+| ৩ | YORI-ASHI, MAE TE TSUKI jodan এবং GYAKU TSUKI chudan |
+| ৪ | YORI-ASHI, GYAKU TSUKI chudan এবং MAE TE TSUKI jodan |
+| ৫ | YORI-ASHI, MAE TE TSUKI jodan এবং GYAKU TSUKI chudan, taisabaki ও MAE TE TSUKI jodan |
+| ৬ | YORI-ASHI, GYAKU TSUKI chudan এবং URA UCHI jodan |
+| ৭ | YORI-ASHI, MAE TE TSUKI jodan, GYAKU TSUKI jodan এবং MAE GERI chudan |
+| ৮ | YORI-ASHI, GYAKU TSUKI jodan এবং MAE GERI chudan |
+| ৯ | YORI-ASHI, MAE TE TSUKI jodan, taisabaki, GYAKU TSUKI jodan, MAWASHI GERI chudan এবং GYAKU USHIRO MAWASHI GERI jodan |
+| ১০ | YORI-ASHI, GYAKU TSUKI jodan, taisabaki, MAWASHI GERI chudan এবং GYAKU USHIRO MAWASHI GERI jodan |
 
-Upon completion, **repeat using the opposite (right/left) kumite-kamae**.
-
----
-
-## Terminology Reference
-
-| Term | Meaning |
-|---|---|
-| Kumite-kamae | Sparring ready posture |
-| Taisabaki | Body shifting/evasion |
-| Jodan | Upper level (head/face) |
-| Chudan | Middle level (chest/solar plexus) |
-| Mae Te Tsuki | Lead hand jab |
-| Gyaku Tsuki | Reverse punch |
-| Ura Uchi | Backfist strike |
-| Mae Geri | Front kick |
-| Mawashi Geri | Roundhouse kick |
-| Gyaku Ushiro Mawashi Geri | Reverse spinning roundhouse kick |
+সম্পূর্ণ করার পর **বিপরীত পজিশন (ডান/বাম) নিয়ে পুনরায় অনুশীলন করুন**।

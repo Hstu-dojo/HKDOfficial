@@ -1,36 +1,32 @@
 ---
 title: Musubi Dachi
-description: Open foot stance — heels together with toes apart, forming a "knot" shape. Used in formal greeting and ready positions.
+description: ওপেন ফুট স্ট্যান্স — গোড়ালি একসাথে এবং আঙুল ৪৫ ডিগ্রি বাইরে খোলা, যা একটি গাঁটের মতো "V" আকৃতি তৈরি করে।
 ---
 
 # Musubi Dachi — Open Foot Stance
 
-**Reading:** *Moo-soo-bee Da-chi*
+**উচ্চারণ:** *মু-সু-বি দা-চি*
 
-## Description
+## বিবরণ
 
-Heels together with toes apart, forming the shape of a **"knot"** (musubi). This open-foot stance is used as a formal ready position and in ceremonial bowing.
+গোড়ালি জোড়া লাগানো কিন্তু পায়ের আঙুল বাইরে খোলা, যা দেখতে একটি গাঁট (Musubi) বা "V" আকৃতির মতো। এই ওপেন-ফুট স্ট্যান্সটি আনুষ্ঠানিক প্রণাম ও সতর্ক অবস্থানের জন্য ব্যবহৃত হয়।
 
-## Demonstration
+## ডেমোনস্ট্রেশন (Demonstration)
 
-| Front View | Side View |
+| সামনের দৃশ্য (Front View) | পাশ্ব দৃশ্য (Side View) |
 |:---:|:---:|
 | ![Musubi Dachi — front view](/prospectus/skills/stances/images/musubif.jpg) | ![Musubi Dachi — side view](/prospectus/skills/stances/images/musubis.jpg) |
 
-## Key Points
+## প্রধান পয়েন্টসমূহ
 
-- Heels are touching together
-- Toes point outward at approximately 45 degrees to each side
-- Feet form a "V" shape when viewed from above
-- Knees are straight, not locked
-- Weight evenly distributed on both feet
-- Body upright and relaxed
+- দুই গোড়ালি পরস্পরের সাথে স্পর্শ করে থাকবে
+- পায়ের আঙুলগুলো বাইরের দিকে প্রায় ৪৫ ডিগ্রি কোণে নির্দেশ করবে
+- উপর থেকে দেখলে পা দুটি "V" আকৃতি গঠন করবে
+- হাঁটু সোজা কিন্তু শিথিল থাকবে
+- শরীরের ওজন দুই পায়ে সমানভাবে থাকবে
 
-## Usage
+## ব্যবহার
 
-Musubi Dachi is primarily used:
-- As the ready position before and after formal bowing (rei)
-- At the start of certain kata
-- During formal dojo ceremonies and greetings
-
----
+Musubi Dachi মূলত ব্যবহৃত হয়:
+- আনুষ্ঠানিক ধনুক প্রণাম (Rei) করার আগে ও পরে
+- নির্দিষ্ট কাটার শুরুতে প্রস্তুত পজিশন হিসেবে

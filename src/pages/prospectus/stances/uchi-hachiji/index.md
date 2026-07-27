@@ -1,45 +1,33 @@
 ---
 title: Uchi-Hachiji Dachi (Niafanchi Dachi)
-description: Inverted natural stance — feet at shoulder width with toes pointing inward at 45 degrees. Also known as Niafanchi Dachi.
+description: ইনভার্টেড ন্যাচারাল স্ট্যান্স — পা কাঁধের চওড়া এবং পায়ের আঙুল ভেতরের দিকে ৪৫ ডিগ্রি কোণে নির্দেশিত।
 ---
 
 # Uchi-Hachiji Dachi — Inverted Natural Stance
 
-**Reading:** *Oo-chi Ha-chi-jee Da-chi*
+**উচ্চারণ:** *উ-চি হা-চি-জি দা-চি*
 
-Also known as: **Niafanchi Dachi**
+অপর নাম: **Niafanchi Dachi**
 
-## Description
+## বিবরণ
 
-Feet at shoulder width apart with toes pointing **inward at 45 degrees**. "Uchi" means inner/inside, inverting the Hachiji Dachi pattern. This stance creates strong internal hip tension and is associated with Naifanchi/Naihanchi kata.
+পা দুটি কাঁধ সমপরিমাণ চওড়া এবং পায়ের আঙুল **ভেতরের দিকে ৪৫ ডিগ্রি কোণে** ঘোরানো থাকে। "Uchi" অর্থ ভেতরের দিক। এটি হিপে একটি শক্তিশালী অভ্যন্তরীণ টান তৈরি করে এবং এটি নাইফাঞ্চি (Naifanchi) কাটার সাথে সম্পর্কিত।
 
-## Demonstration
+## ডেমোনস্ট্রেশন (Demonstration)
 
-| Front View | Side View |
+| সামনের দৃশ্য (Front View) | পাশ্ব দৃশ্য (Side View) |
 |:---:|:---:|
 | ![Uchi-Hachiji Dachi — front view](/prospectus/skills/stances/images/naihanchif.jpg) | ![Uchi-Hachiji Dachi — side view](/prospectus/skills/stances/images/naihanchis.jpg) |
 
-## Key Points
+## প্রধান পয়েন্টসমূহ
 
-- Feet are shoulder-width apart
-- Toes point inward at 45 degrees (pigeon-toed)
-- Knees push slightly outward
-- Strong internal gripping tension in the legs and hips
-- Weight is evenly distributed
-- Body upright with hips forward
+- পা দুটি কাঁধের প্রস্থের সমান চওড়া থাকবে
+- পায়ের আঙুল ভেতরের দিকে ৪৫ ডিগ্রি কোণে থাকবে
+- হাঁটু দুটি বাইরের দিকে হালকা চাপ দিয়ে রাখতে হবে
+- উরু ও হিপের মধ্যে অভ্যন্তরীণ পেশীসংকোচন বা টেনশন থাকবে
+- ওজন দুই পায়ে সমানভাবে থাকবে
 
-## Internal Tension
+## ব্যবহার
 
-This stance requires muscular engagement to maintain the inward toe position:
-- Inner thigh muscles are activated
-- Knee joints must resist the tendency to collapse inward
-- Creates strong hip-locking force
-- Develops the muscular structure used in Naifanchi kata
-
-## Usage
-
-- Featured in Naihanchi (Naifuanchin) kata series
-- Training for internal hip strength
-- Transition stance in certain combinations
-
----
+- Naifanchi (Naihanchi) কাটা সিরিজে ব্যবহৃত হয়
+- হিপ ও পায়ের অভ্যন্তরীণ শক্তি বৃদ্ধির প্রশিক্ষণে

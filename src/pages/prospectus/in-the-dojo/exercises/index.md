@@ -1,51 +1,43 @@
 ---
-title: Basic Exercise Program
-description: The standard 24-exercise warm-up and conditioning program used in Karate-do Shito-Kai training sessions.
+title: শারীরিক ব্যায়াম প্রোগ্রাম (Basic Exercise Program)
+description: শিটো-কাই ক্যারাটে অনুশীলনের শুরুতে করা ২৪টি ব্যায়ামের ওয়ার্ম-আপ এবং ফিটনেস প্রোগ্রাম।
 ---
 
-# Basic Exercise Program
+# শারীরিক ব্যায়াম প্রোগ্রাম — Basic Exercise Program
 
-The following 24 exercises form the standard **warm-up and conditioning program** used at the beginning of Karate-do Shito-Kai training sessions. This program develops flexibility, strength, and cardiovascular fitness — all essential for karate training.
+নিচের ২৪টি ব্যায়াম ক্যারাটে ক্লাস শুরুর আগে **ওয়ার্ম-আপ ও ফিটনেস প্রোগ্রাম** হিসেবে সম্পন্ন করা হয়। এই প্রোগ্রামটি নমনীয়তা (Flexibility), শারীরিক শক্তি ও স্ট্যামিনা বৃদ্ধি করে।
 
 ---
 
-## Exercise Programme
+## ব্যায়ামের তালিকা
 
-| # | Exercise | Repetitions |
+| # | ব্যায়ামের নাম (Exercise) | পুনরাবৃত্তি (Reps) |
 |---|---|---|
-| 1 | Stride Jumps (Jumping Jacks) | 60× |
-| 2 | Side Twist | 20× |
-| 3 | Side Stretch | 30× |
-| 4 | Squats | 10× |
-| 5 | Toe Touch | 30× |
-| 6 | Grab-the-Ball | 10× |
-| 7 | Standing Knees-to-Chest *(5× each leg)* | 1× set |
-| 8 | Side-Kick Stretch — flat *(5× each leg)* | 10× |
-| 9 | Side-Kick Stretch — heel *(5× each leg)* | 10× |
-| 10 | Push-ups (Regular) | 10–50× |
-| 11 | Upper-half Body-lift | 10× |
-| 12 | Lower-half Body-lift | 10× |
-| 13 | Leg Raises | 10× |
-| 14 | Seated Leg Stretch (Head-to-knees) | 10× |
-| 15 | Seated Toe Touch *(5× each leg)* | 10× |
-| 16 | Seated Side Stretch (Elbows-to-floor) | 10× |
-| 17 | Seated Side Twist (Elbows-to-knees) | 10× |
-| 18 | Seated Swim (Head-to-floor) | 10× |
-| 19 | Seated Knees-to-Chest | 10× |
-| 20 | Push-ups (Wide-arm, Straddle leg) | 30–50× |
-| 21 | Sit-ups (Variety) | 10–50× |
-| 22 | Stand-up Back Arch *(5× each leg)* | 10× |
-| 23 | Seated Leg-raise & Hold *(3 inches above floor)* | 75-count hold |
-| 24 | Running On-the-spot | 50-count |
+| ১ | Stride Jumps (জাম্পিং জ্যাক) | ৬০ বার |
+| ২ | Side Twist (কোমর ঘোরানো) | ২০ বার |
+| ৩ | Side Stretch (পাশের স্ট্র্যাচ) | ৩০ বার |
+| ৪ | Squats (স্কোয়াট) | ১০ বার |
+| ৫ | Toe Touch (পায়ের আঙুল স্পর্শ) | ৩০ বার |
+| ৬ | Grab-the-Ball | ১০ বার |
+| ৭ | Standing Knees-to-Chest *(প্রতি পায়ে ৫ বার)* | ১ সেট |
+| ৮ | Side-Kick Stretch — ফ্ল্যাট *(প্রতি পায়ে ৫ বার)* | ১০ বার |
+| ৯ | Side-Kick Stretch — গোড়ালি *(প্রতি পায়ে ৫ বার)* | ১০ বার |
+| ১০ | Push-ups (সাধারণ পুশ-আপ) | ১০–৫০ বার |
+| ১১ | Upper-half Body-lift | ১০ বার |
+| ১২ | Lower-half Body-lift | ১০ বার |
+| ১৩ | Leg Raises (পা ওপরে তোলা) | ১০ বার |
+| ১৪ | Seated Leg Stretch (মাথা হাঁটুতে স্পর্শ) | ১০ বার |
+| ১৫ | Seated Toe Touch *(প্রতি পায়ে ৫ বার)* | ১০ বার |
+| ১৬ | Seated Side Stretch (কনুই মেঝেবর্ধিত) | ১০ বার |
+| ১৭ | Seated Side Twist | ১০ বার |
+| ১৮ | Seated Swim | ১০ বার |
+| ১৯ | Seated Knees-to-Chest | ১০ বার |
+| ২০ | Push-ups (চওড়া পা পুশ-আপ) | ৩০–৫০ বার |
+| ২১ | Sit-ups (সিট-আপস) | ১০–৫০ বার |
+| ২২ | Stand-up Back Arch *(প্রতি পায়ে ৫ বার)* | ১০ বার |
+| ২৩ | Seated Leg-raise & Hold *(মেঝে থেকে ৩ ইঞ্চি উঁচুতে)* | ৭৫ কাউন্ট হোল্ড |
+| ২৪ | Running On-the-spot (এক জায়গায় দৌড়) | ৫০ কাউন্ট |
 
 ---
 
-## Program Notes
-
-- Exercises **1–9** focus on cardiovascular warm-up and flexibility/stretching
-- Exercises **10–13** build upper-body and core strength (lying position)
-- Exercises **14–19** develop seated flexibility and core (floor work)
-- Exercises **20–22** build overall strength
-- Exercises **23–24** are cardiovascular and muscular endurance finishers
-
-> *Consistent warm-up practice prevents injury and prepares the body and mind for karate training. Always complete the full programme before beginning technique practice.*
+> *নিয়মিত ওয়ার্ম-আপ ইনজুরি প্রতিরোধ করে এবং শরীর ও মনকে অনুশীলনের উপযোগী করে তোলে।*

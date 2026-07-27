@@ -1,55 +1,29 @@
 ---
 title: Gyaku Tsuki — Reverse Punch
-description: The reverse hand punch — punching with the rear hand while in forward stance. The most powerful and versatile punch in Shito-Ryu.
+description: রিভার্স পাঞ্চ — সামনের পায়ের বিপরীত পেছনের হাত দিয়ে ঘুসি। শিটো-রিউয়ের সবচেয়ে শক্তিশালী ও কার্যকর পাঞ্চ।
 ---
 
 # Gyaku Tsuki — Reverse Punch
 
-**Reading:** *Gya-koo Tsoo-ki*
+**উচ্চারণ:** *গিয়াকু তসুকি*
 
-## Description
+## বিবরণ
 
-The **reverse hand punch** — punching with the **rear hand** while in forward stance. "Gyaku" means reverse or opposite. Gyaku Tsuki is considered the most powerful punch in karate because it drives the rear hip fully forward, generating maximum rotational force.
+**রিভার্স হাত দিয়ে পাঞ্চ** — সামনের পায়ের বিপরীত পেছনের হাতটি দিয়ে ঘুসি মারা হয়। "Gyaku" অর্থ বিপরীত। হিপ সম্পূর্ণ ঘুরিয়ে পেছনের পা ও কোমরের শক্তি যোগ হওয়ায় এটি ক্যারাটের সর্বাধিক শক্তিশালী ঘুসি।
 
-## Demonstration
+## ডেমোনস্ট্রেশন (Demonstration)
 
 ![Gyaku Tsuki Animation](/prospectus/skills/punches/images/gyaku_tzuki.GIF)
 
-| Step 1 (Front / Side) | Step 2 (Front / Side) | Step 3 (Front / Side) |
+| স্টেপ ১ (সামনে / পাশে) | স্টেপ ২ (সামনে / পাশে) | স্টেপ ৩ (সামনে / পাশে) |
 |:---:|:---:|:---:|
 | ![Gyaku Front 1](/prospectus/skills/punches/images/gyakuf1.jpg) <br> ![Gyaku Side 1](/prospectus/skills/punches/images/gyakus1.jpg) | ![Gyaku Front 2](/prospectus/skills/punches/images/gyakuf2.jpg) <br> ![Gyaku Side 2](/prospectus/skills/punches/images/gyakus2.jpg) | ![Gyaku Front 3](/prospectus/skills/punches/images/gyakuf3.jpg) <br> ![Gyaku Side 3](/prospectus/skills/punches/images/gyakus3.jpg) |
 
-## Technique
+## কৌশল (Technique)
 
-**Execution:**
-- Begin in fighting stance (Moto Dachi, Zenkutsu Dachi, or Nekoashi Dachi)
-- The **rear hand** punches forward — opposite to the front foot
-- Drive the rear hip forcefully forward as the punch launches
-- The hips rotate sharply — the rear hip drives to the front
-- The punching fist rotates (pronates) from palm-up to palm-down during extension
-- The non-punching front hand chambers to the hip sharply (hikite)
-- The punching arm reaches full extension at the target moment
+- পেছনের কোমর (Hip) সজোড়ে সামনের দিকে ঘোরান
+- পেছনের হাত সোজা ছুড়ে মারুন এবং সামনের হাতটি কোমরে সজোরে টেনে আনুন (Hikite)
 
-**Punching Hand:** Opposite side from the forward foot (e.g., right foot forward → left hand punches)
+## ব্যবহার
 
-## Power Chain
-
-Gyaku Tsuki's power travels through:
-1. Rear foot drive from the floor
-2. Rear leg extension
-3. Rear hip rotation forward (koshi no kaiten)
-4. Shoulder rotation forward
-5. Arm extension
-6. Fist rotation and kime at impact
-
-## Levels
-
-- **Gyaku Tsuki jodan** — punch to the face/head
-- **Gyaku Tsuki chudan** — punch to the solar plexus/ribs
-- **Gyaku Tsuki gedan** — punch to the lower abdomen
-
-## Usage
-
-- The primary counter-attack punch in kumite
-- Used after every block in basic combination training
-- Featured extensively across all Shito-Ryu kata
+- কুমিতে বা স্পারিংয়ে ব্লকের পরপরই প্রধান পাল্টা আক্রমণ (Counter Attack) হিসেবে।

@@ -1,37 +1,33 @@
 ---
 title: Heiko Dachi
-description: Parallel stance — feet apart and parallel at hip width. The fundamental natural open stance.
+description: প্যারালাল স্ট্যান্স — পা দুটি হিপের চওড়ায় সোজা সমান্তরালভাবে রাখা। প্রাকৃতিক খোলা স্ট্যান্স।
 ---
 
 # Heiko Dachi — Parallel Stance
 
-**Reading:** *Hey-ko Da-chi*
+**উচ্চারণ:** *হেই-কো দা-চি*
 
-## Description
+## বিবরণ
 
-Feet apart and **parallel** — an open stance at hip width. "Heiko" means parallel, and the defining feature of this stance is that both feet point directly forward with even spacing.
+পা দুটি আলাদা এবং **সমান্তরাল** — হিপের চওড়ায় খোলা একটি নিরপেক্ষ স্ট্যান্স। "Heiko" অর্থ সমান্তরাল। এই স্ট্যান্সের প্রধান বৈশিষ্ট্য হলো দুই পায়ের আঙুলই একদম সোজা সামনের দিকে নির্দেশ করে।
 
-## Demonstration
+## ডেমোনস্ট্রেশন (Demonstration)
 
-| Front View | Side View |
+| সামনের দৃশ্য (Front View) | পাশ্ব দৃশ্য (Side View) |
 |:---:|:---:|
 | ![Heiko Dachi — front view](/prospectus/skills/stances/images/heikof.jpg) | ![Heiko Dachi — side view](/prospectus/skills/stances/images/heikos.jpg) |
 
-## Key Points
+## প্রধান পয়েন্টসমূহ
 
-- Feet are approximately hip-width apart
-- Both feet are parallel, pointing straight forward
-- Knees are straight but relaxed (not bent or locked)
-- Weight is distributed evenly on both feet
-- Body is upright with a natural posture
-- This is the "natural" standing position
+- পা দুটি আনুমানিক হিপের প্রস্থের সমান চওড়া থাকবে
+- উভয় পা সমান্তরালভাবে সোজা সামনে থাকবে
+- হাঁটু শিথিলভাবে সোজা থাকবে
+- ওজন দুই পায়ে সমানভাবে থাকবে
+- সাধারণ স্বাভাবিক সোজা ভঙ্গি বজায় থাকবে
 
-## Usage
+## ব্যবহার
 
-Heiko Dachi is used:
-- As a natural standing ready position
-- In warm-up and basic training exercises
-- As a transitional stance between movements
-- During certain kata sequences
-
----
+Heiko Dachi ব্যবহৃত হয়:
+- স্বাভাবিক দাঁড়িয়ে থাকার রেডি পজিশন হিসেবে
+- ওয়ার্ম-আপ এবং মৌলিক অনুশীলন করার সময়
+- টেকনিকের অন্তর্বর্তীকালীন ট্রানজিশন হিসেবে

@@ -1,63 +1,60 @@
 ---
-title: Punching Techniques — Tsuki-Waza
-description: Complete reference for Shito-Ryu punching and hand-thrusting techniques — from basic seiken tsuki to advanced combination strikes.
+title: পাঞ্চিং টেকনিকসমূহ — Tsuki-Waza
+description: শিটো-রিউ ক্যারাটের সমস্ত ঘুসি এবং হাত দিয়ে আঘাত হানার কৌশল — মৌলিক Seiken Tsuki থেকে শুরু করে উন্নত কম্বিনেশন পাঞ্চ।
 ---
 
-# Punching Techniques — Tsuki-Waza
+# পাঞ্চিং টেকনিকসমূহ — Tsuki-Waza
 
-**突き技** — The art of thrusting and striking with the fist.
+**突き技** — মুষ্টির সাহায্যে থ্রাস্ট এবং আঘাত হানার শিল্প।
 
-Shito-Ryu punching techniques are driven by coordinated hip rotation (koshi), correct fist formation (seiken), and the opposing pull of the hikite (pulling hand). Power originates from the legs, travels through the hips, and is expressed through a perfectly rotating fist.
-
----
-
-## Fist Formations
-
-**Seiken (正拳)** — The fore-fist: the primary punching surface formed by the knuckles of the index and middle fingers. The wrist must be straight and locked at the moment of impact.
+শিটো-রিউ পাঞ্চিং কৌশল হিপ রোটেশন (Koshi), সঠিক মুষ্টি গঠন (Seiken) এবং বিপরীত হাতের পাওয়ার টেনে আনা (Hikite) এর সমন্বয়ে পরিচালিত হয়। শক্তি উৎপন্ন হয় পা থেকে, যা হিপের মাধ্যমে সঞ্চালিত হয়ে ঘুসির মাধ্যমে প্রতিপক্ষের শরীরে আঘাত হানে।
 
 ---
 
-## Punching Techniques (Tsuki-Waza)
+## মুষ্টি গঠন (Fist Formations)
 
-| Japanese Name | English Name | Description |
+**Seiken (正拳)** — ফোর-ফিস্ট: তর্জনী ও মধ্যমা আঙুলের গোড়ালি দিয়ে গঠিত প্রধান ঘুসি আঘাতকারী অংশ। আঘাতের সময় কবজি সম্পূর্ণ সোজা ও শক্ত রাখতে হয়।
+
+---
+
+## পাঞ্চিং কৌশলসমূহ (Tsuki-Waza)
+
+| জাপানি নাম | নাম (English) | বিবরণ |
 |---|---|---|
-| Seiken Tsuki | Fore-Fist Punch | Basic fore-fist straight punch — used for fundamental practice. |
-| [Oi Tsuki](/prospectus/punches/oi) | Lunge Punch | Stepping forward lunge punch — front hand matches front foot. |
-| [Gyaku Tsuki](/prospectus/punches/gyaku) | Reverse Punch | Reverse hand punch — rear hand punches with a step or in stance. The most powerful basic punch. |
-| [Furi Tsuki](/prospectus/punches/furi) | Roundhouse Punch | Circular/swinging punch — a roundhouse punch from the side. |
-| [Age Tsuki](/prospectus/punches/age) | Rising Punch | Rising punch — the fist rises upward to strike the chin or jaw. |
-| Kagi Tsuki | Hook Punch | Hook punch — a close-range punch with a bent elbow following a circular path. |
-| [Mae Te Tsuki](/prospectus/punches/mae-te) | Jab | Lead-hand (forward hand) jab-punch — a fast, straight flicker punch. |
-| [Ura Tsuki](/prospectus/punches/ura) | Inverted Punch | Inverted (palm up) close punch — palm faces upward at impact. |
-| [Morote Tsuki](/prospectus/punches/morote) | U-Punch | U-shape punch — both fists punch simultaneously at different heights. |
-| Tate Tsuki | Vertical Fist Punch | Vertical fist punch — the fist is vertical at impact (thumb up). |
-| Nihon Tsuki | Double Punch | Double punch — two simultaneous or rapid successive punches. |
+| Seiken Tsuki | Fore-Fist Punch | মৌলিক সোজা ঘুসি — অনুশীলনের প্রথম ধাপ। |
+| [Oi Tsuki](/prospectus/punches/oi) | Lunge Punch | কদম ফেলে সামনের দিকে এগিয়ে লঞ্জ পাঞ্চ। |
+| [Gyaku Tsuki](/prospectus/punches/gyaku) | Reverse Punch | বিপরীত হাতের পাঞ্চ — সবচেয়ে শক্তিশালী রিভার্স পাঞ্চ। |
+| [Furi Tsuki](/prospectus/punches/furi) | Roundhouse Punch | পাশ থেকে ঘোরানো বৃত্তাকার রাউন্ডহাউস পাঞ্চ। |
+| [Age Tsuki](/prospectus/punches/age) | Rising Punch | নিচ থেকে থুতনির দিকে ওঠা উর্ধ্বমুখী আপারকাট পাঞ্চ। |
+| Kagi Tsuki | Hook Punch | কনুই বাঁকিয়ে স্বল্প দূরত্বের হুক পাঞ্চ। |
+| [Mae Te Tsuki](/prospectus/punches/mae-te) | Jab | সামনের হাতের দ্রুত জ্যাব পাঞ্চ। |
+| [Ura Tsuki](/prospectus/punches/ura) | Inverted Punch | হাতের তালু ওপরের দিকে রেখে কাছের ইনভার্টেড পাঞ্চ। |
+| [Morote Tsuki](/prospectus/punches/morote) | U-Punch | উভয় হাত দিয়ে একসাথে দুই স্তরে "U" আকৃতির পাঞ্চ। |
+| Tate Tsuki | Vertical Fist Punch | খাড়া মুষ্টির পাঞ্চ (বুড়ো আঙুল ওপরের দিকে)। |
+| Nihon Tsuki | Double Punch | পর পর জোড়া পাঞ্চ। |
 
 ---
 
-## Other Hand Thrusting Techniques
+## অন্যান্য থ্রাস্ট কৌশল (Other Hand Thrusting Techniques)
 
-| Japanese Name | English Name | Description |
+| জাপানি নাম | নাম (English) | বিবরণ |
 |---|---|---|
-| Yonhon Nukite | Four-Finger Spear Hand | Four-finger spear hand thrust — fingers extended and aligned, striking with fingertips. |
+| Yonhon Nukite | Four-Finger Spear Hand | চার আঙুল সোজা প্রসারিত স্পিয়ার-হ্যান্ড আঘাত। |
 
 ---
 
-## Target Levels
+## টার্গেট লেভেল (Target Levels)
 
-| Level | Japanese | Target Area |
+| স্তর (Level) | জাপানি নাম | লক্ষ্য অঞ্চল (Target Area) |
 |---|---|---|
-| Upper | Jodan | Head, face, neck |
-| Middle | Chudan | Chest, solar plexus, ribs |
-| Lower | Gedan | Abdomen, groin |
+| উচ্চ স্তর (Upper) | Jodan | মাথা, মুখমণ্ডল, ঘাড় |
+| মধ্যম স্তর (Middle) | Chudan | বুক, সোলার প্লেক্সাস, পাঁজর |
+| নিম্ন স্তর (Lower) | Gedan | তলপেট, নাভি |
 
 ---
 
-## Power Principles
+## পাওয়ার মূলনীতি (Power Principles)
 
-Effective Shito-Ryu punching requires:
-
-1. **Koshi (Hip Rotation)** — The hip drives the shoulder which drives the arm
-2. **Hikite (Pulling Hand)** — The non-punching hand pulls sharply to the hip, adding rotational torque
-3. **Kime (Focus)** — Maximum muscular contraction at the instant of impact
-4. **Ma-ai (Distance)** — Correct range so the fist reaches full extension at the target, not before or after
+১. **Koshi (হিপ মোচড়)** — হিপের ঘূর্ণন বাহুকে গতি দেয়
+২. **Hikite (টেনে আনা হাত)** — বিপরীত হাত দ্রুত কোমরে টেনে আনলে মোচড় ও শক্তি বাড়ে
+৩. **Kime (একগ্রতা)** — আঘাত হানার মুহূর্তে পেশীর সর্বোচ্চ সংকোচন

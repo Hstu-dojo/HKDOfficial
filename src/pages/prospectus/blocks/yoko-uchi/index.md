@@ -1,43 +1,29 @@
 ---
 title: Yoko Uchi (Uchi Uke) — Inside Block
-description: Mid-level block moving from outside toward the inside centre of the body — redirects attacks across the centreline.
+description: মধ্যস্তরের ব্লক যা বাইরে থেকে ভেতরের দিকে চালিত হয় — সেন্টারলাইনের দিকে আক্রমণকে ঘুরিয়ে দেয়।
 ---
 
 # Yoko Uchi (Uchi Uke) — Inside Block
 
-Also known as: **Uchi Uke** (inside block)
+অপর নাম: **Uchi Uke** (ইনসাইড ব্লক)
 
-**Reading:** *Yo-ko Oo-chi / Oo-chi Oo-ke*
+**উচ্চারণ:** *ইয়োকো উ-চি / উ-চি উ-কে*
 
-## Description
+## বিবরণ
 
-Block moving **from outside toward the inside** (centre of body) — the opposite direction to Yoko Uke. "Uchi" means inside, indicating the block travels toward the centreline.
+ব্লকটি বাইরের দিক থেকে **ভেতরের দিকে** (শরীরের কেন্দ্রের দিকে) চালিত হয় — Yoko Uke এর বিপরীত দিক। "Uchi" অর্থ ভেতর। 
 
-## Demonstration
+## ডেমোনস্ট্রেশন (Demonstration)
 
 ![Yoko Uchi Animation](/prospectus/skills/blocks/images/uchiuke.gif)
 
-| Step 1 (Front / Side) | Step 2 (Front / Side) | Step 3 (Front / Side) | Step 4 (Front / Side) |
+| স্টেপ ১ (সামনে / পাশে) | স্টেপ ২ (সামনে / পাশে) | স্টেপ ৩ (সামনে / পাশে) | স্টেপ ৪ (সামনে / পাশে) |
 |:---:|:---:|:---:|:---:|
 | ![Uchi Front 1](/prospectus/skills/blocks/images/uchif1.jpg) <br> ![Uchi Side 1](/prospectus/skills/blocks/images/uchis1.jpg) | ![Uchi Front 2](/prospectus/skills/blocks/images/uchif2.jpg) <br> ![Uchi Side 2](/prospectus/skills/blocks/images/uchis2.jpg) | ![Uchi Front 3](/prospectus/skills/blocks/images/uchif3.jpg) <br> ![Uchi Side 3](/prospectus/skills/blocks/images/uchis3.jpg) | ![Uchi Front 4](/prospectus/skills/blocks/images/uchif4.jpg) <br> ![Uchi Side 4](/prospectus/skills/blocks/images/uchis4.jpg) |
 
 ![Uchi Back View](/prospectus/skills/blocks/images/uchib.jpg)
 
-## Technique
+## কৌশল (Technique)
 
-**Starting Position:**
-- Blocking arm is held low and to the outside of the body
-- Non-blocking hand is ready for hikite
-
-**Execution:**
-- Sweep the forearm **upward and inward** from outside the body toward the centre
-- The forearm ends roughly parallel to the body's front, elbow at approximately 90 degrees
-- Forearm twists at the moment of contact
-- Block terminates near the centreline of the body
-- Hikite chambers simultaneously to the hip
-
-**Contact Surface:** Inner forearm
-
-## Application
-
-Useful for redirecting punches *across* the body's centreline — passing the attack to the same side as the blocking arm, creating a close-range counter opportunity.
+- বাহুটি নিচু ও বাইরের দিক থেকে সোয়াইপ করে ভেতরের দিকে আনা হয়
+- বাহুর ভেতরের অংশ দিয়ে আঘাত সরানো হয়

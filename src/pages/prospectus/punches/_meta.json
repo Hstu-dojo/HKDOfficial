@@ -1,10 +1,10 @@
 {
-  "index": "Overview",
-  "oi": "Oi Tsuki (Lunge Punch)",
-  "gyaku": "Gyaku Tsuki (Reverse Punch)",
-  "furi": "Furi Tsuki (Roundhouse Punch)",
-  "age": "Age Tsuki (Rising Punch)",
-  "mae-te": "Mae Te Tsuki (Jab)",
-  "ura": "Ura Tsuki (Inverted Punch)",
-  "morote": "Morote Tsuki (U-Punch)"
+  "index": "সংক্ষিপ্ত বিবরণ (Overview)",
+  "oi": "Oi Tsuki",
+  "gyaku": "Gyaku Tsuki",
+  "furi": "Furi Tsuki",
+  "age": "Age Tsuki",
+  "mae-te": "Mae Te Tsuki",
+  "ura": "Ura Tsuki",
+  "morote": "Morote Tsuki"
 }

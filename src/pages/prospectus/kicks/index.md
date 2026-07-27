@@ -1,84 +1,61 @@
 ---
-title: Kicking Techniques — Keri-Waza
-description: Complete reference for Shito-Ryu kicking techniques (Keri-Waza) — front kicks, side kicks, roundhouse kicks, spinning kicks, and jumping kicks.
+title: কিকিং টেকনিকসমূহ — Keri-Waza
+description: শিটো-রিউ ক্যারাটের পা দিয়ে আঘাত করার সম্পূর্ণ কৌশলপঞ্জি — ফ্রন্ট কিক, সাইড কিক, রাউন্ডহাউস কিক, স্পিনিং কিক এবং ফ্লাইং কিক।
 ---
 
-# Kicking Techniques — Keri-Waza
+# কিকিং টেকনিকসমূহ — Keri-Waza
 
-**蹴り技** — The art of striking with the foot, shin, and knee.
+**蹴り技** — পা, শিন (Shin) এবং হাঁটু দিয়ে আঘাত করার শিল্প।
 
-Shito-Ryu kicking techniques balance power and speed across three general ranges: close (knee kick), medium (front and roundhouse), and long range (jumping kicks). Proper hip rotation, chambering, and snapping retraction are essential to all kicks.
-
----
-
-## Kicking Techniques
-
-### Basic & Fundamental Kicks
-
-| Japanese Name | English Name | Description |
-|---|---|---|
-| Mae Geri | Front Kick | Front kick with a snapping forward thrust and return — the most fundamental kick. |
-| Oi Geri | Lunging Kick | Stepping (lunging forward) kick — stepping into a front kick with full body momentum. |
-| Yoko Sokuto Geri | Side Kick | Side kick using the blade/edge of the foot (sokuto) — powerful thrusting kick to the side. |
-| Mawashi Geri | Roundhouse Kick | Roundhouse kick to the front — the foot swings in a horizontal arc to the side of the target. |
-
-### Reverse & Hook Kicks
-
-| Japanese Name | English Name | Description |
-|---|---|---|
-| Gyaku Mawashi Geri | Reverse Roundhouse Kick | Reverse direction (inside) roundhouse kick — swings inward from the outside. |
-| Ura Mawashi Geri | Hook Kick | Back leg hook kick to the front — using the heel or ball of the foot in a hooking arc. |
-
-### Rear & Spinning Kicks
-
-| Japanese Name | English Name | Description |
-|---|---|---|
-| Ushiro Geri | Back Kick | Straight back kick — drives the heel directly backward into the opponent. |
-| Ushiro Mawashi Geri | Spinning Back Roundhouse | Spinning, back-roundhouse kick — 360° spin kick to the front. |
-| Gyaku Geri | Reverse Roundhouse (Spinning) | Reverse (inside) roundhouse kick — spinning variation. |
-
-### Lead Leg & Close-Range Kicks
-
-| Japanese Name | English Name | Description |
-|---|---|---|
-| Mae-Ashi Geri | Lead Leg Front Kick | Forward leg front kick — a quick snapping kick with the front/lead leg. |
-| Fumikomi Geri | Stamp Kick | Stamping/thrusting downward kick — stomps onto the instep or knee. |
-| Hiza Geri | Knee Kick | Knee cap kick — close-range strike with the knee. |
-
-### Jumping Kicks
-
-| Japanese Name | English Name | Description |
-|---|---|---|
-| Mae-Tobi Geri | Flying Front Kick | Front jumping/flying kick — leaping into a front kick. |
-| Yoko-Tobi Geri | Flying Side Kick | Side jumping/flying kick — leaping into a side kick. |
+শিটো-রিউ কিকিং টেকনিকসমূহ তিনটি ভিন্ন দূরত্বে প্রয়োগ করা হয়: অতি কাছাকাছি (হাঁটুর কিক), মাঝারি (ফ্রন্ট ও রাউন্ডহাউস কিক) এবং দীর্ঘ দূরত্ব (লাফিয়ে ফ্লাইং কিক)। সব কিকেই হিপ রোটেশন এবং কিক শেষে পা দ্রুত গুটিয়ে আনা (Retraction) অত্যন্ত জরুরি।
 
 ---
 
-## Key Kicking Principles
+## কিকিং কৌশলসমূহ
 
-### Chamber, Extend, Retract
+### মৌলিক ও সাধারণ কিকসমূহ (Basic & Fundamental Kicks)
 
-Every kick follows a three-phase structure:
-1. **Chamber (Hikite-Ashi)** — raise the knee to the required height before extending
-2. **Extension** — drive the foot outward to the target at full reach
-3. **Retraction** — pull the foot back along the same path to avoid being grabbed
-
-### Foot Surfaces
-
-| Surface | Japanese | Kicks Used In |
+| জাপানি নাম | নাম (English) | বিবরণ |
 |---|---|---|
-| Ball of foot | Koshi | Mae Geri, Mawashi Geri |
-| Blade of foot | Sokuto | Yoko Sokuto Geri |
-| Heel | Kakato | Ushiro Geri, Ura Mawashi Geri |
-| Instep | Haisoku | Mawashi Geri (tournament style) |
-| Knee | Hiza | Hiza Geri |
+| Mae Geri | Front Kick | পা সোজা সামনে সজোরে স্ন্যাপ করে মারার মৌলিক ফ্রন্ট কিক। |
+| Oi Geri | Lunging Kick | সামনে কদম বাড়িয়ে শরীরের গতিশীলতায় মারার ফ্রন্ট কিক। |
+| Yoko Sokuto Geri | Side Kick | পায়ের বাইরের ধারের (Sokuto) শক্ত অংশ দিয়ে পাশের সাইড কিক। |
+| Mawashi Geri | Roundhouse Kick | পাশ থেকে বৃত্তাকারে ঘুরিয়ে আনা রাউন্ডহাউস কিক। |
+
+### রিভার্স ও হুক কিকসমূহ (Reverse & Hook Kicks)
+
+| জাপানি নাম | নাম (English) | বিবরণ |
+|---|---|---|
+| Gyaku Mawashi Geri | Reverse Roundhouse Kick | উল্টো দিক (ভেতর) থেকে ঘুরিয়ে আনা রাউন্ডহাউস কিক। |
+| Ura Mawashi Geri | Hook Kick | গোড়ালি বা পায়ের বল দিয়ে বাঁকিয়ে মারা হুক কিক। |
+
+### পেছনের ও স্পিনিং কিকসমূহ (Rear & Spinning Kicks)
+
+| জাপানি নাম | name (English) | বিবরণ |
+|---|---|---|
+| Ushiro Geri | Back Kick | সোজাসুজি পেছনের দিকে গোড়ালি দিয়ে মারা ব্যাক কিক। |
+| Ushiro Mawashi Geri | Spinning Back Roundhouse | ৩৬০ ডিগ্রি ঘুরে মারা স্পিনিং ব্যাক রাউন্ডহাউস কিক। |
+| Gyaku Geri | Reverse Roundhouse (Spinning) | ঘুরন্ত রিভার্স ইনসাইড রাউন্ডহাউস কিক। |
+
+### সামনের পা ও কাছের কিকসমূহ (Lead Leg & Close-Range Kicks)
+
+| জাপানি নাম | নাম (English) | বিবরণ |
+|---|---|---|
+| Mae-Ashi Geri | Lead Leg Front Kick | ওজন না বদলে সামনের পা দিয়ে দ্রুত স্ন্যাপ ফ্রন্ট কিক। |
+| Fumikomi Geri | Stamp Kick | পায়ের পাতা বা হাঁটু লক্ষ্য করে সজোরে নিচে পদদলিত কিক। |
+| Hiza Geri | Knee Kick | হাঁটুর শক্ত অংশ দিয়ে কাছে এসে হাঁটু দিয়ে আঘাত। |
+
+### লাফিয়ে কিক (Jumping Kicks)
+
+| জাপানি নাম | নাম (English) | বিবরণ |
+|---|---|---|
+| Mae-Tobi Geri | Flying Front Kick | বাতাসে লাফিয়ে উঠে ফ্রন্ট কিক। |
+| Yoko-Tobi Geri | Flying Side Kick | বাতাসে লাফিয়ে উঠে সাইড কিক। |
 
 ---
 
-## Target Levels
+## কিক করার প্রধান ৩টি ধাপ
 
-| Level | Japanese | Target Area |
-|---|---|---|
-| Upper | Jodan | Head, face, neck |
-| Middle | Chudan | Chest, solar plexus, ribs |
-| Lower | Gedan | Abdomen, groin, thigh, knee |
+১. **Chamber (হাঁটু উঁচুতে তোলা)** — কিক করার আগে হাঁটু বুক বা কোমর পর্যন্ত উঁচুতে তুলতে হবে
+২. **Extension (প্রসারণ)** — পা সজোরে সোজা করে টার্গেটে আঘাত করা
+৩. **Retraction (পা গোটানো)** — আঘাত শেষে পা প্রতিপক্ষ যেন ধরতে না পারে সেজন্য আগের পথে দ্রুত গুটিয়ে আনা

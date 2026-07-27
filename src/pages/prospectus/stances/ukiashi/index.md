@@ -1,45 +1,28 @@
 ---
 title: Ukiashi Dachi
-description: Floating foot stance — similar to Nekoashi Dachi but more upright, with a loose floating leg in a relaxed ready position.
+description: ফ্লোটিং ফুট স্ট্যান্স — Nekoashi Dachi এর মতোই তবে কিছুটা সোজা, যেখানে সামনের পা হালকা ভাসমান থাকে।
 ---
 
 # Ukiashi Dachi — Floating Foot Stance
 
-**Reading:** *Oo-ki-a-shi Da-chi*
+**উচ্চারণ:** *উ-কি-আ-শি দা-চি*
 
-## Description
+## বিবরণ
 
-A stance **similar to Nekoashi Dachi** but more upright, with the front foot in a looser, more relaxed "floating" position. "Uki" means "floating." The front leg is held lightly without the committed forward-lean of Nekoashi Dachi.
+**Nekoashi Dachi-এর অনুরূপ** একটি স্ট্যান্স, তবে শরীর কিছুটা সোজা এবং সামনের পাটি আলতোভাবে ভাসমান (Uki) অবস্থায় থাকে। সামনের পায়ে কোনো ওজন থাকে না এবং শরীর প্রস্তুত থাকে যেকোনো দিকে সরে যাওয়ার জন্য।
 
-## Demonstration
+## ডেমোনস্ট্রেশন (Demonstration)
 
-| Front View | Side View |
+| সামনের দৃশ্য (Front View) | পাশ্ব দৃশ্য (Side View) |
 |:---:|:---:|
 | ![Ukiashi Dachi — front view](/prospectus/skills/stances/images/ukiashidachif.jpg) | ![Ukiashi Dachi — side view](/prospectus/skills/stances/images/ukiashidachis.jpg) |
 
-## Key Points
+## প্রধান পয়েন্টসমূহ
 
-- Similar structure to Nekoashi Dachi — rear foot flat, front foot on ball
-- Body is more upright than Nekoashi Dachi
-- Front leg is relaxed and "floating" — less tension than Nekoashi
-- Rear knee has a natural bend
-- Weight is predominantly on the rear foot
-- The stance feels "light" and mobile — ready to float in any direction
+- Nekoashi-এর মতো ভঙ্গি তবে শরীর কিছুটা সোজা
+- সামনের পা একদম শিথিল ও ভাসমান
+- পেছনের পায়ে সম্পূর্ণ ভর থাকবে
 
-## Comparison with Nekoashi Dachi
+## ব্যবহার
 
-| Feature | Nekoashi Dachi | Ukiashi Dachi |
-|---|---|---|
-| Body lean | Slightly forward | More upright |
-| Front leg | Committed cat-foot position | Loose, floating |
-| Tension | Active muscle engagement | Relaxed readiness |
-| Mobility | High | Very high |
-
-## Usage
-
-- Used as a transitional floating posture
-- Applied in sequences requiring instant weight shift
-- Appears in advanced kata
-- Used as a momentary posture during direction changes
-
----
+- কৌশলগত অবস্থান পরিবর্তন ও দিক পরিবর্তনের জন্য।

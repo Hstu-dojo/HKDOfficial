@@ -1,14 +1,14 @@
 {
-  "index": "Overview",
-  "stances": "Stances (Dachi-Kata)",
-  "movement": "Movement (Tenshin)",
-  "defense": "Defense (Uke No Gogensoku)",
-  "blocks": "Blocks (Uke-Waza)",
-  "punches": "Punches (Tsuki-Waza)",
-  "strikes": "Strikes (Uchi-Waza)",
-  "kicks": "Kicks (Keri-Waza)",
-  "kata": "Kata",
-  "kumite-footwork": "Kumite Footwork",
-  "in-the-dojo": "In the Dojo",
-  "grading": "Grading"
+  "index": "সংক্ষিপ্ত বিবরণ (Overview)",
+  "stances": "স্ট্যান্স (Dachi-Kata)",
+  "movement": "মুভমেন্ট (Tenshin)",
+  "defense": "ডিফেন্স (Uke No Gogensoku)",
+  "blocks": "ব্লক (Uke-Waza)",
+  "punches": "পাঞ্চ (Tsuki-Waza)",
+  "strikes": "স্ট্রাইক (Uchi-Waza)",
+  "kicks": "কিক (Keri-Waza)",
+  "kata": "কাটা (Kata)",
+  "kumite-footwork": "কুমিতে ফুটওয়ার্ক (Kumite Footwork)",
+  "in-the-dojo": "ডোজো নিয়মাবলী (In the Dojo)",
+  "grading": "গ্রেডিং (Grading)"
 }

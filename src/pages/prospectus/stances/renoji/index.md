@@ -1,36 +1,29 @@
 ---
 title: Renoji Dachi
-description: L-shape stance — feet arranged in the shape of the Japanese katakana character "Re" (レ), resembling the letter "L."
+description: এল-শেপ স্ট্যান্স — পা দুটি জাপানি কাটাকানা বর্ণ "レ" (Re) বা ইংরেজি "L" অক্ষরের আকৃতিতে রাখা হয়।
 ---
 
 # Renoji Dachi — L-Shape Stance
 
-**Reading:** *Re-no-jee Da-chi*
+**উচ্চারণ:** *রে-নো-জি দা-চি*
 
-## Description
+## বিবরণ
 
-A stance where the feet are arranged in the shape of the **letter "L"** — named after the Japanese katakana character レ (Re). One foot points forward while the other is positioned 90 degrees to the side, creating the L-shape.
+একটি স্ট্যান্স যেখানে পা দুটি **ইংরেজি "L" অক্ষরের** আকৃতিতে থাকে — জাপানি কাটাকানা বর্ণ レ (Re) এর নামানুসারে এর নামকরণ করা হয়েছে। এক পা সামনে এবং অন্য পা পাশে ৯০ ডিগ্রিতে অবস্থান করে।
 
-## Demonstration
+## ডেমোনস্ট্রেশন (Demonstration)
 
-| Front View | Side View |
+| সামনের দৃশ্য (Front View) | পাশ্ব দৃশ্য (Side View) |
 |:---:|:---:|
 | ![Renoji Dachi — front view](/prospectus/skills/stances/images/renojif.jpg) | ![Renoji Dachi — side view](/prospectus/skills/stances/images/renojis.jpg) |
 
-## Key Points
+## প্রধান পয়েন্টসমূহ
 
-- One foot points directly forward
-- The other foot is perpendicular (90 degrees to the side)
-- The heel of the side foot aligns near or at the heel of the forward foot
-- Both knees are relatively straight (natural bend)
-- Weight is slightly more on the rear (side) foot
-- Body faces forward
+- এক পা সোজা সামনে এবং অন্য পা পাশে ৯০ ডিগ্রি সমকোণে থাকবে
+- পেছনের পায়ের গোড়ালি সামনের পায়ের গোড়ালির কাছাকাছি বা পেছনে থাকবে
+- হাঁটুর বাঁক স্বাভাবিক ও সোজা থাকবে
+- ওজন সামান্য পেছনের পায়ে বেশি থাকবে
 
-## Usage
+## ব্যবহার
 
-Renoji Dachi is used as:
-- A transitional stance between movements
-- A readying position for side-facing techniques
-- In certain kata transitions
-
----
+- কৌশল পরিবর্তনের সময় মধ্যবর্তী ট্রানজিশন স্ট্যান্স হিসেবে ব্যবহৃত হয়।

@@ -1,44 +1,30 @@
 ---
 title: Sagiashi Dachi
-description: Heron foot stance — a one-legged balance stance with the free leg raised at the knee, named after the heron bird's characteristic posture.
+description: হেরন ফুট স্ট্যান্স — এক পায়ে দাঁড়িয়ে থাকার স্ট্যান্স, যেখানে অন্য পা হাঁটু পর্যন্ত তুলে রাখা হয়।
 ---
 
 # Sagiashi Dachi — Heron Foot Stance
 
-**Reading:** *Sa-gi-a-shi Da-chi*
+**উচ্চারণ:** *সা-গি-আ-শি দা-চি*
 
-## Description
+## বিবরণ
 
-The **"heron foot" stance** — a one-legged balance stance named after the heron (*sagi*) bird, which characteristically stands on one leg. The free leg is raised with the knee lifted and the foot tucked near the supporting knee.
+**"সারস পাখির পায়ের স্ট্যান্স"** — সারস পাখি (Sagi) যেভাবে এক পায়ে দাঁড়িয়ে থাকে, ঠিক সেই ভঙ্গিতে এটি করা হয়। একটি পায়ে সমস্ত ভর রেখে অন্য পা তুলে হাঁটু ভাজ করে পাশে রাখা হয়।
 
-## Demonstration
+## ডেমোনস্ট্রেশন (Demonstration)
 
-| Front View | Side View |
+| সামনের দৃশ্য (Front View) | পাশ্ব দৃশ্য (Side View) |
 |:---:|:---:|
 | ![Sagiashi Dachi — front view](/prospectus/skills/stances/images/sagiashif1.jpg) | ![Sagiashi Dachi — side view](/prospectus/skills/stances/images/sagiashib1.jpg) |
 
-## Key Points
+## প্রধান পয়েন্টসমূহ
 
-- All weight balanced on a single supporting leg
-- Supporting leg has a slight bend at the knee for stability
-- Free leg is raised — knee lifts upward, foot pulled in near the supporting knee
-- Body remains upright and stable
-- Arms in guard position help with balance
-- Core musculature is essential to maintaining this stance
+- সমস্ত শরীরের ওজন একটিমাত্র পায়ে থাকবে
+- ভর রাখা পা সামান্য হাঁটুতে বাঁকানো থাকবে যাতে ভারসাম্য থাকে
+- মুক্ত পা উঁচুতে হাঁটু তুলে অন্য পায়ের হাঁটুর কাছে ধরে রাখা হবে
+- শরীরের ভারসাম্য রক্ষা করা জরুরি
 
-## Balance Requirements
+## ব্যবহার
 
-This stance demands:
-- Single-leg stability and strength
-- Core engagement to prevent swaying
-- Proprioceptive (balance/spatial) awareness
-- Ankle stability on the supporting foot
-
-## Usage
-
-- Appears in advanced kata sequences
-- Used as a chambering position before executing a kick
-- Practised as a balance exercise in training
-- Develops the one-legged stability needed for jumping kicks
-
----
+- উন্নত কাটার বিভিন্ন জটিল কৌশলে
+- এক পায়ে কিক করার চ্যাম্বারিং পজিশন হিসেবে

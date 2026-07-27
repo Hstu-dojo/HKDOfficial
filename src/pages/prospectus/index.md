@@ -1,33 +1,33 @@
 ---
-title: Karate-do Prospectus
-description: A comprehensive reference archive for Shito-Ryu Karate-do — covering stances, movement, defense principles, blocking, punching, striking, kicking techniques, kata, kumite footwork, dojo rules, and grading requirements.
+title: ক্যারাটে-দো প্রোসপেক্টাস
+description: শিটো-রিউ ক্যারাটে-দো (Shito-Ryu Karate-do) সম্পর্কিত একটি বিস্তৃত কৌশলগত তথ্যকোষ — যার মধ্যে রয়েছে স্ট্যান্স, মুভমেন্ট, ডিফেন্স নীতি, ব্লক, পাঞ্চ, স্ট্রাইক, কিক, কাটা, কুমিতে ফুটওয়ার্ক, डोजো নিয়মাবলী এবং গ্রেডিং প্রয়োজনীয়তা।
 ---
 
-# Karate-do Prospectus
+# ক্যারাটে-দো প্রোসপেক্টাস (Karate-do Prospectus)
 
-A documentation-style reference for **Shito-Ryu Karate-do** — the traditional Japanese martial art founded by **Kenwa Mabuni** (1889–1952). This prospectus organises the complete skill archive into browsable sections covering all technical aspects of Shito-Ryu practice.
+**শিটো-রিউ ক্যারাটে-দো (Shito-Ryu Karate-do)** সম্পর্কিত একটি সম্পূর্ণ ডকুমেন্টেশন নির্দেশিকা — যা ঐতিহ্যবাহী জাপানি মার্শাল আর্টের প্রতিষ্ঠাতা **কেনওয়া মাবুনি (Kenwa Mabuni)** (১৮৮৯–১৯৫২) এর ওপর ভিত্তি করে রচিত। এই প্রোসপেক্টাসটি শিটো-রিউ অনুশীলনের সমস্ত কারিগরি দিকগুলোকে বিভিন্ন ব্রাউজযোগ্য বিভাগে সুসংগঠিত করে।
 
-## About Shito-Ryu
+## শিটো-রিউ সম্পর্কে
 
-Shito-Ryu is one of the four major styles of Japanese karate, known for its large number of kata (over 50), its balance between the power of Naha-te and the speed of Shuri-te, and its comprehensive system of techniques rooted in Okinawan martial tradition.
+শিটো-রিউ হলো জাপানি ক্যারাটের চারটি প্রধান শৈলীর একটি। এটি তার বিশাল সংখ্যক কাটা (৫০টিরও বেশি), নাহা-তে (Naha-te) এর শক্তি এবং সুরি-তে (Shuri-te) এর গতির ভারসাম্য এবং ওকিনাওয়ান মার্শাল আর্টের সুপ্রাচীন ঐতিহ্যের জন্য বিশ্বজুড়ে সুপরিচিত।
 
-> "Karate-do is not merely a sport or fighting technique. It is training in the ways of the spirit." — *Kenwa Mabuni*
+> "ক্যারাটে-দো কেবল কোনো খেলাধুলো বা আত্মরক্ষার কৌশল নয়। এটি মনের আত্মশুদ্ধি ও আত্মনিয়ন্ত্রণের একটি সুনির্দিষ্ট শৃঙ্খলা।" — *কেনওয়া মাবুনি*
 
-## Sections
+## প্রধান বিভাগসমূহ (Sections)
 
-| Section | Japanese | Description |
+| বিভাগ (Section) | জাপানি নাম | বিবরণ (Description) |
 |---|---|---|
-| [Stances](/prospectus/stances) | Dachi-Kata | Basic foot positions and posture shapes |
-| [Movement](/prospectus/movement) | Tenshin-Happo | 8-directional offensive & defensive movement |
-| [Defense](/prospectus/defense) | Uke No Gogensoku | Shito-Ryu's Five Special Principles of Defense |
-| [Blocks](/prospectus/blocks) | Uke-Waza | Blocking techniques |
-| [Punches](/prospectus/punches) | Tsuki-Waza | Punching and hand-thrusting techniques |
-| [Strikes](/prospectus/strikes) | Uchi-Waza | Hand striking techniques |
-| [Kicks](/prospectus/kicks) | Keri-Waza | Kicking techniques |
-| [Kata](/prospectus/kata) | — | Forms catalogue by lineage |
-| [Kumite Footwork](/prospectus/kumite-footwork) | — | Fighting footwork patterns |
-| [In the Dojo](/prospectus/in-the-dojo) | — | Dojo rules and exercise program |
-| [Grading](/prospectus/grading) | — | Belt progression and kata requirements |
+| [স্ট্যান্স (Stances)](/prospectus/stances) | Dachi-Kata | মৌলিক পায়ের অবস্থান, বডি পোস্টার এবং ভারসাম্যের ভিত্তি |
+| [মুভমেন্ট (Movement)](/prospectus/movement) | Tenshin-Happo | ৮-মুখী আক্রমণাত্মক ও প্রতিরক্ষামূলক মুভমেন্ট পদ্ধতি |
+| [ডিফেন্স (Defense)](/prospectus/defense) | Uke No Gogensoku | শিটো-রিউ ক্যারাটের আত্মরক্ষার বিশেষ পাঁচটি মূলনীতি |
+| [ব্লক (Blocks)](/prospectus/blocks) | Uke-Waza | আত্মরক্ষা ও প্রতিহত করার ব্লক কৌশল |
+| [পাঞ্চ (Punches)](/prospectus/punches) | Tsuki-Waza | ঘুসি এবং হাত দিয়ে আঘাত হানার কৌশল |
+| [স্ট্রাইক (Strikes)](/prospectus/strikes) | Uchi-Waza | হাতের বিভিন্ন অংশ দিয়ে আঘাতের কৌশল |
+| [কিক (Kicks)](/prospectus/kicks) | Keri-Waza | পা দিয়ে আঘাত বা কিকিং কৌশল |
+| [কাটা (Kata)](/prospectus/kata) | — | গুরু-পরম্পরা বা ঐতিহ্যবাহী ধারানুসারে কাটার তালিকা |
+| [কুমিতে ফুটওয়ার্ক (Kumite Footwork)](/prospectus/kumite-footwork) | — | ফাইটিং বা স্পারিংয়ের জন্য প্রয়োজনীয় ফুটওয়ার্ক প্যাটার্ন |
+| [ডোজো নিয়মাবলী (In the Dojo)](/prospectus/in-the-dojo) | — | डोजোর নিয়মকানুন এবং শারীরিক অনুশীলনের প্রোগ্রাম |
+| [গ্রেডিং (Grading)](/prospectus/grading) | — | বেল্ট অর্জন ও পরীক্ষার জন্য কাটার প্রয়োজনীয়তা |
 
 ---
 

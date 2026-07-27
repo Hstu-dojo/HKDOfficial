@@ -1,38 +1,33 @@
 ---
 title: Heisoku Dachi
-description: Closed foot stance — toes and heels together, the formal attention stance of Shito-Ryu Karate-do.
+description: ক্লোজড ফুট স্ট্যান্স — দুই পায়ের আঙুল এবং গোড়ালি সম্পূর্ণ যুক্ত, শিটো-রিউ ক্যারাটের আনুষ্ঠানিক অ্যাটেনশন স্ট্যান্স।
 ---
 
 # Heisoku Dachi — Closed Foot Stance
 
-**Reading:** *Hey-so-ku Da-chi*
+**উচ্চারণ:** *হেই-সোকু দা-চি*
 
-## Description
+## বিবরণ
 
-Toes and heels together — the "closed foot stance." This is the formal **attention stance** used at the beginning and end of class, when bowing to the Sensei, and at the start of kata.
+পায়ের আঙুল এবং গোড়ালি একসাথে যুক্ত — এটিকে "ক্লোজড ফুট স্ট্যান্স" বা বন্ধ পায়ের অবস্থান বলা হয়। এটি ক্যারাটে ক্লাসের শুরু ও শেষে সেনসেইকে সালাম (Rei) করার সময় এবং কাটার সূচনায় ব্যবহৃত আনুষ্ঠানিক **প্রস্তুতি বা অ্যাটেনশন স্ট্যান্স**।
 
-## Demonstration
+## ডেমোনস্ট্রেশন (Demonstration)
 
-| Front View | Side View |
+| সামনের দৃশ্য (Front View) | পাশ্ব দৃশ্য (Side View) |
 |:---:|:---:|
 | ![Heisoku Dachi — front view](/prospectus/skills/stances/images/heisokuf.jpg) | ![Heisoku Dachi — side view](/prospectus/skills/stances/images/heisokus.jpg) |
 
-## Key Points
+## প্রধান পয়েন্টসমূহ
 
-- Both feet are placed together with heels touching and toes touching
-- Feet are parallel, pointing straight forward
-- Knees are straight but not locked
-- Weight is distributed evenly on both feet
-- Body is upright, spine straight
-- Arms are at the sides
+- উভয় পা একসাথে রেখে গোড়ালি ও আঙুল একে অপরকে স্পর্শ করবে
+- পা দুটি একদম সোজা সামনের দিকে নির্দেশ করবে
+- হাঁটু সোজা থাকবে তবে শক্ত করে লক করা যাবে না
+- শরীরের ওজন উভয় পায়ে সমানভাবে থাকবে
+- মেরুদণ্ড একদম সোজা ও সোজা থাকবে
+- হাত দুটি শরীরের পাশে থাকবে
 
-## Usage
+## ব্যবহার
 
-Heisoku Dachi is primarily a ceremonial/formal stance used for:
-- Rei (bowing) at the start and end of class
-- The ready position before beginning kata
-- Formal greetings to the Sensei and training partners
-
----
-
-*Photographs excerpted with permission from Karate-do Shito-Ryu Shito-Kai Mexico — Manual Practico — 1986.*
+Heisoku Dachi মূলত আনুষ্ঠানিকতায় ব্যবহৃত হয়:
+- ক্লাস শুরু ও শেষের সালাম (Rei) করার সময়
+- কাটা শুরু করার আগের প্রস্তুত অবস্থানে

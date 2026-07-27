@@ -1,15 +1,15 @@
 ---
-title: In the Dojo
-description: Essential information for Shito-Ryu practitioners — dojo rules of conduct and the standard exercise warm-up program.
+title: डोजো অনুশাসন (In the Dojo)
+description: ক্যারাটে শিক্ষার্থীদের জন্য গুরুত্বপূর্ণ তথ্য — डोजোর আচরণবিধি এবং সাধারণ শারীরিক অনুশীলনের তালিকা।
 ---
 
-# In the Dojo
+# डोजো অনুশাসন — In the Dojo
 
-**道場** — The training hall. The dojo is a sacred space for learning and self-improvement.
+**道場** — ক্যারাটে অনুশীলন হল। ডোজো হলো শিক্ষা, আত্মনিয়ন্ত্রণ এবং আত্মোন্নতির এক পবিত্র স্থান।
 
-The dojo is more than a gym or a sports hall. It is the place where the art of karate-do is transmitted from teacher to student — a continuation of a tradition stretching back through generations of Okinawan and Japanese masters. Proper conduct in the dojo reflects respect for this tradition, for the Sensei, and for one's training partners.
+ডোজো কেবল কোনো জিম বা খেলার ঘর নয়। এটি এমন এক স্থান যেখানে প্রজন্মের পর প্রজন্ম ধরে চলে আসা সুপ্রাচীন ক্যারাটে ঐতিহ্য শিক্ষকের কাছ থেকে শিষ্যের মধ্যে সঞ্চারিত হয়। डोजোতে সঠিক আচরণ সেনসেই ও সহপাঠীদের প্রতি শ্রদ্ধাবোধ প্রদর্শন করে।
 
-## Contents
+## বিষয়বস্তু
 
-- [Dojo Rules](/prospectus/in-the-dojo/dojo-rules) — The fifteen rules of conduct for Karate-do Shito-Kai practitioners
-- [Basic Exercise Program](/prospectus/in-the-dojo/exercises) — The standard 24-exercise warm-up and conditioning program
+- [ডোজো নিয়মাবলী (Dojo Rules)](/prospectus/in-the-dojo/dojo-rules) — ক্যারাটে শিটো-কাই শিক্ষার্থীদের ১৫টি আবশ্যকীয় নিয়মকানুন
+- [শারীরিক ব্যায়াম প্রোগ্রাম (Basic Exercise Program)](/prospectus/in-the-dojo/exercises) — ২৪টি ব্যায়ামের স্ট্যান্ডার্ড ওয়ার্ম-আপ সূচি

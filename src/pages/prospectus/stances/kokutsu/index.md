@@ -1,53 +1,30 @@
 ---
 title: Kokutsu Dachi
-description: Back stance — weight predominantly on the rear leg, with the body "looking back." Strong defensive and counter-attacking stance.
+description: ব্যাক স্ট্যান্স — ওজন প্রধানত পেছনের পায়ে, শরীর পেছনের দিকে মুখ করে থাকা অত্যন্ত শক্তিশালী প্রতিরক্ষামূলক স্ট্যান্স।
 ---
 
 # Kokutsu Dachi — Back Stance
 
-**Reading:** *Ko-koot-soo Da-chi*
+**উচ্চারণ:** *কো-কুতসু দা-চি*
 
-## Description
+## বিবরণ
 
-The **"looking back" stance** — also called the back stance. "Kokutsu" means "looking back" or "leaning back." Weight is loaded heavily on the rear leg, making this a primary **defensive and counter-attacking stance**.
+**"পেছনের দিকে ঝুঁকে থাকা" স্ট্যান্স** — যাকে ব্যাক স্ট্যান্সও বলা হয়। "Kokutsu" অর্থ পেছনের দিকে ঝুঁকানো। শরীরের ওজনের বেশিরভাগ অংশ (৭০–৮০%) পেছনের পায়ে রাখা হয়, যা এটিকে একটি কার্যকর **আত্মরক্ষামূলক ও পাল্টা আক্রমণের স্ট্যান্স** হিসেবে গড়ে তোলে।
 
-## Demonstration
+## ডেমোনস্ট্রেশন (Demonstration)
 
-| Front View | Side View |
+| সামনের দৃশ্য (Front View) | পাশ্ব দৃশ্য (Side View) |
 |:---:|:---:|
 | ![Kokutsu Dachi — front view](/prospectus/skills/stances/images/kokutsuf.jpg) | ![Kokutsu Dachi — side view](/prospectus/skills/stances/images/kokutsus.jpg) |
 
-## Key Points
+## প্রধান পয়েন্টসমূহ
 
-- Approximately 70–80% of weight on rear foot
-- Rear knee is bent deeply over the rear foot
-- Front foot points forward; rear foot points 90 degrees outward (perpendicular)
-- Front leg is mostly straight with slight bend at the knee
-- Front foot rests mostly flat but lightly
-- Body faces slightly sideways (reducing frontal profile)
-- Hips are turned, projecting the rear hip backward
+- ওজনের প্রায় ৭০-৮০% পেছনের পায়ে থাকবে
+- পেছনের হাঁটু গভীরভাবে বাঁকানো থাকবে
+- সামনের পা সোজা সামনে এবং পেছনের পা ৯০ ডিগ্রি বাইরের দিকে নির্দেশ করবে
+- সামনের পা মাটি স্পর্শ করে থাকবে কিন্তু হালকা থাকবে
 
-## Defensive Advantages
+## ব্যবহার
 
-- Weight on rear foot allows instant front-leg kick (mae geri)
-- Reduced target profile through side-facing posture
-- Quick retreat capability
-- Strong base for simultaneous block-and-counter
-
-## Comparison with Nekoashi Dachi
-
-| Feature | Kokutsu Dachi | Nekoashi Dachi |
-|---|---|---|
-| Weight distribution | ~75% rear | ~90% rear |
-| Rear foot angle | 90° (perpendicular) | 45° |
-| Stance length | Long | Short |
-| Rear knee bend | Deep | Deep |
-
-## Usage
-
-- Featured in multiple Shito-Ryu kata
-- Used for retreating defensive combinations
-- Applied with shuto-uke (knife-hand block)
-- Heian (Pinan) kata use this stance extensively
-
----
+- Shuto-uke (নাইফ-হ্যান্ড ব্লক) এর সাথে ব্যাপকভাবে ব্যবহৃত হয়।
+- Heian (Pinan) এবং অন্যান্য বহু কাটাতে প্রতিরক্ষামূলক ভঙ্গিতে এটি ব্যবহৃত হয়।

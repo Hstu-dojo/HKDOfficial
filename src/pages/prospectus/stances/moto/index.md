@@ -1,45 +1,32 @@
 ---
 title: Moto Dachi
-description: Basic forward stance — front knee partially bent, a shorter forward stance than Zenkutsu Dachi. The fundamental fighting-ready stance.
+description: বেসিক ফরোয়ার্ড স্ট্যান্স — সামনের হাঁটু সামান্য বাঁকানো, Zenkutsu Dachi-এর চেয়ে কিছুটা সংক্ষিপ্ত ফরোয়ার্ড স্ট্যান্স।
 ---
 
 # Moto Dachi — Basic Forward Stance
 
-**Reading:** *Mo-to Da-chi*
+**উচ্চারণ:** *মো-তো দা-চি*
 
-## Description
+## বিবরণ
 
-A forward stance with the front knee **partially bent** — shorter and more upright than Zenkutsu Dachi. "Moto" means "basic" or "original." This is the fundamental forward stance used most frequently in Shito-Ryu kumite and basic training.
+সামনের হাঁটু **সামান্য বাঁকানো** একটি ফরোয়ার্ড স্ট্যান্স — যা Zenkutsu Dachi এর তুলনায় সংক্ষিপ্ত এবং সোজা। "Moto" অর্থ মৌলিক বা মূল। এটি শিটো-রিউ কুমিতে এবং মৌলিক প্রশিক্ষণে সর্বাধিক ব্যবহৃত হয়।
 
-## Demonstration
+## ডেমোনস্ট্রেশন (Demonstration)
 
-| Front View | Side View |
+| সামনের দৃশ্য (Front View) | পাশ্ব দৃশ্য (Side View) |
 |:---:|:---:|
 | ![Moto Dachi — front view](/prospectus/skills/stances/images/motof.jpg) | ![Moto Dachi — side view](/prospectus/skills/stances/images/motos.jpg) |
 
-## Key Points
+## প্রধান পয়েন্টসমূহ
 
-- Front foot points forward
-- Rear foot points outward at approximately 45 degrees
-- Front knee is bent partially — not as deep as Zenkutsu Dachi
-- Rear leg is straight or slightly bent
-- Stance length is moderate — roughly one shoulder width in length
-- Weight distribution: approximately 60% front, 40% rear (varies by application)
-- Hip position is relatively high compared to Zenkutsu Dachi
+- সামনের পা সোজা সামনে নির্দেশ করবে
+- পেছনের পা বাইরের দিকে ৪৫ ডিগ্রি কোণে থাকবে
+- সামনের হাঁটু সামান্য বাঁকানো থাকবে
+- স্ট্যান্সের দৈর্ঘ্য মাঝারি — প্রায় এক কাঁধ সমপরিমাণ
+- ওজন বন্টন: প্রায় ৬০% সামনে এবং ৪০% পেছনে
 
-## Comparison
+## ব্যবহার
 
-| Stance | Depth | Front Knee | Weight Forward |
-|---|---|---|---|
-| **Moto Dachi** | Short/Medium | Partial bend | ~60% |
-| Zenkutsu Dachi | Long | Deep bend | ~70% |
-| Nekoashi Dachi | Short | Slightly bent | ~10% |
-
-## Usage
-
-- Primary stance in basic combination drills (kihon)
-- Used extensively in kumite (sparring)
-- Transition stance between Nekoashi and Zenkutsu
-- Featured prominently in Heian (Pinan) kata
-
----
+- বেসিক ড্রিল (Kihon) এবং ক্যারাটে স্পারিংয়ে (Kumite)
+- Nekoashi এবং Zenkutsu-এর মধ্যে স্থানান্তরের সময়
+- Heian (Pinan) কাটাতে ব্যাপকভাবে ব্যবহৃত হয়

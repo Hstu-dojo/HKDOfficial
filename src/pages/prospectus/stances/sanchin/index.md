@@ -1,53 +1,31 @@
 ---
 title: Sanchin Dachi
-description: Hourglass stance — an inward-tension stance with feet in a pigeon-toed T-shape, creating strong muscular contraction throughout the body.
+description: আওয়ারগ্লাস স্ট্যান্স — ভেতরের দিকে পায়ের টেনশন সৃষ্টিকারী স্ট্যান্স, যা পুরো শরীরে পেশীসংকোচন তৈরি করে।
 ---
 
 # Sanchin Dachi — Hourglass Stance
 
-**Reading:** *San-chin Da-chi*
+**উচ্চারণ:** *সান-চিন দা-চি*
 
-## Description
+## বিবরণ
 
-The **inward tension stance** — also called the "hourglass" stance. "Sanchin" means "three battles" or "three conflicts" (mind, body, spirit). This stance generates intense muscular tension throughout the entire body through opposing force vectors.
+**ইনওয়ার্ড টেনশন স্ট্যান্স** — একে "আওয়ারগ্লাস" (বালুঘড়ি) স্ট্যান্সও বলা হয়। "Sanchin" অর্থ "তিনটি যুদ্ধ" (মন, শরীর ও আত্মা)। এই স্ট্যান্সে পা ও উরুর পেশীতে ভেতরের দিকে তীব্র সংকোচন তৈরি করা হয়।
 
-## Demonstration
+## ডেমোনস্ট্রেশন (Demonstration)
 
-| Front View | Side View |
+| সামনের দৃশ্য (Front View) | পাশ্ব দৃশ্য (Side View) |
 |:---:|:---:|
 | ![Sanchin Dachi — front view](/prospectus/skills/stances/images/sanchinf.jpg) | ![Sanchin Dachi — side view](/prospectus/skills/stances/images/sanchins.jpg) |
 
-## Key Points
+## প্রধান পয়েন্টসমূহ
 
-- One foot is placed approximately one step ahead of the other
-- Both feet point inward (pigeon-toed), approximately 30–45 degrees
-- Front foot heel aligns with rear foot toes (T-shape arrangement)
-- Both knees are bent and pushed inward
-- Entire body is contracted — legs grip the floor, hips tuck forward
-- Toes grip the floor actively
-- Weight is evenly distributed on both feet
-- Stance width is roughly shoulder-width
+- এক পা অন্য পায়ের এক কদম সামনে থাকবে
+- দুই পায়ের আঙুলই ভেতরের দিকে ঘুরানো থাকবে
+- সামনের পায়ের গোড়ালি পেছনের পায়ের আঙুলের লাইনে থাকবে (T-আকৃতি)
+- হাঁটু দুটি ভেতরের দিকে চাপ দিয়ে বাঁকানো থাকবে
+- শরীরের কেন্দ্র (Core) এবং তলপেট শক্ত সংকুচিত থাকবে
 
-## Mushin Contraction
+## ব্যবহার
 
-The key feature of Sanchin Dachi is the **whole-body tension** (ibuki):
-
-- Toes grip and claw the floor
-- Inner thighs squeeze inward
-- Knees push toward each other
-- Abdominals and lower back contract
-- Buttocks are clenched tight
-- Arms are held in the guarded position with contracted muscles
-
-## The Sanchin Kata
-
-This stance is the foundation of the **Sanchin kata** — one of the most important kata in Naha-te lineage Karate-do. The kata is practiced slowly with full muscular contraction and controlled breathing (ibuki).
-
-## Usage
-
-- The defining stance of Sanchin kata
-- Foundation of Naha-te power development
-- Develops body conditioning and rooting
-- Used in Tensho kata
-
----
+- **Sanchin kata** এবং Tensho kata-র মূল ভিত্তি স্ট্যান্স।
+- শরীরের দৃঢ়তা ও নিঃশ্বাসের নিয়ন্ত্রণ (Ibuki) বাড়াতে ব্যবহৃত হয়।

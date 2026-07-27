@@ -1,42 +1,28 @@
 ---
 title: Tee-Ji Dachi
-description: T-shape stance — feet arranged in the shape of an inverted letter "T," named after the Japanese katakana character テ (Te).
+description: টি-শেপ স্ট্যান্স — পা দুটি উল্টো ইংরেজি "T" অক্ষরের আকৃতিতে সাজানো থাকে।
 ---
 
 # Tee-Ji Dachi — T-Shape Stance
 
-**Reading:** *Tee-Jee Da-chi*
+**উচ্চারণ:** *টি-জি দা-চি*
 
-## Description
+## বিবরণ
 
-A stance where the feet form the shape of an **inverted letter "T"** — named after the Japanese katakana character テ (Te). The front foot points forward while the rear foot is perpendicular and positioned behind the front heel.
+একটি স্ট্যান্স যেখানে পা দুটি **উল্টো "T" অক্ষরের** রূপ ধারণ করে — জাপানি কাটাকানা বর্ণ テ (Te) থেকে এই নাম এসেছে। সামনের পা সামনে থাকে এবং পেছনের পা লম্বভাবে সামনের গোড়ালির পেছনে থাকে।
 
-## Demonstration
+## ডেমোনস্ট্রেশন (Demonstration)
 
-| Front View | Side View |
+| সামনের দৃশ্য (Front View) | পাশ্ব দৃশ্য (Side View) |
 |:---:|:---:|
 | ![Tee-Ji Dachi — front view](/prospectus/skills/stances/images/tdachif.jpg) | ![Tee-Ji Dachi — side view](/prospectus/skills/stances/images/tdachis.jpg) |
 
-## Key Points
+## প্রধান পয়েন্টসমূহ
 
-- Front foot points directly forward
-- Rear foot is perpendicular (90 degrees), positioned just behind and to the side of the front heel
-- The arrangement forms a "T" shape (or inverted T when viewed from front)
-- Knees have a natural bend
-- Body is upright, facing the same direction as the front foot
-- Weight is distributed with slight emphasis on the rear foot
+- সামনের পা সোজা সামনে থাকবে
+- পেছনের পা লম্বভাবে (৯০ ডিগ্রি) সামনের গোড়ালির ঠিক পেছনে থাকবে
+- এটি উপর থেকে দেখলে একটি "T" আকৃতি গঠন করে
 
-## Difference from Renoji Dachi
+## ব্যবহার
 
-| Feature | Renoji Dachi (L) | Tee-Ji Dachi (T) |
-|---|---|---|
-| Shape | L — heels at same level | T — rear foot behind front heel |
-| Foot position | Side foot beside front foot | Side foot behind front foot |
-
-## Usage
-
-- Transitional stance used in certain kata
-- Used in movements requiring a side-facing pivot
-- Appears in Naha-te kata lineage
-
----
+- নির্দিষ্ট কাটার মধ্যে দিক পরিবর্তন ও মোচড়ের সময় ব্যবহৃত হয়।

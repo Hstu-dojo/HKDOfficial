@@ -1,49 +1,30 @@
 ---
 title: Oi Tsuki — Lunge Punch
-description: The fundamental stepping lunge punch — stepping forward with the lead foot while punching with the same-side hand, the first combination learned in karate.
+description: স্টেপিং লঞ্জ পাঞ্চ — সামনের পা এগিয়ে নেওয়ার সাথে সাথে একই দিকের হাত দিয়ে সামনের দিকে শক্তিশালী ঘুসি।
 ---
 
 # Oi Tsuki — Lunge Punch
 
-**Reading:** *Oh-ee Tsoo-ki*
+**উচ্চারণ:** *ওই তসুকি*
 
-## Description
+## বিবরণ
 
-The **stepping lunge punch** — the front hand punches as the front foot steps forward, creating a coordinated full-body driving strike. "Oi" means "chasing" or "following" — the hand chases the stepping foot.
+**কদম ফেলে লঞ্জ পাঞ্চ** — সামনের পা কদম ফেলে এগিয়ে নেওয়ার সাথে একই দিকের হাত দিয়ে সোজা ঘুসি মারা হয়। "Oi" অর্থ অনুগমন করা — হাতটি যেন কদম ফেলা পায়ের পিছু নেয়।
 
-## Demonstration
+## ডেমোনস্ট্রেশন (Demonstration)
 
 ![Oi Tsuki Animation](/prospectus/skills/punches/images/oi_tzuki.gif)
 
-| Step 1 (Front / Side) | Step 2 (Front / Side) | Step 3 (Front / Side) |
+| স্টেপ ১ (সামনে / পাশে) | স্টেপ ২ (সামনে / পাশে) | স্টেপ ৩ (সামনে / পাশে) |
 |:---:|:---:|:---:|
 | ![Oi Front 1](/prospectus/skills/punches/images/oif1.jpg) <br> ![Oi Side 1](/prospectus/skills/punches/images/ois1.jpg) | ![Oi Front 2](/prospectus/skills/punches/images/oif2.jpg) <br> ![Oi Side 2](/prospectus/skills/punches/images/ois2.jpg) | ![Oi Front 3](/prospectus/skills/punches/images/oif3.jpg) <br> ![Oi Side 3](/prospectus/skills/punches/images/ois3.jpg) |
 
-## Technique
+## কৌশল (Technique)
 
-**Execution:**
-- Begin in fighting stance (Moto Dachi or Zenkutsu Dachi)
-- Drive forward from the rear leg — step the front foot forward
-- As the front foot lands in Zenkutsu Dachi, the **same-side hand** punches forward (chudan or jodan)
-- The punching arm drives forward simultaneously with the step, reaching extension as the foot lands
-- The rear hand chambers to the hip (hikite)
-- The body weight and forward momentum amplifies the punch
+- পেছনের পা সামনে বাড়িয়ে Zenkutsu Dachi স্ট্যান্সে যান
+- পা মাটিতে বসার সাথে একই সময়ে একই দিকের হাত দিয়ে সামনে ঘুসি দিন
+- বিপরীত হাত কোমরে টেনে আনুন (Hikite)
 
-**Stance:** Ends in Zenkutsu Dachi
+## ব্যবহার
 
-**Punching Hand:** Same side as the forward foot (e.g., right foot forward → right hand punches)
-
-## Power Source
-
-The power of Oi Tsuki comes from:
-- **Forward momentum** of the body weight stepping forward
-- **Rear leg drive** pushing off the floor
-- **Hip rotation** as the front hip squares to the target
-- **Shoulder extension** carrying the arm to full reach
-
-## Usage
-
-- The first combination punch taught in beginner training
-- Used extensively in **kihon** (basic line drills)
-- Featured in all Heian/Pinan kata
-- Applied in kumite as a lead-in attack
+- প্রাথমিক লাইনিং অনুশীলনে (Kihon) এবং ক্যারাটের প্রায় সমস্ত কাটাতে এটি রয়েছে।

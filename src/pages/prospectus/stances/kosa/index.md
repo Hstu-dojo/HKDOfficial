@@ -1,37 +1,30 @@
 ---
 title: Kosa Dachi
-description: Hooked leg stance — one leg crossed behind the other, creating a locked, low crossed-leg position used in dynamic kata transitions.
+description: হুকড লেগ স্ট্যান্স — এক পা অন্য পায়ের পেছনে ক্রস করা অবস্থায় হাঁটু নিচু করে রাখা স্ট্যান্স।
 ---
 
 # Kosa Dachi — Hooked Leg Stance
 
-**Reading:** *Ko-sa Da-chi*
+**উচ্চারণ:** *কো-সা দা-চি*
 
-## Description
+## বিবরণ
 
-The **"hooked leg" stance** — one leg is crossed behind the other with both knees bent. "Kosa" means "cross" or "intersection." This stance appears during dynamic spinning or direction-changing movements in kata.
+**"ক্রস করা পায়ের স্ট্যান্স"** — এক পা অন্য পায়ের পেছনের দিকে ক্রস করে হাঁটু বাঁকিয়ে রাখা হয়। "Kosa" অর্থ ক্রস বা মোড়। কাটার মধ্যে দ্রুত ঘোরার বা লাফিয়ে নামার সময়ে এই স্ট্যান্স সাময়িকভাবে দেখা যায়।
 
-## Demonstration
+## ডেমোনস্ট্রেশন (Demonstration)
 
-| Front View | Side View |
+| সামনের দৃশ্য (Front View) | পাশ্ব দৃশ্য (Side View) |
 |:---:|:---:|
 | ![Kosa Dachi — front view](/prospectus/skills/stances/images/kosadachif.jpg) | ![Kosa Dachi — side view](/prospectus/skills/stances/images/kosadachis.jpg) |
 
-## Key Points
+## প্রধান পয়েন্টসমূহ
 
-- One leg crosses behind the other (the stepping leg moves behind)
-- Both knees are bent
-- The rear (crossed) leg is on its ball of foot
-- Front leg is flat-footed and bears most of the weight
-- The body is typically low and in motion
-- This stance is often momentary — a snapshot in transition
+- এক পা অন্য পায়ের পেছনে গিয়ে ক্রস হবে
+- উভয় হাঁটু বাঁকানো থাকবে
+- পেছনের পা আঙুলের ওপর (Ball of foot) ভর দিয়ে থাকবে
+- সামনের পা পুরো মেঝের ওপর ভর রাখবে
 
-## Usage in Kata
+## ব্যবহার
 
-Kosa Dachi typically appears during:
-- 180° or 360° spinning turns in kata
-- The moment before a jump or leap technique
-- Direction-reversal sequences
-- Featured in several Heian/Pinan kata transitions and advanced kata
-
----
+- কাটাতে ১৮০° বা ৩৬০° দ্রুত ঘোরার মুহূর্তে
+- লাফ দেওয়া বা কিক করার ঠিক আগের ক্ষণে

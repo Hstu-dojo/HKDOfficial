@@ -1,48 +1,33 @@
 ---
-title: Striking Techniques — Uchi-Waza
-description: Complete reference for Shito-Ryu hand striking techniques (Uchi-Waza) — knife-hand, backfist, hammerfist, ridge-hand, palm-heel, elbow, and more.
+title: স্ট্রাইকিং টেকনিকসমূহ — Uchi-Waza
+description: শিটো-রিউ ক্যারাটের হাতের বিভিন্ন অংশ এবং কনুই দিয়ে আঘাতের কৌশল — নাইফ-হ্যান্ড, ব্যাকফিস্ট, হাতুড়ি ঘুসি, পাম-হিল ইত্যাদি।
 ---
 
-# Hand Striking Techniques — Uchi-Waza
+# হাতের বিভিন্ন আঘাতের কৌশল — Uchi-Waza
 
-**打ち技** — Striking techniques using various hand surfaces and the elbow.
+**打ち技** — হাতের বিভিন্ন অংশ এবং কনুই ব্যবহার করে আঘাতের শিল্প।
 
-Unlike punching techniques (Tsuki-Waza) which use the fore-fist in a thrusting motion, striking techniques (Uchi-Waza) use the **edge, back, heel, or elbow** and employ swinging, snapping, or driving motions.
+পাঞ্চিং টেকনিক (Tsuki-Waza) এর থেকে স্ট্রাইকিং টেকনিক (Uchi-Waza) ভিন্ন। এখানে সোজাসুজি ঘুসি না মেরে হাতের কিনার, পেছনের অংশ, তালু বা কনুই দিয়ে সুইং বা স্ন্যাপিং মোশনে আঘাত হানা হয়।
 
 ---
 
-## Striking Techniques
+## স্ট্রাইকিং কৌশলসমূহ (Uchi-Waza)
 
-| Japanese Name | English Name | Striking Surface | Description |
+| জাপানি নাম | নাম (English) | আঘাতের অংশ | বিবরণ |
 |---|---|---|---|
-| Shuto Uchi | Knife-Hand Strike | Outer edge of open hand | Chopping strike with the edge of the hand — the "karate chop." |
-| Ura Uchi | Back-Fist Strike | Back of the fist (first two knuckles) | Snapping strike with the back of the fist — fast, whipping motion. |
-| Kentsui Uchi | Hammerfist / Bottom-Fist Strike | Bottom (heel) of the fist | Downward hammering strike with the bottom of the closed fist. |
-| Shotei (Teisho) Uchi | Palm-Heel Strike | Heel of the palm (teisho) | Driving strike with the heel of the palm — palm faces the target. |
-| Haito Uchi | Ridge-Hand Strike | Inner edge of the hand (thumb side) | Strike with the ridge of the hand — opposite edge to shuto. |
-| Haishu Uchi | Back-Hand Strike | Back of the open hand | Open-hand strike using the back surface of the hand. |
-| Hiji Ate Uchi | Elbow Strike | Tip/edge of the elbow | Close-range elbow strike — extremely powerful at short distance. |
-| Koken Uchi | Bent Wrist Strike | Bent wrist joint (koken) | Strike using the bent wrist — a whipping, close-range technique. |
+| Shuto Uchi | Knife-Hand Strike | খোলা হাতের বাইরের কিনার | খোলা হাতের কিনার দিয়ে চপিং আঘাত — "ক্যারাটে চপ"। |
+| Ura Uchi | Back-Fist Strike | মুষ্টির পেছনের অংশ | মুষ্টির পেছনের অংশ দিয়ে দ্রুত চাবুকের মতো স্ন্যাপিং আঘাত। |
+| Kentsui Uchi | Hammerfist Strike | মুষ্টির নিচের শক্ত অংশ | হাতুড়ির মতো মুষ্টির নিচ দিয়ে সজোরে নিচের দিকে আঘাত। |
+| Shotei (Teisho) Uchi | Palm-Heel Strike | তালুর শক্ত নিচের অংশ | হাতের তালুর নিচ দিয়ে সজোরে ধাক্কামূলক্ আঘাত। |
+| Haito Uchi | Ridge-Hand Strike | হাতের ভেতরের অংশ (বুড়ো আঙুলের দিক) | Shuto এর বিপরীত— হাতের ভেতরের ধার দিয়ে আঘাত। |
+| Haishu Uchi | Back-Hand Strike | খোলা হাতের পেছনের অংশ | খোলা হাতের পেছন দিয়ে থাপ্পড়সদৃশ আঘাত। |
+| Hiji Ate Uchi | Elbow Strike | কনুইয়ের শক্ত অগ্রভাগ | অত্যন্ত কাছাকাছি দূরত্বের ধ্বংসাত্মক কনুইয়ের আঘাত। |
+| Koken Uchi | Bent Wrist Strike | বাঁকানো কবজির জয়েন্ট | কবজি ভাজ করে কবজির ওপরের অংশ দিয়ে চাবুক আঘাত। |
 
 ---
 
-## Key Striking Principles
+## মূল নীতিসমূহ
 
-### Snapping vs. Driving
-
-- **Snapping strikes** (e.g., Ura Uchi, Shuto Uchi) — use a whipping retraction to generate speed and penetration, then immediately pull back
-- **Driving strikes** (e.g., Kentsui Uchi, Shotei Uchi) — drive through the target with body weight and momentum
-
-### Elbow Strikes (Hiji Ate)
-
-The elbow is one of the hardest surfaces on the human body. Hiji Ate techniques are among the most destructive close-range attacks in Shito-Ryu, used when:
-- The opponent is too close for a full punch
-- A grab or clinch has been made
-- A follow-up is needed after blocking
-
-Elbow strikes can be applied:
-- Forward (mae hiji ate)
-- Upward (age hiji ate)
-- Downward (otoshi hiji ate)
-- Backward (ushiro hiji ate)
-- Sideways (yoko hiji ate)
+- **Snapping Strikes** (যেমন Ura Uchi, Shuto Uchi) — চাবুকের মতো দ্রুত আঘাত হেনে মুহূর্তেই হাত ফিরিয়ে আনা হয়।
+- **Driving Strikes** (যেমন Kentsui Uchi, Shotei Uchi) — শরীরের ওজন দিয়ে প্রতিপক্ষের শরীরে আঘাত ঢুকিয়ে দেওয়া হয়।
+- **Elbow Strikes (Hiji Ate)** — মানুষের শরীরের কঠিনতম অংশ কনুই। খুব কাছাকাছি মারামারিতে এটি চূড়ান্ত ক্ষতিকারক।

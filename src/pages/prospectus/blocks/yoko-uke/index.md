@@ -1,43 +1,34 @@
 ---
 title: Yoko Uke (Soto Uke) — Outside Block
-description: Mid-level block moving from inside toward outside — deflects attacks from the centre of the body outward.
+description: মধ্যস্তরের ব্লক যা ভেতর থেকে বাইরের দিকে চালিত হয় — বুকের মাঝখানের আক্রমণকে বাইরের দিকে সরিয়ে দেয়।
 ---
 
 # Yoko Uke (Soto Uke) — Outside Block
 
-Also known as: **Soto Uke** (outside block)
+অপর নাম: **Soto Uke** (আউটসাইড ব্লক)
 
-**Reading:** *Yo-ko Oo-ke / So-to Oo-ke*
+**উচ্চারণ:** *ইয়োকো উ-কে / সোতো উ-কে*
 
-## Description
+## বিবরণ
 
-Block moving **from inside (the centre of the body) toward the outside** — sweeping an incoming attack away from the centreline. "Soto" means outside, indicating the direction the block travels.
+ব্লকটি শরীরের কেন্দ্র থেকে **বাইরের দিকে** চালিত হয়। "Soto" অর্থ বাইর। মধ্যস্তরের ঘুসি বা আক্রমণকে বুকের সেন্টারলাইন থেকে বাইরের দিকে সরিয়ে দিতে এটি ব্যবহৃত হয়।
 
-## Demonstration
+## ডেমোনস্ট্রেশন (Demonstration)
 
 ![Yoko Uke Animation](/prospectus/skills/blocks/images/sotouke.gif)
 
-| Step 1 (Front / Side) | Step 2 (Front / Side) | Step 3 (Front / Side) | Step 4 (Front / Side) |
+| স্টেপ ১ (সামনে / পাশে) | স্টেপ ২ (সামনে / পাশে) | স্টেপ ৩ (সামনে / পাশে) | স্টেপ ৪ (সামনে / পাশে) |
 |:---:|:---:|:---:|:---:|
-| ![Yoko Front 1](/prospectus/skills/blocks/images/sotof1.jpg) <br> ![Yoko Side 1](/prospectus/skills/blocks/images/sotos1.jpg) | ![Yoko Front 2](/prospectus/skills/blocks/images/sotof2.jpg) <br> ![Yoko Side 2](/prospectus/skills/blocks/images/sotos2.jpg) | ![Yoko Front 3](/prospectus/skills/blocks/images/sotof3.jpg) <br> ![Yoko Side 3](/prospectus/skills/blocks/images/sotos3.jpg) | ![Yoko Front 4](/prospectus/skills/blocks/images/sotof4.jpg) <br> ![Yoko Side 4](/prospectus/skills/blocks/images/sotos4.jpg) |
+| ![Yoko Front 1](/prospectus/skills/blocks/images/sotof1.jpg) <br> ![Yoko Side 1](/prospectus/skills/blocks/images/sotos1.jpg) | ![Yoko Front 2](/prospectus/skills/blocks/images/sotof2.jpg) <br> ![Yoko Side 2](/prospectus/skills/blocks/sotos2.jpg) | ![Yoko Front 3](/prospectus/skills/blocks/images/sotof3.jpg) <br> ![Yoko Side 3](/prospectus/skills/blocks/images/sotos3.jpg) | ![Yoko Front 4](/prospectus/skills/blocks/images/sotof4.jpg) <br> ![Yoko Side 4](/prospectus/skills/blocks/images/sotos4.jpg) |
 
 ![Yoko Back View](/prospectus/skills/blocks/images/sotob.jpg)
 
-## Technique
+## কৌশল (Technique)
 
-**Starting Position:**
-- Blocking hand raised to the opposite shoulder level with elbow bent
-- Non-blocking hand extended or chambered depending on the application
+- বাহুটি ভেতরের দিক থেকে বাইরের দিকে ঘোরানো হয়
+- কনুই প্রায় ৯০ ডিগ্রি কোণে বানো শেষ পজিশনে থাকবে
+- বাহুর বাইরের হাড় দিয়ে আক্রমণ প্রতিহত করা হয়
 
-**Execution:**
-- Sweep the forearm **inward-to-outward** (from centre to the outside of the body)
-- The forearm ends vertical or near-vertical, outside the body line
-- Forearm twists (rotates) at the moment of contact for maximum power
-- Elbow stays bent at approximately 90 degrees at the end
-- Hikite (pulling hand) chambers to the hip simultaneously
+## ব্যবহার
 
-**Contact Surface:** Outer forearm (the edge facing outward)
-
-## Application
-
-Defends against mid-level (chudan) punches and strikes by sweeping them to the outside of your body, creating an opening for counter-attack.
+- মধ্যস্তরের পাঞ্চ (Chudan tsuki) সরাতে।

@@ -1,77 +1,51 @@
 ---
-title: Grading Requirements
-description: Belt progression and kata requirements for Karate-do Shito-Kai Canada — from 9th Kyu white belt through 1st Kyu brown belt.
+title: বেল্ট পরীক্ষা ও গ্রেডিং (Grading Requirements)
+description: ক্যারাটে-দো শিটো-কাই বেল্ট অর্জন ও পরীক্ষার প্রয়োজনীয়তা — ৯ নম্বর কিউ (সাদা বেল্ট) থেকে ১ নম্বর কিউ (বাদামী বেল্ট)।
 ---
 
-# Grading Requirements
+# বেল্ট পরীক্ষা ও গ্রেডিং (Grading Requirements)
 
-**Kata Requirements for Belt Progression**
+**বেল্ট অর্জনের জন্য কাটার প্রয়োজনীয়তা**
 
-Kata grading in Karate-do Shito-Kai Canada follows a structured progression tied to **kyu** (grade) levels. The kata are taught at specific levels depending on the comprehension level of each student, following the **KIHON ("basic") kata — "Juni-no Kata"**.
+ক্যারাটে-দো শিটো-কাই ক্যানাডায় ক্যু (Gyu / Grade) অনুযায়ী বেল্ট পরীক্ষার সময় নির্দিষ্ট **কাটা (Kata)** প্রদর্শন করতে হয়। মৌলিক কাটা **"Juni-no Kata"** দিয়ে পরীক্ষা সূচনা হয়।
 
 ---
 
-## Kata Requirements by Belt Level
+## বেল্ট লেভেল অনুযায়ী প্রয়োজনীয় কাটার তালিকা
 
-| Belt Level | Kyu | Kata Required | Bunkai Required | Min. Time Before Testing |
+| বেল্ট লেভেল (Belt Level) | কিউ (Kyu) | প্রয়োজনীয় কাটা (Kata Required) | প্রয়োজনীয় বুঙ্কাই (Bunkai Required) | ন্যূনতম বিরতি কাল |
 |---|---|---|---|---|
-| White Belt | 9th Kyu | Juni No Kata | — | 3 months |
-| Yellow Belt | 8th Kyu | Heian Nidan | Heian Nidan | 3 months |
-| Orange Belt | 7th Kyu | Heian Sandan, Heian Shodan | Heian Sandan | 3 months |
-| Blue Belt | 6th Kyu | Heian Yondan | Heian Shodan | 3 months |
-| Green Belt | 5th Kyu | Heian Godan, Rohai | Heian Yondan, Heian Godan | 3 months |
-| Purple Belt | 4th Kyu | Juroku, Jitte | Rohai, Juroku, Jitte | 3 months |
-| Brown Belt I | 3rd Kyu | Jiin, Saifa, Naihanchi Shodan | Jiin, Saifa | 6 months |
-| Brown Belt II | 2nd Kyu | Jion, Bassai Dai, Matsukaze | Jion, Bassai Dai | 6 months |
-| Brown Belt III | 1st Kyu | Seienchin, Sanchin | Matsukaze, Seienchin | 6 months |
+| সাদা বেল্ট (White Belt) | 9th Kyu | Juni No Kata | — | ৩ মাস |
+| হলুদ বেল্ট (Yellow Belt) | 8th Kyu | Heian Nidan | Heian Nidan | ৩ মাস |
+| কমলা বেল্ট (Orange Belt) | 7th Kyu | Heian Sandan, Heian Shodan | Heian Sandan | ৩ মাস |
+| নীল বেল্ট (Blue Belt) | 6th Kyu | Heian Yondan | Heian Shodan | ৩ মাস |
+| সবুজ বেল্ট (Green Belt) | 5th Kyu | Heian Godan, Rohai | Heian Yondan, Heian Godan | ৩ মাস |
+| বেগুনি বেল্ট (Purple Belt) | 4th Kyu | Juroku, Jitte | Rohai, Juroku, Jitte | ৩ মাস |
+| ব্রাউন বেল্ট I (Brown Belt I) | 3rd Kyu | Jiin, Saifa, Naihanchi Shodan | Jiin, Saifa | ৬ মাস |
+| ব্রাউন বেল্ট II (Brown Belt II) | 2nd Kyu | Jion, Bassai Dai, Matsukaze | Jion, Bassai Dai | ৬ মাস |
+| ব্রাউন বেল্ট III (Brown Belt III) | 1st Kyu | Seienchin, Sanchin | Matsukaze, Seienchin | ৬ মাস |
 
 ---
 
-## Understanding the Requirements
+## মূল বিষয়সমূহ
 
-### Kata Performance
+### কাটা প্রদর্শন (Kata Performance)
 
-Each kata listed must be performed with correct:
-- Technique (blocking, punching, striking, kicking)
-- Stance (correct posture and foot placement)
-- Movement (proper transitions and direction changes)
-- Timing and rhythm
-- Focus (kime — the moment of peak power)
-- Breathing
+পরীক্ষায় কাটা প্রদর্শনের সময় যা বিচার করা হয়:
+- সঠিক টেকনিক (ব্লক, পাঞ্চ, কিক)
+- সঠিক স্ট্যান্স ও পোস্টার
+- সঠিক মুভমেন্ট ও ট্রানজিশন
+- টাইমিং ও রিদম
+- কিমে (Kime — চূড়ান্ত শক্তির ফোকাস)
+- শ্বাসপ্রশ্বাস
 
-### Bunkai
+### বুঙ্কাই (Bunkai)
 
-**Bunkai** (分解) means "analysis" — the practical self-defense applications of kata movements. Students must demonstrate that they understand not just the form of the kata but its **fighting applications**.
-
-At higher kyu levels, bunkai is tested with a partner, demonstrating the actual defensive and offensive applications embedded in each kata movement.
-
-### Minimum Time Requirements
-
-The minimum waiting period ensures that students have adequate time to:
-- Develop physical conditioning
-- Deepen understanding of techniques
-- Practise kata to a sufficient standard
-- Learn and refine bunkai applications
+**Bunkai** (分解) অর্থ বিশ্লেষণ বা প্রয়োগ। কাটার গতিবিধিগুলো বাস্তব জীবনে কীভাবে আত্মরক্ষায় ব্যবহার করা হয়, তা সহপাঠীর সাথে হাতে-কলমে প্রদর্শন করাই হলো বুঙ্কাই।
 
 ---
 
-## Kata Progression Overview
+## সম্পর্কিত লিংক
 
-```
-9th Kyu  →  Juni No Kata (basic)
-8th Kyu  →  Heian Nidan
-7th Kyu  →  Heian Sandan + Heian Shodan
-6th Kyu  →  Heian Yondan
-5th Kyu  →  Heian Godan + Rohai
-4th Kyu  →  Juroku + Jitte
-3rd Kyu  →  Jiin + Saifa + Naihanchi Shodan
-2nd Kyu  →  Jion + Bassai Dai + Matsukaze
-1st Kyu  →  Seienchin + Sanchin
-```
-
----
-
-## Related References
-
-- [Full Kata Catalogue](/prospectus/kata) — Complete list of all Shito-Ryu kata by lineage
-- [In the Dojo](../in-the-dojo) — Dojo rules and training standards
+- [সম্পূর্ণ কাটার তালিকা](/prospectus/kata) — ঐতিহাসিক ঐতিহ্য অনুযায়ী কাটার ক্যাটালগ
+- [ডোজো অনুশাসন](/prospectus/in-the-dojo) — ডোজোর নিয়ম এবং ফিটনেস প্রোগ্রাম

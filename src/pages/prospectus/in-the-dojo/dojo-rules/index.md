@@ -1,46 +1,46 @@
 ---
-title: Dojo Rules
-description: The fifteen rules of conduct for all Karate-do Shito-Kai practitioners — inside and outside the dojo.
+title: डोजো নিয়মাবলী (Dojo Rules)
+description: ক্যারাটে-দো শিটো-কাই শিক্ষার্থীদের জন্য নির্ধারিত ১৫টি আচারের নিয়মাবলী — डोजোর ভেতরে এবং বাইরে।
 ---
 
-# Dojo Rules
+# डोजো নিয়মাবলী (Dojo Rules)
 
-These are the **fifteen rules of conduct** for all members of Karate-do Shito-Kai. These rules govern behaviour in the dojo and reflect the ethical standards expected of all karate-ka — both inside and outside the training hall.
-
----
-
-## The Fifteen Rules
-
-1. **Treat everyone with courtesy.**
-
-2. Karate-ka (students) will **bow when entering and before leaving the dojo**.
-
-3. Karate-ka will maintain a **serious attitude at all times**. No profanity or loud talking in the dojo.
-
-4. **Do not criticize other karate-ka.**
-
-5. **No rings, watches or other jewellery** may be worn during class.
-
-6. All karate-ka will comply with the **dojo health rules**. Personal hygiene (cleanliness) is essential. Finger and toe nails should be clipped short.
-
-7. All karate-ka must wear a **clean white karate-gi** (no rips, holes or tears) and a karate belt of grade tied securely around the waist at all times.
-
-8. All karate-ka must wear the **proper crests** on their karate-gi.
-
-9. **Higher belts should aid lower belts** in their training. Lower belts should follow the instructions of higher belts in the dojo.
-
-10. Karate-ka will **attend at least two classes weekly** at the times designated for their instruction.
-
-11. There will be **no sparring without the express permission of the Sensei**.
-
-12. **Smoking, drinking or eating is not permitted** during the classes.
-
-13. Under no circumstances will any form of Shito-kai Karate be **taught by any Shito-kai member to any non-member**.
-
-14. Shito-kai karate-ka will **behave at all times as ladies and gentlemen** both inside and outside the dojo.
-
-15. No Shito-kai karate-ka will **provoke violence outside the dojo** or allow themselves to be provoked into violence, under pain of expulsion from the martial art of Shito-kai Karate-do for life.
+ক্যারাটে-দো শিটো-কাইয়ের সকল সদস্যের জন্য নির্ধারিত **১৫টি আচরণবিধি**। এই নিয়মগুলো डोजোর ভেতরে এবং বাইরে একজন ক্যারাটেকার নৈতিক মান রক্ষা করে।
 
 ---
 
-> *The dojo is a place of learning, respect, and mutual improvement. These rules exist not to restrict, but to create the environment in which the art of Karate-do can be properly transmitted.*
+## ১৫টি প্রধান নিয়মাবলী
+
+১. **সবাইকে বিনয় ও সৌজন্যের সাথে সম্মান প্রদর্শন করুন।**
+
+২. ক্যারাটে-কা (শিক্ষার্থী) डोजোতে প্রবেশ করার সময় এবং বের হওয়ার সময় **প্রণাম (Bow) করবে**।
+
+৩. ক্যারাটে-কা সর্বদা **গম্ভীর ও অনুশাসিত মনোভাব বজায় রাখবে**। डोजোতে কোনো কটু কথা বা চিৎকার-চেঁচামেচি করা যাবে না।
+
+৪. **অন্য ক্যারাটে-কাদের সমালোচনা বা উপহাস করবেন না।**
+
+৫. ক্লাসের সময় কোনো **আংটি, ঘড়ি বা অলঙ্কার পরা যাবে না**।
+
+৬. সকল ক্যারাটে-কা **স্বাস্থ্যবিধি মেনে চলবে**। শারীরিক পরিচ্ছন্নতা অপরিহার্য। হাতের ও পায়ের নখ ছোট রাখতে হবে।
+
+৭. সকল ক্যারাটে-কাকে অবশ্যই **পরিষ্কার সাদা ক্যারাটে-গি (Karate-gi)** এবং নিজ বেল্ট শক্ত করে বেঁধে ক্লাসে উপস্থিত হতে হবে।
+
+৮. ক্যারাটে-গিতে সঠিক প্রাতিষ্ঠানিক লোগো/ক্রেস্ট থাকতে হবে।
+
+৯. **সিনিয়র বেল্টধারীরা জুনিয়রদের শেখাতে সাহায্য করবে** এবং জুনিয়র বেল্টধারীরা সিনিয়রদের নির্দেশ মেনে চলবে।
+
+১০. ক্যারাটে-কাকে প্রতি সপ্তাহে অন্তত **দুটি নির্ধারিত ক্লাসে নিয়মিত উপস্থিত থাকতে হবে**।
+
+১১. সেনসেইয়ের সরাসরি অনুমতি ছাড়া কোনো **স্পারিং বা যুদ্ধ অনুশীলন করা যাবে না**।
+
+১২. ক্লাসের সময় **ধূমপান, মদ্যপান বা খাবার খাওয়া সম্পূর্ণ নিষিদ্ধ**।
+
+১৩. কোনো অবস্থাতেই শিটো-কাই ক্যারাটে কোনো অ-সদস্যের কাছে বাইরে শিক্ষা দেওয়া যাবে না।
+
+১৪. শিটো-কাই ক্যারাটে-কারা ডোজোর ভেতরে এবং বাইরে সর্বদা ভদ্র ও মার্জিত আচরণ করবে।
+
+১৫. কোনো ক্যারাটে-কা डोजোর বাইরে **সহিংসতা ছড়াবে না বা উস্কানিতে পা দেবে না**। এর ব্যত্যয় ঘটলে আজীবনের জন্য ক্যারাটে থেকে বহিষ্কার করা হবে।
+
+---
+
+> *ডোজো হলো শ্রদ্ধা ও আত্মশুদ্ধির জায়গা। এই নিয়মগুলো ক্যারাটের মর্যাদা রক্ষার জন্য গঠিত।*

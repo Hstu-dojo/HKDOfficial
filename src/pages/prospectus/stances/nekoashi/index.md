@@ -1,50 +1,35 @@
 ---
 title: Nekoashi Dachi
-description: Cat foot stance — almost all weight on the rear foot, front foot resting lightly on the ball of the foot. Highly mobile defensive stance.
+description: ক্যাট ফুট স্ট্যান্স — প্রায় সমস্ত ওজন পেছনের পায়ে, সামনের পা মাটিতে হালকাভাবে স্পর্শ করে থাকে। অত্যন্ত ক্ষিপ্র প্রতিরক্ষামূলক স্ট্যান্স।
 ---
 
 # Nekoashi Dachi — Cat Foot Stance
 
-**Reading:** *Ne-ko-a-shi Da-chi*
+**উচ্চারণ:** *নে-কো-আ-শি দা-চি*
 
-## Description
+## বিবরণ
 
-The **"cat foot" stance** — weight is placed almost entirely on the rear foot, with the front foot resting lightly on the ball of the foot. Like a cat ready to spring or step, this stance allows instant movement in any direction.
+**"বিড়ালের পায়ের স্ট্যান্স"** — শরীরের প্রায় ৯০% ওজন পেছনের পায়ে থাকে এবং সামনের পায়ের কেবল বল (Ball of foot) মেঝেকে হালকাভাবে স্পর্শ করে থাকে। বিড়ালের মতো যেকোনো মুহূর্তে লাফিয়ে ওঠা বা সরে যাওয়ার জন্য এই স্ট্যান্সটি বিখ্যাত।
 
-## Demonstration
+## ডেমোনস্ট্রেশন (Demonstration)
 
-| Front View | Side View |
+| সামনের দৃশ্য (Front View) | পাশ্ব দৃশ্য (Side View) |
 |:---:|:---:|
 | ![Nekoashi Dachi — front view](/prospectus/skills/stances/images/nekof.jpg) | ![Nekoashi Dachi — side view](/prospectus/skills/stances/images/nekos.jpg) |
 
-## Key Points
+## প্রধান পয়েন্টসমূহ
 
-- Approximately 90% of weight on rear foot
-- Front foot touches the floor only with the ball of the foot
-- Front knee is slightly bent and inward
-- Rear knee is bent — the primary weight-bearing leg
-- Feet are roughly shoulder-width apart (lateral)
-- Stance is relatively short in length
-- Front foot can be instantly lifted for a kick
+- পেছনের পায়ে প্রায় ৯০% ওজন থাকবে
+- সামনের পা মাটিতে শুধুমাত্র সামনের অংশে (Ball of foot) হালকা ছোঁয়া থাকবে
+- পেছনের হাঁটু গভীরভাবে বাঁকানো থাকবে
+- সামনের পা যেকোনো মুহূর্তে কিকের জন্য তুলে ফেলা সম্ভব
 
-## Defensive Advantages
+## সুবিধা
 
-- Instant front-leg kick without weight shift
-- Easy to step back (hikite movement)
-- Rapid direction change
-- Small frontal profile when used sideways
+- ওজন স্থানান্তর না করেই তাৎক্ষণিক সামনের পায়ে কিক (Front Kick) হানা যায়
+- পেছনের দিকে সরে গিয়ে আত্মরক্ষা করা সহজ
 
-## Transition with Moto Dachi
+## ব্যবহার
 
-Nekoashi Dachi and Moto Dachi are frequently cycled in Shito-Ryu:
-
-> **Kushin** — the defensive concept of immediately shifting from Moto Dachi to Nekoashi Dachi to create distance, then returning to Moto Dachi.
-
-## Usage
-
-- Kumite (sparring) ready position
-- Featured in several Shito-Ryu kata
-- Used for defensive retreating sequences
-- Applied in combination with Kushin principle
-
----
+- স্পারিং (Kumite) এবং আত্মরক্ষামূলক পরিস্থিতিতে
+- Kushin নীতির প্রয়োগে

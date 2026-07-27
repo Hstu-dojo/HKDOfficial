@@ -1,46 +1,30 @@
 ---
 title: Tsuki Uke — Punch Block
-description: Simultaneous punching (forearm) block — the block and the counter-attack are executed as a single action.
+description: একই সাথে ঘুসি ও ব্লক — যেখানে প্রতিরক্ষামূলক ব্লক এবং পাল্টা আক্রমণ একসাথে সম্পন্ন হয়।
 ---
 
 # Tsuki Uke — Punch Block
 
-**Reading:** *Tsoo-ki Oo-ke*
+**উচ্চারণ:** *তসুকি উ-কে*
 
-## Description
+## বিবরণ
 
-The **simultaneous punching block** — an advanced defensive technique where a punch (tsuki) is deployed as a block. The forearm/fist intercepts the incoming attack while simultaneously driving forward into the opponent. This embodies the Hangeki (counter-attack) principle.
+**একসাথে ঘুসি ও ব্লকিং কৌশল** — এটি একটি উন্নত প্রতিরক্ষা যেখানে একটি পাঞ্চ (Tsuki) দিয়েই আক্রমণ ঠেকানো ও প্রতিপক্ষকে আঘাত হানা হয়। এটি Hangeki নীতির শারীরিক রূপ।
 
-## Core Concept
-
-Tsuki Uke is the physical expression of **HANGEKI** — the 5th principle of Shito-Ryu defense. Rather than blocking first and then counter-attacking, both actions happen at the **same moment**. The punch IS the block.
-
-## Demonstration
+## ডেমোনস্ট্রেশন (Demonstration)
 
 ![Tsuki Uke Animation](/prospectus/skills/blocks/images/tsuke.gif)
 
-| Step 1 (Front / Side) | Step 2 (Front / Side) |
+| স্টেপ ১ (সামনে / পাশে) | স্টেপ ২ (সামনে / পাশে) |
 |:---:|:---:|
 | ![Tsuki Front 1](/prospectus/skills/blocks/images/tsukif1.jpg) <br> ![Tsuki Side 1](/prospectus/skills/blocks/images/tsukis1.jpg) | ![Tsuki Front 2](/prospectus/skills/blocks/images/tsukif2.jpg) <br> ![Tsuki Side 2](/prospectus/skills/blocks/images/tsukis2.jpg) |
 
 ![Tsuki Back View](/prospectus/skills/blocks/images/tsukib.jpg)
 
-## Technique
+## মূল ধারণা
 
-**Execution:**
-- Step or shift into the attack, meeting it at close range
-- Drive the punching forearm into the incoming arm/weapon
-- The contact point deflects the attack while the fist drives through to the target
-- The body must be positioned so the attacking limb strikes the forearm, not the body
+ব্লক এবং কাউন্টার অ্যাটাক দুটি আলাদা ধাপে না করে **একই সময়ে** সম্পন্ন করাই Tsuki Uke-এর মূল বিষয়।
 
-**Variations:**
-- **Tsuki Uke jodan** — simultaneous punch targeting the head level
-- **Tsuki Uke chudan** — simultaneous punch targeting the mid-section
+## ব্যবহার
 
-## Application
-
-Most effective against:
-- Straight punches (oi tsuki, gyaku tsuki)
-- Any linear attacking technique
-
-*The timing must be precise — meeting the attack at its mid-point before it reaches the target.*
+- সোজা আসা পাঞ্চের (Oi tsuki, Gyaku tsuki) বিরুদ্ধে অত্যন্ত কার্যকর।

@@ -1,45 +1,31 @@
 ---
 title: Hachiji Dachi
-description: Natural open stance — feet at shoulder width with toes pointing outward at 45 degrees. The primary training and ready stance.
+description: ন্যাচারাল ওপেন স্ট্যান্স — পা দুটি কাঁধ সমপরিমাণ চওড়া এবং পায়ের আঙুল বাইরের দিকে ৪৫ ডিগ্রিতে খোলা।
 ---
 
 # Hachiji Dachi — Natural Open Stance
 
-**Reading:** *Ha-chi-jee Da-chi*
+**উচ্চারণ:** *হা-চি-জি দা-চি*
 
-## Description
+## বিবরণ
 
-Feet at shoulder width apart with toes pointing **outward at 45 degrees**. "Hachiji" refers to the kanji character "8" (八), which the shape of the feet resembles. This is the primary **natural open stance** used throughout training.
+পা দুটি কাঁধ সমপরিমাণ চওড়া রেখে পায়ের আঙুল **বাইরের দিকে ৪৫ ডিগ্রি কোণে** রাখা হয়। "Hachiji" শব্দটি জাপানি সংখ্যা ৮ (八) থেকে এসেছে, যা পায়ের অবস্থানের আকৃতির সাথে মিলে যায়। এটি অনুশীলনের অন্যতম প্রধান প্রাকৃতিক প্রস্তুত স্ট্যান্স।
 
-## Demonstration
+## ডেমোনস্ট্রেশন (Demonstration)
 
-| Front View | Side View |
+| সামনের দৃশ্য (Front View) | পাশ্ব দৃশ্য (Side View) |
 |:---:|:---:|
 | ![Hachiji Dachi — front view](/prospectus/skills/stances/images/hachijif.jpg) | ![Hachiji Dachi — side view](/prospectus/skills/stances/images/hachijis.jpg) |
 
-## Key Points
+## প্রধান পয়েন্টসমূহ
 
-- Feet are shoulder-width apart
-- Toes point outward at 45 degrees to each side
-- Knees are slightly bent (natural relaxed bend)
-- Weight is evenly distributed on both feet
-- Hips are level and square
-- Body is upright with relaxed shoulders
+- পা দুটি কাঁধের সমান চওড়া থাকবে
+- পায়ের আঙুলগুলো বাইরের দিকে ৪৫ ডিগ্রি কোণে খোলা থাকবে
+- হাঁটু হালকা বাঁকানো (স্বাভাবিক শিথিল মোচড়)
+- শরীরের ওজন দুই পায়ে সমানভাবে বন্টিত থাকবে
+- কাঁধ শিথিল এবং হিপ সমান্তরাল থাকবে
 
-## Comparison with Similar Stances
+## ব্যবহার
 
-| Stance | Feet Width | Toes Direction |
-|---|---|---|
-| Heiko Dachi | Hip width | Parallel (forward) |
-| **Hachiji Dachi** | Shoulder width | OUT 45° |
-| Uchi-Hachiji Dachi | Shoulder width | IN 45° |
-
-## Usage
-
-Hachiji Dachi is used:
-- As the primary ready stance (yoi) in training
-- At the start of many kata
-- In warm-up exercises
-- As the natural fighting posture base
-
----
+- অনুশীলনের প্রধান প্রস্তুত পজিশন (Yoi) হিসেবে
+- বহু কাটার শুরুর স্ট্যান্স হিসেবে

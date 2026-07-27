@@ -1,53 +1,35 @@
 ---
 title: Zenkutsu Dachi
-description: Long forward stance — deep front knee bend with extended rear leg. The primary power-generating stance in Shito-Ryu.
+description: লং ফরোয়ার্ড স্ট্যান্স — সামনের হাঁটু গভীরভাবে বাঁকানো এবং পেছনের পা প্রসারিত। শিটো-রিউর মূল পাওয়ার ড্রাইভ স্ট্যান্স।
 ---
 
 # Zenkutsu Dachi — Long Forward Stance
 
-**Reading:** *Zen-koot-soo Da-chi*
+**উচ্চারণ:** *জেন-কুতসু দা-চি*
 
-## Description
+## বিবরণ
 
-A long forward stance with the front knee **deeply bent** and the rear leg fully extended. "Zenkutsu" means "forward leaning." This is the primary power stance in karate and drives the majority of forward-moving strikes and blocks.
+একটি দীর্ঘ ফরোয়ার্ড স্ট্যান্স যেখানে সামনের হাঁটু **গভীরভাবে বাঁকানো** এবং পেছনের পা সোজা প্রসারিত থাকে। "Zenkutsu" অর্থ সামনের দিকে ঝুঁকে থাকা। এটি ক্যারাটের মূল পাওয়ার স্ট্যান্স এবং অধিকাংশ অগ্রগামী আক্রমণ ও ব্লকে ব্যবহৃত হয়।
 
-## Demonstration
+## ডেমোনস্ট্রেশন (Demonstration)
 
-| Front View | Side View |
+| সামনের দৃশ্য (Front View) | পাশ্ব দৃশ্য (Side View) |
 |:---:|:---:|
 | ![Zenkutsu Dachi — front view](/prospectus/skills/stances/images/zenkutsuf.jpg) | ![Zenkutsu Dachi — side view](/prospectus/skills/stances/images/zenkutsus.jpg) |
 
-## Key Points
+## প্রধান পয়েন্টসমূহ
 
-- Front foot points forward
-- Rear foot points outward at 45 degrees
-- Front knee is bent deeply — directly over the toes, not beyond
-- Rear leg is fully straight and tensioned
-- Stance is long — approximately 1.5× shoulder width in length
-- Weight distribution: approximately 70% front, 30% rear
-- Hips are low and square to the front
-- Both feet remain flat on the floor
+- সামনের পা সোজা সামনে নির্দেশ করবে
+- পেছনের পা বাইরের দিকে ৪৫ ডিগ্রি কোণে থাকবে
+- সামনের হাঁটু সঠিকভাবে গোড়ালি ও আঙুলের ওপর গভীরভাবে বাঁকানো
+- পেছনের পা সম্পূর্ণ সোজা থাকবে এবং গোড়ালি মাটিতে লাগানো থাকবে
+- ওজন বন্টন: প্রায় ৭০% সামনে এবং ৩০% পেছনে
 
-## Power Generation
+## শক্তি উৎপাদন
 
-Zenkutsu Dachi generates power through:
-- Hip rotation (koshi no kaiten) over the stable bent front knee
-- Tension in the fully extended rear leg
-- The ground reaction force through the locked rear heel
-- Forward momentum driven by hip drive
+- হিপ রোটেশন (Koshi no kaiten) এবং পেছনের পায়ের গ্রাউন্ড ফোর্সের মাধ্যমে তীব্র শক্তি উৎপন্ন হয়।
 
-## Common Mistakes
+## ব্যবহার
 
-- Allowing the front knee to collapse inward (must stay over the toes)
-- Raising the rear heel off the floor
-- Shortening the stance to reduce effort
-- Leaning the upper body too far forward
-
-## Usage
-
-- The most commonly used attack and block stance
-- Forward stepping (oi-tsuki) uses this stance
-- Featured in all Heian/Pinan kata
-- Used in basic line training (kihon)
-
----
+- আক্রমণ (যেমন Oi-tsuki) এবং ব্লকে ব্যবহৃত সবচেয়ে পরিচিত স্ট্যান্স।
+- সকল Heian/Pinan কাটাতে এটি বিদ্যমান।

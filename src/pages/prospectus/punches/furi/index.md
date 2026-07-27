@@ -1,42 +1,24 @@
 ---
 title: Furi Tsuki — Roundhouse Punch
-description: Circular or swinging roundhouse punch — the fist travels in a wide horizontal arc to strike from the side.
+description: চক্রাকার বা ঘূর্ণায়মান রাউন্ডহাউস পাঞ্চ — হাত বাঁকিয়ে পাশ থেকে ঘুরিয়ে আঘাত করা হয়।
 ---
 
 # Furi Tsuki — Roundhouse Punch
 
-**Reading:** *Foo-ree Tsoo-ki*
+**উচ্চারণ:** *ফুরি তসুকি*
 
-## Description
+## বিবরণ
 
-The **circular swinging punch** — also called the "roundhouse punch." "Furi" means swinging or circular motion. The fist travels in a wide horizontal arc, striking from the side rather than straight ahead.
+**সার্কুলার সুইং পাঞ্চ** — যাকে রাউন্ডহাউস পাঞ্চও বলা হয়। "Furi" অর্থ ঘোরানো। সামনে সোজা ঘুসি না মেরে হাতটিকে পাশ থেকে একটি বৃত্তাকার পথে ঘুরিয়ে আনা হয়।
 
-## Demonstration
+## ডেমোনস্ট্রেশন (Demonstration)
 
 ![Furi Tsuki Animation](/prospectus/skills/punches/images/furi_tzuki.GIF)
 
-| Step 1 (Front / Side) | Step 2 (Front / Side) | Step 3 (Front / Side) |
+| স্টেপ ১ (সামনে / পাশে) | স্টেপ ২ (সামনে / পাশে) | স্টেপ ৩ (সামনে / পাশে) |
 |:---:|:---:|:---:|
 | ![Furi Front 1](/prospectus/skills/punches/images/furif1.jpg) <br> ![Furi Side 1](/prospectus/skills/punches/images/furis1.jpg) | ![Furi Front 2](/prospectus/skills/punches/images/furif2.jpg) <br> ![Furi Side 2](/prospectus/skills/punches/images/furis2.jpg) | ![Furi Front 3](/prospectus/skills/punches/images/furif3.jpg) <br> ![Furi Side 3](/prospectus/skills/punches/images/furis3.jpg) |
 
-## Technique
+## ব্যবহার
 
-**Execution:**
-- The punching arm swings outward from the side of the body in a wide horizontal arc
-- The elbow leads the motion before extending through the target
-- The fist arrives at the target from the side (approximately 90° to the target's line of sight)
-- The fist can remain vertical or pronate slightly at impact
-- Hip rotation drives the swing — the hip of the punching side drives forward
-
-**Contact Area:** The seiken (fore-knuckles) or the full fist
-
-## Application
-
-- Targets the side of the head (temple), the ear, or the jaw
-- Effective at close-to-medium range when a straight punch is blocked or restricted
-- Can bypass a guard that is focused on centre-line defense
-
-## Usage
-
-- Appears in advanced kata
-- Used in kumite as a surprise attack from an angle
+- প্রতিপক্ষের কান, গাল বা চোয়ালের পাশে আঘাত করার জন্য।

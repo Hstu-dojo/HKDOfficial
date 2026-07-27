@@ -1,44 +1,32 @@
 ---
 title: Shiko Dachi
-description: Straddle leg stance — the wide "Sumo" stance with deep knee bend and feet pointing outward at 45 degrees.
+description: স্ট্র্যাডল লেগ স্ট্যান্স — দুই পা চওড়া করে হাঁটু বাঁকানো "সুমো" স্ট্যান্স, যেখানে পায়ের আঙুল বাইরের দিকে ৪৫ ডিগ্রিতে থাকে।
 ---
 
 # Shiko Dachi — Straddle Leg Stance
 
-**Reading:** *She-ko Da-chi*
+**উচ্চারণ:** *শি-কো দা-চি*
 
-## Description
+## বিবরণ
 
-A wide straddle-leg stance with deep knee bend — often called the **"Sumo" stance** due to its resemblance to the sumo wrestling base position. This is one of the most demanding stances in terms of leg strength and flexibility.
+একটি চওড়া স্ট্র্যাডল-লেগ স্ট্যান্স যেখানে হাঁটু গভীরভাবে বাঁকানো থাকে — সুমো কুস্তিগীরদের অবস্থানের সাথে মিল থাকায় একে **"সুমো" স্ট্যান্স**ও বলা হয়। এটি পায়ের শক্তি ও নমনীয়তার জন্য অন্যতম চ্যালেঞ্জিং স্ট্যান্স।
 
-## Demonstration
+## ডেমোনস্ট্রেশন (Demonstration)
 
-| Front View | Side View |
+| সামনের দৃশ্য (Front View) | পাশ্ব দৃশ্য (Side View) |
 |:---:|:---:|
 | ![Shiko Dachi — front view](/prospectus/skills/stances/images/shikof.jpg) | ![Shiko Dachi — side view](/prospectus/skills/stances/images/shikos.jpg) |
 
-## Key Points
+## প্রধান পয়েন্টসমূহ
 
-- Feet are wider than shoulder-width (approximately 1.5–2x shoulder width)
-- Toes point outward at 45 degrees
-- Knees are bent deeply, pushed outward over the toes
-- Body is low — thighs approach parallel to the floor
-- Spine remains straight and vertical
-- Weight is evenly distributed on both feet
-- Hips are square and low
+- পা দুটি কাঁধের প্রস্থের চেয়ে বেশ চওড়া হবে (প্রায় ১.৫ থেকে ২ গুণ)
+- পায়ের আঙুল বাইরের দিকে ৪৫ ডিগ্রি কোণে নির্দেশ করবে
+- হাঁটু গভীরভাবে বাঁকানো হবে এবং পায়ের আঙুলের ওপর দিয়ে বাইরের দিকে থাকবে
+- উরু মেঝের সমান্তরালে নিয়ে আসার চেষ্টা করতে হবে
+- মোট ওজন দুই পায়ে সমান থাকবে এবং মেরুদণ্ড সোজা থাকবে
 
-## Physical Requirements
+## ব্যবহার
 
-Shiko Dachi demands:
-- Strong quadriceps and gluteal muscles
-- Good hip flexibility and adductor stretch
-- Core stability to maintain upright posture at low position
-
-## Usage
-
-- Featured in Shiko kata and several Naha-te derived kata
-- Sanchin kata contains this stance
-- Used in close-range power training combinations
-- Develops leg strength as a conditioning exercise
-
----
+- Shiko এবং Nahate ঘরানার বিভিন্ন কাটাতে ব্যবহৃত হয়
+- কাছের শক্তিশেলী আক্রমণের অনুশীলনে
+- পায়ের শক্তি বাড়ানোর জন্য বিশেষ ব্যায়াম হিসেবে
