@@ -160,16 +160,20 @@ export async function listCertificateTemplates() {
     // This is a fallback only when dynamic scan fails
     const fallbackPdfs = [
       {
-        value: 'certs/HKD-BELTTEST-26.pdf',
-        label: 'HKD-BELTTEST-26.pdf',
+        value: "certs/HKD-BELTTEST-26.pdf",
+        label: "HKD-BELTTEST-26.pdf",
       },
       {
-        value: 'certs/fillable - Final Belt Test Certificates.pdf',
-        label: 'fillable - Final Belt Test Certificates.pdf',
+        value: "certs/fillable - Final Belt Test Certificates.pdf",
+        label: "fillable - Final Belt Test Certificates.pdf",
       },
       {
-        value: 'certs/fillable - program cert.pdf',
-        label: 'fillable - program cert.pdf',
+        value: "certs/fillable - program cert.pdf",
+        label: "fillable - program cert.pdf",
+      },
+      {
+        value: "certs/HKD-GRADING-PRINTABLE.pdf",
+        label: "HKD-GRADING-PRINTABLE.pdf",
       },
     ] satisfies AvailableCertificateTemplate[];
 
