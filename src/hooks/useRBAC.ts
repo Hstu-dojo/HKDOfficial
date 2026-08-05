@@ -27,6 +27,7 @@ export function useRBAC() {
   // Track the user ID we've already fetched RBAC data for,
   // so we don't re-fetch on token refreshes or session reference changes.
   const lastFetchedUserIdRef = useRef<string | null>(null);
+  const fetchInFlightRef = useRef(false);
 
   // Derive a stable user ID to use as the effect dependency
   // instead of the entire session object (which changes on every token refresh)
@@ -35,14 +36,16 @@ export function useRBAC() {
   // Fetch RBAC data using the Supabase user ID via header
   // This avoids cookie issues that can occur with getRBACContext
   useEffect(() => {
-    if (status === 'loading' || !hasCompleteData) {
+    // Still waiting for auth to resolve
+    if (status === 'loading') {
       // Only show loading if we don't already have cached data for this user
       if (!lastFetchedUserIdRef.current || lastFetchedUserIdRef.current !== userId) {
         setLoading(true);
       }
       return;
     }
-    
+
+    // Not authenticated
     if (!userId) {
       lastFetchedUserIdRef.current = null;
       setLocalUserId(null);
@@ -57,7 +60,11 @@ export function useRBAC() {
       return;
     }
 
+    // Don't start a second parallel fetch
+    if (fetchInFlightRef.current) return;
+
     async function fetchRBACData() {
+      fetchInFlightRef.current = true;
       try {
         // Don't show loading spinner if we already have cached permissions
         // (allows background refresh without UI flash)
@@ -74,7 +81,6 @@ export function useRBAC() {
 
         if (response.ok) {
           const data = await response.json();
-          console.log('[useRBAC] Got RBAC data:', data);
           
           lastFetchedUserIdRef.current = userId;
           setLocalUserId(data.localUserId);
@@ -99,13 +105,14 @@ export function useRBAC() {
         setPermissions(null);
         setError('Network error fetching RBAC data');
       } finally {
+        fetchInFlightRef.current = false;
         setLoading(false);
       }
     }
 
     fetchRBACData();
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [userId, status, hasCompleteData]);
+  }, [userId, status]);
 
   const hasPermission = useCallback((resource: ResourceType, action: ActionType): boolean => {
     if (!permissions) return false;

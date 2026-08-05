@@ -158,7 +158,7 @@ const PROFILE_SECTIONS = [
 // ─── Main Component ──────────────────────────────────────────────────────────
 
 export default function RegistrationsManagement() {
-  const { hasPermission, hasRole } = useRBAC();
+  const { hasPermission, hasRole, loading: rbacLoading } = useRBAC();
   const [registrations, setRegistrations] = useState<Registration[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
@@ -288,6 +288,17 @@ export default function RegistrationsManagement() {
   };
 
   // ─── Permission guard ─────────────────────────────────────────────────────
+  // IMPORTANT: Wait for RBAC to finish loading before showing "Access Denied".
+  // Without this, hasPermission returns false while data is still loading,
+  // causing a flash of "Access Denied" before permissions resolve.
+
+  if (rbacLoading || loading) {
+    return (
+      <div className="flex items-center justify-center py-12">
+        <LoadingSpinner size="large" />
+      </div>
+    );
+  }
 
   if (!canRead) {
     return (
@@ -298,14 +309,6 @@ export default function RegistrationsManagement() {
             You don&apos;t have permission to view member registrations.
           </p>
         </div>
-      </div>
-    );
-  }
-
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center py-12">
-        <LoadingSpinner size="large" />
       </div>
     );
   }

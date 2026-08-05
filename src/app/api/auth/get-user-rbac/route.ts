@@ -11,6 +11,9 @@ import { createClient } from '@/lib/supabase/server';
  *
  * SECURITY: Validates the Supabase session server-side and only
  * returns RBAC data for the authenticated user — never for others.
+ * 
+ * PERFORMANCE: Sets Cache-Control to allow short browser caching (10s)
+ * so rapid navigations between admin pages don't re-trigger this endpoint.
  */
 export async function GET(request: NextRequest) {
   try {
@@ -41,11 +44,18 @@ export async function GET(request: NextRequest) {
     const roles = userPermissions.roles;
     const permissions = userPermissions.permissions;
 
-    return NextResponse.json({
+    const response = NextResponse.json({
       localUserId,
       roles,
       permissions,
     });
+
+    // Allow the browser to cache this response for 10 seconds.
+    // This prevents re-fetching RBAC on every admin sub-page navigation
+    // while still ensuring changes propagate within a reasonable window.
+    response.headers.set('Cache-Control', 'private, max-age=10, stale-while-revalidate=30');
+
+    return response;
   } catch (error) {
     console.error('[get-user-rbac] Error:', error);
     return NextResponse.json({ error: 'Internal error' }, { status: 500 });

@@ -22,6 +22,11 @@ interface CompleteSession {
  * Hook that waits for complete session data including user ID and role.
  * Stabilized: once a complete session is established for a given user,
  * subsequent token refreshes won't trigger loading states or retry loops.
+ * 
+ * OPTIMIZED: Eliminated the 200ms retry polling loop. If the session has
+ * user.id + user.email on the first check, it resolves immediately.
+ * Only retries (up to 3x at 150ms) if the session is partial (has email
+ * but no ID), which is a rare edge case during initial Supabase hydration.
  */
 export function useCompleteSession() {
   const { data: session, status } = useSession();
@@ -56,30 +61,33 @@ export function useCompleteSession() {
       return;
     }
 
-    // Check if session has all required data
+    // FAST PATH: session already has all required data → resolve immediately
     if (session?.user?.id && session?.user?.email) {
-      // Session is complete
       resolvedUserIdRef.current = session.user.id;
       setCompleteSession(session as CompleteSession);
       setIsLoading(false);
       setRetryCount(0);
-    } else if (session?.user?.email && retryCount < 10) {
-      // Session is partial, wait a bit and retry
+      return;
+    }
+
+    // SLOW PATH: session is partial (has email but not ID) — rare edge case
+    // during initial Supabase hydration. Retry a few times quickly.
+    if (session?.user?.email && retryCount < 3) {
       const timeout = setTimeout(() => {
         setRetryCount(prev => prev + 1);
-      }, 200); // Check every 200ms
+      }, 150);
 
       return () => clearTimeout(timeout);
-    } else {
-      // Either no session or max retries reached
-      if (session?.user?.email) {
-        console.warn('Session loaded without complete data after retries, proceeding anyway');
-        resolvedUserIdRef.current = session?.user?.id ?? null;
-        setCompleteSession(session as CompleteSession);
-      }
-      setIsLoading(false);
-      setRetryCount(0);
     }
+
+    // Either no session or max retries reached
+    if (session?.user?.email) {
+      console.warn('Session loaded without complete data after retries, proceeding anyway');
+      resolvedUserIdRef.current = session?.user?.id ?? null;
+      setCompleteSession(session as CompleteSession);
+    }
+    setIsLoading(false);
+    setRetryCount(0);
   }, [session, status, retryCount]);
 
   return {
