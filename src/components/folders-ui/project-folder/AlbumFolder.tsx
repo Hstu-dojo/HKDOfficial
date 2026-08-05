@@ -69,7 +69,7 @@ export function AlbumFolder({ album, index, href, onClick, isAdmin }: AlbumFolde
 
   return (
     <motion.div
-      className="group relative w-full max-w-[288px] mx-auto cursor-pointer"
+      className="group relative w-[288px] mx-auto cursor-pointer"
       style={{
         perspective: "1200px",
         zIndex: isActive ? 50 : 1,
@@ -80,12 +80,12 @@ export function AlbumFolder({ album, index, href, onClick, isAdmin }: AlbumFolde
       onClick={handleClick}
     >
       <div
-        className="relative w-full aspect-[288/224]"
+        className="relative w-[288px]"
         style={{ perspective: "1200px" }}
       >
         {/* Back panel */}
         <motion.div
-          className="absolute inset-0 z-0 rounded-2xl"
+          className="relative z-0 rounded-2xl"
           animate={{
             rotateX: isActive ? 15 : 0,
             backgroundColor: isDark ? "#1e1e1e" : "#f1f5f9",
@@ -103,6 +103,7 @@ export function AlbumFolder({ album, index, href, onClick, isAdmin }: AlbumFolde
             },
           }}
           style={{
+            height: "224px",
             border: isDark ? "1px solid rgba(255, 255, 255, 0.06)" : "1px solid rgba(0, 0, 0, 0.05)",
             transformStyle: "preserve-3d",
             transformOrigin: "center bottom",
@@ -138,12 +139,16 @@ export function AlbumFolder({ album, index, href, onClick, isAdmin }: AlbumFolde
               const yOffset = -16 * (1 - distanceFromCenter / centerIndex) || 0;
               const scale = distanceFromCenter === 0 ? 1.05 : distanceFromCenter === 1 ? 0.95 : 0.88;
 
-              const xPos = isActive ? pos.x * 1.4 : pos.x;
-              const yPos = isActive ? -8 + yOffset : 8 + yOffset;
-              const rotation = isActive ? pos.rotate * 1.3 : pos.rotate;
-              const finalScale = isActive ? scale * 1.02 : scale;
+              // Positioning & animation logic:
+              // Closed: tucked deep inside folder (y=36), tight stack (x * 0.3)
+              // Hovered: opens up, rises (y=-14), fans out wide (x * 1.4), brightens up
+              const xPos = isActive ? pos.x * 1.4 : pos.x * 0.3;
+              const yPos = isActive ? -14 + yOffset : 36 + yOffset;
+              const rotation = isActive ? pos.rotate * 1.3 : pos.rotate * 0.4;
+              const finalScale = isActive ? scale * 1.05 : scale * 0.9;
+              const currentOpacity = isActive ? 1 : distanceFromCenter === 0 ? 0.9 : 0.4;
 
-              const staggerDelay = distanceFromCenter * 0.08;
+              const staggerDelay = distanceFromCenter * 0.05;
 
               // Hide images completely if album is empty to avoid rendering missing images
               if (album.imageCount === 0) return null;
@@ -158,24 +163,24 @@ export function AlbumFolder({ album, index, href, onClick, isAdmin }: AlbumFolde
                     y: yPos,
                     rotate: rotation,
                     scale: finalScale,
-                    opacity: 1,
+                    opacity: currentOpacity,
                   }}
                   transition={{
                     type: "spring",
-                    stiffness: 100,
-                    damping: 16,
-                    mass: 1,
+                    stiffness: 160,
+                    damping: 20,
+                    mass: 0.8,
                     delay: staggerDelay,
                   }}
                   style={{ zIndex }}
                 >
-                  <div className="h-[160px] w-[100px] overflow-hidden rounded-lg shadow-lg border border-white/10 bg-muted">
+                  <div className="h-[150px] w-[105px] overflow-hidden rounded-lg shadow-md border border-white/20 bg-muted">
                     <motion.img
                       src={imageUrl}
                       alt={`Preview ${imgIndex + 1}`}
                       className="h-full w-full object-cover"
                       animate={{
-                        filter: `brightness(${isActive ? Math.min(1, brightness + 0.2) : brightness}) contrast(1.08) saturate(${1 - distanceFromCenter * 0.2}) blur(${isActive ? 0 : blurAmount}px)`,
+                        filter: `brightness(${isActive ? 1 : 0.85}) contrast(1.05)`,
                       }}
                       transition={{
                         duration: TRANSITION_DURATION,

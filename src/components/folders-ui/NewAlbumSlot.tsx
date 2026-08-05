@@ -45,13 +45,13 @@ export function NewAlbumSlot({
 
   return (
     <div
-      className="group relative w-full max-w-[288px] mx-auto cursor-pointer"
+      className="group relative w-[288px] mx-auto cursor-pointer"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
       onClick={onClick}
     >
       <div
-        className="relative w-full aspect-[288/224] transition-all duration-500 ease-[cubic-bezier(0.23,1,0.32,1)]"
+        className="relative w-[288px]"
         style={{ perspective: "1200px" }}
       >
         <div
