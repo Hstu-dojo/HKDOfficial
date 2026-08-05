@@ -36,7 +36,7 @@ export function AlbumGrid({ albums }: AlbumGridProps) {
   const heroImage = albums[0]?.previewImages[0]?.secureUrl || "/images/dojo-hero.jpg";
 
   return (
-    <div ref={containerRef} className="min-h-screen bg-background">
+    <div ref={containerRef} className="min-h-screen bg-background pt-[4.5rem] lg:pt-[161px]">
       {/* Hero Section */}
       <section className="relative h-[70vh] min-h-[500px] w-full overflow-hidden flex items-center justify-center">
         {/* Parallax Background Image */}
