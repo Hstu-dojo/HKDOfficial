@@ -36,7 +36,7 @@ export function AlbumGrid({ albums }: AlbumGridProps) {
   const heroImage = albums[0]?.previewImages[0]?.secureUrl || "/images/dojo-hero.jpg";
 
   return (
-    <div ref={containerRef} className="min-h-screen bg-background pt-[4.5rem] lg:pt-[161px]">
+    <div ref={containerRef} className="min-h-screen bg-background">
       {/* Hero Section */}
       <section className="relative h-[70vh] min-h-[500px] w-full overflow-hidden flex items-center justify-center">
         {/* Parallax Background Image */}
@@ -54,7 +54,7 @@ export function AlbumGrid({ albums }: AlbumGridProps) {
         </motion.div>
 
         {/* Hero Content */}
-        <div className="container relative z-10 mx-auto px-4">
+        <div className="container relative z-10 mx-auto px-4 mt-20 md:mt-0">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
