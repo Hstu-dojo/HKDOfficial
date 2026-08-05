@@ -19,6 +19,7 @@ import {
   Share2,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { ParallaxScrollSecond } from "@/components/ui/parallax-scroll";
 
 interface AlbumFolder {
   id: string;
@@ -173,19 +174,17 @@ export function AlbumDetailView({ folder, images, childFolders }: AlbumDetailVie
           </div>
         )}
 
-        {/* Image Masonry Grid matching moments.tsx columns */}
+        {/* Parallax Scroll 2 Grid */}
         {images.length > 0 ? (
-          <div className="columns-1 sm:columns-2 md:columns-3 xl:columns-4 gap-4 space-y-4">
-            {images.map((image, index) => {
+          <ParallaxScrollSecond
+            items={images}
+            renderItem={(image, index) => {
               const caption = image.description || image.title || image.altText || `${folder.name} - Photo ${index + 1}`;
 
               return (
-                <motion.div
+                <div
                   key={image.id}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: Math.min(index * 0.03, 0.4), ease: EASE_OUT_EXPO }}
-                  className="break-inside-avoid group relative overflow-hidden rounded-2xl border bg-muted/20 cursor-zoom-in transition-all duration-300 hover:shadow-2xl"
+                  className="group relative overflow-hidden rounded-2xl border bg-muted/20 cursor-zoom-in transition-all duration-300 hover:shadow-2xl"
                   onClick={() => openLightbox(index)}
                 >
                   <div className="relative w-full">
@@ -216,10 +215,10 @@ export function AlbumDetailView({ folder, images, childFolders }: AlbumDetailVie
                       </Badge>
                     )}
                   </div>
-                </motion.div>
+                </div>
               );
-            })}
-          </div>
+            }}
+          />
         ) : (
           <div className="flex flex-col items-center justify-center py-32 text-center border-2 border-dashed rounded-3xl bg-muted/10">
             <div className="rounded-full bg-muted p-6 mb-4">
