@@ -2,10 +2,9 @@
 
 import { useState, useEffect, useCallback } from "react";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
+import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -23,7 +22,6 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { Separator } from "@/components/ui/separator";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
   FolderOpen,
@@ -32,16 +30,22 @@ import {
   Trash2,
   Eye,
   EyeOff,
-  Image as ImageIcon,
+  ImageIcon,
   Loader2,
-  ArrowLeft,
+  Star,
+  StarOff,
+  Plus,
+  Upload,
+  ChevronRight,
   Home,
+  Info,
 } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
 import { CreateFolderDialog } from "./CreateFolderDialog";
 import { GalleryUploadButton } from "./GalleryUploadButton";
 import { EditImageDialog } from "./EditImageDialog";
 import { EditFolderDialog } from "./EditFolderDialog";
+import { cn } from "@/lib/utils";
 
 interface GalleryFolder {
   id: string;
@@ -79,108 +83,311 @@ interface GalleryImage {
   createdAt: string;
 }
 
-interface GalleryManagerProps {
-  initialFolderId?: string | null;
+const EASE_OUT_EXPO = [0.16, 1, 0.3, 1] as const;
+
+// Mini folder card for the left panel sidebar
+function AlbumSidebarCard({
+  folder,
+  isSelected,
+  onSelect,
+  onEdit,
+  onTogglePublish,
+  onDelete,
+}: {
+  folder: GalleryFolder;
+  isSelected: boolean;
+  onSelect: () => void;
+  onEdit: () => void;
+  onTogglePublish: () => void;
+  onDelete: () => void;
+}) {
+  const [isHovered, setIsHovered] = useState(false);
+  const previews = folder.coverImage ? [folder.coverImage.secureUrl] : [];
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, scale: 0.95 }}
+      animate={{ opacity: 1, scale: 1 }}
+      transition={{ duration: 0.3, ease: EASE_OUT_EXPO }}
+      className={cn(
+        "group relative rounded-2xl cursor-pointer transition-all duration-200",
+        isSelected
+          ? "ring-2 ring-primary shadow-lg shadow-primary/10"
+          : "hover:ring-1 hover:ring-white/10"
+      )}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+      onClick={onSelect}
+    >
+      {/* Folder back panel */}
+      <div
+        className={cn(
+          "relative rounded-2xl overflow-hidden transition-colors duration-200",
+          isSelected ? "bg-primary/10" : "bg-muted/40 group-hover:bg-muted/60"
+        )}
+        style={{
+          height: "120px",
+          border: isSelected
+            ? "1px solid hsl(var(--primary) / 0.3)"
+            : "1px solid rgba(255,255,255,0.06)",
+        }}
+      >
+        {/* Preview images or placeholder */}
+        {previews.length > 0 ? (
+          <div className="absolute inset-0">
+            <Image
+              src={previews[0]}
+              alt={folder.name}
+              fill
+              className="object-cover opacity-60"
+              sizes="200px"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+          </div>
+        ) : (
+          <div className="absolute inset-0 flex items-center justify-center">
+            <FolderOpen
+              className={cn(
+                "h-10 w-10 transition-colors",
+                isSelected ? "text-primary/60" : "text-muted-foreground/30"
+              )}
+            />
+          </div>
+        )}
+
+        {/* Badges */}
+        <div className="absolute top-2 left-2 flex gap-1">
+          {!folder.isPublished && (
+            <Badge variant="secondary" className="text-[10px] px-1.5 py-0 h-4 gap-0.5">
+              <EyeOff className="h-2.5 w-2.5" />
+              Draft
+            </Badge>
+          )}
+        </div>
+
+        {/* Context menu */}
+        <div
+          className={cn(
+            "absolute top-2 right-2 transition-opacity",
+            isHovered || isSelected ? "opacity-100" : "opacity-0"
+          )}
+          onClick={(e) => e.stopPropagation()}
+        >
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="secondary" size="icon" className="h-6 w-6 bg-black/40 hover:bg-black/60 border-0">
+                <MoreVertical className="h-3 w-3 text-white" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-44">
+              <DropdownMenuItem onClick={onEdit}>
+                <Edit className="mr-2 h-4 w-4" /> Edit
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={onTogglePublish}>
+                {folder.isPublished ? (
+                  <><EyeOff className="mr-2 h-4 w-4" /> Unpublish</>
+                ) : (
+                  <><Eye className="mr-2 h-4 w-4" /> Publish</>
+                )}
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem className="text-destructive" onClick={onDelete}>
+                <Trash2 className="mr-2 h-4 w-4" /> Delete
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
+      </div>
+
+      {/* Footer */}
+      <div className="px-2 py-2">
+        <p className="text-xs font-semibold truncate leading-tight">{folder.name}</p>
+        <p className="text-[10px] text-muted-foreground mt-0.5">
+          {folder.imageCount} photo{folder.imageCount !== 1 ? "s" : ""}
+        </p>
+      </div>
+    </motion.div>
+  );
 }
 
-export function GalleryManager({ initialFolderId = null }: GalleryManagerProps) {
+// Image thumbnail in the right panel workspace
+function ImageThumbnail({
+  image,
+  onEdit,
+  onTogglePublish,
+  onToggleFeatured,
+  onDelete,
+}: {
+  image: GalleryImage;
+  onEdit: () => void;
+  onTogglePublish: () => void;
+  onToggleFeatured: () => void;
+  onDelete: () => void;
+}) {
+  return (
+    <motion.div
+      initial={{ opacity: 0, scale: 0.92 }}
+      animate={{ opacity: 1, scale: 1 }}
+      exit={{ opacity: 0, scale: 0.92 }}
+      transition={{ duration: 0.25, ease: EASE_OUT_EXPO }}
+      className="group relative overflow-hidden rounded-xl bg-muted/30 cursor-pointer"
+    >
+      {/* Aspect square container */}
+      <div className="aspect-square relative">
+        <Image
+          src={image.secureUrl}
+          alt={image.altText || image.title || "Gallery image"}
+          fill
+          className="object-cover transition-transform duration-500 group-hover:scale-105"
+          sizes="(max-width: 640px) 50vw, (max-width: 1024px) 25vw, 16vw"
+        />
+
+        {/* Hover overlay */}
+        <div className="absolute inset-0 bg-black/0 group-hover:bg-black/40 transition-colors duration-300" />
+
+        {/* Badges */}
+        <div className="absolute top-2 left-2 flex flex-col gap-1">
+          {image.isFeatured && (
+            <Badge className="text-[10px] px-1.5 py-0 h-4 gap-0.5 bg-yellow-500 text-black border-0">
+              <Star className="h-2.5 w-2.5 fill-current" /> Featured
+            </Badge>
+          )}
+          {!image.isPublished && (
+            <Badge variant="secondary" className="text-[10px] px-1.5 py-0 h-4 gap-0.5">
+              <EyeOff className="h-2.5 w-2.5" /> Draft
+            </Badge>
+          )}
+        </div>
+
+        {/* Hover action menu */}
+        <div
+          className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity"
+          onClick={(e) => e.stopPropagation()}
+        >
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="secondary" size="icon" className="h-7 w-7 bg-black/50 hover:bg-black/70 border-0 text-white">
+                <MoreVertical className="h-3.5 w-3.5" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-44">
+              <DropdownMenuItem onClick={onEdit}>
+                <Edit className="mr-2 h-4 w-4" /> Edit Details
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={onToggleFeatured}>
+                {image.isFeatured ? (
+                  <><StarOff className="mr-2 h-4 w-4" /> Unfeature</>
+                ) : (
+                  <><Star className="mr-2 h-4 w-4" /> Mark Featured</>
+                )}
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={onTogglePublish}>
+                {image.isPublished ? (
+                  <><EyeOff className="mr-2 h-4 w-4" /> Unpublish</>
+                ) : (
+                  <><Eye className="mr-2 h-4 w-4" /> Publish</>
+                )}
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem className="text-destructive" onClick={onDelete}>
+                <Trash2 className="mr-2 h-4 w-4" /> Delete
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
+
+        {/* Title tooltip on hover */}
+        {image.title && (
+          <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-2 translate-y-full group-hover:translate-y-0 transition-transform duration-300">
+            <p className="text-white text-xs truncate font-medium">{image.title}</p>
+          </div>
+        )}
+      </div>
+    </motion.div>
+  );
+}
+
+export function GalleryManager() {
   const [folders, setFolders] = useState<GalleryFolder[]>([]);
+  const [selectedFolder, setSelectedFolder] = useState<GalleryFolder | null>(null);
   const [images, setImages] = useState<GalleryImage[]>([]);
-  const [currentFolder, setCurrentFolder] = useState<GalleryFolder | null>(null);
-  const [breadcrumbs, setBreadcrumbs] = useState<{ id: string | null; name: string }[]>([
-    { id: null, name: "Gallery" },
-  ]);
-  const [loading, setLoading] = useState(true);
-  const [deleteTarget, setDeleteTarget] = useState<{ type: "folder" | "image"; id: string; name: string } | null>(null);
+  const [loadingFolders, setLoadingFolders] = useState(true);
+  const [loadingImages, setLoadingImages] = useState(false);
+  const [deleteTarget, setDeleteTarget] = useState<{
+    type: "folder" | "image";
+    id: string;
+    name: string;
+  } | null>(null);
   const [editImage, setEditImage] = useState<GalleryImage | null>(null);
   const [editFolder, setEditFolder] = useState<GalleryFolder | null>(null);
   const { toast } = useToast();
-  const router = useRouter();
 
-  const folderId = currentFolder?.id || initialFolderId;
-
-  const loadData = useCallback(async () => {
-    setLoading(true);
+  // Load top-level folders
+  const loadFolders = useCallback(async () => {
+    setLoadingFolders(true);
     try {
-      // Load folders
-      const foldersRes = await fetch(`/api/gallery/folders?parentId=${folderId || "root"}`);
-      const foldersData = await foldersRes.json();
-      setFolders(foldersData.folders || []);
-
-      // Load images
-      const imagesRes = await fetch(`/api/gallery/images?folderId=${folderId || "root"}`);
-      const imagesData = await imagesRes.json();
-      setImages(imagesData.images || []);
-    } catch (error) {
-      console.error("Error loading gallery data:", error);
-      toast({
-        title: "Error",
-        description: "Failed to load gallery data",
-        variant: "destructive",
-      });
+      const res = await fetch("/api/gallery/folders?parentId=root");
+      const data = await res.json();
+      setFolders(data.folders || []);
+    } catch {
+      toast({ title: "Error", description: "Failed to load albums", variant: "destructive" });
     } finally {
-      setLoading(false);
+      setLoadingFolders(false);
     }
-  }, [folderId, toast]);
+  }, [toast]);
 
+  // Load images for selected folder
+  const loadImages = useCallback(async (folderId: string | null) => {
+    setLoadingImages(true);
+    try {
+      const param = folderId ? `folderId=${folderId}` : "folderId=root";
+      const res = await fetch(`/api/gallery/images?${param}`);
+      const data = await res.json();
+      setImages(data.images || []);
+    } catch {
+      toast({ title: "Error", description: "Failed to load images", variant: "destructive" });
+    } finally {
+      setLoadingImages(false);
+    }
+  }, [toast]);
+
+  useEffect(() => { loadFolders(); }, [loadFolders]);
   useEffect(() => {
-    loadData();
-  }, [loadData]);
-
-  const navigateToFolder = async (folder: GalleryFolder | null) => {
-    if (folder) {
-      setCurrentFolder(folder);
-      setBreadcrumbs((prev) => [...prev, { id: folder.id, name: folder.name }]);
-    } else {
-      setCurrentFolder(null);
-      setBreadcrumbs([{ id: null, name: "Gallery" }]);
+    if (selectedFolder !== undefined) {
+      loadImages(selectedFolder?.id ?? null);
     }
-  };
+  }, [selectedFolder, loadImages]);
 
-  const navigateToBreadcrumb = (index: number) => {
-    const breadcrumb = breadcrumbs[index];
-    setBreadcrumbs(breadcrumbs.slice(0, index + 1));
-    if (breadcrumb.id) {
-      // Load that folder
-      const folder = folders.find((f) => f.id === breadcrumb.id);
-      setCurrentFolder(folder || null);
-    } else {
-      setCurrentFolder(null);
-    }
-  };
-
-  const goBack = () => {
-    if (breadcrumbs.length > 1) {
-      navigateToBreadcrumb(breadcrumbs.length - 2);
-    }
+  const handleSelectFolder = (folder: GalleryFolder | null) => {
+    setSelectedFolder(folder);
   };
 
   const handleDelete = async () => {
     if (!deleteTarget) return;
-
     try {
       const endpoint =
         deleteTarget.type === "folder"
           ? `/api/gallery/folders/${deleteTarget.id}`
           : `/api/gallery/images/${deleteTarget.id}`;
 
-      const response = await fetch(endpoint, { method: "DELETE" });
-
-      if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.error || `Failed to delete ${deleteTarget.type}`);
-      }
+      const res = await fetch(endpoint, { method: "DELETE" });
+      if (!res.ok) throw new Error((await res.json()).error);
 
       toast({
         title: "Deleted",
-        description: `${deleteTarget.type === "folder" ? "Folder" : "Image"} deleted successfully`,
+        description: `${deleteTarget.type === "folder" ? "Album" : "Image"} deleted`,
       });
 
-      loadData();
+      if (deleteTarget.type === "folder") {
+        loadFolders();
+        if (selectedFolder?.id === deleteTarget.id) setSelectedFolder(null);
+      } else {
+        loadImages(selectedFolder?.id ?? null);
+      }
     } catch (error) {
       toast({
         title: "Error",
-        description: error instanceof Error ? error.message : "Failed to delete",
+        description: error instanceof Error ? error.message : "Delete failed",
         variant: "destructive",
       });
     } finally {
@@ -188,319 +395,218 @@ export function GalleryManager({ initialFolderId = null }: GalleryManagerProps) 
     }
   };
 
-  const togglePublish = async (type: "folder" | "image", id: string, currentState: boolean) => {
-    try {
-      const endpoint = type === "folder" ? `/api/gallery/folders/${id}` : `/api/gallery/images/${id}`;
-
-      const response = await fetch(endpoint, {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ isPublished: !currentState }),
-      });
-
-      if (!response.ok) {
-        throw new Error("Failed to update");
-      }
-
-      toast({
-        title: "Updated",
-        description: `${type === "folder" ? "Folder" : "Image"} ${!currentState ? "published" : "unpublished"}`,
-      });
-
-      loadData();
-    } catch (error) {
-      toast({
-        title: "Error",
-        description: "Failed to update publish status",
-        variant: "destructive",
-      });
-    }
+  const togglePublish = async (type: "folder" | "image", id: string, current: boolean) => {
+    const endpoint =
+      type === "folder" ? `/api/gallery/folders/${id}` : `/api/gallery/images/${id}`;
+    await fetch(endpoint, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ isPublished: !current }),
+    });
+    toast({ title: !current ? "Published" : "Unpublished", description: `${type === "folder" ? "Album" : "Image"} updated` });
+    if (type === "folder") loadFolders();
+    else loadImages(selectedFolder?.id ?? null);
   };
 
-  if (loading) {
-    return (
-      <div className="space-y-6">
-        <div className="flex items-center justify-between">
-          <Skeleton className="h-8 w-48" />
-          <div className="flex gap-2">
-            <Skeleton className="h-9 w-28" />
-            <Skeleton className="h-9 w-32" />
-          </div>
-        </div>
-        <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
-          {Array.from({ length: 8 }).map((_, i) => (
-            <Skeleton key={i} className="aspect-square rounded-lg" />
-          ))}
-        </div>
-      </div>
-    );
-  }
+  const toggleFeatured = async (id: string, current: boolean) => {
+    await fetch(`/api/gallery/images/${id}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ isFeatured: !current }),
+    });
+    toast({ title: !current ? "Marked as Featured" : "Removed from Featured" });
+    loadImages(selectedFolder?.id ?? null);
+  };
 
   return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        {/* Breadcrumbs */}
-        <div className="flex items-center gap-2 overflow-x-auto">
-          {breadcrumbs.length > 1 && (
-            <Button variant="ghost" size="icon" onClick={goBack}>
-              <ArrowLeft className="h-4 w-4" />
-            </Button>
-          )}
-          {breadcrumbs.map((crumb, index) => (
-            <div key={crumb.id || "root"} className="flex items-center">
-              {index > 0 && <span className="mx-2 text-muted-foreground">/</span>}
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => navigateToBreadcrumb(index)}
-                className={index === breadcrumbs.length - 1 ? "font-semibold" : ""}
-              >
-                {index === 0 ? <Home className="mr-1 h-4 w-4" /> : null}
-                {crumb.name}
-              </Button>
-            </div>
-          ))}
+    <div className="flex gap-6 min-h-[600px]">
+      {/* ── LEFT PANEL: Album list ── */}
+      <div className="w-64 shrink-0 flex flex-col gap-4">
+        {/* Panel header */}
+        <div className="flex items-center justify-between">
+          <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">
+            Albums
+          </h2>
+          <CreateFolderDialog parentId={null} onFolderCreated={loadFolders} />
         </div>
 
-        {/* Actions */}
-        <div className="flex flex-col gap-2 sm:flex-row">
-          <CreateFolderDialog
-            parentId={currentFolder?.id}
-            onFolderCreated={loadData}
-          />
-          <GalleryUploadButton
-            folderId={currentFolder?.id}
-            cloudinaryFolder={currentFolder?.cloudinaryFolder}
-            onUploadComplete={loadData}
-          />
-        </div>
+        {/* "All" / root option */}
+        <button
+          onClick={() => handleSelectFolder(null)}
+          className={cn(
+            "flex items-center gap-2 px-3 py-2 rounded-xl text-sm transition-colors text-left w-full",
+            selectedFolder === null
+              ? "bg-primary/10 text-primary border border-primary/20"
+              : "text-muted-foreground hover:bg-muted/50"
+          )}
+        >
+          <Home className="h-4 w-4 shrink-0" />
+          <span className="font-medium">Root / Uncategorized</span>
+        </button>
+
+        {/* Folder grid */}
+        {loadingFolders ? (
+          <div className="grid grid-cols-2 gap-3">
+            {Array.from({ length: 4 }).map((_, i) => (
+              <Skeleton key={i} className="h-32 rounded-2xl" />
+            ))}
+          </div>
+        ) : folders.length > 0 ? (
+          <div className="grid grid-cols-2 gap-3 flex-1 overflow-y-auto">
+            {folders.map((folder) => (
+              <AlbumSidebarCard
+                key={folder.id}
+                folder={folder}
+                isSelected={selectedFolder?.id === folder.id}
+                onSelect={() => handleSelectFolder(folder)}
+                onEdit={() => setEditFolder(folder)}
+                onTogglePublish={() => togglePublish("folder", folder.id, folder.isPublished)}
+                onDelete={() => setDeleteTarget({ type: "folder", id: folder.id, name: folder.name })}
+              />
+            ))}
+          </div>
+        ) : (
+          <div className="flex flex-col items-center justify-center py-10 text-center">
+            <FolderOpen className="h-10 w-10 text-muted-foreground/30 mb-2" />
+            <p className="text-xs text-muted-foreground">No albums yet</p>
+            <p className="text-xs text-muted-foreground/60">Click + to create one</p>
+          </div>
+        )}
       </div>
 
-      <Separator />
-
-      {/* Folders */}
-      {folders.length > 0 && (
-        <div className="space-y-4">
-          <h3 className="text-lg font-semibold">Folders</h3>
-          <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
-            {folders.map((folder) => (
-              <Card
-                key={folder.id}
-                className="group relative cursor-pointer transition-all hover:shadow-md"
-              >
-                <div onClick={() => navigateToFolder(folder)}>
-                  <CardHeader className="p-3">
-                    <div className="aspect-square relative rounded-md bg-muted flex items-center justify-center overflow-hidden">
-                      {folder.coverImage ? (
-                        <Image
-                          src={folder.coverImage.secureUrl}
-                          alt={folder.name}
-                          fill
-                          className="object-cover"
-                          sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 20vw"
-                        />
-                      ) : (
-                        <FolderOpen className="h-16 w-16 text-muted-foreground" />
-                      )}
-                    </div>
-                  </CardHeader>
-                  <CardContent className="p-3 pt-0">
-                    <CardTitle className="text-sm font-medium truncate">{folder.name}</CardTitle>
-                    <p className="text-xs text-muted-foreground">
-                      {folder.imageCount} image{folder.imageCount !== 1 ? "s" : ""}
-                    </p>
-                  </CardContent>
-                </div>
-                <div className="absolute right-2 top-2 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                  {!folder.isPublished && (
-                    <Badge variant="secondary" className="text-xs">
-                      <EyeOff className="mr-1 h-3 w-3" />
-                      Draft
-                    </Badge>
-                  )}
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild onClick={(e) => e.stopPropagation()}>
-                      <Button variant="secondary" size="icon" className="h-7 w-7">
-                        <MoreVertical className="h-4 w-4" />
-                      </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end">
-                      <DropdownMenuItem onClick={() => setEditFolder(folder)}>
-                        <Edit className="mr-2 h-4 w-4" />
-                        Edit
-                      </DropdownMenuItem>
-                      <DropdownMenuItem onClick={() => togglePublish("folder", folder.id, folder.isPublished)}>
-                        {folder.isPublished ? (
-                          <>
-                            <EyeOff className="mr-2 h-4 w-4" />
-                            Unpublish
-                          </>
-                        ) : (
-                          <>
-                            <Eye className="mr-2 h-4 w-4" />
-                            Publish
-                          </>
-                        )}
-                      </DropdownMenuItem>
-                      <DropdownMenuSeparator />
-                      <DropdownMenuItem
-                        className="text-destructive"
-                        onClick={() => setDeleteTarget({ type: "folder", id: folder.id, name: folder.name })}
-                      >
-                        <Trash2 className="mr-2 h-4 w-4" />
-                        Delete
-                      </DropdownMenuItem>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
-                </div>
-              </Card>
-            ))}
-          </div>
-        </div>
-      )}
-
-      {/* Images */}
-      {images.length > 0 && (
-        <div className="space-y-4">
-          {folders.length > 0 && <Separator />}
-          <h3 className="text-lg font-semibold">Images</h3>
-          <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6">
-            {images.map((image) => (
-              <Card
-                key={image.id}
-                className="group relative overflow-hidden transition-all hover:shadow-md"
-              >
-                <div className="aspect-square relative">
-                  <Image
-                    src={image.secureUrl}
-                    alt={image.altText || image.title || "Gallery image"}
-                    fill
-                    className="object-cover transition-transform group-hover:scale-105"
-                    sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, (max-width: 1280px) 25vw, 16vw"
-                  />
-                  {image.isFeatured && (
-                    <Badge className="absolute left-2 top-2" variant="default">
-                      Featured
-                    </Badge>
-                  )}
-                  {!image.isPublished && (
-                    <Badge className="absolute left-2 bottom-2" variant="secondary">
-                      <EyeOff className="mr-1 h-3 w-3" />
-                      Draft
-                    </Badge>
-                  )}
-                </div>
-                <div className="absolute right-2 top-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <Button variant="secondary" size="icon" className="h-7 w-7">
-                        <MoreVertical className="h-4 w-4" />
-                      </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end">
-                      <DropdownMenuItem onClick={() => setEditImage(image)}>
-                        <Edit className="mr-2 h-4 w-4" />
-                        Edit Details
-                      </DropdownMenuItem>
-                      <DropdownMenuItem onClick={() => togglePublish("image", image.id, image.isPublished)}>
-                        {image.isPublished ? (
-                          <>
-                            <EyeOff className="mr-2 h-4 w-4" />
-                            Unpublish
-                          </>
-                        ) : (
-                          <>
-                            <Eye className="mr-2 h-4 w-4" />
-                            Publish
-                          </>
-                        )}
-                      </DropdownMenuItem>
-                      <DropdownMenuSeparator />
-                      <DropdownMenuItem
-                        className="text-destructive"
-                        onClick={() =>
-                          setDeleteTarget({
-                            type: "image",
-                            id: image.id,
-                            name: image.title || "this image",
-                          })
-                        }
-                      >
-                        <Trash2 className="mr-2 h-4 w-4" />
-                        Delete
-                      </DropdownMenuItem>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
-                </div>
-                {image.title && (
-                  <CardFooter className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 to-transparent p-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                    <p className="text-xs text-white truncate">{image.title}</p>
-                  </CardFooter>
+      {/* ── RIGHT PANEL: Image workspace ── */}
+      <div className="flex-1 min-w-0 flex flex-col gap-4">
+        {/* Workspace header */}
+        <div className="flex items-center justify-between">
+          {/* Breadcrumb */}
+          <div className="flex items-center gap-2 text-sm">
+            <span className="text-muted-foreground">Gallery</span>
+            {selectedFolder && (
+              <>
+                <ChevronRight className="h-4 w-4 text-muted-foreground/50" />
+                <span className="font-semibold">{selectedFolder.name}</span>
+                {!selectedFolder.isPublished && (
+                  <Badge variant="secondary" className="ml-1 text-[10px] px-1.5 py-0 h-4 gap-0.5">
+                    <EyeOff className="h-2.5 w-2.5" /> Draft
+                  </Badge>
                 )}
-              </Card>
+              </>
+            )}
+          </div>
+
+          {/* Upload button */}
+          {selectedFolder ? (
+            <GalleryUploadButton
+              folderId={selectedFolder.id}
+              cloudinaryFolder={selectedFolder.cloudinaryFolder}
+              onUploadComplete={() => loadImages(selectedFolder.id)}
+            />
+          ) : (
+            <GalleryUploadButton
+              folderId={undefined}
+              cloudinaryFolder={undefined}
+              onUploadComplete={() => loadImages(null)}
+            />
+          )}
+        </div>
+
+        {/* Album info bar when folder selected */}
+        {selectedFolder?.description && (
+          <div className="flex items-start gap-2 px-3 py-2.5 rounded-xl bg-muted/30 border text-sm text-muted-foreground">
+            <Info className="h-4 w-4 shrink-0 mt-0.5" />
+            <p className="line-clamp-2">{selectedFolder.description}</p>
+          </div>
+        )}
+
+        {/* Image grid */}
+        {loadingImages ? (
+          <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-7 gap-3">
+            {Array.from({ length: 14 }).map((_, i) => (
+              <Skeleton key={i} className="aspect-square rounded-xl" />
             ))}
           </div>
-        </div>
-      )}
-
-      {/* Empty State */}
-      {folders.length === 0 && images.length === 0 && (
-        <div className="flex flex-col items-center justify-center py-16 text-center">
-          <ImageIcon className="h-16 w-16 text-muted-foreground mb-4" />
-          <h3 className="text-lg font-semibold">No content yet</h3>
-          <p className="text-muted-foreground mb-4">
-            Create a folder or upload images to get started.
-          </p>
-          <div className="flex flex-col gap-2 sm:flex-row">
-            <CreateFolderDialog parentId={currentFolder?.id} onFolderCreated={loadData} />
-            <GalleryUploadButton
-              folderId={currentFolder?.id}
-              cloudinaryFolder={currentFolder?.cloudinaryFolder}
-              onUploadComplete={loadData}
-            />
+        ) : images.length > 0 ? (
+          <AnimatePresence>
+            <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-7 gap-3">
+              {images.map((image) => (
+                <ImageThumbnail
+                  key={image.id}
+                  image={image}
+                  onEdit={() => setEditImage(image)}
+                  onTogglePublish={() => togglePublish("image", image.id, image.isPublished)}
+                  onToggleFeatured={() => toggleFeatured(image.id, image.isFeatured)}
+                  onDelete={() =>
+                    setDeleteTarget({ type: "image", id: image.id, name: image.title || "this image" })
+                  }
+                />
+              ))}
+            </div>
+          </AnimatePresence>
+        ) : (
+          <div className="flex-1 flex flex-col items-center justify-center py-20 text-center rounded-2xl border-2 border-dashed border-muted-foreground/20">
+            <ImageIcon className="h-14 w-14 text-muted-foreground/20 mb-4" />
+            <h3 className="text-base font-semibold mb-1">
+              {selectedFolder ? `"${selectedFolder.name}" is empty` : "No uncategorized images"}
+            </h3>
+            <p className="text-sm text-muted-foreground mb-5">
+              {selectedFolder
+                ? "Upload photos to fill this album."
+                : "Select an album on the left or upload here."}
+            </p>
+            {selectedFolder && (
+              <GalleryUploadButton
+                folderId={selectedFolder.id}
+                cloudinaryFolder={selectedFolder.cloudinaryFolder}
+                onUploadComplete={() => loadImages(selectedFolder.id)}
+              />
+            )}
           </div>
-        </div>
-      )}
+        )}
+      </div>
 
-      {/* Delete Confirmation Dialog */}
+      {/* ── Dialogs ── */}
+
+      {/* Delete confirmation */}
       <AlertDialog open={!!deleteTarget} onOpenChange={() => setDeleteTarget(null)}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+            <AlertDialogTitle>Delete {deleteTarget?.type === "folder" ? "Album" : "Image"}?</AlertDialogTitle>
             <AlertDialogDescription>
               {deleteTarget?.type === "folder"
-                ? `This will permanently delete the folder "${deleteTarget.name}" and all its contents. This action cannot be undone.`
-                : `This will permanently delete ${deleteTarget?.name}. This action cannot be undone.`}
+                ? `This will permanently delete the album "${deleteTarget?.name}" and all its images. This cannot be undone.`
+                : `This will permanently delete ${deleteTarget?.name}. This cannot be undone.`}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction onClick={handleDelete} className="bg-destructive text-destructive-foreground">
+            <AlertDialogAction
+              onClick={handleDelete}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
               Delete
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
 
-      {/* Edit Image Dialog */}
+      {/* Edit image */}
       {editImage && (
         <EditImageDialog
           image={editImage}
           folders={folders}
           open={!!editImage}
           onOpenChange={(open) => !open && setEditImage(null)}
-          onSave={loadData}
+          onSave={() => loadImages(selectedFolder?.id ?? null)}
         />
       )}
 
-      {/* Edit Folder Dialog */}
+      {/* Edit folder */}
       {editFolder && (
         <EditFolderDialog
           folder={editFolder}
           open={!!editFolder}
           onOpenChange={(open) => !open && setEditFolder(null)}
-          onSave={loadData}
+          onSave={() => { loadFolders(); if (selectedFolder?.id === editFolder.id) loadImages(editFolder.id); }}
         />
       )}
     </div>

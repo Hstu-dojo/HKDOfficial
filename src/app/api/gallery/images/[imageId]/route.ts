@@ -5,6 +5,7 @@ import { eq } from "drizzle-orm";
 import { getRBACContext } from "@/lib/rbac/middleware";
 import { hasPermission } from "@/lib/rbac/permissions";
 import cloudinary from "@/utils/cloudinary";
+import { revalidatePath } from "next/cache";
 
 // GET - Get a single image
 export async function GET(
@@ -112,6 +113,17 @@ export async function PATCH(
       return NextResponse.json({ error: "Image not found" }, { status: 404 });
     }
 
+    // Invalidate ISR cache for the affected album page
+    revalidatePath("/gallery");
+    if (updatedImage.folderId) {
+      const folders = await db
+        .select({ slug: galleryFolders.slug })
+        .from(galleryFolders)
+        .where(eq(galleryFolders.id, updatedImage.folderId))
+        .limit(1);
+      if (folders.length > 0) revalidatePath(`/gallery/${folders[0].slug}`);
+    }
+
     return NextResponse.json({ image: updatedImage });
   } catch (error) {
     console.error("Error updating gallery image:", error);
@@ -163,6 +175,17 @@ export async function DELETE(
 
     // Delete from database
     await db.delete(galleryImages).where(eq(galleryImages.id, imageId));
+
+    // Invalidate ISR cache for the affected album page
+    revalidatePath("/gallery");
+    if (image.folderId) {
+      const folders = await db
+        .select({ slug: galleryFolders.slug })
+        .from(galleryFolders)
+        .where(eq(galleryFolders.id, image.folderId))
+        .limit(1);
+      if (folders.length > 0) revalidatePath(`/gallery/${folders[0].slug}`);
+    }
 
     return NextResponse.json({ success: true });
   } catch (error) {

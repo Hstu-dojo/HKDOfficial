@@ -14,11 +14,14 @@ import SectionBenefits from "@/components/sections/section-benefits";
 import SectionFAQ from "@/components/sections/section-faq";
 import FeaturedPostsServer from "@/components/sections/featured-posts-server";
 import SectionBranches from "@/components/sections/section-branches";
+import SectionRecentAlbums from "@/components/sections/section-recent-albums";
 import type { BranchData } from "@/components/sections/section-branches";
+import type { AlbumWithPreviews } from "@/components/gallery/AlbumGrid";
 import { db } from "@/lib/connect-db";
 import { partners, partnerPageSettings } from "@/db/schemas/partner";
 import { profiles, courses } from "@/db/schemas/karate";
-import { eq, asc, and, count, inArray } from "drizzle-orm";
+import { galleryFolders, galleryImages } from "@/db/schemas/content";
+import { eq, asc, and, count, inArray, desc } from "drizzle-orm";
 // import SectionIconBoxesLayout2 from "@/components/sections/section-icon-boxes-layout-2";
 
 // Pre-build locale pages at build time so first visit from external links (Facebook etc.) works instantly
@@ -83,6 +86,55 @@ async function getHeroImages(): Promise<{ title: string; thumbnail: string }[]> 
   }
 }
 
+// Fetch recent published albums for home page gallery section
+async function getRecentAlbums() {
+  try {
+    const folders = await db
+      .select({
+        id: galleryFolders.id,
+        name: galleryFolders.name,
+        slug: galleryFolders.slug,
+        description: galleryFolders.description,
+        displayOrder: galleryFolders.displayOrder,
+        createdAt: galleryFolders.createdAt,
+      })
+      .from(galleryFolders)
+      .where(eq(galleryFolders.isPublished, true))
+      .orderBy(desc(galleryFolders.createdAt))
+      .limit(4);
+
+    const albumsWithData = await Promise.all(
+      folders.map(async (folder) => {
+        const [imageCountResult, previewImagesResult] = await Promise.all([
+          db
+            .select({ count: count() })
+            .from(galleryImages)
+            .where(eq(galleryImages.folderId, folder.id)),
+          db
+            .select({ secureUrl: galleryImages.secureUrl })
+            .from(galleryImages)
+            .where(eq(galleryImages.folderId, folder.id))
+            .orderBy(asc(galleryImages.displayOrder))
+            .limit(5),
+        ]);
+        return {
+          id: folder.id,
+          name: folder.name,
+          slug: folder.slug,
+          description: folder.description,
+          imageCount: Number(imageCountResult[0]?.count ?? 0),
+          createdAt: folder.createdAt.toISOString(),
+          previewImages: previewImagesResult,
+        };
+      })
+    );
+
+    return albumsWithData;
+  } catch {
+    return [];
+  }
+}
+
 // Fetch branches (partner orgs) server-side for ISR — cached & revalidated with the page
 async function getBranches(): Promise<BranchData[]> {
   try {
@@ -139,7 +191,11 @@ async function getBranches(): Promise<BranchData[]> {
 export default async function Home({ params }: { params: Promise<{ locale: string }> }) {
   // Params are handled by the layout, but we need to accept them here
   // to avoid Next.js routing errors with dynamic segments
-  const [heroImages, branches] = await Promise.all([getHeroImages(), getBranches()]);
+  const [heroImages, branches, recentAlbums] = await Promise.all([
+    getHeroImages(),
+    getBranches(),
+    getRecentAlbums(),
+  ]);
 
   return (
     <>
@@ -149,6 +205,7 @@ export default async function Home({ params }: { params: Promise<{ locale: strin
         <SectionHomePrograms />
         <SectionBranches branches={branches} />
         <SectionPromo />
+        <SectionRecentAlbums albums={recentAlbums} />
         <SectionBenefits />
         {/* <SectionIconBoxesLayout2 /> */}
         <FeaturedPostsServer />

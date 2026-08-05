@@ -5,6 +5,7 @@ import { eq } from "drizzle-orm";
 import { getRBACContext } from "@/lib/rbac/middleware";
 import { hasPermission } from "@/lib/rbac/permissions";
 import cloudinary from "@/utils/cloudinary";
+import { revalidatePath } from "next/cache";
 
 // GET - Get a single folder with its images
 export async function GET(
@@ -102,6 +103,10 @@ export async function PATCH(
       return NextResponse.json({ error: "Folder not found" }, { status: 404 });
     }
 
+    // Invalidate ISR cache for gallery pages
+    revalidatePath("/gallery");
+    revalidatePath(`/gallery/${updatedFolder.slug}`);
+
     return NextResponse.json({ folder: updatedFolder });
   } catch (error) {
     console.error("Error updating gallery folder:", error);
@@ -170,6 +175,10 @@ export async function DELETE(
       console.error("Error deleting Cloudinary folder:", cloudinaryError);
       // Non-critical error
     }
+
+    // Invalidate ISR cache for gallery pages
+    revalidatePath("/gallery");
+    revalidatePath(`/gallery/${folder.slug}`);
 
     return NextResponse.json({ success: true });
   } catch (error) {
