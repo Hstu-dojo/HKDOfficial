@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { CldUploadWidget } from "next-cloudinary";
 import { Button } from "@/components/ui/button";
 import { Upload, Loader2 } from "lucide-react";
@@ -30,7 +30,7 @@ export function GalleryUploadButton({
   onUploadComplete,
 }: GalleryUploadButtonProps) {
   const [uploading, setUploading] = useState(false);
-  const [uploadedImages, setUploadedImages] = useState<CloudinaryUploadResult[]>([]);
+  const uploadedImagesRef = useRef<CloudinaryUploadResult[]>([]);
   const { toast } = useToast();
 
   const uploadPreset = process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET || "yddebkab";
@@ -50,24 +50,28 @@ export function GalleryUploadButton({
         bytes: result.info.bytes,
         original_filename: result.info.original_filename,
       };
-      setUploadedImages((prev) => [...prev, imageInfo]);
+      uploadedImagesRef.current.push(imageInfo);
     }
   };
 
   const handleQueueEnd = async () => {
-    if (uploadedImages.length === 0) {
+    const imagesToSave = [...uploadedImagesRef.current];
+    
+    if (imagesToSave.length === 0) {
       setUploading(false);
       return;
     }
 
     try {
+      setUploading(true); // Ensure UI stays in loading state while saving to DB
+      
       // Save all uploaded images to our database
       const response = await fetch("/api/gallery/images", {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           folderId,
-          images: uploadedImages,
+          images: imagesToSave,
         }),
       });
 
@@ -83,7 +87,7 @@ export function GalleryUploadButton({
         description: `${images.length} image${images.length > 1 ? "s" : ""} uploaded successfully`,
       });
 
-      setUploadedImages([]);
+      uploadedImagesRef.current = []; // Reset ref
       onUploadComplete();
     } catch (error) {
       toast({
