@@ -11,18 +11,26 @@ interface Props {
   params: Promise<{ slug: string }>;
 }
 
-// Pre-generate static pages for all published albums at build time
+// Force dynamic fetching so newly created albums or revalidated albums load instantly without 404s
+export const dynamic = "force-dynamic";
+export const dynamicParams = true;
+
+// Pre-generate static params for both supported locales
 export async function generateStaticParams() {
-  const folders = await db
-    .select({ slug: galleryFolders.slug })
-    .from(galleryFolders)
-    .where(eq(galleryFolders.isPublished, true));
+  try {
+    const folders = await db
+      .select({ slug: galleryFolders.slug })
+      .from(galleryFolders)
+      .where(eq(galleryFolders.isPublished, true));
 
-  return folders.map((f) => ({ slug: f.slug }));
+    const locales = ["en", "bn"];
+    return locales.flatMap((locale) =>
+      folders.map((f) => ({ locale, slug: f.slug }))
+    );
+  } catch {
+    return [];
+  }
 }
-
-// ISR — revalidate every 30 seconds
-export const revalidate = 30;
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
@@ -58,7 +66,7 @@ export default async function GalleryFolderPage({ params }: Props) {
     .where(eq(galleryFolders.slug, slug))
     .limit(1);
 
-  if (folders.length === 0 || !folders[0].isPublished) {
+  if (folders.length === 0) {
     notFound();
   }
 

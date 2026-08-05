@@ -5,7 +5,7 @@ import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { ArrowRight, Camera } from "lucide-react";
-import { AlbumCard } from "@/components/gallery/AlbumCard";
+import { AlbumFolder } from "@/components/folders-ui/project-folder/AlbumFolder";
 import type { AlbumWithPreviews } from "@/components/gallery/AlbumGrid";
 
 interface SectionRecentAlbumsProps {
@@ -51,13 +51,14 @@ export default function SectionRecentAlbums({ albums }: SectionRecentAlbumsProps
           </Link>
         </motion.div>
 
-        {/* Album Cards */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-5">
+        {/* Album Folders */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
           {albums.map((album, i) => (
-            <AlbumCard
+            <AlbumFolder
               key={album.id}
-              {...album}
+              album={album}
               index={i}
+              href={`/gallery/${album.slug}`}
             />
           ))}
         </div>

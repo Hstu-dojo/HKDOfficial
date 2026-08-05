@@ -31,13 +31,23 @@ export function AlbumFolder({ album, index, href, onClick, isAdmin }: AlbumFolde
   
   const isDark = resolvedTheme === "dark";
 
-  // Pre-calculate randomized positions for the 5 preview images so they look slightly scattered
+  // Calculate exact fan-out positions matching the desktop folders-ui project
   const imagePositions = useRef<ImagePosition[]>(
-    [...Array(5)].map(() => ({
-      x: Math.random() * 20 - 10,
-      y: Math.random() * 10 - 5,
-      rotate: Math.random() * 12 - 6,
-    }))
+    (() => {
+      const count = 5;
+      const positions: ImagePosition[] = [];
+      const totalSpread = 160;
+      const step = count > 1 ? totalSpread / (count - 1) : 0;
+      const startX = -totalSpread / 2;
+
+      for (let i = 0; i < count; i++) {
+        const x = count > 1 ? startX + step * i : 0;
+        const normalizedPos = count > 1 ? (i / (count - 1)) * 2 - 1 : 0;
+        const rotate = normalizedPos * 10;
+        positions.push({ x, y: 0, rotate });
+      }
+      return positions;
+    })()
   ).current;
 
   // Format date nicely
