@@ -21,11 +21,14 @@ const ADMIN_ACCESS_ROLES = [
   'STAFF',
 ];
 
+import { usePathname } from 'next/navigation';
+
 export function AdminLayout({ children }: AdminLayoutProps) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const { data: session, status } = useSession();
   const { hasRole, hasAnyRole, permissions, loading: rbacLoading, error: rbacError, localUserId } = useRBAC();
   const router = useRouter();
+  const pathname = usePathname();
 
   // Check if user has admin access via RBAC roles
   const hasAdminAccessByRole = hasAnyRole(ADMIN_ACCESS_ROLES);
@@ -36,6 +39,9 @@ export function AdminLayout({ children }: AdminLayoutProps) {
   // User has admin access if they have an admin role OR if they have any permission in the system
   // This allows users who are assigned permissions to access the admin panel
   const hasAdminAccess = hasAdminAccessByRole || hasAnyPermission;
+
+  // Check if current page should bypass max-width constraint
+  const isFullWidthPage = pathname?.includes('/admin/gallery');
 
   // Handle authentication redirect
   useEffect(() => {
@@ -180,7 +186,7 @@ export function AdminLayout({ children }: AdminLayoutProps) {
         
         <main className="flex-1 overflow-y-auto focus:outline-none">
           <div className="py-6">
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-8">
+            <div className={isFullWidthPage ? "px-4 sm:px-6 md:px-8 w-full" : "max-w-7xl mx-auto px-4 sm:px-6 md:px-8"}>
               {children}
             </div>
           </div>
