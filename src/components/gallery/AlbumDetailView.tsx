@@ -99,7 +99,7 @@ export function AlbumDetailView({ folder, images, childFolders }: AlbumDetailVie
 
   return (
     <div className="min-h-screen bg-background pt-[4.5rem] lg:pt-[161px]">
-      <div className="container mx-auto px-4 py-8 max-w-[1960px]">
+      <div className="container mx-auto px-4 py-8">
         
         {/* Navigation & Header matching moments.tsx */}
         <motion.div
@@ -176,45 +176,49 @@ export function AlbumDetailView({ folder, images, childFolders }: AlbumDetailVie
         {/* Image Masonry Grid matching moments.tsx columns */}
         {images.length > 0 ? (
           <div className="columns-1 sm:columns-2 md:columns-3 xl:columns-4 gap-4 space-y-4">
-            {images.map((image, index) => (
-              <motion.div
-                key={image.id}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: Math.min(index * 0.03, 0.4), ease: EASE_OUT_EXPO }}
-                className="break-inside-avoid group relative overflow-hidden rounded-2xl border bg-muted/20 cursor-zoom-in transition-all duration-300 hover:shadow-2xl"
-                onClick={() => openLightbox(index)}
-              >
-                <div className="relative w-full">
-                  <Image
-                    src={image.secureUrl}
-                    alt={image.altText || image.title || folder.name}
-                    width={image.width || 720}
-                    height={image.height || 480}
-                    className="w-full h-auto transform rounded-2xl brightness-95 transition-all duration-500 will-change-auto group-hover:scale-[1.03] group-hover:brightness-110 object-cover"
-                    sizes="(max-width: 640px) 100vw, (max-width: 1280px) 50vw, (max-width: 1536px) 33vw, 25vw"
-                  />
+            {images.map((image, index) => {
+              const caption = image.description || image.title || image.altText || `${folder.name} - Photo ${index + 1}`;
 
-                  {/* Hover gradient overlay */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-2xl" />
-                  
-                  <div className="absolute inset-x-0 bottom-0 p-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-between text-white z-10">
-                    <div className="truncate pr-2">
-                      <p className="text-sm font-semibold truncate">{image.title || "View Photo"}</p>
+              return (
+                <motion.div
+                  key={image.id}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: Math.min(index * 0.03, 0.4), ease: EASE_OUT_EXPO }}
+                  className="break-inside-avoid group relative overflow-hidden rounded-2xl border bg-muted/20 cursor-zoom-in transition-all duration-300 hover:shadow-2xl"
+                  onClick={() => openLightbox(index)}
+                >
+                  <div className="relative w-full">
+                    <Image
+                      src={image.secureUrl}
+                      alt={caption}
+                      width={image.width || 720}
+                      height={image.height || 480}
+                      className="w-full h-auto transform rounded-2xl brightness-95 transition-all duration-500 will-change-auto group-hover:scale-[1.03] group-hover:brightness-110 object-cover"
+                      sizes="(max-width: 640px) 100vw, (max-width: 1280px) 50vw, (max-width: 1536px) 33vw, 25vw"
+                    />
+
+                    {/* Hover gradient overlay with caption */}
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-2xl" />
+                    
+                    <div className="absolute inset-x-0 bottom-0 p-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end justify-between text-white z-10">
+                      <div className="pr-3 leading-snug">
+                        <p className="text-sm font-semibold line-clamp-2">{caption}</p>
+                      </div>
+                      <div className="p-2 rounded-full bg-white/20 backdrop-blur-md shrink-0">
+                        <ZoomIn className="h-4 w-4" />
+                      </div>
                     </div>
-                    <div className="p-2 rounded-full bg-white/20 backdrop-blur-md shrink-0">
-                      <ZoomIn className="h-4 w-4" />
-                    </div>
+
+                    {image.isFeatured && (
+                      <Badge className="absolute top-3 left-3 bg-yellow-500 text-black border-0 shadow-md font-bold text-[11px] px-2 py-0.5" variant="default">
+                        ★ Featured
+                      </Badge>
+                    )}
                   </div>
-
-                  {image.isFeatured && (
-                    <Badge className="absolute top-3 left-3 bg-yellow-500 text-black border-0 shadow-md font-bold text-[11px] px-2 py-0.5" variant="default">
-                      ★ Featured
-                    </Badge>
-                  )}
-                </div>
-              </motion.div>
-            ))}
+                </motion.div>
+              );
+            })}
           </div>
         ) : (
           <div className="flex flex-col items-center justify-center py-32 text-center border-2 border-dashed rounded-3xl bg-muted/10">
@@ -251,7 +255,7 @@ export function AlbumDetailView({ folder, images, childFolders }: AlbumDetailVie
                 </Button>
                 <div>
                   <h3 className="text-white font-semibold text-sm truncate max-w-xs sm:max-w-md">
-                    {selectedImage.title || folder.name}
+                    {selectedImage.description || selectedImage.title || selectedImage.altText || `${folder.name} - Photo ${selectedIndex + 1}`}
                   </h3>
                   <p className="text-white/50 text-xs">
                     {selectedIndex + 1} of {images.length}
