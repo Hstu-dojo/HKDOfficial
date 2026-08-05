@@ -52,10 +52,10 @@ export default function SectionCertVerify() {
 
   return (
     <section className="py-12 md:py-20 bg-muted/5 relative overflow-hidden">
-      <div className="container mx-auto px-4 max-w-4xl relative z-10">
-        <div className="bg-gradient-to-br from-card to-background rounded-3xl p-6 md:p-10 border shadow-sm hover:shadow-md transition-shadow relative overflow-hidden">
-          <div className="absolute top-0 right-0 p-8 opacity-5 pointer-events-none hidden md:block">
-             <ShieldCheckIcon className="h-48 w-48 text-primary" />
+      <div className="container mx-auto px-4 relative z-10">
+        <div className="bg-gradient-to-br from-card to-background rounded-3xl p-6 md:p-12 border shadow-sm hover:shadow-md transition-shadow relative overflow-hidden">
+          <div className="absolute top-1/2 right-12 -translate-y-1/2 opacity-[0.04] dark:opacity-[0.06] pointer-events-none hidden md:block scale-[1.2] origin-right">
+             <img src="/favicon.ico" alt="Logo" className="w-[320px] h-auto grayscale" />
           </div>
           
           <div className="relative z-10 flex flex-col md:flex-row items-center gap-8 md:gap-12">
