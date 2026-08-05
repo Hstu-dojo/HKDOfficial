@@ -15,6 +15,7 @@ import SectionFAQ from "@/components/sections/section-faq";
 import FeaturedPostsServer from "@/components/sections/featured-posts-server";
 import SectionBranches from "@/components/sections/section-branches";
 import SectionRecentAlbums from "@/components/sections/section-recent-albums";
+import SectionCertVerify from "@/components/sections/section-cert-verify";
 import type { BranchData } from "@/components/sections/section-branches";
 import type { AlbumWithPreviews } from "@/components/gallery/AlbumGrid";
 import { db } from "@/lib/connect-db";
@@ -160,17 +161,17 @@ async function getBranches(): Promise<BranchData[]> {
     const [memberCounts, courseCounts] = await Promise.all([
       partnerIds.length > 0
         ? db
-            .select({ partnerId: profiles.partnerId, count: count() })
-            .from(profiles)
-            .where(and(eq(profiles.isActive, true), inArray(profiles.partnerId, partnerIds)))
-            .groupBy(profiles.partnerId)
+          .select({ partnerId: profiles.partnerId, count: count() })
+          .from(profiles)
+          .where(and(eq(profiles.isActive, true), inArray(profiles.partnerId, partnerIds)))
+          .groupBy(profiles.partnerId)
         : Promise.resolve([]),
       partnerIds.length > 0
         ? db
-            .select({ partnerId: courses.partnerId, count: count() })
-            .from(courses)
-            .where(and(eq(courses.isActive, true), inArray(courses.partnerId, partnerIds)))
-            .groupBy(courses.partnerId)
+          .select({ partnerId: courses.partnerId, count: count() })
+          .from(courses)
+          .where(and(eq(courses.isActive, true), inArray(courses.partnerId, partnerIds)))
+          .groupBy(courses.partnerId)
         : Promise.resolve([]),
     ]);
 
@@ -215,6 +216,7 @@ export default async function Home({ params }: { params: Promise<{ locale: strin
         {/* <SectionTestimonialsSliderLayout2 /> */}
 
         <Furious5 />
+        <SectionCertVerify />
         <SectionPartners />
         <SectionCTA />
         <ChatPlugin />
