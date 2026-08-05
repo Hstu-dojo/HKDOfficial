@@ -71,8 +71,8 @@ export default function MonthlyBilling() {
   })
 
   // Filters
-  const [statusFilter, setStatusFilter] = React.useState(searchParams.get('status') || '')
-  const [monthFilter, setMonthFilter] = React.useState(searchParams.get('billingMonth') || '')
+  const [statusFilter, setStatusFilter] = React.useState(searchParams?.get('status') || '')
+  const [monthFilter, setMonthFilter] = React.useState(searchParams?.get('billingMonth') || '')
   const [searchQuery, setSearchQuery] = React.useState('')
 
   // Generate modal
