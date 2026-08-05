@@ -163,6 +163,7 @@ const middlewares = {
   "/ne": withLocaleMiddleware,
   "/about": withLocaleMiddleware,
   "/gallery": withLocaleMiddleware,
+  "/gallery/:path*": withLocaleMiddleware,
   "/pricing": withLocaleMiddleware,
   "/partner": withLocaleMiddleware,
   "/org": withLocaleMiddleware,
