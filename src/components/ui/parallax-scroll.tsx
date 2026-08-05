@@ -14,10 +14,7 @@ export const ParallaxScrollSecond = ({
   className?: string;
 }) => {
   const gridRef = useRef<any>(null);
-  const { scrollYProgress } = useScroll({
-    container: gridRef,
-    offset: ["start start", "end start"],
-  });
+  const { scrollYProgress } = useScroll();
 
   const translateFirst = useTransform(scrollYProgress, [0, 1], [0, -200]);
   const translateSecond = useTransform(scrollYProgress, [0, 1], [0, 200]);
@@ -38,7 +35,7 @@ export const ParallaxScrollSecond = ({
 
   return (
     <div
-      className={cn("h-[80vh] items-start overflow-y-auto w-full", className)}
+      className={cn("items-start w-full", className)}
       ref={gridRef}
     >
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 items-start gap-4 mx-auto w-full px-2 pb-10 pt-4">
