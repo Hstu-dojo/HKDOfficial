@@ -21,9 +21,10 @@ import { useToast } from "@/components/ui/use-toast";
 interface CreateFolderDialogProps {
   parentId?: string | null;
   onFolderCreated: () => void;
+  children?: React.ReactNode;
 }
 
-export function CreateFolderDialog({ parentId, onFolderCreated }: CreateFolderDialogProps) {
+export function CreateFolderDialog({ parentId, onFolderCreated, children }: CreateFolderDialogProps) {
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [name, setName] = useState("");
@@ -85,10 +86,14 @@ export function CreateFolderDialog({ parentId, onFolderCreated }: CreateFolderDi
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant="outline" size="sm">
-          <FolderPlus className="mr-2 h-4 w-4" />
-          New Folder
-        </Button>
+        {children ? (
+          children
+        ) : (
+          <Button variant="outline" size="sm">
+            <FolderPlus className="mr-2 h-4 w-4" />
+            New Folder
+          </Button>
+        )}
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
         <form onSubmit={handleSubmit}>

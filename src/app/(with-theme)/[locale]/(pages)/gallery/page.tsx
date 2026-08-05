@@ -3,7 +3,8 @@ import { db } from "@/lib/connect-db";
 import { galleryFolders, galleryImages } from "@/db/schema";
 import { eq, asc, isNull, desc, count } from "drizzle-orm";
 import { AlbumGrid, AlbumWithPreviews } from "@/components/gallery/AlbumGrid";
-
+import Header from "@/components/layout/header";
+import Footer from "@/components/layout/footer";
 export const metadata: Metadata = {
   title: "Gallery | HKD",
   description: "Explore our collection of photos from events, tournaments, and training sessions.",
@@ -63,5 +64,13 @@ async function getPublishedAlbums(): Promise<AlbumWithPreviews[]> {
 
 export default async function GalleryPage() {
   const albums = await getPublishedAlbums();
-  return <AlbumGrid albums={albums} />;
+  return (
+    <>
+      <Header />
+      <main className="relative">
+        <AlbumGrid albums={albums} />
+      </main>
+      <Footer />
+    </>
+  );
 }

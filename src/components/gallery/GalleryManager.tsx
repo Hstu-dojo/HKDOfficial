@@ -42,6 +42,8 @@ import { GalleryUploadButton } from "./GalleryUploadButton";
 import { EditImageDialog } from "./EditImageDialog";
 import { EditFolderDialog } from "./EditFolderDialog";
 import { cn } from "@/lib/utils";
+import { AlbumFolder } from "../folders-ui/project-folder/AlbumFolder";
+import { NewAlbumSlot } from "../folders-ui/NewAlbumSlot";
 
 interface GalleryFolder {
   id: string;
@@ -208,76 +210,67 @@ export function GalleryManager() {
           {loadingFolders ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
               {Array.from({ length: 8 }).map((_, i) => (
-                <Skeleton key={i} className="h-64 rounded-xl" />
-              ))}
-            </div>
-          ) : folders.length > 0 ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-              {folders.map((folder) => (
-                <div 
-                  key={folder.id}
-                  className="group relative flex flex-col rounded-xl border bg-card text-card-foreground shadow-sm hover:shadow-md transition-shadow cursor-pointer overflow-hidden"
-                  onClick={() => setActiveFolder(folder)}
-                >
-                  <div className="aspect-video relative bg-muted/50 border-b">
-                    {folder.coverImage ? (
-                      <img src={folder.coverImage.secureUrl} alt={folder.name} className="w-full h-full object-cover" />
-                    ) : (
-                      <div className="flex w-full h-full items-center justify-center">
-                        <FolderOpen className="h-10 w-10 text-muted-foreground/30" />
-                      </div>
-                    )}
-                    
-                    {!folder.isPublished && (
-                      <Badge variant="secondary" className="absolute top-3 left-3 bg-background/80 backdrop-blur-sm">
-                        <EyeOff className="h-3 w-3 mr-1" /> Draft
-                      </Badge>
-                    )}
-
-                    {/* Context Menu */}
-                    <div className="absolute top-3 right-3" onClick={(e) => e.stopPropagation()}>
-                      <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                          <Button variant="secondary" size="icon" className="h-8 w-8 bg-background/80 backdrop-blur-sm hover:bg-background">
-                            <MoreVertical className="h-4 w-4" />
-                          </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end" className="w-48">
-                          <DropdownMenuItem onClick={() => setEditFolder(folder)}>
-                            <Edit className="mr-2 h-4 w-4" /> Edit Details
-                          </DropdownMenuItem>
-                          <DropdownMenuItem onClick={() => togglePublish("folder", folder.id, folder.isPublished)}>
-                            {folder.isPublished ? (
-                              <><EyeOff className="mr-2 h-4 w-4" /> Unpublish Album</>
-                            ) : (
-                              <><Eye className="mr-2 h-4 w-4" /> Publish Album</>
-                            )}
-                          </DropdownMenuItem>
-                          <DropdownMenuSeparator />
-                          <DropdownMenuItem className="text-destructive" onClick={() => setDeleteTarget({ type: "folder", id: folder.id, name: folder.name })}>
-                            <Trash2 className="mr-2 h-4 w-4" /> Delete Album
-                          </DropdownMenuItem>
-                        </DropdownMenuContent>
-                      </DropdownMenu>
-                    </div>
-                  </div>
-
-                  <div className="p-4 flex flex-col gap-1.5">
-                    <h3 className="font-semibold truncate">{folder.name}</h3>
-                    <div className="flex items-center justify-between text-sm text-muted-foreground">
-                      <span className="flex items-center gap-1.5"><ImageIcon className="h-4 w-4"/> {folder.imageCount} photos</span>
-                      <span>{new Date(folder.createdAt).toLocaleDateString()}</span>
-                    </div>
-                  </div>
-                </div>
+                <Skeleton key={i} className="aspect-[288/224] rounded-xl" />
               ))}
             </div>
           ) : (
-            <div className="flex flex-col items-center justify-center py-24 text-center border-2 border-dashed rounded-xl">
-              <FolderOpen className="h-12 w-12 text-muted-foreground/30 mb-4" />
-              <h3 className="text-lg font-semibold mb-1">No albums yet</h3>
-              <p className="text-muted-foreground mb-6">Create an album to start organizing your photos.</p>
-              <CreateFolderDialog parentId={null} onFolderCreated={loadFolders} />
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+              <CreateFolderDialog parentId={null} onFolderCreated={loadFolders}>
+                <div className="flex items-center justify-center w-full">
+                  <NewAlbumSlot />
+                </div>
+              </CreateFolderDialog>
+              
+              {folders.map((folder, i) => (
+                <div key={folder.id} className="relative group w-full flex items-center justify-center">
+                  <AlbumFolder
+                    index={i}
+                    album={{
+                      id: folder.id,
+                      name: folder.name,
+                      slug: folder.slug,
+                      description: folder.description,
+                      imageCount: folder.imageCount,
+                      createdAt: folder.createdAt,
+                      previewImages: folder.coverImage ? [{ secureUrl: folder.coverImage.secureUrl }] : [],
+                    }}
+                    onClick={() => setActiveFolder(folder)}
+                  />
+                  
+                  {/* Context Menu Overlay */}
+                  <div className="absolute top-2 right-2 z-[60] opacity-0 group-hover:opacity-100 transition-opacity" onClick={(e) => e.stopPropagation()}>
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button variant="secondary" size="icon" className="h-8 w-8 bg-background/80 backdrop-blur-sm hover:bg-background">
+                          <MoreVertical className="h-4 w-4" />
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end" className="w-48">
+                        <DropdownMenuItem onClick={(e) => { e.stopPropagation(); setEditFolder(folder); }}>
+                          <Edit className="mr-2 h-4 w-4" /> Edit Details
+                        </DropdownMenuItem>
+                        <DropdownMenuItem onClick={(e) => { e.stopPropagation(); togglePublish("folder", folder.id, folder.isPublished); }}>
+                          {folder.isPublished ? (
+                            <><EyeOff className="mr-2 h-4 w-4" /> Unpublish Album</>
+                          ) : (
+                            <><Eye className="mr-2 h-4 w-4" /> Publish Album</>
+                          )}
+                        </DropdownMenuItem>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem className="text-destructive" onClick={(e) => { e.stopPropagation(); setDeleteTarget({ type: "folder", id: folder.id, name: folder.name }); }}>
+                          <Trash2 className="mr-2 h-4 w-4" /> Delete Album
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  </div>
+
+                  {!folder.isPublished && (
+                    <Badge variant="secondary" className="absolute top-2 left-2 z-[60] bg-background/80 backdrop-blur-sm shadow-sm pointer-events-none">
+                      <EyeOff className="h-3 w-3 mr-1" /> Draft
+                    </Badge>
+                  )}
+                </div>
+              ))}
             </div>
           )}
         </div>

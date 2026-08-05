@@ -4,6 +4,8 @@ import { galleryFolders, galleryImages } from "@/db/schema";
 import { eq, asc } from "drizzle-orm";
 import { notFound } from "next/navigation";
 import { AlbumDetailView } from "@/components/gallery/AlbumDetailView";
+import Header from "@/components/layout/header";
+import Footer from "@/components/layout/footer";
 
 interface Props {
   params: Promise<{ slug: string }>;
@@ -92,32 +94,38 @@ export default async function GalleryFolderPage({ params }: Props) {
   );
 
   return (
-    <AlbumDetailView
-      folder={{
-        id: folder.id,
-        name: folder.name,
-        slug: folder.slug,
-        description: folder.description,
-        createdAt: folder.createdAt.toISOString(),
-      }}
-      images={publishedImages.map((img) => ({
-        id: img.id,
-        secureUrl: img.secureUrl,
-        title: img.title,
-        description: img.description,
-        altText: img.altText,
-        width: img.width,
-        height: img.height,
-        isFeatured: img.isFeatured,
-        createdAt: img.createdAt.toISOString(),
-      }))}
-      childFolders={childFolders.map((f) => ({
-        id: f.id,
-        name: f.name,
-        slug: f.slug,
-        description: f.description,
-        createdAt: f.createdAt.toISOString(),
-      }))}
-    />
+    <>
+      <Header />
+      <main className="relative">
+        <AlbumDetailView
+          folder={{
+            id: folder.id,
+            name: folder.name,
+            slug: folder.slug,
+            description: folder.description,
+            createdAt: folder.createdAt.toISOString(),
+          }}
+          images={publishedImages.map((img) => ({
+            id: img.id,
+            secureUrl: img.secureUrl,
+            title: img.title,
+            description: img.description,
+            altText: img.altText,
+            width: img.width,
+            height: img.height,
+            isFeatured: img.isFeatured,
+            createdAt: img.createdAt.toISOString(),
+          }))}
+          childFolders={childFolders.map((f) => ({
+            id: f.id,
+            name: f.name,
+            slug: f.slug,
+            description: f.description,
+            createdAt: f.createdAt.toISOString(),
+          }))}
+        />
+      </main>
+      <Footer />
+    </>
   );
 }

@@ -5,7 +5,7 @@ import { motion, useScroll, useTransform } from "framer-motion";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { ImageIcon, Camera, ArrowDown } from "lucide-react";
-import { AlbumCard } from "./AlbumCard";
+import { AlbumFolder } from "../folders-ui/project-folder/AlbumFolder";
 import { useRef } from "react";
 
 export interface AlbumWithPreviews {
@@ -114,10 +114,11 @@ export function AlbumGrid({ albums }: AlbumGridProps) {
             {/* Responsive grid — using larger cards now that we have full-cover glassmorphism */}
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 md:gap-8">
               {albums.map((album, i) => (
-                <AlbumCard
+                <AlbumFolder
                   key={album.id}
-                  {...album}
+                  album={album}
                   index={i}
+                  href={`/gallery/${album.slug}`}
                 />
               ))}
             </div>
