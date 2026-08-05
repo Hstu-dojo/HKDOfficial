@@ -214,7 +214,7 @@ export function GalleryManager() {
               ))}
             </div>
           ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-x-12 gap-y-16 items-start py-6 w-full">
               <CreateFolderDialog parentId={null} onFolderCreated={loadFolders}>
                 <div className="flex items-center justify-center w-full">
                   <NewAlbumSlot />

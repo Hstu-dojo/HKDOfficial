@@ -111,8 +111,8 @@ export function AlbumGrid({ albums }: AlbumGridProps) {
               </div>
             </motion.div>
 
-            {/* Responsive grid — using larger cards now that we have full-cover glassmorphism */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 md:gap-8">
+            {/* Responsive grid with full spacing for 3D folder fan-out */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-x-12 gap-y-16 items-start py-8 w-full">
               {albums.map((album, i) => (
                 <AlbumFolder
                   key={album.id}

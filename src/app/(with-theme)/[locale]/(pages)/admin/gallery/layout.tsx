@@ -12,10 +12,10 @@ export default async function GalleryLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="flex flex-col min-h-screen bg-background">
-      <div className="flex-1 flex flex-col lg:flex-row">
+    <div className="w-full flex flex-col min-h-screen bg-background">
+      <div className="w-full flex-1 flex flex-col lg:flex-row">
         <Sidebar className="hidden lg:block w-64 shrink-0 border-r min-h-[calc(100vh-4rem)]" />
-        <main className="flex-1 p-6 md:p-8 overflow-x-hidden">
+        <main className="flex-1 p-6 md:p-10 overflow-x-hidden w-full">
           {children}
         </main>
       </div>
