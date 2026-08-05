@@ -116,7 +116,7 @@ export function PublicGallery() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-background to-muted/20">
+    <div className="min-h-screen bg-gradient-to-b from-background to-muted/20 pt-[4.5rem] lg:pt-[161px]">
       {/* Hero Section */}
       <section className="relative py-16 md:py-24 overflow-hidden">
         <div className="absolute inset-0 bg-[url('/hero/pattern.svg')] opacity-5" />
