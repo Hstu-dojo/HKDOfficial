@@ -47,7 +47,7 @@ const HeroTriangle = (props: SVGProps<SVGSVGElement>) => {
             width={350}
             height={350}
             x={50}
-            y={170}
+            y={180}
           />
         </pattern>
       </defs>
