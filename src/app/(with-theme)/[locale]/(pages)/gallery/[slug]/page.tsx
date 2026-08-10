@@ -23,7 +23,7 @@ export async function generateStaticParams() {
       .from(galleryFolders)
       .where(eq(galleryFolders.isPublished, true));
 
-    const locales = ["en", "bn"];
+    const locales = ["en", "bn", "ne"];
     return locales.flatMap((locale) =>
       folders.map((f) => ({ locale, slug: f.slug }))
     );
