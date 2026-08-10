@@ -43,7 +43,7 @@ const HeroTriangle = (props: SVGProps<SVGSVGElement>) => {
           patternUnits="userSpaceOnUse"
         >
           <image
-            xlinkHref="https://i.pinimg.com/originals/d5/82/f8/d582f8d46e6085e990b27c2b8b8be110.jpg"
+            xlinkHref="/image/hero-karate-kid.jpg"
             width={350}
             height={350}
             x={50}
