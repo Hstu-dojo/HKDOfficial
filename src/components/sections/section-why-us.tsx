@@ -11,9 +11,8 @@ import {
 } from "@/components/ui/dialog";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
 import { Play } from "@/components/icons/icons";
-import { useScopedI18n } from "@/locales/client";
+import { useScopedI18n, useCurrentLocale } from "@/locales/client";
 import Link from "next/link";
-import { useCurrentLocale } from "@/locales/client";
 import { CheckCircle2, ArrowRight } from "lucide-react";
 
 const SectionWhyUs = () => {
