@@ -21,7 +21,7 @@ export default async function PageAbout() {
     <>
       <Header />
       <main className="relative">
-        <SectionPageTitle subtitle={t('about.subtitle')}>
+        <SectionPageTitle kicker="About HKD" subtitle={t('about.subtitle')}>
           {t('about.title')}
         </SectionPageTitle>
         <SectionChecklist />

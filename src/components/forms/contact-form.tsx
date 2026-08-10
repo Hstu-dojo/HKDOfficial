@@ -60,7 +60,7 @@ export default function ContactForm() {
   }
 
   return (
-    <div className="relative z-10 mx-auto -mt-20 max-w-4xl rounded-md bg-white px-[7%] py-10 shadow-lg dark:bg-slate-900 dark:shadow-slate-950/40 md:py-[5%]">
+    <div className="relative z-10 mx-auto max-w-4xl rounded-3xl bg-card border border-border/60 p-8 md:p-12 shadow-xl dark:bg-slate-900/90 backdrop-blur-sm">
       <div className="container">
         <ul className="mb-6 space-y-1 text-center text-sm">
           <li>

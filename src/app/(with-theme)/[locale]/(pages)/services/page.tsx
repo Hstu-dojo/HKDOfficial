@@ -25,7 +25,7 @@ export default async function PageServices() {
     <>
       <Header />
       <main className="relative">
-        <SectionPageTitle subtitle={t("services.pageSubtitle")}>
+        <SectionPageTitle kicker="What We Offer" subtitle={t("services.pageSubtitle")}>
           {t("services.pageTitle")}
         </SectionPageTitle>
         <SectionIconBoxes noTitle />
