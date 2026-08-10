@@ -119,18 +119,52 @@ export const HeroParallax = ({
 export const Header = () => {
   const t = useScopedI18n("hero");
   return (
-    <div className="relative left-0 top-0 mx-20 w-full max-w-7xl py-20 md:pb-40 md:pt-20">
-      <h1 className="text-headings text-2xl font-bold md:text-7xl">
-        <span className="block text-base font-semibold tracking-widest uppercase text-primary md:text-2xl">
-          {t("welcomeLine1")}
-        </span>
-        <span className="block mt-1">
-          {t("welcomeLine2")}
-        </span>
-      </h1>
-      <p className="mt-8 max-w-lg text-base text-slate-700 dark:text-slate-300 md:text-lg">
-        {t("welcomeSubtitle")}
-      </p>
+    <div className="relative left-0 top-0 mx-auto w-full max-w-7xl px-4 py-20 md:pb-36 md:pt-20 flex flex-col lg:flex-row items-center justify-between gap-10">
+      <div className="flex-1 max-w-2xl">
+        <h1 className="text-headings text-3xl font-black md:text-7xl tracking-tight">
+          <span className="inline-flex items-center gap-2 text-base font-bold tracking-[0.2em] uppercase text-primary mb-3">
+            <span className="h-px w-6 bg-primary" />
+            {t("welcomeLine1")}
+          </span>
+          <span className="block mt-1">
+            {t("welcomeLine2")}
+          </span>
+        </h1>
+        <p className="mt-6 max-w-xl text-base text-slate-600 dark:text-slate-300 md:text-lg leading-relaxed">
+          {t("welcomeSubtitle")}
+        </p>
+      </div>
+
+      {/* Top Right Corner Image */}
+      <motion.div
+        initial={{ opacity: 0, scale: 0.9, y: 20 }}
+        animate={{ opacity: 1, scale: 1, y: 0 }}
+        transition={{ duration: 0.7, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
+        className="relative shrink-0 w-72 sm:w-80 md:w-96 rounded-3xl overflow-hidden shadow-2xl shadow-primary/20 border-2 border-primary/30 group bg-card"
+      >
+        <div className="relative aspect-[4/5] w-full overflow-hidden">
+          <Image
+            src="/image/hero-karate-kid.jpg"
+            alt="HSTU Karate Dojo Training"
+            fill
+            className="object-cover object-top group-hover:scale-105 transition-transform duration-700"
+            priority
+          />
+          {/* Gradient overlay */}
+          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-90" />
+          
+          {/* Floating badge */}
+          <div className="absolute bottom-4 left-4 right-4 backdrop-blur-md bg-black/40 border border-white/20 rounded-2xl p-3 text-white">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-[11px] font-bold uppercase tracking-widest text-primary">Youth Training</p>
+                <p className="text-xs font-semibold text-white/90">Building Character & Excellence</p>
+              </div>
+              <div className="h-2 w-2 rounded-full bg-emerald-400 animate-pulse shrink-0" />
+            </div>
+          </div>
+        </div>
+      </motion.div>
     </div>
   );
 };
