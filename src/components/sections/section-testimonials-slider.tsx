@@ -8,6 +8,7 @@ import "swiper/css/navigation";
 import Image from "next/image";
 import { Star, Quote } from "lucide-react";
 import { useScopedI18n } from "@/locales/client";
+import { SectionHeader } from "./section-header";
 
 const cloudName = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME || "dksn30eyz";
 const avatarTransform = "c_fill,w_300,h_300,g_face,q_auto,r_max";
@@ -55,26 +56,13 @@ const SectionTestimonialsSlider = () => {
       <div className="absolute bottom-0 right-1/4 w-72 h-72 rounded-full bg-violet-500/10 blur-[100px] pointer-events-none" />
 
       <div className="container mx-auto px-4 max-w-7xl relative z-10">
-        {/* Header */}
-        <motion.div
-          initial={{ opacity: 0, y: 24 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-80px" }}
-          transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-          className="text-center mb-12 md:mb-16"
-        >
-          <span className="inline-flex items-center gap-2 text-xs font-bold tracking-[0.2em] uppercase text-primary mb-4">
-            <span className="h-px w-6 bg-primary" />
-            Testimonials
-            <span className="h-px w-6 bg-primary" />
-          </span>
-          <h2 className="text-3xl md:text-5xl font-black tracking-tight text-white mb-3">
-            {tStats("satisfied")}
-          </h2>
-          <p className="text-slate-400 text-base md:text-lg max-w-xl mx-auto">
-            {tStats("satisfiedDesc")}
-          </p>
-        </motion.div>
+        <SectionHeader
+          kicker="Testimonials"
+          title="What Our Members"
+          titleAccent="Say"
+          description={tStats("satisfiedDesc")}
+          lightText
+        />
 
         {/* Slider */}
         <motion.div

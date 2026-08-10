@@ -6,6 +6,7 @@ import Image from "next/image";
 import { urlForImage } from "../../../sanity/lib/utils";
 import { ProjectPayload } from "../../../sanity/lib/sanity_types";
 import { useScopedI18n } from "@/locales/client";
+import { SectionHeader } from "./section-header";
 
 interface FeaturedPostsClientProps {
   featuredPosts: ProjectPayload[];
@@ -16,19 +17,12 @@ const FeaturedPostsClient: React.FC<FeaturedPostsClientProps> = ({ featuredPosts
   return (
     <section className="py-16 bg-gradient-to-br from-gray-50 to-white dark:from-gray-900 dark:to-gray-800">
       <div className="container mx-auto px-4">
-        {/* Section Header */}
-        <div className="text-center mb-12">
-          <span className="inline-block px-4 py-2 bg-blue-100 text-blue-600 dark:bg-blue-900/50 dark:text-blue-300 rounded-full text-sm font-medium mb-4">
-            {t("title")}
-          </span>
-          <h2 className="text-3xl md:text-4xl font-bold text-gray-800 dark:text-white mb-4">
-            {t("subtitle")}
-          </h2>
-          <p className="text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
-            {t("description")}
-          </p>
-          <div className="w-20 h-1 bg-gradient-to-r from-blue-500 to-purple-500 mx-auto mt-6 rounded-full"></div>
-        </div>
+        <SectionHeader
+          kicker="Latest Articles"
+          title="Featured"
+          titleAccent="Posts"
+          description={t("description")}
+        />
 
         {/* Featured Posts Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">

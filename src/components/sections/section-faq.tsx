@@ -10,6 +10,7 @@ import {
 } from "@/components/ui/accordion";
 import { useScopedI18n } from "@/locales/client";
 import { MessageCircle } from "lucide-react";
+import { SectionHeader } from "./section-header";
 
 const SectionFAQ = () => {
   const t = useScopedI18n("homepage.faq");
@@ -26,25 +27,12 @@ const SectionFAQ = () => {
       <div className="absolute top-0 right-0 w-96 h-96 rounded-full bg-primary/5 blur-[120px] pointer-events-none" />
 
       <div className="container mx-auto px-4 max-w-3xl relative z-10">
-        <motion.div
-          initial={{ opacity: 0, y: 24 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-80px" }}
-          transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-          className="text-center mb-12"
-        >
-          <span className="inline-flex items-center gap-2 text-xs font-bold tracking-[0.2em] uppercase text-primary mb-4">
-            <span className="h-px w-6 bg-primary" />
-            FAQ
-            <span className="h-px w-6 bg-primary" />
-          </span>
-          <h2 className="text-3xl md:text-5xl font-black tracking-tight mb-4">
-            {t("title")}
-          </h2>
-          <p className="text-muted-foreground text-lg max-w-xl mx-auto">
-            {t("subtitle")}
-          </p>
-        </motion.div>
+        <SectionHeader
+          kicker="FAQ"
+          title="Frequently Asked"
+          titleAccent="Questions"
+          description={t("subtitle")}
+        />
 
         <motion.div
           initial={{ opacity: 0, y: 30 }}

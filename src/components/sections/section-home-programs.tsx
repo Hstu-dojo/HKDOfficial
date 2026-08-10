@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import Link from "next/link";
 import { useCurrentLocale, useScopedI18n } from "@/locales/client";
 import { ArrowRight } from "lucide-react";
+import { SectionHeader } from "./section-header";
 
 const SectionHomePrograms = () => {
   const locale = useCurrentLocale();
@@ -51,26 +52,12 @@ const SectionHomePrograms = () => {
       />
 
       <div className="container mx-auto px-4 max-w-7xl relative z-10">
-        {/* Section Header */}
-        <motion.div
-          initial={{ opacity: 0, y: 24 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-80px" }}
-          transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-          className="mb-12 md:mb-16 text-center"
-        >
-          <span className="inline-flex items-center gap-2 text-xs font-bold tracking-[0.2em] uppercase text-primary mb-4">
-            <span className="h-px w-6 bg-primary" />
-            What We Offer
-            <span className="h-px w-6 bg-primary" />
-          </span>
-          <h2 className="text-3xl md:text-5xl font-black tracking-tight">
-            {t("title").replace(t("titleSpan"), "")}{" "}
-            <span className="bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">
-              {t("titleSpan")}
-            </span>
-          </h2>
-        </motion.div>
+        <SectionHeader
+          kicker="What We Offer"
+          title="Discover Our"
+          titleAccent="Programs"
+          description="Comprehensive martial arts training designed for practitioners of all ages and skill levels."
+        />
 
         {/* Bento Grid */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-5">

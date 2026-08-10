@@ -4,9 +4,10 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { ArrowRight, Camera } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { AlbumFolder } from "@/components/folders-ui/project-folder/AlbumFolder";
 import type { AlbumWithPreviews } from "@/components/gallery/AlbumGrid";
+import { SectionHeader } from "./section-header";
 
 interface SectionRecentAlbumsProps {
   albums: AlbumWithPreviews[];
@@ -21,35 +22,22 @@ export default function SectionRecentAlbums({ albums }: SectionRecentAlbumsProps
     <section className="py-20 md:py-28 overflow-hidden">
       <div className="container mx-auto px-4">
         {/* Header */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-80px" }}
-          transition={{ duration: 0.6, ease: EASE_OUT_EXPO }}
-          className="flex flex-col sm:flex-row sm:items-end justify-between gap-5 mb-12"
-        >
-          <div>
-            <Badge variant="outline" className="mb-3 gap-1.5">
-              <Camera className="h-3.5 w-3.5" />
-              Photo Gallery
-            </Badge>
-            <h2 className="text-3xl md:text-4xl font-black tracking-tight leading-none">
-              Recent{" "}
-              <span className="bg-gradient-to-r from-primary to-primary/50 bg-clip-text text-transparent">
-                Albums
-              </span>
-            </h2>
-            <p className="text-muted-foreground mt-2 max-w-sm text-sm leading-relaxed">
-              Relive the latest moments from our dojo — grading tests, events, and daily training.
-            </p>
-          </div>
-          <Link href="/gallery" className="shrink-0">
-            <Button variant="outline" className="gap-2">
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12 md:mb-16">
+          <SectionHeader
+            kicker="Photo Gallery"
+            title="Recent"
+            titleAccent="Albums"
+            description="Relive the latest moments from our dojo — grading tests, events, and daily training."
+            align="left"
+            className="mb-0 md:mb-0"
+          />
+          <Link href="/gallery" className="shrink-0 mb-2">
+            <Button variant="outline" className="gap-2 rounded-full px-6">
               View All Albums
               <ArrowRight className="h-4 w-4" />
             </Button>
           </Link>
-        </motion.div>
+        </div>
 
         {/* Album Folders */}
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">

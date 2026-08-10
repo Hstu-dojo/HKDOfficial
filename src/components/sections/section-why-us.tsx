@@ -14,6 +14,7 @@ import { Play } from "@/components/icons/icons";
 import { useScopedI18n, useCurrentLocale } from "@/locales/client";
 import Link from "next/link";
 import { CheckCircle2, ArrowRight } from "lucide-react";
+import { SectionHeader } from "./section-header";
 
 const SectionWhyUs = () => {
   const t = useScopedI18n("homepage.benefits");
@@ -110,25 +111,19 @@ const SectionWhyUs = () => {
             </div>
           </motion.div>
 
-          {/* Right — Text content */}
           <motion.div
             initial={{ opacity: 0, x: 40 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true, margin: "-80px" }}
             transition={{ duration: 0.7, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
           >
-            <span className="inline-flex items-center gap-2 text-xs font-bold tracking-[0.2em] uppercase text-primary mb-5">
-              <span className="h-px w-6 bg-primary" />
-              Why Join HKD?
-            </span>
-
-            <h2 className="text-3xl md:text-4xl lg:text-5xl font-black tracking-tight leading-tight mb-6">
-              {t("title")}
-            </h2>
-
-            <p className="text-muted-foreground text-lg leading-relaxed mb-10">
-              {t("subtitle")}
-            </p>
+            <SectionHeader
+              kicker="Why Join HKD?"
+              title={t("title")}
+              description={t("subtitle")}
+              align="left"
+              className="mb-8 md:mb-8"
+            />
 
             {/* Feature list */}
             <div className="space-y-6 mb-10">

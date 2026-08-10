@@ -6,6 +6,7 @@ import Image from "next/image";
 import Link from "next/link";
 import MaxWidthWrapper from "../maxWidthWrapper";
 import { useScopedI18n } from "@/locales/client";
+import { SectionHeader } from "./section-header";
 
 export interface BranchData {
   id: string;
@@ -79,27 +80,12 @@ const SectionBranches = ({ branches }: SectionBranchesProps) => {
       </div>
 
       <MaxWidthWrapper className="container relative z-10">
-        {/* Section header */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={visible ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-          className="text-center mb-16 lg:mb-20"
-        >
-          <div className="inline-flex items-center gap-3 mb-4">
-            <div className="h-px w-8 bg-primary" />
-            <span className="text-xs font-semibold tracking-[0.25em] text-primary uppercase">
-              {t("kicker")}
-            </span>
-            <div className="h-px w-8 bg-primary" />
-          </div>
-          <h2 className="text-3xl lg:text-5xl font-bold mb-4">
-            {t("titlePrefix")} <span className="text-primary">{t("titleAccent")}</span>
-          </h2>
-          <p className="text-base text-muted-foreground max-w-lg mx-auto">
-            {t("description")}
-          </p>
-        </motion.div>
+        <SectionHeader
+          kicker={t("kicker")}
+          title={t("titlePrefix")}
+          titleAccent={t("titleAccent")}
+          description={t("description")}
+        />
 
         {/* Branch cards grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">

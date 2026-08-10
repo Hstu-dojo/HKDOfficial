@@ -1,7 +1,7 @@
 import MaxWidthWrapper from "../maxWidthWrapper";
-import SectionTitle from "./section-title";
 import Image from "next/image";
 import { getScopedI18n } from "@/locales/server";
+import { SectionHeader } from "./section-header";
 
 const SectionPartners = async () => {
     const t = await getScopedI18n("homepage.partners");
@@ -14,14 +14,13 @@ const SectionPartners = async () => {
         className="object-cover object-center opacity-50"
       />
       <MaxWidthWrapper className="container relative">
-        <SectionTitle
-          subtitle={t("description")}
-          sectionClasses="mx-auto max-w-xl text-center mb-12"
-          titleClasses="mb-3 text-center text-white"
-          subtitleClasses="text-md font-medium text-white"
-        >
-          {t("subtitle")}
-        </SectionTitle>
+        <SectionHeader
+          kicker="Affiliations"
+          title="Our Trusted"
+          titleAccent="Partners"
+          description={t("description")}
+          lightText
+        />
         <div className="flex flex-wrap justify-center">
           <Image
             src="/image/hstu.png"
