@@ -83,12 +83,12 @@ export function AlbumFolder({ album, index, href, onClick, isAdmin }: AlbumFolde
         className="relative w-[288px]"
         style={{ perspective: "1200px" }}
       >
-        {/* Back panel */}
+          {/* Back panel */}
         <motion.div
           className="relative z-0 rounded-2xl"
           animate={{
             rotateX: isActive ? 15 : 0,
-            backgroundColor: isDark ? "#1e1e1e" : "#f1f5f9",
+            backgroundColor: isDark ? "rgba(51, 65, 85, 0.6)" : "#f1f5f9",
           }}
           transition={{
             rotateX: {
@@ -104,7 +104,7 @@ export function AlbumFolder({ album, index, href, onClick, isAdmin }: AlbumFolde
           }}
           style={{
             height: "224px",
-            border: isDark ? "1px solid rgba(255, 255, 255, 0.06)" : "1px solid rgba(0, 0, 0, 0.05)",
+            border: isDark ? "1px solid rgba(255, 255, 255, 0.12)" : "1px solid rgba(0, 0, 0, 0.05)",
             transformStyle: "preserve-3d",
             transformOrigin: "center bottom",
           }}
@@ -199,7 +199,7 @@ export function AlbumFolder({ album, index, href, onClick, isAdmin }: AlbumFolde
           className="absolute bottom-0 left-0 right-0 z-10 rounded-2xl overflow-hidden"
           animate={{
             rotateX: isActive ? -25 : 0,
-            backgroundColor: isDark ? "rgba(26, 26, 26, 0.8)" : "rgba(255, 255, 255, 0.85)",
+            backgroundColor: isDark ? "rgba(30, 41, 59, 0.88)" : "rgba(255, 255, 255, 0.85)",
           }}
           transition={{
             rotateX: {
@@ -216,7 +216,7 @@ export function AlbumFolder({ album, index, href, onClick, isAdmin }: AlbumFolde
           style={{
             backdropFilter: "blur(16px)",
             WebkitBackdropFilter: "blur(16px)",
-            border: isDark ? "1px solid rgba(255, 255, 255, 0.06)" : "1px solid rgba(0, 0, 0, 0.05)",
+            border: isDark ? "1px solid rgba(255, 255, 255, 0.12)" : "1px solid rgba(0, 0, 0, 0.05)",
             transformStyle: "preserve-3d",
             transformOrigin: "center bottom",
           }}

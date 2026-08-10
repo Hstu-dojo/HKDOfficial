@@ -65,7 +65,7 @@ const SectionWhyUs = () => {
             {/* Main image */}
             <div className="relative rounded-3xl overflow-hidden shadow-2xl shadow-black/10">
               <Image
-                src="/image/hero-karate-kid.jpg"
+                src="https://res.cloudinary.com/dksn30eyz/image/upload/v1785926139/hkd/y5m1cmpx9ugjuzoh7wq0.jpg"
                 alt="HKD Karate training"
                 width={560}
                 height={500}
