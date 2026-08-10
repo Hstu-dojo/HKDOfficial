@@ -3,14 +3,12 @@ import Footer from "@/components/layout/footer";
 import SectionCTA from "@/components/sections/section-cta";
 import SectionHero from "@/components/sections/section-hero";
 import SectionHomePrograms from "@/components/sections/section-home-programs";
+import SectionStatsBar from "@/components/sections/section-stats-bar";
 import SectionPartners from "@/components/sections/section-partners";
-import SectionPromo from "@/components/sections/section-promo";
-// import SectionBlog from "@/components/sections/section-blog";
+import SectionWhyUs from "@/components/sections/section-why-us";
 import SectionTestimonialsSlider from "@/components/sections/section-testimonials-slider";
-// import SectionTestimonialsSliderLayout2 from "@/components/sections/section-testimonials-slider-layout-2";
 import Furious5 from "@/components/sections/furious5/furious5";
 import ChatPlugin from "@/components/chat";
-import SectionBenefits from "@/components/sections/section-benefits";
 import SectionFAQ from "@/components/sections/section-faq";
 import FeaturedPostsServer from "@/components/sections/featured-posts-server";
 import SectionBranches from "@/components/sections/section-branches";
@@ -23,7 +21,6 @@ import { partners, partnerPageSettings } from "@/db/schemas/partner";
 import { profiles, courses } from "@/db/schemas/karate";
 import { galleryFolders, galleryImages } from "@/db/schemas/content";
 import { eq, asc, and, count, inArray, desc } from "drizzle-orm";
-// import SectionIconBoxesLayout2 from "@/components/sections/section-icon-boxes-layout-2";
 
 // Pre-build locale pages at build time so first visit from external links (Facebook etc.) works instantly
 export function generateStaticParams() {
@@ -204,19 +201,15 @@ export default async function Home({ params }: { params: Promise<{ locale: strin
       <main className="relative">
         <SectionHero initialProducts={heroImages} />
         <SectionHomePrograms />
+        <SectionStatsBar />
         <SectionBranches branches={branches} />
-        <SectionPromo />
+        <SectionWhyUs />
         <SectionRecentAlbums albums={recentAlbums} />
-        <SectionBenefits />
-        {/* <SectionIconBoxesLayout2 /> */}
+        <SectionCertVerify />
         <FeaturedPostsServer />
-        {/* <SectionBlog /> */}
         <SectionFAQ />
         <SectionTestimonialsSlider />
-        {/* <SectionTestimonialsSliderLayout2 /> */}
-
         <Furious5 />
-        <SectionCertVerify />
         <SectionPartners />
         <SectionCTA />
         <ChatPlugin />
