@@ -104,7 +104,7 @@ const SectionWhyUs = () => {
 
             {/* Floating stat badge */}
             <div className="absolute -right-4 top-8 sm:-right-8 bg-gradient-to-br from-primary to-primary/70 text-white rounded-2xl p-5 shadow-xl shadow-primary/30 backdrop-blur-md border border-white/20">
-              <div className="text-3xl font-black leading-none mb-0.5">500+</div>
+              <div className="text-3xl font-black leading-none mb-0.5">200+</div>
               <div className="text-xs font-semibold opacity-80 leading-snug">
                 Members<br />Trained
               </div>

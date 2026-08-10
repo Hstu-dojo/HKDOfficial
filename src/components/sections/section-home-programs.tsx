@@ -81,13 +81,13 @@ const SectionHomePrograms = () => {
                   {/* Ambient glow */}
                   <div className={`absolute -top-12 -right-12 w-40 h-40 rounded-full bg-gradient-to-br ${program.accentColor} opacity-10 blur-3xl group-hover:opacity-20 transition-opacity duration-500`} />
 
-                  {/* GIF Icon */}
-                  <div className="absolute top-6 right-6 w-16 h-16 md:w-20 md:h-20 opacity-80 group-hover:opacity-100 group-hover:scale-110 transition-all duration-500">
+                  {/* GIF Icon Badge */}
+                  <div className="absolute top-6 right-6 w-16 h-16 md:w-20 md:h-20 rounded-2xl bg-white/80 dark:bg-slate-900/80 backdrop-blur-md p-2.5 shadow-lg border border-white/20 dark:border-slate-700/50 flex items-center justify-center group-hover:scale-110 transition-all duration-500">
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img
                       src={program.icon}
                       alt={program.title}
-                      className="w-full h-full object-contain"
+                      className="w-full h-full object-contain mix-blend-multiply dark:mix-blend-screen"
                     />
                   </div>
 

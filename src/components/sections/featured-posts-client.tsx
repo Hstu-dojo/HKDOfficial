@@ -7,6 +7,8 @@ import { urlForImage } from "../../../sanity/lib/utils";
 import { ProjectPayload } from "../../../sanity/lib/sanity_types";
 import { useScopedI18n } from "@/locales/client";
 import { SectionHeader } from "./section-header";
+import { Button } from "@/components/ui/button";
+import { ArrowRight } from "lucide-react";
 
 interface FeaturedPostsClientProps {
   featuredPosts: ProjectPayload[];
@@ -139,24 +141,11 @@ const FeaturedPostsClient: React.FC<FeaturedPostsClientProps> = ({ featuredPosts
 
         {/* View All Link */}
         <div className="text-center mt-12">
-          <Link
-            href="/blog"
-            className="inline-flex items-center space-x-2 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 dark:from-blue-500 dark:to-purple-500 dark:hover:from-blue-600 dark:hover:to-purple-600 text-white px-8 py-3 rounded-full font-medium transition-all duration-200 transform hover:scale-105 shadow-lg hover:shadow-xl dark:shadow-gray-900/50"
-          >
-            <span>{t("viewAll")}</span>
-            <svg
-              className="w-5 h-5"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M13 7l5 5m0 0l-5 5m5-5H6"
-              />
-            </svg>
+          <Link href="/blog">
+            <Button size="lg" className="rounded-full px-8 font-semibold gap-2 shadow-md">
+              <span>{t("viewAll")}</span>
+              <ArrowRight className="h-4 w-4" />
+            </Button>
           </Link>
         </div>
       </div>

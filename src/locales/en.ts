@@ -61,7 +61,7 @@ export default {
       titleSpan: "Programs",
       training: {
         title: "Training Courses",
-        description: "Structured curriculum from White Belt to Black Belt. Master the art of Shotokan Karate.",
+        description: "Structured curriculum from White Belt to Black Belt. Master the art of Shitoryu Karate.",
       },
       events: {
         title: "Programs & Events",
