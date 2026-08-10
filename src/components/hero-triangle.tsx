@@ -16,12 +16,13 @@ const HeroTriangle = (props: SVGProps<SVGSVGElement>) => {
     >
       <path
         fill={`url(#${patternId})`}
+        opacity={0.7}
         d="M232.16 108.54 76.5 357.6c-33.3 53.28 5 122.4 67.84 122.4h311.32c62.83 0 101.14-69.12 67.84-122.4L367.84 108.54c-31.33-50.13-104.35-50.13-135.68 0Z"
         className="st0"
       />
       <path
         fill={`url(#${gradientId})`}
-        fillOpacity={0.4}
+        fillOpacity={0.55}
         d="M232.16 108.54 76.5 357.6c-33.3 53.28 5 122.4 67.84 122.4h311.32c62.83 0 101.14-69.12 67.84-122.4L367.84 108.54c-31.33-50.13-104.35-50.13-135.68 0Z"
         className="st0"
       />
