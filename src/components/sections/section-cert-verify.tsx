@@ -6,6 +6,7 @@ import { useCurrentLocale, useScopedI18n } from "@/locales/client";
 import { ShieldCheckIcon, MagnifyingGlassIcon, CheckBadgeIcon, XCircleIcon } from "@heroicons/react/24/outline";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
+import { SectionHeader } from "./section-header";
 
 interface CertificateData {
   certificateNumber: string;
@@ -60,15 +61,14 @@ export default function SectionCertVerify() {
           
           <div className="relative z-10 flex flex-col md:flex-row items-center gap-8 md:gap-12">
             <div className="flex-1 w-full text-center md:text-left">
-              <div className="inline-flex items-center justify-center h-12 w-12 rounded-xl bg-primary/10 mb-4 md:mb-6">
-                <ShieldCheckIcon className="h-6 w-6 text-primary" />
-              </div>
-              <h2 className="text-2xl md:text-3xl font-bold mb-2">
-                {t("title") || "Verify Certificate"}
-              </h2>
-              <p className="text-muted-foreground mb-6 text-sm md:text-base">
-                Check the authenticity of any certificate quickly using its unique ID.
-              </p>
+              <SectionHeader
+                kicker="Verification"
+                title="Verify"
+                titleAccent="Certificate"
+                description="Check the authenticity of any certificate quickly using its unique ID."
+                align="left"
+                className="mb-6 md:mb-6"
+              />
 
               <form onSubmit={verify} className="flex gap-2 max-w-md mx-auto md:mx-0">
                 <div className="relative flex-1">
