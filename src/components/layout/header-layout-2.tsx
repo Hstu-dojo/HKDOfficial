@@ -32,7 +32,7 @@ const HeaderLayout2 = () => {
 
   return (
     <>
-      <header className="fixed top-0 z-20 w-full">
+      <header className="fixed top-0 z-40 w-full">
         <div
           className={cn(
             "flex items-center px-4 py-5 transition-all lg:py-12 xl:px-20",

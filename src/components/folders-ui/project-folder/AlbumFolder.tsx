@@ -72,7 +72,7 @@ export function AlbumFolder({ album, index, href, onClick, isAdmin }: AlbumFolde
       className="group relative w-[288px] mx-auto cursor-pointer"
       style={{
         perspective: "1200px",
-        zIndex: isActive ? 50 : 1,
+        zIndex: isActive ? 20 : 1,
         transformStyle: "preserve-3d",
       }}
       onMouseEnter={() => setIsHovered(true)}

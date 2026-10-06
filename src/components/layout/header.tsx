@@ -40,7 +40,7 @@ const Header = () => {
   };
 
   return (
-    <header className="fixed left-0 top-0 z-20 w-full">
+    <header className="fixed left-0 top-0 z-40 w-full">
       <OnboardingAlert />
       <div className={cn("py-5 transition-all lg:py-12", stickyClass)}>
         <MaxWidthWrapper>

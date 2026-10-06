@@ -93,7 +93,7 @@ export function AlbumGrid({ albums }: AlbumGridProps) {
       </section>
 
       {/* Albums Grid Section */}
-      <section className="container mx-auto px-4 py-24 relative z-20 bg-background">
+      <section className="container mx-auto px-4 py-24 relative isolate z-10 bg-background">
         {albums.length > 0 ? (
           <>
             <motion.div
