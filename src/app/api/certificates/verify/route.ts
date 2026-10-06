@@ -9,7 +9,7 @@ import { programs } from '@/db/schemas/karate/programs';
 import { profiles } from '@/db/schemas/karate/members';
 
 /**
- * GET /api/certificates/verify?certId=HKD-P-XXXXXX
+ * GET /api/certificates/verify?certId=KKA-P-XXXXXX
  *
  * Public endpoint — no auth required.
  * Verifies a certificate by its certificate number and returns public details.

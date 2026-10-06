@@ -36,7 +36,7 @@ async function run() {
   console.log("Inserting a mock member profile...");
   const [testMember] = await db.insert(members).values({
     userId: userId,
-    memberNumber: "HKD-TEST-9999",
+    memberNumber: "KKA-TEST-9999",
     fullNameEnglish: "Test Sync Member",
     isActive: true,
     isProfileComplete: true,

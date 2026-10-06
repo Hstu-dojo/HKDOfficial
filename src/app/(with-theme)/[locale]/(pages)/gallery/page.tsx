@@ -6,10 +6,10 @@ import { AlbumGrid, AlbumWithPreviews } from "@/components/gallery/AlbumGrid";
 import Header from "@/components/layout/header";
 import Footer from "@/components/layout/footer";
 export const metadata: Metadata = {
-  title: "Gallery | HKD",
+  title: "Gallery | Kaizen Karate Academy",
   description: "Explore our collection of photos from events, tournaments, and training sessions.",
   openGraph: {
-    title: "Gallery | HKD",
+    title: "Gallery | Kaizen Karate Academy",
     description: "Explore our collection of photos from events, tournaments, and training sessions.",
   },
 };

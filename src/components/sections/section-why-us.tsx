@@ -66,7 +66,7 @@ const SectionWhyUs = () => {
             <div className="relative rounded-3xl overflow-hidden shadow-2xl shadow-black/10">
               <Image
                 src="https://res.cloudinary.com/dksn30eyz/image/upload/v1785926139/hkd/y5m1cmpx9ugjuzoh7wq0.jpg"
-                alt="HKD Karate training"
+                alt="Kaizen Karate training"
                 width={560}
                 height={500}
                 className="w-full object-cover"
@@ -118,7 +118,7 @@ const SectionWhyUs = () => {
             transition={{ duration: 0.7, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
           >
             <SectionHeader
-              kicker="Why Join HKD?"
+              kicker="Why Join Kaizen Karate Academy?"
               title={t("title")}
               description={t("subtitle")}
               align="left"

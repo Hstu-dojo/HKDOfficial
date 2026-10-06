@@ -38,10 +38,10 @@ export function WallMagazine({
       icon: <IconSignature className="h-4 w-4 text-neutral-500" />,
     },
     {
-      title: "Know about HKD",
+      title: "Know about Kaizen Karate Academy",
       description: (
         <span className="text-sm">
-          HKD Dojo is currently only and official Dojo at HSTU.
+          Kaizen Karate Academy is an elite martial arts academy dedicated to discipline, excellence, and traditional karate.
         </span>
       ),
       header: <SkeletonTwo />,
@@ -175,7 +175,7 @@ const SkeletonOne = ({ avatar }: any) => {
   );
 };
 const SkeletonTwo = () => {
-  const words = `HSTU Karate Dojo is a karate club that is situated at Hajee Mohammad Dahesh Science & Technology University, Dinajpur-5200. The dojo began its journey in 2022. Now, it is the official club at this university.
+  const words = `Kaizen Karate Academy is a martial arts academy dedicated to the art of karate, physical fitness, mental discipline, and continuous improvement. We offer structured training courses for junior to senior practitioners.
 `;
   const variants = {
     initial: {

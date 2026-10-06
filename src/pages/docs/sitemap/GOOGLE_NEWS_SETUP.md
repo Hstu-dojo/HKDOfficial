@@ -24,7 +24,7 @@ Each blog post now includes JSON-LD structured data that tells Google News:
 - Article headline and description
 - Publication and modification dates
 - Author information
-- Publisher details (HSTU Karate Dojo)
+- Publisher details (Kaizen Karate Academy)
 - Article images
 - Keywords/tags
 
@@ -51,7 +51,7 @@ This helps Google News properly index and display your articles.
 ### Step 2: Add Your Publication
 1. Click **"Add Publication"** or manage your existing one
 2. Enter your publication details:
-   - **Publication Name:** HSTU Karate Dojo Blog
+   - **Publication Name:** Kaizen Karate Academy Blog
    - **Website URL:** `https://www.hstuma.com`
    - **Language:** English (en)
    - **Country:** Your primary country

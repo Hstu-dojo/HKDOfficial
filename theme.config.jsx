@@ -12,11 +12,11 @@ export default {
         style={{ width: "20px", height: "20px", marginRight: "8px" }}
         src="/logo.png"
       />
-      <strong>HKD</strong>
+      <strong>Kaizen</strong>
     </h4>
   ),
   footer: {
-    text: <span>HKD {new Date().getFullYear()} © HSTU KARATE DOJO.</span>,
+    text: <span>KKA {new Date().getFullYear()} © Kaizen Karate Academy.</span>,
   },
   project: {
     link: "https://github.com/hasanshahriar32",

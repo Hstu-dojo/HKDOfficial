@@ -8,8 +8,8 @@ import { getI18n } from "@/locales/server";
 
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL!),
-  title: "Contact",
-  description: "Contact page",
+  title: "Contact | Kaizen Karate Academy",
+  description: "Contact Kaizen Karate Academy. Get in touch with our instructors and team.",
 };
 
 export default async function PageContact() {

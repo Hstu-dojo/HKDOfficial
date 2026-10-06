@@ -1,4 +1,6 @@
-# Readme
+# Kaizen Karate Academy
+
+Official repository for Kaizen Karate Academy web platform.
 
 ## Erd Diagram:
 

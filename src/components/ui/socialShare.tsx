@@ -26,7 +26,7 @@ export default function SocialShare() {
   const handleSocialShare = (socialPlatform: any) => {
     // Replace this with your custom share functionality
     navigator?.share({
-      title: "HKD Blog",
+      title: "Kaizen Blog",
       text: currentURL,
     });
   };

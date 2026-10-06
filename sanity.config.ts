@@ -26,7 +26,7 @@ import settings from "./sanity/schemas/singletons/settings";
 export default defineConfig({
   basePath: "/studio",
   projectId,
-  title: "HKD: Blog Studio",
+  title: "Kaizen: Blog Studio",
   dataset,
   // Add and edit the content schema in the './sanity/schema' folder
   schema: {

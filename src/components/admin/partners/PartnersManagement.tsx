@@ -632,7 +632,7 @@ export default function PartnersManagement() {
                     value={form.name}
                     onChange={(e) => handleNameChange(e.target.value)}
                     className="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2 text-sm dark:border-gray-600 dark:bg-gray-700 dark:text-white"
-                    placeholder="e.g. HKD Dhaka Branch"
+                    placeholder="e.g. Kaizen Dhaka Branch"
                   />
                 </div>
                 <div>
@@ -645,7 +645,7 @@ export default function PartnersManagement() {
                     value={form.slug}
                     onChange={(e) => setForm((p) => ({ ...p, slug: slugify(e.target.value) }))}
                     className="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2 text-sm dark:border-gray-600 dark:bg-gray-700 dark:text-white"
-                    placeholder="hkd-dhaka-branch"
+                    placeholder="kaizen-dhaka-branch"
                   />
                   <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
                     URL: /org/{form.slug || '...'}

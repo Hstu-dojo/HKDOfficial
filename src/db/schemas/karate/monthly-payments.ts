@@ -131,7 +131,7 @@ export const paymentAccounts = pgTable("payment_accounts", {
   partnerId: text("partner_id").references(() => partners.id, { onDelete: 'set null' }),
   
   // Account details
-  name: text("name").notNull(), // e.g., "Main bKash Account", "HKD Nagad"
+  name: text("name").notNull(), // e.g., "Main bKash Account", "Kaizen Nagad"
   methodType: paymentMethodTypeEnum("method_type").notNull(), // bkash, nagad, etc.
   accountNumber: text("account_number").notNull(), // The phone/account number
   accountName: text("account_name"), // Name shown on the account (optional)

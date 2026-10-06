@@ -38,16 +38,16 @@ async function getHeroImages(): Promise<{ title: string; thumbnail: string }[]> 
 
   // Fallback images
   const fallbackProducts = [
-    { title: "HKD Moment 1", thumbnail: `${baseUrl}/favourite/1762661158686_exjfut.jpg` },
-    { title: "HKD Moment 2", thumbnail: `${baseUrl}/favourite/1769317491047_xkymix.jpg` },
-    { title: "HKD Moment 3", thumbnail: `${baseUrl}/favourite/1769317492753_cx7f84.jpg` },
-    { title: "HKD Moment 4", thumbnail: `${baseUrl}/favourite/20250905_125038_bzghpl.jpg` },
-    { title: "HKD Moment 5", thumbnail: `${baseUrl}/favourite/IMG_1937_sendde.jpg` },
-    { title: "HKD Moment 6", thumbnail: `${baseUrl}/favourite/IMG_20251108_215737_zxprcw.jpg` },
-    { title: "HKD Moment 7", thumbnail: `${baseUrl}/favourite/IMG_20251108_221125_hfljw3.jpg` },
-    { title: "HKD Moment 8", thumbnail: `${baseUrl}/favourite/IMG-20250822-WA0053_qiobdp.jpg` },
-    { title: "HKD Moment 9", thumbnail: `${baseUrl}/favourite/IMG20241102150243_01_mujqjl.jpg` },
-    { title: "HKD Moment 10", thumbnail: `${baseUrl}/favourite/IMG20241102210222_yg3tws.jpg` },
+    { title: "Kaizen Moment 1", thumbnail: `${baseUrl}/favourite/1762661158686_exjfut.jpg` },
+    { title: "Kaizen Moment 2", thumbnail: `${baseUrl}/favourite/1769317491047_xkymix.jpg` },
+    { title: "Kaizen Moment 3", thumbnail: `${baseUrl}/favourite/1769317492753_cx7f84.jpg` },
+    { title: "Kaizen Moment 4", thumbnail: `${baseUrl}/favourite/20250905_125038_bzghpl.jpg` },
+    { title: "Kaizen Moment 5", thumbnail: `${baseUrl}/favourite/IMG_1937_sendde.jpg` },
+    { title: "Kaizen Moment 6", thumbnail: `${baseUrl}/favourite/IMG_20251108_215737_zxprcw.jpg` },
+    { title: "Kaizen Moment 7", thumbnail: `${baseUrl}/favourite/IMG_20251108_221125_hfljw3.jpg` },
+    { title: "Kaizen Moment 8", thumbnail: `${baseUrl}/favourite/IMG-20250822-WA0053_qiobdp.jpg` },
+    { title: "Kaizen Moment 9", thumbnail: `${baseUrl}/favourite/IMG20241102150243_01_mujqjl.jpg` },
+    { title: "Kaizen Moment 10", thumbnail: `${baseUrl}/favourite/IMG20241102210222_yg3tws.jpg` },
   ];
 
   try {
@@ -73,7 +73,7 @@ async function getHeroImages(): Promise<{ title: string; thumbnail: string }[]> 
 
     const images = (data.resources || []).map(
       (resource: { public_id: string; format: string }, index: number) => ({
-        title: `HKD Moment ${index + 1}`,
+        title: `Kaizen Moment ${index + 1}`,
         thumbnail: `https://res.cloudinary.com/${cloudName}/image/upload/${cinematicTransform}/${resource.public_id}.${resource.format || "jpg"}`,
       })
     );

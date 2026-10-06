@@ -4,7 +4,7 @@ import { ContainerScroll } from "@/components/ui/container-scroll-animation";
 import { BackgroundBeams } from "../ui/background-beams";
 import TypewriterEffectComponent from "../blogs/shared/TypewriterEffectComponent";
 
-// Cloudinary cloud name for HKD images
+// Cloudinary cloud name for Kaizen images
 const cloudName = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME || "dksn30eyz";
 // Cinematic effect for portraits: face detection, subtle vignette, contrast, warmth
 const cinematicEffect = "c_fill,w_300,h_300,g_face,q_auto,e_vignette:20,e_contrast:10,e_vibrance:15";
@@ -47,11 +47,11 @@ export function HallOfFrame() {
   );
 }
 
-// HKD Hall of Fame members with Cloudinary images from favourite folder
+// Kaizen Hall of Fame members with Cloudinary images from favourite folder
 export const users = [
   {
     name: "Sensei Abdullah",
-    designation: "Chief Instructor, HKD",
+    designation: "Chief Instructor, Kaizen Karate Academy",
     image: `${baseUrl}/favourite/IMG_1937_sendde.jpg`,
     badge: "Black Belt",
   },
@@ -160,6 +160,6 @@ export const users = [
     name: "Tamanna Akter",
     designation: "Spirit Award",
     image: `${baseUrl}/favourite/IMG20241102210222_yg3tws.jpg`,
-    badge: "HKD Spirit",
+    badge: "Kaizen Spirit",
   },
 ];

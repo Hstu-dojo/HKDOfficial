@@ -45,7 +45,7 @@ export async function GET() {
     
     const images = (data.resources || []).map((resource: { public_id: string; format: string }, index: number) => ({
       id: resource.public_id,
-      title: `HKD Moment ${index + 1}`,
+      title: `Kaizen Moment ${index + 1}`,
       thumbnail: `https://res.cloudinary.com/${cloudName}/image/upload/${cinematicTransform}/${resource.public_id}.${resource.format || 'jpg'}`,
     }));
 

@@ -4,14 +4,14 @@ import { NextResponse } from 'next/server'
 type Bucket = { count: number; resetAtMs: number }
 
 declare global {
-  var __hkd_oauth2_rateLimit: Map<string, Bucket> | undefined
+  var __kka_oauth2_rateLimit: Map<string, Bucket> | undefined
 }
 
 function getBuckets(): Map<string, Bucket> {
-  if (!globalThis.__hkd_oauth2_rateLimit) {
-    globalThis.__hkd_oauth2_rateLimit = new Map<string, Bucket>()
+  if (!globalThis.__kka_oauth2_rateLimit) {
+    globalThis.__kka_oauth2_rateLimit = new Map<string, Bucket>()
   }
-  return globalThis.__hkd_oauth2_rateLimit
+  return globalThis.__kka_oauth2_rateLimit
 }
 
 export function getRequestIp(request: NextRequest): string {

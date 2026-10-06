@@ -21,7 +21,7 @@ export default function Navbar(props: NavbarProps) {
           className='text-lg font-extrabold hover:text-black md:text-xl mr-3'
           href='/blog'
         >
-          HKD Blog
+          Kaizen Blog
         </Link>
         <Link
           className='text-lg text-gray-600 md:text-xl'

@@ -122,7 +122,7 @@ export default function APKDownloadPage() {
                     </div>
                     <div>
                       <h2 className="text-xl font-bold text-slate-900 dark:text-white">
-                        HKD Dojo Tuto
+                        Kaizen Karate App
                       </h2>
                       <p className="text-sm font-medium text-slate-500">
                         {t('apkDownload.version', { version: apkInfo.version })}

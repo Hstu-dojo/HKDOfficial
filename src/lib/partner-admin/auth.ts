@@ -3,7 +3,8 @@ import { db } from '@/lib/connect-db'
 import { partners, partnerAdmins, partnerAdminSessions } from '@/db/schemas/partner'
 import { and, eq, gt } from 'drizzle-orm'
 
-export const PARTNER_ADMIN_SESSION_COOKIE = 'hkd_partner_admin_session'
+export const PARTNER_ADMIN_SESSION_COOKIE = 'kka_partner_admin_session'
+export const LEGACY_PARTNER_ADMIN_SESSION_COOKIE = 'hkd_partner_admin_session'
 
 export interface PartnerAdminUser {
   id: string
@@ -18,7 +19,9 @@ export interface PartnerAdminUser {
 export async function getPartnerAdminUser(): Promise<PartnerAdminUser | null> {
   try {
     const cookieStore = await cookies()
-    const token = cookieStore.get(PARTNER_ADMIN_SESSION_COOKIE)?.value
+    const token =
+      cookieStore.get(PARTNER_ADMIN_SESSION_COOKIE)?.value ||
+      cookieStore.get(LEGACY_PARTNER_ADMIN_SESSION_COOKIE)?.value
     if (!token) return null
 
     const now = new Date()

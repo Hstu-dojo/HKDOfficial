@@ -9,7 +9,7 @@ const transporter = nodemailer.createTransport({
   secure: true,
   auth: {
     user: "resend",
-    pass: "re_7zGogRKU_8sCXU6B3wTyC3WaJwZ2FFcxu",
+    pass: process.env.RESEND_API_KEY || "",
   },
 });
 
@@ -18,10 +18,10 @@ const transporter = nodemailer.createTransport({
 export default async function accountVerify(email, token) {
   const emailHtml = render(<CreateAccountMail token={token} />);
   const options = {
-    from: "noreply@hkd.paradox-bd.com",
-    bcc: "hstu.karate.dojo@gmail.com",
+    from: process.env.EMAIL_FROM_ADDRESS || "noreply@kaizenkarate.com",
+    bcc: "kaizenkarateacademy@gmail.com",
     to: email || "mr.hasan3032@gmail.com",
-    subject: "HKD: Account Verification",
+    subject: "Kaizen Karate Academy: Account Verification",
     html: emailHtml,
   };
 

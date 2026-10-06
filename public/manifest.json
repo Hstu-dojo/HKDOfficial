@@ -4,9 +4,9 @@
   "protocol_handlers": [{ "protocol": "mailto", "url": "/newEmail?to=%s" }],
   "shortcuts": [
     {
-      "name": "HKD Home",
+      "name": "Kaizen Home",
       "short_name": "Home",
-      "description": "Power up your skill with HSTU Karate Dojo. We offer junior to senior level karate trainings. Let us take you to your next level⚡",
+      "description": "Power up your skill with Kaizen Karate Academy. We offer junior to senior level karate trainings. Let us take you to your next level⚡",
       "url": "/en?startLive",
       "icons": [
         {
@@ -18,7 +18,7 @@
     {
       "name": "About Section",
       "short_name": "About",
-      "description": "Power up your skill with HSTU Karate Dojo. We offer junior to senior level karate trainings. Let us take you to your next level⚡",
+      "description": "Power up your skill with Kaizen Karate Academy. We offer junior to senior level karate trainings. Let us take you to your next level⚡",
       "url": "/about",
       "icons": [
         {
@@ -30,7 +30,7 @@
     {
       "name": "Contact Section",
       "short_name": "Contact",
-      "description": "Power up your skill with HSTU Karate Dojo. We offer junior to senior level karate trainings. Let us take you to your next level⚡",
+      "description": "Power up your skill with Kaizen Karate Academy. We offer junior to senior level karate trainings. Let us take you to your next level⚡",
       "url": "/contact",
       "icons": [
         {
@@ -42,7 +42,7 @@
     {
       "name": "Blog Section",
       "short_name": "Blog",
-      "description": "Power up your skill with HSTU Karate Dojo. We offer junior to senior level karate trainings. Let us take you to your next level⚡",
+      "description": "Power up your skill with Kaizen Karate Academy. We offer junior to senior level karate trainings. Let us take you to your next level⚡",
       "url": "/blog",
       "icons": [
         {
@@ -52,9 +52,9 @@
       ]
     }
   ],
-  "name": "HSTU Karate Dojo",
-  "short_name": "HSTU Dojo",
-  "description": "Power up your skill with HSTU Karate Dojo. We offer junior to senior level karate trainings. Let us take you to your next level⚡",
+  "name": "Kaizen Karate Academy",
+  "short_name": "Kaizen Dojo",
+  "description": "Power up your skill with Kaizen Karate Academy. We offer junior to senior level karate trainings. Let us take you to your next level⚡",
   "theme_color": "#5E17EB",
   "background_color": "#000000",
   "icons": [

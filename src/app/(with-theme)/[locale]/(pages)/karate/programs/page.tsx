@@ -8,7 +8,7 @@ import { programs } from "@/db/schemas/karate";
 import { eq, desc } from "drizzle-orm";
 
 export const metadata: Metadata = {
-  title: 'Events & Programs | HKD Dojo',
+  title: 'Events & Programs | Kaizen Karate Academy',
   description: 'Upcoming belt tests, competitions, and special training events.',
 };
 

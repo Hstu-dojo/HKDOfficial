@@ -116,10 +116,10 @@ const Footer = () => {
                 <li>
                   <span>{t("footer.email" as any)}: </span>
                   <a
-                    href="mailto:hstukarate@gmail.com"
+                    href="mailto:kaizenkarateacademy@gmail.com"
                     className="hover:text-primary"
                   >
-                    hstukarate@gmail.com
+                    kaizenkarateacademy@gmail.com
                   </a>
                 </li>
               </ul>

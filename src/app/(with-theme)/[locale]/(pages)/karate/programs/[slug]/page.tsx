@@ -7,7 +7,7 @@ import { eq } from 'drizzle-orm';
 import { notFound } from 'next/navigation';
 
 export const metadata = {
-  title: 'Program Details | HKD Dojo',
+  title: 'Program Details | Kaizen Karate Academy',
 };
 
 // ISR: revalidate every 120 seconds

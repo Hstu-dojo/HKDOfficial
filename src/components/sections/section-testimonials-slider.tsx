@@ -21,28 +21,28 @@ const SectionTestimonialsSlider = () => {
   const testimonials = [
     {
       name: "Md. Hasan",
-      affiliation: "HSTU Student",
+      affiliation: "Academy Student",
       comment: t("hasan1"),
       image: `${baseUrl}/favourite/IMG_1937_sendde.jpg`,
       rating: 5,
     },
     {
       name: "Loveraj Acharya",
-      affiliation: "HSTU Faculty",
+      affiliation: "Senior Practitioner",
       comment: t("loveraj"),
       image: `${baseUrl}/favourite/IMG_20251108_215737_zxprcw.jpg`,
       rating: 4,
     },
     {
       name: "Rafiq Ahmed",
-      affiliation: "HSTU Alumni",
+      affiliation: "Academy Alumni",
       comment: t("hasan2"),
       image: `${baseUrl}/favourite/IMG_20251108_221125_hfljw3.jpg`,
       rating: 5,
     },
     {
       name: "Shahriar Hossain",
-      affiliation: "HSTU Staff",
+      affiliation: "Martial Arts Practitioner",
       comment: t("shahriar"),
       image: `${baseUrl}/favourite/IMG-20250822-WA0053_qiobdp.jpg`,
       rating: 5,

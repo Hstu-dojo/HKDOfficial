@@ -99,7 +99,7 @@ export default function CommitteeIdCard({
       console.warn('Could not embed dojo logo in committee ID card', error);
     }
 
-    page.drawText('HSTU Karate Dojo', {
+    page.drawText('Kaizen Karate Academy', {
       x: 72,
       y: 186,
       size: 12,

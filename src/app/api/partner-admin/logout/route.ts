@@ -3,11 +3,13 @@ import { cookies } from 'next/headers'
 import { db } from '@/lib/connect-db'
 import { partnerAdminSessions } from '@/db/schemas/partner'
 import { eq } from 'drizzle-orm'
-import { PARTNER_ADMIN_SESSION_COOKIE } from '@/lib/partner-admin/auth'
+import { PARTNER_ADMIN_SESSION_COOKIE, LEGACY_PARTNER_ADMIN_SESSION_COOKIE } from '@/lib/partner-admin/auth'
 
 export async function POST() {
   const cookieStore = await cookies()
-  const token = cookieStore.get(PARTNER_ADMIN_SESSION_COOKIE)?.value
+  const token =
+    cookieStore.get(PARTNER_ADMIN_SESSION_COOKIE)?.value ||
+    cookieStore.get(LEGACY_PARTNER_ADMIN_SESSION_COOKIE)?.value
 
   try {
     if (token) {
@@ -18,14 +20,21 @@ export async function POST() {
   }
 
   const res = NextResponse.json({ ok: true })
-  res.cookies.set({
-    name: PARTNER_ADMIN_SESSION_COOKIE,
+  const cookieOptions = {
     value: '',
     httpOnly: true,
-    sameSite: 'lax',
+    sameSite: 'lax' as const,
     secure: process.env.NODE_ENV === 'production',
     path: '/',
     expires: new Date(0),
+  }
+  res.cookies.set({
+    name: PARTNER_ADMIN_SESSION_COOKIE,
+    ...cookieOptions,
+  })
+  res.cookies.set({
+    name: LEGACY_PARTNER_ADMIN_SESSION_COOKIE,
+    ...cookieOptions,
   })
 
   return res

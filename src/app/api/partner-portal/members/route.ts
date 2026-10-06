@@ -265,8 +265,8 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Password must be at least 6 characters' }, { status: 400 })
     }
 
-    // Generate member number: HKD-PARTNER_SLUG-XXXX
-    const prefix = `HKD-${partnerUser.partnerSlug.toUpperCase().slice(0, 8)}`
+    // Generate member number: KKA-PARTNER_SLUG-XXXX
+    const prefix = `KKA-${partnerUser.partnerSlug.toUpperCase().slice(0, 8)}`
     const existingCount = await db
       .select({ total: count() })
       .from(members)

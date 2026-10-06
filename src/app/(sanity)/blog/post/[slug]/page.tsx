@@ -68,14 +68,14 @@ export default async function ProjectSlugRoute({ params }: Props) {
     "dateModified": (project as any)._updatedAt || new Date().toISOString(),
     "author": {
       "@type": project.author?.name ? "Person" : "Organization",
-      "name": project.author?.name || "HSTU Karate Dojo",
+      "name": project.author?.name || "Kaizen Karate Academy",
       ...(project.author?.image && {
         "image": project.author.image
       })
     },
     "publisher": {
       "@type": "Organization",
-      "name": "HSTU Karate Dojo",
+      "name": "Kaizen Karate Academy",
       "logo": {
         "@type": "ImageObject",
         "url": `${BASE_URL}/logo.png`

@@ -87,7 +87,7 @@ export default async function ApplicationSuccessPage({ searchParams, params }: P
             <div className="bg-primary/5 dark:bg-primary/10 rounded-lg p-4 mb-6">
               <p className="text-sm text-primary dark:text-primary/80">
                 <strong>{t('courses.applySuccess.questions')}</strong> {t('courses.applySuccess.contactPrefix')}{' '}
-                <a href="mailto:info@hkddojo.com" className="underline">info@hkddojo.com</a>
+                <a href="mailto:kaizenkarateacademy@gmail.com" className="underline">kaizenkarateacademy@gmail.com</a>
                 {' '}{t('courses.applySuccess.orCall')} <a href="tel:+8801XXXXXXXXX" className="underline">+880 1XXX-XXXXXX</a>
               </p>
             </div>

@@ -23,7 +23,7 @@ export async function GET() {
     });
 
     const BASE_URL = process.env.SITE_URL || process.env.NEXT_PUBLIC_SITE_URL || "https://www.hstuma.com";
-    const PUBLICATION_NAME = "HSTU Karate Dojo";
+    const PUBLICATION_NAME = "Kaizen Karate Academy";
     const PUBLICATION_LANGUAGE = "en";
 
     // Sanitize XML content

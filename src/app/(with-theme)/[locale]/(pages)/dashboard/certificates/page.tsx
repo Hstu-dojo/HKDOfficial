@@ -13,7 +13,7 @@ import { getI18n } from "@/locales/server";
 import CertificateActions from "./certificate-actions-client";
 
 export const metadata = {
-  title: "My Certificates | HKD Dojo",
+  title: "My Certificates | Kaizen Karate Academy",
   description: "View and manage your martial arts certificates.",
 };
 

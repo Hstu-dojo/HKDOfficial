@@ -311,8 +311,8 @@ export async function registerForProgram(data: NewProgramRegistration) {
             })
 
             const prefix = partner?.slug
-              ? `HKD-${partner.slug.toUpperCase().slice(0, 8)}`
-              : 'HKD-HQ'
+              ? `KKA-${partner.slug.toUpperCase().slice(0, 8)}`
+              : 'KKA-HQ'
 
             const existingCount = await db
               .select({ total: count() })

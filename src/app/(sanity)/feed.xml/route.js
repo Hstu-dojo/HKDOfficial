@@ -9,12 +9,12 @@ export async function GET() {
   const data = initial2?.data;
   const BASE_URL = process.env.SITE_URL;
   const feed = new RSS({
-    title: "HKD Blog POSTS",
+    title: "Kaizen Karate Academy Blog POSTS",
     description:
-      "HKD Blog posts section. Here you can find updated news of our karate dojo",
+      "Kaizen Karate Academy blog posts section. Here you can find updated news of our karate academy",
     site_url: BASE_URL,
     feed_url: `${BASE_URL}/feed.xml`,
-    copyright: `${new Date().getFullYear()}- All Right Reserved by HSTU Karate Dojo.`,
+    copyright: `${new Date().getFullYear()} - All Rights Reserved by Kaizen Karate Academy.`,
     language: "en",
     pubDate: new Date(),
   });

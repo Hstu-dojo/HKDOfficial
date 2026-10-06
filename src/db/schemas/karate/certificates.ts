@@ -54,7 +54,7 @@ export const programCertificates = pgTable("program_certificates", {
   participantName: text("participant_name"),
   
   // Certificate identification
-  certificateNumber: text("certificate_number").notNull().unique(), // e.g. "HKD-CERT-2026-0001"
+  certificateNumber: text("certificate_number").notNull().unique(), // e.g. "KKA-CERT-2026-0001"
   
   // Status tracking
   status: certificateStatusEnum("status").notNull().default("ELIGIBLE"),

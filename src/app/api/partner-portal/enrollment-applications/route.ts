@@ -306,7 +306,7 @@ export async function PATCH(request: Request) {
     const emergencyContactPhone = approvedStudentInfo.emergencyContactPhone || approvedStudentInfo.emergencyPhone || null
 
     if (!memberProfile) {
-      const prefix = `HKD-${partnerUser.partnerSlug.toUpperCase().slice(0, 8)}`
+      const prefix = `KKA-${partnerUser.partnerSlug.toUpperCase().slice(0, 8)}`
       const existingCount = await db
         .select({ total: count() })
         .from(members)

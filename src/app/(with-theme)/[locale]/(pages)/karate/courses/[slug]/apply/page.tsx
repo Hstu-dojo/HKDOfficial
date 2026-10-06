@@ -34,7 +34,7 @@ async function getCourse(slug: string) {
     const schedules = await db.select().from(courseSchedules).where(eq(courseSchedules.courseId, course.id));
 
     // Fetch partner info if course has one
-    let partnerName = 'HKD Dojo';
+    let partnerName = 'Kaizen Karate Academy';
     let partnerLocation = '';
     if (course.partnerId) {
       const partner = await db.select({ name: partners.name, location: partners.location })

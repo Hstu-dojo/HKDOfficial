@@ -44,7 +44,7 @@ export default function ContactForm() {
 
       // console.log(data);
       router.push(
-        `mailto:hstukarate@gmail.com?from=${data?.email}&subject=${data?.name}&body=${data?.message}`,
+        `mailto:kaizenkarateacademy@gmail.com?from=${data?.email}&subject=${data?.name}&body=${data?.message}`,
       );
 
       // if (response.success) {
@@ -76,8 +76,8 @@ export default function ContactForm() {
           </li>
           <li>
             <span>{t('contact.email')}: </span>
-            <a href="mailto:hstukarate@gmail.com" className="hover:text-primary">
-              hstukarate@gmail.com
+            <a href="mailto:kaizenkarateacademy@gmail.com" className="hover:text-primary">
+              kaizenkarateacademy@gmail.com
             </a>
           </li>
         </ul>

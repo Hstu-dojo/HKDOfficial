@@ -18,7 +18,7 @@ export const enrollmentApplicationStatusEnum = pgEnum('enrollment_application_st
 // Enrollment Applications - when a user applies to join a course
 export const enrollmentApplications = pgTable("enrollment_applications", {
   id: text("id").primaryKey().default(sql`gen_random_uuid()`),
-  applicationNumber: text("application_number").notNull().unique(), // e.g., "HKD-2026-001"
+  applicationNumber: text("application_number").notNull().unique(), // e.g., "KKA-2026-001"
   
   // Applicant Info
   userId: text("user_id").notNull().references(() => user.id, { onDelete: 'cascade' }),

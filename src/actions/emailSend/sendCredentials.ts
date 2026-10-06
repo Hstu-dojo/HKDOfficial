@@ -27,11 +27,11 @@ export async function sendCredentialsEmail(
     const { data, error } = await resend.emails.send({
       from: fromAddress,
       to: email,
-      subject: "Welcome to HKD Dojo - Your Account Credentials",
+      subject: "Welcome to Kaizen Karate Academy - Your Account Credentials",
       html: `
         <div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; max-width: 600px; margin: 0 auto; padding: 24px; border: 1px solid #e2e8f0; border-radius: 12px; background-color: #ffffff; color: #2d3748;">
           <div style="text-align: center; margin-bottom: 24px;">
-            <h1 style="color: #1a365d; margin: 0; font-size: 24px; font-weight: 700; letter-spacing: -0.5px;">Welcome to HKD Dojo</h1>
+            <h1 style="color: #1a365d; margin: 0; font-size: 24px; font-weight: 700; letter-spacing: -0.5px;">Welcome to Kaizen Karate Academy</h1>
             <p style="color: #718096; margin: 4px 0 0 0; font-size: 14px;">Your martial arts journey begins here</p>
           </div>
           

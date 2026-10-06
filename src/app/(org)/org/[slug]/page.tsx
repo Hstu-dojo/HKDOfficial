@@ -29,7 +29,7 @@ export async function generateMetadata({ params }: OrgPageProps) {
   if (!partner) return { title: "Not Found" };
 
   return {
-    title: `${partner.name} | HKD Partner`,
+    title: `${partner.name} | Kaizen Partner`,
     description: partner.description || `Training venue: ${partner.name}`,
   };
 }

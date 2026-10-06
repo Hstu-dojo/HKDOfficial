@@ -406,7 +406,7 @@ export default function CourseEnrollmentWizard({
     try {
       const pdfBytes = await fillPdfForm(formData, images);
       const safeName = formData.name_en?.replace(/[^a-zA-Z0-9]/g, '_') || 'form';
-      downloadPdf(pdfBytes, `HKD_Registration_${safeName}.pdf`);
+      downloadPdf(pdfBytes, `KKA_Registration_${safeName}.pdf`);
       toast.success('PDF downloaded successfully');
     } catch (err) {
       console.error('PDF generation error:', err);

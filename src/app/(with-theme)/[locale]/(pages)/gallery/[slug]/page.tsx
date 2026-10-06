@@ -42,12 +42,12 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     .limit(1);
 
   if (folders.length === 0) {
-    return { title: "Gallery | HKD" };
+    return { title: "Gallery | Kaizen Karate Academy" };
   }
 
   const folder = folders[0];
   return {
-    title: `${folder.name} | Gallery | HKD`,
+    title: `${folder.name} | Gallery | Kaizen Karate Academy`,
     description: folder.description || `View photos from ${folder.name}`,
     openGraph: {
       title: `${folder.name} | Gallery`,

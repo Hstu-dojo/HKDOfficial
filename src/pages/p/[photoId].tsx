@@ -17,7 +17,7 @@ const Home: NextPage = ({ currentPhoto, images }: { currentPhoto: ImageProps, im
   return (
     <div className="bg-black">
       <Head>
-        <title>HKD Images</title>
+        <title>Kaizen Karate Images</title>
         <meta property="og:image" content={currentPhotoUrl} />
         <meta name="twitter:image" content={currentPhotoUrl} />
       </Head>

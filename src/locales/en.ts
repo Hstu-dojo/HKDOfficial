@@ -1,7 +1,7 @@
 export default {
   // Header & Navigation
   header: {
-    brand: "HSTU Dojo",
+    brand: "Kaizen Karate Academy",
     changelog: "Changelog",
     about: "About",
     login: "Login",
@@ -37,10 +37,10 @@ export default {
     tools: "Built using Great Tools",
     on: "on",
     welcomeLine1: "Welcome to",
-    welcomeLine2: "HSTU Karate Dojo",
-    welcomeSubtitle: "Discover the art of karate at Hajee Mohammad Danesh Science & Technology University. Join us for rigorous training, community engagement, and competitive success.",
+    welcomeLine2: "Kaizen Karate Academy",
+    welcomeSubtitle: "Discover the art of karate with Kaizen Karate Academy. Join us for rigorous training, community engagement, and competitive success.",
     newsletter: {
-      title: "Stay Updated with HSTU Karate Dojo",
+      title: "Stay Updated with Kaizen Karate Academy",
       name: "Name",
       email: "Email",
       subscribe: "Subscribe",
@@ -68,8 +68,8 @@ export default {
         description: "Participate in workshops, seminars, and championships. Test your skills in the arena.",
       },
       join: {
-        title: "Join HKD",
-        description: "Become a member of the HSTU Karate Dojo family. Start your journey today.",
+        title: "Join Kaizen Academy",
+        description: "Become a member of the Kaizen Karate Academy family. Start your journey today.",
       },
     },
     iconBoxes: {
@@ -83,11 +83,11 @@ export default {
       },
       competitions: {
         title: "Competitions",
-        description: "Compete in intra-university and inter-university championships to showcase your skills and bring honor to HSTU.",
+        description: "Compete in regional and national championships to showcase your skills and bring honor to Kaizen Karate Academy.",
       },
     },
     benefits: {
-      title: "Discover the Benefits of Joining HSTU Karate Dojo",
+      title: "Discover the Benefits of Joining Kaizen Karate Academy",
       subtitle: "Enhance your physical and mental capabilities through disciplined karate training. Experience the transformative power of martial arts.",
       discipline: {
         title: "Discipline and Respect",
@@ -100,7 +100,7 @@ export default {
     },
     promo: {
       title: "Ready to Embark on Your Karate Journey?",
-      description: "Join HSTU Karate Dojo and experience the art of karate in a supportive and dynamic environment. Whether you're a beginner or an advanced practitioner, our programs are designed to help you achieve your personal best. Train with experienced instructors, participate in competitions, and engage in community activities.",
+      description: "Join Kaizen Karate Academy and experience the art of karate in a supportive and dynamic environment. Whether you're a beginner or an advanced practitioner, our programs are designed to help you achieve your personal best. Train with experienced instructors, participate in competitions, and engage in community activities.",
       joinNow: "Join Now",
     },
     featuredPosts: {
@@ -119,8 +119,8 @@ export default {
           tags: ["trending"],
         },
         membership: {
-          title: "Membership for HKD",
-          description: "HSTU Karate Dojo is open to having students at this moment. If you want to be a registered member, then contact the authority in the",
+          title: "Membership for Kaizen Academy",
+          description: "Kaizen Karate Academy is open to having students at this moment. If you want to be a registered member, then contact the authority in the",
           tags: ["membership", "registration"],
         },
         kata: {
@@ -142,11 +142,11 @@ export default {
     },
     faq: {
       title: "Frequently Asked Questions",
-      subtitle: "Find answers to the most commonly asked questions about HSTU Karate Dojo and learn more about our activities and membership.",
-      q1: "What is HSTU Karate Dojo?",
-      a1: "HSTU Karate Dojo is the official karate club of Hajee Mohammad Danesh Science & Technology University, established in 2022 to provide martial arts training to the university community.",
+      subtitle: "Find answers to the most commonly asked questions about Kaizen Karate Academy and learn more about our activities and membership.",
+      q1: "What is Kaizen Karate Academy?",
+      a1: "Kaizen Karate Academy is an elite martial arts academy dedicated to traditional Shitoryu karate, focused on continuous improvement, mental toughness, and physical mastery.",
       q2: "Who can join the dojo?",
-      a2: "All students, faculty, and staff of HSTU are welcome to join the dojo, regardless of their prior experience in karate.",
+      a2: "Anyone with a passion for discipline and martial arts is welcome to join the dojo, regardless of their prior experience in karate.",
       q3: "What types of activities does the dojo offer?",
       a3: "The dojo offers rigorous training sessions, participation in intra-university and inter-university championships, workshops, seminars, and community engagement activities.",
       anyQuestion: "Any Question?",
@@ -163,9 +163,9 @@ export default {
     },
     testimonials: {
       testimonialOf: "Testimonial of",
-      hasan1: "Joining the HSTU Karate Dojo has been an incredible experience. The training is top-notch and the sensei is very supportive.",
+      hasan1: "Joining Kaizen Karate Academy has been an incredible experience. The training is top-notch and the sensei is very supportive.",
       loveraj: "The dojo provides a great environment for learning and personal growth. I highly recommend it to anyone interested in martial arts.",
-      hasan2: "The discipline and skills I've gained from the HSTU Karate Dojo have been invaluable. It's a fantastic community.",
+      hasan2: "The discipline and skills I've gained from Kaizen Karate Academy have been invaluable. It's a fantastic community.",
       shahriar: "I appreciate the structured training sessions and the opportunity to compete in championships. The dojo has been a great addition to my routine.",
     },
     furious5: {
@@ -179,7 +179,7 @@ export default {
     },
     partners: {
       title: "Partners",
-      subtitle: "Proud Partners of HSTU Karate Dojo",
+      subtitle: "Proud Partners of Kaizen Karate Academy",
       description: "Connecting with our esteemed partners to elevate our dojo.",
     },
     finalCta: {
@@ -289,8 +289,8 @@ export default {
   certVerify: {
     title: "Certificate Verification",
     subtitle:
-      "Verify the authenticity of certificates issued by HKD Official. Enter the certificate ID below to check its validity.",
-    searchPlaceholder: "e.g. HKD-P-A1B2C3",
+      "Verify the authenticity of certificates issued by Kaizen Karate Academy. Enter the certificate ID below to check its validity.",
+    searchPlaceholder: "e.g. KKA-P-A1B2C3",
     verifyButton: "Verify",
 
     errorTitle: "Certificate Not Found",
@@ -303,7 +303,7 @@ export default {
 
     verifiedTitle: "Certificate Verified",
     verifiedSubtitle:
-      "This certificate is authentic and was issued by HKD Official.",
+      "This certificate is authentic and was issued by Kaizen Karate Academy.",
 
     recipientTitle: "Recipient",
     programDetailsTitle: "Program Details",
@@ -326,7 +326,7 @@ export default {
 
     shareTitle: "Certificate Verification — {certificateNumber}",
     shareText:
-      "Verify the certificate issued to {recipientName} for \"{programTitle}\" by HKD Official.",
+      "Verify the certificate issued to {recipientName} for \"{programTitle}\" by Kaizen Karate Academy.",
 
     initialHint: "Enter a certificate ID above to verify its authenticity.",
   },
@@ -475,7 +475,7 @@ export default {
     messagePlaceholder: "How can we help your business grow?",
     submitButton: "Send Message",
     sending: "Sending...",
-    address: "HSTU, Basherhat, Dinajpur-5200. Bangladesh.",
+    address: "Dinajpur-5200, Bangladesh.",
     phone: "Phone",
     email: "Email",
   },
@@ -483,8 +483,8 @@ export default {
   // About Page
   about: {
     title: "About",
-    subtitle: "HSTU Karate Dojo (HKD) is the official karate club at Hajee Mohammad Danesh Science & Technology University (HSTU) in Dinajpur, Bangladesh. Established in 2022, HKD focuses on discipline, respect, and self-improvement through rigorous training under experienced instructors.",
-    keyFeatures: "Key Features and Values of HSTU Karate Dojo",
+    subtitle: "Kaizen Karate Academy (KKA) is dedicated to excellence in traditional Shitoryu karate. Founded with a commitment to continuous growth and martial discipline, KKA focuses on respect, perseverance, and character development under experienced instructors.",
+    keyFeatures: "Key Features and Values of Kaizen Karate Academy",
     features: {
       established: "Established in 2022",
       discipline: "Emphasis on discipline, respect, and self-improvement",
@@ -653,7 +653,7 @@ export default {
   apkDownload: {
     title: "Mobile Application",
     subtitle:
-      "Download the official HKD Dojo mobile app to access tutorials and manage your enrollments.",
+      "Download the official Kaizen Karate Academy mobile app to access tutorials and manage your enrollments.",
     version: "Version {version}",
     latestRelease: "Latest Release",
     downloadApk: "Download APK",
@@ -780,7 +780,7 @@ export default {
     allLevels: "All Levels",
 
     details: {
-      metaTitleFallback: "Course Details | HKD Dojo",
+      metaTitleFallback: "Course Details | Kaizen Karate Academy",
       metaTitle: "{course} | Course Details",
       minimumBelt: "{belt} Belt +",
       enrollmentOpenBadge: "Enrollment Open",
@@ -803,7 +803,7 @@ export default {
 
     applyPage: {
       notFoundTitle: "Course Not Found",
-      metaTitle: "Apply for {course} | HKD Dojo",
+      metaTitle: "Apply for {course} | Kaizen Karate Academy",
       metaDescription: "Apply for the {course} karate course. {description}",
       enrollmentClosedTitle: "Enrollment Closed",
       enrollmentClosedDescription:
@@ -911,7 +911,7 @@ export default {
     address: "Address",
     phone: "Phone",
     email: "Email",
-    copyright: "© {year} HSTU Karate Dojo- App.",
+    copyright: "© {year} Kaizen Karate Academy. All Rights Reserved.",
     madeBy: "Made by",
   },
 

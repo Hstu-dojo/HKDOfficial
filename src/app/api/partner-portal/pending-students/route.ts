@@ -143,7 +143,7 @@ export async function PATCH(request: Request) {
         const formData = parseNotesRecord(reg.notes)
 
         // Generate member number
-        const prefix = `HKD-${partnerUser.partnerSlug.toUpperCase().slice(0, 8)}`
+        const prefix = `KKA-${partnerUser.partnerSlug.toUpperCase().slice(0, 8)}`
         const existingCount = await db
           .select({ total: count() })
           .from(members)

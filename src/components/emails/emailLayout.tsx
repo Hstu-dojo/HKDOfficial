@@ -25,14 +25,14 @@ export default function EmailLayout({
   return (
     <Html>
       <Head />
-      <Preview>HKD Email Service</Preview>
+      <Preview>Kaizen Karate Academy Email Service</Preview>
       <Body style={main}>
         <Container style={container}>
           <Section style={coverSection}>
             <Section style={imageSection}>
               <Img
                 src={`https://i.ibb.co/JKRHSNw/logo.png`}
-                alt="HKD's Logo"
+                alt="Kaizen Karate Academy Logo"
                 style={{
                   marginLeft: "40%",
                   marginRight: "40%",
@@ -47,14 +47,13 @@ export default function EmailLayout({
             <Hr />
             <Section style={lowerSection}>
               <Text style={cautionText}>
-                HSTU Karate Dojo will never email you and ask you to disclose or
+                Kaizen Karate Academy will never email you and ask you to disclose or
                 verify your password, credit card, or banking account number.
               </Text>
             </Section>
           </Section>
           <Text style={footerText}>
-            This message was produced and distributed by HSTU Karate Dojo.,
-            Basherhat, Dinajpur-5200, BD.. ©️ All rights reserved. HKD is a
+            This message was produced and distributed by Kaizen Karate Academy. ©️ All rights reserved. Kaizen Karate Academy is a
             registered trademark of{" "}
             <Link href="https://paradox-bd.com" target="_blank" style={link}>
               Paradox BD

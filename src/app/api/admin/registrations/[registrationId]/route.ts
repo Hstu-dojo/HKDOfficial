@@ -191,8 +191,8 @@ export async function PUT(
           where: eq(partners.id, partnerId),
         });
         const prefix = partnerRecord?.slug
-          ? `HKD-${partnerRecord.slug.toUpperCase().slice(0, 8)}`
-          : 'HKD-HQ';
+          ? `KKA-${partnerRecord.slug.toUpperCase().slice(0, 8)}`
+          : 'KKA-HQ';
 
         // Generate member number
         const existingCount = await db.select({ total: count() }).from(profiles).where(eq(profiles.partnerId, partnerId));

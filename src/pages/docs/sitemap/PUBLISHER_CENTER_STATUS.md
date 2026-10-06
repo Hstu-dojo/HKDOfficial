@@ -101,7 +101,7 @@ pnpm build
   <loc>https://www.hstuma.com/blog/post/your-article</loc>
   <news:news>
     <news:publication>
-      <news:name>HSTU Karate Dojo</news:name>
+      <news:name>Kaizen Karate Academy</news:name>
       <news:language>en</news:language>
     </news:publication>
     <news:publication_date>2025-10-13T12:00:00Z</news:publication_date>

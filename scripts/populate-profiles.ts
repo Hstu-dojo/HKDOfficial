@@ -74,8 +74,8 @@ async function populateProfiles() {
         where: eq(partners.id, partnerId),
       });
       const prefix = partner?.slug
-        ? `HKD-${partner.slug.toUpperCase().slice(0, 8)}`
-        : 'HKD-HQ';
+        ? `KKA-${partner.slug.toUpperCase().slice(0, 8)}`
+        : 'KKA-HQ';
 
       // Generate member number
       const existingCount = await db.select({ total: count() }).from(profiles).where(eq(profiles.partnerId, partnerId));
@@ -157,8 +157,8 @@ async function populateProfiles() {
         where: eq(partners.id, partnerId),
       });
       const prefix = partner?.slug
-        ? `HKD-${partner.slug.toUpperCase().slice(0, 8)}`
-        : 'HKD-HQ';
+        ? `KKA-${partner.slug.toUpperCase().slice(0, 8)}`
+        : 'KKA-HQ';
 
       const existingCount = await db.select({ total: count() }).from(profiles).where(eq(profiles.partnerId, partnerId));
       const memberNumber = `${prefix}-${String((existingCount[0]?.total || 0) + 1).padStart(4, '0')}`;

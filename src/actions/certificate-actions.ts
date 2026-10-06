@@ -38,7 +38,7 @@ async function getAuthUserId(): Promise<string | null> {
 
 function generateCertificateNumber(): string {
   const rand = Math.random().toString(36).substring(2, 8).toUpperCase(); // 6 chars
-  return `HKD-P-${rand}`;
+  return `KKA-P-${rand}`;
 }
 
 // ---------------------------------------------------------------------------

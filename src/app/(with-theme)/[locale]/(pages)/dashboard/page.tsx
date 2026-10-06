@@ -20,7 +20,7 @@ import { getI18n } from '@/locales/server';
 import { DashboardCertificateDownloadButton } from './dashboard-certificate-download-button';
 
 export const metadata = {
-  title: 'My Dashboard | HKD Dojo',
+  title: 'My Dashboard | Kaizen Karate Academy',
   description: 'Manage your martial arts journey, view enrollments, and track progress.',
 };
 

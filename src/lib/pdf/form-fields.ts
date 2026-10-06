@@ -1,4 +1,4 @@
-// Form field definitions for HSTU Karate Dojo PDF Form
+// Form field definitions for Kaizen Karate Academy PDF Form
 // Field IDs mapped from the PDF AcroForm fields
 
 export interface FormFieldDef {

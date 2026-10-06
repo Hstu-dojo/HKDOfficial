@@ -290,7 +290,7 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
             .select({ count: sql<number>`count(*)` })
             .from(members);
           const count = Number(countResult?.count) || 0;
-          const memberNumber = `HKD-M-${year}-${String(count + 1).padStart(4, "0")}`;
+          const memberNumber = `KKA-M-${year}-${String(count + 1).padStart(4, "0")}`;
 
           [memberProfile] = await db
             .insert(members)

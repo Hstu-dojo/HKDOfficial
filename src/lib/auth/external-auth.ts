@@ -110,7 +110,7 @@ function signJWT(payload: Record<string, unknown>, expiresInSeconds: number): st
     ...payload,
     iat: now,
     exp,
-    iss: 'hkd-auth-server',
+    iss: 'kka-auth-server',
     aud: 'dojo-video-server',
   };
 
@@ -172,7 +172,10 @@ function verifyJWT(token: string): JWTPayload | null {
     }
 
     // Verify issuer and audience
-    if (payload.iss !== 'hkd-auth-server' || payload.aud !== 'dojo-video-server') {
+    if (
+      (payload.iss !== 'kka-auth-server' && payload.iss !== 'hkd-auth-server') ||
+      payload.aud !== 'dojo-video-server'
+    ) {
       console.warn('[verifyJWT] Invalid issuer or audience');
       return null;
     }

@@ -36,7 +36,7 @@ const Home: NextPage = ({ images }: { images: ImageProps[] }) => {
   const ShareFunc = () => {
     // Replace this with your custom share functionality
     navigator?.share({
-      title: "HKD Blog",
+      title: "Kaizen Blog",
       text: currentURL,
     });
   };
@@ -44,7 +44,7 @@ const Home: NextPage = ({ images }: { images: ImageProps[] }) => {
   return (
     <div className="bg-black">
       <Head>
-        <title>HSTU Karate Dojo Gallery</title>
+        <title>Kaizen Karate Academy Gallery</title>
         <meta property="og:image" content="/og-image.png" />
         <meta name="twitter:image" content="/og-image.png" />
       </Head>
@@ -75,7 +75,7 @@ const Home: NextPage = ({ images }: { images: ImageProps[] }) => {
                   width={36}
                   height={36}
                 />
-                <span className="flex">HSTU Dojo</span>
+                <span className="flex">Kaizen Dojo</span>
               </div>
             </Link>
             <h1 className="mb-4 mt-8 text-base font-bold uppercase tracking-widest">

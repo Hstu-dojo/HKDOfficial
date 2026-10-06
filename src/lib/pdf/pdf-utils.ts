@@ -187,7 +187,7 @@ export function downloadPdf(pdfBytes: Uint8Array, filename: string) {
 export function downloadBlankForm() {
   const a = document.createElement('a');
   a.href = '/blank-form.pdf';
-  a.download = 'HKD_Registration_Form_Blank.pdf';
+  a.download = 'Kaizen_Registration_Form_Blank.pdf';
   document.body.appendChild(a);
   a.click();
   document.body.removeChild(a);
@@ -229,7 +229,7 @@ export async function downloadEnrollmentFormPdf(applicationId: string, courseNam
   }
 
   const pdfBytes = await fillPdfForm(formData, images);
-  downloadPdf(pdfBytes, `HKD_Registration_${courseNameSlug.toLowerCase().replace(/[^a-z0-9]/g, '_')}.pdf`);
+  downloadPdf(pdfBytes, `Kaizen_Registration_${courseNameSlug.toLowerCase().replace(/[^a-z0-9]/g, '_')}.pdf`);
 }
 
 // ---------------------------------------------------------------------------
@@ -352,7 +352,8 @@ export function readFileAsDataUrl(file: File): Promise<string> {
 // localStorage persistence
 // ---------------------------------------------------------------------------
 
-const STORAGE_KEY_PREFIX = 'hkd_course_form_';
+const STORAGE_KEY_PREFIX = 'kka_course_form_';
+const LEGACY_STORAGE_KEY_PREFIX = 'hkd_course_form_';
 
 export function saveFormToLocalStorage(
   courseId: string,
@@ -383,13 +384,16 @@ export function loadFormFromLocalStorage(courseId: string): {
   images: ImageData;
 } {
   try {
-    const formDataStr = localStorage.getItem(
-      `${STORAGE_KEY_PREFIX}${courseId}_data`
-    );
+    const formDataStr =
+      localStorage.getItem(`${STORAGE_KEY_PREFIX}${courseId}_data`) ||
+      localStorage.getItem(`${LEGACY_STORAGE_KEY_PREFIX}${courseId}_data`);
     const photo =
-      localStorage.getItem(`${STORAGE_KEY_PREFIX}${courseId}_photo`) || undefined;
+      localStorage.getItem(`${STORAGE_KEY_PREFIX}${courseId}_photo`) ||
+      localStorage.getItem(`${LEGACY_STORAGE_KEY_PREFIX}${courseId}_photo`) ||
+      undefined;
     const signature =
       localStorage.getItem(`${STORAGE_KEY_PREFIX}${courseId}_signature`) ||
+      localStorage.getItem(`${LEGACY_STORAGE_KEY_PREFIX}${courseId}_signature`) ||
       undefined;
     return {
       formData: formDataStr ? JSON.parse(formDataStr) : {},
@@ -404,4 +408,7 @@ export function clearFormLocalStorage(courseId: string) {
   localStorage.removeItem(`${STORAGE_KEY_PREFIX}${courseId}_data`);
   localStorage.removeItem(`${STORAGE_KEY_PREFIX}${courseId}_photo`);
   localStorage.removeItem(`${STORAGE_KEY_PREFIX}${courseId}_signature`);
+  localStorage.removeItem(`${LEGACY_STORAGE_KEY_PREFIX}${courseId}_data`);
+  localStorage.removeItem(`${LEGACY_STORAGE_KEY_PREFIX}${courseId}_photo`);
+  localStorage.removeItem(`${LEGACY_STORAGE_KEY_PREFIX}${courseId}_signature`);
 }

@@ -258,7 +258,7 @@ export async function POST(request: NextRequest) {
       .select({ count: sql<number>`count(*)` })
       .from(enrollmentApplications);
     const count = Number(countResult?.count) || 0;
-    const applicationNumber = `HKD-${year}-${String(count + 1).padStart(4, "0")}`;
+    const applicationNumber = `KKA-${year}-${String(count + 1).padStart(4, "0")}`;
 
     // Create application
     const [newApplication] = await db

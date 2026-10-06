@@ -123,7 +123,7 @@ export default function KarateCoursesPage({ initialCourses, enrolledCourseIds = 
       }
 
       const pdfBytes = await fillPdfForm(formData, images);
-      downloadPdf(pdfBytes, `HKD-Registration-${courseId.slice(0, 8)}.pdf`);
+      downloadPdf(pdfBytes, `KKA-Registration-${courseId.slice(0, 8)}.pdf`);
     } catch (err) {
       console.error('PDF download failed:', err);
       alert('Failed to generate PDF. Please try again.');
