@@ -175,6 +175,10 @@ export async function listCertificateTemplates() {
         value: "certs/HKD-GRADING-PRINTABLE.pdf",
         label: "HKD-GRADING-PRINTABLE.pdf",
       },
+      {
+        value: "certs/kaizen_grading_cert_template.pdf",
+        label: "kaizen_grading_cert_template.pdf",
+      },
     ] satisfies AvailableCertificateTemplate[];
 
     return { success: true as const, data: fallbackPdfs };
