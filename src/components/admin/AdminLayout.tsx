@@ -7,6 +7,7 @@ import { AdminSidebar } from '@/components/admin/AdminSidebar';
 import { AdminHeader } from '@/components/admin/AdminHeader';
 import { useRBAC } from '@/hooks/useRBAC';
 import { LoadingSpinner } from '@/components/ui/loading-spinner';
+import { PageLoader } from '@/components/loading';
 
 interface AdminLayoutProps {
   children: React.ReactNode;
@@ -60,24 +61,7 @@ export function AdminLayout({ children }: AdminLayoutProps) {
   // CRITICAL: Show loading screen until BOTH session AND RBAC are fully loaded
   // This prevents any flash of admin content for unauthorized users
   if (status === 'loading' || rbacLoading) {
-    return (
-      <div className="min-h-screen flex flex-col items-center justify-center bg-slate-50 dark:bg-slate-900">
-        <div className="flex flex-col items-center gap-6">
-          <div className="relative">
-            <div className="h-14 w-14 rounded-full border-[3px] border-slate-200 dark:border-slate-700" />
-            <div className="absolute inset-0 h-14 w-14 rounded-full border-[3px] border-transparent border-t-blue-600 dark:border-t-blue-400 animate-spin" />
-          </div>
-          <div className="text-center space-y-1">
-            <p className="text-sm font-medium text-slate-700 dark:text-slate-300">
-              {status === 'loading' ? 'Signing you in...' : 'Loading admin panel...'}
-            </p>
-            <p className="text-xs text-slate-400 dark:text-slate-500">
-              Please wait a moment
-            </p>
-          </div>
-        </div>
-      </div>
-    );
+    return <PageLoader variant="admin" />;
   }
 
   // Not authenticated - redirect handled by useEffect

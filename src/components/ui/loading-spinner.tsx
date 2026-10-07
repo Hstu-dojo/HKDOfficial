@@ -22,3 +22,6 @@ export function LoadingSpinner({ size = 'medium', className }: LoadingSpinnerPro
     />
   );
 }
+
+export { PanelLoader } from '@/components/loading/PanelLoader';
+

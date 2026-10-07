@@ -1,9 +1,5 @@
-import { Spinner } from "@/components/icons/icons";
+import { PageLoader } from "@/components/loading";
 
-export default function loading() {
-  return (
-    <main className="flex min-h-screen items-center justify-center bg-slate-200 p-1 text-center dark:bg-slate-900">
-      <Spinner className="mr-2 h-5 w-5 animate-spin" />
-    </main>
-  );
+export default function Loading() {
+  return <PageLoader variant="default" badgeText="KAIZEN BLOG POSTS" />;
 }
