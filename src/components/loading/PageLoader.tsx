@@ -2,21 +2,20 @@
 
 import * as React from "react";
 import { ArcRevealLoader, LoaderVariant, ArcGreeting } from "./ArcRevealLoader";
-import { cn } from "@/lib/utils";
 
 export interface PageLoaderProps {
   /** Variant preset: 'default' | 'admin' | 'dashboard' | 'partner' | 'minimal' */
   variant?: LoaderVariant;
   /** Custom greetings to cycle */
   greetings?: ArcGreeting[];
-  /** Custom badge text */
+  /** Optional badge text */
   badgeText?: string;
   className?: string;
 }
 
 /**
- * Standard Full-Screen Route Loader for Next.js `loading.tsx` pages.
- * Used across the main website, admin console, dashboard, and partner portal.
+ * Clean Full-Screen Route Loader for Next.js App Router `loading.tsx` pages.
+ * Powered by Arc Reveal curtain animation and official SiteLogo branding.
  */
 export function PageLoader({
   variant = "default",
@@ -25,20 +24,13 @@ export function PageLoader({
   className,
 }: PageLoaderProps) {
   return (
-    <main
-      className={cn(
-        "fixed inset-0 z-50 flex min-h-screen w-full items-center justify-center bg-background",
-        className,
-      )}
-    >
-      <ArcRevealLoader
-        variant={variant}
-        greetings={greetings}
-        badgeText={badgeText}
-        continuous={true}
-        className="min-h-screen"
-      />
-    </main>
+    <ArcRevealLoader
+      variant={variant}
+      greetings={greetings}
+      badgeText={badgeText}
+      continuous={true}
+      className={className}
+    />
   );
 }
 

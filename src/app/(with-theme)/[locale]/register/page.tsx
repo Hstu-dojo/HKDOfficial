@@ -7,6 +7,7 @@ import { buttonVariants } from "@/components/ui/button";
 import { RegisterForm } from "@/components/auth/register-form";
 import { BackgroundBeams } from "@/components/ui/background-beams";
 import { getI18n, getCurrentLocale } from "@/locales/server";
+import SiteLogo from "@/components/layout/site-logo";
 
 export const metadata: Metadata = {
   title: "Register",
@@ -20,37 +21,21 @@ export default async function AuthenticationPage() {
     <>
       <Link
         href={`/${locale}`}
-        className="absolute right-4 top-4 md:right-8 md:top-8 z-30 flex flex-row-reverse items-center gap-3 text-lg font-semibold tracking-tight transition-opacity hover:opacity-90 text-foreground lg:text-white"
+        className="absolute right-4 top-4 md:right-8 md:top-8 z-30 flex items-center transition-opacity hover:opacity-90"
+        aria-label={t('header.brand')}
       >
-        <Image
-          src="/kaizen.png"
-          alt={t('header.brand')}
-          width={40}
+        <SiteLogo
+          width={140}
           height={40}
-          priority
-          className="h-10 w-10 object-contain drop-shadow"
+          lightClasses="w-32 sm:w-36 dark:hidden lg:hidden"
+          darkClasses="hidden w-32 sm:w-36 dark:block lg:block"
         />
-        <span className="hidden sm:inline-block">{t('header.brand')}</span>
       </Link>
       <div className="container relative flex min-h-screen flex-col pt-24 pb-8 lg:grid lg:max-w-none lg:grid-cols-2 lg:items-center lg:justify-center lg:px-0 lg:py-0">
         <BackgroundBeams />
         <div className="flex-1 lg:p-8 flex flex-col justify-center">
           <div className="mx-auto flex w-full flex-col justify-center space-y-6 sm:w-[520px]">
-            <div className="flex flex-col space-y-3 text-center items-center">
-              <Link
-                href={`/${locale}`}
-                className="mb-1 inline-flex items-center justify-center transition-transform hover:scale-105"
-                aria-label={t('header.brand')}
-              >
-                <Image
-                  src="/kaizen.png"
-                  alt={t('header.brand')}
-                  width={80}
-                  height={80}
-                  priority
-                  className="h-16 w-16 sm:h-20 sm:w-20 object-contain drop-shadow-md"
-                />
-              </Link>
+            <div className="flex flex-col space-y-2 text-center">
               <h1 className="text-2xl font-semibold tracking-tight">
                 {t('auth.register.title')}
               </h1>

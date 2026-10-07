@@ -22,6 +22,8 @@ export default function SiteLogo({
         width={width}
         height={height}
         alt={siteConfig.name}
+        priority
+        unoptimized
       />
       <Image
         src="/logo_dark.svg"
@@ -29,6 +31,8 @@ export default function SiteLogo({
         width={width}
         height={height}
         alt={siteConfig.name}
+        priority
+        unoptimized
       />
     </>
   );

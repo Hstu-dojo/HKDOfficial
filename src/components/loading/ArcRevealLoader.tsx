@@ -2,257 +2,285 @@
 
 import * as React from "react";
 import Image from "next/image";
-import {
-  animate,
-  AnimatePresence,
-  motion,
-  useMotionValue,
-  useReducedMotion,
-  useTransform,
-} from "motion/react";
+import { AnimatePresence, motion } from "motion/react";
 import { cn } from "@/lib/utils";
 
 export type ArcGreeting = {
+  kanji?: string;
   text: string;
+  sub?: string;
   lang?: string;
 };
 
 export type LoaderVariant = "default" | "admin" | "dashboard" | "partner" | "minimal";
 
-const PRESET_GREETINGS: Record<LoaderVariant, { badge: string; greetings: ArcGreeting[] }> = {
-  default: {
-    badge: "TRADITIONAL SHITORYU KARATE",
-    greetings: [
-      { text: "Kaizen.", lang: "ja" },
-      { text: "Discipline.", lang: "en" },
-      { text: "Respect.", lang: "en" },
-      { text: "Excellence.", lang: "en" },
-      { text: "Kaizen Karate Academy.", lang: "en" },
-    ],
+const DEFAULT_GREETINGS: ArcGreeting[] = [
+  {
+    kanji: "改善",
+    text: "Continuous Improvement",
+    sub: "Kaizen • Striving to be 1% better every single day",
+    lang: "en",
   },
-  admin: {
-    badge: "ADMINISTRATION CONSOLE",
-    greetings: [
-      { text: "Kaizen Admin.", lang: "en" },
-      { text: "Verifying Access.", lang: "en" },
-      { text: "Syncing Dojo Records.", lang: "en" },
-      { text: "Console Ready.", lang: "en" },
-    ],
+  {
+    kanji: "規律",
+    text: "Unshakable Discipline",
+    sub: "Kiritsu • Consistency and dedication in every strike",
+    lang: "en",
   },
-  dashboard: {
-    badge: "STUDENT & MEMBER PORTAL",
-    greetings: [
-      { text: "Student Portal.", lang: "en" },
-      { text: "Loading Training Logs.", lang: "en" },
-      { text: "Preparing Dojo Space.", lang: "en" },
-      { text: "Welcome Back.", lang: "en" },
-    ],
+  {
+    kanji: "礼儀",
+    text: "Honor & Respect",
+    sub: "Reigi • Martial arts begins and ends with courtesy",
+    lang: "en",
   },
-  partner: {
-    badge: "DOJO AFFILIATION NETWORK",
-    greetings: [
-      { text: "Partner Portal.", lang: "en" },
-      { text: "Affiliate Network.", lang: "en" },
-      { text: "Loading Branch Data.", lang: "en" },
-      { text: "Ready.", lang: "en" },
-    ],
+  {
+    kanji: "卓越",
+    text: "Pursuit of Mastery",
+    sub: "Takuetsu • Forging the body, mind, and spirit",
+    lang: "en",
   },
-  minimal: {
-    badge: "KAIZEN KARATE ACADEMY",
-    greetings: [
-      { text: "Loading.", lang: "en" },
-      { text: "Please wait.", lang: "en" },
-      { text: "Ready.", lang: "en" },
-    ],
+  {
+    kanji: "不撓不屈",
+    text: "Indomitable Spirit",
+    sub: "Futōfukutsu • An unyielding heart in every challenge",
+    lang: "en",
   },
-};
+];
 
 export interface ArcRevealLoaderProps {
-  /** Variant preset styling and greetings */
+  /** Visual preset or custom greetings */
   variant?: LoaderVariant;
-  /** Custom greetings to cycle */
   greetings?: ArcGreeting[];
-  /** Custom badge text above greeting */
+  /** Optional badge text */
   badgeText?: string;
-  /** Hold duration for each word in milliseconds (default 500ms) */
+  cycleInterval?: number;
   greetingHold?: number;
-  /** Duration of the rising curved arc animation in milliseconds (default 1200ms) */
   revealDuration?: number;
-  /** Whether the loader loops continuously while waiting for data/routing */
   continuous?: boolean;
-  /** Custom class for outer wrapper */
   className?: string;
-  /** Show the Kaizen emblem in the center */
   showLogo?: boolean;
 }
 
 export function ArcRevealLoader({
-  variant = "default",
   greetings: customGreetings,
-  badgeText: customBadge,
-  greetingHold = 450,
-  revealDuration = 1200,
-  continuous = true,
   className,
   showLogo = true,
 }: ArcRevealLoaderProps) {
-  const prefersReducedMotion = useReducedMotion();
-  const preset = PRESET_GREETINGS[variant] || PRESET_GREETINGS.default;
-  const greetings = customGreetings && customGreetings.length > 0 ? customGreetings : preset.greetings;
-  const badge = customBadge || preset.badge;
+  const greetings =
+    customGreetings && customGreetings.length > 0
+      ? customGreetings
+      : DEFAULT_GREETINGS;
 
-  const [index, setIndex] = React.useState(0);
-  const [cycleCount, setCycleCount] = React.useState(0);
+  const [currentIndex, setCurrentIndex] = React.useState(0);
 
-  // Drive the arc curve progress (0 -> 1)
-  const progress = useMotionValue(0);
-  const arcPath = useTransform(progress, (p: number) => {
-    const edge = 110 - p * 140;
-    const control = edge + 22;
-    return `M 0 ${edge} Q 50 ${control} 100 ${edge} L 100 110 L 0 110 Z`;
-  });
-
-  // Cycle greetings
+  // Synchronized wave swap rhythm:
+  // Total cycle = 4000ms
+  // Wave sweeps up from bottom to top between 0ms and 2600ms
+  // Midpoint at 1300ms: wave crest washes over center, swapping the virtue text
+  // 2600ms to 4000ms: serene reading pause with new virtue in place
   React.useEffect(() => {
-    if (prefersReducedMotion) return;
-    const interval = window.setInterval(() => {
-      setIndex((prev) => {
-        const next = prev + 1;
-        if (next >= greetings.length) {
-          if (continuous) {
-            setCycleCount((c) => c + 1);
-            return 0;
-          }
-          return prev;
-        }
-        return next;
-      });
-    }, greetingHold);
+    let swapTimer: NodeJS.Timeout;
 
-    return () => window.clearInterval(interval);
-  }, [greetings.length, greetingHold, continuous, prefersReducedMotion]);
+    // Midpoint swap for the first cycle
+    swapTimer = setTimeout(() => {
+      setCurrentIndex((prev) => (prev + 1) % greetings.length);
+    }, 1400);
 
-  // Continuous subtle arc sweep pulse when waiting
-  React.useEffect(() => {
-    if (prefersReducedMotion) return;
-    const controls = animate(progress, [0, 1], {
-      duration: revealDuration / 1000,
-      ease: [0.76, 0, 0.24, 1],
-      repeat: continuous ? Infinity : 0,
-      repeatDelay: 0.6,
-    });
-    return () => controls.stop();
-  }, [progress, revealDuration, continuous, prefersReducedMotion]);
+    const intervalTimer = setInterval(() => {
+      swapTimer = setTimeout(() => {
+        setCurrentIndex((prev) => (prev + 1) % greetings.length);
+      }, 1400);
+    }, 4200);
 
-  const current = greetings[Math.min(index, greetings.length - 1)];
+    return () => {
+      clearInterval(intervalTimer);
+      clearTimeout(swapTimer);
+    };
+  }, [greetings.length]);
+
+  const current = greetings[currentIndex] || greetings[0];
 
   return (
     <div
       aria-label="Loading"
       role="status"
       className={cn(
-        "relative isolate flex min-h-[50vh] w-full flex-col items-center justify-center overflow-hidden bg-background text-foreground select-none",
+        "fixed inset-0 z-[99999] flex h-screen w-screen flex-col items-center justify-center overflow-hidden bg-background text-foreground select-none",
         className,
       )}
     >
-      {/* Brand background glows: Purple (#5e17eb) and Teal (#0097b2) */}
+      {/* Ambient background aura */}
       <div
-        className="pointer-events-none absolute -top-24 -left-24 h-96 w-96 rounded-full bg-[#5e17eb]/10 blur-3xl dark:bg-[#5e17eb]/20"
-        aria-hidden
-      />
-      <div
-        className="pointer-events-none absolute -bottom-24 -right-24 h-96 w-96 rounded-full bg-[#0097b2]/10 blur-3xl dark:bg-[#0097b2]/20"
+        className="pointer-events-none absolute h-[560px] w-[560px] rounded-full bg-gradient-to-tr from-purple-500/15 via-cyan-400/10 to-transparent blur-3xl"
         aria-hidden
       />
 
-      {/* Main Content Area */}
-      <div className="relative z-10 flex flex-col items-center justify-center px-4 text-center">
-        {/* Kaizen Emblem */}
+      {/* ── Centralized Brand & Content Hierarchy ── */}
+      <div className="relative z-20 flex w-full max-w-xl flex-col items-center justify-center px-6 text-center">
+        {/* 1. Logo Emblem at Top */}
         {showLogo && (
-          <motion.div
-            initial={{ opacity: 0, scale: 0.85 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.4, ease: "easeOut" }}
-            className="relative mb-6"
-          >
-            <div className="relative flex items-center justify-center">
-              {/* Outer pulsing ring */}
-              <div className="absolute -inset-2.5 rounded-full bg-gradient-to-tr from-[#5e17eb]/30 to-[#0097b2]/30 blur-sm animate-pulse" />
-              <div className="relative rounded-full border border-border/60 bg-background/80 p-2 shadow-xl backdrop-blur-md">
-                <Image
-                  src="/kaizen.png"
-                  alt="Kaizen Karate Academy"
-                  width={72}
-                  height={72}
-                  priority
-                  className="h-16 w-16 sm:h-20 sm:w-20 object-contain drop-shadow"
-                />
-              </div>
-            </div>
-          </motion.div>
+          <div className="relative mb-5 flex items-center justify-center">
+            {/* Soft breathing halo behind the emblem */}
+            <motion.div
+              animate={{
+                scale: [1, 1.12, 1],
+                opacity: [0.35, 0.75, 0.35],
+              }}
+              transition={{
+                duration: 4,
+                repeat: Infinity,
+                ease: "easeInOut",
+              }}
+              className="absolute -inset-4 rounded-full bg-gradient-to-r from-purple-600/30 via-cyan-400/30 to-purple-600/30 blur-xl"
+              aria-hidden
+            />
+
+            <Image
+              src="/logo-badge.svg"
+              alt="Kaizen Karate Academy Emblem"
+              width={96}
+              height={96}
+              priority
+              unoptimized
+              className="relative h-20 w-20 sm:h-24 sm:w-24 object-contain drop-shadow-[0_10px_20px_rgba(94,23,235,0.22)] dark:drop-shadow-[0_10px_25px_rgba(0,0,0,0.6)]"
+            />
+          </div>
         )}
 
-        {/* Category / Dojo Badge */}
-        {badge && (
-          <motion.div
-            initial={{ opacity: 0, y: 4 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="mb-4 inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/5 px-3 py-1 text-[11px] font-semibold tracking-wider text-primary uppercase backdrop-blur-sm sm:text-xs"
-          >
-            <span className="h-1.5 w-1.5 rounded-full bg-primary animate-ping" />
-            {badge}
-          </motion.div>
-        )}
-
-        {/* Cycled text with smooth presence */}
-        <div className="relative h-14 min-w-[280px] sm:h-16 sm:min-w-[360px] flex items-center justify-center overflow-hidden">
-          <AnimatePresence mode="wait">
-            {current && (
-              <motion.span
-                key={`${cycleCount}-${index}-${current.text}`}
-                lang={current.lang}
-                initial={{ opacity: 0, y: 12, filter: "blur(4px)" }}
-                animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-                exit={{ opacity: 0, y: -12, filter: "blur(4px)" }}
-                transition={{ duration: 0.32, ease: [0.22, 1, 0.36, 1] }}
-                className="absolute text-2xl font-bold tracking-tight text-foreground sm:text-3xl md:text-4xl"
-              >
-                {current.text}
-              </motion.span>
-            )}
-          </AnimatePresence>
+        {/* 2. Kaizen Karate Academy Name Below Logo */}
+        <div className="mb-4 flex flex-col items-center justify-center">
+          <h1 className="text-xl sm:text-2xl font-black tracking-[0.22em] text-foreground uppercase">
+            Kaizen Karate Academy
+          </h1>
+          <p className="mt-1 text-[11px] sm:text-xs font-semibold tracking-[0.32em] text-muted-foreground/80 uppercase">
+            Traditional Shitoryu Karate
+          </p>
         </div>
 
-        {/* Minimal Progress Bar */}
-        <div className="mt-6 h-1 w-32 overflow-hidden rounded-full bg-muted sm:w-48">
-          <motion.div
-            animate={{ x: ["-100%", "100%"] }}
-            transition={{
-              repeat: Infinity,
-              duration: 1.4,
-              ease: "easeInOut",
-            }}
-            className="h-full w-1/2 rounded-full bg-gradient-to-r from-[#5e17eb] via-[#0097b2] to-[#5e17eb]"
-          />
+        {/* Martial Arts Ornamental Hairline Divider */}
+        <div className="mb-6 flex items-center justify-center gap-3 opacity-80" aria-hidden>
+          <div className="h-[1px] w-14 bg-gradient-to-r from-transparent via-border to-border" />
+          <div className="h-1.5 w-1.5 rotate-45 rounded-[1px] bg-gradient-to-tr from-purple-600 to-cyan-400" />
+          <div className="h-[1px] w-14 bg-gradient-to-l from-transparent via-border to-border" />
+        </div>
+
+        {/* 3. Changing Text at Bottom (Synchronized with Wave Swap) */}
+        <div className="relative flex min-h-[6.5rem] w-full flex-col items-center justify-center">
+          <AnimatePresence mode="popLayout">
+            <motion.div
+              key={`${currentIndex}-${current.text}`}
+              initial={{ opacity: 0, y: 16, filter: "blur(4px)" }}
+              animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+              exit={{ opacity: 0, y: -16, filter: "blur(4px)" }}
+              transition={{ duration: 0.38, ease: [0.22, 1, 0.36, 1] }}
+              className="flex flex-col items-center justify-center gap-2"
+            >
+              {/* Kanji Virtue Badge */}
+              {current.kanji && (
+                <span className="inline-flex items-center rounded-full border border-primary/25 bg-primary/10 px-3.5 py-0.5 text-xs font-bold tracking-[0.3em] text-primary shadow-sm backdrop-blur-sm">
+                  {current.kanji}
+                </span>
+              )}
+
+              {/* Primary English Virtue */}
+              <span className="text-2xl sm:text-3xl font-extrabold tracking-tight text-foreground">
+                {current.text}
+              </span>
+
+              {/* Philosophical Subtext */}
+              {current.sub && (
+                <span className="max-w-md text-xs sm:text-sm font-medium text-muted-foreground tracking-wide">
+                  {current.sub}
+                </span>
+              )}
+            </motion.div>
+          </AnimatePresence>
+
+          {/* Minimal Navigation Dots Indicator */}
+          <div className="mt-5 flex items-center justify-center gap-1.5" aria-hidden>
+            {greetings.map((_, i) => (
+              <span
+                key={i}
+                className={cn(
+                  "h-1 rounded-full transition-all duration-500",
+                  i === currentIndex
+                    ? "w-6 bg-gradient-to-r from-purple-500 to-cyan-400"
+                    : "w-1.5 bg-muted-foreground/25",
+                )}
+              />
+            ))}
+          </div>
         </div>
       </div>
 
-      {/* Decorative Rising Smooth Arc Wave */}
-      <svg
-        className="pointer-events-none absolute inset-x-0 bottom-0 h-40 w-full opacity-40 dark:opacity-25"
-        viewBox="0 0 100 100"
-        preserveAspectRatio="none"
+      {/* ── Continuous Luminous Bottom-to-Top Wave Swap Curtain ── */}
+      <div
+        className="kaizen-wave-sweep pointer-events-none fixed inset-x-0 top-0 z-10 h-[700px] w-full"
         aria-hidden
       >
-        <defs>
-          <linearGradient id="arcGlowGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-            <stop offset="0%" stopColor="#5e17eb" stopOpacity="0.8" />
-            <stop offset="50%" stopColor="#0097b2" stopOpacity="0.9" />
-            <stop offset="100%" stopColor="#5e17eb" stopOpacity="0.8" />
-          </linearGradient>
-        </defs>
-        <motion.path d={arcPath} fill="url(#arcGlowGradient)" />
-      </svg>
+        <svg
+          className="h-full w-full"
+          viewBox="0 0 1440 700"
+          preserveAspectRatio="none"
+        >
+          <defs>
+            {/* Luminous Glowing Crest Gradient */}
+            <linearGradient id="waveCrestGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%" stopColor="#5e17eb" stopOpacity="0.25" />
+              <stop offset="25%" stopColor="#7c3aed" stopOpacity="0.95" />
+              <stop offset="50%" stopColor="#00d2ff" stopOpacity="1" />
+              <stop offset="75%" stopColor="#7c3aed" stopOpacity="0.95" />
+              <stop offset="100%" stopColor="#5e17eb" stopOpacity="0.25" />
+            </linearGradient>
+
+            {/* Primary Wave Fluid Body Gradient */}
+            <linearGradient id="waveBodyGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+              <stop offset="0%" stopColor="#00d2ff" stopOpacity="0.32" />
+              <stop offset="25%" stopColor="#7c3aed" stopOpacity="0.22" />
+              <stop offset="70%" stopColor="#5e17eb" stopOpacity="0.10" />
+              <stop offset="100%" stopColor="#5e17eb" stopOpacity="0" />
+            </linearGradient>
+
+            {/* Secondary Offset Harmonic Wave */}
+            <linearGradient id="waveSecondaryGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+              <stop offset="0%" stopColor="#7c3aed" stopOpacity="0.25" />
+              <stop offset="50%" stopColor="#00d2ff" stopOpacity="0.12" />
+              <stop offset="100%" stopColor="#00d2ff" stopOpacity="0" />
+            </linearGradient>
+
+            {/* Crest Light Glow Filter */}
+            <filter id="waveGlow" x="-20%" y="-40%" width="140%" height="200%">
+              <feGaussianBlur stdDeviation="5" result="blur" />
+              <feMerge>
+                <feMergeNode in="blur" />
+                <feMergeNode in="SourceGraphic" />
+              </feMerge>
+            </filter>
+          </defs>
+
+          {/* Trailing secondary harmonic wave for fluid liquid depth */}
+          <path
+            d="M 0 110 C 320 170, 680 50, 1040 140 C 1240 190, 1360 120, 1440 100 L 1440 700 L 0 700 Z"
+            fill="url(#waveSecondaryGrad)"
+          />
+
+          {/* Primary fluid wave curtain */}
+          <path
+            d="M 0 60 C 360 0, 720 120, 1080 30 C 1260 -10, 1380 40, 1440 50 L 1440 700 L 0 700 Z"
+            fill="url(#waveBodyGrad)"
+          />
+
+          {/* Luminous leading crest edge */}
+          <path
+            d="M 0 60 C 360 0, 720 120, 1080 30 C 1260 -10, 1380 40, 1440 50"
+            fill="none"
+            stroke="url(#waveCrestGrad)"
+            strokeWidth="6"
+            strokeLinecap="round"
+            filter="url(#waveGlow)"
+          />
+        </svg>
+      </div>
     </div>
   );
 }
