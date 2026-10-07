@@ -3,6 +3,7 @@ import { createClient } from '@/lib/supabase/server'
 import { db } from '@/lib/connect-db'
 import { user, registrations } from '@/db/schema'
 import { and, eq, or } from 'drizzle-orm'
+import { ensureProfileForRegistration } from '@/lib/auth/profile-sync'
 
 function getLocaleFromReferer(request: NextRequest): string | null {
   const referer = request.headers.get('referer')
@@ -240,7 +241,7 @@ export async function POST(request: NextRequest) {
       emergencyPhone: phone,
     }
 
-    await db.insert(registrations).values({
+    const [insertedReg] = await db.insert(registrations).values({
       userId: localUser.id,
       firstName,
       lastName,
@@ -252,7 +253,15 @@ export async function POST(request: NextRequest) {
       partnerId,
       notes: JSON.stringify(onboardingPayload),
       status: 'pending',
-    })
+    }).returning({ id: registrations.id })
+
+    if (insertedReg?.id) {
+      try {
+        await ensureProfileForRegistration(insertedReg.id)
+      } catch (profErr) {
+        console.warn('Could not auto-generate member profile during signup:', profErr)
+      }
+    }
 
     return NextResponse.json({
       message: 'User created successfully. Please check your email to verify your account.',

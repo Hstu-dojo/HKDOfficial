@@ -170,6 +170,7 @@ export default function RegistrationsManagement() {
   const [isEditing, setIsEditing] = useState(false);
   const [editData, setEditData] = useState<Record<string, any>>({});
   const [saving, setSaving] = useState(false);
+  const [generatingProfileId, setGeneratingProfileId] = useState<string | null>(null);
   const PAGE_SIZE = 20;
 
   const canRead = hasPermission('MEMBER', 'READ');
@@ -220,6 +221,29 @@ export default function RegistrationsManagement() {
     setShowDetailModal(true);
   };
 
+  const handleGenerateProfile = async (regId: string) => {
+    try {
+      setGeneratingProfileId(regId);
+      const res = await fetch(`/api/admin/registrations/${regId}`, {
+        method: 'POST',
+      });
+      if (res.ok) {
+        await fetchRegistrations();
+        if (selectedRegistration?.id === regId) {
+          const detailRes = await fetch(`/api/admin/registrations/${regId}`);
+          if (detailRes.ok) {
+            const detail = await detailRes.json();
+            setSelectedRegistration(detail);
+          }
+        }
+      }
+    } catch (error) {
+      console.error('Failed to generate profile:', error);
+    } finally {
+      setGeneratingProfileId(null);
+    }
+  };
+
   const handleStatusChange = async (regId: string, newStatus: string) => {
     if (!canApprove && !canUpdate) return;
     if (!confirm(`Change status to "${newStatus}"?`)) return;
@@ -233,9 +257,15 @@ export default function RegistrationsManagement() {
       if (res.ok) {
         await fetchRegistrations();
         if (selectedRegistration?.id === regId) {
-          setSelectedRegistration((prev) =>
-            prev ? { ...prev, status: newStatus as any } : null
-          );
+          const detailRes = await fetch(`/api/admin/registrations/${regId}`);
+          if (detailRes.ok) {
+            const detail = await detailRes.json();
+            setSelectedRegistration(detail);
+          } else {
+            setSelectedRegistration((prev) =>
+              prev ? { ...prev, status: newStatus as any } : null
+            );
+          }
         }
       }
     } catch (error) {
@@ -458,7 +488,23 @@ export default function RegistrationsManagement() {
                           </span>
                         </div>
                       ) : (
-                        <span className="text-xs text-gray-400 dark:text-gray-500 italic">No profile</span>
+                        <div className="flex items-center gap-1.5">
+                          <span className="text-xs text-gray-400 dark:text-gray-500 italic">No profile</span>
+                          {canUpdate && (
+                            <button
+                              type="button"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleGenerateProfile(reg.id);
+                              }}
+                              disabled={generatingProfileId === reg.id}
+                              className="text-[11px] bg-blue-50 hover:bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300 px-2 py-0.5 rounded border border-blue-200 dark:border-blue-800 font-medium disabled:opacity-50"
+                              title="Generate Member ID & Profile"
+                            >
+                              {generatingProfileId === reg.id ? '...' : 'Generate'}
+                            </button>
+                          )}
+                        </div>
                       )}
                     </td>
                     <td className="px-4 py-3">
@@ -578,6 +624,8 @@ export default function RegistrationsManagement() {
           }}
           onSave={handleSaveEdit}
           onStatusChange={handleStatusChange}
+          onGenerateProfile={handleGenerateProfile}
+          generatingProfileId={generatingProfileId}
         />
       )}
     </div>
@@ -594,11 +642,13 @@ function DetailModal({
   saving,
   canUpdate,
   canApprove,
+  generatingProfileId,
   onClose,
   onEdit,
   onCancelEdit,
   onSave,
   onStatusChange,
+  onGenerateProfile,
 }: {
   registration: Registration;
   isEditing: boolean;
@@ -607,11 +657,13 @@ function DetailModal({
   saving: boolean;
   canUpdate: boolean;
   canApprove: boolean;
+  generatingProfileId: string | null;
   onClose: () => void;
   onEdit: () => void;
   onCancelEdit: () => void;
   onSave: () => void;
   onStatusChange: (id: string, status: string) => void;
+  onGenerateProfile: (id: string) => void;
 }) {
   const statusCfg = STATUS_CONFIG[registration.status] || STATUS_CONFIG.pending;
   const StatusIcon = statusCfg.icon;
@@ -642,9 +694,20 @@ function DetailModal({
               )}
             </div>
             <div>
-              <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
-                {registration.firstName} {registration.lastName}
-              </h2>
+              <div className="flex flex-wrap items-center gap-2">
+                <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
+                  {registration.firstName} {registration.lastName}
+                </h2>
+                {registration.profile?.memberNumber ? (
+                  <span className="font-mono text-xs font-semibold px-2 py-0.5 rounded bg-blue-50 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300 border border-blue-200 dark:border-blue-800">
+                    ID: {registration.profile.memberNumber}
+                  </span>
+                ) : (
+                  <span className="text-xs text-yellow-600 dark:text-yellow-400 font-medium">
+                    (No Member ID)
+                  </span>
+                )}
+              </div>
               <div className="flex items-center gap-2 mt-0.5">
                 <span className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-medium ${statusCfg.bg} ${statusCfg.color}`}>
                   <StatusIcon className="h-3 w-3" />
@@ -817,6 +880,24 @@ function DetailModal({
               System Information
             </h3>
             <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+              <div className="rounded-lg border bg-gray-50 dark:bg-gray-900 dark:border-gray-700 p-3">
+                <p className="text-xs text-gray-500 dark:text-gray-400">Member ID</p>
+                <div className="flex items-center justify-between mt-1">
+                  <p className="text-sm font-mono font-medium text-gray-900 dark:text-white">
+                    {registration.profile?.memberNumber || 'No Profile'}
+                  </p>
+                  {!registration.profile?.memberNumber && canUpdate && (
+                    <button
+                      type="button"
+                      onClick={() => onGenerateProfile(registration.id)}
+                      disabled={generatingProfileId === registration.id}
+                      className="text-xs bg-blue-600 hover:bg-blue-700 text-white px-2.5 py-1 rounded font-medium disabled:opacity-50"
+                    >
+                      {generatingProfileId === registration.id ? 'Generating...' : 'Generate ID'}
+                    </button>
+                  )}
+                </div>
+              </div>
               <div className="rounded-lg border bg-gray-50 dark:bg-gray-900 dark:border-gray-700 p-3">
                 <p className="text-xs text-gray-500 dark:text-gray-400">Registration ID</p>
                 <p className="text-xs font-mono text-gray-700 dark:text-gray-300 mt-1">{registration.id}</p>

@@ -8,6 +8,7 @@ import { user as userSchema } from "@/db/schemas/auth";
 import { eq } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import { ensureUserExists } from "@/lib/auth/user-sync";
+import { ensureProfileForRegistration } from "@/lib/auth/profile-sync";
 
 export async function getOnboardingStatus() {
   const cookieStore = await cookies();
@@ -175,6 +176,7 @@ export async function submitOnboarding(formData: any) {
       extraData.emergencyContact = emergencyContactToStore;
       extraData.emergencyPhone = emergencyPhoneToStore;
 
+      let regId = existing?.id;
       if (existing) {
         // Update existing registration — partnerId is NOT updatable here
         // (branch change must go through the dedicated request flow)
@@ -196,7 +198,7 @@ export async function submitOnboarding(formData: any) {
           .where(eq(registrations.id, existing.id));
       } else {
         // Create new registration — include partnerId (venue selection)
-        await db.insert(registrations).values({
+        const [insertedReg] = await db.insert(registrations).values({
             userId: publicUser.id,
             dateOfBirth: new Date(dobToStore),
             email: emailToStore,
@@ -208,7 +210,17 @@ export async function submitOnboarding(formData: any) {
             partnerId: partnerIdToStore,
             notes: JSON.stringify(extraData),
             status: 'pending'
-        });
+        }).returning({ id: registrations.id });
+        regId = insertedReg.id;
+      }
+
+      // Automatically ensure a member profile with Member ID exists!
+      if (regId) {
+        try {
+          await ensureProfileForRegistration(regId);
+        } catch (profErr) {
+          console.warn("Could not auto-create member profile during onboarding:", profErr);
+        }
       }
 
       // Update Public User Profile Name for Dashboard Consistency safely

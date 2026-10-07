@@ -4,6 +4,7 @@ import { hasPermission } from "@/lib/rbac/permissions";
 import { db } from "@/lib/connect-db";
 import { registrations, user, profiles, partners } from "@/db/schema";
 import { eq, desc, like, or, sql, count } from "drizzle-orm";
+import { ensureProfileForRegistration } from "@/lib/auth/profile-sync";
 
 // GET /api/admin/registrations - List all registrations with user info
 export const GET = protectApiRoute("MEMBER", "READ", async (request, context) => {
@@ -35,7 +36,7 @@ export const GET = protectApiRoute("MEMBER", "READ", async (request, context) =>
       })
       .from(registrations)
       .leftJoin(user, eq(registrations.userId, user.id))
-      .leftJoin(profiles, eq(profiles.userId, user.id))
+      .leftJoin(profiles, eq(profiles.userId, registrations.userId))
       .leftJoin(partners, eq(registrations.partnerId, partners.id))
       .orderBy(desc(registrations.createdAt));
 
@@ -62,24 +63,43 @@ export const GET = protectApiRoute("MEMBER", "READ", async (request, context) =>
     const total = filtered.length;
     const paginated = filtered.slice(offset, offset + limit);
 
-    // Parse notes JSON for each registration
-    const data = paginated.map((r) => {
-      let notes: Record<string, any> = {};
-      try {
-        notes =
-          typeof r.registration.notes === "string"
-            ? JSON.parse(r.registration.notes || "{}")
-            : r.registration.notes || {};
-      } catch {}
+    // Parse notes JSON for each registration and ensure member profile exists
+    const data = await Promise.all(
+      paginated.map(async (r) => {
+        let notes: Record<string, any> = {};
+        try {
+          notes =
+            typeof r.registration.notes === "string"
+              ? JSON.parse(r.registration.notes || "{}")
+              : r.registration.notes || {};
+        } catch {}
 
-      return {
-        ...r.registration,
-        parsedNotes: notes,
-        user: r.user,
-        profile: r.profile,
-        partnerName: r.partnerName,
-      };
-    });
+        let currentProfile = r.profile;
+        if (!currentProfile?.memberNumber && r.registration.id) {
+          try {
+            const ensured = await ensureProfileForRegistration(r.registration.id);
+            if (ensured) {
+              currentProfile = {
+                memberNumber: ensured.memberNumber,
+                beltRank: ensured.beltRank,
+                studentLevel: ensured.studentLevel,
+                isActive: ensured.isActive,
+              };
+            }
+          } catch (e) {
+            console.warn("Could not ensure profile for registration:", r.registration.id, e);
+          }
+        }
+
+        return {
+          ...r.registration,
+          parsedNotes: notes,
+          user: r.user,
+          profile: currentProfile,
+          partnerName: r.partnerName,
+        };
+      })
+    );
 
     return NextResponse.json({
       registrations: data,
