@@ -527,15 +527,30 @@ export function mapBeltToExternalRole(beltRank: string | null | undefined): Exte
 }
 
 export async function resolveExternalRoleBySupabaseUserId(supabaseUserId: string): Promise<{
-  profileId: string | null;
+  profileId: string;
   email: string;
   role: ExternalSystemRole | null;
 }> {
-  const localUser = await db
+  let localUser = await db
     .select({ id: user.id, email: user.email })
     .from(user)
     .where(eq(user.supabaseUserId, supabaseUserId))
     .limit(1);
+
+  if (localUser.length === 0) {
+    try {
+      const { createClient } = await import('@/lib/supabase/server');
+      const supabase = await createClient();
+      const { data: { user: authUser } } = await supabase.auth.getUser();
+      if (authUser && authUser.id === supabaseUserId) {
+        const { ensureUserExists } = await import('@/lib/auth/user-sync');
+        const provisioned = await ensureUserExists(authUser);
+        localUser = [{ id: provisioned.id, email: provisioned.email }];
+      }
+    } catch (e) {
+      console.warn('Could not auto-provision in resolveExternalRoleBySupabaseUserId:', e);
+    }
+  }
 
   if (localUser.length === 0) {
     throw new Error('User not found in local database');
@@ -550,21 +565,21 @@ export async function resolveExternalRoleBySupabaseUserId(supabaseUserId: string
     .where(eq(profiles.userId, localUserId))
     .limit(1);
 
-  const profileId = linkedProfile[0]?.id ?? null;
+  const profileId = linkedProfile[0]?.id ?? localUserId;
 
   const userPerms = await getUserPermissionsWithFallback(localUserId);
   const roleNames = userPerms.roles.map((r) => r.name);
 
   if (roleNames.some((r) => ['SUPER_ADMIN', 'ADMIN', 'MODERATOR'].includes(r))) {
-    return { profileId: profileId ?? localUserId, email, role: 'admin' };
+    return { profileId, email, role: 'admin' };
   }
 
   if (roleNames.includes('INSTRUCTOR')) {
-    return { profileId: profileId ?? localUserId, email, role: 'teacher' };
+    return { profileId, email, role: 'teacher' };
   }
 
   if (roleNames.includes('PARTNER')) {
-    return { profileId: profileId ?? localUserId, email, role: 'partner' };
+    return { profileId, email, role: 'partner' };
   }
 
   if (roleNames.some((r) => ['STUDENT', 'MEMBER'].includes(r))) {
@@ -573,7 +588,7 @@ export async function resolveExternalRoleBySupabaseUserId(supabaseUserId: string
     return { profileId, email, role: mapBeltToExternalRole(beltRank) };
   }
 
-  return { profileId: profileId ?? localUserId, email, role: 'none' };
+  return { profileId, email, role: 'none' };
 }
 
 export async function resolveExternalRoleByProfileId(profileId: string): Promise<{
@@ -593,36 +608,65 @@ export async function resolveExternalRoleByProfileId(profileId: string): Promise
     .where(eq(profiles.id, profileId))
     .limit(1)
 
-  if (linked.length === 0) {
-    throw new Error('Profile not found in local database')
+  if (linked.length > 0 && linked[0].userId) {
+    const localUserId = linked[0].userId
+    const email = linked[0].email ?? ''
+
+    const userPerms = await getUserPermissionsWithFallback(localUserId)
+    const roleNames = userPerms.roles.map((r) => r.name)
+
+    if (roleNames.some((r) => ['SUPER_ADMIN', 'ADMIN', 'MODERATOR'].includes(r))) {
+      return { profileId, email, role: 'admin' }
+    }
+
+    if (roleNames.includes('INSTRUCTOR')) {
+      return { profileId, email, role: 'teacher' }
+    }
+
+    if (roleNames.includes('PARTNER')) {
+      return { profileId, email, role: 'partner' }
+    }
+
+    if (roleNames.some((r) => ['STUDENT', 'MEMBER'].includes(r))) {
+      const beltRank = linked[0].beltRank
+      return { profileId, email, role: mapBeltToExternalRole(beltRank) }
+    }
+
+    return { profileId, email, role: 'none' }
   }
 
-  const localUserId = linked[0]!.userId
-  const email = linked[0]!.email ?? ''
+  // Fallback: If not found in `profiles`, profileId could be a direct `user.id`
+  const directUser = await db
+    .select({ id: user.id, email: user.email })
+    .from(user)
+    .where(eq(user.id, profileId))
+    .limit(1)
 
-  if (!localUserId) {
-    throw new Error('Profile is not linked to a local user')
+  if (directUser.length > 0) {
+    const localUserId = directUser[0].id
+    const email = directUser[0].email ?? ''
+
+    const userPerms = await getUserPermissionsWithFallback(localUserId)
+    const roleNames = userPerms.roles.map((r) => r.name)
+
+    if (roleNames.some((r) => ['SUPER_ADMIN', 'ADMIN', 'MODERATOR'].includes(r))) {
+      return { profileId, email, role: 'admin' }
+    }
+
+    if (roleNames.includes('INSTRUCTOR')) {
+      return { profileId, email, role: 'teacher' }
+    }
+
+    if (roleNames.includes('PARTNER')) {
+      return { profileId, email, role: 'partner' }
+    }
+
+    if (roleNames.some((r) => ['STUDENT', 'MEMBER'].includes(r))) {
+      return { profileId, email, role: 'student_9th_kyu' }
+    }
+
+    return { profileId, email, role: 'none' }
   }
 
-  const userPerms = await getUserPermissionsWithFallback(localUserId)
-  const roleNames = userPerms.roles.map((r) => r.name)
-
-  if (roleNames.some((r) => ['SUPER_ADMIN', 'ADMIN', 'MODERATOR'].includes(r))) {
-    return { profileId, email, role: 'admin' }
-  }
-
-  if (roleNames.includes('INSTRUCTOR')) {
-    return { profileId, email, role: 'teacher' }
-  }
-
-  if (roleNames.includes('PARTNER')) {
-    return { profileId, email, role: 'partner' }
-  }
-
-  if (roleNames.some((r) => ['STUDENT', 'MEMBER'].includes(r))) {
-    const beltRank = linked[0]!.beltRank
-    return { profileId, email, role: mapBeltToExternalRole(beltRank) }
-  }
-
-  return { profileId, email, role: 'none' }
+  throw new Error('Profile not found in local database')
 }

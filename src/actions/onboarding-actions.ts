@@ -7,6 +7,7 @@ import { registrations } from "@/db/schemas/karate";
 import { user as userSchema } from "@/db/schemas/auth";
 import { eq } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
+import { ensureUserExists } from "@/lib/auth/user-sync";
 
 export async function getOnboardingStatus() {
   const cookieStore = await cookies();
@@ -31,12 +32,20 @@ export async function getOnboardingStatus() {
     return { existing: false };
   }
 
-  const publicUser = await db.query.user.findFirst({
+  let publicUser = await db.query.user.findFirst({
     where: eq(userSchema.supabaseUserId, authUser.id)
   });
 
   if (!publicUser) {
-    return { existing: false };
+    try {
+      publicUser = await ensureUserExists(authUser);
+    } catch (e) {
+      console.error("Failed to ensure user in getOnboardingStatus:", e);
+    }
+  }
+
+  if (!publicUser) {
+    return { existing: false, userEmail: authUser.email };
   }
 
   const existing = await db.query.registrations.findFirst({
@@ -94,16 +103,20 @@ export async function submitOnboarding(formData: any) {
   }
 
   try {
-      // Find the corresponding public user record
-      const publicUser = await db.query.user.findFirst({
+      let publicUser = await db.query.user.findFirst({
         where: eq(userSchema.supabaseUserId, authUser.id)
       });
 
       if (!publicUser) {
-        // Fallback: If public user doesn't exist, we might need to handle this.
-        // For now, let's assume valid users should have a record.
-        // If not, we can't create a registration linked to a non-existent public user.
-        return { success: false, message: "User profile not found. Please contact support." };
+        try {
+          publicUser = await ensureUserExists(authUser);
+        } catch (syncErr) {
+          console.error("Failed to ensure user in submitOnboarding:", syncErr);
+        }
+      }
+
+      if (!publicUser) {
+        return { success: false, message: "User profile could not be initialized. Please try logging in again." };
       }
 
       // Check if already registered
@@ -198,11 +211,23 @@ export async function submitOnboarding(formData: any) {
         });
       }
 
-      // Update Public User Profile Name for Dashboard Consistency
+      // Update Public User Profile Name for Dashboard Consistency safely
       if (fullName && fullName !== publicUser.userName) {
-          await db.update(userSchema)
-            .set({ userName: fullName })
-            .where(eq(userSchema.id, publicUser.id));
+        try {
+          const conflict = await db
+            .select({ id: userSchema.id })
+            .from(userSchema)
+            .where(eq(userSchema.userName, fullName))
+            .limit(1);
+
+          if (conflict.length === 0) {
+            await db.update(userSchema)
+              .set({ userName: fullName, updatedAt: new Date() })
+              .where(eq(userSchema.id, publicUser.id));
+          }
+        } catch (nameErr) {
+          console.warn("Could not update userName directly:", nameErr);
+        }
       }
       
       revalidatePath('/onboarding');

@@ -75,23 +75,15 @@ export async function GET(request: NextRequest) {
 
     const roleContext = await resolveExternalRoleBySupabaseUserId(authUser.id);
     if (!roleContext.profileId) {
-      return json(
-        {
-          error: 'access_denied',
-          error_description: 'Profile not found for this user',
-        },
-        { status: 403 }
-      );
+      const errorUrl = new URL('/en/oauth-error', canonicalOrigin);
+      errorUrl.searchParams.set('error', 'profile_not_found');
+      return withExternalAuthCors(request, NextResponse.redirect(errorUrl));
     }
 
-    if (!roleContext.role) {
-      return json(
-        {
-          error: 'access_denied',
-          error_description: 'Role not configured for this user',
-        },
-        { status: 403 }
-      );
+    if (!roleContext.role || roleContext.role === 'none') {
+      const errorUrl = new URL('/en/oauth-error', canonicalOrigin);
+      errorUrl.searchParams.set('error', 'role_missing');
+      return withExternalAuthCors(request, NextResponse.redirect(errorUrl));
     }
 
     const authCodeValue = await createAuthorizationCode({

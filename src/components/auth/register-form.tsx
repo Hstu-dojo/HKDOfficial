@@ -23,6 +23,7 @@ import { useI18n } from "@/locales/client";
 import { useCurrentLocale } from "@/locales/client";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Eye, EyeOff } from "lucide-react";
+import { SocialLoginButtons } from "@/components/auth/social-login-buttons";
 
 export function RegisterForm({ className, ...props }: UserAuthFormProps) {
   const searchParams = useSearchParams();
@@ -538,7 +539,7 @@ export function RegisterForm({ className, ...props }: UserAuthFormProps) {
           </div>
         </div>
       </form>
-      <div className="flex-rol relative bottom-4 flex flex-wrap items-center justify-between">
+      <div className="flex-rol relative bottom-2 flex flex-wrap items-center justify-between">
         <small>
           {t('auth.register.existingMember')}{" "}
           <Link className="hover:underline" href={`/${locale}/login`}>
@@ -546,6 +547,9 @@ export function RegisterForm({ className, ...props }: UserAuthFormProps) {
           </Link>
         </small>
       </div>
+      <SocialLoginButtons
+        redirectTo={isTenantHost ? "/onboarding" : `/${locale}/onboarding`}
+      />
     </div>
   );
 }

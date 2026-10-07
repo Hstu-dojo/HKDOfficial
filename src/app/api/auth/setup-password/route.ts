@@ -1,10 +1,10 @@
 import { NextResponse, NextRequest } from "next/server";
-import { db } from "../../../../lib/connect-db";
-import { user as userTable } from "../../../../db/schema";
+import { db } from "@/lib/connect-db";
+import { user as userTable } from "@/db/schema";
 import { eq } from "drizzle-orm";
-import { hash } from "../../../../lib/hash";
-import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs';
-import { cookies } from 'next/headers';
+import { hash } from "@/lib/hash";
+import { createClient } from "@/lib/supabase/server";
+import { ensureUserExists } from "@/lib/auth/user-sync";
 
 export async function POST(req: NextRequest) {
   try {
@@ -25,35 +25,31 @@ export async function POST(req: NextRequest) {
     }
 
     // Verify the user is authenticated via Supabase
-    const cookieStore = cookies();
-    const supabase = createRouteHandlerClient({ cookies: () => cookieStore });
+    const supabase = await createClient();
     const { data: { user: supabaseUser }, error: authError } = await supabase.auth.getUser();
 
-    if (authError || !supabaseUser || supabaseUser.email !== email) {
+    if (authError || !supabaseUser || (supabaseUser.email && supabaseUser.email.toLowerCase() !== email.toLowerCase())) {
       return NextResponse.json(
         { error: "Unauthorized or session mismatch" },
         { status: 401 }
       );
     }
 
+    // Ensure local user record exists
+    const localUser = await ensureUserExists(supabaseUser);
+
     // Hash the password
     const hashedPassword = await hash(password);
 
     // Update the user's password in the database
-    const updatedUser = await db
+    await db
       .update(userTable)
       .set({ 
-        password: hashedPassword
+        password: hashedPassword,
+        hasPassword: true,
+        updatedAt: new Date(),
       })
-      .where(eq(userTable.email, email))
-      .returning();
-
-    if (updatedUser.length === 0) {
-      return NextResponse.json(
-        { error: "User not found" },
-        { status: 404 }
-      );
-    }
+      .where(eq(userTable.id, localUser.id));
 
     return NextResponse.json({
       message: "Password set successfully",

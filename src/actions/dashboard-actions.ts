@@ -15,6 +15,7 @@ import {
 } from "@/db/schemas/karate";
 import { user as userSchema } from "@/db/schemas/auth";
 import { eq, desc } from "drizzle-orm";
+import { ensureUserExists } from "@/lib/auth/user-sync";
 
 export interface DashboardApplication {
   id: string;
@@ -105,9 +106,17 @@ export async function getUserDashboardData(): Promise<DashboardData | { error: s
   }
 
   // 1. Get public user to link with relational tables
-  const publicUser = await db.query.user.findFirst({
+  let publicUser = await db.query.user.findFirst({
     where: eq(userSchema.supabaseUserId, authUser.id)
   });
+
+  if (!publicUser) {
+    try {
+      publicUser = await ensureUserExists(authUser);
+    } catch (err) {
+      console.error("Failed to ensure user in getUserDashboardData:", err);
+    }
+  }
 
   if (!publicUser) {
     return { error: "User profile not found" };

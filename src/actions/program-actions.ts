@@ -165,9 +165,15 @@ export async function getProgramById(id: string) {
 export async function registerForProgram(data: NewProgramRegistration) {
   try {
     // 0. Resolve Public User ID from Auth ID (data.userId comes from session)
-    const publicUser = await db.query.user.findFirst({
+    let publicUser = await db.query.user.findFirst({
         where: eq(user.supabaseUserId, data.userId)
     });
+
+    if (!publicUser) {
+        publicUser = await db.query.user.findFirst({
+            where: eq(user.id, data.userId)
+        });
+    }
 
     if (!publicUser) {
         return { success: false, error: "User profile not found. Please try logging out and back in." };
