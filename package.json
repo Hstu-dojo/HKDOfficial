@@ -19,6 +19,7 @@
     "db:test-permissions": "tsx scripts/test-permissions.ts",
     "db:verify-rbac": "tsx scripts/verify-rbac.ts",
     "db:check-user-roles": "tsx scripts/check-user-roles.ts",
+    "db:backup": "tsx scripts/backup-db.ts",
     "test:partner-assignment": "tsx scripts/test-partner-assignment.ts",
     "start": "next start",
     "lint": "next lint",
@@ -26,6 +27,8 @@
   },
   "dependencies": {
     "@auth/drizzle-adapter": "^1.11.3",
+    "@aws-sdk/client-s3": "^3.1147.0",
+    "@aws-sdk/s3-request-presigner": "^3.1147.0",
     "@ducanh2912/next-pwa": "^10.2.9",
     "@fortawesome/fontawesome-svg-core": "^6.7.2",
     "@fortawesome/free-brands-svg-icons": "^6.7.2",
