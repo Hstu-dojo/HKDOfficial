@@ -15,7 +15,7 @@ const PostCard = ({ post }: Props) => {
 
   return (
     <article
-      className="hover-shadow overflow-hidden rounded-lg bg-white dark:bg-slate-850"
+      className="hover-shadow overflow-hidden rounded-lg bg-white dark:bg-card"
       itemType="https://schema.org/Article"
     >
       <figure className="after: relative overflow-hidden">
@@ -26,7 +26,7 @@ const PostCard = ({ post }: Props) => {
               alt={featuredMedia.alt_text}
               width={featuredImageSizes.medium_large.width}
               height={featuredImageSizes.medium_large.height}
-              className="transition-transform duration-1600 will-change-transform group-hover:scale-105"
+              className="transition-transform duration-1600 will-change-transform group-hover:scale-[1.025]"
             />
           )}
           {post.modified && (

@@ -17,8 +17,8 @@ import {
 } from "@/components/ui/accordion";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import { 
-  UserCircleIcon, 
+import {
+  UserCircleIcon,
   ArrowRightOnRectangleIcon,
   ClipboardDocumentListIcon,
   Squares2X2Icon
@@ -37,12 +37,12 @@ const getItemHref = (item: NavItem, locale: string, currentPath: string): string
     const pathWithoutLocale = currentPath.replace(/^\/[a-z]{2}(?=\/|$)/, '') || '/';
     return `/${item.locale}${pathWithoutLocale}`;
   }
-  
+
   // If skipLocale is true, return the href as-is
   if (item.skipLocale && item.href) {
     return item.href;
   }
-  
+
   // Default: prefix with locale
   return item.href ? `/${locale}${item.href}` : '#';
 };
@@ -57,7 +57,7 @@ export function MobileNav({
   const pathname = usePathname() ?? '/';
   const router = useRouter();
   const t = useI18n() as any;
-  
+
   const { data: session, status } = useSession();
   const { signOut } = useAuth();
   const [needsOnboarding, setNeedsOnboarding] = React.useState(false);
@@ -87,9 +87,9 @@ export function MobileNav({
   };
 
   const isLoggedIn = status === 'authenticated' && session?.user;
-  const userName = session?.user?.user_metadata?.full_name || 
+  const userName = session?.user?.user_metadata?.full_name ||
                    session?.user?.user_metadata?.name ||
-                   session?.user?.email?.split('@')[0] || 
+                   session?.user?.email?.split('@')[0] ||
                    'User';
 
   const labelFor = (item: NavItem) => {
@@ -211,15 +211,15 @@ export function MobileNav({
               {isLoggedIn ? (
                 <div className="space-y-1">
                   {/* User info */}
-                  <div className="flex items-center gap-3 pb-4 border-b border-slate-100 dark:border-slate-700">
+                  <div className="flex items-center gap-3 pb-4 border-b border-border dark:border-border">
                     <div className="h-10 w-10 rounded-full bg-gradient-to-br from-primary to-tertiary flex items-center justify-center text-white font-bold">
                       {session?.user?.email?.charAt(0).toUpperCase() || 'U'}
                     </div>
                     <div className="flex-1 min-w-0">
-                      <p className="text-sm font-medium text-slate-900 dark:text-white truncate">
+                      <p className="text-sm font-medium text-foreground dark:text-white truncate">
                         {userName}
                       </p>
-                      <p className="text-xs text-slate-500 dark:text-slate-400 truncate">
+                      <p className="text-xs text-muted-foreground dark:text-muted-foreground truncate">
                         {session?.user?.email}
                       </p>
                     </div>

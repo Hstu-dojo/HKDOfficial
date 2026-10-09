@@ -27,18 +27,18 @@ export default async function DashboardCommitteePage({
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">My Committee Status</h1>
-        <p className="text-sm text-gray-500 dark:text-gray-400">
+        <h1 className="text-2xl font-bold text-foreground dark:text-gray-100">My Committee Status</h1>
+        <p className="text-sm text-muted-foreground dark:text-gray-400">
           Track your committee application and membership history.
         </p>
       </div>
 
       {current ? (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <div className="rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 p-6">
-            <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">Current Committee</h2>
-            <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">{current.committee?.title}</p>
-            <div className="mt-4 space-y-2 text-sm text-gray-700 dark:text-gray-300">
+          <div className="rounded-xl border border-border dark:border-border bg-white dark:bg-background p-6">
+            <h2 className="text-lg font-semibold text-foreground dark:text-gray-100">Current Committee</h2>
+            <p className="text-sm text-muted-foreground dark:text-gray-400 mt-1">{current.committee?.title}</p>
+            <div className="mt-4 space-y-2 text-sm text-foreground dark:text-gray-300">
               <div><span className="font-medium">Status:</span> {current.status}</div>
               <div><span className="font-medium">Position:</span> {current.positionTitle || '—'}</div>
               <div><span className="font-medium">Year:</span> {current.committee?.year || '—'}</div>
@@ -58,9 +58,9 @@ export default async function DashboardCommitteePage({
           )}
         </div>
       ) : (
-        <div className="rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 p-6">
-          <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">No Active Committee</h2>
-          <p className="text-sm text-gray-500 dark:text-gray-400">
+        <div className="rounded-xl border border-border dark:border-border bg-white dark:bg-background p-6">
+          <h2 className="text-lg font-semibold text-foreground dark:text-gray-100">No Active Committee</h2>
+          <p className="text-sm text-muted-foreground dark:text-gray-400">
             You have no active committee application yet.
           </p>
           <Link
@@ -73,28 +73,28 @@ export default async function DashboardCommitteePage({
       )}
 
       {history.length > 0 && (
-        <div className="rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 p-6">
-          <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">Committee History</h2>
+        <div className="rounded-xl border border-border dark:border-border bg-white dark:bg-background p-6">
+          <h2 className="text-lg font-semibold text-foreground dark:text-gray-100">Committee History</h2>
           <div className="mt-4 space-y-3">
             {history.map((item: any) => (
               <div
                 key={item.id}
-                className="rounded-lg border border-gray-200 dark:border-gray-700 p-4"
+                className="rounded-lg border border-border dark:border-border p-4"
               >
                 <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
                   <div>
-                    <p className="font-medium text-gray-900 dark:text-gray-100">
+                    <p className="font-medium text-foreground dark:text-gray-100">
                       {item.committee?.title || 'Committee'}
                     </p>
-                    <p className="text-xs text-gray-500 dark:text-gray-400">
+                    <p className="text-xs text-muted-foreground dark:text-gray-400">
                       Year {item.committee?.year || '—'}
                     </p>
                   </div>
-                  <span className="text-xs px-2 py-1 rounded-full bg-gray-100 text-gray-700">
+                  <span className="text-xs px-2 py-1 rounded-full bg-muted text-foreground">
                     {item.status}
                   </span>
                 </div>
-                <p className="text-sm text-gray-600 dark:text-gray-300 mt-2">Position: {item.positionTitle || '—'}</p>
+                <p className="text-sm text-muted-foreground dark:text-gray-300 mt-2">Position: {item.positionTitle || '—'}</p>
               </div>
             ))}
           </div>

@@ -1,0 +1,244 @@
+/* Shared publication language. Behavior remains in the existing components. */
+.editorial-site {
+  font-family:
+    var(--font-sans), var(--font-bengali), var(--font-devanagari), Arial,
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  overflow-wrap: break-word;
+}
+.editorial-public {
+  --font-display: var(--font-serif);
+}
+.editorial-public :is(h1, h2, h3, .font-display),
+.editorial-reference :is(h1, h2) {
+  font-family:
+    var(--font-serif), var(--font-bengali), var(--font-devanagari), Georgia,
+    serif;
+  font-weight: 400;
+  letter-spacing: -0.035em;
+}
+.editorial-site :is(input, textarea, select, button) {
+  font-family: inherit;
+}
+.editorial-site :is(input, textarea, select) {
+  transition:
+    border-color 180ms,
+    box-shadow 180ms;
+}
+.editorial-site :is(a, button):focus-visible {
+  outline: 2px solid hsl(var(--ring));
+  outline-offset: 4px;
+}
+.editorial-site img {
+  max-width: 100%;
+}
+.editorial-site main {
+  min-width: 0;
+}
+.editorial-site .container {
+  max-width: 1280px;
+  padding-inline: clamp(1rem, 3vw, 2.5rem);
+}
+.editorial-public main > section {
+  border-bottom: 1px solid hsl(var(--border) / 0.55);
+}
+.editorial-public footer[data-site-footer] {
+  border-top: 1px solid hsl(var(--border));
+  background: hsl(var(--muted));
+}
+.editorial-public footer[data-site-footer] h2 {
+  font-family: inherit;
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.editorial-public footer[data-site-footer] a {
+  transition: color 180ms;
+}
+.editorial-portal {
+  font-family:
+    var(--font-sans), var(--font-bengali), var(--font-devanagari), Arial,
+    sans-serif;
+}
+.editorial-portal :is(h1, h2, h3, h4) {
+  font-family: inherit;
+  font-weight: 600;
+  letter-spacing: -0.025em;
+}
+.editorial-portal h1 {
+  font-size: clamp(1.5rem, 3vw, 2rem);
+}
+.editorial-portal table {
+  width: 100%;
+  font-variant-numeric: tabular-nums;
+  font-size: 0.875rem;
+}
+.editorial-portal th {
+  background: hsl(var(--muted));
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: hsl(var(--muted-foreground));
+}
+.editorial-portal :is(td, th) {
+  padding: 0.875rem 1rem;
+  border-bottom: 1px solid hsl(var(--border) / 0.65);
+}
+.editorial-portal tbody tr {
+  transition: background-color 180ms;
+}
+.editorial-portal tbody tr:hover {
+  background-color: hsl(var(--muted) / 0.6);
+}
+.editorial-portal [data-sidebar="menu-button"][data-active="true"] {
+  box-shadow: inset 2px 0 hsl(var(--primary));
+}
+.editorial-portal [data-sidebar="sidebar"] {
+  background: hsl(var(--sidebar-background));
+}
+.editorial-blog article {
+  max-width: 76rem;
+  margin-inline: auto;
+}
+.editorial-blog .prose {
+  max-width: 70ch;
+  color: hsl(var(--foreground));
+}
+.editorial-blog :is(.prose, .editorial-copy) {
+  line-height: 1.8;
+}
+.editorial-blog .prose :is(h1, h2, h3) {
+  line-height: 1.2;
+}
+.editorial-blog blockquote {
+  border-left: 2px solid hsl(var(--primary));
+  padding-left: 1.5rem;
+  font-family: var(--font-serif), Georgia, serif;
+}
+.editorial-org .font-display {
+  text-transform: none;
+  letter-spacing: -0.04em;
+}
+.editorial-org .font-body {
+  font-family: inherit;
+}
+.editorial-org :is(section, footer) {
+  max-width: 1400px;
+  margin-inline: auto;
+}
+.editorial-org .noise-overlay {
+  display: none;
+}
+.editorial-org .hover-glitch:hover {
+  animation: none;
+}
+.editorial-org [class*="text-[6px]"],
+.editorial-org [class*="text-[8px]"],
+.editorial-org [class*="text-[9px]"] {
+  font-size: 0.75rem;
+}
+.editorial-org [class*="text-[10px]"] {
+  font-size: 0.8125rem;
+}
+.editorial-org [class*="whitespace-nowrap"].font-display {
+  white-space: normal;
+}
+.editorial-org img {
+  border-radius: 0.875rem;
+}
+.editorial-reference {
+  min-height: 100vh;
+}
+.editorial-reference .nextra-content {
+  line-height: 1.8;
+}
+.editorial-reference .nextra-content h1 {
+  font-size: clamp(2rem, 4vw, 3.5rem);
+}
+.editorial-revealed {
+  animation: editorial-settle 550ms var(--editorial-ease) both;
+}
+.editorial-image {
+  overflow: hidden;
+}
+.editorial-image img {
+  transition: transform 650ms var(--editorial-ease);
+}
+.editorial-lead-image {
+  animation: editorial-image-reveal 750ms var(--editorial-ease) both;
+}
+.editorial-hero h1 {
+  animation: editorial-settle 600ms var(--editorial-ease) both;
+}
+.editorial-loading-line {
+  animation: editorial-loading 1.2s var(--editorial-ease) infinite;
+}
+.editorial-public > header {
+  animation: editorial-settle 450ms var(--editorial-ease) both;
+}
+@media (hover: hover) and (pointer: fine) {
+  .editorial-image:hover img {
+    transform: scale(1.025);
+  }
+}
+@keyframes editorial-settle {
+  from {
+    opacity: 0.65;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+@keyframes editorial-loading {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(400%);
+  }
+}
+@keyframes editorial-image-reveal {
+  from {
+    clip-path: inset(0 0 8% 0 round 1rem);
+    opacity: 0.8;
+  }
+  to {
+    clip-path: inset(0 0 0 0 round 1rem);
+    opacity: 1;
+  }
+}
+html:lang(bn) .editorial-public :is(h1, h2, h3),
+html:lang(ne) .editorial-public :is(h1, h2, h3) {
+  letter-spacing: normal;
+  line-height: 1.4;
+}
+@media (max-width: 767px) {
+  .editorial-public main > section {
+    padding-block: 3.5rem;
+  }
+  .editorial-public main > .editorial-hero {
+    padding-top: 7rem;
+  }
+  .editorial-public .editorial-portal main > section {
+    padding-block: inherit;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .editorial-site *,
+  .editorial-site *::before,
+  .editorial-site *::after {
+    animation-duration: 0.01ms !important;
+    animation-delay: 0ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+  .editorial-revealed {
+    animation: none;
+  }
+  .editorial-site [style*="opacity: 0"] {
+    opacity: 1 !important;
+  }
+}

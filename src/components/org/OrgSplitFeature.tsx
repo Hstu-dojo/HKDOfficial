@@ -61,7 +61,7 @@ export default function OrgSplitFeature({
     if (match) {
       return (
         <>
-          {match[1]} <span className="text-accent">{match[2]}</span>
+          {match[1]} <span className="text-primary">{match[2]}</span>
         </>
       );
     }
@@ -85,14 +85,14 @@ export default function OrgSplitFeature({
           />
 
           <div className={visible ? "brutal-reveal" : "opacity-0"}>
-            <span className="font-body text-[8px] md:text-[10px] text-accent tracking-[0.2em] md:tracking-[0.3em] uppercase block mb-2 md:mb-8">
+            <span className="font-body text-[8px] md:text-[10px] text-primary tracking-[0.2em] md:tracking-[0.3em] uppercase block mb-2 md:mb-8">
               [Manifesto]
             </span>
             {/* Single line on mobile */}
-            <h2 className="font-display text-[9vw] sm:text-4xl md:text-7xl lg:text-8xl tracking-tighter text-foreground leading-[0.85] uppercase whitespace-nowrap mb-2 md:mb-8">
+            <h2 className="font-display text-[clamp(2.5rem,6vw,5rem)] sm:text-4xl md:text-7xl lg:text-8xl tracking-tighter text-foreground leading-[1.08] uppercase break-words mb-2 md:mb-8">
               {renderTitle(displayTitle)}
             </h2>
-            <div className="w-8 md:w-16 h-[2px] bg-accent mb-2 md:mb-8" />
+            <div className="w-8 md:w-16 h-[2px] bg-primary mb-2 md:mb-8" />
             <p className="font-body text-[9px] md:text-sm text-muted-foreground leading-relaxed max-w-md">
               {displayText}
             </p>
@@ -113,9 +113,9 @@ export default function OrgSplitFeature({
                   className={visible ? "brutal-reveal" : "opacity-0"}
                   style={{ animationDelay: `${0.2 + i * 0.15}s` }}
                 >
-                  <span className="font-display text-[10vw] md:text-6xl lg:text-8xl text-foreground leading-none">
+                  <span className="font-display text-[clamp(2.5rem,6vw,5rem)] md:text-6xl lg:text-8xl text-foreground leading-none">
                     {stat.value}
-                    <span className="text-accent">{stat.suffix}</span>
+                    <span className="text-primary">{stat.suffix}</span>
                   </span>
                   <span className="font-body text-[7px] md:text-[10px] text-muted-foreground block mt-1 md:mt-3 tracking-[0.08em] md:tracking-[0.2em] uppercase text-center">
                     {stat.label}
@@ -125,7 +125,7 @@ export default function OrgSplitFeature({
             ))}
           </div>
           <div
-            className="absolute bottom-0 right-0 w-6 h-6 md:w-16 md:h-16 bg-accent"
+            className="absolute bottom-0 right-0 w-6 h-6 md:w-16 md:h-16 bg-primary"
             aria-hidden="true"
           />
         </div>

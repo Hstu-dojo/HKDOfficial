@@ -76,7 +76,7 @@ export function AlbumArtwork({
               style={{ transform: "translate3d(0, 0, 0)" }}
             />
             <div className="fixed bottom-0 hidden w-full bg-black/25 py-5 group-hover:block">
-              <p className="mx-2 overflow-hidden font-sans font-bold text-slate-700 dark:text-slate-300">
+              <p className="mx-2 overflow-hidden font-sans font-bold text-foreground dark:text-muted-foreground">
                 {album?.filename}
               </p>
             </div>

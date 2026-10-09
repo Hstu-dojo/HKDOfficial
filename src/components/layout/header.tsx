@@ -1,80 +1,80 @@
 "use client";
-import React, { useState, useEffect } from "react";
+
+import { useEffect, useState } from "react";
 import Link from "next/link";
+import { ArrowUpRight } from "lucide-react";
 import SiteLogo from "./site-logo";
 import MainNav from "./main-nav";
 import { DarkModeSwitch } from "../dark-mode-switch";
 import { mainNav } from "@/config/site";
 import { cn } from "@/lib/utils";
 import { MobileNav } from "./mobile-nav";
-import { useSession } from "@/hooks/useSessionCompat";
-import { useAuth } from "@/context/AuthContext";
 import MaxWidthWrapper from "../maxWidthWrapper";
 import { useI18n, useCurrentLocale } from "@/locales/client";
 import { UserNav } from "./user-nav";
-
 import { OnboardingAlert } from "./onboarding-alert";
 
-const Header = () => {
-  const [stickyClass, setStickyClass] = useState("");
-  const { data: session } = useSession();
-  const { signOut } = useAuth();
+export default function Header() {
+  const [scrolled, setScrolled] = useState(false);
   const t = useI18n();
   const locale = useCurrentLocale();
 
   useEffect(() => {
-    window.addEventListener("scroll", stickyHeader);
-
-    return () => {
-      window.removeEventListener("scroll", stickyHeader);
-    };
+    const onScroll = () => setScrolled(window.scrollY > 10);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
   }, []);
-
-  const stickyHeader = () => {
-    if (window !== undefined) {
-      let windowHeight = window.scrollY;
-      windowHeight > 10
-        ? setStickyClass("bg-white dark:bg-slate-900 lg:py-3 py-3")
-        : setStickyClass("");
-    }
-  };
 
   return (
     <header className="fixed left-0 top-0 z-40 w-full">
       <OnboardingAlert />
-      <div className={cn("py-5 transition-all lg:py-12", stickyClass)}>
+      <div
+        className={cn(
+          "border-b border-border/60 bg-background/95 py-4 backdrop-blur-md transition-shadow duration-200",
+          scrolled && "shadow-sm",
+        )}
+      >
         <MaxWidthWrapper>
-          <div className="flex items-center ">
-            <Link href={`/${locale}`} className="mr-12 shrink-0">
-              <SiteLogo
-                width={123}
-                height={39}
-                lightClasses="w-4/5 dark:hidden lg:w-auto"
-                darkClasses="hidden w-4/5 dark:block lg:w-auto"
-              />
-            </Link>
-
-            <div className="relative flex w-full items-center justify-end lg:justify-start lg:bg-transparent">
+          <div className="flex min-h-11 items-center justify-between gap-3 lg:grid lg:grid-cols-[1fr_auto_1fr] lg:gap-6">
+            <div className="hidden min-w-0 lg:block">
               <MainNav items={mainNav} />
+            </div>
+            <Link
+              href={`/${locale}`}
+              className="flex shrink-0 items-center gap-3"
+              aria-label="Kaizen Karate Academy"
+            >
+              <SiteLogo
+                width={105}
+                height={34}
+                lightClasses="h-auto w-[105px] dark:hidden"
+                darkClasses="hidden h-auto w-[105px] dark:block"
+              />
+              <span className="hidden border-l border-border pl-3 font-serif text-lg tracking-tight sm:block lg:text-xl">
+                Kaizen
+                <span className="block font-sans text-[9px] uppercase tracking-[0.2em] text-muted-foreground">
+                  Karate Academy
+                </span>
+              </span>
+            </Link>
+            <div className="flex min-w-0 items-center justify-end gap-2">
               <DarkModeSwitch />
-              <MobileNav mainNavItems={mainNav} />
-
-              <div className="hidden lg:ml-auto lg:flex lg:items-center lg:gap-4">
+              <div className="hidden lg:block">
                 <UserNav />
-                <a
-                  href="tel:+8801777-300309"
-                  className="inline-block rounded-md bg-gradient-to-l from-primary to-tertiary px-4 py-2.5 text-center font-bold text-white"
-                >
-                  <span className="block text-xxs">{t('cta.callForInfo')}</span>
-                  <span className="text-md">+8801777-300309</span>
-                </a>
               </div>
+              <a
+                href="tel:+8801777-300309"
+                className="hidden items-center gap-2 rounded-full border border-foreground/50 px-4 py-2 text-xs text-foreground transition-colors hover:bg-foreground hover:text-background xl:inline-flex"
+              >
+                <span>{t("cta.callForInfo")}</span>
+                <ArrowUpRight className="h-3.5 w-3.5" />
+              </a>
+              <MobileNav mainNavItems={mainNav} />
             </div>
           </div>
         </MaxWidthWrapper>
       </div>
     </header>
   );
-};
-
-export default Header;
+}

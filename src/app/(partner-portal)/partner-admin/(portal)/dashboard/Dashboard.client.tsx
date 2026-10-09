@@ -3,15 +3,15 @@
 import * as React from 'react'
 import Link from 'next/link'
 import { apiJSON } from '../_lib/api.client'
-import { 
-  Users, 
-  GraduationCap, 
-  DollarSign, 
-  AlertTriangle, 
-  TrendingUp, 
+import {
+  Users,
+  GraduationCap,
+  DollarSign,
+  AlertTriangle,
+  TrendingUp,
   CheckCircle,
-  MapPin, 
-  Mail, 
+  MapPin,
+  Mail,
   Calendar,
   Building,
   ArrowUpRight,
@@ -234,15 +234,15 @@ export default function Dashboard() {
       {/* Tab Contents: Overview */}
       {activeTab === 'overview' && (
         <div className="space-y-6 animate-in fade-in slide-in-from-bottom-2 duration-300">
-          
+
           {/* Main Metric Cards Grid */}
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            
+
             {/* Card 1: Successful Enrollments */}
             <div className="relative overflow-hidden rounded-xl border bg-card p-5 shadow-sm transition-all hover:shadow-md hover:-translate-y-0.5 group">
               <div className="flex items-center justify-between">
                 <span className="text-sm font-semibold text-muted-foreground">Successful Enrollments</span>
-                <div className="rounded-lg bg-emerald-50 dark:bg-emerald-950/30 p-2 text-emerald-600 dark:text-emerald-400 group-hover:scale-110 transition-transform">
+                <div className="rounded-lg bg-emerald-50 dark:bg-emerald-950/30 p-2 text-emerald-600 dark:text-emerald-400 group-hover:scale-[1.025] transition-transform">
                   <CheckCircle className="h-5 w-5" />
                 </div>
               </div>
@@ -264,7 +264,7 @@ export default function Dashboard() {
             <div className="relative overflow-hidden rounded-xl border bg-card p-5 shadow-sm transition-all hover:shadow-md hover:-translate-y-0.5 group">
               <div className="flex items-center justify-between">
                 <span className="text-sm font-semibold text-muted-foreground">Cumulative Revenue</span>
-                <div className="rounded-lg bg-primary/10 p-2 text-primary group-hover:scale-110 transition-transform">
+                <div className="rounded-lg bg-primary/10 p-2 text-primary group-hover:scale-[1.025] transition-transform">
                   <DollarSign className="h-5 w-5" />
                 </div>
               </div>
@@ -282,7 +282,7 @@ export default function Dashboard() {
             <div className="relative overflow-hidden rounded-xl border bg-card p-5 shadow-sm transition-all hover:shadow-md hover:-translate-y-0.5 group">
               <div className="flex items-center justify-between">
                 <span className="text-sm font-semibold text-muted-foreground capitalize">{data.stats.prevMonthLabel} Dues</span>
-                <div className="rounded-lg bg-amber-50 dark:bg-amber-950/30 p-2 text-amber-600 dark:text-amber-400 group-hover:scale-110 transition-transform">
+                <div className="rounded-lg bg-amber-50 dark:bg-amber-950/30 p-2 text-amber-600 dark:text-amber-400 group-hover:scale-[1.025] transition-transform">
                   <AlertTriangle className="h-5 w-5" />
                 </div>
               </div>
@@ -293,7 +293,7 @@ export default function Dashboard() {
                     for <span className="font-semibold text-amber-600 dark:text-amber-400">{data.stats.prevMonthDueStudentCount}</span> students with dues
                   </p>
                 </div>
-                
+
                 {/* Hover Details Button */}
                 <Link
                   href={`/partner-admin/portal/monthly-billing?billingMonth=${(() => {
@@ -313,7 +313,7 @@ export default function Dashboard() {
             <div className="relative overflow-hidden rounded-xl border bg-card p-5 shadow-sm transition-all hover:shadow-md hover:-translate-y-0.5 group">
               <div className="flex items-center justify-between">
                 <span className="text-sm font-semibold text-muted-foreground">Total Outstanding</span>
-                <div className="rounded-lg bg-rose-50 dark:bg-rose-950/30 p-2 text-rose-600 dark:text-rose-400 group-hover:scale-110 transition-transform">
+                <div className="rounded-lg bg-rose-50 dark:bg-rose-950/30 p-2 text-rose-600 dark:text-rose-400 group-hover:scale-[1.025] transition-transform">
                   <TrendingDown className="h-5 w-5" />
                 </div>
               </div>
@@ -329,7 +329,7 @@ export default function Dashboard() {
 
           {/* Charts and Details Section */}
           <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
-            
+
             {/* Collection Trend Chart Card */}
             <div className="lg:col-span-2 rounded-xl border bg-card p-5 shadow-sm space-y-6 flex flex-col justify-between">
               <div>
@@ -357,21 +357,21 @@ export default function Dashboard() {
                     const dueHeight = `${(t.due / maxTrendVal) * 100}%`
 
                     return (
-                      <div 
-                        key={idx} 
+                      <div
+                        key={idx}
                         className="flex flex-col items-center flex-1 group/bar h-full justify-end cursor-pointer"
                         onMouseEnter={() => setHoveredBar(t)}
                         onMouseLeave={() => setHoveredBar(null)}
                       >
                         <div className="flex items-end gap-1.5 h-full w-full justify-center max-w-[64px] px-1 hover:bg-muted/30 rounded-t-md transition-colors pt-4">
                           {/* Collected Bar */}
-                          <div 
-                            style={{ height: collectedHeight }} 
+                          <div
+                            style={{ height: collectedHeight }}
                             className="w-3 md:w-4 bg-emerald-500 dark:bg-emerald-600 rounded-t-sm transition-all duration-300 group-hover/bar:brightness-105 shadow-sm"
                           />
                           {/* Due Bar */}
-                          <div 
-                            style={{ height: dueHeight }} 
+                          <div
+                            style={{ height: dueHeight }}
                             className="w-3 md:w-4 bg-rose-400 dark:bg-rose-500 rounded-t-sm transition-all duration-300 group-hover/bar:brightness-105 shadow-sm"
                           />
                         </div>
@@ -383,7 +383,7 @@ export default function Dashboard() {
 
                   {/* Chart Tooltip */}
                   {hoveredBar && (
-                    <div className="absolute top-0 left-1/2 -translate-x-1/2 bg-gray-900 text-white dark:bg-gray-100 dark:text-gray-900 text-xs rounded-xl shadow-xl p-3.5 z-10 border border-gray-800 dark:border-gray-200 transition-all flex flex-col gap-1.5">
+                    <div className="absolute top-0 left-1/2 -translate-x-1/2 bg-gray-900 text-white dark:bg-gray-100 dark:text-gray-900 text-xs rounded-xl shadow-sm p-3.5 z-10 border border-gray-800 dark:border-gray-200 transition-all flex flex-col gap-1.5">
                       <div className="font-bold text-center pb-1.5 border-b border-gray-800 dark:border-gray-200">{hoveredBar.month} Overview</div>
                       <div className="flex justify-between gap-6">
                         <span className="text-gray-400 dark:text-gray-600">Collected:</span>
@@ -397,7 +397,7 @@ export default function Dashboard() {
                   )}
                 </div>
               </div>
-              
+
               <div className="text-xs text-muted-foreground pt-4 border-t dark:border-gray-800 flex items-center gap-1 justify-center">
                 <ArrowUpRight className="h-3.5 w-3.5 text-primary" />
                 Hover over bars to view precise monthly revenue and balance dues.
@@ -409,7 +409,7 @@ export default function Dashboard() {
               {/* Monthly Collections Health */}
               <div className="rounded-xl border bg-card p-5 shadow-sm space-y-4">
                 <h3 className="font-bold text-foreground text-base">Collections Health</h3>
-                
+
                 <div className="flex flex-col items-center justify-center py-4">
                   <div className="relative flex items-center justify-center">
                     {/* SVG Progress Ring */}
@@ -491,7 +491,7 @@ export default function Dashboard() {
       {/* Tab Contents: Recent Activity Log */}
       {activeTab === 'activity' && (
         <div className="grid grid-cols-1 gap-6 md:grid-cols-2 animate-in fade-in slide-in-from-bottom-2 duration-300">
-          
+
           {/* Recent Enrollments */}
           <div className="rounded-xl border bg-card p-5 shadow-sm flex flex-col justify-between">
             <div className="space-y-4">
@@ -527,10 +527,10 @@ export default function Dashboard() {
                 )}
               </div>
             </div>
-            
+
             <div className="pt-4 border-t dark:border-gray-800 mt-4">
-              <Link 
-                href="/partner-admin/portal/enrollments" 
+              <Link
+                href="/partner-admin/portal/enrollments"
                 className="text-xs text-primary font-bold hover:underline flex items-center gap-1 justify-center"
               >
                 View Full Roster & Enrollments <ArrowRight className="h-3.5 w-3.5" />
@@ -580,10 +580,10 @@ export default function Dashboard() {
                 )}
               </div>
             </div>
-            
+
             <div className="pt-4 border-t dark:border-gray-800 mt-4">
-              <Link 
-                href="/partner-admin/portal/enrollments" 
+              <Link
+                href="/partner-admin/portal/enrollments"
                 className="text-xs text-primary font-bold hover:underline flex items-center gap-1 justify-center"
               >
                 Review & Edit Pending Forms <ArrowRight className="h-3.5 w-3.5" />
@@ -598,12 +598,12 @@ export default function Dashboard() {
       {activeTab === 'actions' && (
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 animate-in fade-in slide-in-from-bottom-2 duration-300">
           {quickShortcuts.map((shortcut, idx) => (
-            <Link 
+            <Link
               key={idx}
-              href={shortcut.href} 
+              href={shortcut.href}
               className="flex items-start gap-4 p-5 rounded-xl border bg-card transition-all hover:bg-muted/30 hover:border-primary/30 group shadow-sm hover:shadow-md"
             >
-              <div className={`rounded-xl border p-3.5 ${shortcut.color} group-hover:scale-105 transition-transform`}>
+              <div className={`rounded-xl border p-3.5 ${shortcut.color} group-hover:scale-[1.025] transition-transform`}>
                 <shortcut.icon className="h-6 w-6" />
               </div>
               <div className="space-y-1.5 flex-1">

@@ -1,18 +1,8 @@
-html {
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  overflow-x: hidden;
-}
-
-p:not(:last-child) {
-  margin-bottom: 0.875rem;
-}
-
-ol,
-ul {
-  margin-left: 1rem;
-}
-
-ol {
-  list-style-type: disc;
-}
+/* Article rules stay inside the publication, leaving shared menus/forms intact. */
+.editorial-blog { -webkit-font-smoothing: antialiased; }
+.editorial-blog .editorial-copy p:not(:last-child),
+.editorial-blog .prose p:not(:last-child) { margin-bottom: 1.25rem; }
+.editorial-blog .editorial-copy :is(ol, ul),
+.editorial-blog .prose :is(ol, ul) { margin-left: 1.5rem; }
+.editorial-blog .editorial-copy ol { list-style-type: decimal; }
+.editorial-blog .editorial-copy ul { list-style-type: disc; }

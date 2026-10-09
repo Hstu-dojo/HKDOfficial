@@ -40,17 +40,17 @@ export default function OrgFooter({
     : [];
 
   return (
-    <footer className="relative bg-card border-t border-border">
+    <footer data-site-footer className="relative bg-card border-t border-border">
       {/* Marquee */}
       <div ref={marqueeRef} className="overflow-hidden border-b border-border py-3 md:py-8">
         <div
-          className={`flex whitespace-nowrap transition-opacity duration-700 ${visible ? "opacity-100" : "opacity-0"}`}
+          className={`flex break-words transition-opacity duration-700 ${visible ? "opacity-100" : "opacity-0"}`}
         >
           <div className="flex animate-marquee-footer shrink-0">
             {Array.from({ length: 4 }).map((_, i) => (
               <span
                 key={`a-${i}`}
-                className="font-display text-[10vw] md:text-[7vw] tracking-tighter uppercase footer-stroke-text"
+                className="font-display text-[clamp(2.5rem,6vw,5rem)] md:text-[clamp(2.5rem,6vw,5rem)] tracking-tighter uppercase footer-stroke-text"
               >
                 {marqueeText}
               </span>
@@ -60,7 +60,7 @@ export default function OrgFooter({
             {Array.from({ length: 4 }).map((_, i) => (
               <span
                 key={`b-${i}`}
-                className="font-display text-[10vw] md:text-[7vw] tracking-tighter uppercase footer-stroke-text"
+                className="font-display text-[clamp(2.5rem,6vw,5rem)] md:text-[clamp(2.5rem,6vw,5rem)] tracking-tighter uppercase footer-stroke-text"
               >
                 {marqueeText}
               </span>
@@ -74,7 +74,7 @@ export default function OrgFooter({
           {/* Brand */}
           <div className="col-span-2 md:col-span-1">
             <div className="flex items-center gap-2 mb-3 md:mb-6">
-              <div className="w-2.5 h-2.5 md:w-3 md:h-3 bg-accent" />
+              <div className="w-2.5 h-2.5 md:w-3 md:h-3 bg-primary" />
               <span className="font-body text-[10px] md:text-xs tracking-[0.25em] md:tracking-[0.3em] text-foreground uppercase">
                 {name}
               </span>
@@ -88,13 +88,13 @@ export default function OrgFooter({
 
           {/* Navigate */}
           <div>
-            <span className="font-body text-[9px] md:text-[10px] text-accent tracking-[0.25em] md:tracking-[0.3em] uppercase block mb-2.5 md:mb-4">
+            <span className="font-body text-[9px] md:text-[10px] text-primary tracking-[0.25em] md:tracking-[0.3em] uppercase block mb-2.5 md:mb-4">
               Navigate
             </span>
             <nav className="flex flex-col gap-2 md:gap-3">
               <Link
                 href="/"
-                className="font-body text-[10px] md:text-xs text-muted-foreground hover:text-accent transition-colors tracking-[0.08em] md:tracking-[0.1em] py-0.5 min-h-[32px] flex items-center"
+                className="font-body text-[10px] md:text-xs text-muted-foreground hover:text-primary transition-colors tracking-[0.08em] md:tracking-[0.1em] py-0.5 min-h-[32px] flex items-center"
               >
                 Home
               </Link>
@@ -102,7 +102,7 @@ export default function OrgFooter({
                 <a
                   key={link}
                   href={`#${link.toLowerCase()}`}
-                  className="font-body text-[10px] md:text-xs text-muted-foreground hover:text-accent transition-colors tracking-[0.08em] md:tracking-[0.1em] py-0.5 min-h-[32px] flex items-center"
+                  className="font-body text-[10px] md:text-xs text-muted-foreground hover:text-primary transition-colors tracking-[0.08em] md:tracking-[0.1em] py-0.5 min-h-[32px] flex items-center"
                 >
                   {link}
                 </a>
@@ -112,7 +112,7 @@ export default function OrgFooter({
 
           {/* Contact */}
           <div>
-            <span className="font-body text-[9px] md:text-[10px] text-accent tracking-[0.25em] md:tracking-[0.3em] uppercase block mb-2.5 md:mb-4">
+            <span className="font-body text-[9px] md:text-[10px] text-primary tracking-[0.25em] md:tracking-[0.3em] uppercase block mb-2.5 md:mb-4">
               Contact
             </span>
             <div className="flex flex-col gap-1.5 md:gap-3 font-body text-[10px] md:text-xs text-muted-foreground">
@@ -121,7 +121,7 @@ export default function OrgFooter({
               {email && (
                 <a
                   href={`mailto:${email}`}
-                  className="hover:text-accent transition-colors mt-1 break-all"
+                  className="hover:text-primary transition-colors mt-1 break-all"
                 >
                   {email}
                 </a>
@@ -131,7 +131,7 @@ export default function OrgFooter({
 
           {/* Social / Follow */}
           <div>
-            <span className="font-body text-[9px] md:text-[10px] text-accent tracking-[0.25em] md:tracking-[0.3em] uppercase block mb-2.5 md:mb-4">
+            <span className="font-body text-[9px] md:text-[10px] text-primary tracking-[0.25em] md:tracking-[0.3em] uppercase block mb-2.5 md:mb-4">
               Follow
             </span>
             <div className="flex flex-col gap-1.5 md:gap-3 font-body text-[10px] md:text-xs text-muted-foreground">
@@ -142,7 +142,7 @@ export default function OrgFooter({
                     href={url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="hover:text-accent transition-colors capitalize tracking-[0.1em] py-0.5 min-h-[32px] flex items-center"
+                    className="hover:text-primary transition-colors capitalize tracking-[0.1em] py-0.5 min-h-[32px] flex items-center"
                   >
                     {platform}
                   </a>
@@ -167,7 +167,7 @@ export default function OrgFooter({
         </div>
       </div>
 
-      <div className="absolute bottom-0 left-0 w-5 h-5 md:w-8 md:h-8 bg-accent" aria-hidden="true" />
+      <div className="absolute bottom-0 left-0 w-5 h-5 md:w-8 md:h-8 bg-primary" aria-hidden="true" />
     </footer>
   );
 }

@@ -29,7 +29,7 @@ function Card({
 }) {
   return (
     <div
-      className={`bg-white dark:bg-slate-800/60 rounded-2xl border border-slate-100 dark:border-slate-700/50 shadow-sm overflow-hidden ${className}`}
+      className={`bg-white dark:bg-card/60 rounded-2xl border border-border dark:border-border/50 shadow-sm overflow-hidden ${className}`}
     >
       {children}
     </div>
@@ -52,12 +52,12 @@ export default function APKDownloadPage() {
       try {
         const controller = new AbortController();
         const timeoutId = setTimeout(() => controller.abort(), 5000);
-        
+
         const response = await fetch('https://hstukarate.vercel.app/apk-download', {
           cache: 'no-store',
           signal: controller.signal
         });
-        
+
         clearTimeout(timeoutId);
         if (!response.ok) throw new Error('FETCH_FAILED');
         data = await response.json();
@@ -72,7 +72,7 @@ export default function APKDownloadPage() {
           createdAt: new Date().toISOString()
         };
       }
-      
+
       setApkInfo(data);
       setError(null);
       setLoading(false);
@@ -85,13 +85,13 @@ export default function APKDownloadPage() {
     <div className="space-y-8 max-w-4xl mx-auto pb-12">
       {/* Header */}
       <div>
-        <h1 className="text-2xl font-bold flex items-center gap-3 text-slate-900 dark:text-slate-100">
+        <h1 className="text-2xl font-bold flex items-center gap-3 text-foreground dark:text-foreground">
           <div className="p-2 rounded-xl bg-primary/10">
             <DevicePhoneMobileIcon className="h-6 w-6 text-primary" />
           </div>
           {t('apkDownload.title')}
         </h1>
-        <p className="text-slate-500 dark:text-slate-400 mt-2">
+        <p className="text-muted-foreground dark:text-muted-foreground mt-2">
           {t('apkDownload.subtitle')}
         </p>
       </div>
@@ -121,15 +121,15 @@ export default function APKDownloadPage() {
                       <SparklesIcon className="h-8 w-8 text-primary" />
                     </div>
                     <div>
-                      <h2 className="text-xl font-bold text-slate-900 dark:text-white">
+                      <h2 className="text-xl font-bold text-foreground dark:text-white">
                         Kaizen Karate App
                       </h2>
-                      <p className="text-sm font-medium text-slate-500">
+                      <p className="text-sm font-medium text-muted-foreground">
                         {t('apkDownload.version', { version: apkInfo.version })}
                       </p>
                     </div>
                   </div>
-                  
+
                   <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-semibold bg-emerald-100 text-emerald-700 dark:bg-emerald-500/10 dark:text-emerald-400 border border-emerald-200/50">
                     <CheckCircleIcon className="h-3.5 w-3.5" />
                     {t('apkDownload.latestRelease')}
@@ -146,17 +146,17 @@ export default function APKDownloadPage() {
                     <ArrowDownTrayIcon className="h-5 w-5" />
                     {t('apkDownload.downloadApk')}
                   </a>
-                  
+
                   <a
                     href="/api/auth/portal-sso"
                     target="_blank"
                     rel="noreferrer"
-                    className="flex-1 flex items-center justify-center gap-3 bg-white hover:bg-slate-50 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-900 dark:text-white border-2 border-slate-200 dark:border-slate-700 py-3.5 px-6 rounded-xl font-semibold transition-all active:scale-[0.98] shadow-sm"
+                    className="flex-1 flex items-center justify-center gap-3 bg-white hover:bg-slate-50 dark:bg-card dark:hover:bg-slate-700 text-foreground dark:text-white border-2 border-border dark:border-border py-3.5 px-6 rounded-xl font-semibold transition-all active:scale-[0.98] shadow-sm"
                   >
                     <GlobeAltIcon className="h-5 w-5 text-primary" />
                     <div className="flex flex-col items-start">
                       <span>Open Web Portal</span>
-                      <span className="text-[10px] font-normal text-slate-500 dark:text-slate-400">portal.hstuma.com</span>
+                      <span className="text-[10px] font-normal text-muted-foreground dark:text-muted-foreground">portal.hstuma.com</span>
                     </div>
                   </a>
                 </div>
@@ -168,14 +168,14 @@ export default function APKDownloadPage() {
 
             <Card>
               <div className="p-6">
-                <h3 className="text-sm font-bold text-slate-900 dark:text-white uppercase tracking-wider mb-4">
+                <h3 className="text-sm font-bold text-foreground dark:text-white uppercase tracking-wider mb-4">
                   {t('apkDownload.releaseNotes')}
                 </h3>
-                <div className="bg-slate-50 dark:bg-slate-900/50 rounded-lg p-4 border border-slate-100 dark:border-slate-800/50 whitespace-pre-wrap">
-                  <p className="text-sm text-slate-600 dark:text-slate-300">
+                <div className="bg-muted dark:bg-background/50 rounded-lg p-4 border border-border dark:border-border/50 whitespace-pre-wrap">
+                  <p className="text-sm text-muted-foreground dark:text-muted-foreground">
                     {apkInfo.releaseNotes || t('apkDownload.noReleaseNotes')}
                   </p>
-                  <div className="mt-4 pt-4 border-t border-slate-200 dark:border-slate-700/50 text-xs text-slate-500">
+                  <div className="mt-4 pt-4 border-t border-border dark:border-border/50 text-xs text-muted-foreground">
                     {t('apkDownload.releasedOn', {
                       date: new Date(apkInfo.createdAt).toLocaleDateString(intlLocale, {
                         year: 'numeric',
@@ -193,30 +193,30 @@ export default function APKDownloadPage() {
           <div className="md:col-span-2 space-y-6">
             <Card>
               <div className="p-6">
-                <h3 className="text-sm font-bold text-slate-900 dark:text-white uppercase tracking-wider mb-4">
+                <h3 className="text-sm font-bold text-foreground dark:text-white uppercase tracking-wider mb-4">
                   {t('apkDownload.installationGuide')}
                 </h3>
-                <ol className="space-y-4 text-sm text-slate-600 dark:text-slate-300">
+                <ol className="space-y-4 text-sm text-muted-foreground dark:text-muted-foreground">
                   <li className="flex gap-3">
-                    <span className="flex-shrink-0 flex items-center justify-center h-6 w-6 rounded-full bg-slate-100 dark:bg-slate-800 font-semibold text-xs text-slate-700 dark:text-slate-200">
+                    <span className="flex-shrink-0 flex items-center justify-center h-6 w-6 rounded-full bg-muted dark:bg-card font-semibold text-xs text-foreground dark:text-foreground">
                       1
                     </span>
                     <span>{t('apkDownload.steps.download')}</span>
                   </li>
                   <li className="flex gap-3">
-                    <span className="flex-shrink-0 flex items-center justify-center h-6 w-6 rounded-full bg-slate-100 dark:bg-slate-800 font-semibold text-xs text-slate-700 dark:text-slate-200">
+                    <span className="flex-shrink-0 flex items-center justify-center h-6 w-6 rounded-full bg-muted dark:bg-card font-semibold text-xs text-foreground dark:text-foreground">
                       2
                     </span>
                     <span>{t('apkDownload.steps.enableUnknownSources')}</span>
                   </li>
                   <li className="flex gap-3">
-                    <span className="flex-shrink-0 flex items-center justify-center h-6 w-6 rounded-full bg-slate-100 dark:bg-slate-800 font-semibold text-xs text-slate-700 dark:text-slate-200">
+                    <span className="flex-shrink-0 flex items-center justify-center h-6 w-6 rounded-full bg-muted dark:bg-card font-semibold text-xs text-foreground dark:text-foreground">
                       3
                     </span>
                     <span>{t('apkDownload.steps.install')}</span>
                   </li>
                   <li className="flex gap-3">
-                    <span className="flex-shrink-0 flex items-center justify-center h-6 w-6 rounded-full bg-slate-100 dark:bg-slate-800 font-semibold text-xs text-slate-700 dark:text-slate-200">
+                    <span className="flex-shrink-0 flex items-center justify-center h-6 w-6 rounded-full bg-muted dark:bg-card font-semibold text-xs text-foreground dark:text-foreground">
                       4
                     </span>
                     <span>{t('apkDownload.steps.login')}</span>

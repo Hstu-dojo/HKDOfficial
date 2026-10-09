@@ -423,7 +423,7 @@ export default function ProgramCertificateManagement() {
 
   if (!programId) {
     return (
-      <div className="text-center py-12 text-gray-500 dark:text-gray-400">
+      <div className="text-center py-12 text-muted-foreground dark:text-gray-400">
         No program selected. Go back to Programs and click &quot;Certificates&quot;.
       </div>
     );
@@ -442,10 +442,10 @@ export default function ProgramCertificateManagement() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
+          <h1 className="text-2xl font-bold text-foreground dark:text-gray-100">
             Certificates — {programTitle || 'Program'}
           </h1>
-          <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
+          <p className="mt-1 text-sm text-muted-foreground dark:text-gray-400">
             Manage certificate eligibility and issuance for this program.
           </p>
         </div>
@@ -508,7 +508,7 @@ export default function ProgramCertificateManagement() {
       )}
 
       {/* Workflow Guide */}
-      <div className="bg-white dark:bg-gray-800 rounded-lg border shadow-sm p-4">
+      <div className="bg-white dark:bg-card rounded-lg border shadow-sm p-4">
         <div className="flex items-center justify-between">
           {[
             { step: 0, label: 'Register', desc: 'Participants register' },
@@ -523,12 +523,12 @@ export default function ProgramCertificateManagement() {
                     ? 'bg-green-500 border-green-500 text-white'
                     : workflowStage === step
                       ? 'bg-blue-500 border-blue-500 text-white'
-                      : 'bg-gray-100 dark:bg-gray-700 border-gray-300 dark:border-gray-600 text-gray-400 dark:text-gray-500'
+                      : 'bg-muted dark:bg-gray-700 border-gray-300 dark:border-gray-600 text-gray-400 dark:text-gray-500'
                 }`}>
                   {workflowStage > step ? <CheckCircleIcon className="h-5 w-5" /> : step + 1}
                 </div>
                 <span className={`mt-1 text-xs font-medium ${
-                  workflowStage >= step ? 'text-gray-900 dark:text-gray-100' : 'text-gray-400 dark:text-gray-500'
+                  workflowStage >= step ? 'text-foreground dark:text-gray-100' : 'text-gray-400 dark:text-gray-500'
                 }`}>{label}</span>
                 <span className="text-[10px] text-gray-400 dark:text-gray-500 hidden sm:block">{desc}</span>
               </div>
@@ -570,7 +570,7 @@ export default function ProgramCertificateManagement() {
                     <span className={`px-1.5 py-0.5 rounded text-[10px] ${
                       p.status === 'approved' || p.status === 'payment_verified'
                         ? 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300'
-                        : 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400'
+                        : 'bg-muted dark:bg-gray-700 text-muted-foreground dark:text-gray-400'
                     }`}>
                       {p.status.replace('_', ' ')}
                     </span>
@@ -584,10 +584,10 @@ export default function ProgramCertificateManagement() {
 
       {/* Empty state: no participants at all */}
       {participants.length === 0 && !fetchError && (
-        <div className="bg-white dark:bg-gray-800 rounded-lg border shadow-sm p-8 text-center">
+        <div className="bg-white dark:bg-card rounded-lg border shadow-sm p-8 text-center">
           <UserGroupIcon className="h-12 w-12 text-gray-300 dark:text-gray-600 mx-auto mb-3" />
-          <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2">No Registrations Found</h3>
-          <p className="text-sm text-gray-500 dark:text-gray-400 max-w-md mx-auto">
+          <h3 className="text-lg font-semibold text-foreground dark:text-gray-100 mb-2">No Registrations Found</h3>
+          <p className="text-sm text-muted-foreground dark:text-gray-400 max-w-md mx-auto">
             No one has registered for this program yet. Participants must register and complete payment before certificates can be issued.
           </p>
           <Link
@@ -601,12 +601,12 @@ export default function ProgramCertificateManagement() {
 
       {/* Section: Mark Eligible — always visible when there are participants */}
       {canCreate && participants.length > 0 && (
-        <div className="bg-white dark:bg-gray-800 rounded-lg border shadow-sm p-5 space-y-4">
+        <div className="bg-white dark:bg-card rounded-lg border shadow-sm p-5 space-y-4">
           <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3">
-            <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+            <h2 className="text-lg font-semibold text-foreground dark:text-gray-100">
               Mark Eligible
               {uncertified.length > 0 && (
-                <span className="ml-2 text-sm font-normal text-gray-500 dark:text-gray-400">
+                <span className="ml-2 text-sm font-normal text-muted-foreground dark:text-gray-400">
                   ({uncertified.length} without certificate)
                 </span>
               )}
@@ -649,13 +649,13 @@ export default function ProgramCertificateManagement() {
                     }}
                     className="mr-3 h-4 w-4 rounded border-gray-300"
                   />
-                  <span className="text-sm text-gray-900 dark:text-gray-100 flex-1">
+                  <span className="text-sm text-foreground dark:text-gray-100 flex-1">
                     {p.profileName || p.profileNameBangla || 'Unknown'}
                     {p.memberNumber && (
                       <span className="ml-2 text-xs text-gray-400 dark:text-gray-500 font-mono">#{p.memberNumber}</span>
                     )}
                     {programType === 'BELT_TEST' && p.newRank && (
-                      <span className="ml-2 text-xs text-gray-500 dark:text-gray-400">
+                      <span className="ml-2 text-xs text-muted-foreground dark:text-gray-400">
                         • {formatBeltRank(p.newRank)}
                       </span>
                     )}
@@ -663,7 +663,7 @@ export default function ProgramCertificateManagement() {
                   <span className={`text-xs px-2 py-0.5 rounded-full ${
                     p.status === 'approved' || p.status === 'payment_verified'
                       ? 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300'
-                      : 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400'
+                      : 'bg-muted dark:bg-gray-700 text-muted-foreground dark:text-gray-400'
                   }`}>
                     {p.status.replace('_', ' ')}
                   </span>
@@ -671,9 +671,9 @@ export default function ProgramCertificateManagement() {
               ))}
             </div>
           ) : (
-            <div className="flex items-center gap-3 p-4 rounded-lg bg-gray-50 dark:bg-gray-900/30">
+            <div className="flex items-center gap-3 p-4 rounded-lg bg-muted dark:bg-background/30">
               <InformationCircleIcon className="h-5 w-5 text-gray-400 flex-shrink-0" />
-              <p className="text-sm text-gray-500 dark:text-gray-400">
+              <p className="text-sm text-muted-foreground dark:text-gray-400">
                 {certificates.length > 0
                   ? 'All participants with profiles already have certificates (eligible, issued, or revoked).'
                   : noProfileParticipants.length > 0 && noProfileParticipants.length === participants.length
@@ -739,18 +739,18 @@ export default function ProgramCertificateManagement() {
       {showIssueModal && (
         <div className="fixed inset-0 z-50 bg-black/50 overflow-y-auto">
           <div className="min-h-full flex items-start sm:items-center justify-center p-4">
-            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl w-full max-w-lg max-h-[calc(100dvh-2rem)] overflow-y-auto p-6 space-y-4">
-            <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+            <div className="bg-white dark:bg-card rounded-lg shadow-sm w-full max-w-lg max-h-[calc(100dvh-2rem)] overflow-y-auto p-6 space-y-4">
+            <h2 className="text-lg font-semibold text-foreground dark:text-gray-100">
               Issue Certificates
             </h2>
-            <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">
+            <p className="text-sm text-muted-foreground dark:text-gray-400 mb-4">
               {selectedCertIds.size} certificate(s) will be issued. Signatures and templates will be automatically applied according to the selected Program Type&apos;s configuration.
             </p>
 
             <div className="flex justify-end gap-3 pt-4 border-t">
               <button
                 onClick={() => setShowIssueModal(false)}
-                className="px-4 py-2 text-sm text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-700 rounded-md hover:bg-gray-200 dark:hover:bg-gray-600"
+                className="px-4 py-2 text-sm text-foreground dark:text-gray-300 bg-muted dark:bg-gray-700 rounded-md hover:bg-gray-200 dark:hover:bg-gray-600"
               >
                 Cancel
               </button>
@@ -771,22 +771,22 @@ export default function ProgramCertificateManagement() {
       {revoking && (
         <div className="fixed inset-0 z-50 bg-black/50 overflow-y-auto">
           <div className="min-h-full flex items-start sm:items-center justify-center p-4">
-            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl w-full max-w-sm max-h-[calc(100dvh-2rem)] overflow-y-auto p-6 space-y-4">
+            <div className="bg-white dark:bg-card rounded-lg shadow-sm w-full max-w-sm max-h-[calc(100dvh-2rem)] overflow-y-auto p-6 space-y-4">
             <h2 className="text-lg font-semibold text-red-600">Revoke Certificate</h2>
-            <p className="text-sm text-gray-500 dark:text-gray-400">
+            <p className="text-sm text-muted-foreground dark:text-gray-400">
               This action cannot be easily undone. Please provide a reason:
             </p>
             <textarea
               value={revokeReason}
               onChange={(e) => setRevokeReason(e.target.value)}
               rows={3}
-              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 outline-none"
+              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-foreground dark:text-gray-100 outline-none"
               placeholder="Reason for revocation..."
             />
             <div className="flex justify-end gap-3">
               <button
                 onClick={() => { setRevoking(null); setRevokeReason(''); }}
-                className="px-4 py-2 text-sm text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-700 rounded-md"
+                className="px-4 py-2 text-sm text-foreground dark:text-gray-300 bg-muted dark:bg-gray-700 rounded-md"
               >
                 Cancel
               </button>
@@ -807,23 +807,23 @@ export default function ProgramCertificateManagement() {
       {showUpdateSigModal && (
         <div className="fixed inset-0 z-50 bg-black/50 overflow-y-auto">
           <div className="min-h-full flex items-start sm:items-center justify-center p-4">
-            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl w-full max-w-lg max-h-[calc(100dvh-2rem)] overflow-y-auto p-6 space-y-4">
-            <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+            <div className="bg-white dark:bg-card rounded-lg shadow-sm w-full max-w-lg max-h-[calc(100dvh-2rem)] overflow-y-auto p-6 space-y-4">
+            <h2 className="text-lg font-semibold text-foreground dark:text-gray-100">
               Update Signatures
             </h2>
-            <p className="text-sm text-gray-500 dark:text-gray-400">
+            <p className="text-sm text-muted-foreground dark:text-gray-400">
               Update signatures for {updateSigCertIds.length} certificate(s). Certificate IDs and issue dates will remain unchanged.
             </p>
 
             {/* Trainer Signature */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+              <label className="block text-sm font-medium text-foreground dark:text-gray-300 mb-1">
                 Trainer Signature <span className="text-xs font-normal text-gray-400">(optional)</span>
               </label>
               <select
                 value={updateTrainerSigId}
                 onChange={(e) => setUpdateTrainerSigId(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 outline-none"
+                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-foreground dark:text-gray-100 outline-none"
               >
                 <option value="">— No trainer signature —</option>
                 {trainerSigs.map((s) => (
@@ -834,13 +834,13 @@ export default function ProgramCertificateManagement() {
 
             {/* Coordinator Signature */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+              <label className="block text-sm font-medium text-foreground dark:text-gray-300 mb-1">
                 Coordinator Signature <span className="text-xs font-normal text-gray-400">(optional)</span>
               </label>
               <select
                 value={updateCoordinatorSigId}
                 onChange={(e) => setUpdateCoordinatorSigId(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 outline-none"
+                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-foreground dark:text-gray-100 outline-none"
               >
                 <option value="">— No coordinator signature —</option>
                 {coordinatorSigs.map((s) => (
@@ -852,7 +852,7 @@ export default function ProgramCertificateManagement() {
             <div className="flex justify-end gap-3 pt-4 border-t">
               <button
                 onClick={() => setShowUpdateSigModal(false)}
-                className="px-4 py-2 text-sm text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-700 rounded-md hover:bg-gray-200 dark:hover:bg-gray-600"
+                className="px-4 py-2 text-sm text-foreground dark:text-gray-300 bg-muted dark:bg-gray-700 rounded-md hover:bg-gray-200 dark:hover:bg-gray-600"
               >
                 Cancel
               </button>
@@ -873,11 +873,11 @@ export default function ProgramCertificateManagement() {
       {showManualCertForm && (
         <div className="fixed inset-0 z-50 bg-black/50 overflow-y-auto">
           <div className="min-h-full flex items-start sm:items-center justify-center p-4">
-            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl w-full max-w-lg max-h-[calc(100dvh-2rem)] overflow-y-auto p-6 space-y-4">
-            <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+            <div className="bg-white dark:bg-card rounded-lg shadow-sm w-full max-w-lg max-h-[calc(100dvh-2rem)] overflow-y-auto p-6 space-y-4">
+            <h2 className="text-lg font-semibold text-foreground dark:text-gray-100">
               Create Manual Certificate
             </h2>
-            <p className="text-sm text-gray-500 dark:text-gray-400">
+            <p className="text-sm text-muted-foreground dark:text-gray-400">
               Create a certificate for someone not registered in the system. You can attach a profile later.
               {programEndDate && (
                 <span className="block mt-1 text-xs">
@@ -888,7 +888,7 @@ export default function ProgramCertificateManagement() {
 
             {/* Participant Name */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+              <label className="block text-sm font-medium text-foreground dark:text-gray-300 mb-1">
                 Participant Name <span className="text-red-500">*</span>
               </label>
               <input
@@ -896,7 +896,7 @@ export default function ProgramCertificateManagement() {
                 value={manualName}
                 onChange={(e) => setManualName(e.target.value)}
                 placeholder="Full name of the participant"
-                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 outline-none"
+                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-foreground dark:text-gray-100 outline-none"
               />
             </div>
 
@@ -905,14 +905,14 @@ export default function ProgramCertificateManagement() {
               .filter((mapping: any) => mapping.kind === 'dynamic' && mapping.dynamicSource !== 'participant_name' && mapping.dynamicSource !== 'certificate_number')
               .map((mapping: any, idx: number) => (
                 <div key={mapping.dynamicSource + idx}>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1 capitalize">
+                  <label className="block text-sm font-medium text-foreground dark:text-gray-300 mb-1 capitalize">
                     {mapping.dynamicSource.replace(/_/g, ' ')}
                   </label>
                   {mapping.dynamicSource === 'belt_test_rank' ? (
                     <select
                       value={manualMetadata[mapping.dynamicSource] || ''}
                       onChange={(e) => setManualMetadata({ ...manualMetadata, [mapping.dynamicSource]: e.target.value })}
-                      className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 outline-none"
+                      className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-foreground dark:text-gray-100 outline-none"
                     >
                       <option value="">Select Belt Rank</option>
                       {BELT_RANK_OPTIONS.map((option) => (
@@ -925,27 +925,27 @@ export default function ProgramCertificateManagement() {
                       value={manualMetadata[mapping.dynamicSource] || ''}
                       onChange={(e) => setManualMetadata({ ...manualMetadata, [mapping.dynamicSource]: e.target.value })}
                       placeholder={`Enter ${mapping.dynamicSource.replace(/_/g, ' ')}`}
-                      className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 outline-none"
+                      className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-foreground dark:text-gray-100 outline-none"
                     />
                   )}
                 </div>
               ))}
 
             {/* General Signature Note */}
-            <p className="text-xs text-gray-500 dark:text-gray-400">
-              Signatures assigned here will override default program signatures. 
+            <p className="text-xs text-muted-foreground dark:text-gray-400">
+              Signatures assigned here will override default program signatures.
               Leave empty to adhere to Program Type configuration (if any).
             </p>
 
             {/* Trainer Signature */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+              <label className="block text-sm font-medium text-foreground dark:text-gray-300 mb-1">
                 Trainer Signature <span className="text-xs font-normal text-gray-400">(optional)</span>
               </label>
               <select
                 value={manualTrainerSigId}
                 onChange={(e) => setManualTrainerSigId(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 outline-none"
+                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-foreground dark:text-gray-100 outline-none"
               >
                 <option value="">— No trainer signature —</option>
                 {trainerSigs.map((s) => (
@@ -956,13 +956,13 @@ export default function ProgramCertificateManagement() {
 
             {/* Coordinator Signature */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+              <label className="block text-sm font-medium text-foreground dark:text-gray-300 mb-1">
                 Coordinator Signature <span className="text-xs font-normal text-gray-400">(optional)</span>
               </label>
               <select
                 value={manualCoordinatorSigId}
                 onChange={(e) => setManualCoordinatorSigId(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 outline-none"
+                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-foreground dark:text-gray-100 outline-none"
               >
                 <option value="">— No coordinator signature —</option>
                 {coordinatorSigs.map((s) => (
@@ -974,7 +974,7 @@ export default function ProgramCertificateManagement() {
             <div className="flex justify-end gap-3 pt-4 border-t">
               <button
                 onClick={() => { setShowManualCertForm(false); setManualName(''); }}
-                className="px-4 py-2 text-sm text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-700 rounded-md hover:bg-gray-200 dark:hover:bg-gray-600"
+                className="px-4 py-2 text-sm text-foreground dark:text-gray-300 bg-muted dark:bg-gray-700 rounded-md hover:bg-gray-200 dark:hover:bg-gray-600"
               >
                 Cancel
               </button>
@@ -995,11 +995,11 @@ export default function ProgramCertificateManagement() {
       {attachCertId && (
         <div className="fixed inset-0 z-50 bg-black/50 overflow-y-auto">
           <div className="min-h-full flex items-start sm:items-center justify-center p-4">
-            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl w-full max-w-lg max-h-[calc(100dvh-2rem)] overflow-y-auto p-6 space-y-4">
-            <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+            <div className="bg-white dark:bg-card rounded-lg shadow-sm w-full max-w-lg max-h-[calc(100dvh-2rem)] overflow-y-auto p-6 space-y-4">
+            <h2 className="text-lg font-semibold text-foreground dark:text-gray-100">
               Attach Member Profile
             </h2>
-            <p className="text-sm text-gray-500 dark:text-gray-400">
+            <p className="text-sm text-muted-foreground dark:text-gray-400">
               Search for a member profile to link to this certificate.
             </p>
 
@@ -1013,7 +1013,7 @@ export default function ProgramCertificateManagement() {
                   onChange={(e) => setProfileSearchQuery(e.target.value)}
                   onKeyDown={(e) => e.key === 'Enter' && handleSearchProfiles()}
                   placeholder="Search by name or member number..."
-                  className="w-full pl-9 pr-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 outline-none text-sm"
+                  className="w-full pl-9 pr-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-foreground dark:text-gray-100 outline-none text-sm"
                 />
               </div>
               <button
@@ -1034,7 +1034,7 @@ export default function ProgramCertificateManagement() {
                     className="flex items-center justify-between px-3 py-2 hover:bg-gray-50 dark:hover:bg-gray-700"
                   >
                     <div>
-                      <span className="text-sm text-gray-900 dark:text-gray-100">
+                      <span className="text-sm text-foreground dark:text-gray-100">
                         {p.fullNameEnglish || p.fullNameBangla || 'Unknown'}
                       </span>
                       <span className="ml-2 text-xs text-gray-400 font-mono">#{p.memberNumber}</span>
@@ -1057,7 +1057,7 @@ export default function ProgramCertificateManagement() {
             <div className="flex justify-end pt-4 border-t">
               <button
                 onClick={() => { setAttachCertId(null); setProfileSearchQuery(''); setProfileSearchResults([]); }}
-                className="px-4 py-2 text-sm text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-700 rounded-md hover:bg-gray-200 dark:hover:bg-gray-600"
+                className="px-4 py-2 text-sm text-foreground dark:text-gray-300 bg-muted dark:bg-gray-700 rounded-md hover:bg-gray-200 dark:hover:bg-gray-600"
               >
                 Close
               </button>
@@ -1142,29 +1142,29 @@ function CertTable({
   const formatBeltRankLocal = (rank?: string | null) => formatBeltRankLabel(rank, '—');
 
   return (
-    <div className="bg-white dark:bg-gray-800 rounded-lg border shadow-sm overflow-hidden">
-      <div className="px-5 py-3 border-b bg-gray-50 dark:bg-gray-900/50 flex items-center justify-between">
-        <h3 className="text-sm font-semibold text-gray-700 dark:text-gray-300">{title}</h3>
+    <div className="bg-white dark:bg-card rounded-lg border shadow-sm overflow-hidden">
+      <div className="px-5 py-3 border-b bg-muted dark:bg-background/50 flex items-center justify-between">
+        <h3 className="text-sm font-semibold text-foreground dark:text-gray-300">{title}</h3>
         {headerAction && <div>{headerAction}</div>}
       </div>
       <div className="overflow-x-auto">
         <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-          <thead className="bg-gray-50 dark:bg-gray-900/30">
+          <thead className="bg-muted dark:bg-background/30">
             <tr>
-              <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Cert #</th>
-              <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Participant</th>
-              <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Member #</th>
+              <th className="px-4 py-2 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">Cert #</th>
+              <th className="px-4 py-2 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">Participant</th>
+              <th className="px-4 py-2 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">Member #</th>
               {showBeltTestColumn && (
-                <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Belt Test</th>
+                <th className="px-4 py-2 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">Belt Test</th>
               )}
-              <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+              <th className="px-4 py-2 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">Status</th>
               {showSigColumns && (
                 <>
-                  <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Trainer</th>
-                  <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Coordinator</th>
+                  <th className="px-4 py-2 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">Trainer</th>
+                  <th className="px-4 py-2 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">Coordinator</th>
                 </>
               )}
-              <th className="px-4 py-2 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+              <th className="px-4 py-2 text-right text-xs font-medium text-muted-foreground uppercase tracking-wider">Actions</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
@@ -1174,8 +1174,8 @@ function CertTable({
 
               return (
                 <tr key={c.id}>
-                  <td className="px-4 py-2 text-xs font-mono text-gray-600 dark:text-gray-400">{c.certificateNumber}</td>
-                  <td className="px-4 py-2 text-sm text-gray-900 dark:text-gray-100">
+                  <td className="px-4 py-2 text-xs font-mono text-muted-foreground dark:text-gray-400">{c.certificateNumber}</td>
+                  <td className="px-4 py-2 text-sm text-foreground dark:text-gray-100">
                     {displayName}
                     {isManual && (
                       <span className="ml-2 inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300">
@@ -1183,9 +1183,9 @@ function CertTable({
                       </span>
                     )}
                   </td>
-                  <td className="px-4 py-2 text-xs text-gray-500 dark:text-gray-400">{c.memberNumber || '—'}</td>
+                  <td className="px-4 py-2 text-xs text-muted-foreground dark:text-gray-400">{c.memberNumber || '—'}</td>
                   {showBeltTestColumn && (
-                    <td className="px-4 py-2 text-xs text-gray-600 dark:text-gray-400">
+                    <td className="px-4 py-2 text-xs text-muted-foreground dark:text-gray-400">
                       {formatBeltRankLocal(c.beltTestNewRank)}
                     </td>
                   )}
@@ -1194,10 +1194,10 @@ function CertTable({
                   </td>
                   {showSigColumns && (
                     <>
-                      <td className="px-4 py-2 text-xs text-gray-600 dark:text-gray-400">
+                      <td className="px-4 py-2 text-xs text-muted-foreground dark:text-gray-400">
                         {sigName(c.trainerSignatureId) || <span className="text-gray-400 italic">—</span>}
                       </td>
-                      <td className="px-4 py-2 text-xs text-gray-600 dark:text-gray-400">
+                      <td className="px-4 py-2 text-xs text-muted-foreground dark:text-gray-400">
                         {sigName(c.coordinatorSignatureId) || <span className="text-gray-400 italic">—</span>}
                       </td>
                     </>
@@ -1269,7 +1269,7 @@ function StatusBadge({ status }: { status: string }) {
     REVOKED: 'bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-300',
   };
   return (
-    <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${styles[status] ?? 'bg-gray-100 text-gray-600'}`}>
+    <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${styles[status] ?? 'bg-muted text-muted-foreground'}`}>
       {status}
     </span>
   );

@@ -12,18 +12,18 @@ export default function AuthDebugPage() {
   return (
     <div className="container mx-auto px-4 py-8">
       <h1 className="text-2xl font-bold mb-6">{t('title')}</h1>
-      
+
       <div className="space-y-6">
         <div className="border p-4 rounded">
           <h2 className="font-bold mb-2">{t('useAuthRaw')}</h2>
-          <pre className="text-xs bg-gray-100 p-2 rounded overflow-auto">
+          <pre className="text-xs bg-muted p-2 rounded overflow-auto">
             {JSON.stringify({ user, authSession, loading }, null, 2)}
           </pre>
         </div>
 
         <div className="border p-4 rounded">
           <h2 className="font-bold mb-2">{t('useSessionCompat')}</h2>
-          <pre className="text-xs bg-gray-100 p-2 rounded overflow-auto">
+          <pre className="text-xs bg-muted p-2 rounded overflow-auto">
             {JSON.stringify({ session, status }, null, 2)}
           </pre>
         </div>

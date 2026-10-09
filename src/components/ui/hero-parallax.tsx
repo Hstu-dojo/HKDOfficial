@@ -128,7 +128,7 @@ export const Header = () => {
           {t("welcomeLine2")}
         </span>
       </h1>
-      <p className="mt-8 max-w-lg text-base text-slate-700 dark:text-slate-300 md:text-lg">
+      <p className="mt-8 max-w-lg text-base text-foreground dark:text-muted-foreground md:text-lg">
         {t("welcomeSubtitle")}
       </p>
     </div>

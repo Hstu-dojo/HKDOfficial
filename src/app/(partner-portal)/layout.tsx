@@ -1,17 +1,21 @@
-import '../globals.css'
-import React from 'react'
-import { ThemeProvider } from '@/context/ThemeProvider'
+import "../globals.css";
+import React from "react";
+import { editorialFonts } from "@/styles/fonts";
+import { EditorialMotion } from "@/components/layout/editorial-motion";
+import { ThemeProvider } from "@/context/ThemeProvider";
 
 export default function PartnerPortalRootLayout({
   children,
 }: {
-  children: React.ReactNode
+  children: React.ReactNode;
 }) {
   return (
-    <div className="min-w-[350px] dark:bg-slate-850 dark:text-slate-200">
+    <div
+      className={`${editorialFonts} editorial-site editorial-portal min-h-screen bg-background text-foreground`}
+    >
       <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-        {children}
+        <EditorialMotion>{children}</EditorialMotion>
       </ThemeProvider>
     </div>
-  )
+  );
 }

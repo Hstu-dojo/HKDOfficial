@@ -39,12 +39,12 @@ const stats = [
 
 export default function SectionStatsBar() {
   return (
-    <section className="relative py-12 bg-foreground dark:bg-slate-800 overflow-hidden">
+    <section className="relative py-10 bg-muted overflow-hidden">
       {/* Subtle noise texture overlay */}
       <div className="absolute inset-0 pointer-events-none opacity-[0.04] bg-[url('/circles_pattern.png')] bg-cover" />
 
       <div className="container mx-auto px-4 max-w-7xl relative z-10">
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-0 md:divide-x md:divide-background/20">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-0 md:divide-x md:divide-border">
           {stats.map((stat, i) => (
             <motion.div
               key={stat.label}
@@ -54,10 +54,10 @@ export default function SectionStatsBar() {
               transition={{ duration: 0.5, delay: i * 0.1, ease: [0.16, 1, 0.3, 1] }}
               className="flex flex-col items-center text-center md:px-6"
             >
-              <span className="text-4xl md:text-5xl font-black text-background dark:text-white tracking-tight leading-none mb-1">
+              <span className="font-serif text-4xl md:text-5xl font-normal text-foreground tracking-tight leading-none mb-1">
                 <AnimatedCounter value={stat.value} suffix={stat.suffix} />
               </span>
-              <span className="text-sm font-medium text-background/60 dark:text-slate-400 uppercase tracking-widest">
+              <span className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
                 {stat.label}
               </span>
             </motion.div>

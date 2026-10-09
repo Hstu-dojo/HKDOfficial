@@ -1,10 +1,10 @@
 const Fallback = () => (
-  <div className="bg-black text-white">
-    <div className="flex h-screen ">
+  <div className="min-h-screen bg-background text-foreground">
+    <div className="flex min-h-screen px-6 py-12 ">
       <div className="m-auto text-center">
         <div>
           <svg
-            className="mx-2 lg:h-[379px] lg:w-[631px]"
+            className="mx-auto w-full max-w-md grayscale"
             viewBox="0 0 450 338"
             fill="none"
             xmlns="http://www.w3.org/2000/svg"

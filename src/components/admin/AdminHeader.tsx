@@ -6,11 +6,11 @@ import { useAuth } from '@/context/AuthContext';
 import { useRBAC } from '@/hooks/useRBAC';
 import { ALL_ROLES } from '@/lib/rbac/constants';
 import Image from 'next/image';
-import { 
-  Bars3Icon, 
-  XMarkIcon, 
+import {
+  Bars3Icon,
+  XMarkIcon,
   UserCircleIcon,
-  ArrowRightOnRectangleIcon 
+  ArrowRightOnRectangleIcon
 } from '@heroicons/react/24/outline';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
@@ -38,13 +38,13 @@ export function AdminHeader({ onToggleSidebar, sidebarOpen }: AdminHeaderProps) 
   const userRoles = ALL_ROLES.filter((r) => hasRole(r)).map((r) => ROLE_LABELS[r] ?? r);
 
   return (
-    <header className="bg-white dark:bg-gray-800 shadow-sm border-b border-slate-200 dark:border-slate-700 sticky top-0 z-30">
+    <header className="bg-white dark:bg-card shadow-sm border-b border-border dark:border-border sticky top-0 z-30">
       <div className="flex items-center justify-between h-16 px-4 md:px-6">
         {/* Left side - Toggle and title */}
         <div className="flex items-center gap-3 min-w-0">
           <button
             onClick={onToggleSidebar}
-            className="p-2 rounded-md text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700 lg:hidden transition-colors shrink-0"
+            className="p-2 rounded-md text-muted-foreground dark:text-muted-foreground hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700 lg:hidden transition-colors shrink-0"
             aria-label="Toggle sidebar"
           >
             {sidebarOpen ? (
@@ -53,8 +53,8 @@ export function AdminHeader({ onToggleSidebar, sidebarOpen }: AdminHeaderProps) 
               <Bars3Icon className="h-6 w-6" />
             )}
           </button>
-          
-          <h1 className="text-lg md:text-xl font-semibold text-slate-900 dark:text-slate-100 truncate">
+
+          <h1 className="text-lg md:text-xl font-semibold text-foreground dark:text-foreground truncate">
             Admin Dashboard
           </h1>
           {userRoles.length > 0 && (
@@ -68,7 +68,7 @@ export function AdminHeader({ onToggleSidebar, sidebarOpen }: AdminHeaderProps) 
         <div className="flex items-center space-x-2 md:space-x-3">
           {/* Quick actions */}
           <Link href="/" className="hidden sm:block">
-            <Button variant="outline" size="sm" className="text-slate-700 dark:text-slate-300 border-slate-300 dark:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-700">
+            <Button variant="outline" size="sm" className="text-foreground dark:text-muted-foreground border-slate-300 dark:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-700">
               View Site
             </Button>
           </Link>
@@ -77,12 +77,12 @@ export function AdminHeader({ onToggleSidebar, sidebarOpen }: AdminHeaderProps) 
           <div className="relative">
             <button
               onClick={() => setShowUserMenu(!showUserMenu)}
-              className="flex items-center space-x-2 text-sm text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-slate-100 focus:outline-none focus:ring-2 focus:ring-slate-500 focus:ring-offset-2 rounded-lg px-2 py-1.5 transition-colors"
+              className="flex items-center space-x-2 text-sm text-foreground dark:text-muted-foreground hover:text-slate-900 dark:hover:text-slate-100 focus:outline-none focus:ring-2 focus:ring-slate-500 focus:ring-offset-2 rounded-lg px-2 py-1.5 transition-colors"
               aria-label="User menu"
             >
               {session?.user?.image ? (
                 <Image
-                  className="h-8 w-8 rounded-full border border-slate-200 dark:border-slate-700"
+                  className="h-8 w-8 rounded-full border border-border dark:border-border"
                   src={session.user.image}
                   alt={session.user.name || 'User'}
                   width={32}
@@ -99,28 +99,28 @@ export function AdminHeader({ onToggleSidebar, sidebarOpen }: AdminHeaderProps) 
             {showUserMenu && (
               <>
                 {/* Backdrop */}
-                <div 
-                  className="fixed inset-0 z-40" 
+                <div
+                  className="fixed inset-0 z-40"
                   onClick={() => setShowUserMenu(false)}
                 />
-                
+
                 {/* Menu */}
-                <div className="absolute right-0 mt-2 w-56 bg-white dark:bg-gray-800 rounded-lg shadow-lg ring-1 ring-black ring-opacity-5 dark:ring-white/10 z-50">
+                <div className="absolute right-0 mt-2 w-56 bg-white dark:bg-card rounded-lg shadow-lg ring-1 ring-black ring-opacity-5 dark:ring-white/10 z-50">
                   <div className="py-1">
-                    <div className="px-4 py-3 text-sm text-gray-700 dark:text-gray-300 border-b border-gray-200 dark:border-gray-700">
+                    <div className="px-4 py-3 text-sm text-foreground dark:text-gray-300 border-b border-border dark:border-border">
                       <div className="font-medium">{session?.user?.name}</div>
-                      <div className="text-gray-500 dark:text-gray-400 truncate">{session?.user?.email}</div>
+                      <div className="text-muted-foreground dark:text-gray-400 truncate">{session?.user?.email}</div>
                     </div>
-                    
+
                     <Link
                       href="/profile"
-                      className="flex items-center px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+                      className="flex items-center px-4 py-2 text-sm text-foreground dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
                       onClick={() => setShowUserMenu(false)}
                     >
                       <UserCircleIcon className="h-4 w-4 mr-2 text-gray-400 dark:text-gray-500" />
                       Profile Settings
                     </Link>
-                    
+
                     <button
                       onClick={async () => {
                         setShowUserMenu(false);

@@ -36,7 +36,7 @@ export default async function ProgramDetailsPage({ params }: { params: Promise<{
   return (
     <>
       <Header />
-      <main className="pt-20 min-h-screen bg-slate-50 dark:bg-slate-900">
+      <main className="pt-20 min-h-screen bg-muted dark:bg-background">
         <ProgramDetails slug={slug} initialProgram={program} />
       </main>
       <Footer />

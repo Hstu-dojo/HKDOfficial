@@ -144,7 +144,7 @@ export default function AdminCreationPage() {
       <div className="flex items-center justify-center min-h-[400px]">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
-          <p className="mt-4 text-gray-600 dark:text-gray-400">Loading admin management...</p>
+          <p className="mt-4 text-muted-foreground dark:text-gray-400">Loading admin management...</p>
         </div>
       </div>
     );
@@ -154,7 +154,7 @@ export default function AdminCreationPage() {
     <div className="space-y-8">
       <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-3">
         <Shield className="h-8 w-8 text-blue-600" />
-        <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">Admin User Management</h1>
+        <h1 className="text-3xl font-bold text-foreground dark:text-gray-100">Admin User Management</h1>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
@@ -177,7 +177,7 @@ export default function AdminCreationPage() {
                 placeholder="admin@example.com"
               />
             </div>
-            
+
             <div>
               <Label htmlFor="userName">Username *</Label>
               <Input
@@ -187,7 +187,7 @@ export default function AdminCreationPage() {
                 placeholder="admin_user"
               />
             </div>
-            
+
             <div>
               <Label htmlFor="password">Password *</Label>
               <Input
@@ -199,8 +199,8 @@ export default function AdminCreationPage() {
               />
             </div>
 
-            <Button 
-              onClick={createAdminUser} 
+            <Button
+              onClick={createAdminUser}
               disabled={creating}
               className="w-full"
             >
@@ -220,8 +220,8 @@ export default function AdminCreationPage() {
           <CardContent className="space-y-4">
             <div>
               <Label>Select User</Label>
-              <Select 
-                value={roleAssignment.userId} 
+              <Select
+                value={roleAssignment.userId}
                 onValueChange={(value) => setRoleAssignment({ ...roleAssignment, userId: value })}
               >
                 <SelectTrigger>
@@ -239,8 +239,8 @@ export default function AdminCreationPage() {
 
             <div>
               <Label>Select Role</Label>
-              <Select 
-                value={roleAssignment.roleId} 
+              <Select
+                value={roleAssignment.roleId}
                 onValueChange={(value) => setRoleAssignment({ ...roleAssignment, roleId: value })}
               >
                 <SelectTrigger>
@@ -256,8 +256,8 @@ export default function AdminCreationPage() {
               </Select>
             </div>
 
-            <Button 
-              onClick={assignRoleToUser} 
+            <Button
+              onClick={assignRoleToUser}
               disabled={assigning}
               className="w-full"
             >
@@ -278,12 +278,12 @@ export default function AdminCreationPage() {
               <h3 className="font-semibold text-lg mb-2">Total Users</h3>
               <p className="text-3xl font-bold text-blue-600">{users.length}</p>
             </div>
-            
+
             <div className="p-4 border rounded-lg">
               <h3 className="font-semibold text-lg mb-2">Total Roles</h3>
               <p className="text-3xl font-bold text-green-600 dark:text-green-400">{roles.length}</p>
             </div>
-            
+
             <div className="p-4 border rounded-lg">
               <h3 className="font-semibold text-lg mb-2">Admin Roles</h3>
               <p className="text-3xl font-bold text-purple-600">
@@ -307,11 +307,11 @@ export default function AdminCreationPage() {
                   <User className="h-8 w-8 text-gray-400 dark:text-gray-500" />
                   <div>
                     <p className="font-medium">{user.userName}</p>
-                    <p className="text-sm text-gray-500 dark:text-gray-400">{user.email}</p>
+                    <p className="text-sm text-muted-foreground dark:text-gray-400">{user.email}</p>
                   </div>
                 </div>
                 <div className="text-right">
-                  <p className="text-sm text-gray-500 dark:text-gray-400">Role: {user.defaultRole}</p>
+                  <p className="text-sm text-muted-foreground dark:text-gray-400">Role: {user.defaultRole}</p>
                   <p className="text-xs text-gray-400 dark:text-gray-500">
                     {user.emailVerified ? '✅ Verified' : '❌ Not verified'}
                   </p>

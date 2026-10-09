@@ -76,7 +76,7 @@ export default function CourseApplicationForm({ course }: { course: Course }) {
   const [currentStep, setCurrentStep] = useState(0);
   const [submitting, setSubmitting] = useState(false);
   const [applicationId, setApplicationId] = useState<string | null>(null);
-  
+
   const [studentInfo, setStudentInfo] = useState<StudentInfo>({
     fullNameEnglish: '',
     fullNameBangla: '',
@@ -96,7 +96,7 @@ export default function CourseApplicationForm({ course }: { course: Course }) {
     nationalIdNumber: '',
     profilePhotoUrl: '',
   });
-  
+
   const [paymentInfo, setPaymentInfo] = useState({
     paymentMethod: 'bkash',
     transactionId: '',
@@ -165,7 +165,7 @@ export default function CourseApplicationForm({ course }: { course: Course }) {
     }
 
     setSubmitting(true);
-    
+
     try {
       // Step 1: Create the application
       const createResponse = await fetch('/api/enrollments/apply', {
@@ -216,11 +216,11 @@ export default function CourseApplicationForm({ course }: { course: Course }) {
 
   if (status === 'unauthenticated') {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
+      <div className="min-h-screen bg-muted flex items-center justify-center p-4">
         <div className="bg-white rounded-2xl shadow-lg p-8 max-w-md w-full text-center">
           <UserIcon className="h-16 w-16 mx-auto text-gray-400 mb-4" />
-          <h2 className="text-2xl font-bold text-gray-900 mb-2">Login Required</h2>
-          <p className="text-gray-600 mb-6">
+          <h2 className="text-2xl font-bold text-foreground mb-2">Login Required</h2>
+          <p className="text-muted-foreground mb-6">
             Please log in to apply for the {course.name} course.
           </p>
           <Link
@@ -235,19 +235,19 @@ export default function CourseApplicationForm({ course }: { course: Course }) {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
+    <div className="min-h-screen bg-muted py-8">
       <div className="max-w-4xl mx-auto px-4">
         {/* Header */}
         <div className="mb-8">
           <Link
             href={`/karate/courses`}
-            className="inline-flex items-center text-gray-600 hover:text-gray-900 mb-4"
+            className="inline-flex items-center text-muted-foreground hover:text-gray-900 mb-4"
           >
             <ArrowLeftIcon className="h-4 w-4 mr-2" />
             Back to Courses
           </Link>
-          <h1 className="text-3xl font-bold text-gray-900">Apply for {course.name}</h1>
-          <p className="text-gray-600 mt-2">{course.shortDescription}</p>
+          <h1 className="text-3xl font-bold text-foreground">Apply for {course.name}</h1>
+          <p className="text-muted-foreground mt-2">{course.shortDescription}</p>
         </div>
 
         {/* Progress Steps */}
@@ -265,7 +265,7 @@ export default function CourseApplicationForm({ course }: { course: Course }) {
                             ? 'bg-red-600 text-white'
                             : index === currentStep
                             ? 'bg-red-600 text-white ring-4 ring-red-100'
-                            : 'bg-gray-200 text-gray-500'
+                            : 'bg-gray-200 text-muted-foreground'
                         }`}
                       >
                         {index < currentStep ? (
@@ -282,7 +282,7 @@ export default function CourseApplicationForm({ course }: { course: Course }) {
                         />
                       )}
                     </div>
-                    <span className="text-xs mt-2 block text-gray-500">{step.name}</span>
+                    <span className="text-xs mt-2 block text-muted-foreground">{step.name}</span>
                   </li>
                 );
               })}
@@ -295,14 +295,14 @@ export default function CourseApplicationForm({ course }: { course: Course }) {
           {/* Step 0: Personal Info */}
           {currentStep === 0 && (
             <div className="space-y-6">
-              <h2 className="text-xl font-semibold text-gray-900 flex items-center">
+              <h2 className="text-xl font-semibold text-foreground flex items-center">
                 <UserIcon className="h-6 w-6 mr-2 text-red-600" />
                 Personal Information
               </h2>
-              
+
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-foreground mb-1">
                     Full Name (English) *
                   </label>
                   <input
@@ -314,9 +314,9 @@ export default function CourseApplicationForm({ course }: { course: Course }) {
                     required
                   />
                 </div>
-                
+
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-foreground mb-1">
                     Full Name (Bangla)
                   </label>
                   <input
@@ -327,9 +327,9 @@ export default function CourseApplicationForm({ course }: { course: Course }) {
                     placeholder="জন ডো"
                   />
                 </div>
-                
+
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-foreground mb-1">
                     Father&apos;s Name
                   </label>
                   <input
@@ -339,9 +339,9 @@ export default function CourseApplicationForm({ course }: { course: Course }) {
                     className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500"
                   />
                 </div>
-                
+
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-foreground mb-1">
                     Mother&apos;s Name
                   </label>
                   <input
@@ -351,9 +351,9 @@ export default function CourseApplicationForm({ course }: { course: Course }) {
                     className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500"
                   />
                 </div>
-                
+
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-foreground mb-1">
                     Date of Birth *
                   </label>
                   <input
@@ -364,9 +364,9 @@ export default function CourseApplicationForm({ course }: { course: Course }) {
                     required
                   />
                 </div>
-                
+
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-foreground mb-1">
                     Gender *
                   </label>
                   <select
@@ -383,9 +383,9 @@ export default function CourseApplicationForm({ course }: { course: Course }) {
                     ))}
                   </select>
                 </div>
-                
+
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-foreground mb-1">
                     Blood Group
                   </label>
                   <select
@@ -399,9 +399,9 @@ export default function CourseApplicationForm({ course }: { course: Course }) {
                     ))}
                   </select>
                 </div>
-                
+
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-foreground mb-1">
                     NID / Birth Certificate Number
                   </label>
                   <input
@@ -412,9 +412,9 @@ export default function CourseApplicationForm({ course }: { course: Course }) {
                   />
                 </div>
               </div>
-              
+
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-foreground mb-1">
                   Profile Photo URL
                 </label>
                 <input
@@ -424,7 +424,7 @@ export default function CourseApplicationForm({ course }: { course: Course }) {
                   className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500"
                   placeholder="https://example.com/photo.jpg"
                 />
-                <p className="text-xs text-gray-500 mt-1">Upload your photo to any image hosting service and paste the URL here</p>
+                <p className="text-xs text-muted-foreground mt-1">Upload your photo to any image hosting service and paste the URL here</p>
               </div>
             </div>
           )}
@@ -432,14 +432,14 @@ export default function CourseApplicationForm({ course }: { course: Course }) {
           {/* Step 1: Contact Info */}
           {currentStep === 1 && (
             <div className="space-y-6">
-              <h2 className="text-xl font-semibold text-gray-900 flex items-center">
+              <h2 className="text-xl font-semibold text-foreground flex items-center">
                 <PhoneIcon className="h-6 w-6 mr-2 text-red-600" />
                 Contact Information
               </h2>
-              
+
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-foreground mb-1">
                     Email *
                   </label>
                   <input
@@ -450,9 +450,9 @@ export default function CourseApplicationForm({ course }: { course: Course }) {
                     required
                   />
                 </div>
-                
+
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-foreground mb-1">
                     Phone Number *
                   </label>
                   <input
@@ -464,9 +464,9 @@ export default function CourseApplicationForm({ course }: { course: Course }) {
                     required
                   />
                 </div>
-                
+
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-foreground mb-1">
                     Emergency Contact
                   </label>
                   <input
@@ -478,9 +478,9 @@ export default function CourseApplicationForm({ course }: { course: Course }) {
                   />
                 </div>
               </div>
-              
+
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-foreground mb-1">
                   Address *
                 </label>
                 <textarea
@@ -498,14 +498,14 @@ export default function CourseApplicationForm({ course }: { course: Course }) {
           {/* Step 2: Background */}
           {currentStep === 2 && (
             <div className="space-y-6">
-              <h2 className="text-xl font-semibold text-gray-900 flex items-center">
+              <h2 className="text-xl font-semibold text-foreground flex items-center">
                 <AcademicCapIcon className="h-6 w-6 mr-2 text-red-600" />
                 Background Information
               </h2>
-              
+
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-foreground mb-1">
                     Occupation
                   </label>
                   <input
@@ -516,9 +516,9 @@ export default function CourseApplicationForm({ course }: { course: Course }) {
                     placeholder="Student, Engineer, etc."
                   />
                 </div>
-                
+
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-foreground mb-1">
                     School/College/University
                   </label>
                   <input
@@ -529,9 +529,9 @@ export default function CourseApplicationForm({ course }: { course: Course }) {
                   />
                 </div>
               </div>
-              
+
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-foreground mb-1">
                   Previous Martial Arts Experience
                 </label>
                 <textarea
@@ -542,9 +542,9 @@ export default function CourseApplicationForm({ course }: { course: Course }) {
                   placeholder="Describe any previous martial arts training, if any"
                 />
               </div>
-              
+
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-foreground mb-1">
                   Medical Conditions / Allergies
                 </label>
                 <textarea
@@ -554,7 +554,7 @@ export default function CourseApplicationForm({ course }: { course: Course }) {
                   className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500"
                   placeholder="List any medical conditions or allergies we should be aware of"
                 />
-                <p className="text-xs text-gray-500 mt-1">This information will be kept confidential and used only for safety purposes</p>
+                <p className="text-xs text-muted-foreground mt-1">This information will be kept confidential and used only for safety purposes</p>
               </div>
             </div>
           )}
@@ -562,24 +562,24 @@ export default function CourseApplicationForm({ course }: { course: Course }) {
           {/* Step 3: Payment */}
           {currentStep === 3 && (
             <div className="space-y-6">
-              <h2 className="text-xl font-semibold text-gray-900 flex items-center">
+              <h2 className="text-xl font-semibold text-foreground flex items-center">
                 <CurrencyDollarIcon className="h-6 w-6 mr-2 text-red-600" />
                 Payment Information
               </h2>
-              
+
               <div className="bg-red-50 rounded-lg p-6">
-                <h3 className="font-semibold text-gray-900 mb-4">Admission Fee to Pay</h3>
+                <h3 className="font-semibold text-foreground mb-4">Admission Fee to Pay</h3>
                 <p className="text-3xl font-bold text-red-600">
                   {formatCurrency(course.admissionFee, course.currency)}
                 </p>
-                <p className="text-sm text-gray-600 mt-2">
+                <p className="text-sm text-muted-foreground mt-2">
                   Monthly fee: {formatCurrency(course.monthlyFee, course.currency)} (to be paid after approval)
                 </p>
               </div>
-              
+
               {/* Payment Methods */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-3">
+                <label className="block text-sm font-medium text-foreground mb-3">
                   Select Payment Method *
                 </label>
                 <div className="grid grid-cols-3 gap-4">
@@ -590,7 +590,7 @@ export default function CourseApplicationForm({ course }: { course: Course }) {
                       className={`p-4 border-2 rounded-lg text-center ${
                         paymentInfo.paymentMethod === 'bkash'
                           ? 'border-pink-500 bg-pink-50'
-                          : 'border-gray-200 hover:border-gray-300'
+                          : 'border-border hover:border-gray-300'
                       }`}
                     >
                       <div className="text-2xl mb-1">🔴</div>
@@ -604,7 +604,7 @@ export default function CourseApplicationForm({ course }: { course: Course }) {
                       className={`p-4 border-2 rounded-lg text-center ${
                         paymentInfo.paymentMethod === 'nagad'
                           ? 'border-orange-500 bg-orange-50'
-                          : 'border-gray-200 hover:border-gray-300'
+                          : 'border-border hover:border-gray-300'
                       }`}
                     >
                       <div className="text-2xl mb-1">🟠</div>
@@ -618,7 +618,7 @@ export default function CourseApplicationForm({ course }: { course: Course }) {
                       className={`p-4 border-2 rounded-lg text-center ${
                         paymentInfo.paymentMethod === 'rocket'
                           ? 'border-purple-500 bg-purple-50'
-                          : 'border-gray-200 hover:border-gray-300'
+                          : 'border-border hover:border-gray-300'
                       }`}
                     >
                       <div className="text-2xl mb-1">🟣</div>
@@ -627,7 +627,7 @@ export default function CourseApplicationForm({ course }: { course: Course }) {
                   )}
                 </div>
               </div>
-              
+
               {/* Payment Instructions */}
               {paymentInfo.paymentMethod === 'bkash' && course.bkashNumber && (
                 <div className="bg-pink-50 rounded-lg p-6">
@@ -641,7 +641,7 @@ export default function CourseApplicationForm({ course }: { course: Course }) {
                     <li>Complete the payment</li>
                     <li>Note down the Transaction ID</li>
                   </ol>
-                  
+
                   {course.bkashQrCodeUrl && (
                     <div className="mt-4">
                       <p className="text-sm text-pink-800 mb-2">Or scan this QR code:</p>
@@ -658,11 +658,11 @@ export default function CourseApplicationForm({ course }: { course: Course }) {
                   )}
                 </div>
               )}
-              
+
               {/* Transaction Details */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-foreground mb-1">
                     Transaction ID *
                   </label>
                   <input
@@ -674,9 +674,9 @@ export default function CourseApplicationForm({ course }: { course: Course }) {
                     required
                   />
                 </div>
-                
+
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-foreground mb-1">
                     Payment Screenshot URL
                   </label>
                   <input
@@ -686,7 +686,7 @@ export default function CourseApplicationForm({ course }: { course: Course }) {
                     className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500"
                     placeholder="https://example.com/screenshot.jpg"
                   />
-                  <p className="text-xs text-gray-500 mt-1">Upload screenshot to imgur.com and paste the link</p>
+                  <p className="text-xs text-muted-foreground mt-1">Upload screenshot to imgur.com and paste the link</p>
                 </div>
               </div>
             </div>
@@ -695,71 +695,71 @@ export default function CourseApplicationForm({ course }: { course: Course }) {
           {/* Step 4: Review */}
           {currentStep === 4 && (
             <div className="space-y-6">
-              <h2 className="text-xl font-semibold text-gray-900 flex items-center">
+              <h2 className="text-xl font-semibold text-foreground flex items-center">
                 <DocumentTextIcon className="h-6 w-6 mr-2 text-red-600" />
                 Review Your Application
               </h2>
-              
+
               <div className="space-y-4">
                 {/* Personal Info Summary */}
-                <div className="bg-gray-50 rounded-lg p-4">
-                  <h3 className="font-medium text-gray-900 mb-3">Personal Information</h3>
+                <div className="bg-muted rounded-lg p-4">
+                  <h3 className="font-medium text-foreground mb-3">Personal Information</h3>
                   <dl className="grid grid-cols-2 gap-x-4 gap-y-2 text-sm">
-                    <dt className="text-gray-500">Name:</dt>
+                    <dt className="text-muted-foreground">Name:</dt>
                     <dd className="font-medium">{studentInfo.fullNameEnglish}</dd>
                     {studentInfo.fullNameBangla && (
                       <>
-                        <dt className="text-gray-500">Name (Bangla):</dt>
+                        <dt className="text-muted-foreground">Name (Bangla):</dt>
                         <dd className="font-medium">{studentInfo.fullNameBangla}</dd>
                       </>
                     )}
-                    <dt className="text-gray-500">Date of Birth:</dt>
+                    <dt className="text-muted-foreground">Date of Birth:</dt>
                     <dd className="font-medium">{studentInfo.dateOfBirth}</dd>
-                    <dt className="text-gray-500">Gender:</dt>
+                    <dt className="text-muted-foreground">Gender:</dt>
                     <dd className="font-medium capitalize">{studentInfo.gender}</dd>
                     {studentInfo.bloodGroup && (
                       <>
-                        <dt className="text-gray-500">Blood Group:</dt>
+                        <dt className="text-muted-foreground">Blood Group:</dt>
                         <dd className="font-medium">{studentInfo.bloodGroup}</dd>
                       </>
                     )}
                   </dl>
                 </div>
-                
+
                 {/* Contact Info Summary */}
-                <div className="bg-gray-50 rounded-lg p-4">
-                  <h3 className="font-medium text-gray-900 mb-3">Contact Information</h3>
+                <div className="bg-muted rounded-lg p-4">
+                  <h3 className="font-medium text-foreground mb-3">Contact Information</h3>
                   <dl className="grid grid-cols-2 gap-x-4 gap-y-2 text-sm">
-                    <dt className="text-gray-500">Email:</dt>
+                    <dt className="text-muted-foreground">Email:</dt>
                     <dd className="font-medium">{studentInfo.email}</dd>
-                    <dt className="text-gray-500">Phone:</dt>
+                    <dt className="text-muted-foreground">Phone:</dt>
                     <dd className="font-medium">{studentInfo.phoneNumber}</dd>
-                    <dt className="text-gray-500">Address:</dt>
+                    <dt className="text-muted-foreground">Address:</dt>
                     <dd className="font-medium col-span-2">{studentInfo.address}</dd>
                   </dl>
                 </div>
-                
+
                 {/* Course & Payment Summary */}
-                <div className="bg-gray-50 rounded-lg p-4">
-                  <h3 className="font-medium text-gray-900 mb-3">Course & Payment</h3>
+                <div className="bg-muted rounded-lg p-4">
+                  <h3 className="font-medium text-foreground mb-3">Course & Payment</h3>
                   <dl className="grid grid-cols-2 gap-x-4 gap-y-2 text-sm">
-                    <dt className="text-gray-500">Course:</dt>
+                    <dt className="text-muted-foreground">Course:</dt>
                     <dd className="font-medium">{course.name}</dd>
-                    <dt className="text-gray-500">Admission Fee:</dt>
+                    <dt className="text-muted-foreground">Admission Fee:</dt>
                     <dd className="font-medium text-red-600">{formatCurrency(course.admissionFee, course.currency)}</dd>
-                    <dt className="text-gray-500">Payment Method:</dt>
+                    <dt className="text-muted-foreground">Payment Method:</dt>
                     <dd className="font-medium capitalize">{paymentInfo.paymentMethod}</dd>
-                    <dt className="text-gray-500">Transaction ID:</dt>
+                    <dt className="text-muted-foreground">Transaction ID:</dt>
                     <dd className="font-medium font-mono">{paymentInfo.transactionId}</dd>
                   </dl>
                 </div>
               </div>
-              
+
               {/* Disclaimer */}
               <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
                 <p className="text-sm text-yellow-800">
-                  By submitting this application, I confirm that all information provided is accurate. 
-                  I understand that the admission fee is non-refundable and my enrollment is subject 
+                  By submitting this application, I confirm that all information provided is accurate.
+                  I understand that the admission fee is non-refundable and my enrollment is subject
                   to admin approval after payment verification.
                 </p>
               </div>
@@ -775,13 +775,13 @@ export default function CourseApplicationForm({ course }: { course: Course }) {
               className={`flex items-center px-6 py-2 rounded-lg ${
                 currentStep === 0
                   ? 'text-gray-300 cursor-not-allowed'
-                  : 'text-gray-700 hover:bg-gray-100'
+                  : 'text-foreground hover:bg-gray-100'
               }`}
             >
               <ArrowLeftIcon className="h-4 w-4 mr-2" />
               Previous
             </button>
-            
+
             {currentStep < steps.length - 1 ? (
               <button
                 type="button"

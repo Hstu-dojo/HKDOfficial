@@ -29,14 +29,15 @@ export function SectionHeader({
       viewport={{ once: true, margin: "-80px" }}
       transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
       className={cn(
-        "mb-12 md:mb-16",
+        "mb-10 md:mb-14",
         align === "center" ? "text-center" : "text-left",
         className
       )}
     >
       <span
         className={cn(
-          "inline-flex items-center gap-2 text-xs font-bold tracking-[0.2em] uppercase text-primary mb-4",
+          "inline-flex items-center gap-2 text-xs font-medium tracking-[0.15em] uppercase mb-5",
+          lightText ? "text-white/65" : "text-muted-foreground",
           align === "center" ? "justify-center" : "justify-start"
         )}
       >
@@ -46,13 +47,13 @@ export function SectionHeader({
       </span>
       <h2
         className={cn(
-          "text-3xl md:text-5xl font-black tracking-tight mb-4",
+          "text-3xl md:text-5xl font-normal tracking-tight mb-4 leading-[1.15]",
           lightText ? "text-white" : "text-foreground"
         )}
       >
         {title}{" "}
         {titleAccent && (
-          <span className="bg-gradient-to-r from-primary via-primary/80 to-primary/60 bg-clip-text text-transparent">
+          <span className="text-primary italic">
             {titleAccent}
           </span>
         )}

@@ -55,7 +55,7 @@ export default function PayFeeForm({ feeId }: { feeId: string }) {
   const [paymentAccounts, setPaymentAccounts] = useState<PaymentAccountInfo[]>([]);
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
-  
+
   const [paymentInfo, setPaymentInfo] = useState({
     paymentMethod: 'bkash',
     transactionId: '',
@@ -78,7 +78,7 @@ export default function PayFeeForm({ feeId }: { feeId: string }) {
         }
         const data = await response.json();
         setFeeDetails(data);
-        
+
         // Fetch payment accounts for this course's organization
         if (data.courseId) {
           try {
@@ -174,7 +174,7 @@ export default function PayFeeForm({ feeId }: { feeId: string }) {
     return (
       <div className="max-w-md mx-auto text-center py-12">
         <CheckCircleIcon className="h-16 w-16 mx-auto text-green-500 mb-4" />
-        <h2 className="text-xl font-bold text-gray-900 mb-2">
+        <h2 className="text-xl font-bold text-foreground mb-2">
           {feeDetails.status === 'paid'
             ? t('feePayment.feeAlreadyPaid')
             : t('feePayment.feeStatus', { status: feeDetails.status })}
@@ -194,12 +194,12 @@ export default function PayFeeForm({ feeId }: { feeId: string }) {
       <div className="mb-6">
         <Link
           href="/dashboard/enrollments"
-          className="inline-flex items-center text-gray-600 hover:text-gray-900 mb-4"
+          className="inline-flex items-center text-muted-foreground hover:text-gray-900 mb-4"
         >
           <ArrowLeftIcon className="h-4 w-4 mr-2" />
           {t('feePayment.backToDashboard')}
         </Link>
-        <h1 className="text-2xl font-bold text-gray-900">{t('feePayment.payMonthlyFee')}</h1>
+        <h1 className="text-2xl font-bold text-foreground">{t('feePayment.payMonthlyFee')}</h1>
       </div>
 
       {/* Fee Summary */}
@@ -209,14 +209,14 @@ export default function PayFeeForm({ feeId }: { feeId: string }) {
             <AcademicCapIcon className="h-8 w-8 text-red-600" />
           </div>
           <div>
-            <h2 className="text-lg font-semibold text-gray-900">{feeDetails.courseName}</h2>
-            <p className="text-gray-500">{formatMonth(feeDetails.billingMonth)}</p>
+            <h2 className="text-lg font-semibold text-foreground">{feeDetails.courseName}</h2>
+            <p className="text-muted-foreground">{formatMonth(feeDetails.billingMonth)}</p>
           </div>
         </div>
 
         <div className="border-t pt-4 space-y-2">
           <div className="flex justify-between text-sm">
-            <span className="text-gray-500">{t('feePayment.monthlyFee')}</span>
+            <span className="text-muted-foreground">{t('feePayment.monthlyFee')}</span>
             <span>{formatCurrency(feeDetails.feeAmount, feeDetails.currency)}</span>
           </div>
           {feeDetails.discountAmount > 0 && (
@@ -243,7 +243,7 @@ export default function PayFeeForm({ feeId }: { feeId: string }) {
           </div>
         </div>
 
-        <div className="mt-4 flex items-center gap-2 text-sm text-gray-500">
+        <div className="mt-4 flex items-center gap-2 text-sm text-muted-foreground">
           <CalendarIcon className="h-4 w-4" />
           <span>{t('feePayment.dueBy', { date: formatDate(feeDetails.dueDate) })}</span>
         </div>
@@ -251,19 +251,19 @@ export default function PayFeeForm({ feeId }: { feeId: string }) {
 
       {/* Payment Method Selection */}
       <div className="bg-white rounded-lg border p-6 mb-6">
-        <h3 className="font-semibold text-gray-900 mb-4">{t('feePayment.selectPaymentMethod')}</h3>
-        
+        <h3 className="font-semibold text-foreground mb-4">{t('feePayment.selectPaymentMethod')}</h3>
+
         <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 mb-6">
           {/* Dynamic payment accounts from API */}
           {paymentAccounts.length > 0 ? (
             paymentAccounts.map((account) => {
               const methodColors: Record<string, { active: string; inactive: string; emoji: string }> = {
-                bkash: { active: 'border-pink-500 bg-pink-50', inactive: 'border-gray-200 hover:border-gray-300', emoji: '🔴' },
-                nagad: { active: 'border-orange-500 bg-orange-50', inactive: 'border-gray-200 hover:border-gray-300', emoji: '🟠' },
-                rocket: { active: 'border-purple-500 bg-purple-50', inactive: 'border-gray-200 hover:border-gray-300', emoji: '🟣' },
-                upay: { active: 'border-green-500 bg-green-50', inactive: 'border-gray-200 hover:border-gray-300', emoji: '🟢' },
-                bank_transfer: { active: 'border-blue-500 bg-blue-50', inactive: 'border-gray-200 hover:border-gray-300', emoji: '🏦' },
-                cash: { active: 'border-gray-500 bg-gray-50', inactive: 'border-gray-200 hover:border-gray-300', emoji: '💵' },
+                bkash: { active: 'border-pink-500 bg-pink-50', inactive: 'border-border hover:border-gray-300', emoji: '🔴' },
+                nagad: { active: 'border-orange-500 bg-orange-50', inactive: 'border-border hover:border-gray-300', emoji: '🟠' },
+                rocket: { active: 'border-purple-500 bg-purple-50', inactive: 'border-border hover:border-gray-300', emoji: '🟣' },
+                upay: { active: 'border-green-500 bg-green-50', inactive: 'border-border hover:border-gray-300', emoji: '🟢' },
+                bank_transfer: { active: 'border-blue-500 bg-blue-50', inactive: 'border-border hover:border-gray-300', emoji: '🏦' },
+                cash: { active: 'border-gray-500 bg-muted', inactive: 'border-border hover:border-gray-300', emoji: '💵' },
               }
               const colors = methodColors[account.methodType] || methodColors.cash
               const isSelected = paymentInfo.paymentMethod === account.methodType
@@ -276,7 +276,7 @@ export default function PayFeeForm({ feeId }: { feeId: string }) {
                 >
                   <div className="text-2xl mb-1">{colors.emoji}</div>
                   <div className="font-medium">{account.name}</div>
-                  <div className="text-xs text-gray-500 mt-1">{account.accountNumber}</div>
+                  <div className="text-xs text-muted-foreground mt-1">{account.accountNumber}</div>
                 </button>
               )
             })
@@ -290,7 +290,7 @@ export default function PayFeeForm({ feeId }: { feeId: string }) {
                   className={`p-4 border-2 rounded-lg text-center ${
                     paymentInfo.paymentMethod === 'bkash'
                       ? 'border-pink-500 bg-pink-50'
-                      : 'border-gray-200 hover:border-gray-300'
+                      : 'border-border hover:border-gray-300'
                   }`}
                 >
                   <div className="text-2xl mb-1">🔴</div>
@@ -304,7 +304,7 @@ export default function PayFeeForm({ feeId }: { feeId: string }) {
                   className={`p-4 border-2 rounded-lg text-center ${
                     paymentInfo.paymentMethod === 'nagad'
                       ? 'border-orange-500 bg-orange-50'
-                      : 'border-gray-200 hover:border-gray-300'
+                      : 'border-border hover:border-gray-300'
                   }`}
                 >
                   <div className="text-2xl mb-1">🟠</div>
@@ -318,7 +318,7 @@ export default function PayFeeForm({ feeId }: { feeId: string }) {
                   className={`p-4 border-2 rounded-lg text-center ${
                     paymentInfo.paymentMethod === 'rocket'
                       ? 'border-purple-500 bg-purple-50'
-                      : 'border-gray-200 hover:border-gray-300'
+                      : 'border-border hover:border-gray-300'
                   }`}
                 >
                   <div className="text-2xl mb-1">🟣</div>
@@ -395,7 +395,7 @@ export default function PayFeeForm({ feeId }: { feeId: string }) {
                 </li>
                 <li>{t('feePayment.bkashSteps.completePayment')}</li>
               </ol>
-              
+
               {feeDetails.bkashQrCodeUrl && (
                 <div className="mt-4">
                   <p className="text-sm text-pink-800 mb-2">{t('feePayment.orScanQr')}</p>
@@ -416,7 +416,7 @@ export default function PayFeeForm({ feeId }: { feeId: string }) {
         {/* Payment Details Input */}
         <div className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-foreground mb-1">
               {t('feePayment.transactionIdLabel')} *
             </label>
             <input
@@ -428,9 +428,9 @@ export default function PayFeeForm({ feeId }: { feeId: string }) {
               required
             />
           </div>
-          
+
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-foreground mb-1">
               {t('feePayment.paymentScreenshotUrlLabel')}
             </label>
             <input
@@ -440,7 +440,7 @@ export default function PayFeeForm({ feeId }: { feeId: string }) {
               className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-red-500"
               placeholder={t('feePayment.paymentScreenshotUrlPlaceholder')}
             />
-            <p className="text-xs text-gray-500 mt-1">
+            <p className="text-xs text-muted-foreground mt-1">
               {t('feePayment.paymentScreenshotUrlHint')}
             </p>
           </div>

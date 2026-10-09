@@ -40,7 +40,7 @@ const ProjectCard = ({ project }: Props) => {
                 alt={featuredMedia.alt_text}
                 width={featuredImageSizes.medium_large.width}
                 height={featuredImageSizes.medium_large.height}
-                className="transition-transform duration-1600 will-change-transform group-hover:scale-105"
+                className="transition-transform duration-1600 will-change-transform group-hover:scale-[1.025]"
               />
             </>
           )}
@@ -52,7 +52,7 @@ const ProjectCard = ({ project }: Props) => {
           />
         </h2>
       </figure>
-      <div className="rounded-b-lg bg-white p-10 dark:bg-slate-800">
+      <div className="rounded-b-lg bg-white p-10 dark:bg-card">
         {(project?.acf?.project_feature_1_number ||
           project?.acf?.project_feature_1_text ||
           project?.acf?.project_feature_2_number ||

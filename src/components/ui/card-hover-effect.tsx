@@ -35,7 +35,7 @@ export const HoverEffect = ({
   const [currentPage, setCurrentPage] = useState(1);
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
   const [isClient, setIsClient] = useState(false);
-  const pageURL = typeof window !== "undefined" ? window.location.href : "";
+  const pageURL = isClient ? window.location.href : "";
 
   useEffect(() => {
     setIsClient(true);
@@ -82,7 +82,7 @@ export const HoverEffect = ({
             <AnimatePresence>
               {hoveredIndex === idx && (
                 <motion.span
-                  className="absolute inset-0 block h-full w-full rounded-3xl bg-neutral-200  dark:bg-slate-800/[0.8]"
+                  className="absolute inset-0 block h-full w-full rounded-3xl bg-neutral-200  dark:bg-card/[0.8]"
                   layoutId="hoverBackground"
                   initial={{ opacity: 0 }}
                   animate={{
@@ -105,7 +105,7 @@ export const HoverEffect = ({
                 />
               </div>
               <CardTitle>{item?.title}</CardTitle>
-              <div className="-mt-5 flex items-center justify-end gap-2 font-mono text-xs text-slate-500">
+              <div className="-mt-5 flex items-center justify-end gap-2 font-mono text-xs text-muted-foreground">
                 <GoCommentDiscussion />
                 <CommentCount
                   shortname="hstu"
@@ -165,7 +165,7 @@ export const Card = ({
     <div
       style={{ zIndex: 5 }}
       className={cn(
-        "relative h-full w-full overflow-hidden rounded-2xl border border-slate-200 bg-white p-4 group-hover:border-slate-700 dark:border-white/[0.2]",
+        "relative h-full w-full overflow-hidden rounded-2xl border border-border bg-card p-2 group-hover:border-foreground/30",
         className,
       )}
     >
@@ -183,7 +183,7 @@ export const CardTitle = ({
   children: React.ReactNode;
 }) => {
   return (
-    <h4 className={cn("mt-4 font-bold tracking-wide text-zinc-700", className)}>
+    <h4 className={cn("mt-4 mb-5 font-serif text-2xl font-normal tracking-tight text-foreground", className)}>
       {children}
     </h4>
   );
@@ -196,13 +196,13 @@ export const CardDescription = ({
   children: React.ReactNode;
 }) => {
   return (
-    <p
+    <div
       className={cn(
-        "text-sm leading-relaxed tracking-wide text-zinc-600",
+        "text-sm leading-relaxed text-muted-foreground",
         className,
       )}
     >
       {children}
-    </p>
+    </div>
   );
 };

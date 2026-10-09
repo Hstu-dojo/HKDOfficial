@@ -36,7 +36,7 @@ export default function SectionPartners() {
   ];
 
   return (
-    <section className="relative py-24 md:py-32 bg-slate-950 text-white overflow-hidden before:absolute before:inset-0 before:bg-gradient-to-b before:from-slate-950 before:via-slate-950/85 before:to-slate-950 before:z-[1]">
+    <section className="relative py-24 md:py-32 bg-[#181818] text-white overflow-hidden">
       {/* Background Map Image */}
       <Image
         src="/partners/map.png"
@@ -64,9 +64,9 @@ export default function SectionPartners() {
               viewport={{ once: true }}
               transition={{ duration: 0.5, delay: index * 0.15 }}
             >
-              <div className="group relative h-full bg-slate-900/80 border border-slate-800 hover:border-primary/50 rounded-3xl p-6 transition-all duration-500 hover:shadow-2xl hover:shadow-primary/10 backdrop-blur-md flex flex-col sm:flex-row items-center gap-5 text-center sm:text-left">
+              <div className="group relative h-full bg-slate-900/80 border border-slate-800 hover:border-primary/50 rounded-3xl p-6 transition-all duration-500 hover:shadow-sm  backdrop-blur-md flex flex-col sm:flex-row items-center gap-5 text-center sm:text-left">
                 <div
-                  className={`relative w-20 h-20 shrink-0 bg-white p-2.5 shadow-lg border border-white/20 flex items-center justify-center group-hover:scale-105 transition-transform duration-500 ${
+                  className={`relative w-20 h-20 shrink-0 bg-white p-2.5 shadow-lg border border-white/20 flex items-center justify-center group-hover:scale-[1.025] transition-transform duration-500 ${
                     partner.isRound ? "rounded-full overflow-hidden" : "rounded-2xl"
                   }`}
                 >
@@ -104,7 +104,7 @@ export default function SectionPartners() {
           transition={{ duration: 0.6, delay: 0.3 }}
           className="max-w-4xl mx-auto"
         >
-          <div className="relative overflow-hidden rounded-3xl bg-slate-900/90 border border-slate-800 p-8 md:p-10 shadow-2xl backdrop-blur-md flex flex-col md:flex-row items-center justify-between gap-6">
+          <div className="relative overflow-hidden rounded-3xl bg-slate-900/90 border border-slate-800 p-8 md:p-10 shadow-sm backdrop-blur-md flex flex-col md:flex-row items-center justify-between gap-6">
             <div className="flex items-center gap-5">
               <div className="h-14 w-14 rounded-2xl bg-primary/20 text-primary flex items-center justify-center shrink-0 border border-primary/30">
                 <BookOpen className="h-7 w-7 text-primary" />

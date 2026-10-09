@@ -40,7 +40,7 @@ export function TextBox({ project }: { project: ShowcaseProject }) {
           {project.title}
         </div>
         {/* Overview  */}
-        <div className="font-serif text-gray-500">
+        <div className="font-serif text-muted-foreground">
           <CustomPortableText value={project.overview as PortableTextBlock[]} />
         </div>
       </div>

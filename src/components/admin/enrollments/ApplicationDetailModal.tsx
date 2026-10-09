@@ -86,7 +86,7 @@ const STATUS_CONFIG: Record<string, { label: string; color: string; bgColor: str
   payment_verified: { label: 'Payment Verified', color: 'text-indigo-700', bgColor: 'bg-indigo-100 dark:bg-indigo-900/30' },
   approved: { label: 'Approved', color: 'text-green-700', bgColor: 'bg-green-100 dark:bg-green-900/30' },
   rejected: { label: 'Rejected', color: 'text-red-700', bgColor: 'bg-red-100 dark:bg-red-900/30' },
-  cancelled: { label: 'Cancelled', color: 'text-gray-700 dark:text-gray-300', bgColor: 'bg-gray-100 dark:bg-gray-700' },
+  cancelled: { label: 'Cancelled', color: 'text-foreground dark:text-gray-300', bgColor: 'bg-muted dark:bg-gray-700' },
 };
 
 export default function ApplicationDetailModal({
@@ -151,11 +151,11 @@ export default function ApplicationDetailModal({
               leaveFrom="opacity-100 scale-100"
               leaveTo="opacity-0 scale-95"
             >
-              <Dialog.Panel className="w-full max-w-3xl max-h-[calc(100dvh-2rem)] transform overflow-hidden rounded-2xl bg-white dark:bg-gray-800 shadow-xl transition-all flex flex-col">
+              <Dialog.Panel className="w-full max-w-3xl max-h-[calc(100dvh-2rem)] transform overflow-hidden rounded-2xl bg-white dark:bg-card shadow-sm transition-all flex flex-col">
                 {/* Header */}
-                <div className="bg-gray-50 dark:bg-gray-800/50 px-6 py-4 border-b flex items-center justify-between">
+                <div className="bg-muted dark:bg-card/50 px-6 py-4 border-b flex items-center justify-between">
                   <div>
-                    <Dialog.Title className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+                    <Dialog.Title className="text-lg font-semibold text-foreground dark:text-gray-100">
                       Application #{app.applicationNumber}
                     </Dialog.Title>
                     <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${status?.bgColor} ${status?.color}`}>
@@ -172,8 +172,8 @@ export default function ApplicationDetailModal({
 
                 <div className="px-6 py-4 flex-1 overflow-y-auto space-y-6">
                   {/* Student Info */}
-                  <div className="bg-gray-50 dark:bg-gray-800/50 rounded-lg p-4">
-                    <h3 className="text-sm font-semibold text-gray-900 dark:text-gray-100 mb-4 flex items-center">
+                  <div className="bg-muted dark:bg-card/50 rounded-lg p-4">
+                    <h3 className="text-sm font-semibold text-foreground dark:text-gray-100 mb-4 flex items-center">
                       <UserIcon className="h-5 w-5 mr-2" />
                       Student Information
                     </h3>
@@ -194,48 +194,48 @@ export default function ApplicationDetailModal({
                       )}
                       <div className="flex-1 grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
                         <div>
-                          <label className="text-gray-500 dark:text-gray-400">Full Name (English)</label>
+                          <label className="text-muted-foreground dark:text-gray-400">Full Name (English)</label>
                           <p className="font-medium">{app.studentInfo.fullNameEnglish}</p>
                         </div>
                         {app.studentInfo.fullNameBangla && (
                           <div>
-                            <label className="text-gray-500 dark:text-gray-400">Full Name (Bangla)</label>
+                            <label className="text-muted-foreground dark:text-gray-400">Full Name (Bangla)</label>
                             <p className="font-medium">{app.studentInfo.fullNameBangla}</p>
                           </div>
                         )}
                         {app.studentInfo.fatherName && (
                           <div>
-                            <label className="text-gray-500 dark:text-gray-400">Father&apos;s Name</label>
+                            <label className="text-muted-foreground dark:text-gray-400">Father&apos;s Name</label>
                             <p className="font-medium">{app.studentInfo.fatherName}</p>
                           </div>
                         )}
                         {app.studentInfo.motherName && (
                           <div>
-                            <label className="text-gray-500 dark:text-gray-400">Mother&apos;s Name</label>
+                            <label className="text-muted-foreground dark:text-gray-400">Mother&apos;s Name</label>
                             <p className="font-medium">{app.studentInfo.motherName}</p>
                           </div>
                         )}
                         {app.studentInfo.dateOfBirth && (
                           <div>
-                            <label className="text-gray-500 dark:text-gray-400">Date of Birth</label>
+                            <label className="text-muted-foreground dark:text-gray-400">Date of Birth</label>
                             <p className="font-medium">{app.studentInfo.dateOfBirth}</p>
                           </div>
                         )}
                         {app.studentInfo.gender && (
                           <div>
-                            <label className="text-gray-500 dark:text-gray-400">Gender</label>
+                            <label className="text-muted-foreground dark:text-gray-400">Gender</label>
                             <p className="font-medium capitalize">{app.studentInfo.gender}</p>
                           </div>
                         )}
                         {app.studentInfo.bloodGroup && (
                           <div>
-                            <label className="text-gray-500 dark:text-gray-400">Blood Group</label>
+                            <label className="text-muted-foreground dark:text-gray-400">Blood Group</label>
                             <p className="font-medium">{app.studentInfo.bloodGroup}</p>
                           </div>
                         )}
                         {app.studentInfo.nationalIdNumber && (
                           <div>
-                            <label className="text-gray-500 dark:text-gray-400">NID Number</label>
+                            <label className="text-muted-foreground dark:text-gray-400">NID Number</label>
                             <p className="font-medium">{app.studentInfo.nationalIdNumber}</p>
                           </div>
                         )}
@@ -244,8 +244,8 @@ export default function ApplicationDetailModal({
                   </div>
 
                   {/* Contact Info */}
-                  <div className="bg-gray-50 dark:bg-gray-800/50 rounded-lg p-4">
-                    <h3 className="text-sm font-semibold text-gray-900 dark:text-gray-100 mb-4 flex items-center">
+                  <div className="bg-muted dark:bg-card/50 rounded-lg p-4">
+                    <h3 className="text-sm font-semibold text-foreground dark:text-gray-100 mb-4 flex items-center">
                       <PhoneIcon className="h-5 w-5 mr-2" />
                       Contact Information
                     </h3>
@@ -275,54 +275,54 @@ export default function ApplicationDetailModal({
 
                   {/* Course & Payment Info */}
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div className="bg-gray-50 dark:bg-gray-800/50 rounded-lg p-4">
-                      <h3 className="text-sm font-semibold text-gray-900 dark:text-gray-100 mb-4 flex items-center">
+                    <div className="bg-muted dark:bg-card/50 rounded-lg p-4">
+                      <h3 className="text-sm font-semibold text-foreground dark:text-gray-100 mb-4 flex items-center">
                         <IdentificationIcon className="h-5 w-5 mr-2" />
                         Course Details
                       </h3>
                       <div className="space-y-2 text-sm">
                         <div>
-                          <label className="text-gray-500 dark:text-gray-400">Course</label>
+                          <label className="text-muted-foreground dark:text-gray-400">Course</label>
                           <p className="font-medium">{course?.name || 'Unknown'}</p>
                         </div>
                         <div>
-                          <label className="text-gray-500 dark:text-gray-400">Admission Fee</label>
+                          <label className="text-muted-foreground dark:text-gray-400">Admission Fee</label>
                           <p className="font-medium">{formatCurrency(app.admissionFeeAmount, app.currency)}</p>
                         </div>
                         {course && (
                           <div>
-                            <label className="text-gray-500 dark:text-gray-400">Monthly Fee</label>
+                            <label className="text-muted-foreground dark:text-gray-400">Monthly Fee</label>
                             <p className="font-medium">{formatCurrency(course.monthlyFee, app.currency)}</p>
                           </div>
                         )}
                       </div>
                     </div>
 
-                    <div className="bg-gray-50 dark:bg-gray-800/50 rounded-lg p-4">
-                      <h3 className="text-sm font-semibold text-gray-900 dark:text-gray-100 mb-4 flex items-center">
+                    <div className="bg-muted dark:bg-card/50 rounded-lg p-4">
+                      <h3 className="text-sm font-semibold text-foreground dark:text-gray-100 mb-4 flex items-center">
                         <BanknotesIcon className="h-5 w-5 mr-2" />
                         Payment Details
                       </h3>
                       <div className="space-y-2 text-sm">
                         <div>
-                          <label className="text-gray-500 dark:text-gray-400">Payment Method</label>
+                          <label className="text-muted-foreground dark:text-gray-400">Payment Method</label>
                           <p className="font-medium">{app.paymentMethod || 'Not submitted'}</p>
                         </div>
                         {app.transactionId && (
                           <div>
-                            <label className="text-gray-500 dark:text-gray-400">Transaction ID</label>
+                            <label className="text-muted-foreground dark:text-gray-400">Transaction ID</label>
                             <p className="font-medium font-mono">{app.transactionId}</p>
                           </div>
                         )}
                         {app.paymentSubmittedAt && (
                           <div>
-                            <label className="text-gray-500 dark:text-gray-400">Payment Submitted</label>
+                            <label className="text-muted-foreground dark:text-gray-400">Payment Submitted</label>
                             <p className="font-medium">{formatDateTime(app.paymentSubmittedAt)}</p>
                           </div>
                         )}
                         {app.paymentVerifiedAt && (
                           <div>
-                            <label className="text-gray-500 dark:text-gray-400">Payment Verified</label>
+                            <label className="text-muted-foreground dark:text-gray-400">Payment Verified</label>
                             <p className="font-medium">{formatDateTime(app.paymentVerifiedAt)}</p>
                           </div>
                         )}
@@ -332,8 +332,8 @@ export default function ApplicationDetailModal({
 
                   {/* Payment Proof */}
                   {app.paymentProofUrl && (
-                    <div className="bg-gray-50 dark:bg-gray-800/50 rounded-lg p-4">
-                      <h3 className="text-sm font-semibold text-gray-900 dark:text-gray-100 mb-4 flex items-center">
+                    <div className="bg-muted dark:bg-card/50 rounded-lg p-4">
+                      <h3 className="text-sm font-semibold text-foreground dark:text-gray-100 mb-4 flex items-center">
                         <DocumentCheckIcon className="h-5 w-5 mr-2" />
                         Payment Proof
                       </h3>
@@ -352,24 +352,24 @@ export default function ApplicationDetailModal({
                           className="rounded-lg border shadow-sm max-h-64 w-full object-contain"
                         />
                       </a>
-                      <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">Click to view full image</p>
+                      <p className="text-xs text-muted-foreground dark:text-gray-400 mt-2">Click to view full image</p>
                     </div>
                   )}
 
                   {/* Additional Info */}
                   {(app.studentInfo.previousMartialArtsExperience || app.studentInfo.medicalConditions) && (
-                    <div className="bg-gray-50 dark:bg-gray-800/50 rounded-lg p-4">
-                      <h3 className="text-sm font-semibold text-gray-900 dark:text-gray-100 mb-4">Additional Information</h3>
+                    <div className="bg-muted dark:bg-card/50 rounded-lg p-4">
+                      <h3 className="text-sm font-semibold text-foreground dark:text-gray-100 mb-4">Additional Information</h3>
                       <div className="space-y-3 text-sm">
                         {app.studentInfo.previousMartialArtsExperience && (
                           <div>
-                            <label className="text-gray-500 dark:text-gray-400">Previous Martial Arts Experience</label>
+                            <label className="text-muted-foreground dark:text-gray-400">Previous Martial Arts Experience</label>
                             <p className="font-medium">{app.studentInfo.previousMartialArtsExperience}</p>
                           </div>
                         )}
                         {app.studentInfo.medicalConditions && (
                           <div>
-                            <label className="text-gray-500 dark:text-gray-400">Medical Conditions</label>
+                            <label className="text-muted-foreground dark:text-gray-400">Medical Conditions</label>
                             <p className="font-medium text-orange-600">{app.studentInfo.medicalConditions}</p>
                           </div>
                         )}
@@ -378,8 +378,8 @@ export default function ApplicationDetailModal({
                   )}
 
                   {/* Timeline */}
-                  <div className="bg-gray-50 dark:bg-gray-800/50 rounded-lg p-4">
-                    <h3 className="text-sm font-semibold text-gray-900 dark:text-gray-100 mb-4 flex items-center">
+                  <div className="bg-muted dark:bg-card/50 rounded-lg p-4">
+                    <h3 className="text-sm font-semibold text-foreground dark:text-gray-100 mb-4 flex items-center">
                       <ClockIcon className="h-5 w-5 mr-2" />
                       Timeline
                     </h3>
@@ -425,10 +425,10 @@ export default function ApplicationDetailModal({
                 </div>
 
                 {/* Action Buttons */}
-                <div className="bg-gray-50 dark:bg-gray-800/50 px-6 py-4 border-t flex justify-end gap-3">
+                <div className="bg-muted dark:bg-card/50 px-6 py-4 border-t flex justify-end gap-3">
                   <button
                     onClick={onClose}
-                    className="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-lg"
+                    className="px-4 py-2 text-sm font-medium text-foreground dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-lg"
                   >
                     Close
                   </button>

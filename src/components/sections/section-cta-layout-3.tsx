@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 
 const SectionCTALayout3 = () => {
   return (
-    <section className="pb-16 dark:bg-slate-900">
+    <section className="pb-16 dark:bg-background">
       <div className="container">
         <motion.div
           initial={{ opacity: 0, y: 60 }}

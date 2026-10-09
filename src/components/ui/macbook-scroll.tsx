@@ -575,7 +575,7 @@ export const KBtn = ({
     <div
       className={cn(
         "rounded-[4px] p-[0.5px]",
-        backlit && "shadow-xl bg-white/[0.2] shadow-white",
+        backlit && "shadow-sm bg-white/[0.2] shadow-white",
       )}
     >
       <div

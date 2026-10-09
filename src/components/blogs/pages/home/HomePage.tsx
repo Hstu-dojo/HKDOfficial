@@ -8,7 +8,7 @@ import type { HomePagePayload } from "../../../../../sanity/lib/sanity_types";
 import { FollowerPointerCard } from "@/components/ui/following-pointer";
 import AvatarBox from "../../shared/AvatarBox";
 import { WallMagazine } from "../../shared/WallMagazine";
-import TypewriterEffectComponent from "../../shared/TypewriterEffectComponent";
+
 import AllProjects from "../../allProjects";
 
 
@@ -31,13 +31,13 @@ export function HomePage({
   const { overview = [], showcaseProjects = [], title = "" } = data ?? {};
   // console.log(data2);
   return (
-    <div>
-      <div className="space-y-20">
+    <div className="editorial-journal">
+      <div className="space-y-12">
         {/* Header */}
         {title && <Header centered title={title} description={overview} />}
         {/* Showcase projects */}
         {showcaseProjects && showcaseProjects.length > 0 && (
-          <div className="mx-auto max-w-[100rem] rounded-md border">
+          <div className="mx-auto overflow-hidden rounded-2xl border border-border">
             {showcaseProjects.map((project, key) => {
               const href = resolveHref(project?._type, project?.slug);
               if (!href) {
@@ -71,14 +71,14 @@ export function HomePage({
           </div>
         )}
       </div>
-      <div className="mt-28 lg:mt-40">
+      <div className="mt-16 lg:mt-20">
         <div className="my-5 text-center">
-          <TypewriterEffectComponent text={"Explore our Wall Magazine"} />
+          <h2 className="font-serif text-3xl font-normal md:text-5xl">Explore our Wall Magazine</h2>
         </div>
         <div><WallMagazine trending={trending} avatar={avatar} /></div>
         <AllProjects data2={data2} />
         {/* <div className="hidden md:flex"><HallOfFrame /></div> */}
-        
+
       </div>
     </div>
   );

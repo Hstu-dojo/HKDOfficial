@@ -59,14 +59,14 @@ export default async function ProjectPage({ params }: Params) {
           <div className="relative z-[1] -m-20 mx-auto mb-5 flex max-w-[50rem] flex-wrap items-center space-y-5 lg:flex-nowrap lg:space-x-10 lg:space-y-0">
             {post?.acf?.project_feature_1_number ||
             post?.acf?.project_feature_1_text ? (
-              <div className="w-full rounded bg-white p-12 shadow-sm dark:bg-slate-800 dark:shadow-slate-950/20 lg:flex-1">
+              <div className="w-full rounded bg-white p-12 shadow-sm dark:bg-card dark:shadow-slate-950/20 lg:flex-1">
                 {post?.acf?.project_feature_1_number && (
                   <span className="mb-4 block text-2xl font-bold text-green lg:text-[2.25rem]">
                     {post?.acf?.project_feature_1_number}
                   </span>
                 )}
                 {post?.acf?.project_feature_1_text && (
-                  <span className="text-[1.0625rem] font-bold text-foreground dark:text-slate-400">
+                  <span className="text-[1.0625rem] font-bold text-foreground dark:text-muted-foreground">
                     {post?.acf?.project_feature_1_text}
                   </span>
                 )}
@@ -75,14 +75,14 @@ export default async function ProjectPage({ params }: Params) {
 
             {post?.acf?.project_feature_2_number ||
             post?.acf?.project_feature_2_text ? (
-              <div className="w-full rounded bg-white p-12 shadow-sm dark:bg-slate-800 dark:shadow-slate-950/20 lg:flex-1">
+              <div className="w-full rounded bg-white p-12 shadow-sm dark:bg-card dark:shadow-slate-950/20 lg:flex-1">
                 {post?.acf?.project_feature_2_number && (
                   <span className="mb-4 block text-2xl font-bold text-green lg:text-[2.25rem]">
                     {post?.acf?.project_feature_2_number}
                   </span>
                 )}
                 {post?.acf?.project_feature_2_text && (
-                  <span className="text-[1.0625rem] font-bold text-foreground dark:text-slate-400">
+                  <span className="text-[1.0625rem] font-bold text-foreground dark:text-muted-foreground">
                     {post?.acf?.project_feature_2_text}
                   </span>
                 )}
@@ -91,14 +91,14 @@ export default async function ProjectPage({ params }: Params) {
 
             {post?.acf?.project_feature_3_number ||
             post?.acf?.project_feature_3_text ? (
-              <div className="w-full rounded bg-white p-12 shadow-sm dark:bg-slate-800 dark:shadow-slate-950/20 lg:flex-1">
+              <div className="w-full rounded bg-white p-12 shadow-sm dark:bg-card dark:shadow-slate-950/20 lg:flex-1">
                 {post?.acf?.project_feature_3_number && (
                   <span className="mb-4 block text-2xl font-bold text-green lg:text-[2.25rem]">
                     {post?.acf?.project_feature_3_number}
                   </span>
                 )}
                 {post?.acf?.project_feature_3_text && (
-                  <span className="text-[1.0625rem] font-bold text-foreground dark:text-slate-400">
+                  <span className="text-[1.0625rem] font-bold text-foreground dark:text-muted-foreground">
                     {post?.acf?.project_feature_3_text}
                   </span>
                 )}

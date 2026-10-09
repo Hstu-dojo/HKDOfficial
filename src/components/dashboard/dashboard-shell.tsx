@@ -18,15 +18,15 @@ export default function DashboardShell({
 
   return (
     <SidebarProvider>
-      <div className="flex min-h-screen w-full bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-slate-100">
+      <div className="editorial-portal flex min-h-screen w-full bg-muted dark:bg-background text-foreground dark:text-foreground">
         <DashboardSidebar />
-        
-        <SidebarInset className="flex flex-col flex-1 min-h-screen bg-slate-50 dark:bg-slate-950">
+
+        <SidebarInset className="flex flex-col flex-1 min-h-screen bg-muted dark:bg-background">
           {/* Dashboard Sticky Header */}
-          <header className="flex h-16 shrink-0 items-center gap-3 border-b border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-4 select-none">
-            <SidebarTrigger className="-ml-1 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800" />
-            <div className="h-4 w-px bg-slate-200 dark:bg-slate-800" />
-            <span className="text-sm font-bold text-slate-800 dark:text-slate-100 uppercase tracking-wider">
+          <header className="flex h-16 shrink-0 items-center gap-3 border-b border-border dark:border-border bg-white dark:bg-background px-4 select-none">
+            <SidebarTrigger className="-ml-1 text-muted-foreground dark:text-muted-foreground hover:bg-slate-100 dark:hover:bg-slate-800" />
+            <div className="h-4 w-px bg-slate-200 dark:bg-card" />
+            <span className="text-sm font-bold text-foreground dark:text-foreground uppercase tracking-wider">
               {t("header.brand" as any)} {t("header.dashboard" as any)}
             </span>
           </header>

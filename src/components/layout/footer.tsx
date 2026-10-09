@@ -29,9 +29,9 @@ const Footer = () => {
   };
 
   return (
-    <footer>
+    <footer data-site-footer>
       <MaxWidthWrapper className="container">
-        <div className="pb-16 pt-28">
+        <div className="pb-12 pt-16">
           <div className="gap-10 space-y-10 md:grid md:grid-cols-12 md:space-y-0">
             <div className="col-span-3">
               <Link href={`/${locale}`} className="shrink-0">
@@ -48,18 +48,21 @@ const Footer = () => {
               <div className="flex space-x-2">
                 <a
                   href="https://x.com/HstuDojo"
+                  aria-label="Kaizen on X"
                   className="mb-2 flex h-10 w-10 items-center justify-center rounded bg-black text-white transition-colors hover:bg-foreground hover:text-white"
                 >
                   <FontAwesomeIcon icon={faXTwitter} width={15} />
                 </a>
                 <a
                   href="https://www.facebook.com/hstu.karate.dojo"
+                  aria-label="Kaizen on Facebook"
                   className="mb-2 flex h-10 w-10 items-center justify-center rounded bg-[#324e8c] text-white transition-colors hover:bg-foreground hover:text-white"
                 >
                   <FontAwesomeIcon icon={faFacebook} width={15} />
                 </a>
                 <a
                   href="https://www.youtube.com/@hstu.karate.dojo_1"
+                  aria-label="Kaizen on YouTube"
                   className="mb-2 flex h-10 w-10 items-center justify-center rounded bg-[#cd201f] text-white transition-colors hover:bg-foreground hover:text-white"
                 >
                   <FontAwesomeIcon icon={faYoutube} width={15} />
@@ -127,7 +130,7 @@ const Footer = () => {
           </div>
         </div>
       </MaxWidthWrapper>
-      <div className="border-t py-12">
+      <div className="border-t py-6">
         <div className="container text-center">
           <span className="text-xs">
             {t("footer.copyright" as any, { year: new Date().getFullYear() })}{" "}

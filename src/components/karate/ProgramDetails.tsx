@@ -6,9 +6,9 @@ import { useRouter } from 'next/navigation';
 import { registerForProgram } from '@/actions/program-actions';
 import { CldUploadWidget } from 'next-cloudinary';
 import { format } from 'date-fns';
-import { 
-  CalendarIcon, 
-  MapPinIcon, 
+import {
+  CalendarIcon,
+  MapPinIcon,
   CurrencyBangladeshiIcon,
   UserGroupIcon,
   CheckCircleIcon,
@@ -26,7 +26,7 @@ export default function ProgramDetails({ slug, initialProgram }: ProgramDetailsP
   const router = useRouter();
   const { data: session, status } = useSession();
   const [program] = useState<any>(initialProgram);
-  
+
   // Registration State
   const [showRegisterModal, setShowRegisterModal] = useState(false);
   const [submitting, setSubmitting] = useState(false);
@@ -50,7 +50,7 @@ export default function ProgramDetails({ slug, initialProgram }: ProgramDetailsP
     { value: 'brown_kyu1', label: 'Brown Belt (Kyu 1)' },
     { value: 'black', label: 'Black Belt' },
   ];
-  
+
   // Payment Account State
   const [paymentAccount, setPaymentAccount] = useState<{
     name: string;
@@ -106,10 +106,10 @@ export default function ProgramDetails({ slug, initialProgram }: ProgramDetailsP
       return;
     }
     // Only require proof if you want to. Let's make it optional but recommended.
-    
+
     setSubmitting(true);
     setRegistrationError('');
-    
+
     try {
       const res = await registerForProgram({
          programId: program.id,
@@ -139,16 +139,16 @@ export default function ProgramDetails({ slug, initialProgram }: ProgramDetailsP
     }
   };
 
-  const isRegistrationOpen = program.isRegistrationOpen && 
+  const isRegistrationOpen = program.isRegistrationOpen &&
     (!program.registrationDeadline || new Date(program.registrationDeadline) > new Date());
-  
+
   const isFull = program.maxParticipants && (program.currentParticipants || 0) >= program.maxParticipants;
 
   return (
     <div className="py-8 pb-16">
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-        
-        <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-lg overflow-hidden border border-slate-200 dark:border-slate-700">
+
+        <div className="bg-white dark:bg-card rounded-2xl shadow-lg overflow-hidden border border-border dark:border-border">
            {/* Banner */}
            <div className="h-56 w-full relative overflow-hidden">
               <div className="absolute inset-0 bg-gradient-to-br from-primary via-primary/90 to-primary/70"></div>
@@ -166,34 +166,34 @@ export default function ProgramDetails({ slug, initialProgram }: ProgramDetailsP
                  {/* Main Content */}
                  <div className="lg:col-span-2 space-y-6">
                     <div className="prose prose-slate dark:prose-invert max-w-none">
-                      <p className="whitespace-pre-wrap text-slate-600 dark:text-slate-300 leading-relaxed">{program.description}</p>
+                      <p className="whitespace-pre-wrap text-muted-foreground dark:text-muted-foreground leading-relaxed">{program.description}</p>
                     </div>
 
-                    <div className="border-t border-slate-200 dark:border-slate-700 pt-6">
-                       <h3 className="font-semibold text-slate-900 dark:text-slate-100 mb-4">Schedule & Location</h3>
+                    <div className="border-t border-border dark:border-border pt-6">
+                       <h3 className="font-semibold text-foreground dark:text-foreground mb-4">Schedule & Location</h3>
                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                          <div className="flex items-start gap-3 p-4 rounded-xl bg-slate-50 dark:bg-slate-900/50">
+                          <div className="flex items-start gap-3 p-4 rounded-xl bg-muted dark:bg-background/50">
                              <CalendarIcon className="h-5 w-5 text-primary flex-shrink-0 mt-0.5" />
                              <div>
-                               <p className="font-medium text-slate-900 dark:text-slate-100">Starts</p>
-                               <p className="text-sm text-slate-600 dark:text-slate-400">{format(new Date(program.startDate), 'PPP p')}</p>
+                               <p className="font-medium text-foreground dark:text-foreground">Starts</p>
+                               <p className="text-sm text-muted-foreground dark:text-muted-foreground">{format(new Date(program.startDate), 'PPP p')}</p>
                              </div>
                           </div>
                           {program.endDate && (
-                             <div className="flex items-start gap-3 p-4 rounded-xl bg-slate-50 dark:bg-slate-900/50">
+                             <div className="flex items-start gap-3 p-4 rounded-xl bg-muted dark:bg-background/50">
                                <CalendarIcon className="h-5 w-5 text-primary flex-shrink-0 mt-0.5" />
                                <div>
-                                 <p className="font-medium text-slate-900 dark:text-slate-100">Ends</p>
-                                 <p className="text-sm text-slate-600 dark:text-slate-400">{format(new Date(program.endDate), 'PPP p')}</p>
+                                 <p className="font-medium text-foreground dark:text-foreground">Ends</p>
+                                 <p className="text-sm text-muted-foreground dark:text-muted-foreground">{format(new Date(program.endDate), 'PPP p')}</p>
                                </div>
                             </div>
                           )}
                           {program.location && (
-                             <div className="flex items-start gap-3 p-4 rounded-xl bg-slate-50 dark:bg-slate-900/50 sm:col-span-2">
+                             <div className="flex items-start gap-3 p-4 rounded-xl bg-muted dark:bg-background/50 sm:col-span-2">
                                <MapPinIcon className="h-5 w-5 text-primary flex-shrink-0 mt-0.5" />
                                <div>
-                                 <p className="font-medium text-slate-900 dark:text-slate-100">Location</p>
-                                 <p className="text-sm text-slate-600 dark:text-slate-400">{program.location}</p>
+                                 <p className="font-medium text-foreground dark:text-foreground">Location</p>
+                                 <p className="text-sm text-muted-foreground dark:text-muted-foreground">{program.location}</p>
                                </div>
                             </div>
                           )}
@@ -203,16 +203,16 @@ export default function ProgramDetails({ slug, initialProgram }: ProgramDetailsP
 
                  {/* Sidebar / Actions */}
                  <div className="lg:col-span-1">
-                    <div className="sticky top-24 bg-slate-50 dark:bg-slate-900/50 rounded-xl p-6 border border-slate-200 dark:border-slate-700">
-                       <h3 className="text-lg font-semibold text-slate-900 dark:text-slate-100">Registration</h3>
-                       
+                    <div className="sticky top-24 bg-muted dark:bg-background/50 rounded-xl p-6 border border-border dark:border-border">
+                       <h3 className="text-lg font-semibold text-foreground dark:text-foreground">Registration</h3>
+
                        <div className="mt-4 space-y-3">
                           <div className="flex justify-between items-center">
-                             <span className="text-slate-500 dark:text-slate-400">Fee</span>
-                             <span className="font-bold text-slate-900 dark:text-slate-100 text-xl">৳{program.fee}</span>
+                             <span className="text-muted-foreground dark:text-muted-foreground">Fee</span>
+                             <span className="font-bold text-foreground dark:text-foreground text-xl">৳{program.fee}</span>
                           </div>
                           <div className="flex justify-between items-center">
-                             <span className="text-slate-500 dark:text-slate-400">Status</span>
+                             <span className="text-muted-foreground dark:text-muted-foreground">Status</span>
                              {isRegistrationOpen && !isFull ? (
                                <span className="text-green-600 dark:text-green-400 font-medium flex items-center gap-1">
                                  <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
@@ -224,8 +224,8 @@ export default function ProgramDetails({ slug, initialProgram }: ProgramDetailsP
                           </div>
                           {program.maxParticipants && (
                              <div className="flex justify-between items-center">
-                               <span className="text-slate-500 dark:text-slate-400">Seats</span>
-                               <span className="text-slate-900 dark:text-slate-100">{(program.currentParticipants || 0)} / {program.maxParticipants}</span>
+                               <span className="text-muted-foreground dark:text-muted-foreground">Seats</span>
+                               <span className="text-foreground dark:text-foreground">{(program.currentParticipants || 0)} / {program.maxParticipants}</span>
                              </div>
                           )}
                        </div>
@@ -239,7 +239,7 @@ export default function ProgramDetails({ slug, initialProgram }: ProgramDetailsP
                                Register Now
                              </button>
                           ) : (
-                             <button disabled className="w-full bg-slate-300 dark:bg-slate-600 text-slate-500 dark:text-slate-400 rounded-xl py-3 px-4 font-semibold cursor-not-allowed">
+                             <button disabled className="w-full bg-slate-300 dark:bg-slate-600 text-muted-foreground dark:text-muted-foreground rounded-xl py-3 px-4 font-semibold cursor-not-allowed">
                                Registration Closed
                              </button>
                           )}
@@ -259,30 +259,30 @@ export default function ProgramDetails({ slug, initialProgram }: ProgramDetailsP
                <div className="absolute inset-0 bg-black/60 backdrop-blur-sm"></div>
              </div>
 
-             <div className="inline-block align-bottom bg-white dark:bg-slate-800 rounded-2xl text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full border border-slate-200 dark:border-slate-700">
+             <div className="inline-block align-bottom bg-white dark:bg-card rounded-2xl text-left overflow-hidden shadow-sm transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full border border-border dark:border-border">
                 <div className="px-6 pt-6 pb-6">
-                   <h3 className="text-xl font-bold text-slate-900 dark:text-slate-100" id="modal-title">
+                   <h3 className="text-xl font-bold text-foreground dark:text-foreground" id="modal-title">
                      Register for {program.title}
                    </h3>
                    <div className="mt-4">
                       <div className="bg-primary/10 border border-primary/20 rounded-xl p-4 mb-4">
-                        <p className="text-sm text-slate-700 dark:text-slate-300">
-                          Please send <span className="font-bold text-primary">৳{program.fee}</span> to our {paymentAccount?.methodType?.toUpperCase() || 'Nagad'} Number: 
+                        <p className="text-sm text-foreground dark:text-muted-foreground">
+                          Please send <span className="font-bold text-primary">৳{program.fee}</span> to our {paymentAccount?.methodType?.toUpperCase() || 'Nagad'} Number:
                         </p>
                         <p className="text-2xl font-mono font-bold text-primary mt-1">
                           {paymentAccount?.accountNumber || '01777-300309'}
                         </p>
                         {paymentAccount?.accountName && (
-                          <p className="text-sm text-slate-600 dark:text-slate-400 mt-1">
+                          <p className="text-sm text-muted-foreground dark:text-muted-foreground mt-1">
                             Account: {paymentAccount.accountName}
                           </p>
                         )}
                         {paymentAccount?.instructions && (
-                          <p className="text-xs text-slate-500 dark:text-slate-400 mt-2">
+                          <p className="text-xs text-muted-foreground dark:text-muted-foreground mt-2">
                             {paymentAccount.instructions}
                           </p>
                         )}
-                        <p className="text-xs text-slate-500 dark:text-slate-400 mt-2">
+                        <p className="text-xs text-muted-foreground dark:text-muted-foreground mt-2">
                           Use Reference: <code className="bg-slate-200 dark:bg-slate-700 px-1 rounded">{session?.user?.name?.split(' ')[0]}-{program.id.substring(0,4)}</code>
                         </p>
                       </div>
@@ -296,12 +296,12 @@ export default function ProgramDetails({ slug, initialProgram }: ProgramDetailsP
                       <form onSubmit={(e) => { e.preventDefault(); submitRegistration(); }} className="space-y-4">
                          {program?.type === 'BELT_TEST' && (
                            <div>
-                             <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">New Rank</label>
+                             <label className="block text-sm font-medium text-foreground dark:text-muted-foreground mb-1">New Rank</label>
                              <select
                                required
                                value={newRank}
                                onChange={(e) => setNewRank(e.target.value)}
-                               className="w-full border border-slate-300 dark:border-slate-600 rounded-lg py-2.5 px-3 bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+                               className="w-full border border-slate-300 dark:border-slate-600 rounded-lg py-2.5 px-3 bg-white dark:bg-background text-foreground dark:text-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
                              >
                                <option value="">Select new rank</option>
                                {BELT_RANKS.map((belt) => (
@@ -313,26 +313,26 @@ export default function ProgramDetails({ slug, initialProgram }: ProgramDetailsP
                            </div>
                          )}
                          <div>
-                            <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Transaction ID</label>
-                            <input 
-                              type="text" 
-                              required 
+                            <label className="block text-sm font-medium text-foreground dark:text-muted-foreground mb-1">Transaction ID</label>
+                            <input
+                              type="text"
+                              required
                               value={transactionId}
                               onChange={e => setTransactionId(e.target.value)}
                               placeholder="e.g. 9JKS82..."
-                              className="w-full border border-slate-300 dark:border-slate-600 rounded-lg py-2.5 px-3 bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent" 
+                              className="w-full border border-slate-300 dark:border-slate-600 rounded-lg py-2.5 px-3 bg-white dark:bg-background text-foreground dark:text-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
                             />
                          </div>
 
                          <div>
-                            <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Payment Proof (Optional)</label>
+                            <label className="block text-sm font-medium text-foreground dark:text-muted-foreground mb-2">Payment Proof (Optional)</label>
                             {paymentProofUrl ? (
                                <div className="flex items-center space-x-2 text-green-600 dark:text-green-400 bg-green-50 dark:bg-green-900/30 p-3 rounded-lg">
                                  <CheckCircleIcon className="h-5 w-5" />
                                  <span className="text-sm font-medium">Proof Uploaded</span>
                                </div>
                             ) : (
-                              <CldUploadWidget 
+                              <CldUploadWidget
                                 uploadPreset={process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET || "yddebkab"}
                                 onSuccess={handleUploadSuccess}
                                 options={{
@@ -342,9 +342,9 @@ export default function ProgramDetails({ slug, initialProgram }: ProgramDetailsP
                                 }}
                               >
                                 {({ open }) => (
-                                  <button 
-                                    type="button" 
-                                    className="inline-flex items-center px-4 py-2.5 border border-slate-300 dark:border-slate-600 text-sm font-medium rounded-lg text-slate-700 dark:text-slate-200 bg-white dark:bg-slate-900 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors"
+                                  <button
+                                    type="button"
+                                    className="inline-flex items-center px-4 py-2.5 border border-slate-300 dark:border-slate-600 text-sm font-medium rounded-lg text-foreground dark:text-foreground bg-white dark:bg-background hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors"
                                     onClick={() => open()}
                                   >
                                     <PhotoIcon className="-ml-1 mr-2 h-5 w-5 text-slate-400" />
@@ -359,7 +359,7 @@ export default function ProgramDetails({ slug, initialProgram }: ProgramDetailsP
                             <button
                               type="button"
                               onClick={() => setShowRegisterModal(false)}
-                              className="flex-1 py-2.5 px-4 rounded-lg border border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-200 font-medium hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors"
+                              className="flex-1 py-2.5 px-4 rounded-lg border border-slate-300 dark:border-slate-600 text-foreground dark:text-foreground font-medium hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors"
                             >
                               Cancel
                             </button>

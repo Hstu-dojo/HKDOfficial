@@ -90,7 +90,7 @@ export default function OrgScheduleBlock({
     >
       {/* Giant background number */}
       <div
-        className="absolute top-6 md:top-8 right-2 md:right-12 font-display text-[25vw] md:text-[18vw] leading-none text-foreground/[0.03] tracking-tighter select-none pointer-events-none"
+        className="absolute top-6 md:top-8 right-2 md:right-12 font-display text-[clamp(2.5rem,6vw,5rem)] md:text-[clamp(2.5rem,6vw,5rem)] leading-none text-foreground/[0.03] tracking-tighter select-none pointer-events-none"
         aria-hidden="true"
       >
         {String(totalClasses).padStart(2, "0")}
@@ -103,11 +103,11 @@ export default function OrgScheduleBlock({
         >
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-2 md:gap-4">
             <div>
-              <span className="font-body text-[8px] md:text-[10px] text-accent tracking-[0.2em] md:tracking-[0.3em] uppercase block mb-1 md:mb-2">
+              <span className="font-body text-[8px] md:text-[10px] text-primary tracking-[0.2em] md:tracking-[0.3em] uppercase block mb-1 md:mb-2">
                 [Schedule]
               </span>
-              <h2 className="font-display text-[11vw] sm:text-5xl md:text-7xl lg:text-8xl tracking-tighter text-foreground leading-none uppercase whitespace-nowrap">
-                Weekly Grid<span className="text-accent">.</span>
+              <h2 className="font-display text-[clamp(2.5rem,6vw,5rem)] sm:text-5xl md:text-7xl lg:text-8xl tracking-tighter text-foreground leading-none uppercase break-words">
+                Weekly Grid<span className="text-primary">.</span>
               </h2>
             </div>
             <div className="flex flex-col items-start md:items-end gap-1 md:gap-2">
@@ -117,7 +117,7 @@ export default function OrgScheduleBlock({
               </p>
               <div className="flex items-center gap-2 md:gap-4">
                 <div className="flex items-center gap-1 md:gap-2">
-                  <span className="w-1.5 h-1.5 md:w-2 md:h-2 bg-accent" />
+                  <span className="w-1.5 h-1.5 md:w-2 md:h-2 bg-primary" />
                   <span className="font-body text-[7px] md:text-[10px] text-foreground/60 tracking-[0.1em]">
                     {totalClasses} CLASSES
                   </span>
@@ -150,13 +150,13 @@ export default function OrgScheduleBlock({
                 onClick={() => setActiveDayIdx(dayIdx)}
                 className={`flex-1 min-w-[52px] py-2 md:py-4 font-body text-[8px] md:text-xs tracking-[0.08em] md:tracking-[0.2em] text-center transition-all relative min-h-[40px] ${
                   activeDayIdx === dayIdx
-                    ? "text-accent"
+                    ? "text-primary"
                     : "text-foreground/30 hover:text-foreground/70 active:text-foreground"
                 }`}
               >
                 {DAY_LABELS[dayIdx]}
                 {activeDayIdx === dayIdx && (
-                  <span className="absolute bottom-0 left-0 right-0 h-[2px] bg-accent" />
+                  <span className="absolute bottom-0 left-0 right-0 h-[2px] bg-primary" />
                 )}
               </button>
             ))}
@@ -191,8 +191,8 @@ export default function OrgScheduleBlock({
                     {slot.startTime}
                   </span>
                   <div className="flex items-center gap-1 md:gap-3">
-                    <span className="w-0.5 md:w-1 h-4 md:h-8 bg-foreground/15 group-hover:bg-accent transition-colors" />
-                    <span className="font-display text-base sm:text-lg md:text-3xl lg:text-4xl text-foreground tracking-tighter uppercase group-hover:text-accent transition-colors truncate">
+                    <span className="w-0.5 md:w-1 h-4 md:h-8 bg-foreground/15 group-hover:bg-primary transition-colors" />
+                    <span className="font-display text-base sm:text-lg md:text-3xl lg:text-4xl text-foreground tracking-tighter uppercase group-hover:text-primary transition-colors truncate">
                       {slot.courseName}
                     </span>
                   </div>

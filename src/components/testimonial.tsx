@@ -14,7 +14,7 @@ const Testimonial = ({
 }: TestimonialProps) => {
   return (
     <CardContainer className="inter-var">
-      <CardBody className="group/card dark:hover:shadow-2xl relative  h-full w-auto rounded-xl border border-black/[0.1] bg-gray-50 p-6 px-10 py-12 dark:border-white/[0.2] dark:bg-black dark:hover:shadow-emerald-500/[0.1] sm:w-[30rem]  ">
+      <CardBody className="group/card dark:hover:shadow-2xl relative  h-full w-auto rounded-xl border border-black/[0.1] bg-muted p-6 px-10 py-12 dark:border-white/[0.2] dark:bg-black dark:hover:shadow-emerald-500/[0.1] sm:w-[30rem]  ">
         {(image || name || company) && (
           <CardItem translateZ="50" className="mb-7 flex items-center">
             {image && (

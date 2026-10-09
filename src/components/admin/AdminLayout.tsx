@@ -33,10 +33,10 @@ export function AdminLayout({ children }: AdminLayoutProps) {
 
   // Check if user has admin access via RBAC roles
   const hasAdminAccessByRole = hasAnyRole(ADMIN_ACCESS_ROLES);
-  
+
   // Check if user has ANY permission (meaning they're in the RBAC system)
   const hasAnyPermission = permissions && permissions.permissions && permissions.permissions.length > 0;
-  
+
   // User has admin access if they have an admin role OR if they have any permission in the system
   // This allows users who are assigned permissions to access the admin panel
   const hasAdminAccess = hasAdminAccessByRole || hasAnyPermission;
@@ -67,13 +67,13 @@ export function AdminLayout({ children }: AdminLayoutProps) {
   // Not authenticated - redirect handled by useEffect
   if (status === 'unauthenticated') {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center bg-slate-50 dark:bg-slate-900">
+      <div className="editorial-portal min-h-screen flex flex-col items-center justify-center bg-muted dark:bg-background">
         <div className="flex flex-col items-center gap-6">
           <div className="relative">
-            <div className="h-14 w-14 rounded-full border-[3px] border-slate-200 dark:border-slate-700" />
+            <div className="h-14 w-14 rounded-full border-[3px] border-border dark:border-border" />
             <div className="absolute inset-0 h-14 w-14 rounded-full border-[3px] border-transparent border-t-blue-600 dark:border-t-blue-400 animate-spin" />
           </div>
-          <p className="text-sm font-medium text-slate-700 dark:text-slate-300">Redirecting to login...</p>
+          <p className="text-sm font-medium text-foreground dark:text-muted-foreground">Redirecting to login...</p>
         </div>
       </div>
     );
@@ -82,14 +82,14 @@ export function AdminLayout({ children }: AdminLayoutProps) {
   // No admin access after RBAC loaded
   if (!hasAdminAccess) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-background">
+      <div className="editorial-portal min-h-screen flex items-center justify-center bg-background">
         <div className="max-w-lg w-full text-center p-8">
           <div className="bg-card shadow-lg rounded-lg p-6 border border-border">
             <h2 className="text-2xl font-bold text-foreground">Access Denied</h2>
             <p className="mt-2 text-muted-foreground">
               You don&apos;t have the required permissions to access the admin panel.
             </p>
-            
+
             {/* Debug info - always show for troubleshooting */}
             <div className="mt-4 p-3 bg-muted/50 rounded text-left text-xs">
               <p className="font-semibold text-foreground">Debug Info:</p>
@@ -141,7 +141,7 @@ export function AdminLayout({ children }: AdminLayoutProps) {
 
   // Authenticated and has admin access
   return (
-    <div className="flex h-[100dvh] bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-slate-100">
+    <div className="editorial-portal flex h-[100dvh] bg-muted dark:bg-background text-foreground dark:text-foreground">
       {/* Mobile sidebar overlay */}
       {sidebarOpen && (
         <div className="fixed inset-0 z-40 lg:hidden">
@@ -167,7 +167,7 @@ export function AdminLayout({ children }: AdminLayoutProps) {
           onToggleSidebar={() => setSidebarOpen(!sidebarOpen)}
           sidebarOpen={sidebarOpen}
         />
-        
+
         <main className="flex-1 overflow-y-auto focus:outline-none">
           <div className="py-6">
             <div className={isFullWidthPage ? "px-4 sm:px-6 md:px-8 w-full" : "max-w-7xl mx-auto px-4 sm:px-6 md:px-8"}>

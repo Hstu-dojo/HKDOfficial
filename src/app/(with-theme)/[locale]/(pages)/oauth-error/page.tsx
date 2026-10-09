@@ -16,17 +16,17 @@ function OAuthErrorContent() {
   const locale = useCurrentLocale();
 
   return (
-    <div className="max-w-md mx-auto bg-white dark:bg-slate-800 rounded-2xl shadow-xl overflow-hidden border border-slate-100 dark:border-slate-700">
+    <div className="max-w-md mx-auto bg-white dark:bg-card rounded-2xl shadow-sm overflow-hidden border border-border dark:border-border">
       <div className="p-8 text-center space-y-6">
         <div className="mx-auto w-16 h-16 bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400 rounded-full flex items-center justify-center">
           <ExclamationTriangleIcon className="w-8 h-8" />
         </div>
-        
+
         {error === 'profile_not_found' ? (
           <>
             <div className="space-y-3">
-              <h1 className="text-2xl font-bold text-slate-900 dark:text-white">{t('oauthError.profileRequiredTitle')}</h1>
-              <p className="text-slate-600 dark:text-slate-300">
+              <h1 className="text-2xl font-bold text-foreground dark:text-white">{t('oauthError.profileRequiredTitle')}</h1>
+              <p className="text-muted-foreground dark:text-muted-foreground">
                 {t('oauthError.profileRequiredDescription')}
               </p>
             </div>
@@ -41,7 +41,7 @@ function OAuthErrorContent() {
               </Link>
               <Link
                 href={`/${locale}/dashboard`}
-                className="w-full px-4 py-3 text-slate-600 dark:text-slate-400 bg-slate-50 dark:bg-slate-900 rounded-xl font-medium hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+                className="w-full px-4 py-3 text-muted-foreground dark:text-muted-foreground bg-muted dark:bg-background rounded-xl font-medium hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
               >
                 {t('oauthError.goToDashboard')}
               </Link>
@@ -50,8 +50,8 @@ function OAuthErrorContent() {
         ) : error === 'role_missing' ? (
           <>
             <div className="space-y-3">
-              <h1 className="text-2xl font-bold text-slate-900 dark:text-white">{t('oauthError.roleRequiredTitle')}</h1>
-              <p className="text-slate-600 dark:text-slate-300">
+              <h1 className="text-2xl font-bold text-foreground dark:text-white">{t('oauthError.roleRequiredTitle')}</h1>
+              <p className="text-muted-foreground dark:text-muted-foreground">
                 {t('oauthError.roleRequiredDescription')}
               </p>
             </div>
@@ -67,8 +67,8 @@ function OAuthErrorContent() {
         ) : (
           <>
             <div className="space-y-3">
-              <h1 className="text-2xl font-bold text-slate-900 dark:text-white">{t('oauthError.authenticationErrorTitle')}</h1>
-              <p className="text-slate-600 dark:text-slate-300">
+              <h1 className="text-2xl font-bold text-foreground dark:text-white">{t('oauthError.authenticationErrorTitle')}</h1>
+              <p className="text-muted-foreground dark:text-muted-foreground">
                 {t('oauthError.authenticationErrorDescription')}
               </p>
             </div>

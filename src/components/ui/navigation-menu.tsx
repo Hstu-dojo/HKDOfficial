@@ -70,7 +70,7 @@ const NavigationMenuContent = React.forwardRef<
     <NavigationMenuPrimitive.Content
       ref={ref}
       className={cn(
-        "origin-top-center text-foreground-muted relative top-full mt-1.5 h-[var(--radix-navigation-menu-viewport-height)] w-full overflow-hidden rounded bg-background shadow-lg shadow-slate-500/20 data-[state=closed]:animate-fade-out data-[state=open]:animate-fade-in data-[motion^=from-]:animate-in data-[motion^=to-]:animate-out data-[motion^=from-]:fade-in data-[motion^=to-]:fade-out data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-90 data-[motion=from-end]:slide-in-from-right-52 data-[motion=from-start]:slide-in-from-left-52 data-[motion=to-end]:slide-out-to-right-52 data-[motion=to-start]:slide-out-to-left-52 dark:bg-slate-900 dark:shadow-slate-900/20 md:absolute md:w-auto",
+        "origin-top-center text-foreground-muted relative top-full mt-1.5 h-[var(--radix-navigation-menu-viewport-height)] w-full overflow-hidden rounded bg-background shadow-lg shadow-slate-500/20 data-[state=closed]:animate-fade-out data-[state=open]:animate-fade-in data-[motion^=from-]:animate-in data-[motion^=to-]:animate-out data-[motion^=from-]:fade-in data-[motion^=to-]:fade-out data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-90 data-[motion=from-end]:slide-in-from-right-52 data-[motion=from-start]:slide-in-from-left-52 data-[motion=to-end]:slide-out-to-right-52 data-[motion=to-start]:slide-out-to-left-52 dark:bg-background dark:shadow-slate-900/20 md:absolute md:w-auto",
         className,
       )}
       {...props}
@@ -111,7 +111,7 @@ const NavigationMenuIndicator = React.forwardRef<
     )}
     {...props}
   >
-    <div className="relative top-[60%] h-2 w-2 rotate-45 rounded-tl-sm bg-background dark:bg-slate-900" />
+    <div className="relative top-[60%] h-2 w-2 rotate-45 rounded-tl-sm bg-background dark:bg-background" />
   </NavigationMenuPrimitive.Indicator>
 ));
 NavigationMenuIndicator.displayName =

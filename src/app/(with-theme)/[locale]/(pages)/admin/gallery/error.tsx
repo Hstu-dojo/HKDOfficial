@@ -16,7 +16,7 @@ export default function Error({
 
   return (
     <main className="flex h-full flex-col items-center justify-center">
-      <h2 className="text-center text-gray-900 dark:text-gray-100">
+      <h2 className="text-center text-foreground dark:text-gray-100">
         {error.message || 'Something went wrong. Try reloading the page'}
       </h2>
       <button

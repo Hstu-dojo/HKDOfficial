@@ -51,7 +51,7 @@ type FeesResponse = {
 }
 
 const STATUS_CONFIG: Record<string, { label: string; color: string }> = {
-  pending: { label: 'Pending', color: 'bg-gray-100 text-gray-700' },
+  pending: { label: 'Pending', color: 'bg-muted text-foreground' },
   due: { label: 'Due', color: 'bg-yellow-100 text-yellow-700' },
   payment_submitted: { label: 'Payment Submitted', color: 'bg-blue-100 text-blue-700' },
   paid: { label: 'Paid', color: 'bg-green-100 text-green-700' },
@@ -365,7 +365,7 @@ export default function MonthlyBilling() {
                       <td className="px-4 py-3 font-medium">{fmtAmount(item.fee.amount, item.fee.currency)}</td>
                       <td className="px-4 py-3 text-muted-foreground">{fmtDate(item.fee.dueDate)}</td>
                       <td className="px-4 py-3">
-                        <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${statusCfg?.color || 'bg-gray-100 text-gray-700'}`}>
+                        <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${statusCfg?.color || 'bg-muted text-foreground'}`}>
                           {statusCfg?.label || item.fee.status}
                         </span>
                       </td>
@@ -501,7 +501,7 @@ export default function MonthlyBilling() {
                 </div>
                 <div>
                   <p className="text-muted-foreground">Status</p>
-                  <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${STATUS_CONFIG[selectedFee.fee.status]?.color || 'bg-gray-100'}`}>
+                  <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${STATUS_CONFIG[selectedFee.fee.status]?.color || 'bg-muted'}`}>
                     {STATUS_CONFIG[selectedFee.fee.status]?.label || selectedFee.fee.status}
                   </span>
                 </div>

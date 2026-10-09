@@ -5,7 +5,7 @@ const SectionMoneyBack = () => {
     <section className="pt-10">
       <div className="container">
         <div className="mx-auto max-w-4xl">
-          <div className="relative rounded-md bg-[#FFFEF6] px-16 pb-12 pt-20 text-center shadow-[0_1px_6px_#EDEBDB] dark:bg-slate-800 dark:shadow-slate-850/20">
+          <div className="relative rounded-md bg-[#FFFEF6] px-16 pb-12 pt-20 text-center shadow-[0_1px_6px_#EDEBDB] dark:bg-card dark:shadow-slate-850/20">
             <Image
               src="/moneyback_badge@2x.png"
               width={100}

@@ -135,7 +135,7 @@ const SectionTeam = () => {
               />
               {item.name && <h3 className="mb-1">{item.name}</h3>}
               {item.position && (
-                <span className="text-sm font-bold text-slate-400 dark:text-slate-300">
+                <span className="text-sm font-bold text-slate-400 dark:text-muted-foreground">
                   {item.position}
                 </span>
               )}

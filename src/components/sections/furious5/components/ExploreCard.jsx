@@ -8,18 +8,18 @@ import { fadeIn } from "@/utils/motion";
 
 const ExploreCard = ({ id, imgUrl, title, index, active, handleClick }) => (
   <motion.div
-    variants={fadeIn("right", "spring", index * 0.5, 0.75)}
+    variants={fadeIn("right", "spring", index * 0.08, 0.45)}
     className={`relative ${
       active === id ? "flex-[10] lg:flex-[3.5]" : "flex-[2] lg:flex-[0.5]"
-    } duration-&lsqb;0.7s&rsqb; flex h-[700px] min-w-[170px] cursor-pointer items-center justify-center transition-[flex] ease-out-flex`}
+    } duration-500 flex h-[380px] lg:h-[480px] min-w-[170px] cursor-pointer items-center justify-center transition-[flex] ease-out-flex`}
     onClick={() => handleClick(id)}
   >
     <Image
       src={imgUrl}
       height={700}
       width={500}
-      alt="planet-04"
-      className={`pointer-events-none absolute h-full w-full rounded-[24px] object-cover object-top ${
+      alt={title}
+      className={`pointer-events-none absolute h-full w-full rounded-2xl object-cover object-top ${
         active === id ? "" : " opacity-60 filter"
       }`}
     />
@@ -28,9 +28,9 @@ const ExploreCard = ({ id, imgUrl, title, index, active, handleClick }) => (
         {title}
       </h3>
     ) : (
-      <div className="absolute bottom-0 flex h-[150px] w-full flex-col justify-evenly overflow-hidden rounded-b-[24px] bg-[rgba(0,0,0,0.5)] p-8 lg:h-[250px]">
+      <div className="absolute bottom-0 flex h-[150px] w-full flex-col justify-evenly overflow-hidden rounded-b-2xl bg-[rgba(0,0,0,0.5)] p-8 lg:h-[250px]">
         <div
-          className={`${styles.flexCenter} glassmorphism mb-[16px] h-[50px] w-[60px] rounded-[24px]`}
+          className={`${styles.flexCenter} glassmorphism mb-[16px] h-[50px] w-[60px] rounded-2xl`}
         >
           <Image
             height={200}

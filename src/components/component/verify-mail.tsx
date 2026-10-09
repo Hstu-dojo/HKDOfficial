@@ -120,14 +120,14 @@ export function VerifyMail({ callbackUrl }: any) {
     }
   };
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center bg-gray-100 dark:bg-gray-900">
+    <div className="flex min-h-screen flex-col items-center justify-center bg-muted dark:bg-background">
       <Link href={`${callbackUrl || "/"}`}>
         <Button className="absolute right-4 top-4" variant="link">
           skip
         </Button>
       </Link>
-      <div className="w-full max-w-md space-y-6 rounded-lg bg-white p-8 shadow-md dark:bg-gray-800">
-        <h2 className="text-center text-3xl font-bold text-gray-900 dark:text-gray-100">
+      <div className="w-full max-w-md space-y-6 rounded-lg bg-white p-8 shadow-md dark:bg-card">
+        <h2 className="text-center text-3xl font-bold text-foreground dark:text-gray-100">
           Verify your email
         </h2>
         <Image
@@ -137,7 +137,7 @@ export function VerifyMail({ callbackUrl }: any) {
           height={70}
           className="m-2 mx-auto border-spacing-2 rounded-full border border-double border-primary dark:opacity-100 dark:contrast-100 dark:invert dark:filter"
         />
-        <p className="text-justify text-gray-600 dark:text-gray-400">
+        <p className="text-justify text-muted-foreground dark:text-gray-400">
           We have sent a verification code to your email. Please enter the code
           below.
         </p>
@@ -157,7 +157,7 @@ export function VerifyMail({ callbackUrl }: any) {
             Verify Code
           </Button>
         </form>
-        <p className="text-center text-sm text-gray-500 dark:text-gray-400">
+        <p className="text-center text-sm text-muted-foreground dark:text-gray-400">
           Did not receive the code?
           <Button onClick={() => resend()} className="underline" variant="link">
             Resend Code

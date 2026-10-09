@@ -52,7 +52,7 @@ interface MonthlyFee {
 }
 
 const STATUS_CONFIG: Record<string, { label: string; color: string; icon: React.ComponentType<{ className?: string }> }> = {
-  pending: { label: 'Pending', color: 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300', icon: ClockIcon },
+  pending: { label: 'Pending', color: 'bg-muted dark:bg-gray-700 text-foreground dark:text-gray-300', icon: ClockIcon },
   due: { label: 'Due', color: 'bg-yellow-100 dark:bg-yellow-900/30 text-yellow-700', icon: ClockIcon },
   payment_submitted: { label: 'Payment Submitted', color: 'bg-blue-100 dark:bg-blue-900/30 text-blue-700', icon: BanknotesIcon },
   paid: { label: 'Paid', color: 'bg-green-100 dark:bg-green-900/30 text-green-700', icon: CheckCircleIcon },
@@ -88,7 +88,7 @@ export default function MonthlyFeesManagement() {
       if (statusFilter) params.set('status', statusFilter);
       if (monthFilter) params.set('billingMonth', monthFilter);
       if (partnerFilter) params.set('partnerId', partnerFilter);
-      
+
       const url = `/api/admin/monthly-fees?${params.toString()}`;
       const response = await fetch(url);
       if (!response.ok) throw new Error('Failed to fetch monthly fees');
@@ -261,8 +261,8 @@ export default function MonthlyFeesManagement() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Monthly Fees</h1>
-          <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
+          <h1 className="text-2xl font-bold text-foreground dark:text-gray-100">Monthly Fees</h1>
+          <p className="mt-1 text-sm text-muted-foreground dark:text-gray-400">
             Track and manage student monthly payments
           </p>
         </div>
@@ -277,28 +277,28 @@ export default function MonthlyFeesManagement() {
 
       {/* Stats */}
       <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
-        <div className="bg-white dark:bg-gray-800 p-4 rounded-lg border">
-          <p className="text-sm text-gray-500 dark:text-gray-400">Total Bills</p>
+        <div className="bg-white dark:bg-card p-4 rounded-lg border">
+          <p className="text-sm text-muted-foreground dark:text-gray-400">Total Bills</p>
           <p className="text-2xl font-semibold">{stats.total}</p>
         </div>
-        <div className="bg-white dark:bg-gray-800 p-4 rounded-lg border">
-          <p className="text-sm text-gray-500 dark:text-gray-400">Pending/Due</p>
+        <div className="bg-white dark:bg-card p-4 rounded-lg border">
+          <p className="text-sm text-muted-foreground dark:text-gray-400">Pending/Due</p>
           <p className="text-2xl font-semibold text-yellow-600 dark:text-yellow-400">{stats.pending}</p>
         </div>
-        <div className="bg-white dark:bg-gray-800 p-4 rounded-lg border">
-          <p className="text-sm text-gray-500 dark:text-gray-400">Awaiting Verification</p>
+        <div className="bg-white dark:bg-card p-4 rounded-lg border">
+          <p className="text-sm text-muted-foreground dark:text-gray-400">Awaiting Verification</p>
           <p className="text-2xl font-semibold text-blue-600 dark:text-blue-400">{stats.payment_submitted}</p>
         </div>
-        <div className="bg-white dark:bg-gray-800 p-4 rounded-lg border">
-          <p className="text-sm text-gray-500 dark:text-gray-400">Paid</p>
+        <div className="bg-white dark:bg-card p-4 rounded-lg border">
+          <p className="text-sm text-muted-foreground dark:text-gray-400">Paid</p>
           <p className="text-2xl font-semibold text-green-600 dark:text-green-400">{stats.paid}</p>
         </div>
-        <div className="bg-white dark:bg-gray-800 p-4 rounded-lg border">
-          <p className="text-sm text-gray-500 dark:text-gray-400">Overdue</p>
+        <div className="bg-white dark:bg-card p-4 rounded-lg border">
+          <p className="text-sm text-muted-foreground dark:text-gray-400">Overdue</p>
           <p className="text-2xl font-semibold text-red-600 dark:text-red-400">{stats.overdue}</p>
         </div>
-        <div className="bg-white dark:bg-gray-800 p-4 rounded-lg border">
-          <p className="text-sm text-gray-500 dark:text-gray-400">Collected</p>
+        <div className="bg-white dark:bg-card p-4 rounded-lg border">
+          <p className="text-sm text-muted-foreground dark:text-gray-400">Collected</p>
           <p className="text-2xl font-semibold text-green-600 dark:text-green-400">
             {formatCurrency(stats.collectedAmount, 'BDT')}
           </p>
@@ -306,12 +306,12 @@ export default function MonthlyFeesManagement() {
       </div>
 
       {/* Filters */}
-      <div className="bg-white dark:bg-gray-800 p-4 rounded-lg border flex flex-wrap gap-4">
+      <div className="bg-white dark:bg-card p-4 rounded-lg border flex flex-wrap gap-4">
         <div className="flex items-center gap-2">
           <FunnelIcon className="h-5 w-5 text-gray-400 dark:text-gray-500" />
-          <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Filters:</span>
+          <span className="text-sm font-medium text-foreground dark:text-gray-300">Filters:</span>
         </div>
-        
+
         <div className="flex-1 min-w-[200px]">
           <div className="relative">
             <MagnifyingGlassIcon className="h-5 w-5 absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 dark:text-gray-500" />
@@ -324,7 +324,7 @@ export default function MonthlyFeesManagement() {
             />
           </div>
         </div>
-        
+
         <select
           value={monthFilter}
           onChange={(e) => setMonthFilter(e.target.value)}
@@ -346,7 +346,7 @@ export default function MonthlyFeesManagement() {
             <option key={p.id} value={p.id}>{p.name}</option>
           ))}
         </select>
-        
+
         <select
           value={statusFilter}
           onChange={(e) => setStatusFilter(e.target.value)}
@@ -360,7 +360,7 @@ export default function MonthlyFeesManagement() {
       </div>
 
       {/* Fees Table */}
-      <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border overflow-hidden">
+      <div className="bg-white dark:bg-card rounded-lg shadow-sm border overflow-hidden">
         {loading ? (
           <div className="flex justify-center items-center py-12">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
@@ -368,44 +368,44 @@ export default function MonthlyFeesManagement() {
         ) : filteredFees.length === 0 ? (
           <div className="text-center py-12">
             <BanknotesIcon className="h-12 w-12 mx-auto text-gray-400 dark:text-gray-500" />
-            <h3 className="mt-2 text-sm font-medium text-gray-900 dark:text-gray-100">No monthly fees found</h3>
-            <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
+            <h3 className="mt-2 text-sm font-medium text-foreground dark:text-gray-100">No monthly fees found</h3>
+            <p className="mt-1 text-sm text-muted-foreground dark:text-gray-400">
               Try adjusting your filters or generate fees for a new month.
             </p>
           </div>
         ) : (
           <div className="overflow-x-auto">
             <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-              <thead className="bg-gray-50 dark:bg-gray-800/50">
+              <thead className="bg-muted dark:bg-card/50">
                 <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground dark:text-gray-400 uppercase tracking-wider">
                     Student
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground dark:text-gray-400 uppercase tracking-wider">
                     Course / Org
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground dark:text-gray-400 uppercase tracking-wider">
                     Month
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground dark:text-gray-400 uppercase tracking-wider">
                     Amount
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground dark:text-gray-400 uppercase tracking-wider">
                     Due Date
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground dark:text-gray-400 uppercase tracking-wider">
                     Status
                   </th>
-                  <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-right text-xs font-medium text-muted-foreground dark:text-gray-400 uppercase tracking-wider">
                     Actions
                   </th>
                 </tr>
               </thead>
-              <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
+              <tbody className="bg-white dark:bg-card divide-y divide-gray-200 dark:divide-gray-700">
                 {filteredFees.map((item) => {
                   const status = STATUS_CONFIG[item.fee.status];
                   const StatusIcon = status?.icon || ClockIcon;
-                  const isOverdue = new Date(item.fee.dueDate) < new Date() && 
+                  const isOverdue = new Date(item.fee.dueDate) < new Date() &&
                     !['paid', 'waived'].includes(item.fee.status);
 
                   return (
@@ -413,36 +413,36 @@ export default function MonthlyFeesManagement() {
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="flex items-center">
                           <div className="h-8 w-8 rounded-full bg-gray-200 dark:bg-gray-600 flex items-center justify-center">
-                            <UserIcon className="h-4 w-4 text-gray-500 dark:text-gray-400" />
+                            <UserIcon className="h-4 w-4 text-muted-foreground dark:text-gray-400" />
                           </div>
                           <div className="ml-3">
-                            <div className="text-sm font-medium text-gray-900 dark:text-gray-100">
+                            <div className="text-sm font-medium text-foreground dark:text-gray-100">
                               {item.member?.fullNameEnglish || 'Unknown'}
                             </div>
-                            <div className="text-xs text-gray-500 dark:text-gray-400">
+                            <div className="text-xs text-muted-foreground dark:text-gray-400">
                               {item.member?.email}
                             </div>
                           </div>
                         </div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="text-sm text-gray-900 dark:text-gray-100">
+                        <div className="text-sm text-foreground dark:text-gray-100">
                           {item.course?.name || 'Unknown'}
                         </div>
                         {item.partnerName && (
-                          <div className="text-xs text-gray-500 dark:text-gray-400">
+                          <div className="text-xs text-muted-foreground dark:text-gray-400">
                             {item.partnerName}
                           </div>
                         )}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="flex items-center text-sm text-gray-900 dark:text-gray-100">
+                        <div className="flex items-center text-sm text-foreground dark:text-gray-100">
                           <CalendarIcon className="h-4 w-4 mr-1 text-gray-400 dark:text-gray-500" />
                           {formatMonth(item.fee.billingMonth)}
                         </div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="text-sm font-medium text-gray-900 dark:text-gray-100">
+                        <div className="text-sm font-medium text-foreground dark:text-gray-100">
                           {formatCurrency(item.fee.amount, item.fee.currency)}
                         </div>
                         {(item.fee.amountPaid ?? 0) > 0 && (item.fee.amountPaid ?? 0) < item.fee.amount && (
@@ -451,7 +451,7 @@ export default function MonthlyFeesManagement() {
                           </div>
                         )}
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-muted-foreground dark:text-gray-400">
                         {formatDate(item.fee.dueDate)}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">

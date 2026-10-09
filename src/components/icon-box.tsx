@@ -13,7 +13,7 @@ const IconBox = ({
   return (
     <div
       className={cn(
-        "hover-shadow z-[1] overflow-hidden rounded-md bg-white px-10 py-12 before:absolute before:left-0 before:top-0 before:block before:h-[.3125rem] before:w-0 before:bg-secondary before:transition-all before:duration-200 hover:before:w-full dark:bg-slate-800",
+        "hover-shadow z-[1] overflow-hidden rounded-md bg-white px-10 py-12 before:absolute before:left-0 before:top-0 before:block before:h-[.3125rem] before:w-0 before:bg-secondary before:transition-all before:duration-200 hover:before:w-full dark:bg-card",
         className,
       )}
     >

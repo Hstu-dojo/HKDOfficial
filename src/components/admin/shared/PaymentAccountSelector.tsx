@@ -79,8 +79,8 @@ const METHOD_CONFIG: Record<
   cash: {
     label: 'Cash',
     emoji: '💵',
-    color: 'text-gray-700 dark:text-gray-400',
-    bg: 'bg-gray-50 dark:bg-gray-800/50',
+    color: 'text-foreground dark:text-gray-400',
+    bg: 'bg-muted dark:bg-card/50',
     border: 'border-gray-300 dark:border-gray-600',
   },
 };
@@ -89,8 +89,8 @@ const getMethodConfig = (type: string) =>
   METHOD_CONFIG[type] ?? {
     label: type,
     emoji: '💳',
-    color: 'text-gray-700 dark:text-gray-400',
-    bg: 'bg-gray-50 dark:bg-gray-800/50',
+    color: 'text-foreground dark:text-gray-400',
+    bg: 'bg-muted dark:bg-card/50',
     border: 'border-gray-300 dark:border-gray-600',
   };
 
@@ -243,7 +243,7 @@ export default function PaymentAccountSelector({
             }}
             className="h-4 w-4 text-blue-600 focus:ring-blue-500"
           />
-          <span className="text-sm text-gray-700 dark:text-gray-300">
+          <span className="text-sm text-foreground dark:text-gray-300">
             Use default payment accounts
           </span>
         </label>
@@ -255,7 +255,7 @@ export default function PaymentAccountSelector({
             onChange={() => setUseDefault(false)}
             className="h-4 w-4 text-blue-600 focus:ring-blue-500"
           />
-          <span className="text-sm text-gray-700 dark:text-gray-300">
+          <span className="text-sm text-foreground dark:text-gray-300">
             Select specific accounts
           </span>
         </label>
@@ -283,7 +283,7 @@ export default function PaymentAccountSelector({
                   'relative flex items-start gap-3 rounded-lg border-2 p-3 text-left transition-all',
                   isSelected
                     ? `${cfg.border} ${cfg.bg} ring-1 ring-offset-1`
-                    : 'border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600'
+                    : 'border-border dark:border-border hover:border-gray-300 dark:hover:border-gray-600'
                 )}
               >
                 {/* Checkbox indicator */}

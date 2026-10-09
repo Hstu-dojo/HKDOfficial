@@ -12,9 +12,9 @@ interface ProfileCompletionBannerProps {
   className?: string;
 }
 
-export function ProfileCompletionBanner({ 
+export function ProfileCompletionBanner({
   variant = "inline",
-  className 
+  className
 }: ProfileCompletionBannerProps) {
   const { data: session, status: sessionStatus } = useSession();
   const [showBanner, setShowBanner] = useState(false);
@@ -48,7 +48,7 @@ export function ProfileCompletionBanner({
   // Minimal variant - just a small inline link
   if (variant === "minimal") {
     return (
-      <Link 
+      <Link
         href="/onboarding"
         className={cn(
           "inline-flex items-center gap-1.5 text-sm font-medium",
@@ -76,7 +76,7 @@ export function ProfileCompletionBanner({
       )}>
         {/* Decorative elements */}
         <div className="absolute -top-12 -right-12 w-40 h-40 bg-gradient-to-br from-violet-400/10 to-cyan-400/10 dark:from-violet-500/5 dark:to-cyan-500/5 rounded-full blur-2xl" />
-        
+
         <div className="relative p-5">
           <div className="flex items-start gap-4">
             {/* Icon */}
@@ -86,10 +86,10 @@ export function ProfileCompletionBanner({
 
             {/* Content */}
             <div className="flex-1">
-              <h3 className="text-base font-semibold text-slate-900 dark:text-white">
+              <h3 className="text-base font-semibold text-foreground dark:text-white">
                 Complete Your Profile
               </h3>
-              <p className="mt-1 text-sm text-slate-600 dark:text-slate-400">
+              <p className="mt-1 text-sm text-muted-foreground dark:text-muted-foreground">
                 Your membership profile is incomplete. Complete it to access enrollment features and unlock all programs and courses.
               </p>
 
@@ -134,9 +134,9 @@ export function ProfileCompletionBanner({
 
           {/* Text */}
           <div className="flex-1">
-            <p className="text-sm font-medium text-slate-900 dark:text-white">
+            <p className="text-sm font-medium text-foreground dark:text-white">
               Profile incomplete!{" "}
-              <span className="font-normal text-slate-600 dark:text-slate-300">
+              <span className="font-normal text-muted-foreground dark:text-muted-foreground">
                 Complete your membership registration to enroll in courses and programs.
               </span>
             </p>

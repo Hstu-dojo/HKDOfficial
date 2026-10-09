@@ -9,18 +9,18 @@ export default function OrgMarquee({ items }: OrgMarqueeProps) {
 
   return (
     <div
-      className="bg-accent overflow-hidden py-2.5 md:py-3 relative"
+      className="bg-primary overflow-hidden py-2.5 md:py-3 relative"
       role="marquee"
       aria-label="Highlights"
     >
-      <div className="flex animate-marquee whitespace-nowrap">
+      <div className="flex animate-marquee break-words">
         {[...words, ...words].map((word, i) => (
           <span
             key={`${word}-${i}`}
-            className="font-display text-lg md:text-3xl text-accent-foreground mx-3 md:mx-10 tracking-wider uppercase"
+            className="font-display text-lg md:text-3xl text-primary-foreground mx-3 md:mx-10 tracking-wider uppercase"
           >
             {word}
-            <span className="text-accent-foreground/40 mx-3 md:mx-10">/</span>
+            <span className="text-primary-foreground/40 mx-3 md:mx-10">/</span>
           </span>
         ))}
       </div>

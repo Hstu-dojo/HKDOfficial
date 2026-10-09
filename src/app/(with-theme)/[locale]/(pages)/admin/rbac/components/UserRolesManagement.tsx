@@ -103,13 +103,13 @@ export default function UserRolesManagement() {
 
       toast({ title: "Success", description: "Role assigned successfully" });
       setSelectedRoleId("");
-      
+
       // Refresh user roles
       const roles = await fetchUserRoles(selectedUser.id);
       setSelectedUser({ ...selectedUser, roles });
-      
+
       // Update users list
-      setUsers(users.map(u => 
+      setUsers(users.map(u =>
         u.id === selectedUser.id ? { ...u, roles } : u
       ));
     } catch (err: any) {
@@ -135,16 +135,16 @@ export default function UserRolesManagement() {
       }
 
       toast({ title: "Success", description: "Role removed successfully" });
-      
+
       // Refresh user roles
       if (selectedUser && selectedUser.id === userId) {
         const roles = await fetchUserRoles(userId);
         setSelectedUser({ ...selectedUser, roles });
       }
-      
+
       // Update users list
       const roles = await fetchUserRoles(userId);
-      setUsers(users.map(u => 
+      setUsers(users.map(u =>
         u.id === userId ? { ...u, roles } : u
       ));
     } catch (err: any) {
@@ -175,7 +175,7 @@ export default function UserRolesManagement() {
       {/* Header */}
       <div>
         <h2 className="text-xl font-semibold">User Roles Management</h2>
-        <p className="text-sm text-gray-500 dark:text-gray-400">
+        <p className="text-sm text-muted-foreground dark:text-gray-400">
           Assign and manage roles for users
         </p>
       </div>
@@ -188,7 +188,7 @@ export default function UserRolesManagement() {
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Users List */}
-        <div className="bg-white dark:bg-gray-800 rounded-lg border">
+        <div className="bg-white dark:bg-card rounded-lg border">
           <div className="p-4 border-b">
             <h3 className="font-semibold mb-3">Select User</h3>
             <div className="relative">
@@ -221,23 +221,23 @@ export default function UserRolesManagement() {
                       className="object-cover"
                     />
                   ) : (
-                    <UserIcon className="h-5 w-5 text-gray-500 dark:text-gray-400" />
+                    <UserIcon className="h-5 w-5 text-muted-foreground dark:text-gray-400" />
                   )}
                 </div>
                 <div className="flex-1 min-w-0">
                   <p className="font-medium truncate">{user.userName || "No name"}</p>
-                  <p className="text-sm text-gray-500 dark:text-gray-400 truncate">{user.email}</p>
+                  <p className="text-sm text-muted-foreground dark:text-gray-400 truncate">{user.email}</p>
                 </div>
                 {user.roles && user.roles.length > 0 && (
                   <div className="flex items-center gap-1">
                     <ShieldCheckIcon className="h-4 w-4 text-green-600 dark:text-green-400" />
-                    <span className="text-xs text-gray-500 dark:text-gray-400">{user.roles.length}</span>
+                    <span className="text-xs text-muted-foreground dark:text-gray-400">{user.roles.length}</span>
                   </div>
                 )}
               </button>
             ))}
             {filteredUsers.length === 0 && (
-              <div className="px-4 py-8 text-center text-gray-500 dark:text-gray-400">
+              <div className="px-4 py-8 text-center text-muted-foreground dark:text-gray-400">
                 No users found
               </div>
             )}
@@ -245,7 +245,7 @@ export default function UserRolesManagement() {
         </div>
 
         {/* User Roles Panel */}
-        <div className="bg-white dark:bg-gray-800 rounded-lg border">
+        <div className="bg-white dark:bg-card rounded-lg border">
           {selectedUser ? (
             <>
               <div className="p-4 border-b">
@@ -261,23 +261,23 @@ export default function UserRolesManagement() {
                         className="object-cover"
                       />
                     ) : (
-                      <UserIcon className="h-6 w-6 text-gray-500 dark:text-gray-400" />
+                      <UserIcon className="h-6 w-6 text-muted-foreground dark:text-gray-400" />
                     )}
                   </div>
                   <div>
                     <h3 className="font-semibold">{selectedUser.userName || "No name"}</h3>
-                    <p className="text-sm text-gray-500 dark:text-gray-400">{selectedUser.email}</p>
+                    <p className="text-sm text-muted-foreground dark:text-gray-400">{selectedUser.email}</p>
                   </div>
                 </div>
               </div>
 
               {/* Assign Role Form */}
-              <div className="p-4 border-b bg-gray-50 dark:bg-gray-800/50 dark:bg-gray-700/50">
+              <div className="p-4 border-b bg-muted dark:bg-card/50 dark:bg-gray-700/50">
                 <form onSubmit={handleAssignRole} className="flex gap-2">
                   <select
                     value={selectedRoleId}
                     onChange={(e) => setSelectedRoleId(e.target.value)}
-                    className="flex-1 px-3 py-2 border rounded-md bg-white dark:bg-gray-800"
+                    className="flex-1 px-3 py-2 border rounded-md bg-white dark:bg-card"
                     required
                   >
                     <option value="">Select role to assign...</option>
@@ -293,7 +293,7 @@ export default function UserRolesManagement() {
                   </Button>
                 </form>
                 {availableRoles.length === 0 && (
-                  <p className="text-sm text-gray-500 dark:text-gray-400 mt-2">
+                  <p className="text-sm text-muted-foreground dark:text-gray-400 mt-2">
                     All available roles have been assigned to this user.
                   </p>
                 )}
@@ -307,14 +307,14 @@ export default function UserRolesManagement() {
                     {selectedUser.roles.map((role) => (
                       <div
                         key={role.id}
-                        className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-800/50 dark:bg-gray-700/50 rounded-lg"
+                        className="flex items-center justify-between p-3 bg-muted dark:bg-card/50 dark:bg-gray-700/50 rounded-lg"
                       >
                         <div className="flex items-center gap-3">
                           <ShieldCheckIcon className="h-5 w-5 text-green-600 dark:text-green-400" />
                           <div>
                             <span className="font-medium">{role.name}</span>
                             {role.description && (
-                              <p className="text-sm text-gray-500 dark:text-gray-400">
+                              <p className="text-sm text-muted-foreground dark:text-gray-400">
                                 {role.description}
                               </p>
                             )}
@@ -332,14 +332,14 @@ export default function UserRolesManagement() {
                     ))}
                   </div>
                 ) : (
-                  <p className="text-gray-500 dark:text-gray-400 text-center py-4">
+                  <p className="text-muted-foreground dark:text-gray-400 text-center py-4">
                     No roles assigned to this user
                   </p>
                 )}
               </div>
             </>
           ) : (
-            <div className="flex flex-col items-center justify-center py-12 text-gray-500 dark:text-gray-400">
+            <div className="flex flex-col items-center justify-center py-12 text-muted-foreground dark:text-gray-400">
               <UserIcon className="h-12 w-12 mb-3 opacity-50" />
               <p>Select a user to manage their roles</p>
             </div>

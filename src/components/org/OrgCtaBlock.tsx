@@ -43,22 +43,22 @@ export default function OrgCtaBlock({
         className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none select-none"
         aria-hidden="true"
       >
-        <span className="font-display text-[40vw] md:text-[35vw] text-foreground/[0.03] leading-none">
+        <span className="font-display text-[clamp(2.5rem,6vw,5rem)] md:text-[clamp(2.5rem,6vw,5rem)] text-foreground/[0.03] leading-none">
           01
         </span>
       </div>
 
       <div className="max-w-[1400px] mx-auto relative z-10 text-center">
         <div className={visible ? "brutal-reveal" : "opacity-0"}>
-          <span className="font-body text-[9px] md:text-[10px] text-accent tracking-[0.25em] md:tracking-[0.3em] uppercase block mb-4 md:mb-8">
+          <span className="font-body text-[9px] md:text-[10px] text-primary tracking-[0.25em] md:tracking-[0.3em] uppercase block mb-4 md:mb-8">
             [Start Here]
           </span>
-          <h2 className="font-display text-[10vw] sm:text-5xl md:text-[10vw] lg:text-[8vw] tracking-tighter text-foreground leading-[0.85] uppercase mb-3 md:mb-12">
+          <h2 className="font-display text-[clamp(2.5rem,6vw,5rem)] sm:text-5xl md:text-[clamp(2.5rem,6vw,5rem)] lg:text-[clamp(2.5rem,6vw,5rem)] tracking-tighter text-foreground leading-[1.08] uppercase mb-3 md:mb-12">
             {ctaText || (
               <>
                 Begin Your
                 <br />
-                <span className="text-accent">Journey</span> Today.
+                <span className="text-primary">Journey</span> Today.
               </>
             )}
           </h2>
@@ -76,7 +76,7 @@ export default function OrgCtaBlock({
                   href={`tel:${phone}`}
                   className="flex items-center gap-2 group"
                 >
-                  <div className="w-8 h-8 md:w-10 md:h-10 border border-foreground/20 group-hover:border-accent flex items-center justify-center transition-colors">
+                  <div className="w-8 h-8 md:w-10 md:h-10 border border-foreground/20 group-hover:border-primary flex items-center justify-center transition-colors">
                     <svg
                       width="14"
                       height="14"
@@ -84,7 +84,7 @@ export default function OrgCtaBlock({
                       fill="none"
                       stroke="currentColor"
                       strokeWidth="1.5"
-                      className="text-foreground/50 group-hover:text-accent transition-colors"
+                      className="text-foreground/50 group-hover:text-primary transition-colors"
                     >
                       <path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45 12.84 12.84 0 002.81.7A2 2 0 0122 16.92z" />
                     </svg>
@@ -93,7 +93,7 @@ export default function OrgCtaBlock({
                     <span className="font-body text-[7px] md:text-[9px] text-foreground/35 tracking-[0.15em] uppercase block">
                       Phone
                     </span>
-                    <span className="font-body text-[10px] md:text-sm text-foreground/70 group-hover:text-accent transition-colors">
+                    <span className="font-body text-[10px] md:text-sm text-foreground/70 group-hover:text-primary transition-colors">
                       {phone}
                     </span>
                   </div>
@@ -104,7 +104,7 @@ export default function OrgCtaBlock({
                   href={`mailto:${email}`}
                   className="flex items-center gap-2 group"
                 >
-                  <div className="w-8 h-8 md:w-10 md:h-10 border border-foreground/20 group-hover:border-accent flex items-center justify-center transition-colors">
+                  <div className="w-8 h-8 md:w-10 md:h-10 border border-foreground/20 group-hover:border-primary flex items-center justify-center transition-colors">
                     <svg
                       width="14"
                       height="14"
@@ -112,7 +112,7 @@ export default function OrgCtaBlock({
                       fill="none"
                       stroke="currentColor"
                       strokeWidth="1.5"
-                      className="text-foreground/50 group-hover:text-accent transition-colors"
+                      className="text-foreground/50 group-hover:text-primary transition-colors"
                     >
                       <rect x="2" y="4" width="20" height="16" rx="2" />
                       <path d="M22 7l-8.97 5.7a1.94 1.94 0 01-2.06 0L2 7" />
@@ -122,7 +122,7 @@ export default function OrgCtaBlock({
                     <span className="font-body text-[7px] md:text-[9px] text-foreground/35 tracking-[0.15em] uppercase block">
                       Email
                     </span>
-                    <span className="font-body text-[10px] md:text-sm text-foreground/70 group-hover:text-accent transition-colors break-all">
+                    <span className="font-body text-[10px] md:text-sm text-foreground/70 group-hover:text-primary transition-colors break-all">
                       {email}
                     </span>
                   </div>
@@ -160,13 +160,13 @@ export default function OrgCtaBlock({
           <div className="flex flex-col sm:flex-row items-center justify-center gap-2.5 md:gap-4">
             <a
               href={ctaLink || "#"}
-              className="w-full sm:w-auto inline-flex items-center justify-center bg-accent text-accent-foreground font-body text-[10px] md:text-sm tracking-[0.15em] md:tracking-[0.2em] uppercase px-6 md:px-10 py-3.5 md:py-5 hover-glitch transition-transform hover:scale-[1.02] min-h-[48px]"
+              className="w-full sm:w-auto inline-flex items-center justify-center bg-primary text-primary-foreground font-body text-[10px] md:text-sm tracking-[0.15em] md:tracking-[0.2em] uppercase px-6 md:px-10 py-3.5 md:py-5 hover-glitch transition-transform hover:scale-[1.02] min-h-[48px]"
             >
               {ctaText || "Get Started"}
             </a>
             <a
               href="#schedule"
-              className="w-full sm:w-auto inline-flex items-center justify-center border-2 border-foreground text-foreground font-body text-[10px] md:text-sm tracking-[0.15em] md:tracking-[0.2em] uppercase px-6 md:px-10 py-3.5 md:py-5 hover:bg-foreground hover:text-background transition-colors min-h-[48px]"
+              className="w-full sm:w-auto inline-flex items-center justify-center border-2 border-foreground text-foreground font-body text-[10px] md:text-sm tracking-[0.15em] md:tracking-[0.2em] uppercase px-6 md:px-10 py-3.5 md:py-5 hover:bg-foreground hover:text-primary-foreground transition-colors min-h-[48px]"
             >
               View Schedule
             </a>

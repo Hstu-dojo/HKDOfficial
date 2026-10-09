@@ -64,13 +64,13 @@ export default function SocialShare() {
 
   return (
     <div className="my-4 max-w-md">
-      <p className="text-lg font-bold text-slate-700">Share this doc via</p>
+      <p className="text-lg font-bold text-foreground">Share this doc via</p>
 
       <div className="my-4 flex justify-around">
         {/* FACEBOOK ICON */}
         <div
           onClick={() => handleSocialClick("facebook")}
-          className="shadow-xl flex h-12 w-12 cursor-pointer items-center justify-center rounded-full border border-blue-200 fill-[#1877f2] hover:bg-[#1877f2] hover:fill-white hover:shadow-blue-500/50"
+          className="shadow-sm flex h-12 w-12 cursor-pointer items-center justify-center rounded-full border border-blue-200 fill-[#1877f2] hover:bg-[#1877f2] hover:fill-white hover:shadow-blue-500/50"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -85,7 +85,7 @@ export default function SocialShare() {
         {/* TWITTER ICON */}
         <div
           onClick={() => handleSocialClick("twitter")}
-          className="shadow-xl flex h-12 w-12 cursor-pointer items-center justify-center rounded-full border border-blue-200 fill-[#1d9bf0] hover:bg-[#1d9bf0] hover:fill-white hover:shadow-sky-500/50"
+          className="shadow-sm flex h-12 w-12 cursor-pointer items-center justify-center rounded-full border border-blue-200 fill-[#1d9bf0] hover:bg-[#1d9bf0] hover:fill-white hover:shadow-sky-500/50"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -100,7 +100,7 @@ export default function SocialShare() {
         {/* INSTAGRAM ICON */}
         {/* <div
           onClick={() => handleSocialClick("instagram")}
-          className="shadow-xl flex h-12 w-12 cursor-pointer items-center justify-center rounded-full border border-pink-200 fill-[#bc2a8d] hover:bg-[#bc2a8d] hover:fill-white hover:shadow-pink-500/50"
+          className="shadow-sm flex h-12 w-12 cursor-pointer items-center justify-center rounded-full border border-pink-200 fill-[#bc2a8d] hover:bg-[#bc2a8d] hover:fill-white hover:shadow-pink-500/50"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -117,7 +117,7 @@ export default function SocialShare() {
         {/* WHATSAPP ICON */}
         <div
           onClick={() => handleSocialClick("whatsapp")}
-          className="border-green-200 shadow-xl hover:shadow-green-500/50 flex h-12 w-12 cursor-pointer items-center justify-center rounded-full border fill-[#25D366] hover:bg-[#25D366] hover:fill-white"
+          className="border-green-200 shadow-sm hover:shadow-green-500/50 flex h-12 w-12 cursor-pointer items-center justify-center rounded-full border fill-[#25D366] hover:bg-[#25D366] hover:fill-white"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -136,7 +136,7 @@ export default function SocialShare() {
         {/* TELEGRAM ICON */}
         <div
           onClick={() => handleSocialClick("telegram")}
-          className="shadow-xl flex h-12 w-12 cursor-pointer items-center justify-center rounded-full border border-sky-200 fill-[#229ED9] hover:bg-[#229ED9] hover:fill-white hover:shadow-sky-500/50"
+          className="shadow-sm flex h-12 w-12 cursor-pointer items-center justify-center rounded-full border border-sky-200 fill-[#229ED9] hover:bg-[#229ED9] hover:fill-white hover:shadow-sky-500/50"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -151,7 +151,7 @@ export default function SocialShare() {
         {/* SHARE ICON */}
         <div
           onClick={() => handleSocialShare("share")}
-          className="shadow-xl flex h-12 w-12 cursor-pointer items-center justify-center rounded-full border border-gray-200 hover:bg-gray-300"
+          className="shadow-sm flex h-12 w-12 cursor-pointer items-center justify-center rounded-full border border-border hover:bg-gray-300"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -163,7 +163,7 @@ export default function SocialShare() {
             strokeWidth="2"
             strokeLinecap="round"
             strokeLinejoin="round"
-            className="text-gray-500"
+            className="text-muted-foreground"
           >
             <circle cx="18" cy="5" r="3"></circle>
             <circle cx="6" cy="12" r="3"></circle>
@@ -176,7 +176,7 @@ export default function SocialShare() {
 
       <p className="text-sm">Or copy link</p>
       {/* BOX LINK */}
-      <div className="mt-4 flex items-center justify-between border-2 border-gray-200 py-2">
+      <div className="mt-4 flex items-center justify-between border-2 border-border py-2">
         <svg
           xmlns="http://www.w3.org/2000/svg"
           width="24"

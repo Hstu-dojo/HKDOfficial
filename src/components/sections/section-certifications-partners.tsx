@@ -82,7 +82,7 @@ const partners = [
 
 const SectionSertificationsPartners = () => {
   return (
-    <section className="bg-muted py-16 dark:bg-slate-900 lg:py-24">
+    <section className="bg-muted py-16 dark:bg-background lg:py-24">
       <div className="container">
         <div className="flex flex-wrap lg:flex-nowrap">
           <div className="mb-10 w-full lg:w-1/2 lg:pr-10">

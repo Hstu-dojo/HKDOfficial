@@ -921,10 +921,10 @@ const PAYMENT_METHOD_STYLES: Record<
     label: 'Cash',
     emoji: '💵',
     activeBorder: 'border-gray-500',
-    activeBg: 'bg-gray-50 dark:bg-gray-800/50',
-    instructionBg: 'bg-gray-50 dark:bg-gray-800/50',
-    instructionText: 'text-gray-800 dark:text-gray-300/80',
-    instructionHeading: 'text-gray-900 dark:text-gray-300',
+    activeBg: 'bg-muted dark:bg-card/50',
+    instructionBg: 'bg-muted dark:bg-card/50',
+    instructionText: 'text-foreground dark:text-gray-300/80',
+    instructionHeading: 'text-foreground dark:text-gray-300',
   },
 };
 
@@ -933,10 +933,10 @@ const getPaymentStyle = (type: string) =>
     label: type,
     emoji: '💳',
     activeBorder: 'border-gray-500',
-    activeBg: 'bg-gray-50 dark:bg-gray-800/50',
-    instructionBg: 'bg-gray-50 dark:bg-gray-800/50',
-    instructionText: 'text-gray-700 dark:text-gray-300',
-    instructionHeading: 'text-gray-900 dark:text-gray-200',
+    activeBg: 'bg-muted dark:bg-card/50',
+    instructionBg: 'bg-muted dark:bg-card/50',
+    instructionText: 'text-foreground dark:text-gray-300',
+    instructionHeading: 'text-foreground dark:text-gray-200',
   };
 
 // ---------------------------------------------------------------------------

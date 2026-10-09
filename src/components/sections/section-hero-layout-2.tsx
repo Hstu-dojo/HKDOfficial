@@ -16,7 +16,7 @@ const SectionHeroLayout2 = () => {
           <div className="mx-auto text-center lg:w-[45%]">
             <h1 className="text-3xl text-white sm:text-5xl xl:text-6xl">
               Grow Your Website{" "}
-              <span className="inline-block bg-gradient-to-l from-primary to-tertiary bg-clip-text text-transparent">
+              <span className="inline-block text-primary">
                 Traffic and Sales
               </span>
             </h1>

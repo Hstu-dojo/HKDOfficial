@@ -138,13 +138,13 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const { slug } = await params;
   const t = await getI18n();
   const course = await getCourse(slug);
-  
+
   if (!course) {
     return {
       title: t('courses.applyPage.notFoundTitle'),
     };
   }
-  
+
   return {
     title: t('courses.applyPage.metaTitle', { course: course.name }),
     description: t('courses.applyPage.metaDescription', { course: course.name, description: course.shortDescription }),
@@ -154,18 +154,18 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 export default async function CourseApplicationPage({ params }: PageProps) {
   const { locale, slug } = await params;
   const course = await getCourse(slug);
-  
+
   if (!course) {
     notFound();
   }
-  
+
   if (!course.isEnrollmentOpen) {
     const t = await getI18n();
 
     return (
       <>
         <Header />
-        <main className="min-h-screen flex items-center justify-center pt-24 pb-16 bg-slate-50 dark:bg-slate-900">
+        <main className="min-h-screen flex items-center justify-center pt-24 pb-16 bg-muted dark:bg-background">
           <div className="text-center">
             <h1 className="text-2xl font-bold">{t('courses.applyPage.enrollmentClosedTitle')}</h1>
             <p className="mt-2 text-muted-foreground">{t('courses.applyPage.enrollmentClosedDescription')}</p>
@@ -178,7 +178,7 @@ export default async function CourseApplicationPage({ params }: PageProps) {
 
   // Auth check — redirect unauthenticated users to login
   const { isAuthenticated, onboardingData, existingPartnerId, userEmail } = await getUserOnboardingData();
-  
+
   if (!isAuthenticated) {
     redirect(`/${locale}/login?callbackUrl=/${locale}/karate/courses/${slug}/apply`);
   }
@@ -218,11 +218,11 @@ export default async function CourseApplicationPage({ params }: PageProps) {
     // For other errors, swallow and let the form render
     // (the API has its own duplicate check as a safety net)
   }
-  
+
   return (
     <>
       <Header />
-      <main className="relative pt-24 pb-16 min-h-screen bg-slate-50 dark:bg-slate-900">
+      <main className="relative pt-24 pb-16 min-h-screen bg-muted dark:bg-background">
         <MaxWidthWrapper>
           <CourseEnrollmentWizard
             course={course}

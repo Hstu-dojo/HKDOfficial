@@ -9,7 +9,7 @@ const TestimonialLayout2 = ({
   testimonial: { name, company, comment, image, rating },
 }: TestimonialProps) => {
   return (
-    <div className="flex flex-wrap gap-5 rounded-xl bg-white p-12 px-10 py-12 shadow-sm dark:bg-slate-850 lg:flex-nowrap">
+    <div className="flex flex-wrap gap-5 rounded-xl bg-white p-12 px-10 py-12 shadow-sm dark:bg-card lg:flex-nowrap">
       {(image || name || company) && (
         <>
           {image && (
@@ -21,7 +21,7 @@ const TestimonialLayout2 = ({
               height={168}
             />
           )}
-          <div className="-ml-14 -mt-4 flex h-16 w-16 shrink-0 items-center justify-center rounded-full border-[5px] border-white bg-primary dark:border-slate-700 md:mb-0 md:w-16">
+          <div className="-ml-14 -mt-4 flex h-16 w-16 shrink-0 items-center justify-center rounded-full border-[5px] border-white bg-primary dark:border-border md:mb-0 md:w-16">
             <svg
               width="22"
               height="19"
@@ -46,7 +46,7 @@ const TestimonialLayout2 = ({
                 </span>
               )}
               {company && (
-                <span className="text-[.8125rem] font-medium tracking-tight text-slate-400 dark:text-slate-300">
+                <span className="text-[.8125rem] font-medium tracking-tight text-slate-400 dark:text-muted-foreground">
                   {company}
                 </span>
               )}

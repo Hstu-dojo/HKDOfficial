@@ -2,7 +2,7 @@
 
 import { motion } from "framer-motion";
 import React from "react";
-import { AuroraBackground } from "../ui/aurora-background";
+
 import { useSession } from "@/hooks/useSessionCompat";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -12,7 +12,7 @@ export default function AuroraBd() {
   console.log(callbackUrl);
   const { data: session } = useSession();
   return (
-    <AuroraBackground>
+    <section className="border-b border-border bg-muted px-4 pb-12 pt-32 text-foreground">
       <motion.div
         initial={{ opacity: 0.0, y: 40 }}
         whileInView={{ opacity: 1, y: 0 }}
@@ -23,10 +23,10 @@ export default function AuroraBd() {
         }}
         className="relative flex flex-col items-center justify-center gap-4 px-4"
       >
-        <div className="text-center text-3xl font-bold dark:text-white md:text-7xl">
+        <div className="text-center font-serif text-3xl font-normal md:text-5xl">
           One more step to your dream DOJO.
         </div>
-        <div className="py-4 text-base font-extralight dark:text-neutral-200 md:text-4xl">
+        <div className="py-3 text-base text-muted-foreground md:text-lg">
           Fill following info caoutiously.
         </div>
         {!session?.user?.email && (
@@ -37,6 +37,6 @@ export default function AuroraBd() {
           </Link>
         )}
       </motion.div>
-    </AuroraBackground>
+    </section>
   );
 }

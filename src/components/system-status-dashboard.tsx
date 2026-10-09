@@ -151,7 +151,7 @@ export default function SystemStatusDashboard() {
   const isLive = systemData.suspended === "not_suspended";
 
   return (
-    <div className="min-h-screen bg-gray-100 p-8">
+    <div className="min-h-screen bg-muted p-8">
       <Card className="mx-auto max-w-2xl">
         <CardHeader>
           <CardTitle>System Status Dashboard</CardTitle>
@@ -219,7 +219,7 @@ export default function SystemStatusDashboard() {
           </div>
         </CardContent>
         <CardFooter className="flex justify-between">
-          <p className="text-sm text-gray-500">
+          <p className="text-sm text-muted-foreground">
             Last updated: {new Date(systemData.updatedAt).toLocaleString()}
           </p>
           <div className="space-x-2">

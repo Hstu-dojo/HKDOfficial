@@ -213,11 +213,11 @@ export default function CommitteeIdCard({
   };
 
   return (
-    <div className="rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 p-6">
+    <div className="rounded-xl border border-border dark:border-border bg-white dark:bg-background p-6">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">Virtual ID Card</h3>
-          <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+          <h3 className="text-lg font-semibold text-foreground dark:text-gray-100">Virtual ID Card</h3>
+          <p className="text-sm text-muted-foreground dark:text-gray-400 mt-1">
             Download your committee ID card.
           </p>
         </div>

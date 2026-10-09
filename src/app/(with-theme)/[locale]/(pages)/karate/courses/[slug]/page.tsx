@@ -9,9 +9,9 @@ import { eq } from 'drizzle-orm';
 import { notFound } from 'next/navigation';
 import { createClient } from '@/lib/supabase/server';
 import { getPartnerIdForSupabaseUser } from '@/lib/partner-assignment';
-import { 
-  CalendarDaysIcon, 
-  ClockIcon, 
+import {
+  CalendarDaysIcon,
+  ClockIcon,
   MapPinIcon,
   CurrencyBangladeshiIcon,
   UserGroupIcon,
@@ -52,7 +52,7 @@ export default async function CourseDetailsPage({
 }) {
   const { locale, slug } = await params;
   const t = await getI18n();
-  
+
   // Using slug as ID since courses don't have a slug column
   const course = await db.query.courses.findFirst({
     where: eq(courses.id, slug),
@@ -84,10 +84,10 @@ export default async function CourseDetailsPage({
   return (
     <>
       <Header />
-      <main className="pt-20 min-h-screen bg-slate-50 dark:bg-slate-900">
+      <main className="pt-20 min-h-screen bg-muted dark:bg-background">
         <div className="py-8 pb-16">
           <MaxWidthWrapper>
-            <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-lg overflow-hidden border border-slate-200 dark:border-slate-700">
+            <div className="bg-white dark:bg-card rounded-2xl shadow-lg overflow-hidden border border-border dark:border-border">
               {/* Banner */}
               <div className="h-56 w-full relative overflow-hidden">
                 {course.bannerUrl ? (
@@ -122,11 +122,11 @@ export default async function CourseDetailsPage({
                   {/* Main Content */}
                   <div className="lg:col-span-2 space-y-6">
                     <div className="prose prose-slate dark:prose-invert max-w-none">
-                      <p className="text-slate-600 dark:text-slate-300 leading-relaxed text-lg">
+                      <p className="text-muted-foreground dark:text-muted-foreground leading-relaxed text-lg">
                         {course.description}
                       </p>
                       {course.descriptionBangla && (
-                        <p className="text-slate-500 dark:text-slate-400 leading-relaxed">
+                        <p className="text-muted-foreground dark:text-muted-foreground leading-relaxed">
                           {course.descriptionBangla}
                         </p>
                       )}
@@ -134,11 +134,11 @@ export default async function CourseDetailsPage({
 
                     {/* Features */}
                     {features.length > 0 && (
-                      <div className="border-t border-slate-200 dark:border-slate-700 pt-6">
-                        <h3 className="font-semibold text-slate-900 dark:text-slate-100 mb-4">{t('courses.details.whatsIncludedTitle')}</h3>
+                      <div className="border-t border-border dark:border-border pt-6">
+                        <h3 className="font-semibold text-foreground dark:text-foreground mb-4">{t('courses.details.whatsIncludedTitle')}</h3>
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                           {features.map((feature, idx) => (
-                            <div key={idx} className="flex items-center gap-2 text-slate-600 dark:text-slate-300">
+                            <div key={idx} className="flex items-center gap-2 text-muted-foreground dark:text-muted-foreground">
                               <CheckCircleIcon className="h-5 w-5 text-green-500 flex-shrink-0" />
                               <span>{feature}</span>
                             </div>
@@ -149,23 +149,23 @@ export default async function CourseDetailsPage({
 
                     {/* Schedule */}
                     {schedules.length > 0 && (
-                      <div className="border-t border-slate-200 dark:border-slate-700 pt-6">
-                        <h3 className="font-semibold text-slate-900 dark:text-slate-100 mb-4">{t('courses.details.classScheduleTitle')}</h3>
+                      <div className="border-t border-border dark:border-border pt-6">
+                        <h3 className="font-semibold text-foreground dark:text-foreground mb-4">{t('courses.details.classScheduleTitle')}</h3>
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                           {schedules.map((schedule) => (
-                            <div 
-                              key={schedule.id} 
-                              className="flex items-start gap-3 p-4 rounded-xl bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700"
+                            <div
+                              key={schedule.id}
+                              className="flex items-start gap-3 p-4 rounded-xl bg-muted dark:bg-background/50 border border-border dark:border-border"
                             >
                               <CalendarDaysIcon className="h-5 w-5 text-primary flex-shrink-0 mt-0.5" />
                               <div>
-                                <p className="font-medium text-slate-900 dark:text-slate-100">
+                                <p className="font-medium text-foreground dark:text-foreground">
                                   {dayNames[schedule.dayOfWeek]}
                                 </p>
-                                <p className="text-sm text-slate-600 dark:text-slate-400">
+                                <p className="text-sm text-muted-foreground dark:text-muted-foreground">
                                   {schedule.startTime} - {schedule.endTime}
                                 </p>
-                                <p className="text-xs text-slate-500 dark:text-slate-500 mt-1">
+                                <p className="text-xs text-muted-foreground dark:text-slate-500 mt-1">
                                   {schedule.location}
                                 </p>
                               </div>
@@ -176,28 +176,28 @@ export default async function CourseDetailsPage({
                     )}
 
                     {/* Course Details */}
-                    <div className="border-t border-slate-200 dark:border-slate-700 pt-6">
-                      <h3 className="font-semibold text-slate-900 dark:text-slate-100 mb-4">{t('courses.details.courseDetailsTitle')}</h3>
+                    <div className="border-t border-border dark:border-border pt-6">
+                      <h3 className="font-semibold text-foreground dark:text-foreground mb-4">{t('courses.details.courseDetailsTitle')}</h3>
                       <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-                        <div className="text-center p-4 rounded-xl bg-slate-50 dark:bg-slate-900/50">
+                        <div className="text-center p-4 rounded-xl bg-muted dark:bg-background/50">
                           <ClockIcon className="h-6 w-6 text-primary mx-auto mb-2" />
-                          <p className="text-2xl font-bold text-slate-900 dark:text-slate-100">{course.duration}</p>
-                          <p className="text-xs text-slate-500 dark:text-slate-400">{t('courses.details.durationUnitMonths')}</p>
+                          <p className="text-2xl font-bold text-foreground dark:text-foreground">{course.duration}</p>
+                          <p className="text-xs text-muted-foreground dark:text-muted-foreground">{t('courses.details.durationUnitMonths')}</p>
                         </div>
-                        <div className="text-center p-4 rounded-xl bg-slate-50 dark:bg-slate-900/50">
+                        <div className="text-center p-4 rounded-xl bg-muted dark:bg-background/50">
                           <CalendarDaysIcon className="h-6 w-6 text-primary mx-auto mb-2" />
-                          <p className="text-2xl font-bold text-slate-900 dark:text-slate-100">{course.sessionsPerWeek}</p>
-                          <p className="text-xs text-slate-500 dark:text-slate-400">{t('courses.details.sessionsPerWeek')}</p>
+                          <p className="text-2xl font-bold text-foreground dark:text-foreground">{course.sessionsPerWeek}</p>
+                          <p className="text-xs text-muted-foreground dark:text-muted-foreground">{t('courses.details.sessionsPerWeek')}</p>
                         </div>
-                        <div className="text-center p-4 rounded-xl bg-slate-50 dark:bg-slate-900/50">
+                        <div className="text-center p-4 rounded-xl bg-muted dark:bg-background/50">
                           <ClockIcon className="h-6 w-6 text-primary mx-auto mb-2" />
-                          <p className="text-2xl font-bold text-slate-900 dark:text-slate-100">{course.sessionDurationMinutes}</p>
-                          <p className="text-xs text-slate-500 dark:text-slate-400">{t('courses.details.minutesPerSession')}</p>
+                          <p className="text-2xl font-bold text-foreground dark:text-foreground">{course.sessionDurationMinutes}</p>
+                          <p className="text-xs text-muted-foreground dark:text-muted-foreground">{t('courses.details.minutesPerSession')}</p>
                         </div>
-                        <div className="text-center p-4 rounded-xl bg-slate-50 dark:bg-slate-900/50">
+                        <div className="text-center p-4 rounded-xl bg-muted dark:bg-background/50">
                           <UserGroupIcon className="h-6 w-6 text-primary mx-auto mb-2" />
-                          <p className="text-2xl font-bold text-slate-900 dark:text-slate-100">{course.currentStudents || 0}/{course.maxStudents || '∞'}</p>
-                          <p className="text-xs text-slate-500 dark:text-slate-400">{t('courses.details.studentsLabel')}</p>
+                          <p className="text-2xl font-bold text-foreground dark:text-foreground">{course.currentStudents || 0}/{course.maxStudents || '∞'}</p>
+                          <p className="text-xs text-muted-foreground dark:text-muted-foreground">{t('courses.details.studentsLabel')}</p>
                         </div>
                       </div>
                     </div>
@@ -205,27 +205,27 @@ export default async function CourseDetailsPage({
 
                   {/* Sidebar / Pricing */}
                   <div className="lg:col-span-1">
-                    <div className="sticky top-24 bg-slate-50 dark:bg-slate-900/50 rounded-xl p-6 border border-slate-200 dark:border-slate-700">
-                      <h3 className="text-lg font-semibold text-slate-900 dark:text-slate-100 mb-4">{t('courses.details.pricingTitle')}</h3>
+                    <div className="sticky top-24 bg-muted dark:bg-background/50 rounded-xl p-6 border border-border dark:border-border">
+                      <h3 className="text-lg font-semibold text-foreground dark:text-foreground mb-4">{t('courses.details.pricingTitle')}</h3>
 
                       {canSeePricing ? (
                         <div className="space-y-4">
-                          <div className="flex justify-between items-center pb-3 border-b border-slate-200 dark:border-slate-700">
-                            <span className="text-slate-500 dark:text-slate-400">{t('courses.details.admissionFee')}</span>
-                            <span className="font-bold text-slate-900 dark:text-slate-100 text-xl">
+                          <div className="flex justify-between items-center pb-3 border-b border-border dark:border-border">
+                            <span className="text-muted-foreground dark:text-muted-foreground">{t('courses.details.admissionFee')}</span>
+                            <span className="font-bold text-foreground dark:text-foreground text-xl">
                               ৳{course.admissionFee}
                             </span>
                           </div>
                           <div className="flex justify-between items-center">
-                            <span className="text-slate-500 dark:text-slate-400">{t('courses.details.monthlyFee')}</span>
+                            <span className="text-muted-foreground dark:text-muted-foreground">{t('courses.details.monthlyFee')}</span>
                             <span className="font-bold text-primary text-2xl">
                               ৳{course.monthlyFee}
                             </span>
                           </div>
                         </div>
                       ) : (
-                        <div className="rounded-lg border border-slate-200 dark:border-slate-700 bg-white/40 dark:bg-slate-900/40 p-4">
-                          <p className="text-sm text-slate-600 dark:text-slate-400">{t('courses.details.pricingHidden')}</p>
+                        <div className="rounded-lg border border-border dark:border-border bg-white/40 dark:bg-background/40 p-4">
+                          <p className="text-sm text-muted-foreground dark:text-muted-foreground">{t('courses.details.pricingHidden')}</p>
                         </div>
                       )}
 
@@ -233,7 +233,7 @@ export default async function CourseDetailsPage({
                         <div className="mt-4 p-3 rounded-lg bg-primary/10 border border-primary/20">
                           <div className="flex items-center gap-2 text-sm">
                             <AcademicCapIcon className="h-5 w-5 text-primary" />
-                            <span className="text-slate-700 dark:text-slate-300">
+                            <span className="text-foreground dark:text-muted-foreground">
                               {t('courses.details.targetLabel')} <strong className="text-primary capitalize">{course.targetBelt} Belt</strong>
                             </span>
                           </div>
@@ -249,16 +249,16 @@ export default async function CourseDetailsPage({
                             {t('courses.details.applyNow')}
                           </Link>
                         ) : (
-                          <button 
-                            disabled 
-                            className="w-full bg-slate-300 dark:bg-slate-600 text-slate-500 dark:text-slate-400 rounded-xl py-3 px-4 font-semibold cursor-not-allowed"
+                          <button
+                            disabled
+                            className="w-full bg-slate-300 dark:bg-slate-600 text-muted-foreground dark:text-muted-foreground rounded-xl py-3 px-4 font-semibold cursor-not-allowed"
                           >
                             {t('courses.details.enrollmentClosedButton')}
                           </button>
                         )}
                       </div>
 
-                      <p className="text-xs text-slate-500 dark:text-slate-400 text-center mt-3">
+                      <p className="text-xs text-muted-foreground dark:text-muted-foreground text-center mt-3">
                         {t('courses.details.paymentInfo')}
                       </p>
                     </div>

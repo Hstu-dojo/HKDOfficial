@@ -1,71 +1,74 @@
+@import "../styles/editorial.css";
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer base {
   :root {
-    --radius: 0.5rem;
+    --radius: 0.75rem;
     --background: 0 0% 100%;
-    --foreground: 231 35% 31%;
-    --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
+    --foreground: 0 0% 10%;
+    --card: 0 0% 98%;
+    --card-foreground: 0 0% 10%;
     --popover: 0 0% 100%;
-    --popover-foreground: 224 71.4% 4.1%;
-    --primary: 189 100% 35%;
+    --popover-foreground: 0 0% 10%;
+    --primary: 0 66% 47%;
     --primary-foreground: 0 0% 100%;
-    --secondary: 260 84% 51%;
+    --secondary: 0 0% 10%;
     --secondary-foreground: 0 0% 100%;
-    --muted: 200 23% 97%;
-    --muted-foreground: 214 14% 48%;
-    --accent: 0 100% 50%;
-    --accent-foreground: 0 0% 100%;
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
-    --border: 192 12% 92%;
-    --input: 192 12% 92%;
-    --ring: 222.2 84% 4.9%;
-    --sidebar-background: 200 23% 98%;
-    --sidebar-foreground: 231 35% 31%;
-    --sidebar-primary: 189 100% 35%;
+    --muted: 0 0% 96%;
+    --muted-foreground: 0 0% 39%;
+    --accent: 0 0% 93%;
+    --accent-foreground: 0 0% 10%;
+    --destructive: 0 72% 42%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 0 0% 86%;
+    --input: 0 0% 65%;
+    --ring: 0 66% 47%;
+    --sidebar-background: 0 0% 97%;
+    --sidebar-foreground: 0 0% 10%;
+    --sidebar-primary: 0 66% 47%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 200 23% 94%;
-    --sidebar-accent-foreground: 231 35% 31%;
-    --sidebar-border: 192 12% 92%;
-    --sidebar-ring: 189 100% 35%;
+    --sidebar-accent: 0 0% 92%;
+    --sidebar-accent-foreground: 0 0% 10%;
+    --sidebar-border: 0 0% 86%;
+    --sidebar-ring: 0 66% 47%;
+    --editorial-ease: cubic-bezier(0.22, 1, 0.36, 1);
   }
 
   .dark {
-    --background: 222 47% 11%;
-    --foreground: 210 40% 98%;
-    --card: 224 40% 14%;
-    --card-foreground: 210 40% 98%;
-    --popover: 224 40% 14%;
-    --popover-foreground: 210 40% 98%;
-    --primary: 189 100% 40%;
-    --primary-foreground: 0 0% 100%;
-    --secondary: 260 84% 55%;
-    --secondary-foreground: 0 0% 100%;
-    --muted: 217 33% 17%;
-    --muted-foreground: 215 20% 65%;
-    --accent: 0 100% 55%;
-    --accent-foreground: 0 0% 100%;
-    --destructive: 0 63% 31%;
-    --destructive-foreground: 210 40% 98%;
-    --border: 216 28% 22%;
-    --input: 216 28% 22%;
-    --ring: 189 100% 40%;
-    --sidebar-background: 224 40% 12%;
-    --sidebar-foreground: 210 40% 98%;
-    --sidebar-primary: 189 100% 40%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 217 33% 17%;
-    --sidebar-accent-foreground: 210 40% 98%;
-    --sidebar-border: 216 28% 22%;
-    --sidebar-ring: 189 100% 40%;
+    --background: 60 2% 9%;
+    --foreground: 40 12% 95%;
+    --card: 60 3% 13%;
+    --card-foreground: 40 12% 95%;
+    --popover: 60 3% 13%;
+    --popover-foreground: 40 12% 95%;
+    --primary: 0 77% 70%;
+    --primary-foreground: 0 0% 9%;
+    --secondary: 40 12% 95%;
+    --secondary-foreground: 60 2% 9%;
+    --muted: 60 2% 16%;
+    --muted-foreground: 40 4% 69%;
+    --accent: 60 2% 21%;
+    --accent-foreground: 40 12% 95%;
+    --destructive: 0 74% 65%;
+    --destructive-foreground: 0 0% 9%;
+    --border: 60 2% 25%;
+    --input: 60 2% 43%;
+    --ring: 0 77% 70%;
+    --sidebar-background: 60 3% 11%;
+    --sidebar-foreground: 40 12% 95%;
+    --sidebar-primary: 0 77% 70%;
+    --sidebar-primary-foreground: 0 0% 9%;
+    --sidebar-accent: 60 2% 19%;
+    --sidebar-accent-foreground: 40 12% 95%;
+    --sidebar-border: 60 2% 25%;
+    --sidebar-ring: 0 77% 70%;
   }
 
   * {
-    @apply border-border dark:border-slate-800;
+    @apply border-border;
   }
 
   address {
@@ -73,7 +76,7 @@
   }
 
   body {
-    @apply bg-background text-muted-foreground;
+    @apply bg-background text-foreground;
   }
 
   blockquote p {
@@ -90,7 +93,7 @@
   h4,
   h5,
   h6 {
-    @apply mb-6 font-bold leading-normal -tracking-[0.01em] text-foreground dark:text-white;
+    @apply mb-6 font-normal leading-tight -tracking-[0.025em] text-foreground;
   }
 
   h1 {

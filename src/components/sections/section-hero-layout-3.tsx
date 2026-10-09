@@ -25,7 +25,7 @@ const SectionHeroLayout3 = () => {
             <div className="mb-12 lg:mb-0 lg:w-2/5">
               <h1 className="text-headings text-3xl md:text-4xl lg:text-5xl xl:text-7xl">
                 Boost the Growth{" "}
-                <span className="relative inline-block before:absolute before:bottom-3 before:-z-[1] before:h-2 before:w-full before:rounded-lg before:bg-primary before:bg-gradient-to-l before:from-primary before:to-tertiary before:opacity-70">
+                <span className="relative inline-block before:absolute before:bottom-3 before:-z-[1] before:h-2 before:w-full before:rounded-lg before:bg-primary before:bg-muted before:from-primary before:to-tertiary before:opacity-70">
                   of Your Company
                 </span>
               </h1>
@@ -43,7 +43,7 @@ const SectionHeroLayout3 = () => {
               </Button>
             </div>
             <div className="relative w-full text-center lg:w-1/2 lg:text-right">
-              <div className="absolute bottom-[10%] left-[5%] animate-fly rounded-[4rem] bg-white p-4 pr-11 shadow-sm sm:-left-[8%]">
+              <div className="absolute bottom-[10%] left-[5%]  rounded-[4rem] bg-white p-4 pr-11 shadow-sm sm:-left-[8%]">
                 <div className="flex gap-4">
                   <span className="inline-flex h-12 w-12 items-center justify-center rounded-full bg-[#D3E9FF]">
                     <svg
@@ -71,7 +71,7 @@ const SectionHeroLayout3 = () => {
                 alt="consulting hero"
                 className="inline-block"
               />
-              <div className="absolute right-[2%] top-1/3 animate-fly rounded-[4rem] bg-white p-4 pl-11 shadow-sm lg:-right-[5%]">
+              <div className="absolute right-[2%] top-1/3  rounded-[4rem] bg-white p-4 pl-11 shadow-sm lg:-right-[5%]">
                 <div className="flex gap-4">
                   <div className="text-left text-foreground">
                     <span className="block text-xs font-medium">
@@ -92,7 +92,7 @@ const SectionHeroLayout3 = () => {
                   </span>
                 </div>
               </div>
-              <div className="absolute -right-[5%] bottom-0 animate-fly rounded-xl bg-white p-8 shadow-sm sm:bottom-0 sm:right-[5%]">
+              <div className="absolute -right-[5%] bottom-0  rounded-xl bg-white p-8 shadow-sm sm:bottom-0 sm:right-[5%]">
                 <div className="text-left">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"

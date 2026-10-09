@@ -219,7 +219,7 @@ export default function PermissionsManagement() {
       <div className="flex items-center justify-between">
         <div>
           <h2 className="text-xl font-semibold">Permissions Management</h2>
-          <p className="text-sm text-gray-500 dark:text-gray-400">
+          <p className="text-sm text-muted-foreground dark:text-gray-400">
             Define granular permissions for resources and actions
           </p>
         </div>
@@ -239,7 +239,7 @@ export default function PermissionsManagement() {
 
       {/* Create/Edit Form */}
       {(showCreateForm || editingPermission) && (
-        <div className="bg-white dark:bg-gray-800 rounded-lg border p-6">
+        <div className="bg-white dark:bg-card rounded-lg border p-6">
           <h3 className="font-semibold mb-4">
             {editingPermission ? `Edit: ${editingPermission.name}` : "Create New Permission"}
           </h3>
@@ -250,7 +250,7 @@ export default function PermissionsManagement() {
                 <select
                   value={formData.resource}
                   onChange={(e) => handleResourceActionChange("resource", e.target.value)}
-                  className="w-full px-3 py-2 border rounded-md bg-white dark:bg-gray-800"
+                  className="w-full px-3 py-2 border rounded-md bg-white dark:bg-card"
                 >
                   {RESOURCES.map((r) => (
                     <option key={r} value={r}>{r}</option>
@@ -262,7 +262,7 @@ export default function PermissionsManagement() {
                 <select
                   value={formData.action}
                   onChange={(e) => handleResourceActionChange("action", e.target.value)}
-                  className="w-full px-3 py-2 border rounded-md bg-white dark:bg-gray-800"
+                  className="w-full px-3 py-2 border rounded-md bg-white dark:bg-card"
                 >
                   {ACTIONS.map((a) => (
                     <option key={a} value={a}>{a}</option>
@@ -313,7 +313,7 @@ export default function PermissionsManagement() {
           <select
             value={filterResource}
             onChange={(e) => setFilterResource(e.target.value)}
-            className="px-3 py-2 border rounded-md bg-white dark:bg-gray-800"
+            className="px-3 py-2 border rounded-md bg-white dark:bg-card"
           >
             <option value="">All Resources</option>
             {RESOURCES.map((r) => (
@@ -326,7 +326,7 @@ export default function PermissionsManagement() {
           <select
             value={filterAction}
             onChange={(e) => setFilterAction(e.target.value)}
-            className="px-3 py-2 border rounded-md bg-white dark:bg-gray-800"
+            className="px-3 py-2 border rounded-md bg-white dark:bg-card"
           >
             <option value="">All Actions</option>
             {ACTIONS.map((a) => (
@@ -339,13 +339,13 @@ export default function PermissionsManagement() {
       {/* Permissions by Resource */}
       <div className="space-y-4">
         {Object.entries(groupedPermissions).map(([resource, perms]) => (
-          <div key={resource} className="bg-white dark:bg-gray-800 rounded-lg border overflow-hidden">
-            <div className="bg-gray-50 dark:bg-gray-800/50 dark:bg-gray-700 px-4 py-3 border-b">
+          <div key={resource} className="bg-white dark:bg-card rounded-lg border overflow-hidden">
+            <div className="bg-muted dark:bg-card/50 dark:bg-gray-700 px-4 py-3 border-b">
               <h3 className="font-semibold flex items-center gap-2">
                 <span className="px-2 py-1 bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-300 dark:bg-blue-900/30 dark:text-blue-400 rounded text-sm">
                   {resource}
                 </span>
-                <span className="text-sm font-normal text-gray-500 dark:text-gray-400">
+                <span className="text-sm font-normal text-muted-foreground dark:text-gray-400">
                   ({perms.length} permissions)
                 </span>
               </h3>
@@ -363,7 +363,7 @@ export default function PermissionsManagement() {
                     <div>
                       <span className="font-medium">{permission.name}</span>
                       {permission.description && (
-                        <p className="text-sm text-gray-500 dark:text-gray-400">
+                        <p className="text-sm text-muted-foreground dark:text-gray-400">
                           {permission.description}
                         </p>
                       )}
@@ -407,7 +407,7 @@ export default function PermissionsManagement() {
           </div>
         ))}
         {Object.keys(groupedPermissions).length === 0 && (
-          <div className="text-center py-8 text-gray-500 dark:text-gray-400 bg-white dark:bg-gray-800 rounded-lg border">
+          <div className="text-center py-8 text-muted-foreground dark:text-gray-400 bg-white dark:bg-card rounded-lg border">
             No permissions found. Create your first permission to get started.
           </div>
         )}

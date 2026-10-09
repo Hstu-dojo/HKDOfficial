@@ -50,11 +50,7 @@ const SectionTestimonialsSlider = () => {
   ];
 
   return (
-    <section className="relative py-20 md:py-28 bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 dark:from-slate-950 dark:to-slate-900 overflow-hidden">
-      {/* Decorative blobs */}
-      <div className="absolute top-0 left-1/4 w-96 h-96 rounded-full bg-primary/10 blur-[120px] pointer-events-none" />
-      <div className="absolute bottom-0 right-1/4 w-72 h-72 rounded-full bg-violet-500/10 blur-[100px] pointer-events-none" />
-
+    <section className="relative py-20 md:py-28 bg-[#191919]      overflow-hidden">
       <div className="container mx-auto px-4 max-w-7xl relative z-10">
         <SectionHeader
           kicker="Testimonials"
@@ -81,7 +77,7 @@ const SectionTestimonialsSlider = () => {
           >
             {testimonials.map((t) => (
               <SwiperSlide key={t.name}>
-                <div className="relative group bg-slate-800/60 border border-slate-700/60 hover:border-primary/40 rounded-3xl p-7 md:p-8 transition-all duration-500 hover:shadow-2xl hover:shadow-primary/10 backdrop-blur-sm h-full">
+                <div className="relative group bg-slate-800/60 border border-slate-700/60 hover:border-primary/40 rounded-3xl p-7 md:p-8 transition-all duration-500 hover:shadow-sm  backdrop-blur-sm h-full">
                   {/* Quote Icon */}
                   <Quote className="h-8 w-8 text-primary/30 mb-5" />
 
@@ -93,7 +89,7 @@ const SectionTestimonialsSlider = () => {
                         className={`h-4 w-4 ${
                           i < t.rating
                             ? "fill-amber-400 text-amber-400"
-                            : "fill-slate-700 text-slate-700"
+                            : "fill-slate-700 text-foreground"
                         }`}
                       />
                     ))}
@@ -111,7 +107,7 @@ const SectionTestimonialsSlider = () => {
                     </div>
                     <div>
                       <div className="font-bold text-white text-sm">{t.name}</div>
-                      <div className="text-xs text-slate-500">{t.affiliation}</div>
+                      <div className="text-xs text-muted-foreground">{t.affiliation}</div>
                     </div>
                   </div>
                 </div>

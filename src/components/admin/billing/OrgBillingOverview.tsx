@@ -85,8 +85,8 @@ export default function OrgBillingOverview() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Organization Billing Overview</h1>
-          <p className="text-sm text-gray-500 dark:text-gray-400">
+          <h1 className="text-2xl font-bold text-foreground dark:text-gray-100">Organization Billing Overview</h1>
+          <p className="text-sm text-muted-foreground dark:text-gray-400">
             Aggregated billing data across all partner organizations.
           </p>
         </div>
@@ -94,7 +94,7 @@ export default function OrgBillingOverview() {
           <select
             value={monthFilter}
             onChange={(e) => setMonthFilter(e.target.value)}
-            className="px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 bg-white dark:bg-slate-800 text-gray-900 dark:text-gray-100"
+            className="px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 bg-white dark:bg-card text-foreground dark:text-gray-100"
           >
             <option value="">All Time</option>
             {monthOptions.map((m) => (
@@ -106,26 +106,26 @@ export default function OrgBillingOverview() {
 
       {/* Global Summary */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="bg-white dark:bg-slate-800 rounded-lg border border-gray-200 dark:border-slate-700 p-5">
-          <p className="text-sm text-gray-500 dark:text-gray-400">Organizations</p>
-          <p className="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-1">
+        <div className="bg-white dark:bg-card rounded-lg border border-border dark:border-border p-5">
+          <p className="text-sm text-muted-foreground dark:text-gray-400">Organizations</p>
+          <p className="text-3xl font-bold text-foreground dark:text-gray-100 mt-1">
             {globalTotals.totalOrganizations}
           </p>
         </div>
-        <div className="bg-white dark:bg-slate-800 rounded-lg border border-gray-200 dark:border-slate-700 p-5">
-          <p className="text-sm text-gray-500 dark:text-gray-400">Total Bills</p>
-          <p className="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-1">
+        <div className="bg-white dark:bg-card rounded-lg border border-border dark:border-border p-5">
+          <p className="text-sm text-muted-foreground dark:text-gray-400">Total Bills</p>
+          <p className="text-3xl font-bold text-foreground dark:text-gray-100 mt-1">
             {globalTotals.totalBills}
           </p>
         </div>
-        <div className="bg-white dark:bg-slate-800 rounded-lg border border-gray-200 dark:border-slate-700 p-5">
-          <p className="text-sm text-gray-500 dark:text-gray-400">Total Revenue</p>
+        <div className="bg-white dark:bg-card rounded-lg border border-border dark:border-border p-5">
+          <p className="text-sm text-muted-foreground dark:text-gray-400">Total Revenue</p>
           <p className="text-3xl font-bold text-green-600 dark:text-green-400 mt-1">
             {fmtAmount(globalTotals.totalRevenue)}
           </p>
         </div>
-        <div className="bg-white dark:bg-slate-800 rounded-lg border border-gray-200 dark:border-slate-700 p-5">
-          <p className="text-sm text-gray-500 dark:text-gray-400">Collection Rate</p>
+        <div className="bg-white dark:bg-card rounded-lg border border-border dark:border-border p-5">
+          <p className="text-sm text-muted-foreground dark:text-gray-400">Collection Rate</p>
           <p className="text-3xl font-bold text-blue-600 dark:text-blue-400 mt-1">
             {globalTotals.overallCollectionRate}%
           </p>
@@ -133,31 +133,31 @@ export default function OrgBillingOverview() {
       </div>
 
       {/* Organization Table */}
-      <div className="bg-white dark:bg-slate-800 rounded-lg border border-gray-200 dark:border-slate-700 overflow-hidden">
-        <div className="p-4 border-b border-gray-200 dark:border-slate-700">
-          <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+      <div className="bg-white dark:bg-card rounded-lg border border-border dark:border-border overflow-hidden">
+        <div className="p-4 border-b border-border dark:border-border">
+          <h2 className="text-lg font-semibold text-foreground dark:text-gray-100">
             Organizations {monthFilter ? `— ${fmtMonth(monthFilter)}` : ''}
           </h2>
         </div>
 
         {orgs.length === 0 ? (
-          <div className="p-12 text-center text-gray-500 dark:text-gray-400">
+          <div className="p-12 text-center text-muted-foreground dark:text-gray-400">
             <p>No organizations found.</p>
           </div>
         ) : (
           <div className="overflow-x-auto">
             <table className="min-w-full divide-y divide-gray-200 dark:divide-slate-700">
-              <thead className="bg-gray-50 dark:bg-slate-900/50">
+              <thead className="bg-muted dark:bg-background/50">
                 <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Organization</th>
-                  <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Total</th>
-                  <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Paid</th>
-                  <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Pending</th>
-                  <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Submitted</th>
-                  <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Overdue</th>
-                  <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Collected</th>
-                  <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Total Amt</th>
-                  <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Rate</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground dark:text-gray-400 uppercase">Organization</th>
+                  <th className="px-6 py-3 text-center text-xs font-medium text-muted-foreground dark:text-gray-400 uppercase">Total</th>
+                  <th className="px-6 py-3 text-center text-xs font-medium text-muted-foreground dark:text-gray-400 uppercase">Paid</th>
+                  <th className="px-6 py-3 text-center text-xs font-medium text-muted-foreground dark:text-gray-400 uppercase">Pending</th>
+                  <th className="px-6 py-3 text-center text-xs font-medium text-muted-foreground dark:text-gray-400 uppercase">Submitted</th>
+                  <th className="px-6 py-3 text-center text-xs font-medium text-muted-foreground dark:text-gray-400 uppercase">Overdue</th>
+                  <th className="px-6 py-3 text-right text-xs font-medium text-muted-foreground dark:text-gray-400 uppercase">Collected</th>
+                  <th className="px-6 py-3 text-right text-xs font-medium text-muted-foreground dark:text-gray-400 uppercase">Total Amt</th>
+                  <th className="px-6 py-3 text-center text-xs font-medium text-muted-foreground dark:text-gray-400 uppercase">Rate</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-200 dark:divide-slate-700">
@@ -170,10 +170,10 @@ export default function OrgBillingOverview() {
                     onClick={() => setExpandedOrg(expandedOrg === org.partnerId ? null : org.partnerId)}
                   >
                     <td className="px-6 py-4">
-                      <div className="font-medium text-gray-900 dark:text-gray-100">{org.partnerName}</div>
-                      <div className="text-xs text-gray-500 dark:text-gray-400">{org.partnerSlug}</div>
+                      <div className="font-medium text-foreground dark:text-gray-100">{org.partnerName}</div>
+                      <div className="text-xs text-muted-foreground dark:text-gray-400">{org.partnerSlug}</div>
                     </td>
-                    <td className="px-6 py-4 text-center text-sm text-gray-900 dark:text-gray-100">
+                    <td className="px-6 py-4 text-center text-sm text-foreground dark:text-gray-100">
                       {org.totalBills}
                     </td>
                     <td className="px-6 py-4 text-center">
@@ -193,7 +193,7 @@ export default function OrgBillingOverview() {
                     <td className="px-6 py-4 text-right text-sm font-medium text-green-600 dark:text-green-400">
                       {fmtAmount(org.collectedAmount)}
                     </td>
-                    <td className="px-6 py-4 text-right text-sm text-gray-900 dark:text-gray-100">
+                    <td className="px-6 py-4 text-right text-sm text-foreground dark:text-gray-100">
                       {fmtAmount(org.totalAmount)}
                     </td>
                     <td className="px-6 py-4 text-center">
@@ -207,7 +207,7 @@ export default function OrgBillingOverview() {
                             style={{ width: `${Math.min(org.collectionRate, 100)}%` }}
                           />
                         </div>
-                        <span className="text-xs font-medium text-gray-700 dark:text-gray-300">
+                        <span className="text-xs font-medium text-foreground dark:text-gray-300">
                           {org.collectionRate}%
                         </span>
                       </div>

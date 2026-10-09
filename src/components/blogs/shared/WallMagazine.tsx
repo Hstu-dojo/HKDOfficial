@@ -166,7 +166,7 @@ const SkeletonOne = ({ avatar }: any) => {
           <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-gradient-to-r from-primary to-tertiary">
             <AvatarBox image={item?.image} />
           </div>
-          <div className="h-7 w-full overflow-hidden rounded-full bg-gray-100 text-center text-[19px] text-gray-600">
+          <div className="h-7 w-full overflow-hidden rounded-full bg-muted text-center text-[19px] text-muted-foreground">
             {item?.name?.slice(0, 15)}
           </div>
         </motion.div>
@@ -200,7 +200,7 @@ const SkeletonTwo = () => {
       initial="initial"
       animate="animate"
       whileHover="hover"
-      className="dark:bg-dot-white/[0.2] bg-dot-black/[0.2] flex h-full min-h-[6rem] w-full flex-1 flex-col space-y-2 text-justify text-sm text-gray-500"
+      className="dark:bg-dot-white/[0.2] bg-dot-black/[0.2] flex h-full min-h-[6rem] w-full flex-1 flex-col space-y-2 text-justify text-sm text-muted-foreground"
     >
       {/* {arr.map((_, i) => (
         <motion.div

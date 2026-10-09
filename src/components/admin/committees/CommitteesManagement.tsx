@@ -448,8 +448,8 @@ export default function CommitteesManagement() {
     <div className="space-y-6">
       <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Committee Management</h1>
-          <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
+          <h1 className="text-2xl font-bold text-foreground dark:text-gray-100">Committee Management</h1>
+          <p className="mt-1 text-sm text-muted-foreground dark:text-gray-400">
             Create yearly committees and review member applications.
           </p>
         </div>
@@ -457,7 +457,7 @@ export default function CommitteesManagement() {
           <button
             disabled={!selectedCommitteeId || exporting}
             onClick={() => handleExport()}
-            className="inline-flex items-center px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-sm font-medium text-gray-700 dark:text-gray-200 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 disabled:opacity-50"
+            className="inline-flex items-center px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-sm font-medium text-foreground dark:text-gray-200 bg-white dark:bg-card hover:bg-gray-50 dark:hover:bg-gray-700 disabled:opacity-50"
           >
             {exporting ? 'Exporting...' : 'Export Excel'}
           </button>
@@ -466,42 +466,42 @@ export default function CommitteesManagement() {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="lg:col-span-1 space-y-6">
-          <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-5">
-            <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Create Committee</h2>
+          <div className="bg-white dark:bg-card rounded-lg border border-border dark:border-border p-5">
+            <h2 className="text-lg font-semibold text-foreground dark:text-gray-100 mb-4">Create Committee</h2>
             <form onSubmit={handleCreateCommittee} className="space-y-3">
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Title</label>
+                <label className="block text-sm font-medium text-foreground dark:text-gray-300">Title</label>
                 <input
                   value={formData.title}
                   onChange={(e) => setFormData((prev) => ({ ...prev, title: e.target.value }))}
-                  className="mt-1 w-full rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 px-3 py-2 text-sm"
+                  className="mt-1 w-full rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-background px-3 py-2 text-sm"
                   placeholder="Executive Committee"
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Year</label>
+                <label className="block text-sm font-medium text-foreground dark:text-gray-300">Year</label>
                 <input
                   value={formData.year}
                   onChange={(e) => setFormData((prev) => ({ ...prev, year: e.target.value }))}
-                  className="mt-1 w-full rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 px-3 py-2 text-sm"
+                  className="mt-1 w-full rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-background px-3 py-2 text-sm"
                   placeholder="2026"
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Description</label>
+                <label className="block text-sm font-medium text-foreground dark:text-gray-300">Description</label>
                 <textarea
                   value={formData.description}
                   onChange={(e) => setFormData((prev) => ({ ...prev, description: e.target.value }))}
-                  className="mt-1 w-full rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 px-3 py-2 text-sm"
+                  className="mt-1 w-full rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-background px-3 py-2 text-sm"
                   rows={3}
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Trainer Signature</label>
+                <label className="block text-sm font-medium text-foreground dark:text-gray-300">Trainer Signature</label>
                 <select
                   value={createTrainerSigId}
                   onChange={(e) => setCreateTrainerSigId(e.target.value)}
-                  className="mt-1 w-full rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 px-3 py-2 text-sm"
+                  className="mt-1 w-full rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-background px-3 py-2 text-sm"
                 >
                   <option value="">Select signature</option>
                   {signatureOptions.map((sig) => (
@@ -520,8 +520,8 @@ export default function CommitteesManagement() {
             </form>
           </div>
 
-          <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-5">
-            <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Committees</h2>
+          <div className="bg-white dark:bg-card rounded-lg border border-border dark:border-border p-5">
+            <h2 className="text-lg font-semibold text-foreground dark:text-gray-100 mb-4">Committees</h2>
             <div className="space-y-3">
               {committees.map((committee) => (
                 <button
@@ -530,20 +530,20 @@ export default function CommitteesManagement() {
                   className={`w-full text-left rounded-lg border px-4 py-3 transition ${
                     selectedCommitteeId === committee.id
                       ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20'
-                      : 'border-gray-200 dark:border-gray-700'
+                      : 'border-border dark:border-border'
                   }`}
                 >
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="font-semibold text-gray-900 dark:text-gray-100">{committee.title}</p>
-                      <p className="text-xs text-gray-500 dark:text-gray-400">Year {committee.year}</p>
+                      <p className="font-semibold text-foreground dark:text-gray-100">{committee.title}</p>
+                      <p className="text-xs text-muted-foreground dark:text-gray-400">Year {committee.year}</p>
                     </div>
                     {committee.isActive && (
                       <span className="text-xs px-2 py-1 rounded-full bg-green-100 text-green-700">Active</span>
                     )}
                   </div>
                   {committee.description && (
-                    <p className="mt-2 text-xs text-gray-500 dark:text-gray-400 line-clamp-2">{committee.description}</p>
+                    <p className="mt-2 text-xs text-muted-foreground dark:text-gray-400 line-clamp-2">{committee.description}</p>
                   )}
                   <div className="mt-3 flex flex-wrap gap-2">
                     <button
@@ -552,7 +552,7 @@ export default function CommitteesManagement() {
                         e.stopPropagation();
                         handleSetActive(committee.id);
                       }}
-                      className="text-xs px-2 py-1 rounded bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200"
+                      className="text-xs px-2 py-1 rounded bg-muted dark:bg-gray-700 text-foreground dark:text-gray-200"
                     >
                       Set Active
                     </button>
@@ -584,11 +584,11 @@ export default function CommitteesManagement() {
         </div>
 
         <div className="lg:col-span-2">
-          <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-5">
+          <div className="bg-white dark:bg-card rounded-lg border border-border dark:border-border p-5">
             <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
               <div>
-                <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">Applications</h2>
-                <p className="text-sm text-gray-500 dark:text-gray-400">Review and approve committee members.</p>
+                <h2 className="text-lg font-semibold text-foreground dark:text-gray-100">Applications</h2>
+                <p className="text-sm text-muted-foreground dark:text-gray-400">Review and approve committee members.</p>
               </div>
               <div className="flex gap-2 flex-wrap">
                 {['', 'pending', 'approved', 'rejected'].map((status) => (
@@ -598,7 +598,7 @@ export default function CommitteesManagement() {
                     className={`px-3 py-1 rounded-full text-xs border ${
                       statusFilter === status
                         ? 'border-blue-500 text-blue-600'
-                        : 'border-gray-200 dark:border-gray-700 text-gray-500'
+                        : 'border-border dark:border-border text-muted-foreground'
                     }`}
                   >
                     {status ? STATUS_LABELS[status] : 'All'}
@@ -608,20 +608,20 @@ export default function CommitteesManagement() {
             </div>
 
             <div className="mt-4 grid grid-cols-2 md:grid-cols-4 gap-3">
-              <div className="rounded-lg border border-gray-200 dark:border-gray-700 p-3">
-                <p className="text-xs text-gray-500">Total</p>
-                <p className="text-xl font-semibold text-gray-900 dark:text-gray-100">{stats.total}</p>
+              <div className="rounded-lg border border-border dark:border-border p-3">
+                <p className="text-xs text-muted-foreground">Total</p>
+                <p className="text-xl font-semibold text-foreground dark:text-gray-100">{stats.total}</p>
               </div>
-              <div className="rounded-lg border border-gray-200 dark:border-gray-700 p-3">
-                <p className="text-xs text-gray-500">Pending</p>
+              <div className="rounded-lg border border-border dark:border-border p-3">
+                <p className="text-xs text-muted-foreground">Pending</p>
                 <p className="text-xl font-semibold text-yellow-600">{stats.pending}</p>
               </div>
-              <div className="rounded-lg border border-gray-200 dark:border-gray-700 p-3">
-                <p className="text-xs text-gray-500">Approved</p>
+              <div className="rounded-lg border border-border dark:border-border p-3">
+                <p className="text-xs text-muted-foreground">Approved</p>
                 <p className="text-xl font-semibold text-green-600">{stats.approved}</p>
               </div>
-              <div className="rounded-lg border border-gray-200 dark:border-gray-700 p-3">
-                <p className="text-xs text-gray-500">Rejected</p>
+              <div className="rounded-lg border border-border dark:border-border p-3">
+                <p className="text-xs text-muted-foreground">Rejected</p>
                 <p className="text-xl font-semibold text-red-600">{stats.rejected}</p>
               </div>
             </div>
@@ -633,18 +633,18 @@ export default function CommitteesManagement() {
                 </div>
               ) : (
                 <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700 text-sm">
-                  <thead className="bg-gray-50 dark:bg-gray-900/40">
+                  <thead className="bg-muted dark:bg-background/40">
                     <tr>
-                      <th className="px-3 py-2 text-left font-medium text-gray-500">Member</th>
-                      <th className="px-3 py-2 text-left font-medium text-gray-500">Status</th>
-                      <th className="px-3 py-2 text-left font-medium text-gray-500">Position</th>
-                      <th className="px-3 py-2 text-left font-medium text-gray-500">Actions</th>
+                      <th className="px-3 py-2 text-left font-medium text-muted-foreground">Member</th>
+                      <th className="px-3 py-2 text-left font-medium text-muted-foreground">Status</th>
+                      <th className="px-3 py-2 text-left font-medium text-muted-foreground">Position</th>
+                      <th className="px-3 py-2 text-left font-medium text-muted-foreground">Actions</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
                     {filteredApplications.length === 0 ? (
                       <tr>
-                        <td colSpan={4} className="px-4 py-6 text-center text-gray-500">
+                        <td colSpan={4} className="px-4 py-6 text-center text-muted-foreground">
                           No applications found.
                         </td>
                       </tr>
@@ -652,19 +652,19 @@ export default function CommitteesManagement() {
                       filteredApplications.map((application) => (
                         <tr key={application.id}>
                           <td className="px-3 py-2">
-                            <div className="font-medium text-gray-900 dark:text-gray-100">
+                            <div className="font-medium text-foreground dark:text-gray-100">
                               {renderApplicantName(application)}
                             </div>
-                            <div className="text-xs text-gray-500">
+                            <div className="text-xs text-muted-foreground">
                               {application.profile?.email || application.user?.email || '—'}
                             </div>
                           </td>
                           <td className="px-3 py-2">
-                            <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs bg-gray-100 text-gray-700">
+                            <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs bg-muted text-foreground">
                               {STATUS_LABELS[application.status] || application.status}
                             </span>
                           </td>
-                          <td className="px-3 py-2 text-gray-700 dark:text-gray-300">
+                          <td className="px-3 py-2 text-foreground dark:text-gray-300">
                             {application.positionTitle || '—'}
                           </td>
                           <td className="px-3 py-2">
@@ -702,35 +702,35 @@ export default function CommitteesManagement() {
 
       {editCommitteeOpen && selectedCommittee && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
-          <div className="bg-white dark:bg-gray-800 rounded-lg w-full max-w-md p-6 space-y-4">
+          <div className="bg-white dark:bg-card rounded-lg w-full max-w-md p-6 space-y-4">
             <div>
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">Edit Committee</h3>
-              <p className="text-sm text-gray-500">Update committee details.</p>
+              <h3 className="text-lg font-semibold text-foreground dark:text-gray-100">Edit Committee</h3>
+              <p className="text-sm text-muted-foreground">Update committee details.</p>
             </div>
 
             <div className="space-y-3">
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Title</label>
+                <label className="block text-sm font-medium text-foreground dark:text-gray-300">Title</label>
                 <input
                   value={editCommitteeTitle}
                   onChange={(e) => setEditCommitteeTitle(e.target.value)}
-                  className="mt-1 w-full rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 px-3 py-2 text-sm"
+                  className="mt-1 w-full rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-background px-3 py-2 text-sm"
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Year</label>
+                <label className="block text-sm font-medium text-foreground dark:text-gray-300">Year</label>
                 <input
                   value={editCommitteeYear}
                   onChange={(e) => setEditCommitteeYear(e.target.value)}
-                  className="mt-1 w-full rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 px-3 py-2 text-sm"
+                  className="mt-1 w-full rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-background px-3 py-2 text-sm"
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Description</label>
+                <label className="block text-sm font-medium text-foreground dark:text-gray-300">Description</label>
                 <textarea
                   value={editCommitteeDescription}
                   onChange={(e) => setEditCommitteeDescription(e.target.value)}
-                  className="mt-1 w-full rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 px-3 py-2 text-sm"
+                  className="mt-1 w-full rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-background px-3 py-2 text-sm"
                   rows={3}
                 />
               </div>
@@ -760,26 +760,26 @@ export default function CommitteesManagement() {
 
       {approveModalOpen && selectedApplication && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
-          <div className="bg-white dark:bg-gray-800 rounded-lg w-full max-w-md p-6">
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">Approve Application</h3>
-            <p className="text-sm text-gray-500 mt-1">Assign a position and RBAC role.</p>
+          <div className="bg-white dark:bg-card rounded-lg w-full max-w-md p-6">
+            <h3 className="text-lg font-semibold text-foreground dark:text-gray-100">Approve Application</h3>
+            <p className="text-sm text-muted-foreground mt-1">Assign a position and RBAC role.</p>
 
             <div className="mt-4 space-y-3">
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Position Title</label>
+                <label className="block text-sm font-medium text-foreground dark:text-gray-300">Position Title</label>
                 <input
                   value={positionTitle}
                   onChange={(e) => setPositionTitle(e.target.value)}
-                  className="mt-1 w-full rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 px-3 py-2 text-sm"
+                  className="mt-1 w-full rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-background px-3 py-2 text-sm"
                   placeholder="President"
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">RBAC Role</label>
+                <label className="block text-sm font-medium text-foreground dark:text-gray-300">RBAC Role</label>
                 <select
                   value={selectedRoleId}
                   onChange={(e) => setSelectedRoleId(e.target.value)}
-                  className="mt-1 w-full rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 px-3 py-2 text-sm"
+                  className="mt-1 w-full rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-background px-3 py-2 text-sm"
                 >
                   <option value="">No Role</option>
                   {roles.map((role) => (
@@ -812,68 +812,68 @@ export default function CommitteesManagement() {
 
       {editModalOpen && selectedApplication && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
-          <div className="bg-white dark:bg-gray-800 rounded-lg w-full max-w-lg p-6 space-y-4">
+          <div className="bg-white dark:bg-card rounded-lg w-full max-w-lg p-6 space-y-4">
             <div>
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">Edit Application</h3>
-              <p className="text-sm text-gray-500">Update details for this applicant.</p>
+              <h3 className="text-lg font-semibold text-foreground dark:text-gray-100">Edit Application</h3>
+              <p className="text-sm text-muted-foreground">Update details for this applicant.</p>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Institution</label>
+                <label className="block text-sm font-medium text-foreground dark:text-gray-300">Institution</label>
                 <input
                   value={editInstitution}
                   onChange={(e) => setEditInstitution(e.target.value)}
-                  className="mt-1 w-full rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 px-3 py-2 text-sm"
+                  className="mt-1 w-full rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-background px-3 py-2 text-sm"
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Department</label>
+                <label className="block text-sm font-medium text-foreground dark:text-gray-300">Department</label>
                 <input
                   value={editDepartment}
                   onChange={(e) => setEditDepartment(e.target.value)}
-                  className="mt-1 w-full rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 px-3 py-2 text-sm"
+                  className="mt-1 w-full rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-background px-3 py-2 text-sm"
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Phone</label>
+                <label className="block text-sm font-medium text-foreground dark:text-gray-300">Phone</label>
                 <input
                   value={editPhone}
                   onChange={(e) => setEditPhone(e.target.value)}
-                  className="mt-1 w-full rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 px-3 py-2 text-sm"
+                  className="mt-1 w-full rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-background px-3 py-2 text-sm"
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">NID</label>
+                <label className="block text-sm font-medium text-foreground dark:text-gray-300">NID</label>
                 <input
                   value={editNid}
                   onChange={(e) => setEditNid(e.target.value)}
-                  className="mt-1 w-full rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 px-3 py-2 text-sm"
+                  className="mt-1 w-full rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-background px-3 py-2 text-sm"
                 />
               </div>
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Address</label>
+              <label className="block text-sm font-medium text-foreground dark:text-gray-300">Address</label>
               <input
                 value={editAddress}
                 onChange={(e) => setEditAddress(e.target.value)}
-                className="mt-1 w-full rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 px-3 py-2 text-sm"
+                className="mt-1 w-full rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-background px-3 py-2 text-sm"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Statement</label>
+              <label className="block text-sm font-medium text-foreground dark:text-gray-300">Statement</label>
               <textarea
                 value={editStatement}
                 onChange={(e) => setEditStatement(e.target.value)}
-                className="mt-1 w-full rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 px-3 py-2 text-sm"
+                className="mt-1 w-full rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-background px-3 py-2 text-sm"
                 rows={3}
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Photo</label>
+              <label className="block text-sm font-medium text-foreground dark:text-gray-300">Photo</label>
               <div className="mt-2 flex items-center gap-4">
                 {editPhotoUrl ? (
                   <img src={editPhotoUrl} alt="Applicant" className="h-16 w-16 rounded object-cover border" />
@@ -891,9 +891,9 @@ export default function CommitteesManagement() {
                       handlePhotoUpload(file);
                     }
                   }}
-                  className="text-sm text-gray-600"
+                  className="text-sm text-muted-foreground"
                 />
-                {photoUploading && <span className="text-xs text-gray-500">Uploading...</span>}
+                {photoUploading && <span className="text-xs text-muted-foreground">Uploading...</span>}
               </div>
             </div>
 

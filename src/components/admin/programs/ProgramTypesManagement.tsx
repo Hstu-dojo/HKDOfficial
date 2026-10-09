@@ -311,11 +311,11 @@ function ProgramTypeFormModal({ isOpen, onClose, onSuccess, initialData }: Progr
 
   return (
     <div className="fixed inset-0 z-50 overflow-y-auto p-4">
-      <div className="fixed inset-0 bg-gray-500/75 dark:bg-gray-900/80 transition-opacity" onClick={onClose} />
+      <div className="fixed inset-0 bg-gray-500/75 dark:bg-background/80 transition-opacity" onClick={onClose} />
 
-      <div className="relative mx-auto flex w-full max-w-5xl flex-col overflow-hidden rounded-lg bg-white dark:bg-gray-800 text-left shadow-xl max-h-[calc(100dvh-2rem)]">
-        <div className="shrink-0 px-4 pt-5 pb-4 sm:p-6 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between">
-          <h3 className="text-lg font-medium leading-6 text-gray-900 dark:text-gray-100">
+      <div className="relative mx-auto flex w-full max-w-5xl flex-col overflow-hidden rounded-lg bg-white dark:bg-card text-left shadow-sm max-h-[calc(100dvh-2rem)]">
+        <div className="shrink-0 px-4 pt-5 pb-4 sm:p-6 border-b border-border dark:border-border flex items-center justify-between">
+          <h3 className="text-lg font-medium leading-6 text-foreground dark:text-gray-100">
             {initialData ? 'Edit Program Type' : 'Create Program Type'}
           </h3>
           <button onClick={onClose} className="text-gray-400 dark:text-gray-500 hover:text-gray-500 dark:hover:text-gray-300">
@@ -327,7 +327,7 @@ function ProgramTypeFormModal({ isOpen, onClose, onSuccess, initialData }: Progr
           <form onSubmit={handleSubmit} className="space-y-4 pt-4">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div className="md:col-span-2">
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Type Name</label>
+                <label className="block text-sm font-medium text-foreground dark:text-gray-300">Type Name</label>
                 <input
                   value={name}
                   onChange={(e) => setName(e.target.value)}
@@ -338,7 +338,7 @@ function ProgramTypeFormModal({ isOpen, onClose, onSuccess, initialData }: Progr
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Category</label>
+                <label className="block text-sm font-medium text-foreground dark:text-gray-300">Category</label>
                 <select
                   value={category}
                   onChange={(e) => setCategory(e.target.value)}
@@ -353,7 +353,7 @@ function ProgramTypeFormModal({ isOpen, onClose, onSuccess, initialData }: Progr
               </div>
 
               <div className="md:col-span-3">
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Certificate Template (PDF)</label>
+                <label className="block text-sm font-medium text-foreground dark:text-gray-300">Certificate Template (PDF)</label>
                 <div className="mt-1 flex gap-2">
                   <select
                     value={certificatePdfPath}
@@ -373,12 +373,12 @@ function ProgramTypeFormModal({ isOpen, onClose, onSuccess, initialData }: Progr
                   <button
                     type="button"
                     onClick={loadTemplates}
-                    className="inline-flex items-center justify-center px-3 py-2 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-200 bg-white dark:bg-gray-800 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition text-sm font-medium"
+                    className="inline-flex items-center justify-center px-3 py-2 border border-gray-300 dark:border-gray-600 text-foreground dark:text-gray-200 bg-white dark:bg-card rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition text-sm font-medium"
                   >
                     <ArrowPathIcon className="h-4 w-4" />
                   </button>
                 </div>
-                <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                <p className="mt-1 text-xs text-muted-foreground dark:text-gray-400">
                   Templates are read from <span className="font-mono">public/certs</span>.
                 </p>
               </div>
@@ -387,32 +387,32 @@ function ProgramTypeFormModal({ isOpen, onClose, onSuccess, initialData }: Progr
             <div className="border-t pt-4">
               <div className="flex items-center justify-between gap-3">
                 <div>
-                  <h4 className="text-sm font-semibold text-gray-900 dark:text-gray-100">Certificate Fields</h4>
-                  <p className="text-xs text-gray-500 dark:text-gray-400">Select each PDF field and map it to static, dynamic, or signature.</p>
+                  <h4 className="text-sm font-semibold text-foreground dark:text-gray-100">Certificate Fields</h4>
+                  <p className="text-xs text-muted-foreground dark:text-gray-400">Select each PDF field and map it to static, dynamic, or signature.</p>
                 </div>
                 <button
                   type="button"
                   onClick={() => loadFields(certificatePdfPath)}
                   disabled={!certificatePdfPath || loadingFields}
-                  className="inline-flex items-center justify-center px-3 py-2 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-200 bg-white dark:bg-gray-800 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition text-sm font-medium disabled:opacity-50"
+                  className="inline-flex items-center justify-center px-3 py-2 border border-gray-300 dark:border-gray-600 text-foreground dark:text-gray-200 bg-white dark:bg-card rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition text-sm font-medium disabled:opacity-50"
                 >
                   {loadingFields ? 'Extracting...' : 'Extract Fields'}
                 </button>
               </div>
 
-              <div className="mt-3 overflow-x-auto rounded-lg border border-gray-200 dark:border-gray-700">
+              <div className="mt-3 overflow-x-auto rounded-lg border border-border dark:border-border">
                 <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-                  <thead className="bg-gray-50 dark:bg-gray-800">
+                  <thead className="bg-muted dark:bg-card">
                     <tr>
-                      <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-300">PDF Field</th>
-                      <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-300">Map As</th>
-                      <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-300">Value</th>
+                      <th className="px-4 py-3 text-left text-xs font-semibold text-muted-foreground dark:text-gray-300">PDF Field</th>
+                      <th className="px-4 py-3 text-left text-xs font-semibold text-muted-foreground dark:text-gray-300">Map As</th>
+                      <th className="px-4 py-3 text-left text-xs font-semibold text-muted-foreground dark:text-gray-300">Value</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-gray-200 dark:divide-gray-700 bg-white dark:bg-gray-800">
+                  <tbody className="divide-y divide-gray-200 dark:divide-gray-700 bg-white dark:bg-card">
                     {extractedFields.length === 0 ? (
                       <tr>
-                        <td className="px-4 py-4 text-sm text-gray-500 dark:text-gray-400" colSpan={3}>
+                        <td className="px-4 py-4 text-sm text-muted-foreground dark:text-gray-400" colSpan={3}>
                           {certificatePdfPath ? 'Click “Extract Fields” to load fields from the selected PDF.' : 'Select a PDF template first.'}
                         </td>
                       </tr>
@@ -422,9 +422,9 @@ function ProgramTypeFormModal({ isOpen, onClose, onSuccess, initialData }: Progr
 
                         return (
                           <tr key={f.name}>
-                            <td className="px-4 py-3 text-sm text-gray-900 dark:text-gray-100 whitespace-nowrap">
+                            <td className="px-4 py-3 text-sm text-foreground dark:text-gray-100 whitespace-nowrap">
                               {f.name}
-                              <div className="text-[11px] text-gray-500 dark:text-gray-400">{f.fieldType}</div>
+                              <div className="text-[11px] text-muted-foreground dark:text-gray-400">{f.fieldType}</div>
                             </td>
 
                             <td className="px-4 py-3">
@@ -452,7 +452,7 @@ function ProgramTypeFormModal({ isOpen, onClose, onSuccess, initialData }: Progr
 
                             <td className="px-4 py-3">
                               {st.kind === '' && (
-                                <div className="text-sm text-gray-500 dark:text-gray-400">—</div>
+                                <div className="text-sm text-muted-foreground dark:text-gray-400">—</div>
                               )}
 
                               {st.kind === 'static' && (
@@ -554,7 +554,7 @@ function ProgramTypeFormModal({ isOpen, onClose, onSuccess, initialData }: Progr
                               )}
 
                               {st.kind === 'signature' && signatures.length === 0 && (
-                                <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                                <p className="mt-1 text-xs text-muted-foreground dark:text-gray-400">
                                   No active signatures. <Link href="/admin/programs/signatures" className="underline">Add one</Link>
                                 </p>
                               )}
@@ -566,7 +566,7 @@ function ProgramTypeFormModal({ isOpen, onClose, onSuccess, initialData }: Progr
                   </tbody>
                 </table>
               </div>
-              <p className="mt-2 text-xs text-gray-500 dark:text-gray-400">
+              <p className="mt-2 text-xs text-muted-foreground dark:text-gray-400">
                 You can leave fields &quot;Unassigned&quot; for now; they won’t be filled during certificate generation.
               </p>
             </div>
@@ -576,7 +576,7 @@ function ProgramTypeFormModal({ isOpen, onClose, onSuccess, initialData }: Progr
                 type="button"
                 onClick={onClose}
                 disabled={saving}
-                className="inline-flex justify-center rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 shadow-sm hover:bg-gray-50 dark:hover:bg-gray-700 disabled:opacity-50"
+                className="inline-flex justify-center rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-card px-4 py-2 text-sm font-medium text-foreground dark:text-gray-300 shadow-sm hover:bg-gray-50 dark:hover:bg-gray-700 disabled:opacity-50"
               >
                 Cancel
               </button>
@@ -654,8 +654,8 @@ export default function ProgramTypesManagement() {
     <div className="space-y-6">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Program Types</h1>
-          <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">Create dynamic program types tied to certificate templates.</p>
+          <h1 className="text-2xl font-bold text-foreground dark:text-gray-100">Program Types</h1>
+          <p className="mt-1 text-sm text-muted-foreground dark:text-gray-400">Create dynamic program types tied to certificate templates.</p>
         </div>
 
         {canCreate && (
@@ -672,36 +672,36 @@ export default function ProgramTypesManagement() {
         )}
       </div>
 
-      <div className="overflow-x-auto rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
+      <div className="overflow-x-auto rounded-lg border border-border dark:border-border bg-white dark:bg-card">
         <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-          <thead className="bg-gray-50 dark:bg-gray-800">
+          <thead className="bg-muted dark:bg-card">
             <tr>
-              <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-300">Name</th>
-              <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-300">Category</th>
-              <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-300">Certificate PDF</th>
-              <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-300">Status</th>
-              <th className="px-4 py-3 text-right text-xs font-semibold text-gray-600 dark:text-gray-300">Actions</th>
+              <th className="px-4 py-3 text-left text-xs font-semibold text-muted-foreground dark:text-gray-300">Name</th>
+              <th className="px-4 py-3 text-left text-xs font-semibold text-muted-foreground dark:text-gray-300">Category</th>
+              <th className="px-4 py-3 text-left text-xs font-semibold text-muted-foreground dark:text-gray-300">Certificate PDF</th>
+              <th className="px-4 py-3 text-left text-xs font-semibold text-muted-foreground dark:text-gray-300">Status</th>
+              <th className="px-4 py-3 text-right text-xs font-semibold text-muted-foreground dark:text-gray-300">Actions</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
             {types.length === 0 ? (
               <tr>
-                <td className="px-4 py-4 text-sm text-gray-500 dark:text-gray-400" colSpan={5}>
+                <td className="px-4 py-4 text-sm text-muted-foreground dark:text-gray-400" colSpan={5}>
                   No program types yet. Create one to enable dynamic program type selection.
                 </td>
               </tr>
             ) : (
               types.map((t) => (
                 <tr key={t.id} className="hover:bg-gray-50 dark:hover:bg-gray-700/40">
-                  <td className="px-4 py-3 text-sm font-medium text-gray-900 dark:text-gray-100">{t.name}</td>
-                  <td className="px-4 py-3 text-sm text-gray-600 dark:text-gray-300">{String(t.category).replace('_', ' ')}</td>
-                  <td className="px-4 py-3 text-sm text-gray-600 dark:text-gray-300">{t.certificatePdfPath}</td>
+                  <td className="px-4 py-3 text-sm font-medium text-foreground dark:text-gray-100">{t.name}</td>
+                  <td className="px-4 py-3 text-sm text-muted-foreground dark:text-gray-300">{String(t.category).replace('_', ' ')}</td>
+                  <td className="px-4 py-3 text-sm text-muted-foreground dark:text-gray-300">{t.certificatePdfPath}</td>
                   <td className="px-4 py-3 text-sm">
                     <span
                       className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
                         t.isActive
                           ? 'bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300'
-                          : 'bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200'
+                          : 'bg-muted dark:bg-gray-700 text-foreground dark:text-gray-200'
                       }`}
                     >
                       {t.isActive ? 'Active' : 'Inactive'}

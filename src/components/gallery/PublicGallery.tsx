@@ -180,9 +180,9 @@ export function PublicGallery() {
                       src={image.secureUrl}
                       alt={image.altText || image.title || "Gallery image"}
                       fill
-                      className="object-cover transition-transform duration-500 group-hover:scale-110"
-                      sizes={index === 0 
-                        ? "(max-width: 768px) 100vw, 50vw" 
+                      className="object-cover transition-transform duration-500 group-hover:scale-[1.025]"
+                      sizes={index === 0
+                        ? "(max-width: 768px) 100vw, 50vw"
                         : "(max-width: 640px) 50vw, (max-width: 768px) 33vw, 16vw"
                       }
                     />
@@ -235,7 +235,7 @@ export function PublicGallery() {
                             src={folder.coverImage.secureUrl}
                             alt={folder.name}
                             fill
-                            className="object-cover transition-transform duration-500 group-hover:scale-105"
+                            className="object-cover transition-transform duration-500 group-hover:scale-[1.025]"
                             sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
                           />
                         ) : (

@@ -58,7 +58,7 @@ export const TextGenerateEffect = ({
         {wordsArray.map((word, idx) => (
           <motion.span
             key={word + idx}
-            className="text-animate text-gray-700 opacity-0"
+            className="text-animate text-foreground opacity-0"
           >
             {word}{" "}
           </motion.span>
@@ -70,7 +70,7 @@ export const TextGenerateEffect = ({
   return (
     <div className={cn("", className)} ref={ref}>
       <div className="mt-4">
-        <div className="leading-snug text-gray-600">{renderWords()}</div>
+        <div className="leading-snug text-muted-foreground">{renderWords()}</div>
       </div>
     </div>
   );

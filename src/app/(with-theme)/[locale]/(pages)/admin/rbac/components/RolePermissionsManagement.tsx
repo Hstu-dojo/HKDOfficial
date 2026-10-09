@@ -85,7 +85,7 @@ export default function RolePermissionsManagement() {
     setSelectedRole(role);
     setBulkMode(false);
     setSelectedPermissions(new Set());
-    
+
     // Fetch permissions for this role
     const perms = await fetchRolePermissions(role.id);
     setRolePermissions((prev) => ({ ...prev, [role.id]: perms }));
@@ -110,7 +110,7 @@ export default function RolePermissionsManagement() {
 
       toast({ title: "Success", description: "Permission assigned successfully" });
       setSelectedPermissionId("");
-      
+
       // Refresh role permissions
       const perms = await fetchRolePermissions(selectedRole.id);
       setRolePermissions((prev) => ({ ...prev, [selectedRole.id]: perms }));
@@ -153,7 +153,7 @@ export default function RolePermissionsManagement() {
 
     setSelectedPermissions(new Set());
     setBulkMode(false);
-    
+
     // Refresh role permissions
     const perms = await fetchRolePermissions(selectedRole.id);
     setRolePermissions((prev) => ({ ...prev, [selectedRole.id]: perms }));
@@ -176,7 +176,7 @@ export default function RolePermissionsManagement() {
       }
 
       toast({ title: "Success", description: "Permission removed successfully" });
-      
+
       // Refresh role permissions
       const perms = await fetchRolePermissions(roleId);
       setRolePermissions((prev) => ({ ...prev, [roleId]: perms }));
@@ -229,7 +229,7 @@ export default function RolePermissionsManagement() {
       {/* Header */}
       <div>
         <h2 className="text-xl font-semibold">Role Permissions Management</h2>
-        <p className="text-sm text-gray-500 dark:text-gray-400">
+        <p className="text-sm text-muted-foreground dark:text-gray-400">
           Assign permissions to roles to define access levels
         </p>
       </div>
@@ -242,7 +242,7 @@ export default function RolePermissionsManagement() {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Roles List */}
-        <div className="bg-white dark:bg-gray-800 rounded-lg border">
+        <div className="bg-white dark:bg-card rounded-lg border">
           <div className="p-4 border-b">
             <h3 className="font-semibold">Select Role</h3>
           </div>
@@ -259,13 +259,13 @@ export default function RolePermissionsManagement() {
                 <div className="flex-1">
                   <p className="font-medium">{role.name}</p>
                   {role.description && (
-                    <p className="text-sm text-gray-500 dark:text-gray-400 truncate">
+                    <p className="text-sm text-muted-foreground dark:text-gray-400 truncate">
                       {role.description}
                     </p>
                   )}
                 </div>
                 {rolePermissions[role.id] && (
-                  <span className="text-xs text-gray-500 dark:text-gray-400 bg-gray-100 dark:bg-gray-700 px-2 py-1 rounded">
+                  <span className="text-xs text-muted-foreground dark:text-gray-400 bg-muted dark:bg-gray-700 px-2 py-1 rounded">
                     {rolePermissions[role.id].length} perms
                   </span>
                 )}
@@ -275,7 +275,7 @@ export default function RolePermissionsManagement() {
         </div>
 
         {/* Role Permissions Panel */}
-        <div className="lg:col-span-2 bg-white dark:bg-gray-800 rounded-lg border">
+        <div className="lg:col-span-2 bg-white dark:bg-card rounded-lg border">
           {selectedRole ? (
             <>
               <div className="p-4 border-b flex items-center justify-between">
@@ -283,7 +283,7 @@ export default function RolePermissionsManagement() {
                   <ShieldCheckIcon className="h-6 w-6 text-green-600 dark:text-green-400" />
                   <div>
                     <h3 className="font-semibold">{selectedRole.name}</h3>
-                    <p className="text-sm text-gray-500 dark:text-gray-400">
+                    <p className="text-sm text-muted-foreground dark:text-gray-400">
                       {selectedRole.description || "No description"}
                     </p>
                   </div>
@@ -299,12 +299,12 @@ export default function RolePermissionsManagement() {
 
               {/* Assign Permission Form */}
               {!bulkMode && (
-                <div className="p-4 border-b bg-gray-50 dark:bg-gray-800/50 dark:bg-gray-700/50">
+                <div className="p-4 border-b bg-muted dark:bg-card/50 dark:bg-gray-700/50">
                   <form onSubmit={handleAssignPermission} className="flex gap-2">
                     <select
                       value={selectedPermissionId}
                       onChange={(e) => setSelectedPermissionId(e.target.value)}
-                      className="flex-1 px-3 py-2 border rounded-md bg-white dark:bg-gray-800"
+                      className="flex-1 px-3 py-2 border rounded-md bg-white dark:bg-card"
                       required
                     >
                       <option value="">Select permission to assign...</option>
@@ -344,7 +344,7 @@ export default function RolePermissionsManagement() {
                   <div className="max-h-[200px] overflow-y-auto space-y-2">
                     {Object.entries(groupedAvailable).map(([resource, perms]) => (
                       <div key={resource} className="space-y-1">
-                        <p className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase">{resource}</p>
+                        <p className="text-xs font-semibold text-muted-foreground dark:text-gray-400 uppercase">{resource}</p>
                         <div className="flex flex-wrap gap-1">
                           {perms.map((p) => (
                             <button
@@ -354,7 +354,7 @@ export default function RolePermissionsManagement() {
                               className={`px-2 py-1 rounded text-xs flex items-center gap-1 transition-colors ${
                                 selectedPermissions.has(p.id)
                                   ? "bg-blue-600 text-white"
-                                  : "bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600"
+                                  : "bg-muted dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600"
                               }`}
                             >
                               {selectedPermissions.has(p.id) && <CheckIcon className="h-3 w-3" />}
@@ -383,8 +383,8 @@ export default function RolePermissionsManagement() {
                         return acc;
                       }, {} as Record<string, Permission[]>)
                     ).map(([resource, perms]) => (
-                      <div key={resource} className="bg-gray-50 dark:bg-gray-800/50 dark:bg-gray-700/50 rounded-lg p-3">
-                        <h5 className="text-sm font-semibold text-gray-600 dark:text-gray-400 dark:text-gray-300 mb-2">
+                      <div key={resource} className="bg-muted dark:bg-card/50 dark:bg-gray-700/50 rounded-lg p-3">
+                        <h5 className="text-sm font-semibold text-muted-foreground dark:text-gray-400 dark:text-gray-300 mb-2">
                           {resource}
                         </h5>
                         <div className="flex flex-wrap gap-2">
@@ -410,14 +410,14 @@ export default function RolePermissionsManagement() {
                     ))}
                   </div>
                 ) : (
-                  <p className="text-gray-500 dark:text-gray-400 text-center py-4">
+                  <p className="text-muted-foreground dark:text-gray-400 text-center py-4">
                     No permissions assigned to this role
                   </p>
                 )}
               </div>
             </>
           ) : (
-            <div className="flex flex-col items-center justify-center py-12 text-gray-500 dark:text-gray-400">
+            <div className="flex flex-col items-center justify-center py-12 text-muted-foreground dark:text-gray-400">
               <ShieldCheckIcon className="h-12 w-12 mb-3 opacity-50" />
               <p>Select a role to manage its permissions</p>
             </div>

@@ -62,14 +62,14 @@ export function OnboardingAlert() {
 
   return (
     <div className="fixed bottom-6 right-6 z-50 max-w-sm animate-in slide-in-from-bottom-5 fade-in duration-500">
-      <Link 
+      <Link
         href="/onboarding"
         className="block"
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
       >
         <div className={cn(
-          "relative overflow-hidden rounded-2xl shadow-2xl transition-all duration-300",
+          "relative overflow-hidden rounded-2xl shadow-sm transition-all duration-300",
           "bg-gradient-to-br from-amber-50 via-white to-orange-50",
           "dark:from-slate-800 dark:via-slate-900 dark:to-slate-800",
           "border border-amber-200/50 dark:border-amber-500/20",
@@ -78,11 +78,11 @@ export function OnboardingAlert() {
           {/* Decorative gradient blob */}
           <div className="absolute -top-10 -right-10 w-32 h-32 bg-gradient-to-br from-amber-400/20 to-orange-400/20 dark:from-amber-500/10 dark:to-orange-500/10 rounded-full blur-2xl" />
           <div className="absolute -bottom-8 -left-8 w-24 h-24 bg-gradient-to-tr from-yellow-400/15 to-amber-400/15 dark:from-yellow-500/5 dark:to-amber-500/5 rounded-full blur-xl" />
-          
+
           <div className="relative p-4">
             {/* Close button */}
-            <button 
-              onClick={handleDismiss} 
+            <button
+              onClick={handleDismiss}
               className={cn(
                 "absolute top-2 right-2 p-1.5 rounded-full transition-all duration-200",
                 "text-slate-400 hover:text-slate-600 dark:text-slate-500 dark:hover:text-slate-300",
@@ -105,10 +105,10 @@ export function OnboardingAlert() {
 
               {/* Content */}
               <div className="flex-1 min-w-0">
-                <h4 className="text-sm font-semibold text-slate-900 dark:text-white mb-0.5">
+                <h4 className="text-sm font-semibold text-foreground dark:text-white mb-0.5">
                   Complete Your Profile
                 </h4>
-                <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
+                <p className="text-xs text-muted-foreground dark:text-muted-foreground leading-relaxed">
                   Finish your membership registration to unlock all programs and courses.
                 </p>
 

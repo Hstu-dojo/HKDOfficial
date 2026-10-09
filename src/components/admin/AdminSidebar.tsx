@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useRBAC } from '@/hooks/useRBAC';
-import { 
+import {
   ChartBarIcon,
   UserGroupIcon,
   CogIcon,
@@ -219,28 +219,28 @@ export function AdminSidebar({ className, onLinkClick }: AdminSidebarProps) {
   // Filter navigation based on permissions
   const visibleNavigation = navigation.filter(item => {
     if (loading) return false;
-    
+
     if (item.requiredPermission) {
       return hasPermission(
         item.requiredPermission.resource as any,
         item.requiredPermission.action as any
       );
     }
-    
+
     if (item.requiredRole) {
       return hasRole(item.requiredRole);
     }
-    
+
     return true; // Show items without requirements
   });
 
   if (loading) {
     return (
-      <div className={cn("w-64 bg-white dark:bg-gray-800 border-r border-slate-200 dark:border-slate-700 min-h-screen", className)}>
+      <div className={cn("w-64 bg-white dark:bg-card border-r border-border dark:border-border min-h-screen", className)}>
         <div className="p-6">
           <div className="animate-pulse space-y-4">
             {[...Array(6)].map((_, i) => (
-              <div key={i} className="h-10 bg-slate-100 dark:bg-slate-700 rounded"></div>
+              <div key={i} className="h-10 bg-muted dark:bg-slate-700 rounded"></div>
             ))}
           </div>
         </div>
@@ -249,25 +249,25 @@ export function AdminSidebar({ className, onLinkClick }: AdminSidebarProps) {
   }
 
   return (
-    <div className={cn("w-64 bg-white dark:bg-gray-800 border-r border-slate-200 dark:border-slate-700 h-full flex flex-col", className)}>
+    <div className={cn("w-64 bg-white dark:bg-card border-r border-border dark:border-border h-full flex flex-col", className)}>
       <div className="flex flex-col h-full">
-        <div className="flex items-center justify-between h-16 px-4 border-b border-slate-200 dark:border-slate-700 bg-white dark:bg-gray-800 flex-shrink-0">
-          <h1 className="text-xl font-bold text-slate-900 dark:text-slate-100">Admin Panel</h1>
+        <div className="flex items-center justify-between h-16 px-4 border-b border-border dark:border-border bg-white dark:bg-card flex-shrink-0">
+          <h1 className="text-xl font-bold text-foreground dark:text-foreground">Admin Panel</h1>
           {/* Close button on mobile */}
-          <button 
-            onClick={onLinkClick} 
-            className="lg:hidden p-2 rounded-md text-slate-500 hover:text-slate-700 hover:bg-slate-100 dark:text-slate-400 dark:hover:text-slate-200 dark:hover:bg-slate-700"
+          <button
+            onClick={onLinkClick}
+            className="lg:hidden p-2 rounded-md text-muted-foreground hover:text-slate-700 hover:bg-slate-100 dark:text-muted-foreground dark:hover:text-slate-200 dark:hover:bg-slate-700"
           >
             <XMarkIcon className="h-6 w-6" />
           </button>
         </div>
-        
+
         <nav className="flex-1 px-4 py-6 space-y-1 overflow-y-auto custom-scrollbar">
           {visibleNavigation.map((item) => {
             const isActive =
               pathname === item.href ||
               (pathname && pathname.startsWith(item.href + '/'));
-            
+
             return (
               <Link
                 key={item.name}
@@ -276,8 +276,8 @@ export function AdminSidebar({ className, onLinkClick }: AdminSidebarProps) {
                 className={cn(
                   "group flex items-center px-3 py-2.5 text-sm font-medium rounded-lg transition-all duration-200 mb-1",
                   isActive
-                    ? "bg-slate-900 dark:bg-blue-600 text-white shadow-md"
-                    : "text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700 hover:text-slate-900 dark:hover:text-slate-100"
+                    ? "bg-secondary text-secondary-foreground shadow-none"
+                    : "text-muted-foreground dark:text-muted-foreground hover:bg-slate-100 dark:hover:bg-slate-700 hover:text-slate-900 dark:hover:text-slate-100"
                 )}
               >
                 <item.icon
@@ -289,8 +289,8 @@ export function AdminSidebar({ className, onLinkClick }: AdminSidebarProps) {
                 <div className="flex-1">
                   <div className={cn("text-sm", isActive && "font-semibold")}>{item.name}</div>
                   {item.description && (
-                    <div className={cn("text-xs mt-0.5", 
-                      isActive ? "text-slate-300 dark:text-slate-400" : "text-slate-400 dark:text-slate-500 group-hover:text-slate-500 dark:group-hover:text-slate-400"
+                    <div className={cn("text-xs mt-0.5",
+                      isActive ? "text-slate-300 dark:text-muted-foreground" : "text-slate-400 dark:text-slate-500 group-hover:text-slate-500 dark:group-hover:text-slate-400"
                     )}>
                       {item.description}
                     </div>
@@ -300,18 +300,18 @@ export function AdminSidebar({ className, onLinkClick }: AdminSidebarProps) {
             );
           })}
         </nav>
-        
+
         {/* User info at bottom */}
-        <div className="p-4 border-t border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900">
+        <div className="p-4 border-t border-border dark:border-border bg-muted dark:bg-background">
           <div className="flex items-center">
             <div className="flex-shrink-0">
               <div className="h-8 w-8 rounded-full bg-slate-200 dark:bg-slate-700 flex items-center justify-center border border-slate-300 dark:border-slate-600">
-                <UserGroupIcon className="h-4 w-4 text-slate-500 dark:text-slate-400" />
+                <UserGroupIcon className="h-4 w-4 text-muted-foreground dark:text-muted-foreground" />
               </div>
             </div>
             <div className="ml-3">
-              <p className="text-sm font-medium text-slate-900 dark:text-slate-100">Admin User</p>
-              <p className="text-xs text-slate-500 dark:text-slate-400">Management Panel</p>
+              <p className="text-sm font-medium text-foreground dark:text-foreground">Admin User</p>
+              <p className="text-xs text-muted-foreground dark:text-muted-foreground">Management Panel</p>
             </div>
           </div>
         </div>

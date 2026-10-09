@@ -5,7 +5,7 @@ import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { buttonVariants } from "@/components/ui/button";
 import { RegisterForm } from "@/components/auth/register-form";
-import { BackgroundBeams } from "@/components/ui/background-beams";
+
 import { getI18n, getCurrentLocale } from "@/locales/server";
 import SiteLogo from "@/components/layout/site-logo";
 
@@ -32,11 +32,11 @@ export default async function AuthenticationPage() {
         />
       </Link>
       <div className="container relative flex min-h-screen flex-col pt-24 pb-8 lg:grid lg:max-w-none lg:grid-cols-2 lg:items-center lg:justify-center lg:px-0 lg:py-0">
-        <BackgroundBeams />
+
         <div className="flex-1 lg:p-8 flex flex-col justify-center">
           <div className="mx-auto flex w-full flex-col justify-center space-y-6 sm:w-[520px]">
             <div className="flex flex-col space-y-2 text-center">
-              <h1 className="text-2xl font-semibold tracking-tight">
+              <h1 className="text-4xl font-normal tracking-tight">
                 {t('auth.register.title')}
               </h1>
               <p className="text-sm text-muted-foreground">
@@ -72,7 +72,7 @@ export default async function AuthenticationPage() {
         >
           {t("header.login")}
         </Link>
-        <div className="relative hidden h-full flex-col bg-muted p-10 text-white dark:border-r lg:flex">
+        <div className="relative hidden h-full flex-col bg-secondary p-10 text-secondary-foreground dark:border-r lg:flex">
           <div className="absolute inset-0 bg-secondary">
             <Image
               src="/image/punch.JPG"

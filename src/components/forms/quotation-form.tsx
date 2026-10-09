@@ -62,7 +62,7 @@ export default function QuotationForm() {
   }
 
   return (
-    <div className="relative z-[1] mx-auto max-w-4xl rounded bg-white px-[12%] py-[8%] dark:bg-slate-900">
+    <div className="relative z-[1] mx-auto max-w-4xl rounded bg-white px-[12%] py-[8%] dark:bg-background">
       <SectionTitle
         subtitle="You deserve more. We're proven to deliver"
         sectionClasses="mx-auto max-w-xl text-center mb-12"

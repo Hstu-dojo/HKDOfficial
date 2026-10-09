@@ -47,10 +47,10 @@ export default function PermissionsPage() {
         fetch("/api/rbac/permissions"),
         fetch("/api/rbac/roles")
       ]);
-      
+
       const permissionsData = await permissionsRes.json();
       const rolesData = await rolesRes.json();
-      
+
       setPermissions(permissionsData.permissions || []);
       setRoles(rolesData.roles || []);
     } catch (err) {
@@ -83,7 +83,7 @@ export default function PermissionsPage() {
   async function handleAssignPermission(e: React.FormEvent) {
     e.preventDefault();
     if (!selectedRole || !selectedPermission) return;
-    
+
     setAssigning(true);
     setError(null);
     try {
@@ -290,10 +290,10 @@ export default function PermissionsPage() {
                     <span className={`px-2 py-1 rounded text-xs ${
                       permission.action === "MANAGE" ? "bg-purple-100 dark:bg-purple-900/30 text-purple-800" :
                       permission.action === "CREATE" ? "bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300" :
-                      permission.action === "READ" ? "bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200" :
+                      permission.action === "READ" ? "bg-muted dark:bg-gray-700 text-foreground dark:text-gray-200" :
                       permission.action === "UPDATE" ? "bg-yellow-100 dark:bg-yellow-900/30 text-yellow-800 dark:text-yellow-300" :
                       permission.action === "DELETE" ? "bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-300" :
-                      "bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200"
+                      "bg-muted dark:bg-gray-700 text-foreground dark:text-gray-200"
                     }`}>
                       {permission.action}
                     </span>

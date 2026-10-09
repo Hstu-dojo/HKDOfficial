@@ -3,9 +3,9 @@
 import { useState, useEffect, useCallback } from 'react';
 import Image from 'next/image';
 import { useRBAC } from '@/hooks/useRBAC';
-import { 
-  PlusIcon, 
-  PencilIcon, 
+import {
+  PlusIcon,
+  PencilIcon,
   TrashIcon,
   EyeIcon,
   CalendarDaysIcon,
@@ -60,7 +60,7 @@ interface Course {
 
 const DAYS_OF_WEEK = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 const BELT_COLORS: Record<string, string> = {
-  white: 'bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600',
+  white: 'bg-white dark:bg-card border border-gray-300 dark:border-gray-600',
   yellow: 'bg-yellow-400',
   orange: 'bg-orange-500',
   green: 'bg-green-500',
@@ -197,8 +197,8 @@ export default function CoursesManagement() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Course Management</h1>
-          <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
+          <h1 className="text-2xl font-bold text-foreground dark:text-gray-100">Course Management</h1>
+          <p className="mt-1 text-sm text-muted-foreground dark:text-gray-400">
             Create and manage karate courses
           </p>
         </div>
@@ -219,11 +219,11 @@ export default function CoursesManagement() {
       {/* Partner Filter */}
       {partners.length > 0 && (
         <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3">
-          <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Filter by Partner:</label>
+          <label className="text-sm font-medium text-foreground dark:text-gray-300">Filter by Partner:</label>
           <select
             value={partnerFilter}
             onChange={(e) => setPartnerFilter(e.target.value)}
-            className="w-full sm:w-auto px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-800"
+            className="w-full sm:w-auto px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-blue-500 bg-white dark:bg-card"
           >
             <option value="">All Partners</option>
             {partners.map((p) => (
@@ -235,24 +235,24 @@ export default function CoursesManagement() {
 
       {/* Stats */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-sm border">
-          <p className="text-sm text-gray-500 dark:text-gray-400">Total Courses</p>
+        <div className="bg-white dark:bg-card p-4 rounded-lg shadow-sm border">
+          <p className="text-sm text-muted-foreground dark:text-gray-400">Total Courses</p>
           <p className="text-2xl font-semibold">{courses.length}</p>
         </div>
-        <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-sm border">
-          <p className="text-sm text-gray-500 dark:text-gray-400">Active Courses</p>
+        <div className="bg-white dark:bg-card p-4 rounded-lg shadow-sm border">
+          <p className="text-sm text-muted-foreground dark:text-gray-400">Active Courses</p>
           <p className="text-2xl font-semibold text-green-600 dark:text-green-400">
             {courses.filter(c => c.isActive).length}
           </p>
         </div>
-        <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-sm border">
-          <p className="text-sm text-gray-500 dark:text-gray-400">Open for Enrollment</p>
+        <div className="bg-white dark:bg-card p-4 rounded-lg shadow-sm border">
+          <p className="text-sm text-muted-foreground dark:text-gray-400">Open for Enrollment</p>
           <p className="text-2xl font-semibold text-blue-600">
             {courses.filter(c => c.isEnrollmentOpen).length}
           </p>
         </div>
-        <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-sm border">
-          <p className="text-sm text-gray-500 dark:text-gray-400">Total Students</p>
+        <div className="bg-white dark:bg-card p-4 rounded-lg shadow-sm border">
+          <p className="text-sm text-muted-foreground dark:text-gray-400">Total Students</p>
           <p className="text-2xl font-semibold text-purple-600">
             {courses.reduce((sum, c) => sum + (c.currentStudents || 0), 0)}
           </p>
@@ -264,19 +264,19 @@ export default function CoursesManagement() {
         {courses.map((course) => (
           <div
             key={course.id}
-            className={`bg-white dark:bg-gray-800 rounded-lg shadow-sm border overflow-hidden ${
+            className={`bg-white dark:bg-card rounded-lg shadow-sm border overflow-hidden ${
               !course.isActive ? 'opacity-60' : ''
             }`}
           >
             {/* Course Header */}
-            <div className="p-4 border-b bg-gray-50 dark:bg-gray-800/50">
+            <div className="p-4 border-b bg-muted dark:bg-card/50">
               <div className="flex justify-between items-start">
                 <div>
-                  <h3 className="font-semibold text-lg text-gray-900 dark:text-gray-100">
+                  <h3 className="font-semibold text-lg text-foreground dark:text-gray-100">
                     {course.name}
                   </h3>
                   {course.nameBangla && (
-                    <p className="text-sm text-gray-500 dark:text-gray-400">{course.nameBangla}</p>
+                    <p className="text-sm text-muted-foreground dark:text-gray-400">{course.nameBangla}</p>
                   )}
                   {course.partnerId && (() => {
                     const partner = partners.find(p => p.id === course.partnerId);
@@ -293,7 +293,7 @@ export default function CoursesManagement() {
                       Active
                     </span>
                   ) : (
-                    <span className="px-2 py-1 text-xs bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded">
+                    <span className="px-2 py-1 text-xs bg-muted dark:bg-gray-700 text-foreground dark:text-gray-300 rounded">
                       Inactive
                     </span>
                   )}
@@ -305,7 +305,7 @@ export default function CoursesManagement() {
             <div className="p-4 space-y-3">
               {/* Belt Range */}
               <div className="flex items-center gap-2">
-                <span className="text-sm text-gray-500 dark:text-gray-400">Belt Level:</span>
+                <span className="text-sm text-muted-foreground dark:text-gray-400">Belt Level:</span>
                 <div className="flex items-center gap-1">
                   <span className={`w-4 h-4 rounded ${BELT_COLORS[course.minimumBelt || 'white']}`}></span>
                   {course.targetBelt && (
@@ -330,7 +330,7 @@ export default function CoursesManagement() {
 
               {/* Schedule */}
               {course.schedules?.length > 0 && (
-                <div className="text-sm text-gray-500 dark:text-gray-400">
+                <div className="text-sm text-muted-foreground dark:text-gray-400">
                   {course.schedules.map((s, i) => (
                     <div key={i}>
                       {DAYS_OF_WEEK[s.dayOfWeek]}: {s.startTime} - {s.endTime}
@@ -365,14 +365,14 @@ export default function CoursesManagement() {
 
               {/* Enrollment Status */}
               <div className="flex items-center justify-between pt-2 border-t">
-                <span className="text-sm text-gray-500 dark:text-gray-400">Enrollment:</span>
+                <span className="text-sm text-muted-foreground dark:text-gray-400">Enrollment:</span>
                 <button
                   onClick={() => toggleEnrollment(course.id, course.isEnrollmentOpen)}
                   disabled={!canUpdate}
                   className={`flex items-center gap-1 px-2 py-1 rounded text-sm ${
                     course.isEnrollmentOpen
                       ? 'bg-green-100 dark:bg-green-900/30 text-green-700'
-                      : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300'
+                      : 'bg-muted dark:bg-gray-700 text-foreground dark:text-gray-300'
                   }`}
                 >
                   {course.isEnrollmentOpen ? (
@@ -391,14 +391,14 @@ export default function CoursesManagement() {
 
               {/* Public Visibility */}
               <div className="flex items-center justify-between">
-                <span className="text-sm text-gray-500 dark:text-gray-400">Public Page:</span>
+                <span className="text-sm text-muted-foreground dark:text-gray-400">Public Page:</span>
                 <button
                   onClick={() => toggleVisibility(course.id, course.isActive)}
                   disabled={!canUpdate}
                   className={`flex items-center gap-1 px-2 py-1 rounded text-sm ${
                     course.isActive
                       ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300'
-                      : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300'
+                      : 'bg-muted dark:bg-gray-700 text-foreground dark:text-gray-300'
                   }`}
                 >
                   {course.isActive ? (
@@ -417,10 +417,10 @@ export default function CoursesManagement() {
             </div>
 
             {/* Course Actions */}
-            <div className="px-4 py-3 bg-gray-50 dark:bg-gray-800/50 border-t flex justify-end gap-2">
+            <div className="px-4 py-3 bg-muted dark:bg-card/50 border-t flex justify-end gap-2">
               <button
                 onClick={() => setViewingCourse(course)}
-                className="p-2 text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-600 rounded"
+                className="p-2 text-muted-foreground dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-600 rounded"
                 title="View Details"
               >
                 <EyeIcon className="h-5 w-5" />
@@ -451,10 +451,10 @@ export default function CoursesManagement() {
         ))}
 
         {courses.length === 0 && (
-          <div className="col-span-full text-center py-12 bg-white dark:bg-gray-800 rounded-lg border">
+          <div className="col-span-full text-center py-12 bg-white dark:bg-card rounded-lg border">
             <CalendarDaysIcon className="h-12 w-12 mx-auto text-gray-400 dark:text-gray-500" />
-            <h3 className="mt-2 text-sm font-medium text-gray-900 dark:text-gray-100">No courses</h3>
-            <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
+            <h3 className="mt-2 text-sm font-medium text-foreground dark:text-gray-100">No courses</h3>
+            <p className="mt-1 text-sm text-muted-foreground dark:text-gray-400">
               Get started by creating a new course.
             </p>
             {canCreate && (
@@ -490,13 +490,13 @@ export default function CoursesManagement() {
       {viewingCourse && (
         <div className="fixed inset-0 z-50 bg-black/50 overflow-y-auto">
           <div className="min-h-full flex items-start sm:items-center justify-center p-4">
-            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl max-w-2xl w-full max-h-[calc(100dvh-2rem)] overflow-y-auto">
+            <div className="bg-white dark:bg-card rounded-lg shadow-sm max-w-2xl w-full max-h-[calc(100dvh-2rem)] overflow-y-auto">
               <div className="p-6">
                 <div className="flex justify-between items-start mb-4">
                 <div>
                   <h2 className="text-xl font-bold">{viewingCourse.name}</h2>
                   {viewingCourse.nameBangla && (
-                    <p className="text-gray-500 dark:text-gray-400">{viewingCourse.nameBangla}</p>
+                    <p className="text-muted-foreground dark:text-gray-400">{viewingCourse.nameBangla}</p>
                   )}
                 </div>
                 <button
@@ -510,15 +510,15 @@ export default function CoursesManagement() {
               <div className="space-y-4">
                 {viewingCourse.description && (
                   <div>
-                    <h4 className="font-medium text-gray-700 dark:text-gray-300">Description</h4>
-                    <p className="text-gray-600 dark:text-gray-400">{viewingCourse.description}</p>
+                    <h4 className="font-medium text-foreground dark:text-gray-300">Description</h4>
+                    <p className="text-muted-foreground dark:text-gray-400">{viewingCourse.description}</p>
                   </div>
                 )}
 
                 {viewingCourse.features && viewingCourse.features.length > 0 && (
                   <div>
-                    <h4 className="font-medium text-gray-700 dark:text-gray-300">Features</h4>
-                    <ul className="list-disc list-inside text-gray-600 dark:text-gray-400">
+                    <h4 className="font-medium text-foreground dark:text-gray-300">Features</h4>
+                    <ul className="list-disc list-inside text-muted-foreground dark:text-gray-400">
                       {viewingCourse.features.map((f, i) => (
                         <li key={i}>{f}</li>
                       ))}
@@ -528,8 +528,8 @@ export default function CoursesManagement() {
 
                 {viewingCourse.bkashNumber && (
                   <div>
-                    <h4 className="font-medium text-gray-700 dark:text-gray-300">Payment Details</h4>
-                    <p className="text-gray-600 dark:text-gray-400">bKash Number: {viewingCourse.bkashNumber}</p>
+                    <h4 className="font-medium text-foreground dark:text-gray-300">Payment Details</h4>
+                    <p className="text-muted-foreground dark:text-gray-400">bKash Number: {viewingCourse.bkashNumber}</p>
                     {viewingCourse.bkashQrCodeUrl && (
                       <Image
                         src={viewingCourse.bkashQrCodeUrl}

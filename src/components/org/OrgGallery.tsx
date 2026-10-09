@@ -36,7 +36,7 @@ export default function OrgGallery({ images, orgName }: OrgGalleryProps) {
     <section ref={sectionRef} className="relative bg-background overflow-hidden">
       {/* Top accent line */}
       <div
-        className="absolute top-0 left-0 h-[2px] bg-accent transition-all"
+        className="absolute top-0 left-0 h-[2px] bg-primary transition-all"
         style={{ width: isVisible ? "100%" : "0%", transitionDuration: '1200ms', transitionTimingFunction: 'cubic-bezier(0.16, 1, 0.3, 1)' }}
       />
 
@@ -51,8 +51,8 @@ export default function OrgGallery({ images, orgName }: OrgGalleryProps) {
           }}
         >
           <div className="flex items-center gap-2 md:gap-4">
-            <div className="w-5 md:w-8 h-[2px] bg-accent" />
-            <span className="font-body text-[8px] md:text-[10px] text-accent tracking-[0.2em] md:tracking-[0.4em] uppercase">
+            <div className="w-5 md:w-8 h-[2px] bg-primary" />
+            <span className="font-body text-[8px] md:text-[10px] text-primary tracking-[0.2em] md:tracking-[0.4em] uppercase">
               The Work Speaks
             </span>
           </div>
@@ -100,14 +100,14 @@ export default function OrgGallery({ images, orgName }: OrgGalleryProps) {
                       src={src || "/placeholder.svg"}
                       alt={`${orgName} gallery image ${i + 1}`}
                       fill
-                      className="object-cover grayscale group-hover:grayscale-0 transition-all duration-700 group-hover:scale-105"
+                      className="object-cover grayscale group-hover:grayscale-0 transition-all duration-700 group-hover:scale-[1.025]"
                     style={{ transitionTimingFunction: 'cubic-bezier(0.16, 1, 0.3, 1)' }}
                     />
                     <div className="absolute inset-0 bg-background/30 group-hover:bg-background/0 transition-colors duration-500" />
-                    <div className="absolute bottom-0 left-0 w-full h-[3px] bg-accent scale-x-0 group-hover:scale-x-100 transition-transform duration-500 origin-left" style={{ transitionTimingFunction: 'cubic-bezier(0.16, 1, 0.3, 1)' }} />
-                    <div className="absolute top-0 left-0 w-5 h-5 border-t-2 border-l-2 border-accent/0 group-hover:border-accent transition-colors duration-300" />
-                    <div className="absolute bottom-0 right-0 w-5 h-5 border-b-2 border-r-2 border-accent/0 group-hover:border-accent transition-colors duration-300" />
-                    <span className="absolute top-3 right-3 font-body text-[10px] text-foreground/30 group-hover:text-accent transition-colors duration-300 tracking-widest">
+                    <div className="absolute bottom-0 left-0 w-full h-[3px] bg-primary scale-x-0 group-hover:scale-x-100 transition-transform duration-500 origin-left" style={{ transitionTimingFunction: 'cubic-bezier(0.16, 1, 0.3, 1)' }} />
+                    <div className="absolute top-0 left-0 w-5 h-5 border-t-2 border-l-2 border-primary/0 group-hover:border-primary transition-colors duration-300" />
+                    <div className="absolute bottom-0 right-0 w-5 h-5 border-b-2 border-r-2 border-primary/0 group-hover:border-primary transition-colors duration-300" />
+                    <span className="absolute top-3 right-3 font-body text-[10px] text-foreground/30 group-hover:text-primary transition-colors duration-300 tracking-widest">
                       0{i + 1}
                     </span>
                   </div>
@@ -116,13 +116,13 @@ export default function OrgGallery({ images, orgName }: OrgGalleryProps) {
                       {fallbackLabels[i % fallbackLabels.length]}
                     </span>
                     <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                      <div className="w-4 h-[1px] bg-accent" />
+                      <div className="w-4 h-[1px] bg-primary" />
                       <svg
                         width="12"
                         height="12"
                         viewBox="0 0 12 12"
                         fill="none"
-                        className="text-accent"
+                        className="text-primary"
                         aria-hidden="true"
                       >
                         <path
@@ -161,7 +161,7 @@ export default function OrgGallery({ images, orgName }: OrgGalleryProps) {
                     className="object-cover grayscale"
                   />
                   <div className="absolute inset-0 bg-background/15" />
-                  <div className="absolute bottom-0 left-0 w-full h-[2px] bg-accent" />
+                  <div className="absolute bottom-0 left-0 w-full h-[2px] bg-primary" />
                   <span className="absolute top-1.5 right-1.5 font-body text-[7px] text-foreground/40 tracking-widest">
                     0{i + 1}
                   </span>

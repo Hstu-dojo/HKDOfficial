@@ -58,7 +58,7 @@ const methodColors: Record<string, string> = {
   rocket: "bg-purple-100 dark:bg-purple-900/30 text-purple-800 dark:bg-purple-900/30 dark:text-purple-400",
   upay: "bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300",
   bank_transfer: "bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-300 dark:bg-blue-900/30 dark:text-blue-400",
-  cash: "bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200 dark:bg-gray-700 dark:text-gray-300",
+  cash: "bg-muted dark:bg-gray-700 text-foreground dark:text-gray-200 dark:bg-gray-700 dark:text-gray-300",
 };
 
 const scopeLabels: Record<string, string> = {
@@ -271,7 +271,7 @@ export default function PaymentSettingsPage() {
             <BanknotesIcon className="h-7 w-7 text-green-600 dark:text-green-400" />
             Payment Settings
           </h1>
-          <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+          <p className="text-sm text-muted-foreground dark:text-gray-400 mt-1">
             Manage bKash, Nagad, and other payment account numbers
           </p>
         </div>
@@ -309,8 +309,8 @@ export default function PaymentSettingsPage() {
       {showForm && (
         <div className="fixed inset-0 z-50 overflow-y-auto p-4">
           <div className="fixed inset-0 bg-black/50" onClick={resetForm} />
-          <div className="relative mx-auto flex w-full max-w-2xl flex-col overflow-hidden bg-white dark:bg-gray-800 rounded-lg shadow-xl max-h-[calc(100dvh-2rem)]">
-            <div className="p-6 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between">
+          <div className="relative mx-auto flex w-full max-w-2xl flex-col overflow-hidden bg-white dark:bg-card rounded-lg shadow-sm max-h-[calc(100dvh-2rem)]">
+            <div className="p-6 border-b border-border dark:border-border flex items-center justify-between">
               <h2 className="text-xl font-semibold">
                 {editingAccount ? "Edit Payment Account" : "Add Payment Account"}
               </h2>
@@ -461,7 +461,7 @@ export default function PaymentSettingsPage() {
                     className="w-full px-3 py-2 border rounded-lg bg-transparent"
                     min={0}
                   />
-                  <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">Higher = shown first</p>
+                  <p className="text-xs text-muted-foreground dark:text-gray-400 mt-1">Higher = shown first</p>
                 </div>
 
                 <div className="flex items-center gap-2 pt-6">
@@ -512,10 +512,10 @@ export default function PaymentSettingsPage() {
 
       {/* Accounts List */}
       {filteredAccounts.length === 0 ? (
-        <div className="text-center py-12 bg-gray-50 dark:bg-gray-800/50 rounded-lg">
+        <div className="text-center py-12 bg-muted dark:bg-card/50 rounded-lg">
           <BanknotesIcon className="h-12 w-12 mx-auto text-gray-400 dark:text-gray-500" />
           <h3 className="mt-4 text-lg font-medium">No payment accounts found</h3>
-          <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">
+          <p className="mt-2 text-sm text-muted-foreground dark:text-gray-400">
             Add your first payment account to start accepting payments.
           </p>
           <Button onClick={() => setShowForm(true)} className="mt-4 gap-2">
@@ -530,7 +530,7 @@ export default function PaymentSettingsPage() {
             return (
               <div
                 key={account.id}
-                className={`p-4 border rounded-lg bg-white dark:bg-gray-800 ${
+                className={`p-4 border rounded-lg bg-white dark:bg-card ${
                   !account.isActive ? "opacity-60" : ""
                 }`}
               >
@@ -554,7 +554,7 @@ export default function PaymentSettingsPage() {
                 </div>
 
                 {account.accountName && (
-                  <p className="text-sm text-gray-500 dark:text-gray-400 mt-2">
+                  <p className="text-sm text-muted-foreground dark:text-gray-400 mt-2">
                     Account holder: {account.accountName}
                   </p>
                 )}
@@ -563,19 +563,19 @@ export default function PaymentSettingsPage() {
                   <span className={`text-xs px-2 py-0.5 rounded ${methodColors[account.methodType]}`}>
                     {account.methodType.toUpperCase()}
                   </span>
-                  <span className="text-xs bg-gray-100 dark:bg-gray-700 px-2 py-0.5 rounded">
+                  <span className="text-xs bg-muted dark:bg-gray-700 px-2 py-0.5 rounded">
                     {scopeLabels[account.scope]}
                     {account.scopeName && `: ${account.scopeName}`}
                   </span>
                 </div>
 
                 {account.instructions && (
-                  <p className="text-xs text-gray-500 dark:text-gray-400 mt-2 line-clamp-2">
+                  <p className="text-xs text-muted-foreground dark:text-gray-400 mt-2 line-clamp-2">
                     {account.instructions}
                   </p>
                 )}
 
-                <div className="flex items-center justify-between mt-4 pt-3 border-t border-gray-200 dark:border-gray-700">
+                <div className="flex items-center justify-between mt-4 pt-3 border-t border-border dark:border-border">
                   <button
                     onClick={() => handleToggleActive(account)}
                     className={`text-xs flex items-center gap-1 ${

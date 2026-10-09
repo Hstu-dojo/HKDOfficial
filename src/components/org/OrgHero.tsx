@@ -121,7 +121,7 @@ export default function OrgHero({
 
       {/* Accent shard */}
       <div
-        className="absolute top-[8%] md:top-[15%] left-0 w-[3px] h-[12vh] md:h-[40vh] bg-accent anim-grow-down z-10"
+        className="absolute top-[8%] md:top-[15%] left-0 w-[3px] h-[12vh] md:h-[40vh] bg-primary anim-grow-down z-10"
         style={d(400)}
       />
 
@@ -149,8 +149,8 @@ export default function OrgHero({
               <Image src={logoUrl} alt={name} fill className="object-cover" />
             ) : (
               <>
-                <div className="absolute inset-0 bg-accent" />
-                <span className="relative font-display text-sm md:text-lg text-accent-foreground leading-none">
+                <div className="absolute inset-0 bg-primary" />
+                <span className="relative font-display text-sm md:text-lg text-primary-foreground leading-none">
                   {initials}
                 </span>
               </>
@@ -175,7 +175,7 @@ export default function OrgHero({
             style={d(200)}
           >
             Home
-            <span className="absolute -bottom-1 left-0 w-0 h-[1px] bg-accent transition-all duration-300 group-hover:w-full" />
+            <span className="absolute -bottom-1 left-0 w-0 h-[1px] bg-primary transition-all duration-300 group-hover:w-full" />
           </Link>
           {navLinks.map((link, i) => (
             <a
@@ -185,7 +185,7 @@ export default function OrgHero({
               style={d(260 + i * 60)}
             >
               {link.label}
-              <span className="absolute -bottom-1 left-0 w-0 h-[1px] bg-accent transition-all duration-300 group-hover:w-full" />
+              <span className="absolute -bottom-1 left-0 w-0 h-[1px] bg-primary transition-all duration-300 group-hover:w-full" />
             </a>
           ))}
         </div>
@@ -201,7 +201,7 @@ export default function OrgHero({
           )}
           <Link
             href="/partner-admin"
-            className="relative group flex items-center justify-center w-8 h-8 md:w-9 md:h-9 border border-foreground/15 hover:border-accent text-foreground/40 hover:text-accent transition-all duration-300 anim-snap-in"
+            className="relative group flex items-center justify-center w-8 h-8 md:w-9 md:h-9 border border-foreground/15 hover:border-primary text-foreground/40 hover:text-primary transition-all duration-300 anim-snap-in"
             style={d(320)}
             title="Partner Admin"
             aria-label="Partner Admin Portal"
@@ -213,11 +213,11 @@ export default function OrgHero({
           </Link>
           <Link
             href={status === "authenticated" ? "/dashboard" : "/register"}
-            className="relative font-body text-[8px] md:text-[11px] bg-accent text-accent-foreground px-3 md:px-5 py-2 md:py-2.5 tracking-[0.15em] uppercase overflow-hidden group anim-snap-in min-h-[36px] md:min-h-[40px] flex items-center"
+            className="relative font-body text-[8px] md:text-[11px] bg-primary text-primary-foreground px-3 md:px-5 py-2 md:py-2.5 tracking-[0.15em] uppercase overflow-hidden group anim-snap-in min-h-[36px] md:min-h-[40px] flex items-center"
             style={d(350)}
             aria-busy={status === "loading"}
           >
-            <span className="relative z-10 transition-colors duration-300 group-hover:text-background">
+            <span className="relative z-10 transition-colors duration-300 group-hover:text-primary-foreground">
               {status === "authenticated" ? "Dashboard" : "Join Now"}
             </span>
             <span
@@ -262,7 +262,7 @@ export default function OrgHero({
         <Link
           href="/"
           onClick={() => setMenuOpen(false)}
-          className="font-display text-4xl tracking-tighter text-foreground uppercase hover:text-accent transition-colors min-h-[48px] flex items-center"
+          className="font-display text-4xl tracking-tighter text-foreground uppercase hover:text-primary transition-colors min-h-[48px] flex items-center"
         >
           Home
         </Link>
@@ -271,7 +271,7 @@ export default function OrgHero({
             key={link.label}
             href={link.href}
             onClick={() => setMenuOpen(false)}
-            className="font-display text-4xl tracking-tighter text-foreground uppercase hover:text-accent transition-colors min-h-[48px] flex items-center"
+            className="font-display text-4xl tracking-tighter text-foreground uppercase hover:text-primary transition-colors min-h-[48px] flex items-center"
           >
             {link.label}
           </a>
@@ -279,7 +279,7 @@ export default function OrgHero({
         <Link
           href="/partner-admin"
           onClick={() => setMenuOpen(false)}
-          className="flex items-center gap-3 font-display text-2xl tracking-tighter text-foreground/40 uppercase hover:text-accent transition-colors min-h-[48px] mt-4 border-t border-foreground/10 pt-6"
+          className="flex items-center gap-3 font-display text-2xl tracking-tighter text-foreground/40 uppercase hover:text-primary transition-colors min-h-[48px] mt-4 border-t border-foreground/10 pt-6"
         >
           <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" d="M9.594 3.94c.09-.542.56-.94 1.11-.94h2.593c.55 0 1.02.398 1.11.94l.213 1.281c.063.374.313.686.645.87.074.04.147.083.22.127.325.196.72.257 1.075.124l1.217-.456a1.125 1.125 0 011.37.49l1.296 2.247a1.125 1.125 0 01-.26 1.431l-1.003.827c-.293.241-.438.613-.43.992a6.759 6.759 0 010 .255c-.007.378.138.75.43.991l1.004.827c.424.35.534.954.26 1.43l-1.298 2.247a1.125 1.125 0 01-1.369.491l-1.217-.456c-.355-.133-.75-.072-1.076.124a6.57 6.57 0 01-.22.128c-.331.183-.581.495-.644.869l-.213 1.281c-.09.543-.56.941-1.11.941h-2.594c-.55 0-1.019-.398-1.11-.94l-.213-1.281c-.062-.374-.312-.686-.644-.87a6.52 6.52 0 01-.22-.127c-.325-.196-.72-.257-1.076-.124l-1.217.456a1.125 1.125 0 01-1.369-.49l-1.297-2.247a1.125 1.125 0 01.26-1.431l1.004-.827c.292-.24.437-.613.43-.991a6.932 6.932 0 010-.255c.007-.38-.138-.751-.43-.992l-1.004-.827a1.125 1.125 0 01-.26-1.43l1.297-2.247a1.125 1.125 0 011.37-.491l1.216.456c.356.133.751.072 1.076-.124.072-.044.146-.087.22-.128.332-.183.582-.495.644-.869l.214-1.28z" />
@@ -297,18 +297,18 @@ export default function OrgHero({
             className="flex items-center justify-center md:justify-start gap-2 md:gap-4 mb-2 md:mb-5 anim-wipe-right"
             style={d(300)}
           >
-            <div className="h-[1.5px] w-5 md:w-16 bg-accent" />
-            <span className="font-body text-[7px] md:text-xs text-accent tracking-[0.15em] md:tracking-[0.4em] uppercase">
+            <div className="h-[1.5px] w-5 md:w-16 bg-primary" />
+            <span className="font-body text-[7px] md:text-xs text-primary tracking-[0.15em] md:tracking-[0.4em] uppercase">
               {tagline || name}
             </span>
-            <div className="h-[1.5px] w-5 bg-accent md:hidden" />
+            <div className="h-[1.5px] w-5 bg-primary md:hidden" />
           </div>
 
           {/* Headline — show org name as a single line, natural wrapping */}
           <div className="relative mb-2 md:mb-0">
             <div className="overflow-hidden">
               <h1
-                className="font-display leading-[0.85] tracking-[-0.04em] uppercase anim-shutter-up text-foreground text-[13vw] sm:text-[12vw] md:text-[11vw] lg:text-[9vw]"
+                className="font-display leading-[1.08] tracking-[-0.04em] uppercase anim-shutter-up text-foreground text-[clamp(2.5rem,6vw,5rem)] sm:text-[clamp(2.5rem,6vw,5rem)] md:text-[clamp(2.5rem,6vw,5rem)] lg:text-[clamp(2.5rem,6vw,5rem)]"
                 style={d(400)}
               >
                 {name}
@@ -331,12 +331,12 @@ export default function OrgHero({
           >
             <a
               href="#programs"
-              className="group relative font-body text-[7px] sm:text-[9px] md:text-[11px] bg-foreground text-background px-3 sm:px-5 md:px-6 py-2 md:py-3 tracking-[0.12em] md:tracking-[0.2em] uppercase overflow-hidden min-h-[36px] md:min-h-[44px] flex items-center"
+              className="group relative font-body text-[7px] sm:text-[9px] md:text-[11px] bg-foreground text-primary-foreground px-3 sm:px-5 md:px-6 py-2 md:py-3 tracking-[0.12em] md:tracking-[0.2em] uppercase overflow-hidden min-h-[36px] md:min-h-[44px] flex items-center"
             >
-              <span className="relative z-10 group-hover:text-accent-foreground transition-colors duration-300">
+              <span className="relative z-10 group-hover:text-primary-foreground transition-colors duration-300">
                 View Programs
               </span>
-              <span className="absolute inset-0 bg-accent translate-y-full group-hover:translate-y-0 transition-transform duration-300" style={{ transitionTimingFunction: 'cubic-bezier(0.22, 1, 0.36, 1)' }} />
+              <span className="absolute inset-0 bg-primary translate-y-full group-hover:translate-y-0 transition-transform duration-300" style={{ transitionTimingFunction: 'cubic-bezier(0.22, 1, 0.36, 1)' }} />
             </a>
             <a
               href="#schedule"
@@ -353,7 +353,7 @@ export default function OrgHero({
           >
             {yearEstablished && (
               <div className="relative">
-                <span className="font-display text-[8vw] sm:text-[7vw] md:text-7xl lg:text-8xl text-foreground leading-none block">
+                <span className="font-display text-[clamp(2.5rem,6vw,5rem)] sm:text-[clamp(2.5rem,6vw,5rem)] md:text-7xl lg:text-8xl text-foreground leading-none block">
                   <Counter target={new Date().getFullYear() - yearEstablished} suffix="+" go />
                 </span>
                 <span className="font-body text-[5px] sm:text-[7px] md:text-[10px] text-foreground/40 block tracking-[0.12em] md:tracking-[0.25em] uppercase mt-0.5 md:mt-2">
@@ -364,7 +364,7 @@ export default function OrgHero({
             )}
             {memberCount > 0 && (
               <div className="relative">
-                <span className="font-display text-[8vw] sm:text-[7vw] md:text-7xl lg:text-8xl text-foreground leading-none block">
+                <span className="font-display text-[clamp(2.5rem,6vw,5rem)] sm:text-[clamp(2.5rem,6vw,5rem)] md:text-7xl lg:text-8xl text-foreground leading-none block">
                   <Counter target={memberCount} suffix="+" go />
                 </span>
                 <span className="font-body text-[5px] sm:text-[7px] md:text-[10px] text-foreground/40 block tracking-[0.12em] md:tracking-[0.25em] uppercase mt-0.5 md:mt-2">
@@ -375,7 +375,7 @@ export default function OrgHero({
             )}
             {courseCount > 0 && (
               <div className="relative">
-                <span className="font-display text-[8vw] sm:text-[7vw] md:text-7xl lg:text-8xl text-foreground leading-none block">
+                <span className="font-display text-[clamp(2.5rem,6vw,5rem)] sm:text-[clamp(2.5rem,6vw,5rem)] md:text-7xl lg:text-8xl text-foreground leading-none block">
                   <Counter target={courseCount} suffix="" go />
                 </span>
                 <span className="font-body text-[5px] sm:text-[7px] md:text-[10px] text-foreground/40 block tracking-[0.12em] md:tracking-[0.25em] uppercase mt-0.5 md:mt-2">
@@ -394,7 +394,7 @@ export default function OrgHero({
           style={d(1000)}
         >
           <div className="flex items-center gap-3">
-            <div className="w-[1px] h-10 bg-accent" />
+            <div className="w-[1px] h-10 bg-primary" />
             <span className="font-body text-[9px] text-foreground/40 tracking-[0.3em] uppercase">
               Scroll
             </span>
@@ -408,7 +408,7 @@ export default function OrgHero({
       </div>
 
       <div
-        className="absolute bottom-0 left-0 h-[1px] w-full bg-accent/40 anim-width-expand"
+        className="absolute bottom-0 left-0 h-[1px] w-full bg-primary/40 anim-width-expand"
         style={d(600)}
       />
     </section>

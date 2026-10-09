@@ -86,10 +86,10 @@ export function GalleryManager() {
   // null = showing all folders. Object = showing images inside that folder
   const [activeFolder, setActiveFolder] = useState<GalleryFolder | null>(null);
   const [images, setImages] = useState<GalleryImage[]>([]);
-  
+
   const [loadingFolders, setLoadingFolders] = useState(true);
   const [loadingImages, setLoadingImages] = useState(false);
-  
+
   const [deleteTarget, setDeleteTarget] = useState<{
     type: "folder" | "image";
     id: string;
@@ -129,7 +129,7 @@ export function GalleryManager() {
   }, [toast]);
 
   useEffect(() => { loadFolders(); }, [loadFolders]);
-  
+
   useEffect(() => {
     if (activeFolder !== null) {
       loadImages(activeFolder.id);
@@ -194,7 +194,7 @@ export function GalleryManager() {
 
   return (
     <div className="w-full flex flex-col min-h-[600px] bg-background">
-      
+
       {/* ── Drill-down Logic ── */}
       {!activeFolder ? (
         /* ALBUMS VIEW (ROOT) */
@@ -220,7 +220,7 @@ export function GalleryManager() {
                   <NewAlbumSlot />
                 </div>
               </CreateFolderDialog>
-              
+
               {folders.map((folder, i) => (
                 <div key={folder.id} className="relative group w-full flex items-center justify-center">
                   <AlbumFolder
@@ -236,7 +236,7 @@ export function GalleryManager() {
                     }}
                     onClick={() => setActiveFolder(folder)}
                   />
-                  
+
                   {/* Context Menu Overlay */}
                   <div className="absolute top-2 right-2 z-[60] opacity-0 group-hover:opacity-100 transition-opacity" onClick={(e) => e.stopPropagation()}>
                     <DropdownMenu>
@@ -287,7 +287,7 @@ export function GalleryManager() {
                 {!activeFolder.isPublished && <Badge variant="secondary">Draft</Badge>}
               </div>
             </div>
-            
+
             <div className="flex items-center gap-3">
               <Button variant="outline" onClick={() => setEditFolder(activeFolder)}>
                 <Edit className="mr-2 h-4 w-4" /> Edit Album
@@ -321,10 +321,10 @@ export function GalleryManager() {
                     src={image.secureUrl}
                     alt={image.title || "Gallery image"}
                     fill
-                    className="object-cover transition-transform duration-500 group-hover:scale-105"
+                    className="object-cover transition-transform duration-500 group-hover:scale-[1.025]"
                     sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 20vw"
                   />
-                  
+
                   {/* Overlay */}
                   <div className="absolute inset-0 bg-black/0 group-hover:bg-black/40 transition-colors" />
 

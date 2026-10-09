@@ -220,10 +220,10 @@ export default function CourseFormModal({ course, onClose, onSaved }: CourseForm
   return (
     <div className="fixed inset-0 z-50 bg-black/50 overflow-y-auto">
       <div className="min-h-full flex items-start sm:items-center justify-center p-4">
-        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl max-w-4xl w-full max-h-[calc(100dvh-2rem)] overflow-y-auto">
+        <div className="bg-white dark:bg-card rounded-lg shadow-sm max-w-4xl w-full max-h-[calc(100dvh-2rem)] overflow-y-auto">
         <form onSubmit={handleSubmit}>
           {/* Header */}
-          <div className="sticky top-0 bg-white dark:bg-gray-800 px-6 py-4 border-b flex justify-between items-center">
+          <div className="sticky top-0 bg-white dark:bg-card px-6 py-4 border-b flex justify-between items-center">
             <h2 className="text-xl font-bold">
               {course?.id ? 'Edit Course' : 'Create New Course'}
             </h2>
@@ -235,9 +235,9 @@ export default function CourseFormModal({ course, onClose, onSaved }: CourseForm
           <div className="p-6 space-y-6">
             {/* Partner Assignment */}
             <div className="space-y-4">
-              <h3 className="font-semibold text-gray-900 dark:text-gray-100 border-b pb-2">Partner Assignment</h3>
+              <h3 className="font-semibold text-foreground dark:text-gray-100 border-b pb-2">Partner Assignment</h3>
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                <label className="block text-sm font-medium text-foreground dark:text-gray-300 mb-1">
                   Assign to Partner
                 </label>
                 <select
@@ -252,7 +252,7 @@ export default function CourseFormModal({ course, onClose, onSaved }: CourseForm
                     </option>
                   ))}
                 </select>
-                <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                <p className="mt-1 text-xs text-muted-foreground dark:text-gray-400">
                   Assign this course to a specific partner. Students enrolled with that partner will see this course.
                 </p>
               </div>
@@ -260,11 +260,11 @@ export default function CourseFormModal({ course, onClose, onSaved }: CourseForm
 
             {/* Basic Information */}
             <div className="space-y-4">
-              <h3 className="font-semibold text-gray-900 dark:text-gray-100 border-b pb-2">Basic Information</h3>
-              
+              <h3 className="font-semibold text-foreground dark:text-gray-100 border-b pb-2">Basic Information</h3>
+
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                  <label className="block text-sm font-medium text-foreground dark:text-gray-300 mb-1">
                     Course Name (English) *
                   </label>
                   <input
@@ -276,7 +276,7 @@ export default function CourseFormModal({ course, onClose, onSaved }: CourseForm
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                  <label className="block text-sm font-medium text-foreground dark:text-gray-300 mb-1">
                     Course Name (Bengali)
                   </label>
                   <input
@@ -289,7 +289,7 @@ export default function CourseFormModal({ course, onClose, onSaved }: CourseForm
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                <label className="block text-sm font-medium text-foreground dark:text-gray-300 mb-1">
                   Description (English)
                 </label>
                 <textarea
@@ -301,7 +301,7 @@ export default function CourseFormModal({ course, onClose, onSaved }: CourseForm
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                <label className="block text-sm font-medium text-foreground dark:text-gray-300 mb-1">
                   Description (Bengali)
                 </label>
                 <textarea
@@ -315,11 +315,11 @@ export default function CourseFormModal({ course, onClose, onSaved }: CourseForm
 
             {/* Course Details */}
             <div className="space-y-4">
-              <h3 className="font-semibold text-gray-900 dark:text-gray-100 border-b pb-2">Course Details</h3>
-              
+              <h3 className="font-semibold text-foreground dark:text-gray-100 border-b pb-2">Course Details</h3>
+
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                  <label className="block text-sm font-medium text-foreground dark:text-gray-300 mb-1">
                     Duration (months) *
                   </label>
                   <input
@@ -332,7 +332,7 @@ export default function CourseFormModal({ course, onClose, onSaved }: CourseForm
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                  <label className="block text-sm font-medium text-foreground dark:text-gray-300 mb-1">
                     Sessions/Week
                   </label>
                   <input
@@ -345,7 +345,7 @@ export default function CourseFormModal({ course, onClose, onSaved }: CourseForm
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                  <label className="block text-sm font-medium text-foreground dark:text-gray-300 mb-1">
                     Session Length (min)
                   </label>
                   <input
@@ -357,7 +357,7 @@ export default function CourseFormModal({ course, onClose, onSaved }: CourseForm
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                  <label className="block text-sm font-medium text-foreground dark:text-gray-300 mb-1">
                     Max Students
                   </label>
                   <input
@@ -372,7 +372,7 @@ export default function CourseFormModal({ course, onClose, onSaved }: CourseForm
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                  <label className="block text-sm font-medium text-foreground dark:text-gray-300 mb-1">
                     Minimum Belt
                   </label>
                   <select
@@ -388,7 +388,7 @@ export default function CourseFormModal({ course, onClose, onSaved }: CourseForm
                   </select>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                  <label className="block text-sm font-medium text-foreground dark:text-gray-300 mb-1">
                     Target Belt
                   </label>
                   <select
@@ -409,11 +409,11 @@ export default function CourseFormModal({ course, onClose, onSaved }: CourseForm
 
             {/* Pricing */}
             <div className="space-y-4">
-              <h3 className="font-semibold text-gray-900 dark:text-gray-100 border-b pb-2">Pricing</h3>
-              
+              <h3 className="font-semibold text-foreground dark:text-gray-100 border-b pb-2">Pricing</h3>
+
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                  <label className="block text-sm font-medium text-foreground dark:text-gray-300 mb-1">
                     Admission Fee (BDT)
                   </label>
                   <input
@@ -426,7 +426,7 @@ export default function CourseFormModal({ course, onClose, onSaved }: CourseForm
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                  <label className="block text-sm font-medium text-foreground dark:text-gray-300 mb-1">
                     Monthly Fee (BDT) *
                   </label>
                   <input
@@ -440,7 +440,7 @@ export default function CourseFormModal({ course, onClose, onSaved }: CourseForm
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                  <label className="block text-sm font-medium text-foreground dark:text-gray-300 mb-1">
                     Currency
                   </label>
                   <select
@@ -457,8 +457,8 @@ export default function CourseFormModal({ course, onClose, onSaved }: CourseForm
 
             {/* Payment Accounts */}
             <div className="space-y-4">
-              <h3 className="font-semibold text-gray-900 dark:text-gray-100 border-b pb-2">Payment Accounts</h3>
-              <p className="text-xs text-gray-500 dark:text-gray-400">
+              <h3 className="font-semibold text-foreground dark:text-gray-100 border-b pb-2">Payment Accounts</h3>
+              <p className="text-xs text-muted-foreground dark:text-gray-400">
                 Select which payment accounts students should use for this course.
                 Manage accounts in{' '}
                 <Link href="/en/admin/payment-settings" target="_blank" className="text-blue-600 hover:underline">Payment Settings</Link>.
@@ -473,7 +473,7 @@ export default function CourseFormModal({ course, onClose, onSaved }: CourseForm
             {/* Schedule */}
             <div className="space-y-4">
               <div className="flex justify-between items-center border-b pb-2">
-                <h3 className="font-semibold text-gray-900 dark:text-gray-100">Class Schedule</h3>
+                <h3 className="font-semibold text-foreground dark:text-gray-100">Class Schedule</h3>
                 <button
                   type="button"
                   onClick={addSchedule}
@@ -485,7 +485,7 @@ export default function CourseFormModal({ course, onClose, onSaved }: CourseForm
               </div>
 
               {formData.schedules.map((schedule, index) => (
-                <div key={index} className="flex flex-col sm:flex-row sm:items-center gap-3 p-3 bg-gray-50 dark:bg-gray-800/50 rounded-lg">
+                <div key={index} className="flex flex-col sm:flex-row sm:items-center gap-3 p-3 bg-muted dark:bg-card/50 rounded-lg">
                   <select
                     value={schedule.dayOfWeek}
                     onChange={(e) => updateSchedule(index, 'dayOfWeek', parseInt(e.target.value))}
@@ -504,7 +504,7 @@ export default function CourseFormModal({ course, onClose, onSaved }: CourseForm
                       onChange={(e) => updateSchedule(index, 'startTime', e.target.value)}
                       className="w-full sm:w-auto px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
                     />
-                    <span className="text-gray-500 dark:text-gray-400">to</span>
+                    <span className="text-muted-foreground dark:text-gray-400">to</span>
                     <input
                       type="time"
                       value={schedule.endTime}
@@ -530,7 +530,7 @@ export default function CourseFormModal({ course, onClose, onSaved }: CourseForm
               ))}
 
               {formData.schedules.length === 0 && (
-                <p className="text-sm text-gray-500 dark:text-gray-400 text-center py-4">
+                <p className="text-sm text-muted-foreground dark:text-gray-400 text-center py-4">
                   No schedule added. Click &quot;Add Schedule&quot; to add class times.
                 </p>
               )}
@@ -538,8 +538,8 @@ export default function CourseFormModal({ course, onClose, onSaved }: CourseForm
 
             {/* Features */}
             <div className="space-y-4">
-              <h3 className="font-semibold text-gray-900 dark:text-gray-100 border-b pb-2">Course Features</h3>
-              
+              <h3 className="font-semibold text-foreground dark:text-gray-100 border-b pb-2">Course Features</h3>
+
               <div className="flex gap-2">
                 <input
                   type="text"
@@ -562,7 +562,7 @@ export default function CourseFormModal({ course, onClose, onSaved }: CourseForm
                 {(formData.features || []).map((feature, index) => (
                   <span
                     key={index}
-                    className="inline-flex items-center px-3 py-1 bg-gray-100 dark:bg-gray-700 rounded-full text-sm"
+                    className="inline-flex items-center px-3 py-1 bg-muted dark:bg-gray-700 rounded-full text-sm"
                   >
                     {feature}
                     <button
@@ -579,8 +579,8 @@ export default function CourseFormModal({ course, onClose, onSaved }: CourseForm
 
             {/* Status */}
             <div className="space-y-4">
-              <h3 className="font-semibold text-gray-900 dark:text-gray-100 border-b pb-2">Status</h3>
-              
+              <h3 className="font-semibold text-foreground dark:text-gray-100 border-b pb-2">Status</h3>
+
               <div className="flex flex-col sm:flex-row gap-3 sm:gap-6">
                 <label className="flex items-center gap-2">
                   <input
@@ -589,7 +589,7 @@ export default function CourseFormModal({ course, onClose, onSaved }: CourseForm
                     onChange={(e) => setFormData({ ...formData, isActive: e.target.checked })}
                     className="rounded border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white text-blue-600 focus:ring-blue-500"
                   />
-                  <span className="text-sm text-gray-700 dark:text-gray-300">Course is active</span>
+                  <span className="text-sm text-foreground dark:text-gray-300">Course is active</span>
                 </label>
                 <label className="flex items-center gap-2">
                   <input
@@ -598,18 +598,18 @@ export default function CourseFormModal({ course, onClose, onSaved }: CourseForm
                     onChange={(e) => setFormData({ ...formData, isEnrollmentOpen: e.target.checked })}
                     className="rounded border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white text-blue-600 focus:ring-blue-500"
                   />
-                  <span className="text-sm text-gray-700 dark:text-gray-300">Open for enrollment</span>
+                  <span className="text-sm text-foreground dark:text-gray-300">Open for enrollment</span>
                 </label>
               </div>
             </div>
 
             {/* Media */}
             <div className="space-y-4">
-              <h3 className="font-semibold text-gray-900 dark:text-gray-100 border-b pb-2">Media</h3>
-              
+              <h3 className="font-semibold text-foreground dark:text-gray-100 border-b pb-2">Media</h3>
+
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                  <label className="block text-sm font-medium text-foreground dark:text-gray-300 mb-1">
                     Thumbnail URL
                   </label>
                   <input
@@ -621,7 +621,7 @@ export default function CourseFormModal({ course, onClose, onSaved }: CourseForm
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                  <label className="block text-sm font-medium text-foreground dark:text-gray-300 mb-1">
                     Banner URL
                   </label>
                   <input
@@ -637,11 +637,11 @@ export default function CourseFormModal({ course, onClose, onSaved }: CourseForm
           </div>
 
           {/* Footer */}
-          <div className="sticky bottom-0 bg-white dark:bg-gray-800 px-6 py-4 border-t flex justify-end gap-3">
+          <div className="sticky bottom-0 bg-white dark:bg-card px-6 py-4 border-t flex justify-end gap-3">
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2 text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-700 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600"
+              className="px-4 py-2 text-foreground dark:text-gray-300 bg-muted dark:bg-gray-700 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600"
             >
               Cancel
             </button>

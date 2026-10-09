@@ -38,7 +38,7 @@ export default async function SearchResults({ params }: Props) {
     <>
       <Header />
       <main className="relative mt-[4.5rem] lg:mt-[161px]">
-        <section className="bg-slate-50 py-24 dark:bg-slate-900">
+        <section className="bg-muted py-24 dark:bg-background">
           <div className="container">{content}</div>
         </section>
       </main>

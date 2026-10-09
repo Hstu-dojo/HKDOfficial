@@ -37,11 +37,7 @@ const SectionWhyUs = () => {
   ];
 
   return (
-    <section className="relative py-20 md:py-32 overflow-hidden bg-gradient-to-b from-background to-muted/20">
-      {/* Decorative blob */}
-      <div className="absolute -left-40 top-1/3 w-[500px] h-[500px] rounded-full bg-primary/5 blur-[120px] pointer-events-none" />
-      <div className="absolute -right-40 bottom-1/4 w-[400px] h-[400px] rounded-full bg-violet-500/5 blur-[100px] pointer-events-none" />
-
+    <section className="relative py-20 md:py-32 overflow-hidden bg-background">
       <div className="container mx-auto px-4 max-w-7xl relative z-10">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-center">
 
@@ -53,17 +49,8 @@ const SectionWhyUs = () => {
             transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
             className="relative"
           >
-            {/* Background circle pattern */}
-            <Image
-              src="/circles_pattern.png"
-              alt=""
-              width={640}
-              height={561}
-              className="absolute -z-[1] -translate-y-8 scale-110 dark:opacity-5 opacity-40"
-            />
-
             {/* Main image */}
-            <div className="relative rounded-3xl overflow-hidden shadow-2xl shadow-black/10">
+            <div className="relative editorial-image rounded-2xl overflow-hidden">
               <Image
                 src="https://res.cloudinary.com/dksn30eyz/image/upload/v1785926139/hkd/y5m1cmpx9ugjuzoh7wq0.jpg"
                 alt="Kaizen Karate training"
@@ -72,8 +59,8 @@ const SectionWhyUs = () => {
                 className="w-full object-cover"
               />
               {/* Video overlay card */}
-              <div className="absolute bottom-4 right-4 w-36 sm:w-44 animate-fly">
-                <div className="relative overflow-hidden rounded-2xl shadow-xl">
+              <div className="absolute bottom-4 right-4 w-36 sm:w-44 ">
+                <div className="relative overflow-hidden rounded-2xl shadow-sm">
                   <Image
                     src="/image/kick.gif"
                     alt="karate competition"
@@ -103,7 +90,7 @@ const SectionWhyUs = () => {
             </div>
 
             {/* Floating stat badge */}
-            <div className="absolute -right-4 top-8 sm:-right-8 bg-gradient-to-br from-primary to-primary/70 text-white rounded-2xl p-5 shadow-xl shadow-primary/30 backdrop-blur-md border border-white/20">
+            <div className="absolute -right-4 top-8 sm:-right-8 bg-secondary text-secondary-foreground rounded-2xl p-5 shadow-sm shadow-none backdrop-blur-md border border-white/20">
               <div className="text-3xl font-black leading-none mb-0.5">200+</div>
               <div className="text-xs font-semibold opacity-80 leading-snug">
                 Members<br />Trained
@@ -149,7 +136,7 @@ const SectionWhyUs = () => {
 
             <Link
               href={`/${locale}/onboarding`}
-              className="group inline-flex items-center gap-3 px-7 py-3.5 rounded-full bg-primary text-primary-foreground font-semibold text-sm shadow-lg shadow-primary/30 hover:shadow-xl hover:shadow-primary/40 hover:-translate-y-0.5 transition-all duration-300"
+              className="group inline-flex items-center gap-3 px-7 py-3.5 rounded-full bg-primary text-primary-foreground font-semibold text-sm shadow-lg shadow-none hover:shadow-sm hover:shadow-none hover:-translate-y-0.5 transition-all duration-300"
             >
               {tp("joinNow")}
               <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform duration-300" />

@@ -20,14 +20,14 @@ const SectionChecklist = () => {
   ];
 
   return (
-    <section className="py-16 md:py-24 bg-gradient-to-b from-background to-muted/20">
+    <section className="py-16 md:py-24 bg-background">
       <div className="container mx-auto px-4 max-w-5xl">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.5 }}
-          className="rounded-3xl bg-card border border-border/60 p-8 md:p-12 shadow-xl shadow-black/5 dark:bg-slate-900/80 backdrop-blur-sm"
+          className="rounded-3xl bg-card border border-border/60 p-8 md:p-12 shadow-sm  dark:bg-background/80 backdrop-blur-sm"
         >
           <h3 className="text-2xl md:text-3xl font-bold text-center mb-8">
             {t("about.keyFeatures")}

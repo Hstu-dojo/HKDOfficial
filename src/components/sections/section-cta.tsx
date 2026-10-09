@@ -21,8 +21,8 @@ const SectionCTA = () => {
       >
         <div className="container relative z-10 py-16">
           <div className="mx-auto max-w-6xl">
-            <div className="rounded-2xl bg-muted px-6 py-20 md:py-24 text-center shadow-lg dark:bg-slate-800 dark:shadow-slate-850/20 border border-border/50">
-              <h2 className="text-2xl md:text-4xl font-bold mb-8 max-w-2xl mx-auto leading-tight">
+            <div className="rounded-2xl bg-secondary text-secondary-foreground px-6 py-16 md:py-24 text-center shadow-lg dark:bg-card dark:shadow-slate-850/20 border border-border/50">
+              <h2 className="text-secondary-foreground text-3xl md:text-5xl font-normal mb-8 max-w-2xl mx-auto leading-tight">
                 {t("title")}
               </h2>
               <div className="flex w-full flex-col items-center justify-center gap-3 md:flex-row lg:gap-4">

@@ -1,19 +1,9 @@
 import React from "react";
-import { Bebas_Neue, JetBrains_Mono } from "next/font/google";
+import { editorialFonts } from "@/styles/fonts";
+import { EditorialMotion } from "@/components/layout/editorial-motion";
 import { AuthProvider } from "@/context/AuthContext";
 
 import "@/styles/org-globals.css";
-
-const bebasNeue = Bebas_Neue({
-  weight: "400",
-  subsets: ["latin"],
-  variable: "--font-bebas",
-});
-
-const jetbrainsMono = JetBrains_Mono({
-  subsets: ["latin"],
-  variable: "--font-jetbrains",
-});
 
 export default function OrgLayout({
   children,
@@ -22,15 +12,12 @@ export default function OrgLayout({
 }>) {
   return (
     <div
-      data-theme="brutalist"
-      className={`${bebasNeue.variable} ${jetbrainsMono.variable} font-body antialiased overflow-x-hidden`}
-      style={{
-        backgroundColor: "hsl(0 0% 3%)",
-        color: "hsl(0 0% 95%)",
-        minHeight: "100vh",
-      }}
+      data-theme="editorial"
+      className={`${editorialFonts} editorial-site editorial-public editorial-org min-h-screen bg-background text-foreground antialiased`}
     >
-      <AuthProvider>{children}</AuthProvider>
+      <AuthProvider>
+        <EditorialMotion>{children}</EditorialMotion>
+      </AuthProvider>
     </div>
   );
 }

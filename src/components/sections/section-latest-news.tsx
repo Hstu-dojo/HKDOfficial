@@ -7,7 +7,7 @@ import AllProjects from "../blogs/allProjects";
 
 const SectionLatestNews = ({data2}: any) => {
   return (
-    <div className="bg-muted py-16 dark:bg-slate-900 lg:py-24">
+    <div className="bg-muted py-16 dark:bg-background lg:py-24">
       <MaxWidthWrapper>
         <div className="container">
           <motion.div

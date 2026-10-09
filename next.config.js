@@ -57,6 +57,8 @@ const rewrites = async () => {
 };
 
 const nextConfig = {
+  // Allow isolated previews/build checks alongside an existing development server.
+  distDir: process.env.NEXT_DIST_DIR || ".next",
   experimental: {
     taint: true,
   },

@@ -38,7 +38,7 @@ export function ProjectPage({ data, encodeDataAttribute }: ProjectPageProps) {
   const endYear = duration?.end ? new Date(duration?.end).getFullYear() : "Now";
 
   return (
-    <div>
+    <article className="editorial-copy">
       <TracingBeam className="mb-12 px-6">
         <div className="mb-20 space-y-6">
           {/* Header */}
@@ -112,7 +112,7 @@ export function ProjectPage({ data, encodeDataAttribute }: ProjectPageProps) {
           {/* Description */}
           {description && (
             <CustomPortableText
-              paragraphClasses="font-serif max-w-3xl text-xl text-gray-600"
+              paragraphClasses="font-serif max-w-3xl text-lg leading-relaxed text-foreground"
               value={description}
             />
           )}
@@ -126,7 +126,7 @@ export function ProjectPage({ data, encodeDataAttribute }: ProjectPageProps) {
               </div>
               <div className="flex flex-col justify-around">
                 <h3 className="text-sm font-bold">{data?.author?.name}</h3>
-                <p className="mouse-pointer -mt-7 text-xs text-gray-600 underline">
+                <p className="mouse-pointer -mt-7 text-xs text-muted-foreground underline">
                   View Details
                 </p>
               </div>
@@ -137,8 +137,8 @@ export function ProjectPage({ data, encodeDataAttribute }: ProjectPageProps) {
       </TracingBeam>
       <BlogComments post={post} />
 
-      <div className="absolute left-0 w-screen border-t" />
-    </div>
+      <div className="w-full border-t" />
+    </article>
   );
 }
 

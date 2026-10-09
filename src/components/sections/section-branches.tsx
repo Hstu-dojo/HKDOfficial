@@ -60,25 +60,8 @@ const SectionBranches = ({ branches }: SectionBranchesProps) => {
     <section
       ref={setRef}
       id="branches"
-      className="relative py-20 lg:py-32 bg-gradient-to-b from-white via-slate-50/80 to-white dark:from-slate-900 dark:via-slate-800/50 dark:to-slate-900 overflow-hidden"
+      className="relative py-20 lg:py-32 bg-background overflow-hidden"
     >
-      {/* Decorative grid lines */}
-      <div className="absolute inset-0 pointer-events-none" aria-hidden="true">
-        <div className="absolute left-[15%] top-0 h-full w-px bg-slate-200/60 dark:bg-slate-700/30" />
-        <div className="absolute left-[85%] top-0 h-full w-px bg-slate-200/60 dark:bg-slate-700/30" />
-        <div className="absolute left-0 top-[50%] w-full h-px bg-slate-200/40 dark:bg-slate-700/20" />
-      </div>
-
-      {/* Background large text */}
-      <div
-        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 select-none pointer-events-none"
-        aria-hidden="true"
-      >
-        <span className="font-bold text-[20vw] lg:text-[14vw] text-slate-100 dark:text-slate-800/40 leading-none whitespace-nowrap">
-          DOJO
-        </span>
-      </div>
-
       <MaxWidthWrapper className="container relative z-10">
         <SectionHeader
           kicker={t("kicker")}
@@ -100,7 +83,7 @@ const SectionBranches = ({ branches }: SectionBranchesProps) => {
 
               >
                 <Link href={`/org/${branch.slug}`}>
-                  <div className="group relative bg-white dark:bg-slate-800 rounded-xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-500 border border-slate-100 dark:border-slate-700/50 hover:border-primary/30 dark:hover:border-primary/30 h-full">
+                  <div className="editorial-image group relative bg-card rounded-xl overflow-hidden shadow-sm hover:shadow-sm transition-all duration-500 border border-border dark:border-border/50 hover:border-primary/30 dark:hover:border-primary/30 h-full">
                     {/* Image section */}
                     <div className="relative h-48 lg:h-56 overflow-hidden">
                       {branch.heroImageUrl ? (
@@ -108,10 +91,10 @@ const SectionBranches = ({ branches }: SectionBranchesProps) => {
                           src={branch.heroImageUrl}
                           alt={branch.name}
                           fill
-                          className="object-cover transition-transform duration-700 group-hover:scale-110"
+                          className="object-cover transition-transform duration-700 group-hover:scale-[1.025]"
                         />
                       ) : (
-                        <div className="absolute inset-0 bg-gradient-to-br from-primary/20 to-secondary/20 dark:from-primary/10 dark:to-secondary/10 flex items-center justify-center">
+                        <div className="absolute inset-0 bg-muted from-primary/20 to-secondary/20 dark:from-primary/10 dark:to-secondary/10 flex items-center justify-center">
                           <svg
                             className="w-16 h-16 text-primary/30"
                             fill="none"
@@ -133,7 +116,7 @@ const SectionBranches = ({ branches }: SectionBranchesProps) => {
 
                       {/* Logo badge */}
                       {branch.logoUrl && (
-                        <div className="absolute top-3 left-3 w-10 h-10 rounded-lg bg-white/90 dark:bg-slate-900/90 backdrop-blur-sm p-1.5 shadow-lg border border-white/20">
+                        <div className="absolute top-3 left-3 w-10 h-10 rounded-lg bg-white/90 dark:bg-background/90 backdrop-blur-sm p-1.5 shadow-lg border border-white/20">
                           <Image
                             src={branch.logoUrl}
                             alt={`${branch.name} logo`}
@@ -146,7 +129,7 @@ const SectionBranches = ({ branches }: SectionBranchesProps) => {
                       {/* Year badge */}
                       {branch.yearEstablished && (
                         <div className="absolute top-3 right-3">
-                          <span className="text-[10px] font-medium bg-white/90 dark:bg-slate-900/90 backdrop-blur-sm text-slate-600 dark:text-slate-300 px-2 py-1 rounded-md shadow-sm">
+                          <span className="text-[10px] font-medium bg-white/90 dark:bg-background/90 backdrop-blur-sm text-muted-foreground dark:text-muted-foreground px-2 py-1 rounded-md shadow-sm">
                             Est. {branch.yearEstablished}
                           </span>
                         </div>
@@ -155,21 +138,21 @@ const SectionBranches = ({ branches }: SectionBranchesProps) => {
                       {/* Stats floating on image */}
                       <div className="absolute bottom-3 left-3 right-3 flex items-center gap-3">
                         {branch.memberCount > 0 && (
-                          <div className="flex items-center gap-1.5 bg-white/90 dark:bg-slate-900/90 backdrop-blur-sm rounded-md px-2.5 py-1 shadow-sm">
+                          <div className="flex items-center gap-1.5 bg-white/90 dark:bg-background/90 backdrop-blur-sm rounded-md px-2.5 py-1 shadow-sm">
                             <svg className="w-3.5 h-3.5 text-primary" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
                               <path strokeLinecap="round" strokeLinejoin="round" d="M15 19.128a9.38 9.38 0 002.625.372 9.337 9.337 0 004.121-.952 4.125 4.125 0 00-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 018.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0111.964-3.07M12 6.375a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zm8.25 2.25a2.625 2.625 0 11-5.25 0 2.625 2.625 0 015.25 0z" />
                             </svg>
-                            <span className="text-[11px] font-semibold text-slate-700 dark:text-slate-200">
+                            <span className="text-[11px] font-semibold text-foreground dark:text-foreground">
                               {branch.memberCount}+
                             </span>
                           </div>
                         )}
                         {branch.courseCount > 0 && (
-                          <div className="flex items-center gap-1.5 bg-white/90 dark:bg-slate-900/90 backdrop-blur-sm rounded-md px-2.5 py-1 shadow-sm">
+                          <div className="flex items-center gap-1.5 bg-white/90 dark:bg-background/90 backdrop-blur-sm rounded-md px-2.5 py-1 shadow-sm">
                             <svg className="w-3.5 h-3.5 text-secondary" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
                               <path strokeLinecap="round" strokeLinejoin="round" d="M4.26 10.147a60.436 60.436 0 00-.491 6.347A48.627 48.627 0 0112 20.904a48.627 48.627 0 018.232-4.41 60.46 60.46 0 00-.491-6.347m-15.482 0a50.57 50.57 0 00-2.658-.813A59.905 59.905 0 0112 3.493a59.902 59.902 0 0110.399 5.84c-.896.248-1.783.52-2.658.814m-15.482 0A50.697 50.697 0 0112 13.489a50.702 50.702 0 017.74-3.342" />
                             </svg>
-                            <span className="text-[11px] font-semibold text-slate-700 dark:text-slate-200">
+                            <span className="text-[11px] font-semibold text-foreground dark:text-foreground">
                                 {branch.courseCount === 1
                                   ? t("programCountOne", { count: branch.courseCount })
                                   : t("programCountMany", { count: branch.courseCount })}
@@ -233,7 +216,7 @@ const SectionBranches = ({ branches }: SectionBranchesProps) => {
                     </div>
 
                     {/* Hover accent bar */}
-                    <div className="absolute bottom-0 left-0 w-full h-[3px] bg-gradient-to-r from-primary to-tertiary scale-x-0 group-hover:scale-x-100 transition-transform duration-500 origin-left" />
+                    <div className="absolute bottom-0 left-0 w-full h-[3px] bg-muted from-primary to-tertiary scale-x-0 group-hover:scale-x-100 transition-transform duration-500 origin-left" />
                   </div>
                 </Link>
               </motion.div>
@@ -246,7 +229,7 @@ const SectionBranches = ({ branches }: SectionBranchesProps) => {
           initial={{ scaleX: 0 }}
           animate={visible ? { scaleX: 1 } : {}}
           transition={{ duration: 0.8, delay: 0.4, ease: [0.22, 1, 0.36, 1] }}
-          className="mt-16 h-px bg-gradient-to-r from-transparent via-primary/30 to-transparent origin-center"
+          className="mt-16 h-px bg-muted from-transparent via-primary/30 to-transparent origin-center"
         />
       </MaxWidthWrapper>
     </section>

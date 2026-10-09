@@ -26,7 +26,7 @@ const SectionStats = () => {
   ];
 
   return (
-    <section className="relative py-16 bg-foreground dark:bg-slate-800 text-background dark:text-white overflow-hidden">
+    <section className="relative py-16 bg-foreground dark:bg-card text-background dark:text-white overflow-hidden">
       <div className="container mx-auto px-4 max-w-7xl relative z-10">
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-0 lg:divide-x lg:divide-background/20">
           {statistics.map((item, index) => (
@@ -41,7 +41,7 @@ const SectionStats = () => {
               <span className="text-4xl lg:text-5xl font-black mb-2 tracking-tight">
                 {item.number}
               </span>
-              <span className="text-sm font-medium text-background/70 dark:text-slate-400 uppercase tracking-wider">
+              <span className="text-sm font-medium text-background/70 dark:text-muted-foreground uppercase tracking-wider">
                 {item.title}
               </span>
             </motion.div>

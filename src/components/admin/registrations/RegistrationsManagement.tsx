@@ -347,10 +347,10 @@ export default function RegistrationsManagement() {
     <div className="space-y-6">
       {/* Header */}
       <div>
-        <h1 className="text-2xl font-semibold text-gray-900 dark:text-white">
+        <h1 className="text-2xl font-semibold text-foreground dark:text-white">
           Member Registrations
         </h1>
-        <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
+        <p className="mt-1 text-sm text-muted-foreground dark:text-gray-400">
           View and manage member onboarding registrations
         </p>
       </div>
@@ -363,8 +363,8 @@ export default function RegistrationsManagement() {
           { label: 'Approved', value: stats.approved, color: 'bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300' },
           { label: 'Rejected', value: stats.rejected, color: 'bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-300' },
         ].map((stat) => (
-          <div key={stat.label} className="rounded-lg border bg-white dark:bg-gray-800 p-4">
-            <p className="text-sm text-gray-500 dark:text-gray-400">{stat.label}</p>
+          <div key={stat.label} className="rounded-lg border bg-white dark:bg-card p-4">
+            <p className="text-sm text-muted-foreground dark:text-gray-400">{stat.label}</p>
             <p className={`text-2xl font-bold ${stat.color} inline-block rounded-full px-3 py-1 mt-1`}>
               {stat.value}
             </p>
@@ -379,7 +379,7 @@ export default function RegistrationsManagement() {
           <input
             type="text"
             placeholder="Search by name, email, phone..."
-            className="w-full rounded-lg border pl-10 pr-4 py-2 text-sm dark:bg-gray-800 dark:border-gray-600 dark:text-white"
+            className="w-full rounded-lg border pl-10 pr-4 py-2 text-sm dark:bg-card dark:border-gray-600 dark:text-white"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
           />
@@ -387,7 +387,7 @@ export default function RegistrationsManagement() {
         <div className="flex items-center gap-2">
           <FunnelIcon className="h-4 w-4 text-gray-400 dark:text-gray-500" />
           <select
-            className="rounded-lg border px-3 py-2 text-sm dark:bg-gray-800 dark:border-gray-600 dark:text-white"
+            className="rounded-lg border px-3 py-2 text-sm dark:bg-card dark:border-gray-600 dark:text-white"
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
           >
@@ -400,29 +400,29 @@ export default function RegistrationsManagement() {
       </div>
 
       {/* Table */}
-      <div className="overflow-x-auto rounded-lg border bg-white dark:bg-gray-800">
+      <div className="overflow-x-auto rounded-lg border bg-white dark:bg-card">
         <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-          <thead className="bg-gray-50 dark:bg-gray-900">
+          <thead className="bg-muted dark:bg-background">
             <tr>
-              <th className="px-4 py-3 text-left text-xs font-medium uppercase text-gray-500 dark:text-gray-400">
+              <th className="px-4 py-3 text-left text-xs font-medium uppercase text-muted-foreground dark:text-gray-400">
                 Member
               </th>
-              <th className="px-4 py-3 text-left text-xs font-medium uppercase text-gray-500 dark:text-gray-400">
+              <th className="px-4 py-3 text-left text-xs font-medium uppercase text-muted-foreground dark:text-gray-400">
                 Member ID
               </th>
-              <th className="px-4 py-3 text-left text-xs font-medium uppercase text-gray-500 dark:text-gray-400">
+              <th className="px-4 py-3 text-left text-xs font-medium uppercase text-muted-foreground dark:text-gray-400">
                 Contact
               </th>
-              <th className="px-4 py-3 text-left text-xs font-medium uppercase text-gray-500 dark:text-gray-400">
+              <th className="px-4 py-3 text-left text-xs font-medium uppercase text-muted-foreground dark:text-gray-400">
                 Role
               </th>
-              <th className="px-4 py-3 text-left text-xs font-medium uppercase text-gray-500 dark:text-gray-400">
+              <th className="px-4 py-3 text-left text-xs font-medium uppercase text-muted-foreground dark:text-gray-400">
                 Status
               </th>
-              <th className="px-4 py-3 text-left text-xs font-medium uppercase text-gray-500 dark:text-gray-400">
+              <th className="px-4 py-3 text-left text-xs font-medium uppercase text-muted-foreground dark:text-gray-400">
                 Submitted
               </th>
-              <th className="px-4 py-3 text-right text-xs font-medium uppercase text-gray-500 dark:text-gray-400">
+              <th className="px-4 py-3 text-right text-xs font-medium uppercase text-muted-foreground dark:text-gray-400">
                 Actions
               </th>
             </tr>
@@ -430,7 +430,7 @@ export default function RegistrationsManagement() {
           <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
             {registrations.length === 0 ? (
               <tr>
-                <td colSpan={7} className="px-4 py-8 text-center text-sm text-gray-500 dark:text-gray-400">
+                <td colSpan={7} className="px-4 py-8 text-center text-sm text-muted-foreground dark:text-gray-400">
                   No registrations found.
                 </td>
               </tr>
@@ -457,14 +457,14 @@ export default function RegistrationsManagement() {
                               className="object-cover"
                             />
                           ) : (
-                            <UserIcon className="h-5 w-5 text-gray-500 dark:text-gray-400" />
+                            <UserIcon className="h-5 w-5 text-muted-foreground dark:text-gray-400" />
                           )}
                         </div>
                         <div>
-                          <p className="font-medium text-gray-900 dark:text-white">
+                          <p className="font-medium text-foreground dark:text-white">
                             {reg.firstName} {reg.lastName}
                           </p>
-                          <p className="text-xs text-gray-500 dark:text-gray-400">
+                          <p className="text-xs text-muted-foreground dark:text-gray-400">
                             {reg.parsedNotes?.usernameBn || ''}
                           </p>
                         </div>
@@ -473,11 +473,11 @@ export default function RegistrationsManagement() {
                     <td className="px-4 py-3">
                       {reg.profile ? (
                         <div>
-                          <p className="text-sm font-mono font-medium text-gray-900 dark:text-white">
+                          <p className="text-sm font-mono font-medium text-foreground dark:text-white">
                             {reg.profile.memberNumber}
                           </p>
                           {reg.partnerName && (
-                            <p className="text-xs text-gray-500 dark:text-gray-400">{reg.partnerName}</p>
+                            <p className="text-xs text-muted-foreground dark:text-gray-400">{reg.partnerName}</p>
                           )}
                           <span className={`mt-0.5 inline-flex rounded-full px-2 py-0.5 text-xs font-semibold ${
                             reg.profile.isActive
@@ -508,8 +508,8 @@ export default function RegistrationsManagement() {
                       )}
                     </td>
                     <td className="px-4 py-3">
-                      <p className="text-sm text-gray-700 dark:text-gray-300">{reg.email}</p>
-                      <p className="text-xs text-gray-500 dark:text-gray-400">{reg.phoneNumber}</p>
+                      <p className="text-sm text-foreground dark:text-gray-300">{reg.email}</p>
+                      <p className="text-xs text-muted-foreground dark:text-gray-400">{reg.phoneNumber}</p>
                     </td>
                     <td className="px-4 py-3">
                       {reg.user?.defaultRole && (
@@ -524,7 +524,7 @@ export default function RegistrationsManagement() {
                         {statusCfg.label}
                       </span>
                     </td>
-                    <td className="px-4 py-3 text-sm text-gray-500 dark:text-gray-400">
+                    <td className="px-4 py-3 text-sm text-muted-foreground dark:text-gray-400">
                       {new Date(reg.createdAt).toLocaleDateString()}
                     </td>
                     <td className="px-4 py-3 text-right">
@@ -534,7 +534,7 @@ export default function RegistrationsManagement() {
                           className="rounded p-1 hover:bg-gray-100 dark:hover:bg-gray-600"
                           title="View details"
                         >
-                          <EyeIcon className="h-4 w-4 text-gray-500 dark:text-gray-400" />
+                          <EyeIcon className="h-4 w-4 text-muted-foreground dark:text-gray-400" />
                         </button>
                         {canApprove && reg.status === 'pending' && (
                           <>
@@ -566,15 +566,15 @@ export default function RegistrationsManagement() {
 
       {/* Pagination */}
       {pagination && pagination.totalPages > 1 && (
-        <div className="flex flex-col gap-2 rounded-lg border bg-white dark:bg-gray-800 px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
-          <div className="text-sm text-gray-500 dark:text-gray-400">
+        <div className="flex flex-col gap-2 rounded-lg border bg-white dark:bg-card px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
+          <div className="text-sm text-muted-foreground dark:text-gray-400">
             Showing {((pagination.page - 1) * pagination.limit) + 1}–{Math.min(pagination.page * pagination.limit, pagination.total)} of {pagination.total} registrations
           </div>
           <div className="flex items-center gap-1 overflow-x-auto">
             <button
               onClick={() => goToPage(pagination.page - 1)}
               disabled={pagination.page <= 1}
-              className="rounded px-3 py-1 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 disabled:opacity-40 disabled:cursor-not-allowed whitespace-nowrap"
+              className="rounded px-3 py-1 text-sm font-medium text-foreground dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 disabled:opacity-40 disabled:cursor-not-allowed whitespace-nowrap"
             >
               Previous
             </button>
@@ -585,7 +585,7 @@ export default function RegistrationsManagement() {
                 className={`rounded px-3 py-1 text-sm font-medium ${
                   p === pagination.page
                     ? 'bg-blue-600 text-white'
-                    : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'
+                    : 'text-foreground dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'
                 } whitespace-nowrap`}
               >
                 {p}
@@ -594,7 +594,7 @@ export default function RegistrationsManagement() {
             <button
               onClick={() => goToPage(pagination.page + 1)}
               disabled={pagination.page >= pagination.totalPages}
-              className="rounded px-3 py-1 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 disabled:opacity-40 disabled:cursor-not-allowed whitespace-nowrap"
+              className="rounded px-3 py-1 text-sm font-medium text-foreground dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 disabled:opacity-40 disabled:cursor-not-allowed whitespace-nowrap"
             >
               Next
             </button>
@@ -675,9 +675,9 @@ function DetailModal({
 
   return (
     <div className="fixed inset-0 z-50 overflow-y-auto bg-black/50 p-4">
-      <div className="mx-auto flex w-full max-w-4xl flex-col overflow-hidden rounded-xl bg-white dark:bg-gray-800 shadow-2xl max-h-[calc(100dvh-2rem)]">
+      <div className="mx-auto flex w-full max-w-4xl flex-col overflow-hidden rounded-xl bg-white dark:bg-card shadow-sm max-h-[calc(100dvh-2rem)]">
         {/* Header */}
-        <div className="shrink-0 flex flex-col gap-3 border-b p-5 dark:border-gray-700 sm:flex-row sm:items-center sm:justify-between">
+        <div className="shrink-0 flex flex-col gap-3 border-b p-5 dark:border-border sm:flex-row sm:items-center sm:justify-between">
           <div className="flex items-center gap-3">
             <div className="relative flex h-10 w-10 items-center justify-center overflow-hidden rounded-full bg-gray-200 dark:bg-gray-600">
               {registration.user?.userAvatar ? (
@@ -690,12 +690,12 @@ function DetailModal({
                   className="object-cover"
                 />
               ) : (
-                <UserIcon className="h-6 w-6 text-gray-500 dark:text-gray-400" />
+                <UserIcon className="h-6 w-6 text-muted-foreground dark:text-gray-400" />
               )}
             </div>
             <div>
               <div className="flex flex-wrap items-center gap-2">
-                <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
+                <h2 className="text-lg font-semibold text-foreground dark:text-white">
                   {registration.firstName} {registration.lastName}
                 </h2>
                 {registration.profile?.memberNumber ? (
@@ -713,7 +713,7 @@ function DetailModal({
                   <StatusIcon className="h-3 w-3" />
                   {statusCfg.label}
                 </span>
-                <span className="text-xs text-gray-500 dark:text-gray-400">
+                <span className="text-xs text-muted-foreground dark:text-gray-400">
                   Submitted {new Date(registration.createdAt).toLocaleDateString()}
                 </span>
               </div>
@@ -732,7 +732,7 @@ function DetailModal({
               <>
                 <button
                   onClick={onCancelEdit}
-                  className="rounded-lg px-3 py-1.5 text-sm font-medium text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
+                  className="rounded-lg px-3 py-1.5 text-sm font-medium text-muted-foreground dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
                 >
                   Cancel
                 </button>
@@ -749,7 +749,7 @@ function DetailModal({
               onClick={onClose}
               className="rounded-lg p-1.5 hover:bg-gray-100 dark:hover:bg-gray-700"
             >
-              <XMarkIcon className="h-5 w-5 text-gray-500 dark:text-gray-400" />
+              <XMarkIcon className="h-5 w-5 text-muted-foreground dark:text-gray-400" />
             </button>
           </div>
         </div>
@@ -792,7 +792,7 @@ function DetailModal({
               <div key={section.title} className="space-y-3">
                 <div className="flex items-center gap-2">
                   <SectionIcon className="h-5 w-5 text-gray-400 dark:text-gray-500" />
-                  <h3 className="text-sm font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400">
+                  <h3 className="text-sm font-semibold uppercase tracking-wide text-muted-foreground dark:text-gray-400">
                     {section.title}
                   </h3>
                 </div>
@@ -802,8 +802,8 @@ function DetailModal({
                     if (!isEditing && !value && value !== 0) return null;
 
                     return (
-                      <div key={field.key} className="rounded-lg border bg-gray-50 dark:bg-gray-900 dark:border-gray-700 p-3">
-                        <p className="text-xs font-medium text-gray-500 dark:text-gray-400 mb-1">
+                      <div key={field.key} className="rounded-lg border bg-muted dark:bg-background dark:border-border p-3">
+                        <p className="text-xs font-medium text-muted-foreground dark:text-gray-400 mb-1">
                           {field.label}
                         </p>
                         {isEditing ? (
@@ -812,14 +812,14 @@ function DetailModal({
                           field.key === 'motive' ||
                           field.key === 'activitiesDetail' ? (
                             <textarea
-                              className="w-full rounded border px-2 py-1 text-sm dark:bg-gray-800 dark:border-gray-600 dark:text-white"
+                              className="w-full rounded border px-2 py-1 text-sm dark:bg-card dark:border-gray-600 dark:text-white"
                               rows={2}
                               value={editData[field.key] || ''}
                               onChange={(e) => updateField(field.key, e.target.value)}
                             />
                           ) : field.key === 'sex' ? (
                             <select
-                              className="w-full rounded border px-2 py-1 text-sm dark:bg-gray-800 dark:border-gray-600 dark:text-white"
+                              className="w-full rounded border px-2 py-1 text-sm dark:bg-card dark:border-gray-600 dark:text-white"
                               value={editData[field.key] || ''}
                               onChange={(e) => updateField(field.key, e.target.value)}
                             >
@@ -830,7 +830,7 @@ function DetailModal({
                             </select>
                           ) : field.key === 'bloodGroup' ? (
                             <select
-                              className="w-full rounded border px-2 py-1 text-sm dark:bg-gray-800 dark:border-gray-600 dark:text-white"
+                              className="w-full rounded border px-2 py-1 text-sm dark:bg-card dark:border-gray-600 dark:text-white"
                               value={editData[field.key] || ''}
                               onChange={(e) => updateField(field.key, e.target.value)}
                             >
@@ -842,27 +842,27 @@ function DetailModal({
                           ) : field.key === 'age' || field.key === 'height' || field.key === 'weight' ? (
                             <input
                               type="number"
-                              className="w-full rounded border px-2 py-1 text-sm dark:bg-gray-800 dark:border-gray-600 dark:text-white"
+                              className="w-full rounded border px-2 py-1 text-sm dark:bg-card dark:border-gray-600 dark:text-white"
                               value={editData[field.key] || ''}
                               onChange={(e) => updateField(field.key, field.key === 'age' || field.key === 'height' || field.key === 'weight' ? Number(e.target.value) : e.target.value)}
                             />
                           ) : field.type === 'date' ? (
                             <input
                               type="date"
-                              className="w-full rounded border px-2 py-1 text-sm dark:bg-gray-800 dark:border-gray-600 dark:text-white"
+                              className="w-full rounded border px-2 py-1 text-sm dark:bg-card dark:border-gray-600 dark:text-white"
                               value={editData[field.key] || ''}
                               onChange={(e) => updateField(field.key, e.target.value)}
                             />
                           ) : (
                             <input
                               type="text"
-                              className="w-full rounded border px-2 py-1 text-sm dark:bg-gray-800 dark:border-gray-600 dark:text-white"
+                              className="w-full rounded border px-2 py-1 text-sm dark:bg-card dark:border-gray-600 dark:text-white"
                               value={editData[field.key] || ''}
                               onChange={(e) => updateField(field.key, e.target.value)}
                             />
                           )
                         ) : (
-                          <p className="text-sm font-medium text-gray-900 dark:text-white">
+                          <p className="text-sm font-medium text-foreground dark:text-white">
                             {String(value)}
                           </p>
                         )}
@@ -875,15 +875,15 @@ function DetailModal({
           })}
 
           {/* Meta Information */}
-          <div className="space-y-3 border-t pt-4 dark:border-gray-700">
-            <h3 className="text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400">
+          <div className="space-y-3 border-t pt-4 dark:border-border">
+            <h3 className="text-xs font-semibold uppercase tracking-wide text-muted-foreground dark:text-gray-400">
               System Information
             </h3>
             <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-              <div className="rounded-lg border bg-gray-50 dark:bg-gray-900 dark:border-gray-700 p-3">
-                <p className="text-xs text-gray-500 dark:text-gray-400">Member ID</p>
+              <div className="rounded-lg border bg-muted dark:bg-background dark:border-border p-3">
+                <p className="text-xs text-muted-foreground dark:text-gray-400">Member ID</p>
                 <div className="flex items-center justify-between mt-1">
-                  <p className="text-sm font-mono font-medium text-gray-900 dark:text-white">
+                  <p className="text-sm font-mono font-medium text-foreground dark:text-white">
                     {registration.profile?.memberNumber || 'No Profile'}
                   </p>
                   {!registration.profile?.memberNumber && canUpdate && (
@@ -898,32 +898,32 @@ function DetailModal({
                   )}
                 </div>
               </div>
-              <div className="rounded-lg border bg-gray-50 dark:bg-gray-900 dark:border-gray-700 p-3">
-                <p className="text-xs text-gray-500 dark:text-gray-400">Registration ID</p>
-                <p className="text-xs font-mono text-gray-700 dark:text-gray-300 mt-1">{registration.id}</p>
+              <div className="rounded-lg border bg-muted dark:bg-background dark:border-border p-3">
+                <p className="text-xs text-muted-foreground dark:text-gray-400">Registration ID</p>
+                <p className="text-xs font-mono text-foreground dark:text-gray-300 mt-1">{registration.id}</p>
               </div>
-              <div className="rounded-lg border bg-gray-50 dark:bg-gray-900 dark:border-gray-700 p-3">
-                <p className="text-xs text-gray-500 dark:text-gray-400">User Account</p>
-                <p className="text-sm font-medium text-gray-900 dark:text-white mt-1">
+              <div className="rounded-lg border bg-muted dark:bg-background dark:border-border p-3">
+                <p className="text-xs text-muted-foreground dark:text-gray-400">User Account</p>
+                <p className="text-sm font-medium text-foreground dark:text-white mt-1">
                   {registration.user?.userName || 'N/A'} ({registration.user?.email || 'N/A'})
                 </p>
               </div>
-              <div className="rounded-lg border bg-gray-50 dark:bg-gray-900 dark:border-gray-700 p-3">
-                <p className="text-xs text-gray-500 dark:text-gray-400">Created At</p>
-                <p className="text-sm text-gray-700 dark:text-gray-300 mt-1">
+              <div className="rounded-lg border bg-muted dark:bg-background dark:border-border p-3">
+                <p className="text-xs text-muted-foreground dark:text-gray-400">Created At</p>
+                <p className="text-sm text-foreground dark:text-gray-300 mt-1">
                   {new Date(registration.createdAt).toLocaleString()}
                 </p>
               </div>
-              <div className="rounded-lg border bg-gray-50 dark:bg-gray-900 dark:border-gray-700 p-3">
-                <p className="text-xs text-gray-500 dark:text-gray-400">Last Updated</p>
-                <p className="text-sm text-gray-700 dark:text-gray-300 mt-1">
+              <div className="rounded-lg border bg-muted dark:bg-background dark:border-border p-3">
+                <p className="text-xs text-muted-foreground dark:text-gray-400">Last Updated</p>
+                <p className="text-sm text-foreground dark:text-gray-300 mt-1">
                   {new Date(registration.updatedAt).toLocaleString()}
                 </p>
               </div>
               {registration.reviewedAt && (
-                <div className="rounded-lg border bg-gray-50 dark:bg-gray-900 dark:border-gray-700 p-3">
-                  <p className="text-xs text-gray-500 dark:text-gray-400">Reviewed At</p>
-                  <p className="text-sm text-gray-700 dark:text-gray-300 mt-1">
+                <div className="rounded-lg border bg-muted dark:bg-background dark:border-border p-3">
+                  <p className="text-xs text-muted-foreground dark:text-gray-400">Reviewed At</p>
+                  <p className="text-sm text-foreground dark:text-gray-300 mt-1">
                     {new Date(registration.reviewedAt).toLocaleString()}
                   </p>
                 </div>

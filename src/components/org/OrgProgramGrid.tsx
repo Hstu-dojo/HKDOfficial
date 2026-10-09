@@ -52,17 +52,17 @@ export default function OrgProgramGrid({
           <div className="flex flex-col justify-between">
             <div>
               <span
-                className={`font-body text-[8px] md:text-[10px] text-accent tracking-[0.2em] md:tracking-[0.3em] uppercase block mb-1 md:mb-3 ${visible ? "anim-cut-in" : "opacity-0"}`}
+                className={`font-body text-[8px] md:text-[10px] text-primary tracking-[0.2em] md:tracking-[0.3em] uppercase block mb-1 md:mb-3 ${visible ? "anim-cut-in" : "opacity-0"}`}
                 style={{ animationDelay: "0.1s" }}
               >
                 [Programs]
               </span>
-              <h2 className="font-display tracking-tighter text-foreground leading-none uppercase overflow-hidden">
+              <h2 className="font-display tracking-tight text-foreground leading-tight overflow-hidden">
                 <span
-                  className={`block text-[13vw] sm:text-[10vw] md:text-8xl lg:text-9xl whitespace-nowrap ${visible ? "anim-shutter-up" : "opacity-0"}`}
+                  className={`block text-[clamp(2.5rem,6vw,5rem)] sm:text-[clamp(2.5rem,6vw,5rem)] md:text-6xl lg:text-7xl break-words ${visible ? "anim-shutter-up" : "opacity-0"}`}
                   style={{ animationDelay: "0.2s" }}
                 >
-                  Train Hard<span className="text-accent">.</span>
+                  Train Hard<span className="text-primary">.</span>
                 </span>
               </h2>
             </div>
@@ -80,7 +80,7 @@ export default function OrgProgramGrid({
                   { v: String(courses.length * 3), l: "Daily Classes" },
                 ].map((s) => (
                   <div key={s.l} className="flex items-baseline gap-1">
-                    <span className="font-display text-base md:text-2xl text-accent leading-none">
+                    <span className="font-display text-base md:text-2xl text-primary leading-none">
                       {s.v}
                     </span>
                     <span className="font-body text-[6px] md:text-[9px] text-foreground/35 tracking-[0.1em] uppercase">
@@ -105,8 +105,8 @@ export default function OrgProgramGrid({
                   fill
                   className="object-cover grayscale hover:grayscale-0 transition-all duration-700"
                 />
-                <div className="absolute top-0 left-0 w-3 h-3 md:w-6 md:h-6 border-t-2 border-l-2 border-accent" />
-                <div className="absolute bottom-0 right-0 w-3 h-3 md:w-6 md:h-6 border-b-2 border-r-2 border-accent" />
+                <div className="absolute top-0 left-0 w-3 h-3 md:w-6 md:h-6 border-t-2 border-l-2 border-primary" />
+                <div className="absolute bottom-0 right-0 w-3 h-3 md:w-6 md:h-6 border-b-2 border-r-2 border-primary" />
                 <div className="absolute bottom-2 left-2 bg-background/90 px-1.5 py-0.5 md:px-2 md:py-1">
                   <span className="font-body text-[6px] md:text-[9px] text-foreground/60 tracking-[0.12em] md:tracking-[0.2em] uppercase">
                     {courses.length} Programs / Week
@@ -114,7 +114,7 @@ export default function OrgProgramGrid({
                 </div>
               </div>
               <div
-                className={`h-[2px] bg-accent mt-1 md:mt-2 ${visible ? "line-expand" : "w-0"}`}
+                className={`h-[2px] bg-primary mt-1 md:mt-2 ${visible ? "line-expand" : "w-0"}`}
                 style={{ animationDelay: "0.8s" }}
               />
             </div>
@@ -132,7 +132,7 @@ export default function OrgProgramGrid({
               onMouseLeave={() => setHoveredId(null)}
             >
               <div
-                className={`absolute left-0 top-0 bottom-0 w-[3px] bg-accent transition-transform duration-300 origin-top ${
+                className={`absolute left-0 top-0 bottom-0 w-[3px] bg-primary transition-transform duration-300 origin-top ${
                   hoveredId === course.id ? "scale-y-100" : "scale-y-0"
                 }`}
               />
@@ -146,7 +146,7 @@ export default function OrgProgramGrid({
                   <div>
                     <h3
                       className={`font-display text-xl md:text-6xl lg:text-7xl tracking-tighter leading-none uppercase transition-colors duration-300 ${
-                        hoveredId === course.id ? "text-accent" : "text-foreground"
+                        hoveredId === course.id ? "text-primary" : "text-foreground"
                       }`}
                     >
                       {course.name}
@@ -184,7 +184,7 @@ export default function OrgProgramGrid({
                     <span className="font-body text-[6px] md:text-[10px] text-foreground/35 block tracking-[0.08em] md:tracking-[0.2em] uppercase mb-0.5">
                       Status
                     </span>
-                    <span className="font-body text-[8px] md:text-xs text-accent">ACTIVE</span>
+                    <span className="font-body text-[8px] md:text-xs text-primary">ACTIVE</span>
                   </div>
                 </div>
               </div>

@@ -38,10 +38,10 @@ export default async function CertificatesPage() {
       {/* Page Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-extrabold text-slate-900 dark:text-slate-100">
+          <h1 className="text-2xl font-extrabold text-foreground dark:text-foreground">
             {t("certificates.title")}
           </h1>
-          <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">
+          <p className="text-sm text-muted-foreground dark:text-muted-foreground mt-1">
             {t("certificates.subtitle")}
           </p>
         </div>
@@ -60,7 +60,7 @@ export default async function CertificatesPage() {
           {certificates.map((cert: any) => (
             <div
               key={cert.id}
-              className="group relative rounded-2xl border border-slate-200 dark:border-slate-700/50 bg-white dark:bg-slate-800/60 shadow-sm hover:shadow-md hover:border-primary/30 transition-all duration-200 overflow-hidden"
+              className="group relative rounded-2xl border border-border dark:border-border/50 bg-white dark:bg-card/60 shadow-sm hover:shadow-md hover:border-primary/30 transition-all duration-200 overflow-hidden"
             >
               {/* Top accent */}
               <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-primary to-tertiary" />
@@ -73,15 +73,15 @@ export default async function CertificatesPage() {
                       <DocumentCheckIcon className="h-6 w-6 text-primary" />
                     </div>
                     <div className="min-w-0 flex-1">
-                      <h3 className="text-base font-bold text-slate-900 dark:text-slate-100 truncate">
+                      <h3 className="text-base font-bold text-foreground dark:text-foreground truncate">
                         {cert.programTitle}
                       </h3>
                       <div className="flex flex-wrap items-center gap-x-3 gap-y-1 mt-1.5">
-                        <span className="inline-flex items-center gap-1 text-xs font-mono bg-slate-100 dark:bg-slate-700/50 text-slate-600 dark:text-slate-300 px-2 py-0.5 rounded">
+                        <span className="inline-flex items-center gap-1 text-xs font-mono bg-muted dark:bg-slate-700/50 text-muted-foreground dark:text-muted-foreground px-2 py-0.5 rounded">
                           {cert.certificateNumber}
                         </span>
                         {cert.issueDate && (
-                          <span className="inline-flex items-center gap-1 text-xs text-slate-500 dark:text-slate-400">
+                          <span className="inline-flex items-center gap-1 text-xs text-muted-foreground dark:text-muted-foreground">
                             <CalendarDaysIcon className="h-3.5 w-3.5" />
                             {format(new Date(cert.issueDate), "MMM d, yyyy")}
                           </span>
@@ -104,15 +104,15 @@ export default async function CertificatesPage() {
           ))}
         </div>
       ) : (
-        <div className="rounded-2xl border border-slate-200 dark:border-slate-700/50 bg-white dark:bg-slate-800/60 shadow-sm">
+        <div className="rounded-2xl border border-border dark:border-border/50 bg-white dark:bg-card/60 shadow-sm">
           <div className="flex flex-col items-center justify-center py-16 px-6 text-center">
-            <div className="h-16 w-16 rounded-2xl bg-slate-100 dark:bg-slate-700/50 flex items-center justify-center mb-4">
+            <div className="h-16 w-16 rounded-2xl bg-muted dark:bg-slate-700/50 flex items-center justify-center mb-4">
               <DocumentCheckIcon className="h-8 w-8 text-slate-300 dark:text-slate-600" />
             </div>
-            <h2 className="text-lg font-bold text-slate-900 dark:text-slate-100 mb-2">
+            <h2 className="text-lg font-bold text-foreground dark:text-foreground mb-2">
               {t("certificates.emptyTitle")}
             </h2>
-            <p className="text-sm text-slate-500 dark:text-slate-400 max-w-sm mb-6">
+            <p className="text-sm text-muted-foreground dark:text-muted-foreground max-w-sm mb-6">
               {t("certificates.emptyDescription")}
             </p>
             <Link
@@ -127,14 +127,14 @@ export default async function CertificatesPage() {
       )}
 
       {/* Verification info */}
-      <div className="rounded-2xl bg-slate-50 dark:bg-slate-800/40 border border-slate-100 dark:border-slate-700/50 p-5">
+      <div className="rounded-2xl bg-muted dark:bg-card/40 border border-border dark:border-border/50 p-5">
         <div className="flex items-start gap-3">
           <ShieldCheckIcon className="h-5 w-5 text-primary mt-0.5 flex-shrink-0" />
           <div>
-            <h3 className="text-sm font-semibold text-slate-900 dark:text-slate-100 mb-1">
+            <h3 className="text-sm font-semibold text-foreground dark:text-foreground mb-1">
               {t("certificates.verificationTitle")}
             </h3>
-            <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
+            <p className="text-xs text-muted-foreground dark:text-muted-foreground leading-relaxed">
               {t("certificates.verificationPrefix")}{" "}
               <Link
                 href="/cert-verify"

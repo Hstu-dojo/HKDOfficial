@@ -1,46 +1,13 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-
-@layer utilities {
-  .text-balance {
-    text-wrap: balance;
-  }
+.text-balance {
+  text-wrap: balance;
 }
 
-@layer base {
-  [data-theme="brutalist"] {
-    --background: 0 0% 3%;
-    --foreground: 0 0% 95%;
-    --card: 0 0% 7%;
-    --card-foreground: 0 0% 95%;
-    --popover: 0 0% 7%;
-    --popover-foreground: 0 0% 95%;
-    --primary: 0 0% 95%;
-    --primary-foreground: 0 0% 3%;
-    --secondary: 0 0% 12%;
-    --secondary-foreground: 0 0% 95%;
-    --muted: 0 0% 12%;
-    --muted-foreground: 0 0% 55%;
-    --accent: 0 100% 50%;
-    --accent-foreground: 0 0% 100%;
-    --destructive: 0 100% 50%;
-    --destructive-foreground: 0 0% 100%;
-    --border: 0 0% 18%;
-    --input: 0 0% 18%;
-    --ring: 0 100% 50%;
-    --radius: 0rem;
-  }
+[data-theme="editorial"] * {
+  border-color: hsl(var(--border));
 }
-
-@layer base {
-  [data-theme="brutalist"] * {
-    border-color: hsl(var(--border));
-  }
-  [data-theme="brutalist"] {
-    background-color: hsl(var(--background));
-    color: hsl(var(--foreground));
-  }
+[data-theme="editorial"] {
+  background-color: hsl(var(--background));
+  color: hsl(var(--foreground));
 }
 
 /* Noise texture overlay */

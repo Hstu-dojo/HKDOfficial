@@ -135,9 +135,9 @@ export default function RolesManagement() {
         throw new Error(data.error || "Failed to update role");
       }
 
-      toast({ 
-        title: "Success", 
-        description: `Role ${role.isActive ? "deactivated" : "activated"} successfully` 
+      toast({
+        title: "Success",
+        description: `Role ${role.isActive ? "deactivated" : "activated"} successfully`
       });
       fetchRoles();
     } catch (err: any) {
@@ -170,7 +170,7 @@ export default function RolesManagement() {
       <div className="flex items-center justify-between">
         <div>
           <h2 className="text-xl font-semibold">Roles Management</h2>
-          <p className="text-sm text-gray-500 dark:text-gray-400">
+          <p className="text-sm text-muted-foreground dark:text-gray-400">
             Create and manage roles for your application
           </p>
         </div>
@@ -190,7 +190,7 @@ export default function RolesManagement() {
 
       {/* Create/Edit Form */}
       {(showCreateForm || editingRole) && (
-        <div className="bg-white dark:bg-gray-800 rounded-lg border p-6">
+        <div className="bg-white dark:bg-card rounded-lg border p-6">
           <h3 className="font-semibold mb-4">
             {editingRole ? `Edit Role: ${editingRole.name}` : "Create New Role"}
           </h3>
@@ -205,7 +205,7 @@ export default function RolesManagement() {
                   required
                   className="uppercase"
                 />
-                <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">Use UPPER_SNAKE_CASE for consistency</p>
+                <p className="text-xs text-muted-foreground dark:text-gray-400 mt-1">Use UPPER_SNAKE_CASE for consistency</p>
               </div>
               <div>
                 <label className="block text-sm font-medium mb-1">Description</label>
@@ -236,10 +236,10 @@ export default function RolesManagement() {
       )}
 
       {/* Roles Table */}
-      <div className="bg-white dark:bg-gray-800 rounded-lg border overflow-hidden">
+      <div className="bg-white dark:bg-card rounded-lg border overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full">
-            <thead className="bg-gray-50 dark:bg-gray-800/50 dark:bg-gray-700">
+            <thead className="bg-muted dark:bg-card/50 dark:bg-gray-700">
               <tr>
                 <th className="px-4 py-3 text-left text-sm font-semibold">Role Name</th>
                 <th className="px-4 py-3 text-left text-sm font-semibold">Description</th>
@@ -254,7 +254,7 @@ export default function RolesManagement() {
                   <td className="px-4 py-3">
                     <span className="font-medium">{role.name}</span>
                   </td>
-                  <td className="px-4 py-3 text-sm text-gray-500 dark:text-gray-400">
+                  <td className="px-4 py-3 text-sm text-muted-foreground dark:text-gray-400">
                     {role.description || "-"}
                   </td>
                   <td className="px-4 py-3">
@@ -279,7 +279,7 @@ export default function RolesManagement() {
                       )}
                     </button>
                   </td>
-                  <td className="px-4 py-3 text-sm text-gray-500 dark:text-gray-400">
+                  <td className="px-4 py-3 text-sm text-muted-foreground dark:text-gray-400">
                     {new Date(role.createdAt).toLocaleDateString()}
                   </td>
                   <td className="px-4 py-3 text-right">
@@ -306,7 +306,7 @@ export default function RolesManagement() {
               ))}
               {roles.length === 0 && (
                 <tr>
-                  <td colSpan={5} className="px-4 py-8 text-center text-gray-500 dark:text-gray-400">
+                  <td colSpan={5} className="px-4 py-8 text-center text-muted-foreground dark:text-gray-400">
                     No roles found. Create your first role to get started.
                   </td>
                 </tr>

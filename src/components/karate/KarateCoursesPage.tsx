@@ -42,7 +42,7 @@ interface Course {
 }
 
 const BELT_STYLES: Record<string, { bg: string; text: string; dot: string }> = {
-  white:  { bg: 'bg-gray-50 dark:bg-gray-800',         text: 'text-gray-700 dark:text-gray-300',       dot: 'bg-gray-300' },
+  white:  { bg: 'bg-muted dark:bg-card',         text: 'text-foreground dark:text-gray-300',       dot: 'bg-gray-300' },
   yellow: { bg: 'bg-yellow-50 dark:bg-yellow-900/20',   text: 'text-yellow-700 dark:text-yellow-300',   dot: 'bg-yellow-400' },
   orange: { bg: 'bg-orange-50 dark:bg-orange-900/20',   text: 'text-orange-700 dark:text-orange-300',   dot: 'bg-orange-400' },
   green:  { bg: 'bg-green-50 dark:bg-green-900/20',     text: 'text-green-700 dark:text-green-300',     dot: 'bg-green-500' },
@@ -223,7 +223,7 @@ export default function KarateCoursesPage({ initialCourses, enrolledCourseIds = 
             initial={{ opacity: 0, scale: 0.95 }}
             animate={visible ? { opacity: 1, scale: 1 } : {}}
             transition={{ duration: 0.5, delay: 0.2 }}
-            className="text-center py-20 bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-100 dark:border-slate-700/50"
+            className="text-center py-20 bg-white dark:bg-card rounded-xl shadow-sm border border-border dark:border-border/50"
           >
             <svg className="w-16 h-16 mx-auto text-muted-foreground/30 mb-4" fill="none" viewBox="0 0 24 24" strokeWidth={1} stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" d="M4.26 10.147a60.436 60.436 0 00-.491 6.347A48.627 48.627 0 0112 20.904a48.627 48.627 0 018.232-4.41 60.46 60.46 0 00-.491-6.347m-15.482 0a50.57 50.57 0 00-2.658-.813A59.905 59.905 0 0112 3.493a59.902 59.902 0 0110.399 5.84c-.896.248-1.783.52-2.658.814m-15.482 0A50.697 50.697 0 0112 13.489a50.702 50.702 0 017.74-3.342" />
@@ -249,7 +249,7 @@ export default function KarateCoursesPage({ initialCourses, enrolledCourseIds = 
                     animate={visible ? 'animate' : 'initial'}
                     custom={i}
                   >
-                    <div className={`group relative bg-white dark:bg-slate-800 rounded-xl overflow-hidden shadow-sm transition-all duration-500 border border-slate-100 dark:border-slate-700/50 h-full flex flex-col ${canApply ? 'hover:shadow-xl hover:border-primary/30 dark:hover:border-primary/30' : 'opacity-60 grayscale select-none'}`}>
+                    <div className={`group relative bg-white dark:bg-card rounded-xl overflow-hidden shadow-sm transition-all duration-500 border border-border dark:border-border/50 h-full flex flex-col ${canApply ? 'hover:shadow-sm hover:border-primary/30 dark:hover:border-primary/30' : 'opacity-60 grayscale select-none'}`}>
                       {/* image */}
                       <div className="relative h-48 lg:h-52 overflow-hidden">
                         {course.imageUrl ? (
@@ -257,7 +257,7 @@ export default function KarateCoursesPage({ initialCourses, enrolledCourseIds = 
                             src={course.imageUrl}
                             alt={course.name}
                             fill
-                            className="object-contain transition-transform duration-700 group-hover:scale-110"
+                            className="object-contain transition-transform duration-700 group-hover:scale-[1.025]"
                           />
                         ) : (
                           <div className="absolute inset-0 bg-gradient-to-br from-primary/20 to-secondary/20 dark:from-primary/10 dark:to-secondary/10 flex items-center justify-center">
@@ -300,21 +300,21 @@ export default function KarateCoursesPage({ initialCourses, enrolledCourseIds = 
                         {/* bottom floating chips */}
                         <div className="absolute bottom-3 left-3 right-3 flex items-center gap-2 flex-wrap">
                           {course.durationMonths && (
-                            <div className="flex items-center gap-1.5 bg-white/90 dark:bg-slate-900/90 backdrop-blur-sm rounded-md px-2.5 py-1 shadow-sm">
+                            <div className="flex items-center gap-1.5 bg-white/90 dark:bg-background/90 backdrop-blur-sm rounded-md px-2.5 py-1 shadow-sm">
                               <svg className="w-3.5 h-3.5 text-primary" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
                                 <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />
                               </svg>
-                              <span className="text-[11px] font-semibold text-slate-700 dark:text-slate-200">
+                              <span className="text-[11px] font-semibold text-foreground dark:text-foreground">
                                 {course.durationMonths} months
                               </span>
                             </div>
                           )}
                           {course.maxCapacity && (
-                            <div className="flex items-center gap-1.5 bg-white/90 dark:bg-slate-900/90 backdrop-blur-sm rounded-md px-2.5 py-1 shadow-sm">
+                            <div className="flex items-center gap-1.5 bg-white/90 dark:bg-background/90 backdrop-blur-sm rounded-md px-2.5 py-1 shadow-sm">
                               <svg className="w-3.5 h-3.5 text-secondary" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
                                 <path strokeLinecap="round" strokeLinejoin="round" d="M15 19.128a9.38 9.38 0 002.625.372 9.337 9.337 0 004.121-.952 4.125 4.125 0 00-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 018.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0111.964-3.07M12 6.375a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zm8.25 2.25a2.625 2.625 0 11-5.25 0 2.625 2.625 0 015.25 0z" />
                               </svg>
-                              <span className="text-[11px] font-semibold text-slate-700 dark:text-slate-200">
+                              <span className="text-[11px] font-semibold text-foreground dark:text-foreground">
                                 {course.currentEnrollment}/{course.maxCapacity}
                               </span>
                             </div>
@@ -338,7 +338,7 @@ export default function KarateCoursesPage({ initialCourses, enrolledCourseIds = 
                             {course.schedules.slice(0, 3).map((schedule, idx) => (
                               <span
                                 key={idx}
-                                className="inline-flex items-center gap-1 text-[10px] font-medium bg-slate-100 dark:bg-slate-700/50 text-muted-foreground px-2 py-1 rounded-md"
+                                className="inline-flex items-center gap-1 text-[10px] font-medium bg-muted dark:bg-slate-700/50 text-muted-foreground px-2 py-1 rounded-md"
                               >
                                 <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
                                   <path strokeLinecap="round" strokeLinejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5" />
@@ -375,7 +375,7 @@ export default function KarateCoursesPage({ initialCourses, enrolledCourseIds = 
                         <div className="flex-1" />
 
                         {/* pricing & CTA */}
-                        <div className="border-t border-slate-100 dark:border-slate-700/50 pt-4 mt-2">
+                        <div className="border-t border-border dark:border-border/50 pt-4 mt-2">
                           <div className="flex items-end justify-between mb-4 min-h-[44px]">
                             {canApply ? (
                               <>
@@ -448,7 +448,7 @@ export default function KarateCoursesPage({ initialCourses, enrolledCourseIds = 
                           ) : (
                             <button
                               disabled
-                              className="w-full px-4 py-3 bg-slate-100 dark:bg-slate-700/50 text-muted-foreground font-medium rounded-lg cursor-not-allowed text-sm"
+                              className="w-full px-4 py-3 bg-muted dark:bg-slate-700/50 text-muted-foreground font-medium rounded-lg cursor-not-allowed text-sm"
                             >
                               Enrollment Closed
                             </button>
@@ -474,7 +474,7 @@ export default function KarateCoursesPage({ initialCourses, enrolledCourseIds = 
         transition={{ duration: 0.6, delay: 0.3 }}
         className="relative z-10 mt-20 mb-8"
       >
-        <div className="bg-white dark:bg-slate-800 py-16 px-8 rounded-xl shadow-sm border border-slate-100 dark:border-slate-700/50">
+        <div className="bg-white dark:bg-card py-16 px-8 rounded-xl shadow-sm border border-border dark:border-border/50">
           <div className="text-center mb-12">
             <div className="inline-flex items-center gap-3 mb-4">
               <div className="h-px w-8 bg-secondary" />

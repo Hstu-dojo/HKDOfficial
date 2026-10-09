@@ -6,9 +6,9 @@ import { useI18n } from "@/locales/client";
 
 const SectionCTALayout4 = () => {
   const t = useI18n();
-  
+
   return (
-    <section className="bg-muted px-6 py-24 dark:bg-slate-900">
+    <section className="bg-muted px-6 py-24 dark:bg-background">
       <div className="container">
         <div className="mx-auto max-w-6xl">
           <div className="text-center">

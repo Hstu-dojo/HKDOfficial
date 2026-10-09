@@ -253,7 +253,7 @@ export default function AdminDocsPage() {
   const totalDocs = sections.reduce((sum, s) => sum + s.links.length, 0);
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 p-6 lg:p-8">
+    <div className="min-h-screen bg-muted dark:bg-background p-6 lg:p-8">
       {/* Header */}
       <div className="mb-8">
         <div className="flex items-center gap-3 mb-2">
@@ -261,15 +261,15 @@ export default function AdminDocsPage() {
             <BookOpenIcon className="h-6 w-6 text-white dark:text-slate-900" />
           </div>
           <div>
-            <h1 className="text-2xl font-bold text-slate-900 dark:text-slate-100">
+            <h1 className="text-2xl font-bold text-foreground dark:text-foreground">
               Documentation Index
             </h1>
-            <p className="text-sm text-slate-500 dark:text-slate-400">
+            <p className="text-sm text-muted-foreground dark:text-muted-foreground">
               {sections.length} sections · {totalDocs} documents
             </p>
           </div>
         </div>
-        <p className="text-slate-600 dark:text-slate-400 mt-3 max-w-2xl">
+        <p className="text-muted-foreground dark:text-muted-foreground mt-3 max-w-2xl">
           Full navigation map of all internal developer documentation. All links
           open the corresponding Nextra docs page (admin-protected).
         </p>
@@ -277,7 +277,7 @@ export default function AdminDocsPage() {
           <Link
             href="/docs"
             target="_blank"
-            className="inline-flex items-center gap-1.5 text-sm font-medium text-slate-700 dark:text-slate-300 border border-slate-300 dark:border-slate-600 px-3 py-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+            className="inline-flex items-center gap-1.5 text-sm font-medium text-foreground dark:text-muted-foreground border border-slate-300 dark:border-slate-600 px-3 py-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
           >
             <ArrowTopRightOnSquareIcon className="h-4 w-4" />
             Open Docs Root
@@ -298,7 +298,7 @@ export default function AdminDocsPage() {
               {/* Section header */}
               <div className="flex items-center gap-2.5">
                 <Icon className={`h-5 w-5 flex-shrink-0 ${c.icon}`} />
-                <h2 className="font-semibold text-slate-800 dark:text-slate-200 text-sm">
+                <h2 className="font-semibold text-foreground dark:text-foreground text-sm">
                   {section.title}
                 </h2>
                 <span className={`ml-auto text-xs font-medium px-2 py-0.5 rounded-full ${c.badge}`}>
@@ -312,15 +312,15 @@ export default function AdminDocsPage() {
                   <li key={link.href}>
                     <Link
                       href={link.href}
-                      className={`group flex items-start gap-2 rounded-lg px-3 py-2 bg-white/60 dark:bg-slate-900/40 border border-transparent hover:border-slate-200 dark:hover:border-slate-700 hover:bg-white dark:hover:bg-slate-900/70 transition-all`}
+                      className={`group flex items-start gap-2 rounded-lg px-3 py-2 bg-white/60 dark:bg-background/40 border border-transparent hover:border-slate-200 dark:hover:border-slate-700 hover:bg-white dark:hover:bg-slate-900/70 transition-all`}
                     >
                       <DocumentTextIcon className="h-4 w-4 mt-0.5 flex-shrink-0 text-slate-400 group-hover:text-slate-600 dark:group-hover:text-slate-300 transition-colors" />
                       <div>
-                        <div className={`text-sm font-medium text-slate-700 dark:text-slate-300 ${c.link} transition-colors`}>
+                        <div className={`text-sm font-medium text-foreground dark:text-muted-foreground ${c.link} transition-colors`}>
                           {link.title}
                         </div>
                         {link.description && (
-                          <div className="text-xs text-slate-500 dark:text-slate-500 mt-0.5">
+                          <div className="text-xs text-muted-foreground dark:text-slate-500 mt-0.5">
                             {link.description}
                           </div>
                         )}

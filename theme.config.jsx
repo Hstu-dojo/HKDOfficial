@@ -1,4 +1,6 @@
 export default {
+  primaryHue: 0,
+  primarySaturation: 66,
   logo: (
     <h4
       style={{

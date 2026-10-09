@@ -4,7 +4,7 @@ import { AspectRatio } from "@/components/ui/aspect-ratio";
 
 const SectionPromoVideo = () => {
   return (
-    <section className="bg-muted py-16 dark:bg-slate-900 lg:py-28">
+    <section className="bg-muted py-16 dark:bg-background lg:py-28">
       <div className="container">
         <div className="flex flex-wrap justify-between lg:flex-nowrap lg:space-x-10">
           <div className="mb-10 w-full lg:w-[45%]">

@@ -7,9 +7,10 @@ export const DarkModeSwitch = ({ className }: { className?: string }) => {
   return (
     <button
       className={cn(
-        "group mr-2 flex h-8 w-8 items-center justify-center rounded-full border bg-white transition-colors hover:border-transparent hover:bg-primary focus:border-transparent focus:bg-primary dark:border-transparent dark:bg-white/[.15] dark:hover:bg-primary lg:ml-5",
+        "group mr-2 flex h-8 w-8 items-center justify-center rounded-full border bg-white transition-colors hover:border-transparent hover:bg-primary focus:border-transparent focus:bg-primary dark:border-transparent dark:bg-white/[.15] dark:hover:bg-primary lg:ml-0",
         className,
       )}
+      aria-label="Toggle color theme"
       onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
     >
       <svg

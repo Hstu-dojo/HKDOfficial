@@ -15,7 +15,7 @@ import { useScopedI18n } from "@/locales/client";
 const SectionBenefits = () => {
     const t = useScopedI18n("homepage.benefits");
   return (
-    <section className="relative overflow-hidden bg-gradient-to-b from-[#EBE4FA]/25 to-muted/25 py-24 dark:bg-slate-900 dark:bg-none lg:py-32">
+    <section className="relative overflow-hidden bg-muted   py-24 dark:bg-background dark:bg-none lg:py-32">
       <MaxWidthWrapper className="container">
         <div className="flex flex-wrap items-center justify-between lg:flex-nowrap">
           <div className="relative z-[1] mb-10 lg:w-1/2">
@@ -33,7 +33,7 @@ const SectionBenefits = () => {
               height={540}
               className="rounded-xl"
             />
-            <div className="absolute -right-10 top-1/4 w-1/2 animate-fly rounded-xl lg:w-auto">
+            <div className="absolute -right-10 top-1/4 w-1/2  rounded-xl lg:w-auto">
               <Image
                 src="/image/kick.gif"
                 alt="karate competition"

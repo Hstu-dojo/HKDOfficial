@@ -427,17 +427,17 @@ export default function PartnersManagement() {
       {/* Header */}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
+          <h1 className="text-2xl font-bold text-foreground dark:text-gray-100">
             Partner Organizations
           </h1>
-          <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
+          <p className="mt-1 text-sm text-muted-foreground dark:text-gray-400">
             Manage partner venues and their admin accounts
           </p>
         </div>
         <div className="flex flex-col sm:flex-row gap-2">
           <button
             onClick={openTenantModal}
-            className="inline-flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100 dark:hover:bg-gray-700"
+            className="inline-flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-foreground shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:border-gray-600 dark:bg-card dark:text-gray-100 dark:hover:bg-gray-700"
           >
             <UserPlusIcon className="h-5 w-5" />
             Tenant Subdomains
@@ -468,10 +468,10 @@ export default function PartnersManagement() {
       {filteredPartners.length === 0 ? (
         <div className="rounded-lg border border-dashed border-gray-300 p-12 text-center dark:border-gray-600">
           <BuildingOffice2Icon className="mx-auto h-12 w-12 text-gray-400" />
-          <h3 className="mt-2 text-sm font-medium text-gray-900 dark:text-gray-100">
+          <h3 className="mt-2 text-sm font-medium text-foreground dark:text-gray-100">
             No partners found
           </h3>
-          <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
+          <p className="mt-1 text-sm text-muted-foreground dark:text-gray-400">
             {search ? 'Try a different search term' : 'Get started by creating a new partner organization'}
           </p>
         </div>
@@ -480,7 +480,7 @@ export default function PartnersManagement() {
           {filteredPartners.map((partner) => (
             <div
               key={partner.id}
-              className="rounded-lg border border-gray-200 bg-white p-5 shadow-sm transition-shadow hover:shadow-md dark:border-gray-700 dark:bg-gray-800"
+              className="rounded-lg border border-border bg-white p-5 shadow-sm transition-shadow hover:shadow-md dark:border-border dark:bg-card"
             >
               {/* Card Header */}
               <div className="flex items-start justify-between">
@@ -489,10 +489,10 @@ export default function PartnersManagement() {
                     <BuildingOffice2Icon className="h-5 w-5 text-blue-600 dark:text-blue-400" />
                   </div>
                   <div>
-                    <h3 className="font-semibold text-gray-900 dark:text-gray-100">
+                    <h3 className="font-semibold text-foreground dark:text-gray-100">
                       {partner.name}
                     </h3>
-                    <p className="text-xs text-gray-500 dark:text-gray-400">
+                    <p className="text-xs text-muted-foreground dark:text-gray-400">
                       /{partner.slug}
                     </p>
                   </div>
@@ -509,7 +509,7 @@ export default function PartnersManagement() {
               </div>
 
               {/* Card Body */}
-              <div className="mt-4 space-y-2 text-sm text-gray-600 dark:text-gray-400">
+              <div className="mt-4 space-y-2 text-sm text-muted-foreground dark:text-gray-400">
                 {partner.location && (
                   <div className="flex items-center gap-2">
                     <MapPinIcon className="h-4 w-4 shrink-0" />
@@ -535,7 +535,7 @@ export default function PartnersManagement() {
               </div>
 
               {/* Card Actions */}
-              <div className="mt-4 flex items-center gap-2 border-t border-gray-100 pt-3 dark:border-gray-700">
+              <div className="mt-4 flex items-center gap-2 border-t border-gray-100 pt-3 dark:border-border">
                 <button
                   onClick={() => openEditModal(partner)}
                   className="inline-flex items-center gap-1 rounded px-2 py-1 text-xs font-medium text-blue-600 hover:bg-blue-50 dark:text-blue-400 dark:hover:bg-blue-900/20"
@@ -574,7 +574,7 @@ export default function PartnersManagement() {
                   href={`/org/${partner.slug}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="ml-auto inline-flex items-center gap-1 rounded px-2 py-1 text-xs font-medium text-gray-500 hover:bg-gray-50 dark:text-gray-400 dark:hover:bg-gray-700"
+                  className="ml-auto inline-flex items-center gap-1 rounded px-2 py-1 text-xs font-medium text-muted-foreground hover:bg-gray-50 dark:text-gray-400 dark:hover:bg-gray-700"
                 >
                   <ArrowTopRightOnSquareIcon className="h-3.5 w-3.5" />
                   View
@@ -589,10 +589,10 @@ export default function PartnersManagement() {
       {showModal && (
         <div className="fixed inset-0 z-50 bg-black/50 overflow-y-auto">
           <div className="min-h-full flex items-start sm:items-center justify-center p-4">
-            <div className="w-full max-w-2xl max-h-[calc(100dvh-2rem)] overflow-y-auto rounded-xl bg-white shadow-2xl dark:bg-gray-800">
+            <div className="w-full max-w-2xl max-h-[calc(100dvh-2rem)] overflow-y-auto rounded-xl bg-white shadow-sm dark:bg-card">
             {/* Modal Header */}
-            <div className="flex items-center justify-between border-b p-5 dark:border-gray-700">
-              <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+            <div className="flex items-center justify-between border-b p-5 dark:border-border">
+              <h2 className="text-lg font-semibold text-foreground dark:text-gray-100">
                 {editingPartner ? 'Edit Partner' : 'Create New Partner'}
               </h2>
               <button
@@ -617,13 +617,13 @@ export default function PartnersManagement() {
               )}
 
               {/* Organization Info */}
-              <h3 className="text-sm font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">
+              <h3 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground dark:text-gray-400">
                 Organization Info
               </h3>
 
               <div className="grid gap-4 sm:grid-cols-2">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                  <label className="block text-sm font-medium text-foreground dark:text-gray-300">
                     Name <span className="text-red-500">*</span>
                   </label>
                   <input
@@ -636,7 +636,7 @@ export default function PartnersManagement() {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                  <label className="block text-sm font-medium text-foreground dark:text-gray-300">
                     Slug <span className="text-red-500">*</span>
                   </label>
                   <input
@@ -647,14 +647,14 @@ export default function PartnersManagement() {
                     className="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2 text-sm dark:border-gray-600 dark:bg-gray-700 dark:text-white"
                     placeholder="kaizen-dhaka-branch"
                   />
-                  <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                  <p className="mt-1 text-xs text-muted-foreground dark:text-gray-400">
                     URL: /org/{form.slug || '...'}
                   </p>
                 </div>
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                <label className="block text-sm font-medium text-foreground dark:text-gray-300">
                   Description
                 </label>
                 <textarea
@@ -668,7 +668,7 @@ export default function PartnersManagement() {
 
               <div className="grid gap-4 sm:grid-cols-3">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                  <label className="block text-sm font-medium text-foreground dark:text-gray-300">
                     Location
                   </label>
                   <input
@@ -680,7 +680,7 @@ export default function PartnersManagement() {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                  <label className="block text-sm font-medium text-foreground dark:text-gray-300">
                     Contact Email
                   </label>
                   <input
@@ -691,7 +691,7 @@ export default function PartnersManagement() {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                  <label className="block text-sm font-medium text-foreground dark:text-gray-300">
                     Contact Phone
                   </label>
                   <input
@@ -706,17 +706,17 @@ export default function PartnersManagement() {
               {/* Admin Account — only for new partners */}
               {!editingPartner && (
                 <>
-                  <h3 className="text-sm font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">
+                  <h3 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground dark:text-gray-400">
                     Partner Admin Account
                   </h3>
-                  <p className="text-xs text-gray-500 dark:text-gray-400">
+                  <p className="text-xs text-muted-foreground dark:text-gray-400">
                     These credentials will be used by the partner to log into their admin panel at{' '}
-                    <code className="rounded bg-gray-100 px-1 dark:bg-gray-700">/partner-admin</code>
+                    <code className="rounded bg-muted px-1 dark:bg-gray-700">/partner-admin</code>
                   </p>
 
                   <div className="grid gap-4 sm:grid-cols-2">
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                      <label className="block text-sm font-medium text-foreground dark:text-gray-300">
                         Admin Name
                       </label>
                       <input
@@ -728,7 +728,7 @@ export default function PartnersManagement() {
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                      <label className="block text-sm font-medium text-foreground dark:text-gray-300">
                         Admin Email <span className="text-red-500">*</span>
                       </label>
                       <input
@@ -743,7 +743,7 @@ export default function PartnersManagement() {
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                    <label className="block text-sm font-medium text-foreground dark:text-gray-300">
                       Admin Password <span className="text-red-500">*</span>
                     </label>
                     <input
@@ -760,11 +760,11 @@ export default function PartnersManagement() {
               )}
 
               {/* Actions */}
-              <div className="flex items-center justify-end gap-3 border-t pt-4 dark:border-gray-700">
+              <div className="flex items-center justify-end gap-3 border-t pt-4 dark:border-border">
                 <button
                   type="button"
                   onClick={() => setShowModal(false)}
-                  className="rounded-lg bg-gray-100 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600"
+                  className="rounded-lg bg-muted px-4 py-2 text-sm font-medium text-foreground hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600"
                 >
                   Cancel
                 </button>
@@ -786,14 +786,14 @@ export default function PartnersManagement() {
       {showAdminModal && adminPartner && (
         <div className="fixed inset-0 z-50 bg-black/50 overflow-y-auto">
           <div className="min-h-full flex items-start sm:items-center justify-center p-4">
-            <div className="w-full max-w-2xl max-h-[calc(100dvh-2rem)] overflow-y-auto rounded-xl bg-white shadow-2xl dark:bg-gray-800">
+            <div className="w-full max-w-2xl max-h-[calc(100dvh-2rem)] overflow-y-auto rounded-xl bg-white shadow-sm dark:bg-card">
             {/* Modal Header */}
-            <div className="flex items-center justify-between border-b p-5 dark:border-gray-700">
+            <div className="flex items-center justify-between border-b p-5 dark:border-border">
               <div>
-                <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+                <h2 className="text-lg font-semibold text-foreground dark:text-gray-100">
                   Admin Accounts
                 </h2>
-                <p className="mt-0.5 text-sm text-gray-500 dark:text-gray-400">
+                <p className="mt-0.5 text-sm text-muted-foreground dark:text-gray-400">
                   {adminPartner.name} — manage who can access /partner-admin
                 </p>
               </div>
@@ -823,11 +823,11 @@ export default function PartnersManagement() {
                   <div className="h-6 w-6 animate-spin rounded-full border-b-2 border-blue-600" />
                 </div>
               ) : partnerAdmins.length === 0 ? (
-                <div className="py-6 text-center text-sm text-gray-500 dark:text-gray-400">
+                <div className="py-6 text-center text-sm text-muted-foreground dark:text-gray-400">
                   No admin accounts found for this partner.
                 </div>
               ) : (
-                <div className="divide-y divide-gray-100 dark:divide-gray-700 rounded-lg border border-gray-200 dark:border-gray-700">
+                <div className="divide-y divide-gray-100 dark:divide-gray-700 rounded-lg border border-border dark:border-border">
                   {partnerAdmins.map((admin) => (
                     <div
                       key={admin.id}
@@ -835,7 +835,7 @@ export default function PartnersManagement() {
                     >
                       <div className="min-w-0 flex-1">
                         <div className="flex items-center gap-2">
-                          <p className="truncate text-sm font-medium text-gray-900 dark:text-gray-100">
+                          <p className="truncate text-sm font-medium text-foreground dark:text-gray-100">
                             {admin.name}
                           </p>
                           <span
@@ -848,7 +848,7 @@ export default function PartnersManagement() {
                             {admin.isActive ? 'Active' : 'Inactive'}
                           </span>
                         </div>
-                        <div className="mt-0.5 flex items-center gap-3 text-xs text-gray-500 dark:text-gray-400">
+                        <div className="mt-0.5 flex items-center gap-3 text-xs text-muted-foreground dark:text-gray-400">
                           <span className="flex items-center gap-1">
                             <EnvelopeIcon className="h-3 w-3" />
                             {admin.email}
@@ -896,13 +896,13 @@ export default function PartnersManagement() {
                 </button>
               ) : (
                 <form onSubmit={handleAddAdmin} className="space-y-3 rounded-lg border border-purple-200 bg-purple-50/50 p-4 dark:border-purple-800 dark:bg-purple-900/10">
-                  <h4 className="text-sm font-semibold text-gray-900 dark:text-gray-100">
+                  <h4 className="text-sm font-semibold text-foreground dark:text-gray-100">
                     New Admin Account
                   </h4>
 
                   <div className="grid gap-3 sm:grid-cols-2">
                     <div>
-                      <label className="block text-xs font-medium text-gray-700 dark:text-gray-300">
+                      <label className="block text-xs font-medium text-foreground dark:text-gray-300">
                         Name
                       </label>
                       <input
@@ -914,7 +914,7 @@ export default function PartnersManagement() {
                       />
                     </div>
                     <div>
-                      <label className="block text-xs font-medium text-gray-700 dark:text-gray-300">
+                      <label className="block text-xs font-medium text-foreground dark:text-gray-300">
                         Phone
                       </label>
                       <input
@@ -928,7 +928,7 @@ export default function PartnersManagement() {
                   </div>
 
                   <div>
-                    <label className="block text-xs font-medium text-gray-700 dark:text-gray-300">
+                    <label className="block text-xs font-medium text-foreground dark:text-gray-300">
                       Email <span className="text-red-500">*</span>
                     </label>
                     <input
@@ -942,7 +942,7 @@ export default function PartnersManagement() {
                   </div>
 
                   <div>
-                    <label className="block text-xs font-medium text-gray-700 dark:text-gray-300">
+                    <label className="block text-xs font-medium text-foreground dark:text-gray-300">
                       Password <span className="text-red-500">*</span>
                     </label>
                     <input
@@ -967,7 +967,7 @@ export default function PartnersManagement() {
                     <button
                       type="button"
                       onClick={() => setShowAddAdmin(false)}
-                      className="rounded-lg bg-gray-100 px-4 py-1.5 text-sm font-medium text-gray-700 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600"
+                      className="rounded-lg bg-muted px-4 py-1.5 text-sm font-medium text-foreground hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600"
                     >
                       Cancel
                     </button>
@@ -983,11 +983,11 @@ export default function PartnersManagement() {
       {showTenantModal && (
         <div className="fixed inset-0 z-50 bg-black/50 overflow-y-auto">
           <div className="min-h-full flex items-start sm:items-center justify-center p-4">
-            <div className="w-full max-w-2xl max-h-[calc(100dvh-2rem)] overflow-y-auto rounded-xl bg-white shadow-2xl dark:bg-gray-800">
-            <div className="flex items-center justify-between border-b p-5 dark:border-gray-700">
+            <div className="w-full max-w-2xl max-h-[calc(100dvh-2rem)] overflow-y-auto rounded-xl bg-white shadow-sm dark:bg-card">
+            <div className="flex items-center justify-between border-b p-5 dark:border-border">
               <div>
-                <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">Tenant Subdomains</h2>
-                <p className="text-sm text-gray-500 dark:text-gray-400">Add or remove tenant subdomains under {process.env.NEXT_PUBLIC_TENANT_BASE_DOMAIN || 'p.hstuma.com'}.</p>
+                <h2 className="text-lg font-semibold text-foreground dark:text-gray-100">Tenant Subdomains</h2>
+                <p className="text-sm text-muted-foreground dark:text-gray-400">Add or remove tenant subdomains under {process.env.NEXT_PUBLIC_TENANT_BASE_DOMAIN || 'p.hstuma.com'}.</p>
               </div>
               <button
                 onClick={() => setShowTenantModal(false)}
@@ -1018,20 +1018,20 @@ export default function PartnersManagement() {
                 </button>
               </form>
 
-              <div className="mt-2 max-h-72 overflow-y-auto rounded-lg border border-gray-200 dark:border-gray-700">
+              <div className="mt-2 max-h-72 overflow-y-auto rounded-lg border border-border dark:border-border">
                 {tenantLoading ? (
                   <div className="flex h-24 items-center justify-center">
                     <div className="h-6 w-6 animate-spin rounded-full border-b-2 border-blue-600" />
                   </div>
                 ) : tenantDomains.length === 0 ? (
-                  <div className="p-4 text-sm text-gray-500 dark:text-gray-400">No tenant subdomains found.</div>
+                  <div className="p-4 text-sm text-muted-foreground dark:text-gray-400">No tenant subdomains found.</div>
                 ) : (
                   <ul className="divide-y divide-gray-200 dark:divide-gray-700">
                     {tenantDomains.map((domain) => (
                       <li key={domain.slug} className="flex items-center justify-between px-4 py-2">
                         <div>
-                          <div className="font-medium text-gray-900 dark:text-gray-100">{domain.slug}</div>
-                          <div className="text-xs text-gray-500 dark:text-gray-400">{domain.domain}</div>
+                          <div className="font-medium text-foreground dark:text-gray-100">{domain.slug}</div>
+                          <div className="text-xs text-muted-foreground dark:text-gray-400">{domain.domain}</div>
                         </div>
                         <button
                           type="button"

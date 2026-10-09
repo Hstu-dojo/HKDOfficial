@@ -140,15 +140,15 @@ export default function EnrollmentFormModal({
               leaveFrom="opacity-100 scale-100"
               leaveTo="opacity-0 scale-95"
             >
-              <Dialog.Panel className="w-full max-w-4xl max-h-[calc(100vh-2rem)] transform overflow-hidden rounded-2xl bg-white dark:bg-gray-800 shadow-2xl transition-all flex flex-col border border-gray-100 dark:border-gray-700">
+              <Dialog.Panel className="w-full max-w-4xl max-h-[calc(100vh-2rem)] transform overflow-hidden rounded-2xl bg-white dark:bg-card shadow-sm transition-all flex flex-col border border-gray-100 dark:border-border">
                 {/* Header */}
-                <div className="bg-gray-50 dark:bg-gray-900/50 px-6 py-4 border-b dark:border-gray-700 flex items-center justify-between">
+                <div className="bg-muted dark:bg-background/50 px-6 py-4 border-b dark:border-border flex items-center justify-between">
                   <div>
-                    <Dialog.Title className="text-lg font-bold text-gray-900 dark:text-gray-100">
+                    <Dialog.Title className="text-lg font-bold text-foreground dark:text-gray-100">
                       Student Enrollment Form
                     </Dialog.Title>
-                    <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
-                      Course: <span className="font-semibold text-gray-700 dark:text-gray-300">{courseName}</span> · Status:{' '}
+                    <p className="text-xs text-muted-foreground dark:text-gray-400 mt-0.5">
+                      Course: <span className="font-semibold text-foreground dark:text-gray-300">{courseName}</span> · Status:{' '}
                       <span className="font-semibold capitalize text-blue-600 dark:text-blue-400">
                         {status.replace('_', ' ')}
                       </span>
@@ -178,13 +178,13 @@ export default function EnrollmentFormModal({
                 </div>
 
                 {/* Tabs */}
-                <div className="flex border-b dark:border-gray-700 px-6 bg-white dark:bg-gray-800">
+                <div className="flex border-b dark:border-border px-6 bg-white dark:bg-card">
                   <button
                     onClick={() => setActiveTab('form')}
                     className={`py-3 px-4 text-sm font-semibold border-b-2 transition-colors ${
                       activeTab === 'form'
                         ? 'border-blue-500 text-blue-600 dark:text-blue-400'
-                        : 'border-transparent text-gray-500 hover:text-gray-700 dark:hover:text-gray-300'
+                        : 'border-transparent text-muted-foreground hover:text-gray-700 dark:hover:text-gray-300'
                     }`}
                   >
                     Form Fields
@@ -194,7 +194,7 @@ export default function EnrollmentFormModal({
                     className={`py-3 px-4 text-sm font-semibold border-b-2 transition-colors ${
                       activeTab === 'files'
                         ? 'border-blue-500 text-blue-600 dark:text-blue-400'
-                        : 'border-transparent text-gray-500 hover:text-gray-700 dark:hover:text-gray-300'
+                        : 'border-transparent text-muted-foreground hover:text-gray-700 dark:hover:text-gray-300'
                     }`}
                   >
                     Photos & Payments
@@ -202,19 +202,19 @@ export default function EnrollmentFormModal({
                 </div>
 
                 {/* Content */}
-                <div className="px-6 py-6 flex-1 overflow-y-auto space-y-8 bg-gray-50/50 dark:bg-gray-900/10">
+                <div className="px-6 py-6 flex-1 overflow-y-auto space-y-8 bg-muted/50 dark:bg-background/10">
                   {loading ? (
                     <div className="flex flex-col items-center justify-center py-20 space-y-3">
                       <span className="h-8 w-8 animate-spin rounded-full border-4 border-blue-600 border-t-transparent" />
-                      <p className="text-sm text-gray-500 dark:text-gray-400">Loading enrollment details...</p>
+                      <p className="text-sm text-muted-foreground dark:text-gray-400">Loading enrollment details...</p>
                     </div>
                   ) : activeTab === 'form' ? (
                     <div className="space-y-8">
                       {FORM_SECTIONS.filter(
                         (s) => s.id !== 'payment' && s.id !== 'review' && s.id !== 'images'
                       ).map((section) => (
-                        <div key={section.id} className="bg-white dark:bg-gray-800 p-5 rounded-xl border border-gray-100 dark:border-gray-700 shadow-sm space-y-4">
-                          <h3 className="text-sm font-bold text-gray-900 dark:text-gray-100 pb-2 border-b dark:border-gray-700 flex items-center">
+                        <div key={section.id} className="bg-white dark:bg-card p-5 rounded-xl border border-gray-100 dark:border-border shadow-sm space-y-4">
+                          <h3 className="text-sm font-bold text-foreground dark:text-gray-100 pb-2 border-b dark:border-border flex items-center">
                             {section.title} <span className="text-xs text-gray-400 dark:text-gray-500 ml-1.5">({section.titleBn})</span>
                           </h3>
                           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
@@ -222,7 +222,7 @@ export default function EnrollmentFormModal({
                               const value = formData[field.id] || '';
                               return (
                                 <div key={field.id} className="space-y-1">
-                                  <label className="text-xs font-semibold text-gray-500 dark:text-gray-400 flex items-center gap-0.5">
+                                  <label className="text-xs font-semibold text-muted-foreground dark:text-gray-400 flex items-center gap-0.5">
                                     {field.label}
                                     {field.required && <span className="text-red-500">*</span>}
                                   </label>
@@ -256,7 +256,7 @@ export default function EnrollmentFormModal({
                                       />
                                     )
                                   ) : (
-                                    <p className="text-sm font-medium text-gray-900 dark:text-gray-100 break-words min-h-[1.25rem]">
+                                    <p className="text-sm font-medium text-foreground dark:text-gray-100 break-words min-h-[1.25rem]">
                                       {value || <span className="text-gray-300 dark:text-gray-600">—</span>}
                                     </p>
                                   )}
@@ -270,13 +270,13 @@ export default function EnrollmentFormModal({
                   ) : (
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                       {/* Pictures */}
-                      <div className="bg-white dark:bg-gray-800 p-5 rounded-xl border border-gray-100 dark:border-gray-700 shadow-sm space-y-6">
-                        <h3 className="text-sm font-bold text-gray-900 dark:text-gray-100 pb-2 border-b dark:border-gray-700">
+                      <div className="bg-white dark:bg-card p-5 rounded-xl border border-gray-100 dark:border-border shadow-sm space-y-6">
+                        <h3 className="text-sm font-bold text-foreground dark:text-gray-100 pb-2 border-b dark:border-border">
                           Photos & Attachments
                         </h3>
                         <div className="grid grid-cols-2 gap-4">
                           <div>
-                            <label className="text-xs font-semibold text-gray-500 dark:text-gray-400 block mb-2">
+                            <label className="text-xs font-semibold text-muted-foreground dark:text-gray-400 block mb-2">
                               Profile Photo
                             </label>
                             {formData.profilePhotoUrl ? (
@@ -284,27 +284,27 @@ export default function EnrollmentFormModal({
                                 href={formData.profilePhotoUrl}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="block group relative overflow-hidden rounded-lg border dark:border-gray-700 h-40 w-full"
+                                className="block group relative overflow-hidden rounded-lg border dark:border-border h-40 w-full"
                               >
                                 <Image
                                   src={formData.profilePhotoUrl}
                                   alt="Profile"
                                   fill
                                   unoptimized
-                                  className="object-cover group-hover:scale-105 transition-transform duration-200"
+                                  className="object-cover group-hover:scale-[1.025] transition-transform duration-200"
                                 />
                                 <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center text-white text-xs font-semibold transition-opacity duration-200">
                                   View Full Image
                                 </div>
                               </a>
                             ) : (
-                              <div className="h-40 rounded-lg border border-dashed dark:border-gray-700 bg-gray-50 dark:bg-gray-900/50 flex flex-col items-center justify-center text-gray-400">
+                              <div className="h-40 rounded-lg border border-dashed dark:border-border bg-muted dark:bg-background/50 flex flex-col items-center justify-center text-gray-400">
                                 <span className="text-xs">No Photo</span>
                               </div>
                             )}
                           </div>
                           <div>
-                            <label className="text-xs font-semibold text-gray-500 dark:text-gray-400 block mb-2">
+                            <label className="text-xs font-semibold text-muted-foreground dark:text-gray-400 block mb-2">
                               Signature
                             </label>
                             {formData.signatureUrl ? (
@@ -312,21 +312,21 @@ export default function EnrollmentFormModal({
                                 href={formData.signatureUrl}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="block group relative overflow-hidden rounded-lg border dark:border-gray-700 h-40 w-full"
+                                className="block group relative overflow-hidden rounded-lg border dark:border-border h-40 w-full"
                               >
                                 <Image
                                   src={formData.signatureUrl}
                                   alt="Signature"
                                   fill
                                   unoptimized
-                                  className="object-contain bg-gray-50 dark:bg-gray-900/30 group-hover:scale-105 transition-transform duration-200"
+                                  className="object-contain bg-muted dark:bg-background/30 group-hover:scale-[1.025] transition-transform duration-200"
                                 />
                                 <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center text-white text-xs font-semibold transition-opacity duration-200">
                                   View Full Image
                                 </div>
                               </a>
                             ) : (
-                              <div className="h-40 rounded-lg border border-dashed dark:border-gray-700 bg-gray-50 dark:bg-gray-900/50 flex flex-col items-center justify-center text-gray-400">
+                              <div className="h-40 rounded-lg border border-dashed dark:border-border bg-muted dark:bg-background/50 flex flex-col items-center justify-center text-gray-400">
                                 <span className="text-xs">No Signature</span>
                               </div>
                             )}
@@ -335,23 +335,23 @@ export default function EnrollmentFormModal({
                       </div>
 
                       {/* Payment */}
-                      <div className="bg-white dark:bg-gray-800 p-5 rounded-xl border border-gray-100 dark:border-gray-700 shadow-sm space-y-6">
-                        <h3 className="text-sm font-bold text-gray-900 dark:text-gray-100 pb-2 border-b dark:border-gray-700">
+                      <div className="bg-white dark:bg-card p-5 rounded-xl border border-gray-100 dark:border-border shadow-sm space-y-6">
+                        <h3 className="text-sm font-bold text-foreground dark:text-gray-100 pb-2 border-b dark:border-border">
                           Payment Information
                         </h3>
                         {paymentInfo ? (
                           <div className="space-y-4">
                             <div className="grid grid-cols-2 gap-4 text-sm">
                               <div>
-                                <label className="text-xs font-semibold text-gray-500 dark:text-gray-400">
+                                <label className="text-xs font-semibold text-muted-foreground dark:text-gray-400">
                                   Payment Method
                                 </label>
-                                <p className="font-semibold text-gray-900 dark:text-gray-100 capitalize">
+                                <p className="font-semibold text-foreground dark:text-gray-100 capitalize">
                                   {paymentInfo.method || '—'}
                                 </p>
                               </div>
                               <div>
-                                <label className="text-xs font-semibold text-gray-500 dark:text-gray-400">
+                                <label className="text-xs font-semibold text-muted-foreground dark:text-gray-400">
                                   Amount
                                 </label>
                                 <p className="font-semibold text-gray-950 dark:text-white">
@@ -365,10 +365,10 @@ export default function EnrollmentFormModal({
                                 </p>
                               </div>
                               <div className="col-span-2">
-                                <label className="text-xs font-semibold text-gray-500 dark:text-gray-400">
+                                <label className="text-xs font-semibold text-muted-foreground dark:text-gray-400">
                                   Transaction ID
                                 </label>
-                                <p className="font-mono text-gray-900 dark:text-gray-100">
+                                <p className="font-mono text-foreground dark:text-gray-100">
                                   {paymentInfo.transactionId || '—'}
                                 </p>
                               </div>
@@ -376,21 +376,21 @@ export default function EnrollmentFormModal({
 
                             {paymentInfo.proofUrl ? (
                               <div className="space-y-2">
-                                <label className="text-xs font-semibold text-gray-500 dark:text-gray-400">
+                                <label className="text-xs font-semibold text-muted-foreground dark:text-gray-400">
                                   Payment Proof Screenshot
                                 </label>
                                 <a
                                   href={paymentInfo.proofUrl}
                                   target="_blank"
                                   rel="noopener noreferrer"
-                                  className="block group relative overflow-hidden rounded-lg border dark:border-gray-700 h-48 w-full"
+                                  className="block group relative overflow-hidden rounded-lg border dark:border-border h-48 w-full"
                                 >
                                   <Image
                                     src={paymentInfo.proofUrl}
                                     alt="Payment Proof"
                                     fill
                                     unoptimized
-                                    className="object-cover group-hover:scale-105 transition-transform duration-200"
+                                    className="object-cover group-hover:scale-[1.025] transition-transform duration-200"
                                   />
                                   <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center text-white text-xs font-semibold transition-opacity duration-200">
                                     View Full Screenshot
@@ -398,13 +398,13 @@ export default function EnrollmentFormModal({
                                 </a>
                               </div>
                             ) : (
-                              <div className="h-48 rounded-lg border border-dashed dark:border-gray-700 bg-gray-50 dark:bg-gray-900/50 flex flex-col items-center justify-center text-gray-400">
+                              <div className="h-48 rounded-lg border border-dashed dark:border-border bg-muted dark:bg-background/50 flex flex-col items-center justify-center text-gray-400">
                                 <span className="text-xs">No payment proof uploaded</span>
                               </div>
                             )}
                           </div>
                         ) : (
-                          <div className="text-sm text-gray-500 dark:text-gray-400 italic py-6 text-center">
+                          <div className="text-sm text-muted-foreground dark:text-gray-400 italic py-6 text-center">
                             No payment information associated with this record.
                           </div>
                         )}
@@ -414,7 +414,7 @@ export default function EnrollmentFormModal({
                 </div>
 
                 {/* Footer */}
-                <div className="bg-gray-50 dark:bg-gray-900/50 px-6 py-4 border-t dark:border-gray-700 flex justify-between items-center">
+                <div className="bg-muted dark:bg-background/50 px-6 py-4 border-t dark:border-border flex justify-between items-center">
                   <div>
                     {isEditing ? (
                       <span className="text-xs text-orange-500 font-semibold animate-pulse">
@@ -433,7 +433,7 @@ export default function EnrollmentFormModal({
                             }
                           }}
                           disabled={saving}
-                          className="px-4 py-2 text-sm font-semibold text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-xl transition-colors"
+                          className="px-4 py-2 text-sm font-semibold text-foreground dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-xl transition-colors"
                         >
                           Cancel
                         </button>
@@ -454,7 +454,7 @@ export default function EnrollmentFormModal({
                       <>
                         <button
                           onClick={() => setIsEditing(true)}
-                          className="inline-flex items-center gap-1.5 px-4 py-2 text-sm font-semibold text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 border dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 rounded-xl transition-colors shadow-sm"
+                          className="inline-flex items-center gap-1.5 px-4 py-2 text-sm font-semibold text-foreground dark:text-gray-300 bg-white dark:bg-card border dark:border-border hover:bg-gray-50 dark:hover:bg-gray-700 rounded-xl transition-colors shadow-sm"
                         >
                           <PencilIcon className="h-4 w-4" />
                           Edit Form

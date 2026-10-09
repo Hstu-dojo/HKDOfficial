@@ -96,7 +96,7 @@ export default function CertificateActions({
         {/* Preview */}
         <button
           onClick={handleView}
-          className="inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-semibold rounded-lg border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors"
+          className="inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-semibold rounded-lg border border-border dark:border-border text-foreground dark:text-foreground bg-white dark:bg-card hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors"
           title={t('certificates.actions.viewTitle')}
         >
           <EyeIcon className="h-4 w-4" />
@@ -125,7 +125,7 @@ export default function CertificateActions({
           href={linkedInUrl}
           target="_blank"
           rel="noopener noreferrer"
-          className="inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-semibold rounded-lg border border-[#0A66C2]/30 text-[#0A66C2] bg-white dark:bg-slate-800 hover:bg-[#0A66C2]/5 dark:hover:bg-[#0A66C2]/10 transition-colors"
+          className="inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-semibold rounded-lg border border-[#0A66C2]/30 text-[#0A66C2] bg-white dark:bg-card hover:bg-[#0A66C2]/5 dark:hover:bg-[#0A66C2]/10 transition-colors"
           title={t('certificates.actions.addToLinkedInTitle')}
         >
           <svg className="h-4 w-4" viewBox="0 0 24 24" fill="currentColor">
@@ -142,16 +142,16 @@ export default function CertificateActions({
           onClick={() => setShowPreview(false)}
         >
           <div
-            className="relative w-full max-w-4xl bg-white dark:bg-slate-900 rounded-2xl shadow-2xl overflow-hidden"
+            className="relative w-full max-w-4xl bg-white dark:bg-background rounded-2xl shadow-sm overflow-hidden"
             onClick={(e) => e.stopPropagation()}
           >
             {/* Modal header */}
-            <div className="flex items-center justify-between px-5 py-3 border-b border-slate-200 dark:border-slate-800">
+            <div className="flex items-center justify-between px-5 py-3 border-b border-border dark:border-border">
               <div>
-                <h3 className="font-bold text-slate-900 dark:text-slate-100 text-sm">
+                <h3 className="font-bold text-foreground dark:text-foreground text-sm">
                   {programTitle}
                 </h3>
-                <p className="text-xs text-slate-500 dark:text-slate-400 font-mono">
+                <p className="text-xs text-muted-foreground dark:text-muted-foreground font-mono">
                   {certNumber}
                 </p>
               </div>
@@ -172,13 +172,13 @@ export default function CertificateActions({
                   onClick={() => setShowPreview(false)}
                   className="p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
                 >
-                  <XMarkIcon className="h-5 w-5 text-slate-500" />
+                  <XMarkIcon className="h-5 w-5 text-muted-foreground" />
                 </button>
               </div>
             </div>
 
             {/* PDF viewer */}
-            <div className="w-full aspect-[1.414/1] max-h-[80vh] bg-slate-100 dark:bg-slate-950">
+            <div className="w-full aspect-[1.414/1] max-h-[80vh] bg-muted dark:bg-background">
               {pdfLoading ? (
                 <div className="flex items-center justify-center h-full">
                   <span className="h-8 w-8 border-3 border-primary/30 border-t-primary rounded-full animate-spin" />
@@ -190,7 +190,7 @@ export default function CertificateActions({
                   className="w-full h-full"
                 >
                   <div className="flex flex-col items-center justify-center h-full gap-3 p-6 text-center">
-                    <p className="text-sm text-slate-500 dark:text-slate-400">
+                    <p className="text-sm text-muted-foreground dark:text-muted-foreground">
                       {t('certificates.actions.unableToDisplayPdf')}
                     </p>
                     <button
@@ -209,7 +209,7 @@ export default function CertificateActions({
                 </object>
               ) : (
                 <div className="flex items-center justify-center h-full">
-                  <p className="text-sm text-slate-500 dark:text-slate-400">{t('certificates.actions.failedToLoad')}</p>
+                  <p className="text-sm text-muted-foreground dark:text-muted-foreground">{t('certificates.actions.failedToLoad')}</p>
                 </div>
               )}
             </div>

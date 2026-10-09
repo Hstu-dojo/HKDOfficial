@@ -1,6 +1,6 @@
 const SectionResults = () => {
   return (
-    <section className="bg-muted py-16 dark:bg-slate-900 lg:py-24">
+    <section className="bg-muted py-16 dark:bg-background lg:py-24">
       <div className="container">
         <div className="flex flex-wrap items-center lg:flex-nowrap lg:space-x-16">
           <div className="w-full lg:w-[54%] lg:pr-20">
@@ -24,7 +24,7 @@ const SectionResults = () => {
           <div className="w-full lg:w-[46%]">
             <div className="flex flex-wrap lg:flex-nowrap lg:space-x-10">
               <div className="w-full lg:w-1/2">
-                <div className="hover-shadow mb-10 rounded bg-white p-12 dark:bg-slate-800">
+                <div className="hover-shadow mb-10 rounded bg-white p-12 dark:bg-card">
                   <span className="text-green mb-3 block text-3xl font-bold md:text-5xl">
                     30%
                   </span>
@@ -32,7 +32,7 @@ const SectionResults = () => {
                     Lower cost per acquisition
                   </span>
                 </div>
-                <div className="hover-shadow mb-10 rounded bg-white p-12 dark:bg-slate-800">
+                <div className="hover-shadow mb-10 rounded bg-white p-12 dark:bg-card">
                   <span className="text-green mb-3 block text-3xl font-bold md:text-5xl">
                     150%
                   </span>
@@ -42,7 +42,7 @@ const SectionResults = () => {
                 </div>
               </div>
               <div className="w-full lg:mt-10 lg:w-1/2">
-                <div className="hover-shadow mb-10 rounded bg-white p-12 dark:bg-slate-800">
+                <div className="hover-shadow mb-10 rounded bg-white p-12 dark:bg-card">
                   <span className="text-green mb-3 block text-3xl font-bold md:text-5xl">
                     86%
                   </span>
@@ -50,7 +50,7 @@ const SectionResults = () => {
                     More inbound leads
                   </span>
                 </div>
-                <div className="hover-shadow rounded bg-white p-12 dark:bg-slate-800">
+                <div className="hover-shadow rounded bg-white p-12 dark:bg-card">
                   <span className="text-green mb-3 block text-3xl font-bold md:text-5xl">
                     24%
                   </span>

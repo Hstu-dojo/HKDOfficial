@@ -21,14 +21,12 @@ const SectionFAQ = () => {
   ];
 
   return (
-    <section className="relative py-20 md:py-28 bg-gradient-to-b from-muted/10 to-background overflow-hidden">
+    <section className="relative py-20 md:py-28 bg-muted   overflow-hidden">
       {/* Decorative blurred blob */}
-      <div className="absolute top-0 right-0 w-96 h-96 rounded-full bg-primary/5 blur-[120px] pointer-events-none" />
-      <div className="absolute bottom-0 left-0 w-80 h-80 rounded-full bg-violet-500/5 blur-[100px] pointer-events-none" />
 
       <div className="container mx-auto px-4 max-w-7xl relative z-10">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-start">
-          
+
           {/* Left Column — Header & Contact Info */}
           <div className="lg:col-span-5">
             <SectionHeader
@@ -46,7 +44,7 @@ const SectionFAQ = () => {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.5, delay: 0.2 }}
-              className="p-6 md:p-8 rounded-3xl bg-gradient-to-br from-card to-muted/50 border border-border/60 shadow-sm relative overflow-hidden"
+              className="p-6 md:p-8 rounded-3xl bg-muted   border border-border/60 shadow-sm relative overflow-hidden"
             >
               <div className="flex items-center gap-3 mb-4">
                 <div className="h-10 w-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary">

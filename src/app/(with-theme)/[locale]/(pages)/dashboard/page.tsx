@@ -34,7 +34,7 @@ function Card({
 }) {
   return (
     <div
-      className={`bg-white dark:bg-slate-800/60 rounded-2xl border border-slate-100 dark:border-slate-700/50 shadow-sm ${className}`}
+      className={`bg-white dark:bg-card/60 rounded-2xl border border-border dark:border-border/50 shadow-sm ${className}`}
     >
       {children}
     </div>
@@ -51,12 +51,12 @@ function CardHeader({
   action?: React.ReactNode;
 }) {
   return (
-    <div className="flex items-center justify-between pb-4 mb-5 border-b border-slate-100 dark:border-slate-700/50">
+    <div className="flex items-center justify-between pb-4 mb-5 border-b border-border dark:border-border/50">
       <div className="flex items-center gap-2.5">
         <div className="p-2 rounded-xl bg-primary/10">
           <Icon className="h-5 w-5 text-primary" />
         </div>
-        <h2 className="text-lg font-bold text-slate-900 dark:text-slate-100">{title}</h2>
+        <h2 className="text-lg font-bold text-foreground dark:text-foreground">{title}</h2>
       </div>
       {action}
     </div>
@@ -72,7 +72,7 @@ const statusStyles: Record<string, string> = {
   payment_verified:  'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400',
   rejected:          'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400',
   overdue:           'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400',
-  waived:            'bg-slate-100 text-slate-600 dark:bg-slate-700 dark:text-slate-300',
+  waived:            'bg-muted text-muted-foreground dark:bg-slate-700 dark:text-muted-foreground',
 };
 
 function StatusBadge({
@@ -84,7 +84,7 @@ function StatusBadge({
 }) {
   return (
     <span
-      className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold capitalize ${statusStyles[status] ?? 'bg-slate-100 text-slate-700 dark:bg-slate-700 dark:text-slate-300'}`}
+      className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold capitalize ${statusStyles[status] ?? 'bg-muted text-foreground dark:bg-slate-700 dark:text-muted-foreground'}`}
     >
       {label}
     </span>
@@ -140,10 +140,10 @@ export default async function DashboardPage() {
     if (data.error === 'Not authenticated') redirect('/login');
     return (
       <div className="text-center py-20">
-        <h1 className="text-2xl font-bold text-slate-900 dark:text-slate-100 mb-4">
+        <h1 className="text-2xl font-bold text-foreground dark:text-foreground mb-4">
           {t('dashboard.somethingWentWrong')}
         </h1>
-        <p className="text-slate-600 dark:text-slate-400">{data.error}</p>
+        <p className="text-muted-foreground dark:text-muted-foreground">{data.error}</p>
         <Link href="/contact" className="text-primary hover:underline mt-4 inline-block">
           {t('dashboard.contactSupport')}
         </Link>
@@ -172,10 +172,10 @@ export default async function DashboardPage() {
                 alt={user.name ?? 'User avatar'}
                 width={72}
                 height={72}
-                className="rounded-full object-cover border-4 border-white dark:border-slate-700 shadow-lg h-[72px] w-[72px]"
+                className="rounded-full object-cover border-4 border-white dark:border-border shadow-lg h-[72px] w-[72px]"
               />
             ) : (
-              <div className="h-[72px] w-[72px] rounded-full bg-gradient-to-br from-primary/20 to-tertiary/20 flex items-center justify-center border-4 border-white dark:border-slate-700 shadow-lg">
+              <div className="h-[72px] w-[72px] rounded-full bg-gradient-to-br from-primary/20 to-tertiary/20 flex items-center justify-center border-4 border-white dark:border-border shadow-lg">
                 <UserCircleIcon className="h-10 w-10 text-primary/60" />
               </div>
             )}
@@ -183,10 +183,10 @@ export default async function DashboardPage() {
 
           {/* Info */}
           <div className="text-center sm:text-left flex-1 min-w-0">
-            <h1 className="text-xl font-bold text-slate-900 dark:text-slate-100 truncate">
+            <h1 className="text-xl font-bold text-foreground dark:text-foreground truncate">
               {user.name ?? t('dashboard.member')}
             </h1>
-            <p className="text-sm text-slate-500 dark:text-slate-400 truncate">{user.email}</p>
+            <p className="text-sm text-muted-foreground dark:text-muted-foreground truncate">{user.email}</p>
             <div className="mt-2 flex flex-wrap justify-center sm:justify-start gap-2">
               {user.profileId ? (
                 <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-primary/10 text-primary border border-primary/20">
@@ -219,13 +219,13 @@ export default async function DashboardPage() {
                 {enrollments.map((enrollment: any) => (
                   <div
                     key={enrollment.id}
-                    className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 rounded-xl bg-slate-50 dark:bg-slate-700/30 border border-slate-100 dark:border-slate-700/50"
+                    className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 rounded-xl bg-muted dark:bg-slate-700/30 border border-border dark:border-border/50"
                   >
                     <div className="min-w-0">
-                      <h3 className="font-semibold text-slate-900 dark:text-slate-100 truncate">
+                      <h3 className="font-semibold text-foreground dark:text-foreground truncate">
                         {enrollment.courseName}
                       </h3>
-                      <div className="flex items-center gap-3 mt-1 text-xs text-slate-500 dark:text-slate-400">
+                      <div className="flex items-center gap-3 mt-1 text-xs text-muted-foreground dark:text-muted-foreground">
                         <span>
                           {t('dashboard.since')} {format(new Date(enrollment.joinedAt), 'MMM yyyy')}
                         </span>
@@ -238,7 +238,7 @@ export default async function DashboardPage() {
                     </div>
                     <Link
                       href={`/karate/courses/${enrollment.courseSlug}`}
-                      className="flex-shrink-0 px-4 py-2 text-xs font-semibold text-slate-700 dark:text-slate-200 bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-600 transition-colors"
+                      className="flex-shrink-0 px-4 py-2 text-xs font-semibold text-foreground dark:text-foreground bg-white dark:bg-slate-700 border border-border dark:border-slate-600 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-600 transition-colors"
                     >
                       {t('dashboard.viewCourse')}
                     </Link>
@@ -248,7 +248,7 @@ export default async function DashboardPage() {
             ) : (
               <div className="text-center py-10">
                 <AcademicCapIcon className="h-12 w-12 text-slate-200 dark:text-slate-700 mx-auto mb-3" />
-                <p className="text-slate-500 dark:text-slate-400 text-sm mb-4">
+                <p className="text-muted-foreground dark:text-muted-foreground text-sm mb-4">
                   {t('dashboard.noClasses')}
                 </p>
                 <Link
@@ -268,7 +268,7 @@ export default async function DashboardPage() {
               <div className="overflow-x-auto -mx-1">
                 <table className="w-full text-left text-sm">
                   <thead>
-                    <tr className="text-xs uppercase text-slate-500 dark:text-slate-400 bg-slate-50 dark:bg-slate-700/50">
+                    <tr className="text-xs uppercase text-muted-foreground dark:text-muted-foreground bg-muted dark:bg-slate-700/50">
                       <th className="px-4 py-3 rounded-l-xl font-semibold">{t('dashboard.programCourse')}</th>
                       <th className="px-4 py-3 font-semibold">{t('dashboard.date')}</th>
                       <th className="px-4 py-3 font-semibold">{t('dashboard.status')}</th>
@@ -278,10 +278,10 @@ export default async function DashboardPage() {
                   <tbody className="divide-y divide-slate-100 dark:divide-slate-700/50">
                     {applications.map((app: any) => (
                       <tr key={app.id} className="hover:bg-slate-50/50 dark:hover:bg-slate-700/20 transition-colors">
-                        <td className="px-4 py-3 font-medium text-slate-900 dark:text-slate-100">
+                        <td className="px-4 py-3 font-medium text-foreground dark:text-foreground">
                           {app.courseName || t('dashboard.applicationNumber', { number: app.applicationNumber })}
                         </td>
-                        <td className="px-4 py-3 text-slate-500 dark:text-slate-400 text-xs whitespace-nowrap">
+                        <td className="px-4 py-3 text-muted-foreground dark:text-muted-foreground text-xs whitespace-nowrap">
                           {format(new Date(app.appliedAt), 'MMM d, yyyy')}
                         </td>
                         <td className="px-4 py-3">
@@ -303,7 +303,7 @@ export default async function DashboardPage() {
                 </table>
               </div>
             ) : (
-              <p className="text-slate-500 dark:text-slate-400 text-sm text-center py-6">
+              <p className="text-muted-foreground dark:text-muted-foreground text-sm text-center py-6">
                 {t('dashboard.noApplications')}
               </p>
             )}
@@ -317,17 +317,17 @@ export default async function DashboardPage() {
                 {programRegistrations.map((reg: any) => (
                   <div
                     key={reg.id}
-                    className="p-4 rounded-xl bg-slate-50 dark:bg-slate-700/30 border border-slate-100 dark:border-slate-700/50"
+                    className="p-4 rounded-xl bg-muted dark:bg-slate-700/30 border border-border dark:border-border/50"
                   >
                     <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                       <div className="min-w-0 flex-1">
                         <span className="text-xs uppercase font-semibold text-primary bg-primary/10 px-2 py-0.5 rounded-full">
                           {reg.programType?.replace(/_/g, ' ') || 'Program'}
                         </span>
-                        <h3 className="font-semibold text-slate-900 dark:text-slate-100 mt-1 truncate">
+                        <h3 className="font-semibold text-foreground dark:text-foreground mt-1 truncate">
                           {reg.programTitle}
                         </h3>
-                        <div className="flex items-center gap-3 mt-1 text-xs text-slate-500 dark:text-slate-400">
+                        <div className="flex items-center gap-3 mt-1 text-xs text-muted-foreground dark:text-muted-foreground">
                           {reg.programDate && (
                             <span className="flex items-center gap-1">
                               <CalendarDaysIcon className="h-3.5 w-3.5" />
@@ -347,7 +347,7 @@ export default async function DashboardPage() {
                       </div>
                     </div>
                     {reg.status === 'approved' && (
-                      <div className="mt-3 pt-3 border-t border-slate-200 dark:border-slate-600/50">
+                      <div className="mt-3 pt-3 border-t border-border dark:border-slate-600/50">
                         <p className="text-xs text-green-600 dark:text-green-400 font-medium">
                           {t('dashboard.registeredMessage')}
                         </p>
@@ -359,7 +359,7 @@ export default async function DashboardPage() {
             ) : (
               <div className="text-center py-10">
                 <TrophyIcon className="h-12 w-12 text-slate-200 dark:text-slate-700 mx-auto mb-3" />
-                <p className="text-slate-500 dark:text-slate-400 text-sm mb-4">
+                <p className="text-muted-foreground dark:text-muted-foreground text-sm mb-4">
                   {t('dashboard.noProgramRegistrations')}
                 </p>
                 <Link
@@ -392,17 +392,17 @@ export default async function DashboardPage() {
                 {payments.map((payment: any) => (
                   <div
                     key={payment.id}
-                    className="p-3.5 rounded-xl bg-slate-50 dark:bg-slate-700/30 border border-slate-100 dark:border-slate-700/50"
+                    className="p-3.5 rounded-xl bg-muted dark:bg-slate-700/30 border border-border dark:border-border/50"
                   >
                     <div className="flex justify-between items-start mb-1.5">
-                      <span className="font-semibold text-sm text-slate-900 dark:text-slate-100 truncate pr-2">
+                      <span className="font-semibold text-sm text-foreground dark:text-foreground truncate pr-2">
                         {payment.courseName}
                       </span>
-                      <span className="font-mono text-sm font-semibold text-slate-700 dark:text-slate-200 flex-shrink-0">
+                      <span className="font-mono text-sm font-semibold text-foreground dark:text-foreground flex-shrink-0">
                         ৳{payment.amount}
                       </span>
                     </div>
-                    <div className="text-xs text-slate-500 dark:text-slate-400 mb-2.5">
+                    <div className="text-xs text-muted-foreground dark:text-muted-foreground mb-2.5">
                       {format(
                         new Date(payment.year, parseInt(payment.month.split('-')[1]) - 1),
                         'MMMM yyyy',
@@ -423,7 +423,7 @@ export default async function DashboardPage() {
                 ))}
               </div>
             ) : (
-              <p className="text-slate-500 dark:text-slate-400 text-sm text-center py-6">
+              <p className="text-muted-foreground dark:text-muted-foreground text-sm text-center py-6">
                 {t('dashboard.noPaymentHistory')}
               </p>
             )}
@@ -445,14 +445,14 @@ export default async function DashboardPage() {
                 {certificates.map((cert: any) => (
                   <div
                     key={cert.id}
-                    className="p-3.5 rounded-xl bg-slate-50 dark:bg-slate-700/30 border border-slate-100 dark:border-slate-700/50"
+                    className="p-3.5 rounded-xl bg-muted dark:bg-slate-700/30 border border-border dark:border-border/50"
                   >
                     <div className="flex justify-between items-start mb-1.5">
-                      <span className="font-semibold text-sm text-slate-900 dark:text-slate-100 truncate pr-2">
+                      <span className="font-semibold text-sm text-foreground dark:text-foreground truncate pr-2">
                         {cert.programTitle}
                       </span>
                     </div>
-                    <div className="flex items-center gap-2 text-xs text-slate-500 dark:text-slate-400 mb-2.5">
+                    <div className="flex items-center gap-2 text-xs text-muted-foreground dark:text-muted-foreground mb-2.5">
                       <span className="font-mono">{cert.certificateNumber}</span>
                       {cert.issueDate && (
                         <>
@@ -469,11 +469,11 @@ export default async function DashboardPage() {
           )}
 
           {/* Help card */}
-          <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-slate-100 to-slate-50 dark:from-slate-900 dark:to-slate-800 p-5 shadow-sm dark:shadow-md border border-slate-200 dark:border-slate-700/50">
+          <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-slate-100 to-slate-50 dark:from-slate-900 dark:to-slate-800 p-5 shadow-sm dark:shadow-md border border-border dark:border-border/50">
             <div className="absolute -top-8 -right-8 h-28 w-28 rounded-full bg-primary opacity-10 dark:opacity-20 blur-2xl pointer-events-none" />
             <div className="relative z-10">
-              <h3 className="font-bold text-base mb-1.5 text-slate-900 dark:text-white">{t('dashboard.needHelp')}</h3>
-              <p className="text-slate-500 dark:text-slate-300 text-xs leading-relaxed mb-4">
+              <h3 className="font-bold text-base mb-1.5 text-foreground dark:text-white">{t('dashboard.needHelp')}</h3>
+              <p className="text-muted-foreground dark:text-muted-foreground text-xs leading-relaxed mb-4">
                 {t('dashboard.needHelpDescription')}
               </p>
               <Link

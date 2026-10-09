@@ -142,15 +142,15 @@ function CertVerifyContent() {
       <Header />
       <main className="relative min-h-screen">
         {/* Hero / Search section */}
-        <section className="bg-gradient-to-br from-primary/5 via-white to-tertiary/5 dark:from-primary/10 dark:via-slate-900 dark:to-tertiary/10 border-b border-slate-200 dark:border-slate-800">
+        <section className="bg-gradient-to-br from-primary/5 via-white to-tertiary/5 dark:from-primary/10 dark:via-slate-900 dark:to-tertiary/10 border-b border-border dark:border-border">
           <div className="max-w-3xl mx-auto px-4 py-16 sm:py-20 text-center">
             <div className="inline-flex items-center justify-center h-16 w-16 rounded-2xl bg-primary/10 mb-6">
               <ShieldCheckIcon className="h-8 w-8 text-primary" />
             </div>
-            <h1 className="text-3xl sm:text-4xl font-extrabold text-slate-900 dark:text-slate-100 mb-3">
+            <h1 className="text-3xl sm:text-4xl font-extrabold text-foreground dark:text-foreground mb-3">
               {t("title")}
             </h1>
-            <p className="text-slate-500 dark:text-slate-400 text-base sm:text-lg max-w-xl mx-auto mb-8">
+            <p className="text-muted-foreground dark:text-muted-foreground text-base sm:text-lg max-w-xl mx-auto mb-8">
               {t("subtitle")}
             </p>
 
@@ -169,7 +169,7 @@ function CertVerifyContent() {
                   value={searchValue}
                   onChange={(e) => setSearchValue(e.target.value.toUpperCase())}
                   placeholder={t("searchPlaceholder")}
-                  className="w-full pl-11 pr-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 text-sm font-mono tracking-wide focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary transition placeholder:text-slate-400"
+                  className="w-full pl-11 pr-4 py-3 rounded-xl border border-border dark:border-border bg-white dark:bg-card text-foreground dark:text-foreground text-sm font-mono tracking-wide focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary transition placeholder:text-slate-400"
                   autoFocus
                 />
               </div>
@@ -210,7 +210,7 @@ function CertVerifyContent() {
               <p className="text-red-600/70 dark:text-red-400/70 text-sm max-w-md mx-auto">
                 {error}
               </p>
-              <p className="text-slate-500 dark:text-slate-400 text-xs mt-4">
+              <p className="text-muted-foreground dark:text-muted-foreground text-xs mt-4">
                 {t("errorHelpPrefix")}{" "}
                 <Link href={`/${locale}/contact`} className="text-primary hover:underline">
                   {t("contactSupport")}
@@ -242,28 +242,28 @@ function CertVerifyContent() {
               </div>
 
               {/* Certificate Details Card */}
-              <div className="rounded-2xl border border-slate-200 dark:border-slate-700/50 bg-white dark:bg-slate-800/60 shadow-sm overflow-hidden">
+              <div className="rounded-2xl border border-border dark:border-border/50 bg-white dark:bg-card/60 shadow-sm overflow-hidden">
                 {/* Recipient section */}
-                <div className="p-5 sm:p-6 border-b border-slate-100 dark:border-slate-700/50">
+                <div className="p-5 sm:p-6 border-b border-border dark:border-border/50">
                   <h3 className="text-xs uppercase font-semibold tracking-wider text-slate-400 dark:text-slate-500 mb-3">
                     {t("recipientTitle")}
                   </h3>
                   <div className="space-y-2.5">
                     <div className="flex items-center gap-3">
                       <UserIcon className="h-5 w-5 text-slate-400 flex-shrink-0" />
-                      <span className="text-lg font-bold text-slate-900 dark:text-slate-100">
+                      <span className="text-lg font-bold text-foreground dark:text-foreground">
                         {certificate.recipientName}
                       </span>
                     </div>
                     {certificate.recipientNameBangla && (
-                      <p className="ml-8 text-slate-500 dark:text-slate-400 text-sm">
+                      <p className="ml-8 text-muted-foreground dark:text-muted-foreground text-sm">
                         {certificate.recipientNameBangla}
                       </p>
                     )}
                     {certificate.memberNumber && (
                       <div className="flex items-center gap-3">
                         <IdentificationIcon className="h-5 w-5 text-slate-400 flex-shrink-0" />
-                        <span className="text-sm text-slate-600 dark:text-slate-300 font-mono">
+                        <span className="text-sm text-muted-foreground dark:text-muted-foreground font-mono">
                           {certificate.memberNumber}
                         </span>
                       </div>
@@ -272,7 +272,7 @@ function CertVerifyContent() {
                 </div>
 
                 {/* Program section */}
-                <div className="p-5 sm:p-6 border-b border-slate-100 dark:border-slate-700/50">
+                <div className="p-5 sm:p-6 border-b border-border dark:border-border/50">
                   <h3 className="text-xs uppercase font-semibold tracking-wider text-slate-400 dark:text-slate-500 mb-3">
                     {t("programDetailsTitle")}
                   </h3>
@@ -280,7 +280,7 @@ function CertVerifyContent() {
                     <div className="flex items-start gap-3">
                       <AcademicCapIcon className="h-5 w-5 text-primary mt-0.5 flex-shrink-0" />
                       <div>
-                        <p className="font-bold text-slate-900 dark:text-slate-100">
+                        <p className="font-bold text-foreground dark:text-foreground">
                           {certificate.program.title}
                         </p>
                         <span className="inline-block mt-1 text-xs font-semibold px-2 py-0.5 rounded-full bg-primary/10 text-primary">
@@ -289,14 +289,14 @@ function CertVerifyContent() {
                       </div>
                     </div>
                     {certificate.program.description && (
-                      <p className="text-sm text-slate-500 dark:text-slate-400 ml-8 line-clamp-3">
+                      <p className="text-sm text-muted-foreground dark:text-muted-foreground ml-8 line-clamp-3">
                         {certificate.program.description}
                       </p>
                     )}
                     {(certificate.program.startDate || certificate.program.endDate) && (
                       <div className="flex items-center gap-3 ml-8">
                         <CalendarDaysIcon className="h-4 w-4 text-slate-400 flex-shrink-0" />
-                        <span className="text-sm text-slate-600 dark:text-slate-300">
+                        <span className="text-sm text-muted-foreground dark:text-muted-foreground">
                           {certificate.program.startDate &&
                             format(new Date(certificate.program.startDate), "MMM d, yyyy")}
                           {certificate.program.startDate && certificate.program.endDate && " — "}
@@ -308,7 +308,7 @@ function CertVerifyContent() {
                     {certificate.program.location && (
                       <div className="flex items-center gap-3 ml-8">
                         <MapPinIcon className="h-4 w-4 text-slate-400 flex-shrink-0" />
-                        <span className="text-sm text-slate-600 dark:text-slate-300">
+                        <span className="text-sm text-muted-foreground dark:text-muted-foreground">
                           {certificate.program.location}
                         </span>
                       </div>
@@ -317,21 +317,21 @@ function CertVerifyContent() {
                 </div>
 
                 {/* Issue info section */}
-                <div className="p-5 sm:p-6 border-b border-slate-100 dark:border-slate-700/50">
+                <div className="p-5 sm:p-6 border-b border-border dark:border-border/50">
                   <h3 className="text-xs uppercase font-semibold tracking-wider text-slate-400 dark:text-slate-500 mb-3">
                     {t("certificateInfoTitle")}
                   </h3>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
                       <p className="text-xs text-slate-400 dark:text-slate-500 mb-1">{t("certificateNumberLabel")}</p>
-                      <p className="font-mono font-semibold text-sm text-slate-900 dark:text-slate-100">
+                      <p className="font-mono font-semibold text-sm text-foreground dark:text-foreground">
                         {certificate.certificateNumber}
                       </p>
                     </div>
                     {certificate.issueDate && (
                       <div>
                         <p className="text-xs text-slate-400 dark:text-slate-500 mb-1">{t("issueDateLabel")}</p>
-                        <p className="font-semibold text-sm text-slate-900 dark:text-slate-100">
+                        <p className="font-semibold text-sm text-foreground dark:text-foreground">
                           {format(new Date(certificate.issueDate), "MMMM d, yyyy")}
                         </p>
                       </div>
@@ -347,21 +347,21 @@ function CertVerifyContent() {
                     </h3>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       {certificate.signatures.trainer && (
-                        <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-700/30">
-                          <p className="font-semibold text-sm text-slate-900 dark:text-slate-100">
+                        <div className="p-3 rounded-xl bg-muted dark:bg-slate-700/30">
+                          <p className="font-semibold text-sm text-foreground dark:text-foreground">
                             {certificate.signatures.trainer.name}
                           </p>
-                          <p className="text-xs text-slate-500 dark:text-slate-400">
+                          <p className="text-xs text-muted-foreground dark:text-muted-foreground">
                             {certificate.signatures.trainer.title ?? t("trainerFallback")}
                           </p>
                         </div>
                       )}
                       {certificate.signatures.coordinator && (
-                        <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-700/30">
-                          <p className="font-semibold text-sm text-slate-900 dark:text-slate-100">
+                        <div className="p-3 rounded-xl bg-muted dark:bg-slate-700/30">
+                          <p className="font-semibold text-sm text-foreground dark:text-foreground">
                             {certificate.signatures.coordinator.name}
                           </p>
-                          <p className="text-xs text-slate-500 dark:text-slate-400">
+                          <p className="text-xs text-muted-foreground dark:text-muted-foreground">
                             {certificate.signatures.coordinator.title ?? t("coordinatorFallback")}
                           </p>
                         </div>
@@ -383,7 +383,7 @@ function CertVerifyContent() {
                 </button>
                 <button
                   onClick={handleShare}
-                  className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-sm font-semibold text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors"
+                  className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl border border-border dark:border-border bg-white dark:bg-card text-sm font-semibold text-foreground dark:text-foreground hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors"
                 >
                   {copied ? (
                     <>
@@ -415,7 +415,7 @@ function CertVerifyContent() {
                   })()}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl border border-[#0A66C2]/30 text-[#0A66C2] bg-white dark:bg-slate-800 text-sm font-semibold hover:bg-[#0A66C2]/5 dark:hover:bg-[#0A66C2]/10 transition-colors"
+                  className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl border border-[#0A66C2]/30 text-[#0A66C2] bg-white dark:bg-card text-sm font-semibold hover:bg-[#0A66C2]/5 dark:hover:bg-[#0A66C2]/10 transition-colors"
                   title={t("addToLinkedInTitle")}
                 >
                   <svg className="h-4 w-4" viewBox="0 0 24 24" fill="currentColor">

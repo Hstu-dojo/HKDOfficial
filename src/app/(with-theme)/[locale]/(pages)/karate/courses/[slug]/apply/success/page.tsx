@@ -24,9 +24,9 @@ export default async function ApplicationSuccessPage({ searchParams, params }: P
   return (
     <>
       <Header />
-      <main className="min-h-screen pt-24 pb-16 bg-slate-50 dark:bg-slate-900 flex items-center justify-center p-4">
+      <main className="min-h-screen pt-24 pb-16 bg-muted dark:bg-background flex items-center justify-center p-4">
         <MaxWidthWrapper className="max-w-2xl">
-          <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-lg border border-slate-200 dark:border-slate-700/50 p-8 text-center">
+          <div className="bg-white dark:bg-card rounded-2xl shadow-lg border border-border dark:border-border/50 p-8 text-center">
             {/* Success Icon */}
             <div className="w-20 h-20 bg-green-100 dark:bg-green-900/30 rounded-full flex items-center justify-center mx-auto mb-6">
               <CheckCircleIcon className="h-12 w-12 text-green-600" />
@@ -35,7 +35,7 @@ export default async function ApplicationSuccessPage({ searchParams, params }: P
             <h1 className="text-2xl font-bold mb-2">
               {t('courses.applySuccess.title')}
             </h1>
-            
+
             {applicationId && (
               <p className="text-sm text-muted-foreground mb-4">
                 {t('courses.applySuccess.applicationId')}: <span className="font-mono font-medium">{applicationId.slice(0, 8)}...</span>
@@ -50,7 +50,7 @@ export default async function ApplicationSuccessPage({ searchParams, params }: P
             <SuccessPdfDownload courseId={slug} applicationId={applicationId} />
 
             {/* Timeline */}
-            <div className="bg-slate-50 dark:bg-slate-900/50 rounded-lg p-6 text-left mb-6">
+            <div className="bg-muted dark:bg-background/50 rounded-lg p-6 text-left mb-6">
               <h3 className="font-semibold mb-4">{t('courses.applySuccess.nextTitle')}</h3>
               <ol className="space-y-4">
                 <li className="flex items-start gap-3">
@@ -96,7 +96,7 @@ export default async function ApplicationSuccessPage({ searchParams, params }: P
             <div className="flex flex-col sm:flex-row gap-3">
               <Link
                 href={`/${locale}/karate/courses`}
-                className="flex-1 px-4 py-2.5 border border-slate-200 dark:border-slate-700 text-foreground rounded-lg hover:bg-slate-50 dark:hover:bg-slate-700/50 text-center text-sm font-medium transition-colors"
+                className="flex-1 px-4 py-2.5 border border-border dark:border-border text-foreground rounded-lg hover:bg-slate-50 dark:hover:bg-slate-700/50 text-center text-sm font-medium transition-colors"
               >
                 {t('courses.applySuccess.browseMoreCourses')}
               </Link>

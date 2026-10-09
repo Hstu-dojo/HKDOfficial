@@ -9,14 +9,14 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useRouter, useSearchParams } from "next/navigation";
-import { 
-  User, 
-  Mail, 
-  Phone, 
-  Calendar, 
-  Shield, 
-  Check, 
-  AlertCircle, 
+import {
+  User,
+  Mail,
+  Phone,
+  Calendar,
+  Shield,
+  Check,
+  AlertCircle,
   Loader2,
   KeyRound,
   Settings,
@@ -76,7 +76,7 @@ function ProfileSettingsContent() {
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  
+
   // UI states
   const [isEmailChanging, setIsEmailChanging] = useState(false);
   const [isProfileUpdating, setIsProfileUpdating] = useState(false);
@@ -87,7 +87,7 @@ function ProfileSettingsContent() {
   const [emailChangeError, setEmailChangeError] = useState("");
   const [profileUpdateError, setProfileUpdateError] = useState("");
   const [passwordChangeError, setPasswordChangeError] = useState("");
-  
+
 
 
   // Check if user has password (from identities)
@@ -97,19 +97,19 @@ function ProfileSettingsContent() {
   // Check for URL parameters (success/error messages from email confirmation)
   useEffect(() => {
     if (!searchParams) return;
-    
+
     const message = searchParams.get('message');
     const error = searchParams.get('error');
     const shouldSyncEmail = searchParams.get('sync_email');
-    
+
     if (message) {
       setEmailChangeMessage(message);
-      
+
       if (shouldSyncEmail === 'true') {
         const oldEmail = localStorage.getItem('email_change_old');
         setEmailChangeMessage(t('profile.emailSyncing'));
-        
-        fetch('/api/sync-email', { 
+
+        fetch('/api/sync-email', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ oldEmail: oldEmail || null })
@@ -132,15 +132,15 @@ function ProfileSettingsContent() {
             setEmailChangeError(t('profile.emailSyncNetworkError'));
           });
       }
-      
+
       const newUrl = new URL(window.location.href);
       newUrl.searchParams.delete('message');
       newUrl.searchParams.delete('sync_email');
       window.history.replaceState({}, '', newUrl.toString());
-      
+
       setTimeout(() => setEmailChangeMessage(""), 10000);
     }
-    
+
     if (error) {
       setEmailChangeError(error);
       const newUrl = new URL(window.location.href);
@@ -156,11 +156,11 @@ function ProfileSettingsContent() {
     if (hash.includes('message=')) {
       const hashParams = new URLSearchParams(hash.substring(1));
       const hashMessage = hashParams.get('message');
-      
+
       if (hashMessage) {
         setEmailChangeMessage(t('profile.emailConfirmationReceived'));
         window.history.replaceState({}, '', window.location.pathname + window.location.search);
-        
+
         supabase.auth.getUser().then(({ data }) => {
           if (data.user && user && data.user.email !== user.email) {
             setEmailChangeMessage(t('profile.emailUpdatedRefresh'));
@@ -188,7 +188,7 @@ function ProfileSettingsContent() {
 
       try {
         const { data, error } = await supabase.auth.getUserIdentities();
-        
+
         if (error) {
           setIsCheckingPassword(false);
           return;
@@ -197,7 +197,7 @@ function ProfileSettingsContent() {
         const hasEmailIdentity = data?.identities?.some(
           (identity) => identity.provider === 'email'
         ) || false;
-        
+
         setHasPassword(hasEmailIdentity);
       } catch (err) {
         console.error('Error checking identities:', err);
@@ -292,11 +292,11 @@ function ProfileSettingsContent() {
 
     try {
       const updates: any = {};
-      
+
       if (name !== user.user_metadata?.name) {
         updates.data = { name };
       }
-      
+
       if (phone && phone !== user.phone) {
         updates.phone = phone;
       }
@@ -359,9 +359,9 @@ function ProfileSettingsContent() {
           await fetch('/api/auth/update-password-status', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ 
+            body: JSON.stringify({
               supabaseUserId: user.id,
-              hasPassword: true 
+              hasPassword: true
             }),
           });
         } catch (dbError) {
@@ -372,15 +372,15 @@ function ProfileSettingsContent() {
       setPasswordChangeMessage(
         hasPassword ? t('profile.passwordChangedSuccess') : t('profile.passwordSetSuccess'),
       );
-      
+
       setCurrentPassword("");
       setNewPassword("");
       setConfirmPassword("");
-      
+
       if (!hasPassword) {
         setHasPassword(true);
       }
-      
+
       setTimeout(() => setPasswordChangeMessage(""), 5000);
     } catch (error: any) {
       setPasswordChangeError(error.message || t('profile.failedToUpdatePassword'));
@@ -402,17 +402,17 @@ function ProfileSettingsContent() {
   return (
     <div className="space-y-6">
       {/* Page Header */}
-      <div className="flex items-center justify-between border-b border-slate-200 dark:border-slate-700 pb-6">
+      <div className="flex items-center justify-between border-b border-border dark:border-border pb-6">
         <div className="flex items-center gap-4">
-          <Link 
-            href={`/${currentLocale}/dashboard`} 
+          <Link
+            href={`/${currentLocale}/dashboard`}
             className="p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
           >
-            <ArrowLeft className="h-5 w-5 text-slate-600 dark:text-slate-400" />
+            <ArrowLeft className="h-5 w-5 text-muted-foreground dark:text-muted-foreground" />
           </Link>
           <div>
-            <h1 className="text-2xl font-bold text-slate-900 dark:text-slate-100">{t('dashboardSidebar.accountSettings')}</h1>
-            <p className="text-slate-600 dark:text-slate-400">{t('profile.accountSettingsSubtitle')}</p>
+            <h1 className="text-2xl font-bold text-foreground dark:text-foreground">{t('dashboardSidebar.accountSettings')}</h1>
+            <p className="text-muted-foreground dark:text-muted-foreground">{t('profile.accountSettingsSubtitle')}</p>
           </div>
         </div>
         <Button onClick={handleSignOut} variant="outline" size="sm">
@@ -491,7 +491,7 @@ function ProfileSettingsContent() {
                     <Shield className="h-4 w-4 text-muted-foreground" />
                     <span>{t('profile.userId')}</span>
                   </div>
-                  <p className="text-xs font-mono text-slate-500">{user.id}</p>
+                  <p className="text-xs font-mono text-muted-foreground">{user.id}</p>
                 </div>
               </div>
 
@@ -585,7 +585,7 @@ function ProfileSettingsContent() {
                 {hasPassword ? t('profile.changePasswordButton') : t('profile.setPasswordButton')}
               </CardTitle>
               <CardDescription>
-                {hasPassword 
+                {hasPassword
                   ? t('profile.passwordChangeSubtitle')
                   : t('profile.passwordSetSubtitle')
                 }
@@ -658,11 +658,11 @@ function ProfileSettingsContent() {
                     </Alert>
                   )}
 
-                  <Button 
-                    type="submit" 
+                  <Button
+                    type="submit"
                     disabled={
-                      isPasswordChanging || 
-                      !newPassword || 
+                      isPasswordChanging ||
+                      !newPassword ||
                       !confirmPassword ||
                       (hasPassword && !currentPassword)
                     }
@@ -770,32 +770,32 @@ function ProfileSettingsContent() {
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="flex flex-col sm:flex-row gap-4">
-                <Link 
+                <Link
                   href={`/${currentLocale}/onboarding?edit=true`}
-                  className="flex-1 inline-flex items-center justify-center gap-2 px-4 py-3 rounded-lg border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
+                  className="flex-1 inline-flex items-center justify-center gap-2 px-4 py-3 rounded-lg border border-border dark:border-border hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
                 >
-                  <Settings className="h-5 w-5 text-slate-600 dark:text-slate-400" />
+                  <Settings className="h-5 w-5 text-muted-foreground dark:text-muted-foreground" />
                   <div className="text-left">
-                    <p className="font-medium text-slate-900 dark:text-slate-100">{t('profile.registration.editTitle')}</p>
-                    <p className="text-xs text-slate-500 dark:text-slate-400">{t('profile.registration.editSubtitle')}</p>
+                    <p className="font-medium text-foreground dark:text-foreground">{t('profile.registration.editTitle')}</p>
+                    <p className="text-xs text-muted-foreground dark:text-muted-foreground">{t('profile.registration.editSubtitle')}</p>
                   </div>
                 </Link>
-                
-                <Link 
+
+                <Link
                   href={`/${currentLocale}/onboarding`}
-                  className="flex-1 inline-flex items-center justify-center gap-2 px-4 py-3 rounded-lg border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
+                  className="flex-1 inline-flex items-center justify-center gap-2 px-4 py-3 rounded-lg border border-border dark:border-border hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
                 >
-                  <FileText className="h-5 w-5 text-slate-600 dark:text-slate-400" />
+                  <FileText className="h-5 w-5 text-muted-foreground dark:text-muted-foreground" />
                   <div className="text-left">
-                    <p className="font-medium text-slate-900 dark:text-slate-100">{t('profile.registration.viewTitle')}</p>
-                    <p className="text-xs text-slate-500 dark:text-slate-400">{t('profile.registration.viewSubtitle')}</p>
+                    <p className="font-medium text-foreground dark:text-foreground">{t('profile.registration.viewTitle')}</p>
+                    <p className="text-xs text-muted-foreground dark:text-muted-foreground">{t('profile.registration.viewSubtitle')}</p>
                   </div>
                 </Link>
               </div>
 
               <Separator />
 
-              <div className="text-sm text-slate-600 dark:text-slate-400">
+              <div className="text-sm text-muted-foreground dark:text-muted-foreground">
                 <p>{t('profile.membershipInfo')}</p>
               </div>
             </CardContent>
@@ -808,55 +808,55 @@ function ProfileSettingsContent() {
             </CardHeader>
             <CardContent>
               <div className="grid gap-3 sm:grid-cols-2">
-                <Link 
+                <Link
                   href={`/${currentLocale}/dashboard/enrollments`}
-                  className="flex items-center gap-3 p-3 rounded-lg border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
+                  className="flex items-center gap-3 p-3 rounded-lg border border-border dark:border-border hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
                 >
                   <div className="p-2 rounded-lg bg-green-100 dark:bg-green-900/50">
                     <CurrencyBangladeshiIcon className="h-5 w-5 text-green-600" />
                   </div>
                   <div>
-                    <p className="font-medium text-slate-900 dark:text-slate-100">{t('profile.quickActions.payFeesTitle')}</p>
-                    <p className="text-xs text-slate-500">{t('profile.quickActions.payFeesSubtitle')}</p>
+                    <p className="font-medium text-foreground dark:text-foreground">{t('profile.quickActions.payFeesTitle')}</p>
+                    <p className="text-xs text-muted-foreground">{t('profile.quickActions.payFeesSubtitle')}</p>
                   </div>
                 </Link>
-                
-                <Link 
+
+                <Link
                   href={`/${currentLocale}/dashboard/enrollments`}
-                  className="flex items-center gap-3 p-3 rounded-lg border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
+                  className="flex items-center gap-3 p-3 rounded-lg border border-border dark:border-border hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
                 >
                   <div className="p-2 rounded-lg bg-blue-100 dark:bg-blue-900/50">
                     <AcademicCapIcon className="h-5 w-5 text-blue-600" />
                   </div>
                   <div>
-                    <p className="font-medium text-slate-900 dark:text-slate-100">{t('profile.quickActions.enrollmentsTitle')}</p>
-                    <p className="text-xs text-slate-500">{t('profile.quickActions.enrollmentsSubtitle')}</p>
+                    <p className="font-medium text-foreground dark:text-foreground">{t('profile.quickActions.enrollmentsTitle')}</p>
+                    <p className="text-xs text-muted-foreground">{t('profile.quickActions.enrollmentsSubtitle')}</p>
                   </div>
                 </Link>
 
-                <Link 
+                <Link
                   href={`/${currentLocale}/karate/programs`}
-                  className="flex items-center gap-3 p-3 rounded-lg border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
+                  className="flex items-center gap-3 p-3 rounded-lg border border-border dark:border-border hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
                 >
                   <div className="p-2 rounded-lg bg-purple-100 dark:bg-purple-900/50">
                     <TrophyIcon className="h-5 w-5 text-purple-600" />
                   </div>
                   <div>
-                    <p className="font-medium text-slate-900 dark:text-slate-100">{t('profile.quickActions.programsTitle')}</p>
-                    <p className="text-xs text-slate-500">{t('profile.quickActions.programsSubtitle')}</p>
+                    <p className="font-medium text-foreground dark:text-foreground">{t('profile.quickActions.programsTitle')}</p>
+                    <p className="text-xs text-muted-foreground">{t('profile.quickActions.programsSubtitle')}</p>
                   </div>
                 </Link>
 
-                <Link 
+                <Link
                   href={`/${currentLocale}/karate/courses`}
-                  className="flex items-center gap-3 p-3 rounded-lg border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
+                  className="flex items-center gap-3 p-3 rounded-lg border border-border dark:border-border hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
                 >
                   <div className="p-2 rounded-lg bg-orange-100 dark:bg-orange-900/50">
                     <ClipboardDocumentCheckIcon className="h-5 w-5 text-orange-600" />
                   </div>
                   <div>
-                    <p className="font-medium text-slate-900 dark:text-slate-100">{t('profile.quickActions.coursesTitle')}</p>
-                    <p className="text-xs text-slate-500">{t('profile.quickActions.coursesSubtitle')}</p>
+                    <p className="font-medium text-foreground dark:text-foreground">{t('profile.quickActions.coursesTitle')}</p>
+                    <p className="text-xs text-muted-foreground">{t('profile.quickActions.coursesSubtitle')}</p>
                   </div>
                 </Link>
               </div>
@@ -869,9 +869,9 @@ function ProfileSettingsContent() {
 }
 
 // Import icons used in quick links
-import { 
-  CurrencyBangladeshiIcon, 
-  AcademicCapIcon, 
+import {
+  CurrencyBangladeshiIcon,
+  AcademicCapIcon,
   ClipboardDocumentCheckIcon,
   TrophyIcon
 } from '@heroicons/react/24/outline';

@@ -54,11 +54,11 @@ export default function SectionCertVerify() {
   return (
     <section className="py-12 md:py-20 bg-muted/5 relative overflow-hidden">
       <div className="container mx-auto px-4 relative z-10">
-        <div className="bg-gradient-to-br from-card to-background rounded-3xl p-6 md:p-12 border shadow-sm hover:shadow-md transition-shadow relative overflow-hidden">
+        <div className="bg-muted   rounded-3xl p-6 md:p-12 border shadow-sm hover:shadow-md transition-shadow relative overflow-hidden">
           <div className="absolute top-1/2 right-12 -translate-y-1/2 opacity-[0.04] dark:opacity-[0.06] pointer-events-none hidden md:block scale-[1.2] origin-right">
              <img src="/favicon.ico" alt="Logo" className="w-[320px] h-auto grayscale" />
           </div>
-          
+
           <div className="relative z-10 flex flex-col md:flex-row items-center gap-8 md:gap-12">
             <div className="flex-1 w-full text-center md:text-left">
               <SectionHeader
@@ -98,7 +98,7 @@ export default function SectionCertVerify() {
             <div className="w-full md:w-1/2 min-h-[160px] flex items-center justify-center">
               <AnimatePresence mode="wait">
                 {!result && !error && !loading && (
-                   <motion.div 
+                   <motion.div
                      key="idle"
                      initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
                      className="text-center text-muted-foreground bg-muted/20 p-6 rounded-2xl w-full border border-dashed"
@@ -107,7 +107,7 @@ export default function SectionCertVerify() {
                       <p className="text-sm">Enter a certificate ID to instantly verify its status.</p>
                    </motion.div>
                 )}
-                
+
                 {loading && (
                   <motion.div key="loading" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
                     <span className="inline-block h-8 w-8 border-3 border-primary/30 border-t-primary rounded-full animate-spin" />
@@ -115,7 +115,7 @@ export default function SectionCertVerify() {
                 )}
 
                 {error && !loading && (
-                   <motion.div 
+                   <motion.div
                     key="error"
                     initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0 }}
                     className="bg-red-50 dark:bg-red-950/20 text-red-600 dark:text-red-400 p-6 rounded-2xl border border-red-200 dark:border-red-900/50 w-full text-center shadow-sm"
@@ -126,7 +126,7 @@ export default function SectionCertVerify() {
                 )}
 
                 {result && !loading && (
-                   <motion.div 
+                   <motion.div
                     key="success"
                     initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0 }}
                     className="bg-green-50 dark:bg-green-950/20 border border-green-200 dark:border-green-900/50 p-6 rounded-2xl w-full shadow-sm text-left"

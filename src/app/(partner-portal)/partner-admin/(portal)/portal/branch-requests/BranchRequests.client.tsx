@@ -59,7 +59,7 @@ const STATUS_BADGES: Record<string, { label: string; color: string }> = {
   pending: { label: 'Pending', color: 'bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400 border border-amber-200 dark:border-amber-800/50' },
   approved: { label: 'Completed', color: 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 border border-green-200 dark:border-green-800/50' },
   rejected: { label: 'Rejected', color: 'bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400 border border-red-200 dark:border-red-800/50' },
-  cancelled: { label: 'Cancelled', color: 'bg-slate-100 dark:bg-slate-800/50 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-700' },
+  cancelled: { label: 'Cancelled', color: 'bg-muted dark:bg-card/50 text-muted-foreground dark:text-muted-foreground border border-border dark:border-border' },
 }
 
 export default function BranchRequests() {
@@ -67,7 +67,7 @@ export default function BranchRequests() {
   const [loading, setLoading] = React.useState(true)
   const [error, setError] = React.useState<string | null>(null)
   const [message, setMessage] = React.useState<string | null>(null)
-  
+
   // Filters
   const [status, setStatus] = React.useState<'pending' | 'completed' | 'rejected' | 'cancelled' | 'all'>('pending')
   const [page, setPage] = React.useState(1)
@@ -77,13 +77,13 @@ export default function BranchRequests() {
     total: 0,
     totalPages: 0,
   })
-  
+
   const [rows, setRows] = React.useState<BranchRequest[]>([])
-  
+
   // Review actions
   const [actionLoading, setActionLoading] = React.useState<string | null>(null)
   const [notes, setNotes] = React.useState<Record<string, string>>({})
-  
+
   // Modal for new request
   const [transferOpen, setTransferOpen] = React.useState(false)
   const [submittingTransfer, setSubmittingTransfer] = React.useState(false)
@@ -91,7 +91,7 @@ export default function BranchRequests() {
   const [partnersList, setPartnersList] = React.useState<Partner[]>([])
   const [membersLoading, setMembersLoading] = React.useState(false)
   const [partnersLoading, setPartnersLoading] = React.useState(false)
-  
+
   const [formSelectedMember, setFormSelectedMember] = React.useState('')
   const [formSelectedPartner, setFormSelectedPartner] = React.useState('')
   const [formReason, setFormReason] = React.useState('')
@@ -132,7 +132,7 @@ export default function BranchRequests() {
     setFormSelectedMember('')
     setFormSelectedPartner('')
     setFormReason('')
-    
+
     // Fetch members
     setMembersLoading(true)
     try {
@@ -162,7 +162,7 @@ export default function BranchRequests() {
       setFormError('Please select both a student and a destination branch.')
       return
     }
-    
+
     setSubmittingTransfer(true)
     setFormError(null)
     try {
@@ -308,7 +308,7 @@ export default function BranchRequests() {
           </div>
         ) : (
           rows.map((r) => {
-            const statusCfg = STATUS_BADGES[r.status] || { label: r.status, color: 'bg-gray-100 text-gray-700' }
+            const statusCfg = STATUS_BADGES[r.status] || { label: r.status, color: 'bg-muted text-foreground' }
             return (
               <div key={r.id} className="rounded-lg border bg-card p-5 shadow-sm transition-all hover:shadow-md">
                 <div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">

@@ -33,7 +33,7 @@ const BackToTop = () => {
       <button
         onClick={scrollToTop}
         style={{ bottom: isVisible ? "20px" : "-32px" }}
-        className="fixed right-5 z-50 flex h-8 w-8 items-center justify-center rounded-full bg-muted shadow-sm transition-all hover:bg-primary hover:text-white dark:bg-slate-900"
+        className="fixed right-5 z-50 flex h-8 w-8 items-center justify-center rounded-full bg-muted shadow-sm transition-all hover:bg-primary hover:text-white dark:bg-background"
       >
         <ChevronUpIcon width={18} height={18} />
       </button>

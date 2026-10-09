@@ -21,7 +21,7 @@ export default function AuthCodeErrorPage() {
   useEffect(() => {
     // Get error details from URL hash or search params
     const error = searchParams?.get('error') || window.location.hash.match(/error=([^&]*)/)?.[1]
-    const error_description = searchParams?.get('error_description') || 
+    const error_description = searchParams?.get('error_description') ||
       decodeURIComponent(window.location.hash.match(/error_description=([^&]*)/)?.[1] || '')
     const error_code = searchParams?.get('error_code') || window.location.hash.match(/error_code=([^&]*)/)?.[1]
 
@@ -76,8 +76,8 @@ export default function AuthCodeErrorPage() {
               />
             </svg>
           </div>
-          <h1 className="text-2xl font-bold text-gray-900">{getErrorTitle()}</h1>
-          <p className="mt-2 text-sm text-gray-600">
+          <h1 className="text-2xl font-bold text-foreground">{getErrorTitle()}</h1>
+          <p className="mt-2 text-sm text-muted-foreground">
             {getErrorMessage()}
           </p>
         </div>
@@ -90,13 +90,13 @@ export default function AuthCodeErrorPage() {
               </Button>
             </Link>
           )}
-          
+
           <Link href={`/${locale}/login`}>
             <Button variant="outline" className="w-full">
               {t('actions.backToLogin')}
             </Button>
           </Link>
-          
+
           <Link href={`/${locale}`}>
             <Button variant="ghost" className="w-full">
               {t('actions.goToHome')}
@@ -106,7 +106,7 @@ export default function AuthCodeErrorPage() {
 
         {errorDetails.error && (
           <details className="mt-4 text-left">
-            <summary className="cursor-pointer text-sm text-gray-500">
+            <summary className="cursor-pointer text-sm text-muted-foreground">
               {t('technicalDetailsTitle')}
             </summary>
             <div className="mt-2 text-xs text-gray-400 font-mono">

@@ -54,11 +54,11 @@ export default async function IndexRoute({
 }) {
   return (
     <>
-      <div className="flex min-h-screen flex-col bg-white text-black">
+      <div className="flex min-h-screen flex-col bg-background text-foreground">
         <Suspense>
           <Navbar />
         </Suspense>
-        <div className="mt-20 w-screen flex-grow px-4 md:px-16 lg:px-32">
+        <div className="mx-auto w-full max-w-screen-xl flex-grow px-4 py-12 md:px-8 md:py-16 lg:px-10">
           <Suspense fallback={<SkeletonCard />}>{children}</Suspense>
         </div>
         <Suspense>

@@ -1,17 +1,11 @@
 import type { Metadata } from "next";
-import { Roboto } from "next/font/google";
+
 import { Toaster } from "sonner";
 import { siteConfig } from "@/config/site";
 import BackToTop from "@/components/back-to-top";
 import React, { Suspense } from "react";
 import { I18nProviderClient } from "@/locales/client";
 import { VerificationHandler } from "@/components/layout/verification-handler";
-
-const roboto = Roboto({
-  subsets: ["latin"],
-  weight: ["400", "500", "700"],
-  display: "swap",
-});
 
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL || siteConfig.url),
@@ -70,10 +64,10 @@ export default async function RootLayout({
 }) {
   const resolvedParams = await params;
   const locale = resolvedParams?.locale || "en";
-  
+
   return (
     <div
-      className={`${roboto.className} dark:bg-slate-850 dark:text-slate-200`}
+      className="editorial-public bg-background text-foreground"
     >
       <I18nProviderClient locale={locale}>
         <Suspense fallback={null}>

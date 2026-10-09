@@ -33,12 +33,12 @@ export function AlbumGrid({ albums }: AlbumGridProps) {
   const opacity = useTransform(scrollYProgress, [0, 0.5], [1, 0]);
 
   // Use the most recent album's first image as the hero background, or fallback
-  const heroImage = albums[0]?.previewImages[0]?.secureUrl || "/images/dojo-hero.jpg";
+  const heroImage = albums[0]?.previewImages[0]?.secureUrl || "/image/kata.JPG";
 
   return (
     <div ref={containerRef} className="min-h-screen bg-background">
       {/* Hero Section */}
-      <section className="relative h-[70vh] min-h-[500px] w-full overflow-hidden flex items-center justify-center">
+      <section className="relative h-[55vh] min-h-[420px] w-full overflow-hidden flex items-center justify-center">
         {/* Parallax Background Image */}
         <motion.div 
           className="absolute inset-0 z-0"
@@ -66,9 +66,9 @@ export function AlbumGrid({ albums }: AlbumGridProps) {
               Photo Gallery
             </Badge>
 
-            <h1 className="text-5xl md:text-7xl font-black tracking-tight mb-6 leading-tight text-foreground">
+            <h1 className="text-4xl md:text-6xl font-normal tracking-tight mb-6 leading-tight text-foreground">
               Our Dojo{" "}
-              <span className="bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">
+              <span className="text-primary italic">
                 Moments
               </span>
             </h1>
@@ -84,7 +84,7 @@ export function AlbumGrid({ albums }: AlbumGridProps) {
               transition={{ delay: 0.6, duration: 1 }}
               className="flex justify-center"
             >
-              <div className="animate-bounce p-3 rounded-full bg-muted/30 backdrop-blur-sm border border-border/50 text-muted-foreground">
+              <div className=" p-3 rounded-full bg-muted/30 backdrop-blur-sm border border-border/50 text-muted-foreground">
                 <ArrowDown className="h-5 w-5" />
               </div>
             </motion.div>
@@ -112,7 +112,7 @@ export function AlbumGrid({ albums }: AlbumGridProps) {
             </motion.div>
 
             {/* Responsive grid with full spacing for 3D folder fan-out */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-x-12 gap-y-16 items-start py-8 w-full">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-x-5 gap-y-10 items-start py-8 w-full">
               {albums.map((album, i) => (
                 <AlbumFolder
                   key={album.id}

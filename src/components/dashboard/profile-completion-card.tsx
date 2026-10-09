@@ -19,7 +19,7 @@ export function ProfileCompletionCard({ className }: ProfileCompletionCardProps)
       {/* Decorative elements */}
       <div className="absolute -top-12 -right-12 w-40 h-40 bg-gradient-to-br from-amber-400/10 to-orange-400/10 dark:from-amber-500/5 dark:to-orange-500/5 rounded-full blur-2xl" />
       <div className="absolute -bottom-8 -left-8 w-32 h-32 bg-gradient-to-tr from-yellow-400/10 to-amber-400/10 dark:from-yellow-500/5 dark:to-amber-500/5 rounded-full blur-xl" />
-      
+
       <div className="relative p-6">
         <div className="flex items-start gap-4">
           {/* Icon */}
@@ -29,17 +29,17 @@ export function ProfileCompletionCard({ className }: ProfileCompletionCardProps)
 
           {/* Content */}
           <div className="flex-1">
-            <h3 className="text-lg font-semibold text-slate-900 dark:text-white">
+            <h3 className="text-lg font-semibold text-foreground dark:text-white">
               Complete Your Profile
             </h3>
-            <p className="mt-1 text-sm text-slate-600 dark:text-slate-400">
+            <p className="mt-1 text-sm text-muted-foreground dark:text-muted-foreground">
               Your membership profile is incomplete. You need to complete it before you can enroll in courses, register for programs, or access member benefits.
             </p>
 
             {/* Features List */}
             <div className="mt-4 flex flex-wrap gap-2">
               {['Enroll in courses', 'Register for events', 'Track progress'].map((feature) => (
-                <span 
+                <span
                   key={feature}
                   className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-amber-100 dark:bg-amber-500/20 text-amber-700 dark:text-amber-300"
                 >

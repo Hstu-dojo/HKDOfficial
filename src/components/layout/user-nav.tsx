@@ -15,8 +15,8 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { 
-  UserCircleIcon, 
+import {
+  UserCircleIcon,
   ArrowRightOnRectangleIcon,
   ClipboardDocumentListIcon,
   Squares2X2Icon,
@@ -30,7 +30,7 @@ export function UserNav() {
   const router = useRouter();
   const locale = useCurrentLocale();
   const t = useI18n();
-  
+
   const [needsOnboarding, setNeedsOnboarding] = useState(false);
   const [checkingOnboarding, setCheckingOnboarding] = useState(true);
 
@@ -76,16 +76,16 @@ export function UserNav() {
           "inline-flex items-center gap-2 px-4 py-2 rounded-lg",
           "text-sm font-semibold",
           // Glass effect for both modes
-          "bg-white/60 dark:bg-slate-800/60",
+          "bg-white/60 dark:bg-card/60",
           "backdrop-blur-lg",
           "border border-white/40 dark:border-slate-600/40",
           "shadow-lg shadow-black/5 dark:shadow-black/20",
           // Hover states
           "hover:bg-white/80 dark:hover:bg-slate-700/70",
           "hover:border-white/60 dark:hover:border-slate-500/50",
-          "hover:shadow-xl",
+          "hover:shadow-sm",
           // Text colors
-          "text-slate-800 dark:text-slate-100",
+          "text-foreground dark:text-foreground",
           "transition-all duration-200"
         )}
       >
@@ -97,8 +97,8 @@ export function UserNav() {
 
   // Logged in - show user dropdown
   const userInitial = session.user.email?.charAt(0).toUpperCase() || 'U';
-  const userName = session.user.name || 
-                   session.user.email?.split('@')[0] || 
+  const userName = session.user.name ||
+                   session.user.email?.split('@')[0] ||
                    'User';
 
   return (
@@ -109,16 +109,16 @@ export function UserNav() {
             "inline-flex items-center gap-2 px-3 py-2 rounded-lg",
             "text-sm font-medium",
             // Glass effect for both modes
-            "bg-white/60 dark:bg-slate-800/60",
+            "bg-white/60 dark:bg-card/60",
             "backdrop-blur-lg",
             "border border-white/40 dark:border-slate-600/40",
             "shadow-lg shadow-black/5 dark:shadow-black/20",
             // Hover states
             "hover:bg-white/80 dark:hover:bg-slate-700/70",
             "hover:border-white/60 dark:hover:border-slate-500/50",
-            "hover:shadow-xl",
+            "hover:shadow-sm",
             // Text colors
-            "text-slate-800 dark:text-slate-100",
+            "text-foreground dark:text-foreground",
             "transition-all duration-200",
             "focus:outline-none focus:ring-2 focus:ring-primary/50"
           )}
@@ -128,27 +128,27 @@ export function UserNav() {
             {userInitial}
           </div>
           <span className="hidden sm:inline max-w-[100px] truncate">{userName}</span>
-          <ChevronDownIcon className="h-4 w-4 text-slate-500 dark:text-slate-400" />
+          <ChevronDownIcon className="h-4 w-4 text-muted-foreground dark:text-muted-foreground" />
         </button>
       </DropdownMenuTrigger>
 
-      <DropdownMenuContent 
-        align="end" 
+      <DropdownMenuContent
+        align="end"
         className={cn(
           "w-56",
           // Glass effect for dropdown
-          "bg-white/90 dark:bg-slate-800/95",
+          "bg-white/90 dark:bg-card/95",
           "backdrop-blur-xl",
-          "border border-slate-200/60 dark:border-slate-700/60",
-          "shadow-xl shadow-black/10 dark:shadow-black/30"
+          "border border-border/60 dark:border-border/60",
+          "shadow-sm shadow-black/10 dark:shadow-black/30"
         )}
       >
         {/* User info header */}
-        <div className="px-3 py-2 border-b border-slate-200/60 dark:border-slate-700/60">
-          <p className="text-sm font-medium text-slate-900 dark:text-slate-100 truncate">
+        <div className="px-3 py-2 border-b border-border/60 dark:border-border/60">
+          <p className="text-sm font-medium text-foreground dark:text-foreground truncate">
             {userName}
           </p>
-          <p className="text-xs text-slate-500 dark:text-slate-400 truncate">
+          <p className="text-xs text-muted-foreground dark:text-muted-foreground truncate">
             {session.user.email}
           </p>
         </div>
@@ -180,8 +180,8 @@ export function UserNav() {
         {/* Onboarding - only show if not completed */}
         {needsOnboarding && !checkingOnboarding && (
           <DropdownMenuItem asChild>
-            <Link 
-              href={`/${locale}/onboarding`} 
+            <Link
+              href={`/${locale}/onboarding`}
               className="cursor-pointer text-amber-600 dark:text-amber-400"
             >
               <ClipboardDocumentListIcon className="h-4 w-4 mr-2" />
@@ -194,7 +194,7 @@ export function UserNav() {
         <DropdownMenuSeparator />
 
         {/* Logout */}
-        <DropdownMenuItem 
+        <DropdownMenuItem
           onClick={handleSignOut}
           className="cursor-pointer text-red-600 dark:text-red-400 focus:text-red-600 dark:focus:text-red-400"
         >

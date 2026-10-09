@@ -69,23 +69,24 @@ const NewsletterForm = () => {
   }
 
   return (
-    <div className="z-10 mx-20 rounded-md bg-muted px-8 py-10 shadow-lg dark:bg-slate-800 dark:shadow-slate-850/20 md:px-16 md:pb-5">
-      <h2 className="mb-8 text-lg">{t("title")}</h2>
+    <div className="relative z-10 rounded-2xl bg-muted p-5 sm:p-6">
+      <h2 className="mb-5 text-2xl">{t("title")}</h2>
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(onSubmit)}
-          className="z-10 block md:flex md:space-x-5"
+          className="space-y-3"
         >
           <FormField
             control={form.control}
             name="name"
             render={({ field }) => (
-              <FormItem className="mb-5 flex-1 space-y-0">
+              <FormItem className="space-y-0">
                 <div className="relative mb-2">
                   <FormControl>
                     <Input
                       className="material-input rounded-none border-0 border-b-[1px] border-slate-300 bg-transparent px-0 dark:border-slate-600 dark:bg-transparent"
                       placeholder={t("name")}
+                      aria-label={t("name")}
                       required
                       {...field}
                     />
@@ -100,13 +101,14 @@ const NewsletterForm = () => {
             control={form.control}
             name="email"
             render={({ field }) => (
-              <FormItem className="relative mb-5 flex-1 space-y-0">
+              <FormItem className="relative space-y-0">
                 <div className="relative mb-2">
                   <FormControl>
                     <Input
                       className="material-input rounded-none border-0 border-b-[1px] border-slate-300 bg-transparent px-0 dark:border-slate-600 dark:bg-transparent"
                       type="email"
                       placeholder={t("email")}
+                      aria-label={t("email")}
                       required
                       {...field}
                     />
@@ -117,7 +119,7 @@ const NewsletterForm = () => {
               </FormItem>
             )}
           />
-          <Button type="submit" disabled={isPending}>
+          <Button type="submit" disabled={isPending} className="w-full rounded-full">
             {isPending ? (
               <>
                 <Spinner className="mr-2 h-5 w-5 animate-spin" />

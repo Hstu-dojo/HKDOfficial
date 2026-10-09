@@ -95,7 +95,7 @@ export default function PermissionMatrix() {
   async function togglePermission(roleId: string, permissionId: string, hasPermission: boolean) {
     const key = `${roleId}-${permissionId}`;
     setUpdating(key);
-    
+
     try {
       const res = await fetch(`/api/rbac/roles/${roleId}/permissions`, {
         method: hasPermission ? "DELETE" : "POST",
@@ -150,22 +150,22 @@ export default function PermissionMatrix() {
 
   async function grantAllPermissions(roleId: string, roleName: string) {
     if (!matrixData) return;
-    
+
     if (!confirm(`Grant ALL permissions to ${roleName}? This will give this role full access.`)) {
       return;
     }
-    
+
     setUpdating(`all-${roleId}`);
     let successCount = 0;
     let errorCount = 0;
-    
+
     const role = matrixData.roles.find((r) => r.id === roleId);
     if (!role) return;
-    
+
     const missingPermissions = matrixData.permissions.filter(
       (p) => !role.permissionIds.includes(p.id)
     );
-    
+
     for (const permission of missingPermissions) {
       try {
         const res = await fetch(`/api/rbac/roles/${roleId}/permissions`, {
@@ -179,12 +179,12 @@ export default function PermissionMatrix() {
         errorCount++;
       }
     }
-    
+
     toast({
       title: "Bulk Assignment Complete",
       description: `${successCount} permissions granted, ${errorCount} failed`,
     });
-    
+
     setUpdating(null);
     await fetchMatrix();
   }
@@ -221,7 +221,7 @@ export default function PermissionMatrix() {
             <ShieldCheckIcon className="h-6 w-6 text-green-600 dark:text-green-400" />
             Role-Permission Matrix
           </h2>
-          <p className="text-sm text-gray-500 dark:text-gray-400">
+          <p className="text-sm text-muted-foreground dark:text-gray-400">
             {matrixData.totalRoles} roles × {matrixData.totalPermissions} permissions
           </p>
         </div>
@@ -235,7 +235,7 @@ export default function PermissionMatrix() {
       </div>
 
       {/* Legend */}
-      <div className="flex flex-wrap items-center gap-4 p-3 bg-gray-50 dark:bg-gray-800/50 rounded-lg">
+      <div className="flex flex-wrap items-center gap-4 p-3 bg-muted dark:bg-card/50 rounded-lg">
         <span className="text-sm font-medium">Actions:</span>
         {Object.entries(actionColors).map(([action, color]) => (
           <div key={action} className="flex items-center gap-1">
@@ -269,9 +269,9 @@ export default function PermissionMatrix() {
       {/* Matrix Table */}
       <div className="overflow-x-auto border rounded-lg">
         <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-          <thead className="bg-gray-50 dark:bg-gray-800">
+          <thead className="bg-muted dark:bg-card">
             <tr>
-              <th className="sticky left-0 z-10 bg-gray-50 dark:bg-gray-800 px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider min-w-[200px]">
+              <th className="sticky left-0 z-10 bg-muted dark:bg-card px-4 py-3 text-left text-xs font-medium text-muted-foreground dark:text-gray-400 uppercase tracking-wider min-w-[200px]">
                 Role
               </th>
               {filteredResources.map((resource) => {
@@ -280,7 +280,7 @@ export default function PermissionMatrix() {
                   <th
                     key={resource}
                     colSpan={perms.length}
-                    className="px-2 py-3 text-center text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider border-l border-gray-200 dark:border-gray-700"
+                    className="px-2 py-3 text-center text-xs font-medium text-muted-foreground dark:text-gray-400 uppercase tracking-wider border-l border-border dark:border-border"
                   >
                     {resource}
                     <div className="flex justify-center gap-1 mt-1">
@@ -297,24 +297,24 @@ export default function PermissionMatrix() {
                   </th>
                 );
               })}
-              <th className="px-4 py-3 text-center text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+              <th className="px-4 py-3 text-center text-xs font-medium text-muted-foreground dark:text-gray-400 uppercase tracking-wider">
                 Actions
               </th>
             </tr>
           </thead>
-          <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
+          <tbody className="bg-white dark:bg-card divide-y divide-gray-200 dark:divide-gray-700">
             {matrixData.roles
               .filter((r) => r.isActive)
               .map((role) => (
                 <tr key={role.id} className="hover:bg-gray-50 dark:hover:bg-gray-700">
-                  <td className="sticky left-0 z-10 bg-white dark:bg-gray-800 px-4 py-3 whitespace-nowrap border-r border-gray-200 dark:border-gray-700">
+                  <td className="sticky left-0 z-10 bg-white dark:bg-card px-4 py-3 whitespace-nowrap border-r border-border dark:border-border">
                     <div className="flex items-center gap-2">
                       <ShieldCheckIcon
                         className={`h-5 w-5 ${role.name === "SUPER_ADMIN" ? "text-yellow-500" : "text-green-600 dark:text-green-400"}`}
                       />
                       <div>
                         <div className="font-medium text-sm">{role.name}</div>
-                        <div className="text-xs text-gray-500 dark:text-gray-400">
+                        <div className="text-xs text-muted-foreground dark:text-gray-400">
                           {role.permissionIds.length} perms
                         </div>
                       </div>
@@ -325,7 +325,7 @@ export default function PermissionMatrix() {
                     return perms.map((permission) => {
                       const hasPermission = role.permissionIds.includes(permission.id);
                       const isUpdating = updating === `${role.id}-${permission.id}`;
-                      
+
                       return (
                         <td
                           key={permission.id}
@@ -339,12 +339,12 @@ export default function PermissionMatrix() {
                                 ? "bg-gray-200 dark:bg-gray-700"
                                 : hasPermission
                                 ? "bg-green-100 dark:bg-green-900/30 hover:bg-green-200 dark:hover:bg-green-800/50"
-                                : "bg-gray-100 dark:bg-gray-700 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-600 dark:hover:bg-gray-700"
+                                : "bg-muted dark:bg-gray-700 dark:bg-card hover:bg-gray-200 dark:hover:bg-gray-600 dark:hover:bg-gray-700"
                             }`}
                             title={`${hasPermission ? "Remove" : "Grant"} ${permission.name}`}
                           >
                             {isUpdating ? (
-                              <ArrowPathIcon className="h-4 w-4 animate-spin text-gray-500 dark:text-gray-400" />
+                              <ArrowPathIcon className="h-4 w-4 animate-spin text-muted-foreground dark:text-gray-400" />
                             ) : hasPermission ? (
                               <CheckCircleSolid className="h-4 w-4 text-green-600 dark:text-green-400" />
                             ) : (
@@ -386,7 +386,7 @@ export default function PermissionMatrix() {
           .map((role) => (
             <div
               key={role.id}
-              className="p-4 border rounded-lg bg-white dark:bg-gray-800"
+              className="p-4 border rounded-lg bg-white dark:bg-card"
             >
               <div className="flex items-center justify-between mb-3">
                 <div className="flex items-center gap-2">
@@ -395,12 +395,12 @@ export default function PermissionMatrix() {
                   />
                   <span className="font-semibold">{role.name}</span>
                 </div>
-                <span className="text-sm text-gray-500 dark:text-gray-400">
+                <span className="text-sm text-muted-foreground dark:text-gray-400">
                   {role.permissionIds.length}/{matrixData.totalPermissions}
                 </span>
               </div>
               {role.description && (
-                <p className="text-xs text-gray-500 dark:text-gray-400 mb-3">
+                <p className="text-xs text-muted-foreground dark:text-gray-400 mb-3">
                   {role.description}
                 </p>
               )}
@@ -413,7 +413,7 @@ export default function PermissionMatrix() {
                 ).map(([resource, count]) => (
                   <span
                     key={resource}
-                    className="text-xs px-2 py-0.5 bg-gray-100 dark:bg-gray-700 rounded"
+                    className="text-xs px-2 py-0.5 bg-muted dark:bg-gray-700 rounded"
                   >
                     {resource}: {count}
                   </span>

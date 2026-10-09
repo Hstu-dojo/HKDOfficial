@@ -144,9 +144,9 @@ export default function CommitteeApplyForm({
   };
 
   return (
-    <div className="rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 p-6">
-      <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">Apply for Committee</h3>
-      <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+    <div className="rounded-xl border border-border dark:border-border bg-white dark:bg-background p-6">
+      <h3 className="text-lg font-semibold text-foreground dark:text-gray-100">Apply for Committee</h3>
+      <p className="text-sm text-muted-foreground dark:text-gray-400 mt-1">
         Submit your application to join the committee for this year.
       </p>
 
@@ -166,41 +166,41 @@ export default function CommitteeApplyForm({
       <form onSubmit={handleSubmit} className="mt-5 space-y-4">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Name</label>
+            <label className="block text-sm font-medium text-foreground dark:text-gray-300">Name</label>
             <input
               value={prefill?.username || ''}
               disabled
-              className="mt-1 w-full rounded-md border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 px-3 py-2 text-sm text-gray-700 dark:text-gray-200"
+              className="mt-1 w-full rounded-md border border-border dark:border-border bg-muted dark:bg-card px-3 py-2 text-sm text-foreground dark:text-gray-200"
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Email</label>
+            <label className="block text-sm font-medium text-foreground dark:text-gray-300">Email</label>
             <input
               value={prefill?.email || ''}
               disabled
-              className="mt-1 w-full rounded-md border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 px-3 py-2 text-sm text-gray-700 dark:text-gray-200"
+              className="mt-1 w-full rounded-md border border-border dark:border-border bg-muted dark:bg-card px-3 py-2 text-sm text-foreground dark:text-gray-200"
             />
           </div>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Phone</label>
+            <label className="block text-sm font-medium text-foreground dark:text-gray-300">Phone</label>
             <input
               value={phone}
               onChange={(e) => setPhone(e.target.value)}
               required
-              className="mt-1 w-full rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 px-3 py-2 text-sm"
+              className="mt-1 w-full rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-background px-3 py-2 text-sm"
               placeholder="Phone number"
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">NID</label>
+            <label className="block text-sm font-medium text-foreground dark:text-gray-300">NID</label>
           <input
             value={nid}
             onChange={(e) => setNid(e.target.value)}
             required
-            className="mt-1 w-full rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 px-3 py-2 text-sm"
+            className="mt-1 w-full rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-background px-3 py-2 text-sm"
             placeholder="National ID"
           />
           </div>
@@ -208,57 +208,57 @@ export default function CommitteeApplyForm({
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Institution</label>
+            <label className="block text-sm font-medium text-foreground dark:text-gray-300">Institution</label>
             <input
               value={institution}
               onChange={(e) => setInstitution(e.target.value)}
               required
-              className="mt-1 w-full rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 px-3 py-2 text-sm"
+              className="mt-1 w-full rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-background px-3 py-2 text-sm"
               placeholder="University / College"
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Faculty / Department</label>
+            <label className="block text-sm font-medium text-foreground dark:text-gray-300">Faculty / Department</label>
             <input
               value={department}
               onChange={(e) => setDepartment(e.target.value)}
               required
-              className="mt-1 w-full rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 px-3 py-2 text-sm"
+              className="mt-1 w-full rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-background px-3 py-2 text-sm"
               placeholder="Faculty / Department Name"
             />
           </div>
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Address</label>
+          <label className="block text-sm font-medium text-foreground dark:text-gray-300">Address</label>
           <input
             value={address}
             onChange={(e) => setAddress(e.target.value)}
             required
-            className="mt-1 w-full rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 px-3 py-2 text-sm"
+            className="mt-1 w-full rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-background px-3 py-2 text-sm"
             placeholder="Current address"
           />
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Statement</label>
+          <label className="block text-sm font-medium text-foreground dark:text-gray-300">Statement</label>
           <textarea
             value={statement}
             onChange={(e) => setStatement(e.target.value)}
-            className="mt-1 w-full rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 px-3 py-2 text-sm"
+            className="mt-1 w-full rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-background px-3 py-2 text-sm"
             rows={4}
             placeholder="Why do you want to join the committee?"
           />
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Profile Photo</label>
+          <label className="block text-sm font-medium text-foreground dark:text-gray-300">Profile Photo</label>
           <div className="mt-2 flex items-center gap-4">
             {photoUrl ? (
               <img
                 src={photoUrl}
                 alt="Profile"
-                className="h-20 w-20 rounded-lg object-cover border border-gray-200"
+                className="h-20 w-20 rounded-lg object-cover border border-border"
               />
             ) : (
               <div className="h-20 w-20 rounded-lg border border-dashed border-gray-300 flex items-center justify-center text-xs text-gray-400">
@@ -276,17 +276,17 @@ export default function CommitteeApplyForm({
                     handlePhotoUpload(file);
                   }
                 }}
-                className="block text-sm text-gray-600"
+                className="block text-sm text-muted-foreground"
               />
               {photoUploading && (
-                <p className="text-xs text-gray-500 mt-1">Uploading...</p>
+                <p className="text-xs text-muted-foreground mt-1">Uploading...</p>
               )}
               {!photoUploading && photoFileName && (
-                <p className="text-xs text-gray-500 mt-1">{photoFileName}</p>
+                <p className="text-xs text-muted-foreground mt-1">{photoFileName}</p>
               )}
             </div>
           </div>
-          <p className="text-xs text-gray-500 mt-2">
+          <p className="text-xs text-muted-foreground mt-2">
             Upload a recent passport-sized photo. If you already have a profile photo, you can replace it here.
           </p>
         </div>

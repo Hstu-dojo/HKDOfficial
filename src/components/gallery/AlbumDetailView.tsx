@@ -99,9 +99,9 @@ export function AlbumDetailView({ folder, images, childFolders }: AlbumDetailVie
   };
 
   return (
-    <div className="min-h-screen bg-background pt-[4.5rem] lg:pt-[161px]">
+    <div className="min-h-screen bg-background pt-24 lg:pt-28">
       <div className="container mx-auto px-4 py-8">
-        
+
         {/* Navigation & Header matching moments.tsx */}
         <motion.div
           initial={{ opacity: 0, y: 15 }}
@@ -117,9 +117,9 @@ export function AlbumDetailView({ folder, images, childFolders }: AlbumDetailVie
           </Link>
 
           {/* Hero Banner styled like moments.tsx hero */}
-          <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-card via-card/80 to-muted/40 border p-8 md:p-12 shadow-2xl">
+          <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-card via-card/80 to-muted/40 border p-8 md:p-12 shadow-sm">
             <div className="absolute inset-0 bg-grid-white/5 opacity-20 pointer-events-none" />
-            
+
             <div className="relative z-10 flex flex-col md:flex-row md:items-end justify-between gap-6">
               <div className="max-w-3xl">
                 <Badge variant="outline" className="mb-4 gap-1.5 bg-background/50 backdrop-blur-md">
@@ -164,8 +164,8 @@ export function AlbumDetailView({ folder, images, childFolders }: AlbumDetailVie
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
               {childFolders.map((child) => (
                 <Link key={child.id} href={`/gallery/${child.slug}`}>
-                  <div className="group relative overflow-hidden rounded-2xl bg-card border hover:border-primary/50 hover:shadow-xl transition-all duration-300 cursor-pointer p-4 flex flex-col items-center text-center">
-                    <FolderOpen className="h-10 w-10 text-muted-foreground/40 group-hover:scale-110 group-hover:text-primary transition-all duration-300 mb-2" />
+                  <div className="group relative overflow-hidden rounded-2xl bg-card border hover:border-primary/50 hover:shadow-sm transition-all duration-300 cursor-pointer p-4 flex flex-col items-center text-center">
+                    <FolderOpen className="h-10 w-10 text-muted-foreground/40 group-hover:scale-[1.025] group-hover:text-primary transition-all duration-300 mb-2" />
                     <p className="text-sm font-semibold truncate w-full group-hover:text-primary transition-colors">{child.name}</p>
                   </div>
                 </Link>
@@ -184,7 +184,7 @@ export function AlbumDetailView({ folder, images, childFolders }: AlbumDetailVie
               return (
                 <div
                   key={image.id}
-                  className="group relative overflow-hidden rounded-2xl border bg-muted/20 cursor-zoom-in transition-all duration-300 hover:shadow-2xl"
+                  className="group relative overflow-hidden rounded-2xl border bg-muted/20 cursor-zoom-in transition-all duration-300 hover:shadow-sm"
                   onClick={() => openLightbox(index)}
                 >
                   <div className="relative w-full">
@@ -199,7 +199,7 @@ export function AlbumDetailView({ folder, images, childFolders }: AlbumDetailVie
 
                     {/* Hover gradient overlay with caption */}
                     <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-2xl" />
-                    
+
                     <div className="absolute inset-x-0 bottom-0 p-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end justify-between text-white z-10">
                       <div className="pr-3 leading-snug">
                         <p className="text-sm font-semibold line-clamp-2">{caption}</p>
@@ -317,7 +317,7 @@ export function AlbumDetailView({ folder, images, childFolders }: AlbumDetailVie
                   <img
                     src={selectedImage.secureUrl}
                     alt={selectedImage.altText || selectedImage.title || folder.name}
-                    className="max-h-[82vh] max-w-[92vw] object-contain rounded-xl shadow-2xl"
+                    className="max-h-[82vh] max-w-[92vw] object-contain rounded-xl shadow-sm"
                   />
                 </motion.div>
               </AnimatePresence>
@@ -325,7 +325,7 @@ export function AlbumDetailView({ folder, images, childFolders }: AlbumDetailVie
 
             {/* Bottom Thumbnail Strip */}
             {images.length > 1 && (
-              <div 
+              <div
                 className="relative z-50 py-4 px-6 bg-gradient-to-t from-black/90 to-transparent overflow-x-auto flex justify-center"
                 onClick={(e) => e.stopPropagation()}
               >

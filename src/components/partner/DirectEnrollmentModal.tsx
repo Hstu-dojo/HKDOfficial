@@ -64,7 +64,7 @@ export default function DirectEnrollmentModal({
   const [step, setStep] = useState(1);
   const [courses, setCourses] = useState<Course[]>([]);
   const [loadingCourses, setLoadingCourses] = useState(false);
-  
+
   // Selection
   const [selectedCourseId, setSelectedCourseId] = useState('');
   const [selectedCourse, setSelectedCourse] = useState<Course | null>(null);
@@ -77,7 +77,7 @@ export default function DirectEnrollmentModal({
   // Payment State
   const [paymentMethod, setPaymentMethod] = useState('cash');
   const [transactionId, setTransactionId] = useState('');
-  
+
   // Submission
   const [submitting, setSubmitting] = useState(false);
 
@@ -293,18 +293,18 @@ export default function DirectEnrollmentModal({
               leaveFrom="opacity-100 scale-100"
               leaveTo="opacity-0 scale-95"
             >
-              <Dialog.Panel className="w-full max-w-4xl max-h-[calc(100vh-2rem)] transform overflow-hidden rounded-2xl bg-white dark:bg-gray-800 shadow-2xl transition-all flex flex-col border border-gray-100 dark:border-gray-700">
+              <Dialog.Panel className="w-full max-w-4xl max-h-[calc(100vh-2rem)] transform overflow-hidden rounded-2xl bg-white dark:bg-card shadow-sm transition-all flex flex-col border border-gray-100 dark:border-border">
                 {/* Header */}
-                <div className="bg-gray-50 dark:bg-gray-900/50 px-6 py-4 border-b dark:border-gray-700 flex items-center justify-between">
+                <div className="bg-muted dark:bg-background/50 px-6 py-4 border-b dark:border-border flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <AcademicCapIcon className="h-6 w-6 text-blue-600 dark:text-blue-400" />
                     <div>
-                      <Dialog.Title className="text-lg font-bold text-gray-900 dark:text-gray-100">
+                      <Dialog.Title className="text-lg font-bold text-foreground dark:text-gray-100">
                         Enroll Member to Course
                       </Dialog.Title>
-                      <p className="text-xs text-gray-500 dark:text-gray-400">
+                      <p className="text-xs text-muted-foreground dark:text-gray-400">
                         Select a course and enter payment details to enroll{' '}
-                        <span className="font-semibold text-gray-700 dark:text-gray-300">
+                        <span className="font-semibold text-foreground dark:text-gray-300">
                           {member.fullNameEnglish || member.userName || 'this member'}
                         </span>
                       </p>
@@ -319,7 +319,7 @@ export default function DirectEnrollmentModal({
                 </div>
 
                 {/* Step Indicators */}
-                <div className="flex justify-between border-b dark:border-gray-700 px-6 py-3 bg-gray-50/50 dark:bg-gray-900/10 text-xs font-semibold text-gray-500 dark:text-gray-400">
+                <div className="flex justify-between border-b dark:border-border px-6 py-3 bg-muted/50 dark:bg-background/10 text-xs font-semibold text-muted-foreground dark:text-gray-400">
                   <span className={step === 1 ? 'text-blue-600 dark:text-blue-400' : ''}>1. Select Course</span>
                   <span className={step === 2 ? 'text-blue-600 dark:text-blue-400' : ''}>2. Confirm Member Details</span>
                   <span className={step === 3 ? 'text-blue-600 dark:text-blue-400' : ''}>3. Payment Configuration</span>
@@ -327,7 +327,7 @@ export default function DirectEnrollmentModal({
                 </div>
 
                 {/* Scrollable Content */}
-                <div className="p-6 overflow-y-auto flex-1 bg-gray-50/20 dark:bg-gray-900/5">
+                <div className="p-6 overflow-y-auto flex-1 bg-muted/20 dark:bg-background/5">
                   {/* Step 1: Select Course */}
                   {step === 1 && (
                     <div className="space-y-6">
@@ -336,12 +336,12 @@ export default function DirectEnrollmentModal({
                           <span className="h-8 w-8 animate-spin rounded-full border-4 border-blue-600 border-t-transparent" />
                         </div>
                       ) : courses.length === 0 ? (
-                        <p className="text-sm text-center text-gray-500 dark:text-gray-400 py-12">
+                        <p className="text-sm text-center text-muted-foreground dark:text-gray-400 py-12">
                           No active courses are available for your venue. Please create a course first.
                         </p>
                       ) : (
                         <div className="max-w-xl mx-auto space-y-4">
-                          <label className="block text-sm font-bold text-gray-700 dark:text-gray-300">
+                          <label className="block text-sm font-bold text-foreground dark:text-gray-300">
                             Available Dojo Courses *
                           </label>
                           <select
@@ -362,14 +362,14 @@ export default function DirectEnrollmentModal({
                               <h4 className="font-bold text-blue-900 dark:text-blue-400">{selectedCourse.name}</h4>
                               <div className="grid grid-cols-2 gap-4 text-sm">
                                 <div>
-                                  <span className="text-gray-500 dark:text-gray-400">Admission Fee:</span>{' '}
-                                  <strong className="text-gray-900 dark:text-gray-100">
+                                  <span className="text-muted-foreground dark:text-gray-400">Admission Fee:</span>{' '}
+                                  <strong className="text-foreground dark:text-gray-100">
                                     {formatCurrency(selectedCourse.admissionFee, selectedCourse.currency)}
                                   </strong>
                                 </div>
                                 <div>
-                                  <span className="text-gray-500 dark:text-gray-400">Monthly Fee:</span>{' '}
-                                  <strong className="text-gray-900 dark:text-gray-100">
+                                  <span className="text-muted-foreground dark:text-gray-400">Monthly Fee:</span>{' '}
+                                  <strong className="text-foreground dark:text-gray-100">
                                     {formatCurrency(selectedCourse.monthlyFee, selectedCourse.currency)}
                                   </strong>
                                 </div>
@@ -387,9 +387,9 @@ export default function DirectEnrollmentModal({
                       {visibleSections.map((section) => (
                         <div
                           key={section.id}
-                          className="bg-white dark:bg-gray-800 p-5 rounded-xl border border-gray-100 dark:border-gray-700 shadow-sm space-y-4"
+                          className="bg-white dark:bg-card p-5 rounded-xl border border-gray-100 dark:border-border shadow-sm space-y-4"
                         >
-                          <h3 className="text-sm font-bold text-gray-900 dark:text-gray-100 pb-2 border-b dark:border-gray-700 flex items-center">
+                          <h3 className="text-sm font-bold text-foreground dark:text-gray-100 pb-2 border-b dark:border-border flex items-center">
                             {section.title} <span className="text-xs text-gray-400 dark:text-gray-500 ml-1.5">({section.titleBn})</span>
                           </h3>
                           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
@@ -397,7 +397,7 @@ export default function DirectEnrollmentModal({
                               const value = formData[field.id] || '';
                               return (
                                 <div key={field.id} className="space-y-1">
-                                  <label className="text-xs font-semibold text-gray-500 dark:text-gray-400 flex items-center gap-0.5">
+                                  <label className="text-xs font-semibold text-muted-foreground dark:text-gray-400 flex items-center gap-0.5">
                                     {field.label}
                                     {field.required && <span className="text-red-500">*</span>}
                                   </label>
@@ -437,14 +437,14 @@ export default function DirectEnrollmentModal({
                       ))}
 
                       {/* Image Upload box */}
-                      <div className="bg-white dark:bg-gray-800 p-5 rounded-xl border border-gray-100 dark:border-gray-700 shadow-sm space-y-4">
-                        <h3 className="text-sm font-bold text-gray-900 dark:text-gray-100 pb-2 border-b dark:border-gray-700">
+                      <div className="bg-white dark:bg-card p-5 rounded-xl border border-gray-100 dark:border-border shadow-sm space-y-4">
+                        <h3 className="text-sm font-bold text-foreground dark:text-gray-100 pb-2 border-b dark:border-border">
                           Profile Picture & Signature
                         </h3>
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                           {/* Profile photo */}
                           <div className="space-y-2">
-                            <label className="text-xs font-semibold text-gray-500 dark:text-gray-400">Passport Photo</label>
+                            <label className="text-xs font-semibold text-muted-foreground dark:text-gray-400">Passport Photo</label>
                             {photoFile && (
                               <div className="relative w-24 h-24 rounded-lg overflow-hidden border">
                                 {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -455,14 +455,14 @@ export default function DirectEnrollmentModal({
                               type="file"
                               accept="image/*"
                               onChange={handleFileUpload('photo')}
-                              className="text-xs w-full text-gray-500 dark:text-gray-400"
+                              className="text-xs w-full text-muted-foreground dark:text-gray-400"
                             />
                           </div>
                           {/* Signature photo */}
                           <div className="space-y-2">
-                            <label className="text-xs font-semibold text-gray-500 dark:text-gray-400">Signature Image</label>
+                            <label className="text-xs font-semibold text-muted-foreground dark:text-gray-400">Signature Image</label>
                             {signatureFile && (
-                              <div className="relative w-32 h-16 rounded-lg overflow-hidden border bg-gray-50">
+                              <div className="relative w-32 h-16 rounded-lg overflow-hidden border bg-muted">
                                 {/* eslint-disable-next-line @next/next/no-img-element */}
                                 <img src={signatureFile} alt="Signature" className="w-full h-full object-contain" />
                               </div>
@@ -471,7 +471,7 @@ export default function DirectEnrollmentModal({
                               type="file"
                               accept="image/*"
                               onChange={handleFileUpload('signature')}
-                              className="text-xs w-full text-gray-500 dark:text-gray-400"
+                              className="text-xs w-full text-muted-foreground dark:text-gray-400"
                             />
                           </div>
                         </div>
@@ -482,17 +482,17 @@ export default function DirectEnrollmentModal({
                   {/* Step 3: Payment */}
                   {step === 3 && selectedCourse && (
                     <div className="max-w-md mx-auto space-y-6">
-                      <div className="bg-gray-50 dark:bg-gray-900/30 rounded-xl p-4 border border-gray-100 dark:border-gray-700 space-y-2">
-                        <h4 className="text-sm font-bold text-gray-700 dark:text-gray-300">Enrollment Fees Due</h4>
+                      <div className="bg-muted dark:bg-background/30 rounded-xl p-4 border border-gray-100 dark:border-border space-y-2">
+                        <h4 className="text-sm font-bold text-foreground dark:text-gray-300">Enrollment Fees Due</h4>
                         <div className="flex justify-between text-sm">
                           <span>Admission Fee:</span>
-                          <span className="font-semibold text-gray-900 dark:text-gray-100">
+                          <span className="font-semibold text-foreground dark:text-gray-100">
                             {formatCurrency(selectedCourse.admissionFee, selectedCourse.currency)}
                           </span>
                         </div>
                         <div className="flex justify-between text-sm">
                           <span>First Month Fee:</span>
-                          <span className="font-semibold text-gray-900 dark:text-gray-100">
+                          <span className="font-semibold text-foreground dark:text-gray-100">
                             {formatCurrency(selectedCourse.monthlyFee, selectedCourse.currency)}
                           </span>
                         </div>
@@ -500,7 +500,7 @@ export default function DirectEnrollmentModal({
 
                       <div className="space-y-4">
                         <div>
-                          <label className="block text-sm font-bold text-gray-700 dark:text-gray-300">
+                          <label className="block text-sm font-bold text-foreground dark:text-gray-300">
                             Payment Channel *
                           </label>
                           <select
@@ -518,7 +518,7 @@ export default function DirectEnrollmentModal({
 
                         {paymentMethod !== 'cash' && paymentMethod !== 'waived' && (
                           <div>
-                            <label className="block text-sm font-bold text-gray-700 dark:text-gray-300">
+                            <label className="block text-sm font-bold text-foreground dark:text-gray-300">
                               Payment Transaction ID *
                             </label>
                             <input
@@ -541,39 +541,39 @@ export default function DirectEnrollmentModal({
                       <div className="bg-green-50 dark:bg-green-950/20 border border-green-200 dark:border-green-800 rounded-xl p-5 text-center space-y-2">
                         <CheckIcon className="h-8 w-8 text-green-600 mx-auto" />
                         <h4 className="font-bold text-green-950 dark:text-green-400">Ready to Enroll</h4>
-                        <p className="text-xs text-gray-500 dark:text-gray-400">
+                        <p className="text-xs text-muted-foreground dark:text-gray-400">
                           Confirming the following will active the course enrollment instantly.
                         </p>
                       </div>
 
                       <div className="divide-y dark:divide-gray-700 text-sm">
                         <div className="py-2.5 flex justify-between">
-                          <span className="text-gray-500">Student:</span>
+                          <span className="text-muted-foreground">Student:</span>
                           <span className="font-semibold">{formData.name_en}</span>
                         </div>
                         <div className="py-2.5 flex justify-between">
-                          <span className="text-gray-500">Selected Course:</span>
+                          <span className="text-muted-foreground">Selected Course:</span>
                           <span className="font-semibold">{selectedCourse.name}</span>
                         </div>
                         <div className="py-2.5 flex justify-between">
-                          <span className="text-gray-500">Admission Charge:</span>
+                          <span className="text-muted-foreground">Admission Charge:</span>
                           <span className="font-semibold">
                             {formatCurrency(selectedCourse.admissionFee, selectedCourse.currency)}
                           </span>
                         </div>
                         <div className="py-2.5 flex justify-between">
-                          <span className="text-gray-500">Monthly Tuition:</span>
+                          <span className="text-muted-foreground">Monthly Tuition:</span>
                           <span className="font-semibold">
                             {formatCurrency(selectedCourse.monthlyFee, selectedCourse.currency)}
                           </span>
                         </div>
                         <div className="py-2.5 flex justify-between">
-                          <span className="text-gray-500">Payment Channel:</span>
+                          <span className="text-muted-foreground">Payment Channel:</span>
                           <span className="font-semibold uppercase">{paymentMethod}</span>
                         </div>
                         {paymentMethod !== 'cash' && paymentMethod !== 'waived' && (
                           <div className="py-2.5 flex justify-between">
-                            <span className="text-gray-500">TxID:</span>
+                            <span className="text-muted-foreground">TxID:</span>
                             <span className="font-mono text-xs">{transactionId}</span>
                           </div>
                         )}
@@ -583,11 +583,11 @@ export default function DirectEnrollmentModal({
                 </div>
 
                 {/* Footer Buttons */}
-                <div className="bg-gray-50 dark:bg-gray-900/50 px-6 py-4 border-t dark:border-gray-700 flex items-center justify-between">
+                <div className="bg-muted dark:bg-background/50 px-6 py-4 border-t dark:border-border flex items-center justify-between">
                   <button
                     onClick={() => setStep((s) => Math.max(1, s - 1))}
                     disabled={step === 1 || submitting}
-                    className="inline-flex items-center gap-1 px-4 py-2 text-sm font-semibold text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg disabled:opacity-30 transition-colors"
+                    className="inline-flex items-center gap-1 px-4 py-2 text-sm font-semibold text-foreground dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg disabled:opacity-30 transition-colors"
                   >
                     <ChevronLeftIcon className="h-4 w-4" /> Previous
                   </button>
