@@ -6,6 +6,7 @@ import Image from 'next/image';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Download, Loader2 } from 'lucide-react';
 import { ProfileCompletionBanner } from '@/components/layout/profile-completion-banner';
+import { useCurrentLocale, useScopedI18n } from '@/locales/client';
 import {
   fillPdfForm,
   downloadPdf,
@@ -52,8 +53,6 @@ const BELT_STYLES: Record<string, { bg: string; text: string; dot: string }> = {
   black:  { bg: 'bg-slate-900 dark:bg-slate-700',       text: 'text-white',                             dot: 'bg-black dark:bg-white' },
 };
 
-const DAY_NAMES = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-
 const fadeUp = {
   initial: { opacity: 0, y: 40 },
   animate: (i: number) => ({
@@ -71,6 +70,11 @@ interface KarateCoursesPageProps {
 }
 
 export default function KarateCoursesPage({ initialCourses, enrolledCourseIds = [], enrolledApplicationMap = {}, applicationNumberMap = {} }: KarateCoursesPageProps) {
+  const locale = useCurrentLocale();
+  const numberLocale = locale === 'bn' ? 'bn-BD' : locale === 'ne' ? 'ne-NP' : 'en-BD';
+  const t = useScopedI18n('courses.catalog') as any;
+  const tDays = useScopedI18n('days');
+  const dayNames = [tDays('sunday'), tDays('monday'), tDays('tuesday'), tDays('wednesday'), tDays('thursday'), tDays('friday'), tDays('saturday')];
   const [courses] = useState<Course[]>(initialCourses);
   const enrolledSet = new Set(enrolledCourseIds);
   const [downloadingCourse, setDownloadingCourse] = useState<string | null>(null);
@@ -147,19 +151,18 @@ export default function KarateCoursesPage({ initialCourses, enrolledCourseIds = 
 
   const formatCurrency = (amount: number | null | undefined, currency: string) => {
     if (amount == null) return '—'
-    return new Intl.NumberFormat('en-BD', {
+    return new Intl.NumberFormat(numberLocale, {
       style: 'currency',
       currency,
       minimumFractionDigits: 0,
     }).format(amount / 100)
   };
 
-  const formatTime = (time: string) => {
-    const [hours, minutes] = time.split(':');
+  const formatTime = (timeString: string) => {
+    const [hours, minutes] = timeString.split(':');
     const h = parseInt(hours);
-    const ampm = h >= 12 ? 'PM' : 'AM';
-    const hour12 = h % 12 || 12;
-    return `${hour12}:${minutes} ${ampm}`;
+    const formattedDateTime = new Date(2000, 0, 1, h, Number(minutes));
+    return new Intl.DateTimeFormat(numberLocale, { hour: 'numeric', minute: '2-digit' }).format(formattedDateTime);
   };
 
   const getBeltLabel = (belt: string) =>
@@ -193,16 +196,15 @@ export default function KarateCoursesPage({ initialCourses, enrolledCourseIds = 
         <div className="inline-flex items-center gap-3 mb-4">
           <div className="h-px w-8 bg-primary" />
           <span className="text-xs font-semibold tracking-[0.25em] text-primary uppercase">
-            Train With Us
+            {t('kicker')}
           </span>
           <div className="h-px w-8 bg-primary" />
         </div>
         <h1 className="text-3xl lg:text-5xl font-bold mb-4">
-          Karate <span className="text-primary">Courses</span>
+          {t('titlePrefix')} <span className="text-primary">{t('titleAccent')}</span>
         </h1>
         <p className="text-base text-muted-foreground max-w-lg mx-auto">
-          Begin your martial arts journey with expert-led programs designed for
-          all ages and skill levels.
+          {t('description')}
         </p>
       </motion.div>
 
@@ -228,8 +230,8 @@ export default function KarateCoursesPage({ initialCourses, enrolledCourseIds = 
             <svg className="w-16 h-16 mx-auto text-muted-foreground/30 mb-4" fill="none" viewBox="0 0 24 24" strokeWidth={1} stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" d="M4.26 10.147a60.436 60.436 0 00-.491 6.347A48.627 48.627 0 0112 20.904a48.627 48.627 0 018.232-4.41 60.46 60.46 0 00-.491-6.347m-15.482 0a50.57 50.57 0 00-2.658-.813A59.905 59.905 0 0112 3.493a59.902 59.902 0 0110.399 5.84c-.896.248-1.783.52-2.658.814m-15.482 0A50.697 50.697 0 0112 13.489a50.702 50.702 0 017.74-3.342" />
             </svg>
-            <h3 className="text-xl font-semibold mb-2">No Courses Available</h3>
-            <p className="text-muted-foreground">Please check back later for upcoming courses.</p>
+            <h3 className="text-xl font-semibold mb-2">{t('noCourses')}</h3>
+            <p className="text-muted-foreground">{t('noCoursesDescription')}</p>
           </motion.div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
@@ -288,11 +290,11 @@ export default function KarateCoursesPage({ initialCourses, enrolledCourseIds = 
                           {course.isEnrollmentOpen ? (
                             <span className="inline-flex items-center gap-1 text-[10px] font-medium bg-green-500/90 backdrop-blur-sm text-white px-2.5 py-1 rounded-md shadow-sm">
                               <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" />
-                              Open
+                              {t('open')}
                             </span>
                           ) : (
                             <span className="text-[10px] font-medium bg-slate-500/80 backdrop-blur-sm text-white px-2.5 py-1 rounded-md shadow-sm">
-                              Closed
+                              {t('closed')}
                             </span>
                           )}
                         </div>
@@ -305,7 +307,7 @@ export default function KarateCoursesPage({ initialCourses, enrolledCourseIds = 
                                 <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />
                               </svg>
                               <span className="text-[11px] font-semibold text-foreground dark:text-foreground">
-                                {course.durationMonths} months
+                                {t('months', { count: course.durationMonths })}
                               </span>
                             </div>
                           )}
@@ -343,12 +345,12 @@ export default function KarateCoursesPage({ initialCourses, enrolledCourseIds = 
                                 <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
                                   <path strokeLinecap="round" strokeLinejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5" />
                                 </svg>
-                                {DAY_NAMES[schedule.dayOfWeek]} {formatTime(schedule.startTime)}
+                                {dayNames[schedule.dayOfWeek]} {formatTime(schedule.startTime)}
                               </span>
                             ))}
                             {course.schedules.length > 3 && (
                               <span className="text-[10px] text-muted-foreground/60 self-center">
-                                +{course.schedules.length - 3} more
+                                {t('more', { count: course.schedules.length - 3 })}
                               </span>
                             )}
                           </div>
@@ -380,14 +382,14 @@ export default function KarateCoursesPage({ initialCourses, enrolledCourseIds = 
                             {canApply ? (
                               <>
                                 <div>
-                                  <p className="text-[10px] font-medium text-muted-foreground uppercase tracking-wider">Monthly</p>
+                                  <p className="text-[10px] font-medium text-muted-foreground uppercase tracking-wider">{t('monthly')}</p>
                                   <p className="text-2xl font-bold text-primary">
                                     {formatCurrency(course.monthlyFee, course.currency)}
                                   </p>
                                 </div>
                                 {course.admissionFee != null && course.admissionFee > 0 && (
                                   <div className="text-right">
-                                    <p className="text-[10px] font-medium text-muted-foreground uppercase tracking-wider">Admission</p>
+                                    <p className="text-[10px] font-medium text-muted-foreground uppercase tracking-wider">{t('admission')}</p>
                                     <p className="text-base font-semibold">
                                       {formatCurrency(course.admissionFee, course.currency)}
                                     </p>
@@ -396,9 +398,9 @@ export default function KarateCoursesPage({ initialCourses, enrolledCourseIds = 
                               </>
                             ) : (
                                 <div>
-                                  <p className="text-[10px] font-medium text-muted-foreground uppercase tracking-wider opacity-60">Pricing</p>
+                                  <p className="text-[10px] font-medium text-muted-foreground uppercase tracking-wider opacity-60">{t('pricing')}</p>
                                   <p className="text-base font-medium text-muted-foreground opacity-60">
-                                    Private Course
+                                    {t('privateCourse')}
                                   </p>
                                 </div>
                             )}
@@ -411,7 +413,7 @@ export default function KarateCoursesPage({ initialCourses, enrolledCourseIds = 
                                   <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
                                     <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                                   </svg>
-                                  Already Applied
+                                  {t('alreadyApplied')}
                                 </div>
                                 {enrolledApplicationMap[course.id] && (
                                   <button
@@ -432,7 +434,7 @@ export default function KarateCoursesPage({ initialCourses, enrolledCourseIds = 
                                 href={`/karate/courses/${course.slug}/apply`}
                                 className="flex items-center justify-center gap-2 w-full text-center px-4 py-3 bg-gradient-to-r from-primary to-tertiary text-white font-semibold rounded-lg hover:opacity-90 transition-all duration-300 shadow-sm hover:shadow-md text-sm"
                               >
-                                Apply Now
+                                {t('applyNow')}
                                 <svg className="w-4 h-4 transition-transform group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
                                   <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
                                 </svg>
@@ -442,7 +444,7 @@ export default function KarateCoursesPage({ initialCourses, enrolledCourseIds = 
                                 disabled
                                 className="w-full px-4 py-3 bg-slate-200 dark:bg-slate-700 text-muted-foreground font-medium rounded-lg cursor-not-allowed text-sm flex items-center justify-center"
                               >
-                                Exclusive Course
+                                {t('exclusiveCourse')}
                               </button>
                             )
                           ) : (
@@ -450,7 +452,7 @@ export default function KarateCoursesPage({ initialCourses, enrolledCourseIds = 
                               disabled
                               className="w-full px-4 py-3 bg-muted dark:bg-slate-700/50 text-muted-foreground font-medium rounded-lg cursor-not-allowed text-sm"
                             >
-                              Enrollment Closed
+                              {t('enrollmentClosed')}
                             </button>
                           )}
                         </div>
@@ -479,12 +481,12 @@ export default function KarateCoursesPage({ initialCourses, enrolledCourseIds = 
             <div className="inline-flex items-center gap-3 mb-4">
               <div className="h-px w-8 bg-secondary" />
               <span className="text-xs font-semibold tracking-[0.25em] text-secondary uppercase">
-                Why Us
+                {t('whyUs')}
               </span>
               <div className="h-px w-8 bg-secondary" />
             </div>
             <h2 className="text-2xl lg:text-3xl font-bold">
-              Why Choose Our <span className="text-primary">Karate Program</span>?
+              {t('whyChoosePrefix')} <span className="text-primary">{t('whyChooseAccent')}</span>{t('whyChooseSuffix')}
             </h2>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
@@ -495,8 +497,8 @@ export default function KarateCoursesPage({ initialCourses, enrolledCourseIds = 
                     <path strokeLinecap="round" strokeLinejoin="round" d="M4.26 10.147a60.436 60.436 0 00-.491 6.347A48.627 48.627 0 0112 20.904a48.627 48.627 0 018.232-4.41 60.46 60.46 0 00-.491-6.347m-15.482 0a50.57 50.57 0 00-2.658-.813A59.905 59.905 0 0112 3.493a59.902 59.902 0 0110.399 5.84c-.896.248-1.783.52-2.658.814m-15.482 0A50.697 50.697 0 0112 13.489a50.702 50.702 0 017.74-3.342" />
                   </svg>
                 ),
-                title: 'Expert Instructors',
-                desc: 'Learn from certified black belt instructors with years of teaching experience.',
+                title: t('expertInstructors'),
+                desc: t('expertInstructorsDescription'),
               },
               {
                 icon: (
@@ -504,8 +506,8 @@ export default function KarateCoursesPage({ initialCourses, enrolledCourseIds = 
                     <path strokeLinecap="round" strokeLinejoin="round" d="M15 19.128a9.38 9.38 0 002.625.372 9.337 9.337 0 004.121-.952 4.125 4.125 0 00-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 018.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0111.964-3.07M12 6.375a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zm8.25 2.25a2.625 2.625 0 11-5.25 0 2.625 2.625 0 015.25 0z" />
                   </svg>
                 ),
-                title: 'All Ages Welcome',
-                desc: 'Programs designed for children, adults, and families to train together.',
+                title: t('allAges'),
+                desc: t('allAgesDescription'),
               },
               {
                 icon: (
@@ -513,8 +515,8 @@ export default function KarateCoursesPage({ initialCourses, enrolledCourseIds = 
                     <path strokeLinecap="round" strokeLinejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5" />
                   </svg>
                 ),
-                title: 'Flexible Schedule',
-                desc: 'Multiple class times to fit your busy lifestyle.',
+                title: t('flexibleSchedule'),
+                desc: t('flexibleScheduleDescription'),
               },
             ].map((item, idx) => (
               <div key={idx} className="text-center group/card">

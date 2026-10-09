@@ -21,28 +21,28 @@ const SectionTestimonialsSlider = () => {
   const testimonials = [
     {
       name: "Md. Hasan",
-      affiliation: "Academy Student",
+      affiliation: t("academyStudent"),
       comment: t("hasan1"),
       image: `${baseUrl}/favourite/IMG_1937_sendde.jpg`,
       rating: 5,
     },
     {
       name: "Loveraj Acharya",
-      affiliation: "Senior Practitioner",
+      affiliation: t("seniorPractitioner"),
       comment: t("loveraj"),
       image: `${baseUrl}/favourite/IMG_20251108_215737_zxprcw.jpg`,
       rating: 4,
     },
     {
       name: "Rafiq Ahmed",
-      affiliation: "Academy Alumni",
+      affiliation: t("academyAlumni"),
       comment: t("hasan2"),
       image: `${baseUrl}/favourite/IMG_20251108_221125_hfljw3.jpg`,
       rating: 5,
     },
     {
       name: "Shahriar Hossain",
-      affiliation: "Martial Arts Practitioner",
+      affiliation: t("martialArtsPractitioner"),
       comment: t("shahriar"),
       image: `${baseUrl}/favourite/IMG-20250822-WA0053_qiobdp.jpg`,
       rating: 5,
@@ -53,9 +53,9 @@ const SectionTestimonialsSlider = () => {
     <section className="relative py-20 md:py-28 bg-[#191919]      overflow-hidden">
       <div className="container mx-auto px-4 max-w-7xl relative z-10">
         <SectionHeader
-          kicker="Testimonials"
-          title="What Our Members"
-          titleAccent="Say"
+          kicker={t("kicker")}
+          title={t("titlePrefix")}
+          titleAccent={t("titleAccent")}
           description={tStats("satisfiedDesc")}
           lightText
         />

@@ -1,6 +1,6 @@
 # Editorial theme implementation
 
-The academy now uses the magazine direction from the supplied references: serif feature headlines, white and neutral-gray surfaces, rounded photographic panels, a compact masthead, selective red highlights, and restrained motion.
+The academy now uses the magazine direction from the supplied references: serif feature headlines, white and neutral-gray surfaces, rounded photographic panels, a compact masthead, purple and aqua from the academy logo, and restrained motion.
 
 ## Changes
 
@@ -10,7 +10,7 @@ The academy now uses the magazine direction from the supplied references: serif 
 - Restyled academy navigation, footer, program cards, statistics, section titles, branch cards, FAQ, testimonials, and the existing Furious5 showcase.
 - Applied semantic neutral surfaces and readable typography across courses, application forms, payments, gallery, committee, authentication, settings, student dashboard, central administration, and partner portal screens. Existing belt colors, provider colors, and status semantics remain distinct.
 - Replaced the gallery's 3D folder presentation with photographic covers while retaining album destinations and click callbacks. Preserved lightbox, upload, and management implementations.
-- Unified blog/article/notice typography and layout, scoped reading CSS, and integrated the prospectus with the same font family and red primary hue.
+- Unified blog/article/notice typography and layout, scoped reading CSS, and integrated the prospectus with the same font family and purple primary hue.
 - Brought organization templates into the same visual family while retaining partner branding, configured content, links, schedules, and enrollment behavior.
 - Added progressive section reveals, subtle image zooms, headline/image entrance motion, and reduced-motion support. Removed the large homepage parallax composition and simplified the full-page loader without imposing a routing delay.
 - Corrected invalid document/description markup and the blog comment count's initial server/client URL mismatch during rendered verification.
@@ -34,3 +34,9 @@ Build warnings: the existing WordPress API was unreachable and used its existing
 ## Local verification support
 
 `NEXT_DIST_DIR` optionally selects a separate generated Next.js directory. The default remains `.next`. Generated `.next-editorial-*` directories are ignored so verification can run beside an existing development process.
+
+## Current motion and palette refinement
+
+The Lorenzo-inspired revision retains the editorial layout and existing home sections. GSAP animates the hero canvas, photo, and copy, with a short desktop pin when the canvas fits the viewport; compact screens receive unpinned photographic movement. Existing program cards receive staggered scroll movement. The logo colors are purple `#5E17EB` and aqua `#0097B2`, with readable dark-theme and aqua-text variants. The discarded leaderboard, belt explorer, results APIs, admin management screen, schema/migration, and empty results table have been removed. No new homepage sections or backend workflows are introduced.
+
+Verification for the current refinement: TypeScript and focused ESLint passed. Chromium confirmed the exact logo color tokens, absence of the discarded homepage components, scroll-responsive hero movement, desktop pinning, reduced-motion cleanup, dark theme, 320px layout width, and mobile-menu behavior without page errors. Desktop, scrolled, dark, and mobile screenshots were reviewed. The production build was not rerun for this UI-only refinement.

@@ -102,7 +102,13 @@ export default function PaymentSettingsPage() {
       const res = await fetch("/api/admin/payment-accounts");
       if (!res.ok) throw new Error("Failed to fetch");
       const data = await res.json();
-      setAccounts(data.accounts || []);
+      // The API returns `{ account, partnerName }` rows. Flatten them here,
+      // while still accepting flat records from older/mock API responses.
+      const rows = Array.isArray(data.accounts) ? data.accounts : [];
+      setAccounts(rows.map((row: any) => ({
+        ...(row?.account ?? row),
+        partnerName: row?.partnerName ?? row?.account?.partnerName ?? null,
+      })));
     } catch (error) {
       toast({ title: "Error", description: "Failed to load payment accounts", variant: "destructive" });
     } finally {
@@ -526,7 +532,9 @@ export default function PaymentSettingsPage() {
       ) : (
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
           {filteredAccounts.map((account) => {
-            const MethodIcon = methodIcons[account.methodType] || BanknotesIcon;
+            const methodType = typeof account.methodType === "string" ? account.methodType : "";
+            const methodClass = methodColors[methodType] || "bg-muted text-foreground";
+            const MethodIcon = methodIcons[methodType] || BanknotesIcon;
             return (
               <div
                 key={account.id}
@@ -536,7 +544,7 @@ export default function PaymentSettingsPage() {
               >
                 <div className="flex items-start justify-between">
                   <div className="flex items-center gap-3">
-                    <div className={`p-2 rounded-lg ${methodColors[account.methodType]}`}>
+                    <div className={`p-2 rounded-lg ${methodClass}`}>
                       <MethodIcon className="h-5 w-5" />
                     </div>
                     <div>
@@ -560,8 +568,8 @@ export default function PaymentSettingsPage() {
                 )}
 
                 <div className="flex items-center gap-2 mt-3">
-                  <span className={`text-xs px-2 py-0.5 rounded ${methodColors[account.methodType]}`}>
-                    {account.methodType.toUpperCase()}
+                  <span className={`text-xs px-2 py-0.5 rounded ${methodClass}`}>
+                    {methodType ? methodType.toUpperCase() : "Unknown method"}
                   </span>
                   <span className="text-xs bg-muted dark:bg-gray-700 px-2 py-0.5 rounded">
                     {scopeLabels[account.scope]}

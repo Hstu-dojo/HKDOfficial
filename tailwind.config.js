@@ -123,6 +123,7 @@ module.exports = {
 				'950': '#10100F',
 				base: '#737370'
 			},
+			aqua: { DEFAULT: 'hsl(var(--aqua) / <alpha-value>)', foreground: 'hsl(var(--aqua-foreground) / <alpha-value>)' },
 			yellow: '#fbc02d',
 			green: '#44d88d',
 			border: 'hsl(var(--border, 192 12% 92%) / <alpha-value>)',
@@ -142,7 +143,7 @@ module.exports = {
 				DEFAULT: 'hsl(var(--primary) / <alpha-value>)'
 			},
 			quaternary: {
-				DEFAULT: '#fa6262'
+				DEFAULT: 'hsl(var(--secondary) / <alpha-value>)'
 			},
 			destructive: {
 				DEFAULT: 'hsl(var(--destructive, 0 84.2% 60.2%) / <alpha-value>)',

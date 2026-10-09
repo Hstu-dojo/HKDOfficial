@@ -57,6 +57,9 @@ export default {
   // Homepage Sections
   homepage: {
     programs: {
+      kicker: "Training",
+      titlePrefix: "Discover Our",
+      description: "Comprehensive martial arts training designed for practitioners of all ages and skill levels.",
       title: "Discover Our Programs",
       titleSpan: "Programs",
       training: {
@@ -87,6 +90,8 @@ export default {
       },
     },
     benefits: {
+      kicker: "Why Join Kaizen Karate Academy?",
+      membersTrainedLabel: "Members Trained",
       title: "Discover the Benefits of Joining Kaizen Karate Academy",
       subtitle: "Enhance your physical and mental capabilities through disciplined karate training. Experience the transformative power of martial arts.",
       discipline: {
@@ -141,6 +146,11 @@ export default {
       visitBranch: "Visit Branch",
     },
     faq: {
+      kicker: "FAQ",
+      titlePrefix: "Frequently Asked",
+      titleAccent: "Questions",
+      stillHaveQuestions: "Still Have Questions?",
+      helpDescription: "We're here to help you get started",
       title: "Frequently Asked Questions",
       subtitle: "Find answers to the most commonly asked questions about Kaizen Karate Academy and learn more about our activities and membership.",
       q1: "What is Kaizen Karate Academy?",
@@ -160,8 +170,19 @@ export default {
       competitionsType: "Intra and inter-university",
       satisfied: "Satisfied Members",
       satisfiedDesc: "Those who already tried it.",
+      barMembers: "Members Trained",
+      barCompetitions: "Competitions Won",
+      barYears: "Years Active",
+      barBranches: "Active Branches",
     },
     testimonials: {
+      kicker: "Testimonials",
+      titlePrefix: "What Our Members",
+      titleAccent: "Say",
+      academyStudent: "Academy Student",
+      seniorPractitioner: "Senior Practitioner",
+      academyAlumni: "Academy Alumni",
+      martialArtsPractitioner: "Martial Arts Practitioner",
       testimonialOf: "Testimonial of",
       hasan1: "Joining Kaizen Karate Academy has been an incredible experience. The training is top-notch and the sensei is very supportive.",
       loveraj: "The dojo provides a great environment for learning and personal growth. I highly recommend it to anyone interested in martial arts.",
@@ -178,9 +199,34 @@ export default {
       crane: "Crane",
     },
     partners: {
+      kicker: "Affiliations",
+      titlePrefix: "Our Trusted",
+      titleAccent: "Partners",
       title: "Partners",
       subtitle: "Proud Partners of Kaizen Karate Academy",
       description: "Connecting with our esteemed partners to elevate our dojo.",
+      roles: {
+        hstu: "Host University & Primary Support",
+        sdch: "Training Partner & Facility Provider",
+        ece: "Official Club Partner",
+      },
+      organizations: {
+        hstu: "Hajee Mohammad Danesh Science & Technology University",
+        sdch: "Physical Education & Sports Dept.",
+        ece: "ECE Club of HSTU",
+      },
+      prospectusTitle: "Dojo Prospectus & Guidelines",
+      prospectusDescription: "Explore our official curriculum, belt requirements, training schedule, and dojo rules.",
+      viewProspectus: "View Prospectus",
+    },
+    recentAlbums: {
+      kicker: "Photo Gallery",
+      titlePrefix: "Recent",
+      titleAccent: "Albums",
+      description: "Relive the latest moments from our dojo — grading tests, events, and daily training.",
+      viewAll: "View All Albums",
+      emptyTitle: "No recent albums yet",
+      emptyDescription: "Published dojo photos and event albums will appear here.",
     },
     finalCta: {
       title: "Karate is not just about fighting, it's a lifestyle!",
@@ -467,6 +513,7 @@ export default {
 
   // Contact Page
   contact: {
+    kicker: "Get In Touch",
     title: "Contact",
     subtitle: "Let's have a discussion about your business",
     nameLabel: "Name",
@@ -480,8 +527,30 @@ export default {
     email: "Email",
   },
 
+  committeePage: {
+    title: "Committee Members",
+    subtitle: "Meet the current committee and apply to join the team for this year.",
+    year: "Year {year}", active: "Active", faculty: "Faculty / Department:", institution: "Institution:", memberNumber: "Member #:",
+    memberFallback: "Committee Member", applyToJoin: "Apply to Join", loginRequired: "You must be logged in to submit an application.", login: "Log in", pastBadge: "Past",
+    noActive: "No Active Committee", checkBack: "Please check back later.", past: "Past Committees", member: "Member",
+    form: {
+      title: "Apply for Committee", description: "Submit your application to join the committee for this year.",
+      alreadySubmitted: "You already submitted this form for {year}.", status: "Status:", loginToApply: "Please log in and complete onboarding to apply.",
+      name: "Name", email: "Email", phone: "Phone", phonePlaceholder: "Phone number", nid: "NID", nidPlaceholder: "National ID",
+      institution: "Institution", institutionPlaceholder: "University / College", department: "Faculty / Department", departmentPlaceholder: "Faculty / Department Name",
+      address: "Address", addressPlaceholder: "Current address", statement: "Statement", statementPlaceholder: "Why do you want to join the committee?",
+      photo: "Profile Photo", noPhoto: "No Photo", uploading: "Uploading...", photoHint: "Upload a recent passport-sized photo. If you already have a profile photo, you can replace it here.",
+      submitting: "Submitting...", update: "Update Application", submit: "Submit Application", profileAlt: "Profile photo",
+      statusPending: "Pending", statusApproved: "Approved", statusRejected: "Rejected", statusUnderReview: "Under Review",
+      loginError: "Please log in to apply.", requiredError: "Please fill all required fields: Institution, Faculty / Department, Phone, NID, Address, Photo.",
+      updated: "Application updated successfully.", submitted: "Application submitted successfully.", failed: "Failed to submit application.",
+      imageOnly: "Please select an image file", tooLarge: "File too large. Max 4MB.", uploadFailed: "Failed to upload photo", uploaded: "Photo uploaded successfully",
+    },
+  },
+
   // About Page
   about: {
+    kicker: "About Kaizen",
     title: "About",
     subtitle: "Kaizen Karate Academy (KKA) is dedicated to excellence in traditional Shitoryu karate. Founded with a commitment to continuous growth and martial discipline, KKA focuses on respect, perseverance, and character development under experienced instructors.",
     keyFeatures: "Key Features and Values of Kaizen Karate Academy",
@@ -511,6 +580,7 @@ export default {
   },
 
   services: {
+    kicker: "What We Offer",
     metadataTitle: "Services",
     metadataDescription: "Services page",
     pageTitle: "Services",
@@ -778,6 +848,18 @@ export default {
     intermediate: "Intermediate",
     advanced: "Advanced",
     allLevels: "All Levels",
+    catalog: {
+      kicker: "Train With Us", titlePrefix: "Karate", titleAccent: "Courses",
+      description: "Begin your martial arts journey with expert-led programs designed for all ages and skill levels.",
+      noCourses: "No Courses Available", noCoursesDescription: "Please check back later for upcoming courses.",
+      open: "Open", closed: "Closed", months: "{count} months", more: "+{count} more",
+      monthly: "Monthly", admission: "Admission", pricing: "Pricing", privateCourse: "Private Course",
+      alreadyApplied: "Already Applied", applyNow: "Apply Now", exclusiveCourse: "Exclusive Course", enrollmentClosed: "Enrollment Closed",
+      whyUs: "Why Us", whyChoosePrefix: "Why Choose Our", whyChooseAccent: "Karate Program", whyChooseSuffix: "?",
+      expertInstructors: "Expert Instructors", expertInstructorsDescription: "Learn from certified black belt instructors with years of teaching experience.",
+      allAges: "All Ages Welcome", allAgesDescription: "Programs designed for children, adults, and families to train together.",
+      flexibleSchedule: "Flexible Schedule", flexibleScheduleDescription: "Multiple class times to fit your busy lifestyle.",
+    },
 
     details: {
       metaTitleFallback: "Course Details | Kaizen Karate Academy",
@@ -851,6 +933,13 @@ export default {
   programs: {
     title: "Programs",
     allPrograms: "All Programs",
+    catalog: {
+      heading: "Upcoming Events & Programs",
+      description: "Join our special training sessions, belt tests, and competitions.",
+      empty: "No upcoming programs scheduled at the moment.",
+      free: "Free",
+      viewDetails: "View Details",
+    },
     register: "Register",
     beltTest: "Belt Test",
     competition: "Competition",
@@ -861,6 +950,29 @@ export default {
     registrationClosed: "Registration Closed",
     upcoming: "Upcoming",
     completed: "Completed",
+  },
+
+  // Common UI Elements
+  galleryPage: {
+    photoGallery: "Photo Gallery",
+    heroTitle: "Our Dojo",
+    heroAccent: "Moments",
+    heroDescription: "Browse through collections of tournaments, belt ceremonies, training sessions, and unforgettable memories of our martial arts journey.",
+    allCollections: "All Collections",
+    albumCountOne: "{count} album published",
+    albumCountMany: "{count} albums published",
+    noAlbums: "No albums yet",
+    noAlbumsDescription: "Check back soon — our dojo moments will appear here as they are published.",
+    allAlbums: "All Albums",
+    collection: "Collection",
+    photoCount: "photos",
+    photoPosition: "{current} of {total}",
+    featured: "Featured",
+    share: "Share",
+    subAlbums: "Sub-Albums",
+    noPhotos: "No photos in this album yet",
+    noPhotosDescription: "Upload photos from the admin panel to populate this collection.",
+    download: "Download",
   },
 
   // Common UI Elements

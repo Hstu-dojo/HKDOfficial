@@ -1,5 +1,7 @@
 "use client";
 
+import { useRef } from "react";
+import { useEditorialScene } from "./use-editorial-scene";
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
@@ -7,6 +9,8 @@ import { useCurrentLocale, useScopedI18n } from "@/locales/client";
 import { SectionHeader } from "./section-header";
 
 export default function SectionHomePrograms() {
+  const scene = useRef<HTMLElement>(null);
+  useEditorialScene(scene, "photos");
   const locale = useCurrentLocale();
   const t = useScopedI18n("homepage.programs");
   const programs = [
@@ -31,21 +35,22 @@ export default function SectionHomePrograms() {
   ];
 
   return (
-    <section className="relative bg-background py-16 md:py-24">
+    <section ref={scene} data-scroll-scene className="relative bg-background py-16 md:py-24">
       <div className="container mx-auto">
         <SectionHeader
-          kicker="What We Offer"
-          title="Discover Our"
-          titleAccent="Programs"
-          description="Comprehensive martial arts training designed for practitioners of all ages and skill levels."
+          kicker={t("kicker")}
+          title={t("titlePrefix")}
+          titleAccent={t("titleSpan")}
+          description={t("description")}
           align="left"
         />
         <div className="grid grid-cols-1 gap-3 md:grid-cols-3">
           {programs.map((program, index) => (
             <Link
+              data-scene-card
               key={program.href}
               href={`/${locale}${program.href}`}
-              className="editorial-image group overflow-hidden rounded-2xl bg-muted"
+              className="group overflow-hidden rounded-2xl border border-primary/10 bg-muted"
             >
               <div className="relative aspect-[4/3] overflow-hidden">
                 <Image
@@ -53,13 +58,14 @@ export default function SectionHomePrograms() {
                   alt={program.title}
                   fill
                   sizes="(max-width: 768px) 100vw, 33vw"
-                  className="object-cover grayscale transition-[filter,transform] duration-500 group-hover:grayscale-0"
+                  data-scene-photo
+                  className="object-cover"
                 />
               </div>
               <div className="p-6 md:p-7">
                 <div className="mb-5 flex items-center justify-between text-xs text-muted-foreground">
                   <span>0{index + 1}</span>
-                  <ArrowUpRight className="h-5 w-5 text-foreground transition-transform duration-300 group-hover:-translate-y-1 group-hover:translate-x-1" />
+                  <ArrowUpRight className="h-5 w-5 text-aqua transition-transform duration-300 group-hover:-translate-y-1 group-hover:translate-x-1" />
                 </div>
                 <h3 className="mb-3 text-3xl leading-tight">{program.title}</h3>
                 <p className="text-sm leading-relaxed text-muted-foreground">

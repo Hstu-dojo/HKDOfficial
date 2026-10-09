@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { ArrowUpRight, ImageIcon } from "lucide-react";
 import type { AlbumWithPreviews } from "../../gallery/AlbumGrid";
+import { useCurrentLocale, useI18n } from "@/locales/client";
 
 export interface ImagePosition {
   x: number;
@@ -19,9 +20,11 @@ export interface AlbumFolderProps {
 
 /** A photographic editorial cover with the same album destinations and callbacks. */
 export function AlbumFolder({ album, href, onClick }: AlbumFolderProps) {
+  const locale = useCurrentLocale();
+  const t = useI18n() as any;
   const cover = album.previewImages?.[0]?.secureUrl;
   const formattedDate = new Date(album.createdAt).toLocaleDateString(
-    undefined,
+    locale === "bn" ? "bn-BD" : locale === "ne" ? "ne-NP" : "en-US",
     { month: "short", day: "numeric", year: "numeric" },
   );
   const content = (
@@ -45,7 +48,7 @@ export function AlbumFolder({ album, href, onClick }: AlbumFolderProps) {
       </div>
       <div className="px-1 pb-2 pt-5">
         <div className="mb-3 flex flex-wrap justify-between gap-2 text-xs text-muted-foreground">
-          <span>{album.imageCount} photos</span>
+          <span>{album.imageCount} {t("galleryPage.photoCount")}</span>
           <span>{formattedDate}</span>
         </div>
         <h3 className="mb-2 line-clamp-2 text-2xl leading-tight text-foreground">

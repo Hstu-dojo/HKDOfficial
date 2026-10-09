@@ -53,7 +53,7 @@ const SectionWhyUs = () => {
             <div className="relative editorial-image rounded-2xl overflow-hidden">
               <Image
                 src="https://res.cloudinary.com/dksn30eyz/image/upload/v1785926139/hkd/y5m1cmpx9ugjuzoh7wq0.jpg"
-                alt="Kaizen Karate training"
+                alt={t("title")}
                 width={560}
                 height={500}
                 className="w-full object-cover"
@@ -63,7 +63,7 @@ const SectionWhyUs = () => {
                 <div className="relative overflow-hidden rounded-2xl shadow-sm">
                   <Image
                     src="/image/kick.gif"
-                    alt="karate competition"
+                    alt={t("title")}
                     width={320}
                     height={320}
                     unoptimized
@@ -93,7 +93,7 @@ const SectionWhyUs = () => {
             <div className="absolute -right-4 top-8 sm:-right-8 bg-secondary text-secondary-foreground rounded-2xl p-5 shadow-sm shadow-none backdrop-blur-md border border-white/20">
               <div className="text-3xl font-black leading-none mb-0.5">200+</div>
               <div className="text-xs font-semibold opacity-80 leading-snug">
-                Members<br />Trained
+                {t("membersTrainedLabel")}
               </div>
             </div>
           </motion.div>
@@ -105,7 +105,7 @@ const SectionWhyUs = () => {
             transition={{ duration: 0.7, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
           >
             <SectionHeader
-              kicker="Why Join Kaizen Karate Academy?"
+              kicker={t("kicker")}
               title={t("title")}
               description={t("subtitle")}
               align="left"

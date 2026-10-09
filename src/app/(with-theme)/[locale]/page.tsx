@@ -128,7 +128,8 @@ async function getRecentAlbums() {
     );
 
     return albumsWithData;
-  } catch {
+  } catch (error) {
+    console.error("[Homepage gallery] Failed to load recent albums:", error);
     return [];
   }
 }

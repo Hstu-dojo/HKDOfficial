@@ -27,7 +27,7 @@ export function EditorialMotion({ children }: { children: React.ReactNode }) {
     );
     document
       .querySelectorAll(
-        ".editorial-public main > section, .editorial-public main > div > section, .editorial-blog article",
+        ".editorial-public main > section:not([data-scroll-scene]), .editorial-public main > div > section:not([data-scroll-scene]), .editorial-blog article",
       )
       .forEach((element) => observer.observe(element));
     return () => observer.disconnect();

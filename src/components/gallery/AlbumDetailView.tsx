@@ -20,6 +20,7 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { ParallaxScrollSecond } from "@/components/ui/parallax-scroll";
+import { useCurrentLocale, useI18n } from "@/locales/client";
 
 interface AlbumFolder {
   id: string;
@@ -56,6 +57,8 @@ interface AlbumDetailViewProps {
 const EASE_OUT_EXPO = [0.16, 1, 0.3, 1] as const;
 
 export function AlbumDetailView({ folder, images, childFolders }: AlbumDetailViewProps) {
+  const t = useI18n() as any;
+  const locale = useCurrentLocale();
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
   const selectedImage = selectedIndex !== null ? images[selectedIndex] : null;
 
@@ -84,7 +87,8 @@ export function AlbumDetailView({ folder, images, childFolders }: AlbumDetailVie
     return () => window.removeEventListener("keydown", handler);
   }, [selectedIndex, goNext, goPrev]);
 
-  const formattedDate = new Date(folder.createdAt).toLocaleDateString("en-US", {
+  const dateLocale = locale === "bn" ? "bn-BD" : locale === "ne" ? "ne-NP" : "en-US";
+  const formattedDate = new Date(folder.createdAt).toLocaleDateString(dateLocale, {
     month: "long",
     year: "numeric",
   });
@@ -112,7 +116,7 @@ export function AlbumDetailView({ folder, images, childFolders }: AlbumDetailVie
           <Link href="/gallery">
             <Button variant="ghost" size="sm" className="mb-4 gap-2 text-muted-foreground hover:text-foreground">
               <ArrowLeft className="h-4 w-4" />
-              All Albums
+              {t("galleryPage.allAlbums")}
             </Button>
           </Link>
 
@@ -124,7 +128,7 @@ export function AlbumDetailView({ folder, images, childFolders }: AlbumDetailVie
               <div className="max-w-3xl">
                 <Badge variant="outline" className="mb-4 gap-1.5 bg-background/50 backdrop-blur-md">
                   <FolderOpen className="h-3.5 w-3.5" />
-                  Collection
+                  {t("galleryPage.collection")}
                 </Badge>
                 <h1 className="text-3xl sm:text-4xl md:text-5xl font-black tracking-tight leading-tight">
                   {folder.name}
@@ -139,7 +143,8 @@ export function AlbumDetailView({ folder, images, childFolders }: AlbumDetailVie
               <div className="flex flex-wrap items-center gap-4 text-sm text-muted-foreground shrink-0">
                 <div className="flex items-center gap-2 bg-background/60 backdrop-blur-md px-3.5 py-1.5 rounded-full border">
                   <ImageIcon className="h-4 w-4 text-primary" />
-                  <span className="font-semibold text-foreground">{images.length}</span> photos
+                  <span className="font-semibold text-foreground">{images.length}</span>{" "}
+                  {t("galleryPage.photoCount")}
                 </div>
                 <div className="flex items-center gap-2 bg-background/60 backdrop-blur-md px-3.5 py-1.5 rounded-full border">
                   <Calendar className="h-4 w-4 text-primary" />
@@ -147,7 +152,7 @@ export function AlbumDetailView({ folder, images, childFolders }: AlbumDetailVie
                 </div>
                 <Button variant="outline" size="sm" onClick={handleShare} className="rounded-full gap-2">
                   <Share2 className="h-4 w-4" />
-                  Share
+                  {t("galleryPage.share")}
                 </Button>
               </div>
             </div>
@@ -159,7 +164,7 @@ export function AlbumDetailView({ folder, images, childFolders }: AlbumDetailVie
           <div className="mb-10">
             <h2 className="text-xl font-bold mb-4 flex items-center gap-2">
               <FolderOpen className="h-5 w-5 text-primary" />
-              Sub-Albums
+              {t("galleryPage.subAlbums")}
             </h2>
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
               {childFolders.map((child) => (
@@ -211,7 +216,7 @@ export function AlbumDetailView({ folder, images, childFolders }: AlbumDetailVie
 
                     {image.isFeatured && (
                       <Badge className="absolute top-3 left-3 bg-yellow-500 text-black border-0 shadow-md font-bold text-[11px] px-2 py-0.5" variant="default">
-                        ★ Featured
+                        ★ {t("galleryPage.featured")}
                       </Badge>
                     )}
                   </div>
@@ -224,8 +229,8 @@ export function AlbumDetailView({ folder, images, childFolders }: AlbumDetailVie
             <div className="rounded-full bg-muted p-6 mb-4">
               <ImageIcon className="h-12 w-12 text-muted-foreground/40" />
             </div>
-            <h3 className="text-xl font-bold mb-1">No photos in this album yet</h3>
-            <p className="text-muted-foreground">Upload photos from the admin panel to populate this collection.</p>
+            <h3 className="text-xl font-bold mb-1">{t("galleryPage.noPhotos")}</h3>
+            <p className="text-muted-foreground">{t("galleryPage.noPhotosDescription")}</p>
           </div>
         )}
       </div>
@@ -257,7 +262,7 @@ export function AlbumDetailView({ folder, images, childFolders }: AlbumDetailVie
                     {selectedImage.description || selectedImage.title || selectedImage.altText || `${folder.name} - Photo ${selectedIndex + 1}`}
                   </h3>
                   <p className="text-white/50 text-xs">
-                    {selectedIndex + 1} of {images.length}
+                    {t("galleryPage.photoPosition", { current: selectedIndex + 1, total: images.length })}
                   </p>
                 </div>
               </div>
@@ -272,7 +277,7 @@ export function AlbumDetailView({ folder, images, childFolders }: AlbumDetailVie
                 >
                   <Button variant="outline" size="sm" className="rounded-full gap-2 border-white/20 text-white bg-white/10 hover:bg-white/20">
                     <Download className="h-4 w-4" />
-                    <span className="hidden sm:inline">Download</span>
+                    <span className="hidden sm:inline">{t("galleryPage.download")}</span>
                   </Button>
                 </a>
               </div>

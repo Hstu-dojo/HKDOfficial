@@ -242,3 +242,23 @@ html:lang(ne) .editorial-public :is(h1, h2, h3) {
     opacity: 1 !important;
   }
 }
+
+/* Academy colors: logo purple and aqua, carried through existing surfaces. */
+.editorial-hero {
+  background-image: radial-gradient(ellipse at 0% 5%, hsl(var(--brand-purple) / .07), transparent 55%), radial-gradient(ellipse at 100% 80%, hsl(var(--brand-aqua) / .09), transparent 55%);
+}
+.editorial-hero [data-scene-canvas] {
+  transform-origin: center center;
+  border-color: hsl(var(--primary) / .16);
+  box-shadow: 0 20px 70px hsl(var(--brand-purple) / .06);
+}
+.editorial-hero .hero-events {
+  background: hsl(var(--secondary));
+  color: hsl(var(--secondary-foreground));
+}
+.editorial-hero .hero-events h2 { color: inherit; }
+.editorial-hero h1 { animation: none; }
+[data-scene-photo] { transform-origin: center; }
+@media (prefers-reduced-motion: reduce) {
+  [data-scroll-scene] { scroll-behavior: auto; }
+}

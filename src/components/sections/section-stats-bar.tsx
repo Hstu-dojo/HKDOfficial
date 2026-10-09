@@ -2,9 +2,9 @@
 
 import { useRef, useEffect, useState } from "react";
 import { motion, useInView } from "framer-motion";
-import { useScopedI18n } from "@/locales/client";
+import { useCurrentLocale, useScopedI18n } from "@/locales/client";
 
-function AnimatedCounter({ value, suffix = "" }: { value: number; suffix?: string }) {
+function AnimatedCounter({ value, suffix = "", locale }: { value: number; suffix?: string; locale: string }) {
   const ref = useRef<HTMLSpanElement>(null);
   const inView = useInView(ref, { once: true });
   const [count, setCount] = useState(0);
@@ -24,20 +24,21 @@ function AnimatedCounter({ value, suffix = "" }: { value: number; suffix?: strin
 
   return (
     <span ref={ref}>
-      {count.toLocaleString()}
+      {count.toLocaleString(locale === "bn" ? "bn-BD" : locale === "ne" ? "ne-NP" : "en-US")}
       {suffix}
     </span>
   );
 }
 
-const stats = [
-  { label: "Members Trained", value: 200, suffix: "+" },
-  { label: "Competitions Won", value: 15, suffix: "+" },
-  { label: "Years Active", value: 5, suffix: "+" },
-  { label: "Active Branches", value: 4, suffix: "" },
-];
-
 export default function SectionStatsBar() {
+  const locale = useCurrentLocale();
+  const t = useScopedI18n("homepage.stats");
+  const stats = [
+    { label: t("barMembers"), value: 200, suffix: "+" },
+    { label: t("barCompetitions"), value: 15, suffix: "+" },
+    { label: t("barYears"), value: 5, suffix: "+" },
+    { label: t("barBranches"), value: 4, suffix: "" },
+  ];
   return (
     <section className="relative py-10 bg-muted overflow-hidden">
       {/* Subtle noise texture overlay */}
@@ -55,7 +56,7 @@ export default function SectionStatsBar() {
               className="flex flex-col items-center text-center md:px-6"
             >
               <span className="font-serif text-4xl md:text-5xl font-normal text-foreground tracking-tight leading-none mb-1">
-                <AnimatedCounter value={stat.value} suffix={stat.suffix} />
+                <AnimatedCounter value={stat.value} suffix={stat.suffix} locale={locale} />
               </span>
               <span className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
                 {stat.label}

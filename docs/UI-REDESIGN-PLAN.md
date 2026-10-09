@@ -43,7 +43,7 @@ These findings come from source review. A rendered screenshot audit remains the 
 
 ## 3. Proposed art direction: The Dojo Journal
 
-The user-provided magazine references guide this direction: elegant serif headlines, a centered masthead, white and soft-gray surfaces, tightly composed asymmetric panels, compact metadata, restrained red highlights, and generous article reading space. The academy identity comes through real karate photography and existing content.
+The user-provided magazine references guide this direction: elegant serif headlines, a centered masthead, white and soft-gray surfaces, tightly composed asymmetric panels, compact metadata, purple and aqua highlights from the academy logo, and generous article reading space. The academy identity comes through real karate photography and existing content.
 
 The public site should feel like a contemporary sports and culture magazine. Use a white publication canvas on a pale-gray outer background, softly rounded feature panels, fine rules, occasional black utility strips, and selective headline highlights. At small widths, let the publication canvas fill the viewport and stack panels in a meaningful reading order. The angled tablet imagery in the references is presentation mockup framing, not a layout or animation to reproduce on the actual website.
 
@@ -60,7 +60,8 @@ Use the existing academy mark. Let photography and typography carry the brand. A
 | Ink | `#191919` | Headlines and body text |
 | Muted ink | `#626262` | Supporting copy and metadata |
 | Rule | `#DADADA` | Decorative separators and card boundaries |
-| Vermilion | `#C62828` | Select headline highlights, primary actions, active markers |
+| Purple | `#5E17EB` | Headline highlights, primary actions, focus and active markers |
+| Aqua | `#0097B2` | Secondary actions, supporting feature panels and accents |
 | Dark paper | `#171716` | Dark-mode background and feature panels |
 | Dark surface | `#222220` | Dark-mode elevated surfaces |
 | Light ink | `#F5F2EB` | Text on dark surfaces |

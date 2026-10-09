@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { applyForCommittee, updateCommitteeApplication } from '@/actions/committee-actions';
 import { toast } from 'sonner';
+import { useScopedI18n } from '@/locales/client';
 
 interface PrefillData {
   username?: string;
@@ -41,6 +42,10 @@ export default function CommitteeApplyForm({
   existingApplication,
   committeeYear,
 }: CommitteeApplyFormProps) {
+  const t = useScopedI18n('committeePage.form') as any;
+  const statusKey: Record<string, string> = {
+    pending: 'statusPending', approved: 'statusApproved', rejected: 'statusRejected', under_review: 'statusUnderReview',
+  };
   const [submitting, setSubmitting] = useState(false);
   const [institution, setInstitution] = useState(existingApplication?.institution || prefill?.institute || '');
   const [department, setDepartment] = useState(existingApplication?.department || prefill?.dept || '');
@@ -57,11 +62,11 @@ export default function CommitteeApplyForm({
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
     if (!isLoggedIn) {
-      toast.error('Please log in to apply.');
+      toast.error(t('loginError'));
       return;
     }
     if (!institution.trim() || !department.trim() || !phone.trim() || !address.trim() || !nid.trim() || !photoUrl.trim()) {
-      toast.error('Please fill all required fields: Institution, Faculty / Department, Phone, NID, Address, Photo.');
+      toast.error(t('requiredError'));
       return;
     }
 
@@ -94,22 +99,22 @@ export default function CommitteeApplyForm({
     setSubmitting(false);
 
     if (result.success) {
-      toast.success(existingApplication ? 'Application updated successfully.' : 'Application submitted successfully.');
+      toast.success(existingApplication ? t('updated') : t('submitted'));
       if (!existingApplication) {
         setStatement('');
       }
     } else {
-      toast.error(result.error || 'Failed to submit application.');
+      toast.error(result.error || t('failed'));
     }
   };
 
   const handlePhotoUpload = async (file: File) => {
     if (!file.type.startsWith('image/')) {
-      toast.error('Please select an image file');
+      toast.error(t('imageOnly'));
       return;
     }
     if (file.size > 4 * 1024 * 1024) {
-      toast.error('File too large. Max 4MB.');
+      toast.error(t('tooLarge'));
       return;
     }
 
@@ -129,15 +134,15 @@ export default function CommitteeApplyForm({
       });
 
       if (!res.ok) {
-        throw new Error('Upload failed');
+        throw new Error(t('uploadFailed'));
       }
 
       const result = await res.json();
       setPhotoUrl(result.secureUrl);
-      toast.success('Photo uploaded successfully');
+      toast.success(t('uploaded'));
     } catch (error) {
       console.error(error);
-      toast.error('Failed to upload photo');
+      toast.error(t('uploadFailed'));
     } finally {
       setPhotoUploading(false);
     }
@@ -145,28 +150,28 @@ export default function CommitteeApplyForm({
 
   return (
     <div className="rounded-xl border border-border dark:border-border bg-white dark:bg-background p-6">
-      <h3 className="text-lg font-semibold text-foreground dark:text-gray-100">Apply for Committee</h3>
+      <h3 className="text-lg font-semibold text-foreground dark:text-gray-100">{t('title')}</h3>
       <p className="text-sm text-muted-foreground dark:text-gray-400 mt-1">
-        Submit your application to join the committee for this year.
+        {t('description')}
       </p>
 
       {existingApplication && (
         <div className="mt-4 rounded-lg border border-blue-200 bg-blue-50 px-4 py-3 text-sm text-blue-800">
-          You already submitted this form for {committeeYear || 'this year'}.
-          <span className="ml-2 font-medium">Status: {existingApplication.status}</span>
+          {t('alreadySubmitted', { year: committeeYear || 'this year' })}
+          <span className="ml-2 font-medium">{t('status')} {t(statusKey[existingApplication.status.toLowerCase()] || 'statusPending')}</span>
         </div>
       )}
 
       {!isLoggedIn && (
         <div className="mt-4 rounded-lg border border-yellow-200 bg-yellow-50 px-4 py-3 text-sm text-yellow-800">
-          Please log in and complete onboarding to apply.
+          {t('loginToApply')}
         </div>
       )}
 
       <form onSubmit={handleSubmit} className="mt-5 space-y-4">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <label className="block text-sm font-medium text-foreground dark:text-gray-300">Name</label>
+            <label className="block text-sm font-medium text-foreground dark:text-gray-300">{t('name')}</label>
             <input
               value={prefill?.username || ''}
               disabled
@@ -174,7 +179,7 @@ export default function CommitteeApplyForm({
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-foreground dark:text-gray-300">Email</label>
+            <label className="block text-sm font-medium text-foreground dark:text-gray-300">{t('email')}</label>
             <input
               value={prefill?.email || ''}
               disabled
@@ -185,84 +190,84 @@ export default function CommitteeApplyForm({
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <label className="block text-sm font-medium text-foreground dark:text-gray-300">Phone</label>
+            <label className="block text-sm font-medium text-foreground dark:text-gray-300">{t('phone')}</label>
             <input
               value={phone}
               onChange={(e) => setPhone(e.target.value)}
               required
               className="mt-1 w-full rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-background px-3 py-2 text-sm"
-              placeholder="Phone number"
+              placeholder={t('phonePlaceholder')}
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-foreground dark:text-gray-300">NID</label>
+            <label className="block text-sm font-medium text-foreground dark:text-gray-300">{t('nid')}</label>
           <input
             value={nid}
             onChange={(e) => setNid(e.target.value)}
             required
             className="mt-1 w-full rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-background px-3 py-2 text-sm"
-            placeholder="National ID"
+            placeholder={t('nidPlaceholder')}
           />
           </div>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <label className="block text-sm font-medium text-foreground dark:text-gray-300">Institution</label>
+            <label className="block text-sm font-medium text-foreground dark:text-gray-300">{t('institution')}</label>
             <input
               value={institution}
               onChange={(e) => setInstitution(e.target.value)}
               required
               className="mt-1 w-full rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-background px-3 py-2 text-sm"
-              placeholder="University / College"
+              placeholder={t('institutionPlaceholder')}
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-foreground dark:text-gray-300">Faculty / Department</label>
+            <label className="block text-sm font-medium text-foreground dark:text-gray-300">{t('department')}</label>
             <input
               value={department}
               onChange={(e) => setDepartment(e.target.value)}
               required
               className="mt-1 w-full rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-background px-3 py-2 text-sm"
-              placeholder="Faculty / Department Name"
+              placeholder={t('departmentPlaceholder')}
             />
           </div>
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-foreground dark:text-gray-300">Address</label>
+          <label className="block text-sm font-medium text-foreground dark:text-gray-300">{t('address')}</label>
           <input
             value={address}
             onChange={(e) => setAddress(e.target.value)}
             required
             className="mt-1 w-full rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-background px-3 py-2 text-sm"
-            placeholder="Current address"
+            placeholder={t('addressPlaceholder')}
           />
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-foreground dark:text-gray-300">Statement</label>
+          <label className="block text-sm font-medium text-foreground dark:text-gray-300">{t('statement')}</label>
           <textarea
             value={statement}
             onChange={(e) => setStatement(e.target.value)}
             className="mt-1 w-full rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-background px-3 py-2 text-sm"
             rows={4}
-            placeholder="Why do you want to join the committee?"
+            placeholder={t('statementPlaceholder')}
           />
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-foreground dark:text-gray-300">Profile Photo</label>
+          <label className="block text-sm font-medium text-foreground dark:text-gray-300">{t('photo')}</label>
           <div className="mt-2 flex items-center gap-4">
             {photoUrl ? (
               <img
                 src={photoUrl}
-                alt="Profile"
+                alt={t('profileAlt')}
                 className="h-20 w-20 rounded-lg object-cover border border-border"
               />
             ) : (
               <div className="h-20 w-20 rounded-lg border border-dashed border-gray-300 flex items-center justify-center text-xs text-gray-400">
-                No Photo
+                {t('noPhoto')}
               </div>
             )}
             <div>
@@ -279,7 +284,7 @@ export default function CommitteeApplyForm({
                 className="block text-sm text-muted-foreground"
               />
               {photoUploading && (
-                <p className="text-xs text-muted-foreground mt-1">Uploading...</p>
+                <p className="text-xs text-muted-foreground mt-1">{t('uploading')}</p>
               )}
               {!photoUploading && photoFileName && (
                 <p className="text-xs text-muted-foreground mt-1">{photoFileName}</p>
@@ -287,7 +292,7 @@ export default function CommitteeApplyForm({
             </div>
           </div>
           <p className="text-xs text-muted-foreground mt-2">
-            Upload a recent passport-sized photo. If you already have a profile photo, you can replace it here.
+            {t('photoHint')}
           </p>
         </div>
 
@@ -296,7 +301,7 @@ export default function CommitteeApplyForm({
           disabled={submitting || !isLoggedIn}
           className="inline-flex items-center justify-center rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 disabled:opacity-50"
         >
-          {submitting ? 'Submitting...' : existingApplication ? 'Update Application' : 'Submit Application'}
+          {submitting ? t('submitting') : existingApplication ? t('update') : t('submit')}
         </button>
       </form>
     </div>

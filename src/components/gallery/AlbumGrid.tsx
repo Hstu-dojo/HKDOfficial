@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { ImageIcon, Camera, ArrowDown } from "lucide-react";
 import { AlbumFolder } from "../folders-ui/project-folder/AlbumFolder";
 import { useRef } from "react";
+import { useI18n } from "@/locales/client";
 
 export interface AlbumWithPreviews {
   id: string;
@@ -23,6 +24,7 @@ interface AlbumGridProps {
 }
 
 export function AlbumGrid({ albums }: AlbumGridProps) {
+  const t = useI18n() as any;
   const containerRef = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({
     target: containerRef,
@@ -46,7 +48,7 @@ export function AlbumGrid({ albums }: AlbumGridProps) {
         >
           <img 
             src={heroImage} 
-            alt="Gallery Hero" 
+            alt={t("galleryPage.photoGallery")} 
             className="w-full h-full object-cover"
           />
           {/* Gradient Overlay for legibility */}
@@ -54,7 +56,7 @@ export function AlbumGrid({ albums }: AlbumGridProps) {
         </motion.div>
 
         {/* Hero Content */}
-        <div className="container relative z-10 mx-auto px-4 mt-20 md:mt-0">
+        <div className="container relative z-10 mx-auto mt-24 px-4 md:mt-12">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
@@ -63,19 +65,18 @@ export function AlbumGrid({ albums }: AlbumGridProps) {
           >
             <Badge variant="outline" className="mb-6 gap-2 px-4 py-1.5 text-sm bg-background/50 backdrop-blur-md border-primary/30 text-primary">
               <Camera className="h-4 w-4" />
-              Photo Gallery
+              {t("galleryPage.photoGallery")}
             </Badge>
 
             <h1 className="text-4xl md:text-6xl font-normal tracking-tight mb-6 leading-tight text-foreground">
-              Our Dojo{" "}
+              {t("galleryPage.heroTitle")}{" "}
               <span className="text-primary italic">
-                Moments
+                {t("galleryPage.heroAccent")}
               </span>
             </h1>
 
             <p className="text-lg md:text-xl text-muted-foreground leading-relaxed mb-10 max-w-2xl mx-auto">
-              Browse through collections of tournaments, belt ceremonies, training sessions, and
-              unforgettable memories of our martial arts journey.
+              {t("galleryPage.heroDescription")}
             </p>
 
             <motion.div
@@ -104,9 +105,9 @@ export function AlbumGrid({ albums }: AlbumGridProps) {
               className="flex items-end justify-between mb-12 border-b pb-4"
             >
               <div>
-                <h2 className="text-3xl font-bold tracking-tight">All Collections</h2>
+                <h2 className="text-3xl font-bold tracking-tight">{t("galleryPage.allCollections")}</h2>
                 <p className="text-muted-foreground mt-2">
-                  {albums.length} {albums.length === 1 ? "album" : "albums"} published
+                  {t(albums.length === 1 ? "galleryPage.albumCountOne" : "galleryPage.albumCountMany", { count: albums.length })}
                 </p>
               </div>
             </motion.div>
@@ -128,9 +129,9 @@ export function AlbumGrid({ albums }: AlbumGridProps) {
             <div className="rounded-full bg-background p-6 mb-6 shadow-sm">
               <ImageIcon className="h-12 w-12 text-muted-foreground/40" />
             </div>
-            <h2 className="text-2xl font-bold mb-2">No albums yet</h2>
+            <h2 className="text-2xl font-bold mb-2">{t("galleryPage.noAlbums")}</h2>
             <p className="text-muted-foreground max-w-sm">
-              Check back soon — our dojo moments will appear here as they are published.
+              {t("galleryPage.noAlbumsDescription")}
             </p>
           </div>
         )}

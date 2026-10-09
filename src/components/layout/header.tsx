@@ -42,21 +42,15 @@ export default function Header() {
             </div>
             <Link
               href={`/${locale}`}
-              className="flex shrink-0 items-center gap-3"
+              className="flex shrink-0 items-center"
               aria-label="Kaizen Karate Academy"
             >
               <SiteLogo
-                width={105}
-                height={34}
-                lightClasses="h-auto w-[105px] dark:hidden"
-                darkClasses="hidden h-auto w-[105px] dark:block"
+                width={175}
+                height={40}
+                lightClasses="h-auto w-[145px] sm:w-[175px] dark:hidden"
+                darkClasses="hidden h-auto w-[145px] sm:w-[175px] dark:block"
               />
-              <span className="hidden border-l border-border pl-3 font-serif text-lg tracking-tight sm:block lg:text-xl">
-                Kaizen
-                <span className="block font-sans text-[9px] uppercase tracking-[0.2em] text-muted-foreground">
-                  Karate Academy
-                </span>
-              </span>
             </Link>
             <div className="flex min-w-0 items-center justify-end gap-2">
               <DarkModeSwitch />

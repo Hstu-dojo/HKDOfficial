@@ -30,9 +30,9 @@ const SectionFAQ = () => {
           {/* Left Column — Header & Contact Info */}
           <div className="lg:col-span-5">
             <SectionHeader
-              kicker="FAQ"
-              title="Frequently Asked"
-              titleAccent="Questions"
+              kicker={t("kicker")}
+              title={t("titlePrefix")}
+              titleAccent={t("titleAccent")}
               description={t("subtitle")}
               align="left"
               className="mb-8 md:mb-8"
@@ -51,8 +51,8 @@ const SectionFAQ = () => {
                   <HelpCircle className="h-5 w-5" />
                 </div>
                 <div>
-                  <h3 className="font-bold text-base">Still Have Questions?</h3>
-                  <p className="text-xs text-muted-foreground">We're here to help you get started</p>
+                  <h3 className="font-bold text-base">{t("stillHaveQuestions")}</h3>
+                  <p className="text-xs text-muted-foreground">{t("helpDescription")}</p>
                 </div>
               </div>
 
