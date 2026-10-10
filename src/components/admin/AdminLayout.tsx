@@ -18,12 +18,10 @@ import { usePathname } from 'next/navigation';
 export function AdminLayout({ children }: AdminLayoutProps) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const { data: session, status } = useSession();
-  const { hasRole, permissions, loading: rbacLoading, error: rbacError, localUserId } = useRBAC();
+  const { permissions, loading: rbacLoading } = useRBAC();
   const router = useRouter();
   const pathname = usePathname();
 
-  const hasAdminAccessByRole = hasRole('SUPER_ADMIN');
-  const hasAnyPermission = !!permissions?.permissions.length;
   const hasAdminAccess = !!permissions && canAccessAdminRoute(permissions, pathname || '/admin');
 
   // Check if current page should bypass max-width constraint
@@ -74,35 +72,6 @@ export function AdminLayout({ children }: AdminLayoutProps) {
             <p className="mt-2 text-muted-foreground">
               You don&apos;t have the required permissions to access the admin panel.
             </p>
-
-            {/* Debug info - always show for troubleshooting */}
-            <div className="mt-4 p-3 bg-muted/50 rounded text-left text-xs">
-              <p className="font-semibold text-foreground">Debug Info:</p>
-              <p className="text-muted-foreground">
-                Local User ID: {localUserId || 'Not found'}
-              </p>
-              <p className="text-muted-foreground">
-                Roles: {permissions?.roles?.map(r => r.name).join(', ') || 'None'}
-              </p>
-              <p className="text-muted-foreground">
-                Permissions Count: {permissions?.permissions?.length || 0}
-              </p>
-              <p className="text-muted-foreground">
-                Has Admin Role: {hasAdminAccessByRole ? 'Yes' : 'No'}
-              </p>
-              <p className="text-muted-foreground">
-                Has Any Permission: {hasAnyPermission ? 'Yes' : 'No'}
-              </p>
-              {rbacError && (
-                <p className="text-destructive mt-2">
-                  Error: {rbacError}
-                </p>
-              )}
-              <p className="text-muted-foreground mt-2 text-yellow-600">
-                If you&apos;re a SUPER_ADMIN, you may need to run the RBAC seed script
-                and assign your role in the userRole table.
-              </p>
-            </div>
 
             <div className="mt-6 space-x-4">
               <button
