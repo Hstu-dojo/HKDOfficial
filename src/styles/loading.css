@@ -1,10 +1,12 @@
-/* Academy interpretation of Skiper7: stationary type, photographic cuts,
-   and a single full-screen exit. The source photographs are local assets. */
+/* One clipped stage: kinetic academy collage, masked type, then a full exit. */
 .academy-loader-host {
   position: fixed;
   inset: 0;
   z-index: 10000;
   isolation: isolate;
+  overflow: hidden;
+  clip-path: inset(0);
+  contain: paint;
   will-change: transform;
 }
 .academy-page-loader {
@@ -26,45 +28,112 @@
 .academy-loader-host .academy-page-loader {
   position: absolute;
 }
-.academy-loader-host.is-leaving {
+.academy-loader-host[data-loader-phase="exiting"] {
   pointer-events: none;
-  animation: academy-loader-exit 0.85s cubic-bezier(0.785, 0.135, 0.15, 0.86)
+  animation: academy-loader-exit 0.72s cubic-bezier(0.785, 0.135, 0.15, 0.86)
     both;
 }
 .academy-loader-montage,
 .academy-loader-grade {
   position: absolute;
   inset: 0;
-  z-index: -1;
+  z-index: 0;
   pointer-events: none;
 }
 .academy-loader-montage {
+  overflow: hidden;
   background: #191320;
+}
+.academy-loader-panel {
+  --panel-angle: 0deg;
+  --panel-delay: 0s;
+  --panel-drift-x: 2vw;
+  --panel-drift-y: -3vh;
+  position: absolute;
+  margin: 0;
+  overflow: hidden;
+  background: #2b2039;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  animation:
+    academy-collage-arrive 0.75s cubic-bezier(0.16, 1, 0.3, 1)
+      var(--panel-delay) both,
+    academy-collage-drift 4s ease-in-out calc(0.75s + var(--panel-delay))
+      infinite alternate;
+}
+.academy-loader-panel-1 {
+  --panel-angle: -9deg;
+  left: -6vw;
+  top: -8vh;
+  width: 42vw;
+  height: 58vh;
+}
+.academy-loader-panel-2 {
+  --panel-angle: 7deg;
+  --panel-delay: 0.09s;
+  --panel-drift-x: -3vw;
+  right: -4vw;
+  top: -6vh;
+  width: 36vw;
+  height: 55vh;
+}
+.academy-loader-panel-3 {
+  --panel-angle: -2deg;
+  --panel-delay: 0.18s;
+  --panel-drift-y: 2vh;
+  left: 26vw;
+  top: 26vh;
+  width: 48vw;
+  height: 54vh;
+}
+.academy-loader-panel-4 {
+  --panel-angle: 8deg;
+  --panel-delay: 0.27s;
+  left: -3vw;
+  bottom: -10vh;
+  width: 41vw;
+  height: 50vh;
+}
+.academy-loader-panel-5 {
+  --panel-angle: -8deg;
+  --panel-delay: 0.36s;
+  --panel-drift-x: -2vw;
+  --panel-drift-y: 3vh;
+  right: -5vw;
+  bottom: -8vh;
+  width: 43vw;
+  height: 51vh;
 }
 .academy-loader-frame {
   object-fit: cover;
   object-position: center 42%;
-  filter: grayscale(1) brightness(0.55);
-  opacity: 0;
-  animation: academy-frame-cut 3.5s step-end infinite;
+  filter: grayscale(1) brightness(0.8);
+  transform: scale(1.08);
+  animation: academy-collage-image 5s ease-out both;
 }
-.academy-loader-frame:first-child {
-  object-position: center 38%;
+.academy-loader-panel-1 .academy-loader-frame {
+  object-position: center 30%;
 }
-.academy-loader-frame:nth-child(4) {
-  object-position: center 55%;
+.academy-loader-panel-2 .academy-loader-frame {
+  object-position: center 36%;
 }
 .academy-loader-grade {
+  z-index: 1;
   background:
+    radial-gradient(
+      ellipse at center,
+      rgba(25, 19, 32, 0.55) 0%,
+      rgba(25, 19, 32, 0.12) 75%
+    ),
     linear-gradient(
       180deg,
-      rgba(25, 19, 32, 0.25),
-      rgba(25, 19, 32, 0.08) 45%,
-      rgba(25, 19, 32, 0.65)
-    ),
-    rgba(52, 25, 78, 0.24);
+      rgba(52, 25, 78, 0.22),
+      rgba(25, 19, 32, 0.2) 45%,
+      rgba(25, 19, 32, 0.8)
+    );
 }
 .academy-loader-composition {
+  position: relative;
+  z-index: 2;
   width: min(76vw, 48rem);
   display: flex;
   flex-direction: column;
@@ -140,6 +209,7 @@
   font-weight: 600;
 }
 .academy-loader-status {
+  z-index: 2;
   position: absolute;
   bottom: max(1.25rem, env(safe-area-inset-bottom));
   inset-inline: clamp(1.25rem, 4vw, 3rem);
@@ -264,15 +334,33 @@
     opacity: 0;
   }
 }
-/* 700ms per photograph: distinct cuts without a strobe effect. */
-@keyframes academy-frame-cut {
-  0%,
-  19.999% {
-    opacity: 1;
-  }
-  20%,
-  100% {
+@keyframes academy-collage-arrive {
+  from {
     opacity: 0;
+    clip-path: inset(100% 0 0 0);
+    transform: translate3d(0, 12vh, 0) rotate(var(--panel-angle)) scale(1.12);
+  }
+  to {
+    opacity: 1;
+    clip-path: inset(0);
+    transform: translate3d(0, 0, 0) rotate(var(--panel-angle)) scale(1);
+  }
+}
+@keyframes academy-collage-drift {
+  from {
+    transform: translate3d(0, 0, 0) rotate(var(--panel-angle)) scale(1);
+  }
+  to {
+    transform: translate3d(var(--panel-drift-x), var(--panel-drift-y), 0)
+      rotate(var(--panel-angle)) scale(1.04);
+  }
+}
+@keyframes academy-collage-image {
+  from {
+    transform: scale(1.15);
+  }
+  to {
+    transform: scale(1);
   }
 }
 @keyframes academy-rail {
@@ -295,6 +383,36 @@
   }
 }
 @media (max-width: 480px) {
+  .academy-loader-panel-1 {
+    left: -20vw;
+    top: -4vh;
+    width: 80vw;
+    height: 42vh;
+  }
+  .academy-loader-panel-2 {
+    right: -16vw;
+    top: 3vh;
+    width: 70vw;
+    height: 45vh;
+  }
+  .academy-loader-panel-3 {
+    left: 8vw;
+    top: 33vh;
+    width: 90vw;
+    height: 40vh;
+  }
+  .academy-loader-panel-4 {
+    left: -22vw;
+    bottom: -8vh;
+    width: 80vw;
+    height: 40vh;
+  }
+  .academy-loader-panel-5 {
+    right: -22vw;
+    bottom: -4vh;
+    width: 85vw;
+    height: 37vh;
+  }
   .academy-loader-composition {
     width: 90vw;
     gap: 1.75rem;
@@ -335,7 +453,7 @@
   }
 }
 @media (prefers-reduced-motion: reduce) {
-  .academy-loader-host.is-leaving {
+  .academy-loader-host[data-loader-phase="exiting"] {
     animation: academy-loader-exit-fade 0.12s linear both;
   }
   .academy-page-loader *,
@@ -343,11 +461,13 @@
   .academy-belt-loader > span {
     animation: none !important;
   }
-  .academy-loader-frame {
-    opacity: 0;
-  }
-  .academy-loader-frame:first-child {
+  .academy-loader-panel {
     opacity: 1;
+    clip-path: none;
+    transform: rotate(var(--panel-angle));
+  }
+  .academy-loader-frame {
+    transform: none;
   }
   .academy-panel-rail > span {
     width: 100%;

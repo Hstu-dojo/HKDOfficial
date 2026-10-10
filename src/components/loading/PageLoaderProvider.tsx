@@ -5,21 +5,15 @@ import {
   useCallback,
   useEffect,
   useMemo,
-  useState,
+  useReducer,
 } from "react";
-import { createPortal } from "react-dom";
+import { usePathname } from "next/navigation";
 import Image from "next/image";
 import { cn } from "@/lib/utils";
-import type { LoaderVariant } from "./ArcRevealLoader";
 import { getLoadingCopy } from "./loading-copy";
 
-interface LoaderRegistration {
-  pathname: string | null;
-  variant: LoaderVariant;
-  badgeText?: string;
-  className?: string;
-  greeting?: string;
-}
+import { initialLoaderState, loaderReducer } from "./loader-state";
+import type { LoaderRegistration } from "./loader-state";
 
 export const PageLoaderContext = createContext<{
   register: (id: string, config: LoaderRegistration) => void;
@@ -61,20 +55,21 @@ export function PageLoaderScreen({
     >
       <span className="sr-only">{loadingLabel}</span>
       <div className="academy-loader-montage" aria-hidden="true">
-        {photographs.map((number, index) => (
-          <Image
+        {photographs.map((number) => (
+          <figure
             key={number}
-            src={`/image/loading/training-${number}.webp`}
-            alt=""
-            fill
-            sizes="100vw"
-            unoptimized
-            loading="eager"
-            className="academy-loader-frame"
-            style={{
-              animationDelay: `${index === 0 ? 0 : (index - photographs.length) * 0.7}s`,
-            }}
-          />
+            className={`academy-loader-panel academy-loader-panel-${number}`}
+          >
+            <Image
+              src={`/image/loading/training-${number}.webp`}
+              alt=""
+              fill
+              sizes="60vw"
+              unoptimized
+              loading="eager"
+              className="academy-loader-frame"
+            />
+          </figure>
         ))}
       </div>
       <div className="academy-loader-grade" aria-hidden="true" />
@@ -120,47 +115,45 @@ export function PageLoaderProvider({
 }: {
   children: React.ReactNode;
 }) {
-  const [entries, setEntries] = useState<Map<string, LoaderRegistration>>(
-    () => new Map(),
+  const pathname = usePathname();
+  const [state, dispatch] = useReducer(
+    loaderReducer,
+    pathname,
+    initialLoaderState,
   );
-  const [mounted, setMounted] = useState(false);
-  const [screen, setScreen] = useState<LoaderRegistration | null>(null);
   const register = useCallback((id: string, config: LoaderRegistration) => {
-    setEntries((previous) => new Map(previous).set(id, config));
+    dispatch({ type: "register", id, config });
   }, []);
   const unregister = useCallback((id: string) => {
-    setEntries((previous) => {
-      const next = new Map(previous);
-      next.delete(id);
-      return next;
-    });
+    dispatch({ type: "unregister", id });
   }, []);
   const host = useMemo(
     () => ({ register, unregister }),
     [register, unregister],
   );
-  const active = Array.from(entries.values()).at(-1);
-  const visibleConfig = active || screen;
-  const visible = Boolean(visibleConfig);
-  const leaving = !active && Boolean(screen);
+  const visible = state.screen !== null;
 
   useEffect(() => {
-    setMounted(true);
-  }, []);
-  useEffect(() => {
-    if (active) setScreen(active);
-  }, [active]);
-  useEffect(() => {
-    if (!leaving) return;
-    // Animation-end is the normal cleanup. This also releases the overlay if a
-    // browser pauses CSS animations or the tab becomes hidden during the exit.
-    const duration = window.matchMedia("(prefers-reduced-motion: reduce)")
-      .matches
-      ? 220
-      : 1000;
-    const timer = window.setTimeout(() => setScreen(null), duration);
+    if (state.phase !== "intro" && state.phase !== "exiting") return;
+    const reduced = window.matchMedia(
+      "(prefers-reduced-motion: reduce)",
+    ).matches;
+    const type = state.phase === "intro" ? "intro-complete" : "exit-complete";
+    const duration =
+      state.phase === "intro"
+        ? reduced
+          ? 0
+          : state.introDuration
+        : reduced
+          ? 220
+          : 880;
+    const timer = window.setTimeout(
+      () => dispatch({ type, cycle: state.cycle }),
+      duration,
+    );
     return () => window.clearTimeout(timer);
-  }, [leaving]);
+  }, [state.phase, state.cycle, state.introDuration]);
+
   useEffect(() => {
     if (!visible) return;
     const overflow = document.body.style.overflow;
@@ -173,23 +166,25 @@ export function PageLoaderProvider({
   return (
     <PageLoaderContext.Provider value={host}>
       {children}
-      {mounted &&
-        visibleConfig &&
-        createPortal(
-          <div
-            className={cn("academy-loader-host", leaving && "is-leaving")}
-            onAnimationEnd={(event) => {
-              if (event.target === event.currentTarget && leaving)
-                setScreen(null);
-            }}
-          >
-            <PageLoaderScreen
-              {...visibleConfig}
-              loadingLabel={getLoadingCopy(visibleConfig.pathname).loading}
-            />
-          </div>,
-          document.body,
-        )}
+      {state.screen && (
+        <div
+          className="academy-loader-host"
+          data-loader-phase={state.phase}
+          onAnimationEnd={(event) => {
+            if (
+              event.target === event.currentTarget &&
+              state.phase === "exiting"
+            ) {
+              dispatch({ type: "exit-complete", cycle: state.cycle });
+            }
+          }}
+        >
+          <PageLoaderScreen
+            {...state.screen}
+            loadingLabel={getLoadingCopy(state.screen.pathname).loading}
+          />
+        </div>
+      )}
     </PageLoaderContext.Provider>
   );
 }

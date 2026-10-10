@@ -1,11 +1,14 @@
 "use client";
 
-import { useContext, useEffect, useId, useState } from "react";
+import { useContext, useEffect, useId, useLayoutEffect, useState } from "react";
 import { createPortal } from "react-dom";
 import { usePathname } from "next/navigation";
 import type { LoaderVariant, ArcGreeting } from "./ArcRevealLoader";
 import { getLoadingCopy } from "./loading-copy";
 import { PageLoaderContext, PageLoaderScreen } from "./PageLoaderProvider";
+
+const useBrowserLayoutEffect =
+  typeof window === "undefined" ? useEffect : useLayoutEffect;
 
 export interface PageLoaderProps {
   variant?: LoaderVariant;
@@ -28,15 +31,18 @@ export function PageLoader({
   const greeting = greetings?.[0]?.text;
 
   useEffect(() => {
-    setMounted(true);
+    if (!host) setMounted(true);
+  }, [host]);
+  useBrowserLayoutEffect(() => {
     if (!host) return;
     host.register(id, { pathname, variant, badgeText, className, greeting });
     return () => host.unregister(id);
   }, [host, id, pathname, variant, badgeText, className, greeting]);
 
-  // Preserve the server fallback until hydration, then let the persistent host
-  // own the portal and the exit after Next removes this loading boundary.
-  if (mounted && host) return null;
+  // The fallback never renders its own pictures. Suspense may retain hidden
+  // fallback markup after streaming; only the root host owns image elements.
+  // Layout-effect cleanup also unregisters work when Suspense hides this tree.
+  if (host) return null;
   const content = (
     <PageLoaderScreen
       pathname={pathname}

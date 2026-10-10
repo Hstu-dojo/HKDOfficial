@@ -18,6 +18,7 @@
     "db:assign-super-admin": "tsx scripts/assign-super-admin.ts",
     "db:test-permissions": "tsx scripts/test-permissions.ts",
     "test:rbac-access": "node --test tests/rbac-access.test.cjs",
+    "test:page-loader": "node --test tests/page-loader.test.cjs",
     "db:verify-rbac": "tsx scripts/verify-rbac.ts",
     "db:check-user-roles": "tsx scripts/check-user-roles.ts",
     "db:backup": "tsx scripts/backup-db.ts",
