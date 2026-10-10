@@ -5,23 +5,14 @@ interface LoadingSpinnerProps {
   className?: string;
 }
 
+/** Compact crossed belt strokes for buttons and small loading areas. */
 export function LoadingSpinner({ size = 'medium', className }: LoadingSpinnerProps) {
-  const sizeClasses = {
-    small: 'h-4 w-4',
-    medium: 'h-8 w-8',
-    large: 'h-12 w-12',
-  };
-
+  const sizeClasses = { small: 'h-4 w-4', medium: 'h-8 w-8', large: 'h-12 w-12' };
   return (
-    <div
-      className={cn(
-        'animate-spin rounded-full border-2 border-muted border-t-primary',
-        sizeClasses[size],
-        className
-      )}
-    />
+    <span role="status" aria-label="Loading" className={cn('academy-belt-loader', sizeClasses[size], className)}>
+      <span aria-hidden="true" /><span aria-hidden="true" />
+    </span>
   );
 }
 
 export { PanelLoader } from '@/components/loading/PanelLoader';
-

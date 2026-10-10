@@ -1,8 +1,12 @@
 "use client";
 
-import SiteLogo from "@/components/layout/site-logo";
+import { useEffect, useState } from "react";
+import { createPortal } from "react-dom";
+import { usePathname } from "next/navigation";
+import Image from "next/image";
 import { cn } from "@/lib/utils";
 import type { LoaderVariant, ArcGreeting } from "./ArcRevealLoader";
+import { getLoadingCopy } from "./loading-copy";
 
 export interface PageLoaderProps {
   variant?: LoaderVariant;
@@ -11,51 +15,44 @@ export interface PageLoaderProps {
   className?: string;
 }
 
-/** A quiet publication-style loading state; never adds a minimum wait to routing. */
-export function PageLoader({
-  variant = "default",
-  greetings,
-  badgeText,
-  className,
-}: PageLoaderProps) {
-  const label =
-    badgeText ||
-    (variant === "admin"
-      ? "Academy administration"
-      : variant === "partner"
-        ? "Partner portal"
-        : variant === "dashboard"
-          ? "Student dashboard"
-          : "Kaizen Karate Academy");
-  return (
-    <div
-      role="status"
-      aria-live="polite"
-      aria-label="Loading page"
-      className={cn(
-        "flex min-h-screen flex-col items-center justify-center gap-7 bg-background px-6 text-center text-foreground",
-        className,
-      )}
-    >
-      <SiteLogo
-        width={123}
-        height={39}
-        lightClasses="dark:hidden"
-        darkClasses="hidden dark:block"
-      />
-      <div>
-        <p className="mb-2 text-xs uppercase tracking-[0.18em] text-muted-foreground">
-          {label}
-        </p>
-        <p className="font-serif text-2xl">
-          {greetings?.[0]?.text || "Loading…"}
-        </p>
+/** Real loading fallback: no artificial progress or minimum routing delay. */
+export function PageLoader({ variant = "default", greetings, badgeText, className }: PageLoaderProps) {
+  const copy = getLoadingCopy(usePathname());
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => { setMounted(true); }, []);
+  const label = badgeText || (variant === "admin" || variant === "dashboard" || variant === "partner" ? copy[variant] : copy.academy);
+  const content = (
+    <div className={cn("academy-page-loader", className)} role="status" aria-live="polite" aria-label={copy.loading} data-academy-loader>
+      <span className="sr-only">{copy.loading}</span>
+      <div className="academy-loader-photo" aria-hidden="true" />
+      <div className="academy-loader-curtain academy-loader-curtain-aqua" aria-hidden="true" />
+      <div className="academy-loader-curtain academy-loader-curtain-purple" aria-hidden="true" />
+      <div className="academy-loader-top" aria-hidden="true">
+        <Image src="/logo-badge.svg" alt="" width={56} height={56} priority unoptimized />
+        <span>{label}</span>
       </div>
-      <div className="relative h-px w-40 overflow-hidden bg-border">
-        <div className="editorial-loading-line absolute inset-y-0 left-0 w-1/3 bg-primary" />
+      <div className="academy-loader-center" aria-hidden="true">
+        <div className="academy-loader-word-mask">
+          <div className="academy-loader-word">
+            {Array.from("KAIZEN").map((letter, index) => (
+              <span key={index} style={{ animationDelay: `${100 + index * 45}ms` }}>{letter}</span>
+            ))}
+          </div>
+        </div>
+        <div className="academy-loader-word-mask">
+          <div className="academy-loader-karate">KARATE</div>
+        </div>
+        <div className="academy-loader-caption">{copy.academy}</div>
       </div>
+      <div className="academy-loader-bottom" aria-hidden="true">
+        <p>{greetings?.[0]?.text || copy.motto}</p>
+        <span className="academy-loader-loading-label">{copy.loading}</span>
+      </div>
+      <div className="academy-loader-rail" aria-hidden="true"><span /></div>
     </div>
   );
+  // Escape transformed headers/layouts: the curtain always covers the viewport.
+  return mounted ? createPortal(content, document.body) : content;
 }
 
 export default PageLoader;
