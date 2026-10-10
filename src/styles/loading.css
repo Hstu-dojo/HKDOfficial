@@ -42,23 +42,37 @@
 }
 .academy-loader-montage {
   overflow: hidden;
-  background: #191320;
+  background: radial-gradient(ellipse at 50% 45%, #30213f, #191320 80%);
 }
 .academy-loader-panel {
   --panel-angle: 0deg;
   --panel-delay: 0s;
   --panel-drift-x: 2vw;
   --panel-drift-y: -3vh;
+  --spotlight-shift: 0s;
+  --spotlight-rgb: 188 161 255;
   position: absolute;
   margin: 0;
   overflow: hidden;
-  background: #2b2039;
-  border: 1px solid rgba(255, 255, 255, 0.08);
   animation:
-    academy-collage-arrive 0.75s cubic-bezier(0.16, 1, 0.3, 1)
+    academy-collage-arrive 0.45s cubic-bezier(0.16, 1, 0.3, 1)
       var(--panel-delay) both,
-    academy-collage-drift 4s ease-in-out calc(0.75s + var(--panel-delay))
+    academy-collage-drift 4s ease-in-out calc(0.45s + var(--panel-delay))
       infinite alternate;
+}
+.academy-loader-panel::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  border: 1px solid rgb(var(--spotlight-rgb) / 0.4);
+  box-shadow: inset 0 0 3rem rgb(var(--spotlight-rgb) / 0.3);
+  background: linear-gradient(
+    135deg,
+    rgb(var(--spotlight-rgb) / 0.18),
+    transparent 45%
+  );
+  animation: academy-collage-glow 2.1s linear var(--spotlight-shift) infinite;
 }
 .academy-loader-panel-1 {
   --panel-angle: -9deg;
@@ -69,7 +83,9 @@
 }
 .academy-loader-panel-2 {
   --panel-angle: 7deg;
-  --panel-delay: 0.09s;
+  --panel-delay: 0.04s;
+  --spotlight-shift: -1.4s;
+  --spotlight-rgb: 124 233 225;
   --panel-drift-x: -3vw;
   right: -4vw;
   top: -6vh;
@@ -78,7 +94,8 @@
 }
 .academy-loader-panel-3 {
   --panel-angle: -2deg;
-  --panel-delay: 0.18s;
+  --panel-delay: 0.08s;
+  --spotlight-shift: -0.7s;
   --panel-drift-y: 2vh;
   left: 26vw;
   top: 26vh;
@@ -87,7 +104,9 @@
 }
 .academy-loader-panel-4 {
   --panel-angle: 8deg;
-  --panel-delay: 0.27s;
+  --panel-delay: 0.12s;
+  --spotlight-shift: -1.4s;
+  --spotlight-rgb: 124 233 225;
   left: -3vw;
   bottom: -10vh;
   width: 41vw;
@@ -95,7 +114,7 @@
 }
 .academy-loader-panel-5 {
   --panel-angle: -8deg;
-  --panel-delay: 0.36s;
+  --panel-delay: 0.16s;
   --panel-drift-x: -2vw;
   --panel-drift-y: 3vh;
   right: -5vw;
@@ -106,9 +125,12 @@
 .academy-loader-frame {
   object-fit: cover;
   object-position: center 42%;
-  filter: grayscale(1) brightness(0.8);
+  filter: grayscale(1) brightness(0.45);
+  opacity: 0.18;
   transform: scale(1.08);
-  animation: academy-collage-image 5s ease-out both;
+  animation:
+    academy-collage-image 5s ease-out both,
+    academy-photo-spotlight 2.1s linear var(--spotlight-shift) infinite;
 }
 .academy-loader-panel-1 .academy-loader-frame {
   object-position: center 30%;
@@ -173,8 +195,8 @@
 .academy-loader-imprint {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 1rem;
+  justify-content: center;
+  gap: 0.65rem;
   padding-inline: 0.5rem;
   animation: academy-imprint-reveal 0.45s 0.2s both;
 }
@@ -191,7 +213,7 @@
   font-size: clamp(0.65rem, 1.25vw, 0.85rem);
   font-weight: 700;
   line-height: 1.3;
-  text-align: right;
+  text-align: left;
   text-transform: uppercase;
   color: var(--loader-aqua);
 }
@@ -363,6 +385,31 @@
     transform: scale(1);
   }
 }
+/* Three beats: opposite corners, the other pair, then the central photograph. */
+@keyframes academy-photo-spotlight {
+  0%,
+  26%,
+  100% {
+    opacity: 1;
+    filter: grayscale(1) brightness(1.15) contrast(1.08);
+  }
+  31%,
+  97% {
+    opacity: 0.18;
+    filter: grayscale(1) brightness(0.45) contrast(1);
+  }
+}
+@keyframes academy-collage-glow {
+  0%,
+  26%,
+  100% {
+    opacity: 0.85;
+  }
+  31%,
+  97% {
+    opacity: 0;
+  }
+}
 @keyframes academy-rail {
   from {
     transform: translateX(-110%);
@@ -468,6 +515,11 @@
   }
   .academy-loader-frame {
     transform: none;
+    opacity: 0.7;
+    filter: grayscale(1) brightness(0.8);
+  }
+  .academy-loader-panel::after {
+    display: none;
   }
   .academy-panel-rail > span {
     width: 100%;
