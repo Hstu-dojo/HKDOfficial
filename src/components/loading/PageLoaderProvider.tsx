@@ -78,9 +78,6 @@ export function PageLoaderScreen({
           <div className="academy-loader-word-mask">
             <span>KAIZEN</span>
           </div>
-          <div className="academy-loader-word-mask">
-            <span>KARATE</span>
-          </div>
         </div>
         <div className="academy-loader-imprint">
           <Image

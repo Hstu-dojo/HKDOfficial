@@ -4,7 +4,7 @@ export const loadingCopy = {
     loading: "Loading…",
     academy: "Karate Academy",
     motto: "Discipline. Respect. Progress.",
-    headline: ["TRAIN WITH", "PURPOSE."],
+    headline: ["Train with", "purpose."],
     admin: "Academy administration",
     dashboard: "Student dashboard",
     partner: "Partner portal",

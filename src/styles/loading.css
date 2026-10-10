@@ -163,8 +163,7 @@
   text-align: center;
   padding-block: 3rem;
 }
-.academy-loader-title,
-.academy-loader-manifesto {
+.academy-loader-title {
   font-weight: 900;
   font-family:
     var(--font-loader), var(--font-sans), var(--font-bengali),
@@ -178,19 +177,10 @@
   overflow: hidden;
   padding-block: 0.08em;
 }
-.academy-loader-title .academy-loader-word-mask + .academy-loader-word-mask {
-  margin-top: -0.06em;
-}
 .academy-loader-title .academy-loader-word-mask > span,
 .academy-loader-manifesto .academy-loader-word-mask > span {
   display: block;
   animation: academy-type-rise 0.7s cubic-bezier(0.16, 1, 0.3, 1) both;
-}
-.academy-loader-title
-  .academy-loader-word-mask
-  + .academy-loader-word-mask
-  > span {
-  animation-delay: 0.08s;
 }
 .academy-loader-imprint {
   display: flex;
@@ -218,10 +208,26 @@
   color: var(--loader-aqua);
 }
 .academy-loader-manifesto {
-  font-size: min(10.7vw, 12.5vh, 6.7rem);
+  font-family:
+    var(--font-serif), var(--font-bengali), var(--font-devanagari), Georgia,
+    serif;
+  font-size: min(9.6vw, 10.5vh, 6rem);
+  font-weight: 400;
   color: var(--loader-aqua);
-  letter-spacing: -0.04em;
-  line-height: 0.92;
+  letter-spacing: -0.035em;
+  line-height: 1.08;
+}
+.academy-page-loader:lang(en)
+  .academy-loader-manifesto
+  .academy-loader-word-mask:last-child
+  > span {
+  font-style: italic;
+}
+.academy-page-loader:lang(bn) .academy-loader-manifesto {
+  font-family: var(--font-bengali), sans-serif;
+}
+.academy-page-loader:lang(ne) .academy-loader-manifesto {
+  font-family: var(--font-devanagari), sans-serif;
 }
 .academy-page-loader:lang(bn) .academy-loader-manifesto,
 .academy-page-loader:lang(ne) .academy-loader-manifesto {
