@@ -1,3 +1,4 @@
+import { requireAdminPageAccess } from '@/lib/rbac/page-access';
 import { Metadata } from "next";
 import { GalleryManager } from "@/components/gallery/GalleryManager";
 
@@ -8,7 +9,8 @@ export const metadata: Metadata = {
 
 export const dynamic = "force-dynamic";
 
-export default function GalleryAdminPage() {
+export default async function GalleryAdminPage() {
+  await requireAdminPageAccess('/admin/gallery');
   return (
     <div className="space-y-6">
       <div>

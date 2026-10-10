@@ -58,8 +58,10 @@ export async function withAdminMiddleware(request: NextRequest) {
     const internalSecret = process.env.NEXTAUTH_SECRET || process.env.JWT_SECRET || '';
     const checkRoleResponse = await fetch(`${baseUrl}/api/auth/check-admin-role`, {
       method: 'GET',
+      cache: 'no-store',
       headers: {
         'x-supabase-user-id': authUser.id,
+        'x-admin-path': request.nextUrl.pathname,
         'x-internal-secret': internalSecret,
       },
     });
@@ -74,6 +76,7 @@ export async function withAdminMiddleware(request: NextRequest) {
     const roleData = await checkRoleResponse.json();
 
     if (!roleData.hasAdminRole) {
+      if (roleData.redirectTo) return NextResponse.redirect(new URL(roleData.redirectTo, request.url));
       const unauthorizedUrl = new URL('/unauthorized', request.url);
       return NextResponse.redirect(unauthorizedUrl);
     }

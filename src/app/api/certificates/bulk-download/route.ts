@@ -1,3 +1,5 @@
+import { getRBACContext } from '@/lib/rbac/middleware';
+import { hasPermission } from '@/lib/rbac/permissions';
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 import { getProgramCertificates, getCertificateForPdf } from '@/actions/certificate-actions';
@@ -12,6 +14,10 @@ import { formatBeltRankLabel } from '@/lib/belt-rank';
  */
 export async function GET(request: NextRequest) {
   try {
+    const context = await getRBACContext();
+    if (!context) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    if (!(await hasPermission(context.userId, 'CERTIFICATE', 'READ'))) return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+
     const programId = request.nextUrl.searchParams.get('programId');
     const admin = request.nextUrl.searchParams.get('admin') === 'true';
     const shouldFlatten = true; // Admin gets flattened textbase, users need rasterized image-pdf (pending external lib)

@@ -1,3 +1,4 @@
+import { hasPermission } from '@/lib/rbac/permissions';
 import { NextRequest, NextResponse } from "next/server";
 import { protectApiRoute } from "@/lib/rbac/middleware";
 import { db } from "@/lib/connect-db";
@@ -128,6 +129,9 @@ export const GET = protectApiRoute("USER", "READ", async (request, context) => {
 export const POST = protectApiRoute("USER", "CREATE", async (request, context) => {
   try {
     const { userName, email, password, defaultRole, emailVerified } = await request.json();
+    if (defaultRole && defaultRole !== 'GUEST' && !(await hasPermission(context.userId, 'ROLE', 'UPDATE'))) {
+      return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+    }
 
     if (!userName || !email || !password) {
       return NextResponse.json(

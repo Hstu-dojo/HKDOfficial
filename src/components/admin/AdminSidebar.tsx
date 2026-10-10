@@ -24,6 +24,7 @@ import {
   XMarkIcon,
 } from '@heroicons/react/24/outline';
 import { cn } from '@/lib/utils';
+import { canAccessAdminRoute } from '@/lib/rbac/admin-route-access';
 import { useCurrentLocale, useScopedI18n } from '@/locales/client';
 
 interface NavItem {
@@ -224,25 +225,12 @@ export function AdminSidebar({ className, onLinkClick }: AdminSidebarProps) {
   const locale = useCurrentLocale();
   const competitionText = useScopedI18n('competition');
   const pathname = usePathname();
-  const { hasPermission, hasRole, loading } = useRBAC();
+  const { permissions, loading } = useRBAC();
 
   // Filter navigation based on permissions
-  const visibleNavigation = navigation.filter(item => {
-    if (loading) return false;
-
-    if (item.requiredPermission) {
-      return hasPermission(
-        item.requiredPermission.resource as any,
-        item.requiredPermission.action as any
-      );
-    }
-
-    if (item.requiredRole) {
-      return hasRole(item.requiredRole);
-    }
-
-    return true; // Show items without requirements
-  });
+  const visibleNavigation = navigation.filter(item =>
+    !loading && permissions && canAccessAdminRoute(permissions, item.href)
+  );
 
   if (loading) {
     return (
@@ -275,7 +263,7 @@ export function AdminSidebar({ className, onLinkClick }: AdminSidebarProps) {
         <nav className="flex-1 px-4 py-6 space-y-1 overflow-y-auto custom-scrollbar">
           {visibleNavigation.map((item) => {
             const isCompetition = item.href === '/admin/competition-results';
-            const href = isCompetition ? `/${locale}${item.href}` : item.href;
+            const href = `/${locale}${item.href}`;
             const isActive =
               pathname === href ||
               (pathname && pathname.startsWith(href + '/'));

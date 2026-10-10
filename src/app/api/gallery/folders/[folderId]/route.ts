@@ -16,6 +16,13 @@ export async function GET(
     const { folderId } = await params;
     const { searchParams } = new URL(request.url);
     const publicOnly = searchParams.get("public") === "true";
+    if (!publicOnly) {
+      const context = await getRBACContext();
+      if (!context) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      if (!(await hasPermission(context.userId, 'GALLERY', 'READ'))) {
+        return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+      }
+    }
 
     const folders = await db
       .select()

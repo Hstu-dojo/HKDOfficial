@@ -31,20 +31,20 @@ export async function getUserPermissions(userId: string): Promise<UserPermission
       .select({
         roleId: committeeMembers.rbacRoleId,
         isActive: committees.isActive,
+        status: committeeMembers.status,
       })
       .from(committeeMembers)
       .innerJoin(committees, eq(committeeMembers.committeeId, committees.id))
       .where(
         and(
           eq(committeeMembers.userId, userId),
-          eq(committeeMembers.status, "approved"),
           isNotNull(committeeMembers.rbacRoleId)
         )
       );
 
     const committeeRoleIds = new Set(committeeRoleRows.map((row) => row.roleId));
     const activeCommitteeRoleIds = new Set(
-      committeeRoleRows.filter((row) => row.isActive).map((row) => row.roleId)
+      committeeRoleRows.filter((row) => row.isActive && row.status === "approved").map((row) => row.roleId)
     );
 
     const filteredUserRoles = userRoles.filter((ur) => {
@@ -98,11 +98,14 @@ export async function getUserPermissions(userId: string): Promise<UserPermission
  */
 export async function getUserPermissionsWithFallback(userId: string): Promise<UserPermissions> {
   try {
-    // First try to get permissions from the userRole table
+    // Any explicit assignment (including revoked/inactive ones) supersedes
+    // legacy defaultRole. Revocation must never resurrect profile privileges.
+    const assignments = await db.select({ id: userRole.id }).from(userRole)
+      .where(eq(userRole.userId, userId)).limit(1);
     const permissions = await getUserPermissions(userId);
     
     // If user has roles assigned in userRole table, return those
-    if (permissions.roles.length > 0) {
+    if (assignments.length > 0) {
       return permissions;
     }
     
@@ -132,20 +135,9 @@ export async function getUserPermissionsWithFallback(userId: string): Promise<Us
       .limit(1);
     
     if (roleData.length === 0 || !roleData[0].isActive) {
-      // Role doesn't exist in RBAC system yet, but user has defaultRole
-      // Return a minimal role object
-      return {
-        userId,
-        roles: [{
-          id: 'default',
-          name: defaultRoleName,
-          description: `Default role from user profile`,
-          isActive: true,
-        }],
-        permissions: [],
-      };
+      return { userId, roles: [], permissions: [] };
     }
-    
+
     // Get permissions for this role
     const rolePerms = await db
       .select({
@@ -219,6 +211,9 @@ export async function assignRole(userId: string, roleId: string, assignedBy?: st
       roleId,
       assignedBy,
       isActive: true,
+    }).onConflictDoUpdate({
+      target: [userRole.userId, userRole.roleId],
+      set: { isActive: true, assignedBy, assignedAt: new Date() },
     });
     return true;
   } catch (error) {
@@ -389,12 +384,11 @@ export async function updateRole(
  */
 export async function deleteRole(roleId: string): Promise<boolean> {
   try {
-    // First remove all role permissions
-    await db.delete(rolePermission).where(eq(rolePermission.roleId, roleId));
-    // Then remove all user role assignments
-    await db.delete(userRole).where(eq(userRole.roleId, roleId));
-    // Finally delete the role
-    await db.delete(role).where(eq(role.id, roleId));
+    await db.transaction(async tx => {
+      await tx.delete(rolePermission).where(eq(rolePermission.roleId, roleId));
+      await tx.delete(userRole).where(eq(userRole.roleId, roleId));
+      await tx.delete(role).where(eq(role.id, roleId));
+    });
     return true;
   } catch (error) {
     console.error("Error deleting role:", error);

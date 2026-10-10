@@ -1,3 +1,4 @@
+import { requireAdminPageAccess } from '@/lib/rbac/page-access';
 import EnrollmentsManagement from "@/components/admin/enrollments/EnrollmentsManagement";
 
 export const metadata = {
@@ -5,6 +6,7 @@ export const metadata = {
   description: "Manage student enrollment applications",
 };
 
-export default function EnrollmentsPage() {
+export default async function EnrollmentsPage() {
+  await requireAdminPageAccess('/admin/enrollments');
   return <EnrollmentsManagement />;
 }

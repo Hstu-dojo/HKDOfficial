@@ -6,40 +6,25 @@ import { useRouter } from 'next/navigation';
 import { AdminSidebar } from '@/components/admin/AdminSidebar';
 import { AdminHeader } from '@/components/admin/AdminHeader';
 import { useRBAC } from '@/hooks/useRBAC';
-import { LoadingSpinner } from '@/components/ui/loading-spinner';
 import { PageLoader } from '@/components/loading';
+import { canAccessAdminRoute } from '@/lib/rbac/admin-route-access';
 
 interface AdminLayoutProps {
   children: React.ReactNode;
 }
-
-// Roles that have access to the admin panel
-const ADMIN_ACCESS_ROLES = [
-  'SUPER_ADMIN',
-  'ADMIN',
-  'MODERATOR',
-  'INSTRUCTOR',
-  'STAFF',
-];
 
 import { usePathname } from 'next/navigation';
 
 export function AdminLayout({ children }: AdminLayoutProps) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const { data: session, status } = useSession();
-  const { hasRole, hasAnyRole, permissions, loading: rbacLoading, error: rbacError, localUserId } = useRBAC();
+  const { hasRole, permissions, loading: rbacLoading, error: rbacError, localUserId } = useRBAC();
   const router = useRouter();
   const pathname = usePathname();
 
-  // Check if user has admin access via RBAC roles
-  const hasAdminAccessByRole = hasAnyRole(ADMIN_ACCESS_ROLES);
-
-  // Check if user has ANY permission (meaning they're in the RBAC system)
-  const hasAnyPermission = permissions && permissions.permissions && permissions.permissions.length > 0;
-
-  // User has admin access if they have an admin role OR if they have any permission in the system
-  // This allows users who are assigned permissions to access the admin panel
-  const hasAdminAccess = hasAdminAccessByRole || hasAnyPermission;
+  const hasAdminAccessByRole = hasRole('SUPER_ADMIN');
+  const hasAnyPermission = !!permissions?.permissions.length;
+  const hasAdminAccess = !!permissions && canAccessAdminRoute(permissions, pathname || '/admin');
 
   // Check if current page should bypass max-width constraint
   const isFullWidthPage = pathname?.includes('/admin/gallery');

@@ -1,3 +1,5 @@
+import { getRBACContext } from '@/lib/rbac/middleware';
+import { hasPermission } from '@/lib/rbac/permissions';
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 import { getProgramCertificates } from '@/actions/certificate-actions';
@@ -12,6 +14,10 @@ import * as XLSX from 'xlsx';
  */
 export async function GET(request: NextRequest) {
   try {
+    const context = await getRBACContext();
+    if (!context) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    if (!(await hasPermission(context.userId, 'CERTIFICATE', 'READ'))) return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+
     const programId = request.nextUrl.searchParams.get('programId');
     if (!programId) {
       return NextResponse.json({ error: 'programId is required' }, { status: 400 });

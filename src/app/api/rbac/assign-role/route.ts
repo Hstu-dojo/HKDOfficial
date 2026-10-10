@@ -1,22 +1,11 @@
+import { protectApiRoute } from '@/lib/rbac/middleware';
 import { NextResponse } from 'next/server';
-import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs';
-import { cookies } from 'next/headers';
 import { db } from '@/lib/connect-db';
 import { userRole, user, role } from '@/db/schema';
 import { eq, and } from 'drizzle-orm';
 
-export async function POST(request: Request) {
+export const POST = protectApiRoute("ROLE", "UPDATE", async (request, context) => {
   try {
-    const supabase = createRouteHandlerClient({ cookies });
-    const { data: { user: supabaseUser } } = await supabase.auth.getUser();
-
-    if (!supabaseUser) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
-    }
-
     const { userId, roleId, isSupabaseId } = await request.json();
 
     if (!userId || !roleId) {
@@ -57,19 +46,6 @@ export async function POST(request: Request) {
       );
     }
 
-    // Get current user's ID for assignedBy field using email
-    const currentUser = await db
-      .select()
-      .from(user)
-      .where(eq(user.email, supabaseUser.email!));
-
-    if (currentUser.length === 0) {
-      return NextResponse.json(
-        { error: 'Current user not found in database' },
-        { status: 404 }
-      );
-    }
-
     // Check if user already has this role (active or inactive)
     const existingAssignment = await db
       .select()
@@ -85,7 +61,7 @@ export async function POST(request: Request) {
           .update(userRole)
           .set({ 
             isActive: true, 
-            assignedBy: currentUser[0].id,
+            assignedBy: context.userId,
             assignedAt: new Date()
           })
           .where(eq(userRole.id, existingAssignment[0].id))
@@ -103,7 +79,7 @@ export async function POST(request: Request) {
       assignment = await db.insert(userRole).values({
         userId: localUserId,
         roleId,
-        assignedBy: currentUser[0].id,
+        assignedBy: context.userId,
         isActive: true,
       }).returning();
     }
@@ -120,4 +96,4 @@ export async function POST(request: Request) {
       { status: 500 }
     );
   }
-}
+});

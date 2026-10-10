@@ -1,22 +1,11 @@
+import { protectApiRoute } from '@/lib/rbac/middleware';
 import { NextResponse } from 'next/server';
-import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs';
-import { cookies } from 'next/headers';
 import { db } from '@/lib/connect-db';
 import { userRole } from '@/db/schema';
 import { eq, and } from 'drizzle-orm';
 
-export async function DELETE(request: Request) {
+export const DELETE = protectApiRoute("ROLE", "UPDATE", async (request, context) => {
   try {
-    const supabase = createRouteHandlerClient({ cookies });
-    const { data: { user } } = await supabase.auth.getUser();
-
-    if (!user) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
-    }
-
     const { userId, roleId } = await request.json();
 
     if (!userId || !roleId) {
@@ -28,7 +17,8 @@ export async function DELETE(request: Request) {
 
     // Remove role assignment
     const result = await db
-      .delete(userRole)
+      .update(userRole)
+      .set({ isActive: false })
       .where(and(eq(userRole.userId, userId), eq(userRole.roleId, roleId)))
       .returning();
 
@@ -50,4 +40,4 @@ export async function DELETE(request: Request) {
       { status: 500 }
     );
   }
-}
+});

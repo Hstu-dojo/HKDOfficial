@@ -1,3 +1,4 @@
+import { requireAdminPageAccess } from '@/lib/rbac/page-access';
 import { db } from "@/lib/connect-db";
 import { user } from "@/db/schemas/auth";
 import { courses } from "@/db/schemas/karate";
@@ -8,6 +9,7 @@ import AdminDashboard from "@/components/admin/AdminDashboard";
 export const dynamic = 'force-dynamic';
 
 export default async function AdminPage() {
+  await requireAdminPageAccess('/admin');
   // Fetch counts
   const userCountQuery = await db.select({ count: count() }).from(user);
   const courseCountQuery = await db.select({ count: count() }).from(courses);

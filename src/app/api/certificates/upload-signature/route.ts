@@ -1,3 +1,5 @@
+import { getRBACContext } from '@/lib/rbac/middleware';
+import { hasPermission } from '@/lib/rbac/permissions';
 import { NextRequest, NextResponse } from 'next/server';
 import cloudinary from '@/utils/cloudinary';
 import { createClient } from '@/lib/supabase/server';
@@ -12,6 +14,10 @@ import { createClient } from '@/lib/supabase/server';
  */
 export async function POST(request: NextRequest) {
   try {
+    const context = await getRBACContext();
+    if (!context) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    if (!(await hasPermission(context.userId, 'CERTIFICATE', 'CREATE') || await hasPermission(context.userId, 'CERTIFICATE', 'UPDATE'))) return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+
     // Auth check
     const supabase = await createClient();
     const { data: { user } } = await supabase.auth.getUser();

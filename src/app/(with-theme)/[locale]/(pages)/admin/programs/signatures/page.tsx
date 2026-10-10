@@ -1,3 +1,4 @@
+import { requireAdminPageAccess } from '@/lib/rbac/page-access';
 import SignatureManagement from "@/components/admin/certificates/SignatureManagement";
 
 export const metadata = {
@@ -5,6 +6,7 @@ export const metadata = {
   description: "Manage reusable signatures for program certificates",
 };
 
-export default function SignaturesPage() {
+export default async function SignaturesPage() {
+  await requireAdminPageAccess('/admin/programs/signatures');
   return <SignatureManagement />;
 }

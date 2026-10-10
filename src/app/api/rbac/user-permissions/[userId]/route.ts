@@ -57,7 +57,7 @@ export async function GET(request: NextRequest) {
 }
 
 // POST /api/rbac/user-permissions/[userId] - Assign role to user
-export const POST = protectApiRoute("USER", "UPDATE", async (request, context) => {
+export const POST = protectApiRoute("ROLE", "UPDATE", async (request, context) => {
   try {
     const url = new URL(request.url);
     const userId = url.pathname.split('/').pop();
@@ -81,7 +81,7 @@ export const POST = protectApiRoute("USER", "UPDATE", async (request, context) =
 });
 
 // DELETE /api/rbac/user-permissions/[userId] - Remove role from user
-export const DELETE = protectApiRoute("USER", "UPDATE", async (request, context) => {
+export const DELETE = protectApiRoute("ROLE", "UPDATE", async (request, context) => {
   try {
     const url = new URL(request.url);
     const userId = url.pathname.split('/').pop();

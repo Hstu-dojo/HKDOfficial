@@ -1,5 +1,7 @@
 'use server';
 
+import { canAccess } from '@/lib/rbac/middleware';
+
 import { readdir, readFile, stat } from 'fs/promises';
 import path from 'path';
 import { PDFDocument } from 'pdf-lib';
@@ -129,6 +131,8 @@ function assertSafeCertPath(publicRelativePath: string) {
 // ---------------------------------------------------------------------------
 
 export async function listCertificateTemplates() {
+  if (!(await canAccess('PROGRAM', 'READ'))) return { success: false as const, error: 'Forbidden' };
+
   try {
     const pdfs: AvailableCertificateTemplate[] = [];
 
@@ -194,6 +198,8 @@ export async function listCertificateTemplates() {
 }
 
 export async function extractCertificateFields(publicRelativePath: string) {
+  if (!(await canAccess('PROGRAM', 'READ'))) return { success: false as const, error: 'Forbidden' };
+
   try {
     assertSafeCertPath(publicRelativePath);
     
@@ -255,6 +261,8 @@ export async function extractCertificateFields(publicRelativePath: string) {
 // ---------------------------------------------------------------------------
 
 export async function getProgramTypes(options?: { includeInactive?: boolean; search?: string }) {
+  if (!(await canAccess('PROGRAM', 'READ'))) return { success: false as const, error: 'Forbidden' };
+
   try {
     const includeInactive = options?.includeInactive ?? true;
     const search = options?.search?.trim();
@@ -276,6 +284,8 @@ export async function getProgramTypes(options?: { includeInactive?: boolean; sea
 }
 
 export async function createProgramType(data: Omit<NewProgramType, 'id' | 'createdAt' | 'updatedAt' | 'createdBy'>) {
+  if (!(await canAccess('PROGRAM', 'CREATE'))) return { success: false as const, error: 'Forbidden' };
+
   try {
     const userId = await getAuthUserId();
     if (!userId) return { success: false as const, error: 'Unauthorized' };
@@ -307,6 +317,8 @@ export async function updateProgramType(
   id: string,
   data: Partial<Pick<ProgramType, 'name' | 'category' | 'certificatePdfPath' | 'fieldMappings' | 'isActive'>>
 ) {
+  if (!(await canAccess('PROGRAM', 'UPDATE'))) return { success: false as const, error: 'Forbidden' };
+
   try {
     const userId = await getAuthUserId();
     if (!userId) return { success: false as const, error: 'Unauthorized' };
@@ -351,6 +363,8 @@ export async function updateProgramType(
 }
 
 export async function deleteProgramType(id: string) {
+  if (!(await canAccess('PROGRAM', 'DELETE'))) return { success: false as const, error: 'Forbidden' };
+
   try {
     const userId = await getAuthUserId();
     if (!userId) return { success: false as const, error: 'Unauthorized' };

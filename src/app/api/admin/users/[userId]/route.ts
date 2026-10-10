@@ -1,3 +1,4 @@
+import { hasPermission } from '@/lib/rbac/permissions';
 import { NextRequest, NextResponse } from "next/server";
 import { protectApiRoute } from "@/lib/rbac/middleware";
 import { db } from "@/lib/connect-db";
@@ -56,7 +57,15 @@ export const PUT = protectApiRoute("USER", "UPDATE", async (request, context) =>
   try {
     const url = new URL(request.url);
     const userId = url.pathname.split('/').pop();
-    const updateData = await request.json();
+    const body = await request.json();
+    if ('defaultRole' in body && !(await hasPermission(context.userId, 'ROLE', 'UPDATE'))) {
+      return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+    }
+    // Never allow arbitrary DB columns (e.g. supabaseUserId) to be mass assigned.
+    const updateData: Record<string, any> = {};
+    for (const key of ['userName', 'email', 'password', 'emailVerified', 'defaultRole']) {
+      if (key in body) updateData[key] = body[key];
+    }
 
     if (!userId) {
       return NextResponse.json({ error: "User ID is required" }, { status: 400 });

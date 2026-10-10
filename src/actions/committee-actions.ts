@@ -1,5 +1,7 @@
 'use server';
 
+import { canAccess } from '@/lib/rbac/middleware';
+
 import { db } from '@/lib/connect-db';
 import { committees, committeeMembers, userRole, profiles, certificateSignatures } from '@/db/schema';
 import { user as userTable } from '@/db/schemas/auth';
@@ -19,6 +21,8 @@ async function getAuthUserId(): Promise<string | null> {
 }
 
 export async function getCommittees() {
+  if (!(await canAccess('MEMBER', 'READ'))) return { success: false as const, error: 'Forbidden' };
+
   try {
     const data = await db.query.committees.findMany({
       orderBy: [desc(committees.createdAt)],
@@ -30,6 +34,8 @@ export async function getCommittees() {
 }
 
 export async function createCommittee(data: { title: string; year: string; description?: string; trainerSignatureId?: string | null; coordinatorSignatureId?: string | null }) {
+  if (!(await canAccess('MEMBER', 'CREATE'))) return { success: false as const, error: 'Forbidden' };
+
   const userId = await getAuthUserId();
   if (!userId) return { success: false, error: 'Unauthorized' };
 
@@ -54,6 +60,8 @@ export async function updateCommittee(
   committeeId: string,
   data: { title?: string; year?: string; description?: string | null }
 ) {
+  if (!(await canAccess('MEMBER', 'UPDATE'))) return { success: false as const, error: 'Forbidden' };
+
   const userId = await getAuthUserId();
   if (!userId) return { success: false, error: 'Unauthorized' };
 
@@ -89,6 +97,9 @@ export async function updateCommittee(
 }
 
 export async function setCommitteeActive(committeeId: string) {
+  if (!(await canAccess('ROLE', 'UPDATE'))) return { success: false as const, error: 'Forbidden' };
+  if (!(await canAccess('MEMBER', 'UPDATE'))) return { success: false as const, error: 'Forbidden' };
+
   const userId = await getAuthUserId();
   if (!userId) return { success: false, error: 'Unauthorized' };
 
@@ -174,11 +185,24 @@ export async function setCommitteeActive(committeeId: string) {
 }
 
 export async function deleteCommittee(committeeId: string) {
+  if (!(await canAccess('MEMBER', 'DELETE'))) return { success: false as const, error: 'Forbidden' };
+
+  if (!(await canAccess('ROLE', 'UPDATE'))) return { success: false as const, error: 'Forbidden' };
   const userId = await getAuthUserId();
   if (!userId) return { success: false, error: 'Unauthorized' };
 
   try {
-    await db.delete(committees).where(eq(committees.id, committeeId));
+    await db.transaction(async tx => {
+      const assignedMembers = await tx.query.committeeMembers.findMany({
+        where: eq(committeeMembers.committeeId, committeeId),
+      });
+      for (const member of assignedMembers) {
+        if (member.rbacRoleId) await tx.update(userRole).set({ isActive: false }).where(
+          and(eq(userRole.userId, member.userId), eq(userRole.roleId, member.rbacRoleId))
+        );
+      }
+      await tx.delete(committees).where(eq(committees.id, committeeId));
+    });
     revalidatePath('/admin/committees');
     return { success: true };
   } catch (error: any) {
@@ -187,6 +211,8 @@ export async function deleteCommittee(committeeId: string) {
 }
 
 export async function getCommitteeMembers(committeeId: string) {
+  if (!(await canAccess('MEMBER', 'READ'))) return { success: false as const, error: 'Forbidden' };
+
   try {
     const data = await db.query.committeeMembers.findMany({
       where: eq(committeeMembers.committeeId, committeeId),
@@ -294,6 +320,8 @@ export async function updateCommitteeApplication(applicationId: string, data: { 
 }
 
 export async function updateCommitteeApplicationAdmin(applicationId: string, data: { institution?: string; department?: string; statement?: string; additionalData?: Record<string, any>; photoUrl?: string | null }) {
+  if (!(await canAccess('MEMBER', 'UPDATE'))) return { success: false as const, error: 'Forbidden' };
+
   const userId = await getAuthUserId();
   if (!userId) return { success: false, error: 'Unauthorized' };
 
@@ -336,11 +364,21 @@ export async function updateCommitteeApplicationAdmin(applicationId: string, dat
 }
 
 export async function approveApplication(id: string, positionTitle: string, rbacRoleId: string | null) {
+  if (rbacRoleId && !(await canAccess('ROLE', 'UPDATE'))) return { success: false as const, error: 'Forbidden' };
+  if (!(await canAccess('MEMBER', 'APPROVE'))) return { success: false as const, error: 'Forbidden' };
+
   const userId = await getAuthUserId();
   if (!userId) return { success: false, error: 'Unauthorized' };
 
   try {
     await db.transaction(async (tx) => {
+      const previous = await tx.query.committeeMembers.findFirst({ where: eq(committeeMembers.id, id) });
+      if (previous?.rbacRoleId && !(await canAccess('ROLE', 'UPDATE'))) throw new Error('Forbidden');
+      if (previous?.rbacRoleId && previous.rbacRoleId !== rbacRoleId) {
+        await tx.update(userRole).set({ isActive: false }).where(
+          and(eq(userRole.userId, previous.userId), eq(userRole.roleId, previous.rbacRoleId))
+        );
+      }
       // 1. Update application status
       const [updated] = await tx.update(committeeMembers).set({
         status: "approved",
@@ -391,6 +429,8 @@ export async function approveApplication(id: string, positionTitle: string, rbac
 }
 
 export async function rejectApplication(id: string) {
+  if (!(await canAccess('MEMBER', 'APPROVE'))) return { success: false as const, error: 'Forbidden' };
+
   const userId = await getAuthUserId();
   if (!userId) return { success: false, error: 'Unauthorized' };
 
@@ -420,7 +460,7 @@ export async function getActiveCommittee() {
         eq(committeeMembers.committeeId, committee.id),
         eq(committeeMembers.status, "approved")
       ),
-      with: { profile: true, user: true }
+      with: { profile: { columns: { fullNameEnglish: true, fullNameBangla: true, picture: true, memberNumber: true } }, user: { columns: { userName: true } } }
     });
 
     return { success: true, data: { ...committee, members: membersList } };
@@ -473,7 +513,7 @@ export async function getCommitteeDirectory() {
         inArray(committeeMembers.committeeId, committeeIds),
         eq(committeeMembers.status, "approved")
       ),
-      with: { profile: true, user: true },
+      with: { profile: { columns: { fullNameEnglish: true, fullNameBangla: true, picture: true, memberNumber: true } }, user: { columns: { userName: true } } },
     });
 
     const membersByCommittee = new Map<string, typeof approvedMembers>();

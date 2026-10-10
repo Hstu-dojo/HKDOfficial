@@ -25,7 +25,7 @@ export const GET = protectApiRoute("USER", "READ", async (request, context) => {
 });
 
 // POST /api/rbac/users/[userId]/roles - Assign role to user
-export const POST = protectApiRoute("USER", "UPDATE", async (request, context) => {
+export const POST = protectApiRoute("ROLE", "UPDATE", async (request, context) => {
   try {
     const url = new URL(request.url);
     const userId = url.pathname.split('/')[4]; // Extract userId from path
@@ -49,7 +49,7 @@ export const POST = protectApiRoute("USER", "UPDATE", async (request, context) =
 });
 
 // DELETE /api/rbac/users/[userId]/roles - Remove role from user
-export const DELETE = protectApiRoute("USER", "UPDATE", async (request, context) => {
+export const DELETE = protectApiRoute("ROLE", "UPDATE", async (request, context) => {
   try {
     const url = new URL(request.url);
     const userId = url.pathname.split('/')[4]; // Extract userId from path

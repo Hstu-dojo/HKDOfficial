@@ -1,5 +1,7 @@
 'use server';
 
+import { canAccess } from '@/lib/rbac/middleware';
+
 import { db } from "@/lib/connect-db";
 import { programs, programRegistrations, members, profiles, registrations, courseEnrollments, courses, enrollmentApplications, programTypes } from "@/db/schemas/karate";
 import { user, account } from "@/db/schemas/auth";
@@ -44,6 +46,8 @@ const BELT_TEST_ALLOWED_RANKS = [
 ];
 
 export async function createProgram(data: NewProgram) {
+  if (!(await canAccess('PROGRAM', 'CREATE'))) return { success: false as const, error: 'Forbidden' };
+
   try {
     // If a dynamic program type was selected, derive the category for business rules.
     if (data.programTypeId) {
@@ -80,6 +84,8 @@ export async function createProgram(data: NewProgram) {
 }
 
 export async function updateProgram(id: string, data: Partial<NewProgram>) {
+  if (!(await canAccess('PROGRAM', 'UPDATE'))) return { success: false as const, error: 'Forbidden' };
+
   try {
     const existing = await db.query.programs.findFirst({
       where: eq(programs.id, id),
@@ -133,6 +139,8 @@ export async function updateProgram(id: string, data: Partial<NewProgram>) {
 }
 
 export async function getAllPrograms() {
+  if (!(await canAccess('PROGRAM', 'READ'))) return { success: false as const, error: 'Forbidden' };
+
   try {
     const allPrograms = await db.query.programs.findMany({
       with: {
@@ -148,6 +156,8 @@ export async function getAllPrograms() {
 }
 
 export async function getProgramById(id: string) {
+  if (!(await canAccess('PROGRAM', 'READ') || await canAccess('CERTIFICATE', 'READ') || await canAccess('PROGRAM_REGISTRATION', 'READ'))) return { success: false as const, error: 'Forbidden' };
+
   try {
     const program = await db.query.programs.findFirst({
       where: eq(programs.id, id),
@@ -411,6 +421,8 @@ export async function registerForProgram(data: NewProgramRegistration) {
 }
 
 export async function getProgramRegistrations(programId?: string) {
+  if (!(await canAccess('PROGRAM_REGISTRATION', 'READ'))) return { success: false as const, error: 'Forbidden' };
+
   try {
     const whereClause = programId ? eq(programRegistrations.programId, programId) : undefined;
     const registrations = await db.query.programRegistrations.findMany({
@@ -435,6 +447,8 @@ export async function getProgramRegistrations(programId?: string) {
 
 // Get registrations with full details for export
 export async function getProgramRegistrationsForExport(programId?: string, statusFilter?: string) {
+  if (!(await canAccess('PROGRAM_REGISTRATION', 'READ'))) return { success: false as const, error: 'Forbidden' };
+
   try {
     // Use explicit SELECT with LEFT JOINs to ensure we get all data
     const conditions = [];
@@ -571,6 +585,8 @@ export async function updateRegistrationStatus(
   registrationId: string, 
   status: 'approved' | 'rejected' | 'pending_payment' | 'payment_submitted'
 ) {
+  if (!(await canAccess('PROGRAM_REGISTRATION', 'UPDATE'))) return { success: false as const, error: 'Forbidden' };
+
   try {
     const [updated] = await db.update(programRegistrations)
       .set({ status: status as any, updatedAt: new Date() })
@@ -596,6 +612,8 @@ export async function updateRegistration(
     newRank?: string;
   }
 ) {
+  if (!(await canAccess('PROGRAM_REGISTRATION', 'UPDATE'))) return { success: false as const, error: 'Forbidden' };
+
   try {
     const updatePayload: any = { ...data, updatedAt: new Date() };
     if (data.newRank === '') updatePayload.newRank = null; // allow clearing
@@ -614,6 +632,8 @@ export async function updateRegistration(
 }
 
 export async function deleteRegistration(registrationId: string) {
+  if (!(await canAccess('PROGRAM_REGISTRATION', 'DELETE'))) return { success: false as const, error: 'Forbidden' };
+
   try {
     // First get the registration to update participant count
     const registration = await db.query.programRegistrations.findFirst({
@@ -673,6 +693,8 @@ export async function getProgramBySlug(slug: string) {
 }
 
 export async function searchAdminRegistrantCandidates(programId: string, q: string) {
+  if (!(await canAccess('PROGRAM_REGISTRATION', 'CREATE'))) return { success: false as const, error: 'Forbidden' };
+
   try {
     const query = (q || '').trim();
     if (!programId) return { success: false, error: 'Program is required' };
@@ -844,6 +866,8 @@ export async function searchAdminRegistrantCandidates(programId: string, q: stri
 }
 
 export async function adminAddRegistrantToProgram(input: { programId: string; userId: string; newRank?: string | null }) {
+  if (!(await canAccess('PROGRAM_REGISTRATION', 'CREATE'))) return { success: false as const, error: 'Forbidden' };
+
   try {
     if (!input?.programId || !input?.userId) {
       return { success: false, error: 'Program and user are required' };

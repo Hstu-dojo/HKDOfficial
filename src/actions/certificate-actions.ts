@@ -1,5 +1,7 @@
 'use server';
 
+import { canAccess } from '@/lib/rbac/middleware';
+
 import { db } from '@/lib/connect-db';
 import {
   programs,
@@ -46,6 +48,8 @@ function generateCertificateNumber(): string {
 // ---------------------------------------------------------------------------
 
 export async function getSignatures() {
+  if (!(await canAccess('CERTIFICATE', 'READ'))) return { success: false as const, error: 'Forbidden' };
+
   try {
     const sigs = await db.query.certificateSignatures.findMany({
       orderBy: [desc(certificateSignatures.createdAt)],
@@ -58,6 +62,8 @@ export async function getSignatures() {
 }
 
 export async function getActiveSignatures() {
+  if (!(await canAccess('CERTIFICATE', 'READ') || await canAccess('MEMBER', 'READ') || await canAccess('PROGRAM', 'READ'))) return { success: false as const, error: 'Forbidden' };
+
   try {
     const sigs = await db.query.certificateSignatures.findMany({
       where: eq(certificateSignatures.isActive, true),
@@ -73,6 +79,8 @@ export async function getActiveSignatures() {
 export async function createSignature(
   data: Omit<NewCertificateSignature, 'id' | 'createdAt' | 'updatedAt' | 'createdBy'>
 ) {
+  if (!(await canAccess('CERTIFICATE', 'CREATE'))) return { success: false as const, error: 'Forbidden' };
+
   try {
     const userId = await getAuthUserId();
     if (!userId) return { success: false, error: 'Unauthorized' };
@@ -94,6 +102,8 @@ export async function updateSignature(
   id: string,
   data: Partial<Pick<CertificateSignature, 'name' | 'nameBangla' | 'role' | 'title' | 'signatureImageUrl' | 'isActive'>>
 ) {
+  if (!(await canAccess('CERTIFICATE', 'UPDATE'))) return { success: false as const, error: 'Forbidden' };
+
   try {
     const userId = await getAuthUserId();
     if (!userId) return { success: false, error: 'Unauthorized' };
@@ -113,6 +123,8 @@ export async function updateSignature(
 }
 
 export async function deleteSignature(id: string) {
+  if (!(await canAccess('CERTIFICATE', 'DELETE'))) return { success: false as const, error: 'Forbidden' };
+
   try {
     const userId = await getAuthUserId();
     if (!userId) return { success: false, error: 'Unauthorized' };
@@ -163,6 +175,8 @@ export interface ProgramParticipant {
  * certificate rows are missing.
  */
 export async function getProgramParticipants(programId: string) {
+  if (!(await canAccess('CERTIFICATE', 'READ'))) return { success: false as const, error: 'Forbidden' };
+
   try {
     const rows = await db
       .select({
@@ -219,6 +233,8 @@ export async function markEligible(
   programId: string,
   profileIds: string[]
 ) {
+  if (!(await canAccess('CERTIFICATE', 'CREATE'))) return { success: false as const, error: 'Forbidden' };
+
   try {
     const userId = await getAuthUserId();
     if (!userId) return { success: false, error: 'Unauthorized' };
@@ -248,6 +264,8 @@ export async function markEligible(
  * Auto-mark eligible: all participants with payment_verified or approved status.
  */
 export async function autoMarkEligible(programId: string) {
+  if (!(await canAccess('CERTIFICATE', 'CREATE'))) return { success: false as const, error: 'Forbidden' };
+
   try {
     const userId = await getAuthUserId();
     if (!userId) return { success: false, error: 'Unauthorized' };
@@ -300,6 +318,8 @@ export async function issueCertificates(
   coordinatorSignatureId: string | null | undefined,
   issueDate?: Date
 ) {
+  if (!(await canAccess('CERTIFICATE', 'CREATE'))) return { success: false as const, error: 'Forbidden' };
+
   try {
     const userId = await getAuthUserId();
     if (!userId) return { success: false, error: 'Unauthorized' };
@@ -410,6 +430,8 @@ export async function issueCertificates(
  * Revoke a certificate.
  */
 export async function revokeCertificate(certificateId: string, reason: string) {
+  if (!(await canAccess('CERTIFICATE', 'UPDATE'))) return { success: false as const, error: 'Forbidden' };
+
   try {
     const userId = await getAuthUserId();
     if (!userId) return { success: false, error: 'Unauthorized' };
@@ -440,6 +462,8 @@ export async function revokeCertificate(certificateId: string, reason: string) {
  * Only REVOKED certificates can be deleted.
  */
 export async function deleteCertificate(certificateId: string) {
+  if (!(await canAccess('CERTIFICATE', 'DELETE'))) return { success: false as const, error: 'Forbidden' };
+
   try {
     const userId = await getAuthUserId();
     if (!userId) return { success: false, error: 'Unauthorized' };
@@ -478,6 +502,8 @@ export async function updateCertificateSignatures(
   trainerSignatureId: string | null | undefined,
   coordinatorSignatureId: string | null | undefined,
 ) {
+  if (!(await canAccess('CERTIFICATE', 'UPDATE'))) return { success: false as const, error: 'Forbidden' };
+
   try {
     const userId = await getAuthUserId();
     if (!userId) return { success: false, error: 'Unauthorized' };
@@ -521,6 +547,8 @@ export async function createManualCertificate(
   issueDate?: Date,
   metadata?: Record<string, any>
 ) {
+  if (!(await canAccess('CERTIFICATE', 'CREATE'))) return { success: false as const, error: 'Forbidden' };
+
   try {
     const userId = await getAuthUserId();
     if (!userId) return { success: false, error: 'Unauthorized' };
@@ -560,6 +588,8 @@ export async function attachProfileToCertificate(
   certificateId: string,
   profileId: string
 ) {
+  if (!(await canAccess('CERTIFICATE', 'UPDATE'))) return { success: false as const, error: 'Forbidden' };
+
   try {
     const userId = await getAuthUserId();
     if (!userId) return { success: false, error: 'Unauthorized' };
@@ -650,6 +680,8 @@ export async function attachProfileToCertificate(
  * Search profiles by name or member number (for attach-profile modal).
  */
 export async function searchProfiles(query: string) {
+  if (!(await canAccess('CERTIFICATE', 'READ'))) return { success: false as const, error: 'Forbidden' };
+
   try {
     const userId = await getAuthUserId();
     if (!userId) return { success: false, error: 'Unauthorized' };
@@ -684,6 +716,8 @@ export async function searchProfiles(query: string) {
  * Remove eligibility (delete certificate row, only if ELIGIBLE status).
  */
 export async function removeEligibility(certificateId: string) {
+  if (!(await canAccess('CERTIFICATE', 'DELETE'))) return { success: false as const, error: 'Forbidden' };
+
   try {
     const userId = await getAuthUserId();
     if (!userId) return { success: false, error: 'Unauthorized' };
@@ -713,6 +747,8 @@ export async function removeEligibility(certificateId: string) {
  * Get all certificates for a specific program.
  */
 export async function getProgramCertificates(programId: string) {
+  if (!(await canAccess('CERTIFICATE', 'READ'))) return { success: false as const, error: 'Forbidden' };
+
   try {
     const certs = await db
       .select({
@@ -758,6 +794,8 @@ export async function getProgramCertificates(programId: string) {
  * Get all certificates across all programs (admin overview).
  */
 export async function getAllCertificates() {
+  if (!(await canAccess('CERTIFICATE', 'READ'))) return { success: false as const, error: 'Forbidden' };
+
   try {
     const certs = await db
       .select({
@@ -846,6 +884,9 @@ export async function getMyCertificates() {
  * Get a single certificate with full data (for PDF generation).
  */
 export async function getCertificateForPdf(certificateId: string) {
+  const viewerId = await getAuthUserId();
+  if (!viewerId) return { success: false as const, error: 'Unauthorized' };
+  const canReadAll = await canAccess('CERTIFICATE', 'READ');
   try {
     const [cert] = await db
       .select({
@@ -881,7 +922,7 @@ export async function getCertificateForPdf(certificateId: string) {
           eq(programRegistrations.profileId, programCertificates.profileId)
         )
       )
-      .where(eq(programCertificates.id, certificateId))
+      .where(and(eq(programCertificates.id, certificateId), ...(canReadAll ? [] : [eq(profiles.userId, viewerId), eq(programCertificates.status, 'ISSUED')])) )
       .limit(1);
 
     if (!cert) return { success: false, error: 'Certificate not found' };

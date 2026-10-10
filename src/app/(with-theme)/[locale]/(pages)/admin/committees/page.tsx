@@ -1,3 +1,4 @@
+import { requireAdminPageAccess } from '@/lib/rbac/page-access';
 import CommitteesManagement from '@/components/admin/committees/CommitteesManagement';
 
 export const metadata = {
@@ -5,6 +6,7 @@ export const metadata = {
   description: 'Create committee terms and manage applications',
 };
 
-export default function CommitteesAdminPage() {
+export default async function CommitteesAdminPage() {
+  await requireAdminPageAccess('/admin/committees');
   return <CommitteesManagement />;
 }

@@ -1,3 +1,4 @@
+import { requireAdminPageAccess } from '@/lib/rbac/page-access';
 import { Metadata } from "next";
 import Link from "next/link";
 import {
@@ -249,7 +250,8 @@ const colorMap: Record<string, { bg: string; border: string; icon: string; badge
   },
 };
 
-export default function AdminDocsPage() {
+export default async function AdminDocsPage() {
+  await requireAdminPageAccess('/admin/docs');
   const totalDocs = sections.reduce((sum, s) => sum + s.links.length, 0);
 
   return (

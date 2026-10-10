@@ -1,3 +1,4 @@
+import { requireAdminPageAccess } from '@/lib/rbac/page-access';
 import ProgramRegistrations from "@/components/admin/programs/ProgramRegistrations";
 
 
@@ -6,6 +7,7 @@ export const metadata = {
   description: "Manage registrations for programs",
 };
 
-export default function RegistrationsPage() {
+export default async function RegistrationsPage() {
+  await requireAdminPageAccess('/admin/programs/registrations');
   return <ProgramRegistrations />;
 }

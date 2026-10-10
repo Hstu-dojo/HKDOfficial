@@ -1,3 +1,4 @@
+import { requireAdminPageAccess } from '@/lib/rbac/page-access';
 import ProgramCertificateManagement from "@/components/admin/certificates/ProgramCertificateManagement";
 import { Suspense } from "react";
 
@@ -6,7 +7,8 @@ export const metadata = {
   description: "Manage certificate eligibility and issuance for a program",
 };
 
-export default function ProgramCertificatesPage() {
+export default async function ProgramCertificatesPage() {
+  await requireAdminPageAccess('/admin/programs/certificates');
   return (
     <Suspense fallback={
       <div className="flex justify-center items-center min-h-[400px]">

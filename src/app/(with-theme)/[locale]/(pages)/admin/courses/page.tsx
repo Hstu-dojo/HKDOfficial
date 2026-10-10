@@ -1,3 +1,4 @@
+import { requireAdminPageAccess } from '@/lib/rbac/page-access';
 import CoursesManagement from "@/components/admin/courses/CoursesManagement";
 
 export const metadata = {
@@ -5,6 +6,7 @@ export const metadata = {
   description: "Manage karate courses",
 };
 
-export default function CoursesPage() {
+export default async function CoursesPage() {
+  await requireAdminPageAccess('/admin/courses');
   return <CoursesManagement />;
 }

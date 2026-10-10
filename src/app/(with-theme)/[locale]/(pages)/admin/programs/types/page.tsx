@@ -1,3 +1,4 @@
+import { requireAdminPageAccess } from '@/lib/rbac/page-access';
 import ProgramTypesManagement from '@/components/admin/programs/ProgramTypesManagement';
 
 export const metadata = {
@@ -5,6 +6,7 @@ export const metadata = {
   description: 'Manage dynamic program types and certificate templates',
 };
 
-export default function ProgramTypesPage() {
+export default async function ProgramTypesPage() {
+  await requireAdminPageAccess('/admin/programs/types');
   return <ProgramTypesManagement />;
 }

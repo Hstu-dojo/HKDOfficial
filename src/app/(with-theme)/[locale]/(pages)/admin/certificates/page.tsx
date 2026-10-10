@@ -1,3 +1,4 @@
+import { requireAdminPageAccess } from '@/lib/rbac/page-access';
 import CertificatesOverview from "@/components/admin/certificates/CertificatesOverview";
 
 export const metadata = {
@@ -5,6 +6,7 @@ export const metadata = {
   description: "Overview of all program certificates",
 };
 
-export default function CertificatesPage() {
+export default async function CertificatesPage() {
+  await requireAdminPageAccess('/admin/certificates');
   return <CertificatesOverview />;
 }

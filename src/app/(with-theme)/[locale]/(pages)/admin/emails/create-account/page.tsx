@@ -1,15 +1,7 @@
-"use client";
-import { CreateAccountMail } from "@/components/emails/body/createAccount";
-import { useState, useEffect } from 'react'
-export default function Email() {
-  const [isClient, setIsClient] = useState(false)
-  
-  useEffect(() => {
-    setIsClient(true)
-  }, [])
-  return (
-    <>
-      {isClient ? <CreateAccountMail token={"123-456-789"} /> : 'Rendering..'}
-    </>
-  );
+import Content from './page-content';
+import { requireAdminPageAccess } from '@/lib/rbac/page-access';
+export default async function Page({ params }: { params: Promise<{ locale: string }> }) {
+  const { locale } = await params;
+  await requireAdminPageAccess('/admin/emails/create-account', locale);
+  return <Content />;
 }
