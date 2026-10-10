@@ -3,6 +3,7 @@ import { editorialFonts } from "@/styles/fonts";
 import { cookies } from "next/headers";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { Analytics } from "@vercel/analytics/next";
+import { PageLoaderProvider } from "@/components/loading/PageLoaderProvider";
 export default async function RootLayout({
   children,
 }: {
@@ -13,7 +14,7 @@ export default async function RootLayout({
   return (
     <html lang={locale} className={editorialFonts} suppressHydrationWarning>
       <body className="editorial-site">
-        {children}
+        <PageLoaderProvider>{children}</PageLoaderProvider>
         <SpeedInsights />
         <Analytics />
       </body>

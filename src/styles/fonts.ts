@@ -26,6 +26,14 @@ const sans = localFont({
   variable: "--font-sans",
   display: "swap",
 });
+const loader = localFont({
+  src: "../assets/fonts/editorial/inter-900-loader.woff2",
+  weight: "900",
+  style: "normal",
+  variable: "--font-loader",
+  display: "swap",
+  preload: false,
+});
 const serif = localFont({
   src: [
     {
@@ -83,4 +91,4 @@ const devanagari = localFont({
   preload: false,
 });
 
-export const editorialFonts = `${sans.variable} ${serif.variable} ${bengali.variable} ${devanagari.variable}`;
+export const editorialFonts = `${sans.variable} ${loader.variable} ${serif.variable} ${bengali.variable} ${devanagari.variable}`;
