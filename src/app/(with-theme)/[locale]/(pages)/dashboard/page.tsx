@@ -163,7 +163,7 @@ export default async function DashboardPage() {
     : [];
 
   return (
-    <div className="space-y-6">
+    <div className="portal-page space-y-6">
       {/* ── User hero card ──────────────────────────────────────────────── */}
       <div className="portal-overview-hero relative overflow-hidden">
         <div className="pointer-events-none absolute -right-10 -top-10 h-40 w-40 rounded-full bg-primary/10 blur-3xl" />

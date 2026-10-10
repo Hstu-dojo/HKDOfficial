@@ -189,12 +189,12 @@ export default function PayFeeForm({ feeId }: { feeId: string }) {
   const amountDue = feeDetails.totalAmount - feeDetails.paidAmount;
 
   return (
-    <div className="max-w-2xl mx-auto">
+    <div className="portal-page space-y-6">
       {/* Header */}
       <div className="mb-6">
         <Link
           href="/dashboard/enrollments"
-          className="inline-flex items-center text-muted-foreground hover:text-gray-900 mb-4"
+          className="inline-flex items-center text-muted-foreground hover:text-foreground mb-4"
         >
           <ArrowLeftIcon className="h-4 w-4 mr-2" />
           {t('feePayment.backToDashboard')}
@@ -203,7 +203,7 @@ export default function PayFeeForm({ feeId }: { feeId: string }) {
       </div>
 
       {/* Fee Summary */}
-      <div className="bg-white rounded-lg border p-6 mb-6">
+      <div className="bg-card rounded-xl border border-border p-4 sm:p-6">
         <div className="flex items-center gap-4 mb-4">
           <div className="p-3 bg-red-100 rounded-lg">
             <AcademicCapIcon className="h-8 w-8 text-red-600" />
@@ -250,7 +250,7 @@ export default function PayFeeForm({ feeId }: { feeId: string }) {
       </div>
 
       {/* Payment Method Selection */}
-      <div className="bg-white rounded-lg border p-6 mb-6">
+      <div className="bg-card rounded-xl border border-border p-4 sm:p-6">
         <h3 className="font-semibold text-foreground mb-4">{t('feePayment.selectPaymentMethod')}</h3>
 
         <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 mb-6">
@@ -335,11 +335,11 @@ export default function PayFeeForm({ feeId }: { feeId: string }) {
             const selectedAccount = paymentAccounts.find(a => a.methodType === paymentInfo.paymentMethod);
             if (!selectedAccount) return null;
             return (
-              <div className="bg-blue-50 rounded-lg p-4 mb-6">
-                <h4 className="font-semibold text-blue-900 mb-3">
+              <div className="bg-primary/5 rounded-xl border border-primary/15 p-4 mb-6">
+                <h4 className="font-semibold text-foreground mb-3">
                   {t('feePayment.bkashInstructionsTitle').replace('bKash', selectedAccount.name)}
                 </h4>
-                <ol className="list-decimal list-inside text-sm text-blue-800 space-y-2">
+                <ol className="list-decimal list-inside text-sm text-muted-foreground space-y-2">
                   <li>Open your {selectedAccount.methodType} app</li>
                   <li>Go to &quot;Send Money&quot;</li>
                   <li>
@@ -355,11 +355,11 @@ export default function PayFeeForm({ feeId }: { feeId: string }) {
                   <li>Complete the payment and note the Transaction ID</li>
                 </ol>
                 {selectedAccount.instructions && (
-                  <p className="mt-3 text-sm text-blue-700">{selectedAccount.instructions}</p>
+                  <p className="mt-3 text-sm text-muted-foreground">{selectedAccount.instructions}</p>
                 )}
                 {selectedAccount.qrCodeUrl && (
                   <div className="mt-4">
-                    <p className="text-sm text-blue-800 mb-2">{t('feePayment.orScanQr')}</p>
+                    <p className="text-sm text-muted-foreground mb-2">{t('feePayment.orScanQr')}</p>
                     <div className="bg-white p-3 rounded-lg inline-block">
                       <Image
                         src={selectedAccount.qrCodeUrl}
@@ -451,7 +451,7 @@ export default function PayFeeForm({ feeId }: { feeId: string }) {
       <button
         onClick={handleSubmitPayment}
         disabled={submitting || !paymentInfo.transactionId}
-        className="w-full py-3 bg-red-600 text-white font-semibold rounded-lg hover:bg-red-700 disabled:opacity-50 flex items-center justify-center gap-2"
+        className="w-full py-2.5 bg-primary text-primary-foreground font-semibold rounded-md hover:bg-primary/90 disabled:opacity-50 flex items-center justify-center gap-2"
       >
         {submitting ? (
           <>

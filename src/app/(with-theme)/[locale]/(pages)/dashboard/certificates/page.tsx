@@ -34,7 +34,7 @@ export default async function CertificatesPage() {
       : [];
 
   return (
-    <div className="space-y-6">
+    <div className="portal-page space-y-6">
       {/* Page Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>

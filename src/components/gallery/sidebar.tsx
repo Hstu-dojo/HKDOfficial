@@ -21,13 +21,13 @@ export function Sidebar({ className }: SidebarProps) {
   const isActive = (path: string) => pathname?.includes(path);
 
   return (
-    <div className={cn("pb-12", className)}>
-      <div className="space-y-4 py-4">
+    <div className={cn("min-w-0", className)}>
+      <div className="space-y-4 py-2 lg:py-4">
         <div className="px-3 py-2">
           <h2 className="mb-2 px-4 text-lg font-semibold tracking-tight">
             Gallery
           </h2>
-          <div className="space-y-1">
+          <div className="flex gap-2 lg:flex-col lg:gap-1">
             <Button
               onClick={() => router.push("/admin/gallery")}
               variant={isActive("/admin/gallery") && !isActive("favorite") ? "secondary" : "ghost"}
@@ -46,7 +46,7 @@ export function Sidebar({ className }: SidebarProps) {
             </Button>
           </div>
         </div>
-        <div className="px-3 py-2">
+        <div className="hidden px-3 py-2 lg:block">
           <h2 className="mb-2 px-4 text-lg font-semibold tracking-tight">
             Actions
           </h2>
@@ -72,7 +72,7 @@ export function Sidebar({ className }: SidebarProps) {
             </Button>
           </div>
         </div>
-        <div className="px-3 py-2">
+        <div className="hidden px-3 py-2 lg:block">
           <h2 className="mb-2 px-4 text-lg font-semibold tracking-tight">
             Quick Links
           </h2>

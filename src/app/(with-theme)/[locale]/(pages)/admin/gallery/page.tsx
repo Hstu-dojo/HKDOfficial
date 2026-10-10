@@ -12,7 +12,7 @@ export const dynamic = "force-dynamic";
 export default async function GalleryAdminPage() {
   await requireAdminPageAccess('/admin/gallery');
   return (
-    <div className="space-y-6">
+    <div className="portal-page space-y-6">
       <div>
         <h1 className="text-3xl font-bold tracking-tight">Gallery Management</h1>
         <p className="text-muted-foreground">

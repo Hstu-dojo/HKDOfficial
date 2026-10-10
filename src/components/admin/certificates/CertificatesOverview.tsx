@@ -87,7 +87,7 @@ export default function CertificatesOverview() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="portal-page space-y-6">
       <div>
         <h1 className="text-2xl font-bold text-foreground dark:text-gray-100">Certificates Overview</h1>
         <p className="mt-1 text-sm text-muted-foreground dark:text-gray-400">

@@ -408,7 +408,7 @@ export default function ProgramRegistrations() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="portal-page space-y-6">
       {/* Header */}
       <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-4">
         <div>

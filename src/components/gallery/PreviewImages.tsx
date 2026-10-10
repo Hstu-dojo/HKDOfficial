@@ -32,17 +32,17 @@ const PreviewImages = async ({ tag }: { tag?: string }) => {
 
   // console.log(reducedResults)
   return (
-    <div>
+    <div className="portal-page space-y-6">
       <div className="flex items-center justify-between ">
         <div className="space-y-1">
-          <h2 className="text-2xl font-semibold tracking-tight">Listen Now</h2>
+          <h1 className="text-2xl font-semibold tracking-tight">Featured Media</h1>
           <p className="text-sm text-muted-foreground">
-            Top picks for you. Updated daily.
+            Images selected for the featured gallery.
           </p>
         </div>
       </div>
       <Separator className="my-4" />
-      <div className="mx-auto max-w-[1960px] p-4">
+      <div className="w-full min-w-0">
         {/* <ScrollArea> */}
         <div className="2xl:columns-4 columns-1 sm:columns-2 xl:columns-3">
           {results?.resources?.map((album: Album) => (

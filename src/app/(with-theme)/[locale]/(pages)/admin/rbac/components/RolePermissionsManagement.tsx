@@ -225,7 +225,7 @@ export default function RolePermissionsManagement() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="portal-page space-y-6">
       {/* Header */}
       <div>
         <h2 className="text-xl font-semibold">Role Permissions Management</h2>
@@ -353,7 +353,7 @@ export default function RolePermissionsManagement() {
                               onClick={() => togglePermissionSelection(p.id)}
                               className={`px-2 py-1 rounded text-xs flex items-center gap-1 transition-colors ${
                                 selectedPermissions.has(p.id)
-                                  ? "bg-blue-600 text-white"
+                                  ? "bg-primary text-primary-foreground"
                                   : "bg-muted dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600"
                               }`}
                             >

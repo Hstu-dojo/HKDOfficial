@@ -21,7 +21,7 @@ export default function RBACDashboardPage() {
   ];
 
   return (
-    <div className="space-y-6">
+    <div className="portal-page space-y-6">
       <div className="shadow rounded-lg border bg-white dark:bg-card">
         <div className="overflow-x-auto">
           <div className="flex gap-2 p-2 min-w-max">
@@ -31,7 +31,7 @@ export default function RBACDashboardPage() {
                 onClick={() => setActiveTab(tab.id)}
                 className={`py-2 px-4 font-medium rounded-lg transition-colors whitespace-nowrap ${
                   activeTab === tab.id
-                    ? "bg-blue-600 text-white"
+                    ? "bg-primary text-primary-foreground"
                     : "bg-muted dark:bg-background text-muted-foreground dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700"
                 }`}
                 title={tab.description}

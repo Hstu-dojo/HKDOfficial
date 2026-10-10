@@ -209,7 +209,7 @@ export default function StudentEnrollmentDashboard() {
   const totalDue = pendingFees.reduce((sum, f) => sum + (f.totalAmount - f.paidAmount), 0);
 
   return (
-    <div className="space-y-8">
+    <div className="portal-page space-y-6">
       {/* Header */}
       <div>
         <h1 className="text-2xl font-bold text-foreground dark:text-gray-100">{t('enrollments.title')}</h1>
@@ -282,7 +282,7 @@ export default function StudentEnrollmentDashboard() {
                 const StatusIcon = status?.icon || ClockIcon;
                 const statusLabel = status ? t(status.labelKey) : app.application.status;
                 return (
-                  <div key={app.application.id} className="p-4 flex items-center justify-between">
+                  <div key={app.application.id} className="p-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                     <div className="flex items-center gap-4">
                       <div className="p-2 bg-muted dark:bg-slate-700 rounded-lg">
                         <AcademicCapIcon className="h-6 w-6 text-muted-foreground dark:text-gray-400" />

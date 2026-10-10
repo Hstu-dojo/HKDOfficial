@@ -94,7 +94,7 @@ export default function Enrollments() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="portal-page space-y-6">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h1 className="text-3xl font-bold tracking-tight text-foreground">Enrollments</h1>
@@ -198,7 +198,7 @@ function ApplicationsTab({
   }
 
   return (
-    <div className="space-y-4">
+    <div className="portal-page space-y-6">
       <div className="rounded-xl border bg-card p-4 shadow-sm flex flex-col gap-4 sm:flex-row sm:items-end">
         <div className="w-full sm:w-56 space-y-1.5">
           <Label htmlFor="app_status">Status</Label>

@@ -96,7 +96,7 @@ export default function Profile() {
   if (!partner) return <p className="text-sm text-destructive">Partner not found</p>
 
   return (
-    <div className="space-y-4">
+    <div className="portal-page space-y-6">
       <div>
         <h1 className="text-2xl font-bold text-foreground">Profile</h1>
         <p className="text-sm text-muted-foreground">/org/{partner.slug}</p>
@@ -105,7 +105,7 @@ export default function Profile() {
       {message ? <p className="text-sm text-primary">{message}</p> : null}
       {error ? <p className="text-sm text-destructive">{error}</p> : null}
 
-      <form onSubmit={onSave} className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+      <form onSubmit={onSave} className="portal-surface grid grid-cols-1 gap-4 sm:grid-cols-2">
         <div className="space-y-2 sm:col-span-2">
           <Label htmlFor="name">Organization name *</Label>
           <Input id="name" required value={form.name} onChange={(e) => setForm((p) => ({ ...p, name: e.target.value }))} />

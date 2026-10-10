@@ -214,7 +214,7 @@ export default function PermissionsManagement() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="portal-page space-y-6">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>

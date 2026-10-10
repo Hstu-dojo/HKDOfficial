@@ -137,7 +137,7 @@ export default function PageSettings() {
   if (!settings) return <p className="text-sm text-destructive">No settings</p>
 
   return (
-    <div className="space-y-4">
+    <div className="portal-page space-y-6">
       <div>
         <h1 className="text-2xl font-bold text-foreground">Page Settings</h1>
         <p className="text-sm text-muted-foreground">Controls the public org page content.</p>
@@ -147,7 +147,7 @@ export default function PageSettings() {
       {error ? <p className="text-sm text-destructive">{error}</p> : null}
 
       <form onSubmit={onSave} className="space-y-6">
-        <section className="space-y-3">
+        <section className="portal-surface space-y-4">
           <h2 className="text-lg font-semibold text-foreground">Branding</h2>
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <div className="space-y-2">
@@ -161,7 +161,7 @@ export default function PageSettings() {
           </div>
         </section>
 
-        <section className="space-y-3">
+        <section className="portal-surface space-y-4">
           <h2 className="text-lg font-semibold text-foreground">Hero & CTA</h2>
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <div className="space-y-2 sm:col-span-2">
@@ -195,7 +195,7 @@ export default function PageSettings() {
           </div>
         </section>
 
-        <section className="space-y-3">
+        <section className="portal-surface space-y-4">
           <h2 className="text-lg font-semibold text-foreground">About</h2>
           <div className="grid grid-cols-1 gap-4">
             <div className="space-y-2">
@@ -213,7 +213,7 @@ export default function PageSettings() {
           </div>
         </section>
 
-        <section className="space-y-3">
+        <section className="portal-surface space-y-4">
           <h2 className="text-lg font-semibold text-foreground">Founder</h2>
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <div className="space-y-2">
@@ -235,7 +235,7 @@ export default function PageSettings() {
           </div>
         </section>
 
-        <section className="space-y-3">
+        <section className="portal-surface space-y-4">
           <h2 className="text-lg font-semibold text-foreground">Visibility</h2>
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
             <Toggle label="Show Stats" checked={!!settings.showStats} onChange={(v) => update('showStats', v)} />
@@ -246,7 +246,7 @@ export default function PageSettings() {
           </div>
         </section>
 
-        <section className="space-y-3">
+        <section className="portal-surface space-y-4">
           <h2 className="text-lg font-semibold text-foreground">Social Links</h2>
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <SocialField label="Facebook" value={social.facebook} onChange={(v) => setSocial((p) => ({ ...p, facebook: v }))} />
@@ -257,13 +257,13 @@ export default function PageSettings() {
           </div>
         </section>
 
-        <section className="space-y-3">
+        <section className="portal-surface space-y-4">
           <h2 className="text-lg font-semibold text-foreground">Gallery Images</h2>
           <p className="text-sm text-muted-foreground">One image URL per line.</p>
           <Textarea value={galleryText} onChange={(e) => setGalleryText(e.target.value)} />
         </section>
 
-        <section className="space-y-3">
+        <section className="portal-surface space-y-4">
           <h2 className="text-lg font-semibold text-foreground">Features</h2>
           <p className="text-sm text-muted-foreground">
             JSON array of objects (e.g. [{'{'}&quot;icon&quot;:&quot;...&quot;,&quot;title&quot;:&quot;...&quot;,&quot;description&quot;:&quot;...&quot;{'}'}]).

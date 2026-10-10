@@ -151,7 +151,7 @@ export default function AdminCreationPage() {
   }
 
   return (
-    <div className="space-y-8">
+    <div className="portal-page space-y-6">
       <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-3">
         <Shield className="h-8 w-8 text-blue-600" />
         <h1 className="text-3xl font-bold text-foreground dark:text-gray-100">Admin User Management</h1>

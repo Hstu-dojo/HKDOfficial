@@ -397,9 +397,9 @@ function ProfileSettingsContent() {
   const phoneVerified = user.phone_confirmed_at ? true : false;
 
   return (
-    <div className="space-y-6">
+    <div className="portal-page space-y-6">
       {/* Page Header */}
-      <div className="flex items-center justify-between border-b border-border dark:border-border pb-6">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between border-b border-border dark:border-border pb-6">
         <div className="flex items-center gap-4">
           <Link
             href={`/${currentLocale}/dashboard`}
@@ -419,18 +419,18 @@ function ProfileSettingsContent() {
 
       {/* Tabs for different sections */}
       <Tabs defaultValue="account" className="space-y-6">
-        <TabsList className="grid w-full grid-cols-3 lg:w-[400px]">
+        <TabsList className="flex w-full sm:w-auto">
           <TabsTrigger value="account" className="flex items-center gap-2">
             <User className="h-4 w-4" />
-            <span className="hidden sm:inline">{t('profile.tabs.account')}</span>
+            <span className="inline">{t('profile.tabs.account')}</span>
           </TabsTrigger>
           <TabsTrigger value="security" className="flex items-center gap-2">
             <KeyRound className="h-4 w-4" />
-            <span className="hidden sm:inline">{t('profile.tabs.security')}</span>
+            <span className="inline">{t('profile.tabs.security')}</span>
           </TabsTrigger>
           <TabsTrigger value="membership" className="flex items-center gap-2">
             <FileText className="h-4 w-4" />
-            <span className="hidden sm:inline">{t('profile.tabs.membership')}</span>
+            <span className="inline">{t('profile.tabs.membership')}</span>
           </TabsTrigger>
         </TabsList>
 

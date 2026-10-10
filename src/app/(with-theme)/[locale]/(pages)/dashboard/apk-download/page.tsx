@@ -82,7 +82,7 @@ export default function APKDownloadPage() {
   }, [t]);
 
   return (
-    <div className="space-y-8 max-w-4xl mx-auto pb-12">
+    <div className="portal-page space-y-6">
       {/* Header */}
       <div>
         <h1 className="text-2xl font-bold flex items-center gap-3 text-foreground dark:text-foreground">

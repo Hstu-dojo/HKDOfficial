@@ -651,7 +651,7 @@ export default function ProgramTypesManagement() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="portal-page space-y-6">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h1 className="text-2xl font-bold text-foreground dark:text-gray-100">Program Types</h1>

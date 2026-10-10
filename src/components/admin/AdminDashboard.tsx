@@ -181,7 +181,7 @@ export default function AdminDashboard({ dashboardData }: AdminDashboardProps) {
   ].filter((action) => action.show);
 
   return (
-    <div className="space-y-8">
+    <div className="portal-page space-y-6">
       {/* Header */}
       <div className="portal-overview-hero">
         <h1 className="text-3xl font-bold text-foreground dark:text-gray-100">

@@ -134,7 +134,7 @@ export default function CompetitionResultsManager() {
   );
 
   return (
-    <div className="space-y-8">
+    <div className="portal-page space-y-6">
       <div>
         <h1 className="text-3xl">{t("adminTitle")}</h1>
         <p className="mt-3 max-w-3xl text-muted-foreground">

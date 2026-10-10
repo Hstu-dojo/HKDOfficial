@@ -344,7 +344,7 @@ export default function RegistrationsManagement() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="portal-page space-y-6">
       {/* Header */}
       <div>
         <h1 className="text-2xl font-semibold text-foreground dark:text-white">

@@ -119,16 +119,16 @@ export default function PermissionsPage() {
   }
 
   if (loading) {
-    return <div className="flex justify-center items-center min-h-screen">Loading...</div>;
+    return <div className="flex justify-center items-center min-h-[20rem]">Loading...</div>;
   }
 
   return (
-    <div className="max-w-6xl mx-auto p-4 space-y-8">
-      <div className="flex justify-between items-center">
+    <div className="portal-page space-y-6">
+      <div className="flex flex-col gap-3 sm:flex-row sm:justify-between sm:items-center">
         <h1 className="text-3xl font-bold">RBAC Management</h1>
         <button
           onClick={handleSeedData}
-          className="bg-green-600 text-red-700 px-4 py-2 rounded hover:bg-green-700"
+          className="bg-primary text-primary-foreground px-4 py-2 rounded hover:bg-primary/90"
         >
           Seed Default Data
         </button>
@@ -174,7 +174,7 @@ export default function PermissionsPage() {
             <button
               type="submit"
               disabled={creating}
-              className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 disabled:opacity-50"
+              className="bg-primary text-primary-foreground px-4 py-2 rounded hover:bg-primary/90 disabled:opacity-50"
             >
               {creating ? "Creating..." : "Create"}
             </button>

@@ -54,9 +54,9 @@ export default function RolesPage() {
   }
 
   return (
-    <div className="max-w-2xl mx-auto p-4">
+    <div className="portal-page space-y-6">
       <h1 className="text-2xl font-bold mb-4">Roles Management</h1>
-      <form onSubmit={handleCreateRole} className="mb-6 flex gap-2">
+      <form onSubmit={handleCreateRole} className="portal-surface grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-[1fr_2fr_auto]">
         <input
           type="text"
           placeholder="Role name"
@@ -72,7 +72,7 @@ export default function RolesPage() {
           onChange={e => setNewRole(r => ({ ...r, description: e.target.value }))}
           className="border px-2 py-1 rounded bg-transparent"
         />
-        <button type="submit" className="bg-blue-600 text-white px-4 py-1 rounded hover:bg-blue-700" disabled={creating}>
+        <button type="submit" className="bg-primary text-primary-foreground px-4 py-2 rounded-md hover:bg-primary/90" disabled={creating}>
           {creating ? "Creating..." : "Add Role"}
         </button>
       </form>

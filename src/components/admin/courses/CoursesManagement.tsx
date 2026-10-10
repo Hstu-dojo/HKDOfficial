@@ -193,7 +193,7 @@ export default function CoursesManagement() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="portal-page space-y-6">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
         <div>
