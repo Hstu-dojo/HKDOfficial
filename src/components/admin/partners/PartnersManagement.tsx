@@ -1,5 +1,7 @@
 'use client'
 
+import { PanelLoader } from "@/components/loading";
+
 import { useState, useEffect, useCallback } from 'react'
 import {
   BuildingOffice2Icon,
@@ -416,9 +418,7 @@ export default function PartnersManagement() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center py-12">
-        <div className="h-8 w-8 animate-spin rounded-full border-b-2 border-blue-600" />
-      </div>
+      <PanelLoader />
     )
   }
 
@@ -444,7 +444,7 @@ export default function PartnersManagement() {
           </button>
           <button
             onClick={openCreateModal}
-            className="inline-flex items-center gap-2 rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800"
+            className="inline-flex items-center gap-2 rounded-lg bg-primary px-4 py-2 text-sm font-medium text-primary-foreground shadow-sm hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800"
           >
             <PlusIcon className="h-5 w-5" />
             Create Partner
@@ -771,7 +771,7 @@ export default function PartnersManagement() {
                 <button
                   type="submit"
                   disabled={saving}
-                  className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 disabled:opacity-50"
+                  className="rounded-lg bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90 disabled:opacity-50"
                 >
                   {saving ? 'Saving...' : editingPartner ? 'Update Partner' : 'Create Partner'}
                 </button>

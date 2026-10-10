@@ -203,26 +203,28 @@ export default async function Home({ params }: { params: Promise<{ locale: strin
   return (
     <>
       <Header />
-      <main className="relative">
-        <HomeScrollTrail>
-          <SectionHero initialProducts={heroImages} />
-          <SectionHomePrograms />
-          <SectionStatsBar />
-          <SectionCompetitionResults results={competition.results} unavailable={competition.unavailable} />
-          <SectionBranches branches={branches} />
-          <SectionWhyUs />
-          <SectionRecentAlbums albums={recentAlbums} />
-          <SectionCertVerify />
-          <FeaturedPostsServer />
-          <SectionFAQ />
-          <SectionTestimonialsSlider />
-          <Furious5 />
-          <SectionPartners />
-          <SectionCTA />
-        </HomeScrollTrail>
-        <ChatPlugin />
-      </main>
-      <Footer />
+      <HomeScrollTrail>
+        <main className="relative">
+          <div className="relative isolate" data-home-sections>
+            <SectionHero initialProducts={heroImages} />
+            <SectionHomePrograms />
+            <SectionStatsBar />
+            <SectionCompetitionResults results={competition.results} unavailable={competition.unavailable} />
+            <SectionBranches branches={branches} />
+            <SectionWhyUs />
+            <SectionRecentAlbums albums={recentAlbums} />
+            <SectionCertVerify />
+            <FeaturedPostsServer />
+            <SectionFAQ />
+            <SectionTestimonialsSlider />
+            <Furious5 />
+            <SectionPartners />
+            <SectionCTA />
+          </div>
+          <ChatPlugin />
+        </main>
+        <Footer />
+      </HomeScrollTrail>
     </>
   );
 }

@@ -1,5 +1,7 @@
 'use client'
 
+import { PanelLoader } from "@/components/loading";
+
 import * as React from 'react'
 import { apiJSON } from '../../_lib/api.client'
 import { Button } from '@/components/ui/button'
@@ -135,7 +137,7 @@ export default function PendingStudents() {
             </thead>
             <tbody>
               {loading ? (
-                <tr><td colSpan={6} className="px-4 py-6 text-center text-muted-foreground">Loading…</td></tr>
+                <tr><td colSpan={6} className="px-4 py-6 text-center text-muted-foreground"><PanelLoader size="sm" /></td></tr>
               ) : rows.length === 0 ? (
                 <tr><td colSpan={6} className="px-4 py-6 text-center text-muted-foreground">No registrations found.</td></tr>
               ) : (

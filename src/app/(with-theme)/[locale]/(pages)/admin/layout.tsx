@@ -1,4 +1,5 @@
-import { requireAdminPanelAccess } from '@/lib/rbac/page-access';
+import { requireAdminPanelAccess } from "@/lib/rbac/page-access";
+import { AdminPermissionsProvider } from "@/context/AdminPermissionsContext";
 import { Metadata } from "next";
 import { AdminLayout } from "@/components/admin/AdminLayout";
 
@@ -9,11 +10,16 @@ export const metadata: Metadata = {
 
 export default async function RootAdminLayout({
   children,
+  params,
 }: {
   children: React.ReactNode;
+  params: Promise<{ locale: string }>;
 }) {
-  await requireAdminPanelAccess();
+  const { locale } = await params;
+  const { permissions } = await requireAdminPanelAccess(locale);
   return (
-    <AdminLayout>{children}</AdminLayout>
+    <AdminPermissionsProvider permissions={permissions!}>
+      <AdminLayout>{children}</AdminLayout>
+    </AdminPermissionsProvider>
   );
 }

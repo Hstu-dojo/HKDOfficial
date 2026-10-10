@@ -1,5 +1,7 @@
 'use client';
 
+import { PanelLoader } from "@/components/loading";
+
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useRBAC } from '@/hooks/useRBAC';
 import { toast } from 'sonner';
@@ -583,7 +585,7 @@ function ProgramTypeFormModal({ isOpen, onClose, onSuccess, initialData }: Progr
               <button
                 type="submit"
                 disabled={saving}
-                className="inline-flex justify-center rounded-md border border-transparent bg-blue-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-blue-700 disabled:opacity-50"
+                className="inline-flex justify-center rounded-md border border-transparent bg-primary px-4 py-2 text-sm font-medium text-primary-foreground shadow-sm hover:bg-primary/90 disabled:opacity-50"
               >
                 {saving ? 'Saving...' : initialData ? 'Update Type' : 'Create Type'}
               </button>
@@ -644,9 +646,7 @@ export default function ProgramTypesManagement() {
 
   if (rbacLoading || loading) {
     return (
-      <div className="flex justify-center items-center min-h-[400px]">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500"></div>
-      </div>
+      <PanelLoader />
     );
   }
 
@@ -664,7 +664,7 @@ export default function ProgramTypesManagement() {
               setEditing(null);
               setShowForm(true);
             }}
-            className="inline-flex w-full sm:w-auto items-center justify-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
+            className="inline-flex w-full sm:w-auto items-center justify-center px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition"
           >
             <PlusIcon className="h-5 w-5 mr-2" />
             New Type

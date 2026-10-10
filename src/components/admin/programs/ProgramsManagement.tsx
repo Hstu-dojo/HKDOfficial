@@ -1,5 +1,7 @@
 'use client';
 
+import { PanelLoader } from "@/components/loading";
+
 import { useState, useEffect } from 'react';
 import { useRBAC } from '@/hooks/useRBAC';
 import {
@@ -97,9 +99,7 @@ export default function ProgramsManagement() {
 
   if (rbacLoading || loading) {
     return (
-      <div className="flex justify-center items-center min-h-[400px]">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500"></div>
-      </div>
+      <PanelLoader />
     );
   }
 
@@ -132,7 +132,7 @@ export default function ProgramsManagement() {
                 setEditingProgram(null);
                 setShowForm(true);
               }}
-              className="inline-flex w-full items-center justify-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition sm:w-auto"
+              className="inline-flex w-full items-center justify-center px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition sm:w-auto"
             >
               <PlusIcon className="h-5 w-5 mr-2" />
               New Program
@@ -224,7 +224,7 @@ export default function ProgramsManagement() {
               <div className="mt-6">
                 <button
                   onClick={() => setShowForm(true)}
-                  className="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700"
+                  className="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-primary-foreground bg-primary hover:bg-primary/90"
                 >
                   <PlusIcon className="-ml-1 mr-2 h-5 w-5" aria-hidden="true" />
                   New Program

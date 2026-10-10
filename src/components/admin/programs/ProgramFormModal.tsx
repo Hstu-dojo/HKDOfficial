@@ -435,7 +435,7 @@ export default function ProgramFormModal({ isOpen, onClose, onSuccess, initialDa
                 <button
                   type="submit"
                   disabled={loading}
-                  className="inline-flex w-full justify-center rounded-md border border-transparent bg-blue-600 px-4 py-2 text-base font-medium text-white shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 sm:col-start-2 sm:text-sm disabled:opacity-50"
+                  className="inline-flex w-full justify-center rounded-md border border-transparent bg-primary px-4 py-2 text-base font-medium text-primary-foreground shadow-sm hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 sm:col-start-2 sm:text-sm disabled:opacity-50"
                 >
                   {loading ? 'Saving...' : (initialData ? 'Update Program' : 'Create Program')}
                 </button>

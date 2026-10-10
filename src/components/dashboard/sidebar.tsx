@@ -2,6 +2,7 @@
 
 import * as React from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { useCurrentLocale, useI18n } from "@/locales/client";
 import {
@@ -23,26 +24,63 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
   SidebarRail,
+  useSidebar,
 } from "@/components/ui/sidebar";
 import { cn } from "@/lib/utils";
 
 const navItems = [
-  { title: "Overview",         i18nKey: "dashboardSidebar.overview",        href: "/dashboard",              icon: HomeIcon,          exact: true  },
-  { title: "My Enrollments",   i18nKey: "enrollments.title",                href: "/dashboard/enrollments",  icon: AcademicCapIcon                  },
-  { title: "Certificates",     i18nKey: "certificates.title",               href: "/dashboard/certificates", icon: DocumentCheckIcon                 },
-  { title: "Committee",        i18nKey: "dashboardSidebar.committee",       href: "/dashboard/committee",    icon: UserGroupIcon                    },
-  { title: "Download App",     i18nKey: "header.downloadApp",               href: "/dashboard/apk-download", icon: ArrowDownTrayIcon                 },
-  { title: "Account Settings", i18nKey: "dashboardSidebar.accountSettings", href: "/dashboard/profile",      icon: Cog6ToothIcon                    },
+  {
+    title: "Overview",
+    i18nKey: "dashboardSidebar.overview",
+    href: "/dashboard",
+    icon: HomeIcon,
+    exact: true,
+  },
+  {
+    title: "My Enrollments",
+    i18nKey: "enrollments.title",
+    href: "/dashboard/enrollments",
+    icon: AcademicCapIcon,
+  },
+  {
+    title: "Certificates",
+    i18nKey: "certificates.title",
+    href: "/dashboard/certificates",
+    icon: DocumentCheckIcon,
+  },
+  {
+    title: "Committee",
+    i18nKey: "dashboardSidebar.committee",
+    href: "/dashboard/committee",
+    icon: UserGroupIcon,
+  },
+  {
+    title: "Download App",
+    i18nKey: "header.downloadApp",
+    href: "/dashboard/apk-download",
+    icon: ArrowDownTrayIcon,
+  },
+  {
+    title: "Account Settings",
+    i18nKey: "dashboardSidebar.accountSettings",
+    href: "/dashboard/profile",
+    icon: Cog6ToothIcon,
+  },
 ];
 
-export default function DashboardSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+export default function DashboardSidebar({
+  ...props
+}: React.ComponentProps<typeof Sidebar>) {
   const pathname = usePathname();
+  const { setOpenMobile } = useSidebar();
   const locale = useCurrentLocale();
   const t = useI18n() as any;
 
   const isActive = (href: string, exact?: boolean) => {
     const clean = (pathname || "").replace(/^\/[a-z]{2}(?=\/|$)/, "");
-    return exact ? clean === href || clean === `${href}/` : clean.startsWith(href);
+    return exact
+      ? clean === href || clean === `${href}/`
+      : clean.startsWith(href);
   };
 
   const labelFor = (item: (typeof navItems)[number]) => {
@@ -51,25 +89,29 @@ export default function DashboardSidebar({ ...props }: React.ComponentProps<type
   };
 
   return (
-    <Sidebar collapsible="icon" {...props}>
-      <SidebarHeader className="border-b border-sidebar-border h-16 flex items-center justify-between px-4 bg-white dark:bg-background select-none">
-        <div className="flex items-center gap-3">
-          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10">
-            <HomeIcon className="h-4 w-4 text-primary" />
-          </div>
-          <div className="flex flex-col leading-none group-data-[collapsible=icon]:hidden">
-            <span className="text-sm font-bold text-foreground dark:text-foreground">
-              {t("header.dashboard" as any)}
-            </span>
-            <span className="text-xs text-muted-foreground dark:text-muted-foreground mt-0.5">
-              {t("dashboardSidebar.memberPortal" as any)}
-            </span>
+    <Sidebar collapsible="icon" className="portal-sidebar" {...props}>
+      <SidebarHeader className="portal-sidebar-brand">
+        <div className="flex min-w-0 items-center gap-3">
+          <Image
+            src="/logo-badge.svg"
+            alt="Kaizen"
+            width={36}
+            height={36}
+            className="shrink-0"
+          />
+          <div className="min-w-0 group-data-[collapsible=icon]:hidden">
+            <p className="truncate text-sm font-semibold">
+              {t("header.dashboard")}
+            </p>
+            <p className="text-xs text-muted-foreground">
+              {t("dashboardSidebar.memberPortal")}
+            </p>
           </div>
         </div>
       </SidebarHeader>
 
-      <SidebarContent className="py-4 bg-white dark:bg-background">
-        <SidebarMenu className="px-2 gap-1.5">
+      <SidebarContent className="p-2 py-4">
+        <SidebarMenu className="gap-1.5 px-2">
           {navItems.map((item) => {
             const active = isActive(item.href, item.exact);
             return (
@@ -78,16 +120,17 @@ export default function DashboardSidebar({ ...props }: React.ComponentProps<type
                   asChild
                   isActive={active}
                   tooltip={labelFor(item)}
-                  className={cn(
-                    "w-full transition-all duration-150 rounded-lg p-2.5 flex items-center gap-3",
-                    active
-                      ? "bg-primary text-white shadow-sm shadow-primary/20 hover:bg-primary hover:text-white"
-                      : "text-muted-foreground dark:text-muted-foreground hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-slate-100"
-                  )}
+                  className="portal-nav-link"
                 >
-                  <Link href={`/${locale}${item.href}`}>
-                    <item.icon className="h-4.5 w-4.5 shrink-0" />
-                    <span className="group-data-[collapsible=icon]:hidden truncate">{labelFor(item)}</span>
+                  <Link
+                    href={`/${locale}${item.href}`}
+                    onClick={() => setOpenMobile(false)}
+                    aria-current={active ? "page" : undefined}
+                  >
+                    <item.icon className="h-4 w-4 shrink-0" />
+                    <span className="truncate group-data-[collapsible=icon]:hidden">
+                      {labelFor(item)}
+                    </span>
                   </Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>
@@ -96,17 +139,17 @@ export default function DashboardSidebar({ ...props }: React.ComponentProps<type
         </SidebarMenu>
       </SidebarContent>
 
-      <SidebarFooter className="border-t border-sidebar-border p-2 bg-white dark:bg-background">
+      <SidebarFooter className="border-t border-sidebar-border bg-white p-2 dark:bg-background">
         <SidebarMenu>
           <SidebarMenuItem>
             <SidebarMenuButton
               asChild
               tooltip={t("dashboardSidebar.backToSite" as any)}
-              className="text-muted-foreground dark:text-muted-foreground hover:bg-slate-100 dark:hover:bg-slate-800 transition-all rounded-lg p-2.5"
+              className="portal-nav-link"
             >
               <Link href={`/${locale}`}>
-                <ArrowLeftOnRectangleIcon className="h-4.5 w-4.5 shrink-0" />
-                <span className="group-data-[collapsible=icon]:hidden truncate">
+                <ArrowLeftOnRectangleIcon className="h-4 w-4 shrink-0" />
+                <span className="truncate group-data-[collapsible=icon]:hidden">
                   {t("dashboardSidebar.backToSite" as any)}
                 </span>
               </Link>

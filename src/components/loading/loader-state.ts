@@ -79,3 +79,11 @@ export function loaderReducer(
       return { ...state, screen: null, entries: {}, phase: "idle" };
   }
 }
+
+/** Portal transitions keep the navigation visible instead of replaying the collage. */
+export function isPortalPath(pathname: string | null): boolean {
+  return (
+    /^\/(?:(?:en|bn|ne)\/)?(?:admin|dashboard)(?:\/|$)/.test(pathname || "") ||
+    /^\/partner-admin(?:\/|$)/.test(pathname || "")
+  );
+}

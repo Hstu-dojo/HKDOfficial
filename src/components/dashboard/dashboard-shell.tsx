@@ -1,11 +1,19 @@
 "use client";
 
-import { SidebarProvider, SidebarInset, SidebarTrigger } from "@/components/ui/sidebar";
+import { DarkModeSwitch } from "@/components/dark-mode-switch";
+
+import { PortalContent } from "@/components/portal/portal-content";
+
+import {
+  SidebarProvider,
+  SidebarInset,
+  SidebarTrigger,
+} from "@/components/ui/sidebar";
 import DashboardSidebar from "./sidebar";
 import { useI18n } from "@/locales/client";
 
 /**
- * Client wrapper that wraps the dashboard content in shadcn's <SidebarProvider>.
+ * Client wrapper with a persistent sidebar and an independently scrolling content pane.
  * Provides a responsive header with a SidebarTrigger and portal title,
  * and maintains static viewport layout limits so the main panel scrolls independently.
  */
@@ -17,30 +25,25 @@ export default function DashboardShell({
   const t = useI18n() as any;
 
   return (
-    <SidebarProvider>
-      <div className="editorial-portal flex min-h-screen w-full bg-muted dark:bg-background text-foreground dark:text-foreground">
-        <DashboardSidebar />
+    <SidebarProvider className="editorial-portal portal-shell">
+      <DashboardSidebar />
 
-        <SidebarInset className="flex flex-col flex-1 min-h-screen bg-muted dark:bg-background">
-          {/* Dashboard Sticky Header */}
-          <header className="flex h-16 shrink-0 items-center gap-3 border-b border-border dark:border-border bg-white dark:bg-background px-4 select-none">
-            <SidebarTrigger className="-ml-1 text-muted-foreground dark:text-muted-foreground hover:bg-slate-100 dark:hover:bg-slate-800" />
-            <div className="h-4 w-px bg-slate-200 dark:bg-card" />
-            <span className="text-sm font-bold text-foreground dark:text-foreground uppercase tracking-wider">
-              {t("header.brand" as any)} {t("header.dashboard" as any)}
-            </span>
-          </header>
+      <SidebarInset className="portal-inset">
+        {/* Dashboard Sticky Header */}
+        <header className="portal-header">
+          <SidebarTrigger className="-ml-1 text-muted-foreground hover:bg-slate-100 dark:text-muted-foreground dark:hover:bg-slate-800" />
+          <div className="h-4 w-px bg-slate-200 dark:bg-card" />
+          <span className="portal-header-title">
+            {t("header.dashboard" as any)}
+          </span>
+          <DarkModeSwitch className="ml-auto mr-0 shrink-0" />
+        </header>
 
-          {/* Main Dashboard Content Area */}
-          <main className="flex-1 overflow-y-auto custom-scrollbar">
-            <div className="px-4 py-6 md:px-6 lg:px-8 lg:py-8">
-              <div className="mx-auto w-full max-w-5xl">
-                {children}
-              </div>
-            </div>
-          </main>
-        </SidebarInset>
-      </div>
+        {/* Main Dashboard Content Area */}
+        <PortalContent label={t("header.dashboard" as any)}>
+          {children}
+        </PortalContent>
+      </SidebarInset>
     </SidebarProvider>
   );
 }

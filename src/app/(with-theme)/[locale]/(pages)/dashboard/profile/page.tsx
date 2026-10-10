@@ -1,4 +1,6 @@
 "use client";
+
+import { PanelLoader } from "@/components/loading";
 import { useState, useEffect, Suspense } from "react";
 import { useAuth, supabase } from "@/context/AuthContext";
 import { useCurrentLocale, useI18n } from "@/locales/client";
@@ -225,12 +227,7 @@ function ProfileSettingsContent() {
 
   if (loading) {
     return (
-      <div className="flex min-h-[400px] items-center justify-center">
-        <div className="flex flex-col items-center gap-2">
-          <Loader2 className="h-8 w-8 animate-spin text-primary" />
-          <p className="text-muted-foreground">{t('profile.loadingProfile')}</p>
-        </div>
-      </div>
+      <PanelLoader title={t('profile.loadingProfile')} />
     );
   }
 
@@ -879,9 +876,7 @@ import {
 export default function DashboardProfilePage() {
   return (
     <Suspense fallback={
-      <div className="flex min-h-[400px] items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin text-primary" />
-      </div>
+      <PanelLoader />
     }>
       <ProfileSettingsContent />
     </Suspense>

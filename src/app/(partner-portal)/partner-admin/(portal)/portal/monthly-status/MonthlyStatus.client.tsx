@@ -1,5 +1,7 @@
 'use client'
 
+import { PanelLoader } from "@/components/loading";
+
 import * as React from 'react'
 import { apiJSON } from '../../_lib/api.client'
 import { Button } from '@/components/ui/button'
@@ -124,7 +126,7 @@ export default function MonthlyStatus() {
       {error ? <p className="text-sm text-destructive">{error}</p> : null}
 
       {loading ? (
-        <p className="text-sm text-muted-foreground">Loading…</p>
+        <PanelLoader />
       ) : !data ? (
         <p className="text-sm text-muted-foreground">No data.</p>
       ) : (

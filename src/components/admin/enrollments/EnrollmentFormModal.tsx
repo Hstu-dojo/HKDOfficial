@@ -440,7 +440,7 @@ export default function EnrollmentFormModal({
                         <button
                           onClick={handleSave}
                           disabled={saving}
-                          className="inline-flex items-center gap-1.5 px-4 py-2 text-sm font-semibold text-white bg-blue-600 hover:bg-blue-700 rounded-xl disabled:opacity-50 transition-colors shadow-sm shadow-blue-500/10"
+                          className="inline-flex items-center gap-1.5 px-4 py-2 text-sm font-semibold text-primary-foreground bg-primary hover:bg-primary/90 rounded-xl disabled:opacity-50 transition-colors shadow-sm shadow-blue-500/10"
                         >
                           {saving ? (
                             <span className="h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" />

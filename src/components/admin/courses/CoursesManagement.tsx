@@ -1,5 +1,7 @@
 'use client';
 
+import { PanelLoader } from "@/components/loading";
+
 import { useState, useEffect, useCallback } from 'react';
 import Image from 'next/image';
 import { useRBAC } from '@/hooks/useRBAC';
@@ -186,9 +188,7 @@ export default function CoursesManagement() {
 
   if (rbacLoading || loading) {
     return (
-      <div className="flex justify-center items-center min-h-[400px]">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500"></div>
-      </div>
+      <PanelLoader />
     );
   }
 
@@ -208,7 +208,7 @@ export default function CoursesManagement() {
               setEditingCourse(null);
               setShowForm(true);
             }}
-            className="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+            className="inline-flex items-center px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90"
           >
             <PlusIcon className="h-5 w-5 mr-2" />
             New Course
@@ -460,7 +460,7 @@ export default function CoursesManagement() {
             {canCreate && (
               <button
                 onClick={() => setShowForm(true)}
-                className="mt-4 inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+                className="mt-4 inline-flex items-center px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90"
               >
                 <PlusIcon className="h-5 w-5 mr-2" />
                 New Course

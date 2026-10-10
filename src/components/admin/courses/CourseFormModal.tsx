@@ -648,7 +648,7 @@ export default function CourseFormModal({ course, onClose, onSaved }: CourseForm
             <button
               type="submit"
               disabled={loading}
-              className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50"
+              className="px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 disabled:opacity-50"
             >
               {loading ? 'Saving...' : course?.id ? 'Update Course' : 'Create Course'}
             </button>

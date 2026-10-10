@@ -1,5 +1,7 @@
 'use client'
 
+import { PanelLoader } from "@/components/loading";
+
 import * as React from 'react'
 import { apiJSON } from '../../_lib/api.client'
 import { Button } from '@/components/ui/button'
@@ -130,7 +132,7 @@ export default function PageSettings() {
     }
   }
 
-  if (loading) return <p className="text-sm text-muted-foreground">Loading…</p>
+  if (loading) return <PanelLoader />
   if (error && !settings) return <p className="text-sm text-destructive">{error}</p>
   if (!settings) return <p className="text-sm text-destructive">No settings</p>
 

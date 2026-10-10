@@ -1,5 +1,5 @@
-import { PageLoader } from "@/components/loading";
+import { PanelLoader } from "@/components/loading";
 
 export default function AdminLoading() {
-  return <PageLoader variant="admin" />;
+  return <PanelLoader />;
 }

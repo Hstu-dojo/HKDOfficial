@@ -1,5 +1,5 @@
-import { PageLoader } from "@/components/loading";
+import { PanelLoader } from "@/components/loading";
 
 export default function PartnerAdminLoading() {
-  return <PageLoader variant="partner" />;
+  return <PanelLoader />;
 }

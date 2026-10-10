@@ -1,5 +1,7 @@
 'use client'
 
+import { PanelLoader } from "@/components/loading";
+
 import * as React from 'react'
 import { apiJSON } from '../../_lib/api.client'
 import { Button } from '@/components/ui/button'
@@ -304,9 +306,7 @@ export default function Members() {
           <tbody>
             {loading ? (
               <tr>
-                <td colSpan={8} className="px-3 py-6 text-center text-muted-foreground">
-                  Loading…
-                </td>
+                <td colSpan={8} className="px-3 py-6 text-center text-muted-foreground"><PanelLoader size="sm" /></td>
               </tr>
             ) : members.length === 0 ? (
               <tr>

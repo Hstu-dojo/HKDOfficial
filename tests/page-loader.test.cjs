@@ -105,3 +105,27 @@ test("registration updates do not restart the intro sequence", () => {
   assert.equal(state.cycle, cycle);
   assert.equal(state.screen.badgeText, "Media");
 });
+
+test("all portal routes use in-panel loading, without matching public pages", () => {
+  for (const prefix of ["", "/en", "/bn", "/ne"]) {
+    for (const path of [
+      "/admin",
+      "/admin/rbac",
+      "/dashboard",
+      "/dashboard/certificates",
+    ]) {
+      assert.equal(loaderExports.isPortalPath(prefix + path), true);
+      assert.equal(initialLoaderState(prefix + path).screen, null);
+    }
+  }
+  for (const path of ["/partner-admin", "/partner-admin/portal/members"])
+    assert.equal(loaderExports.isPortalPath(path), true);
+  for (const path of [
+    "/en",
+    "/en/gallery",
+    "/bn/onboarding",
+    "/en/admin-news",
+    null,
+  ])
+    assert.equal(loaderExports.isPortalPath(path), false);
+});

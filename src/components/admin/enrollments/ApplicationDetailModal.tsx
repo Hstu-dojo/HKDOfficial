@@ -436,7 +436,7 @@ export default function ApplicationDetailModal({
                   {app.status === 'payment_submitted' && canVerify && (
                     <button
                       onClick={() => onAction(app.id, 'verify_payment')}
-                      className="px-4 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-lg flex items-center gap-2"
+                      className="px-4 py-2 text-sm font-medium text-primary-foreground bg-primary hover:bg-primary/90 rounded-lg flex items-center gap-2"
                     >
                       <DocumentCheckIcon className="h-4 w-4" />
                       Verify Payment

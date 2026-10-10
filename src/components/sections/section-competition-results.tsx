@@ -70,9 +70,10 @@ export default function SectionCompetitionResults({
       <div className="container relative mx-auto">
         <div className="mb-10 flex flex-col justify-between gap-8 border-b border-border pb-10 lg:flex-row lg:items-end">
           <div className="max-w-xl">
-            <p className="mb-4 text-xs uppercase tracking-[0.18em] text-secondary">
+            <span className="mb-5 inline-flex items-center justify-start gap-2 text-xs font-medium uppercase tracking-[0.15em] text-muted-foreground">
+              <span aria-hidden="true" className="h-px w-6 bg-primary" />
               {t("eyebrow")}
-            </p>
+            </span>
             <h2 className="text-4xl leading-tight md:text-6xl">
               {t("title")} <em className="text-primary">{t("titleAccent")}</em>
             </h2>

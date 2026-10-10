@@ -291,7 +291,7 @@ export default function PaymentAccountSelector({
                   className={cn(
                     'mt-0.5 flex h-5 w-5 flex-shrink-0 items-center justify-center rounded-full border-2 transition-colors',
                     isSelected
-                      ? 'border-blue-600 bg-blue-600 text-white'
+                      ? 'border-blue-600 bg-primary text-primary-foreground'
                       : 'border-gray-300 dark:border-gray-600'
                   )}
                 >

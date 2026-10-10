@@ -1,8 +1,10 @@
-'use client';
+"use client";
 
-import { useState, useEffect, useCallback } from 'react';
-import { useSearchParams } from 'next/navigation';
-import { useRBAC } from '@/hooks/useRBAC';
+import { PanelLoader } from "@/components/loading";
+
+import { useState, useEffect, useCallback } from "react";
+import { useSearchParams } from "next/navigation";
+import { useRBAC } from "@/hooks/useRBAC";
 import {
   CheckCircleIcon,
   ArrowDownTrayIcon,
@@ -16,8 +18,8 @@ import {
   TableCellsIcon,
   LinkIcon,
   MagnifyingGlassIcon,
-} from '@heroicons/react/24/outline';
-import { toast } from 'sonner';
+} from "@heroicons/react/24/outline";
+import { toast } from "sonner";
 import {
   getProgramParticipants,
   getProgramCertificates,
@@ -32,11 +34,11 @@ import {
   attachProfileToCertificate,
   searchProfiles,
   type ProgramParticipant,
-} from '@/actions/certificate-actions';
-import { getProgramById } from '@/actions/program-actions';
-import type { CertificateSignature } from '@/db/schemas/karate/certificates';
-import Link from 'next/link';
-import { BELT_RANK_OPTIONS, formatBeltRankLabel } from '@/lib/belt-rank';
+} from "@/actions/certificate-actions";
+import { getProgramById } from "@/actions/program-actions";
+import type { CertificateSignature } from "@/db/schemas/karate/certificates";
+import Link from "next/link";
+import { BELT_RANK_OPTIONS, formatBeltRankLabel } from "@/lib/belt-rank";
 
 // ---------------------------------------------------------------------------
 // Types
@@ -63,12 +65,12 @@ interface CertRow {
 
 export default function ProgramCertificateManagement() {
   const searchParams = useSearchParams();
-  const programId = searchParams?.get('programId') ?? '';
+  const programId = searchParams?.get("programId") ?? "";
   const { hasPermission, loading: rbacLoading } = useRBAC();
 
-  const [programTitle, setProgramTitle] = useState('');
+  const [programTitle, setProgramTitle] = useState("");
   const [programEndDate, setProgramEndDate] = useState<Date | null>(null);
-  const [programType, setProgramType] = useState<string>('');
+  const [programType, setProgramType] = useState<string>("");
   const [fieldMappings, setFieldMappings] = useState<any[]>([]);
   const [participants, setParticipants] = useState<ProgramParticipant[]>([]);
   const [certificates, setCertificates] = useState<CertRow[]>([]);
@@ -77,44 +79,55 @@ export default function ProgramCertificateManagement() {
   const [fetchError, setFetchError] = useState<string | null>(null);
 
   // Selection state for eligibility
-  const [selectedProfileIds, setSelectedProfileIds] = useState<Set<string>>(new Set());
+  const [selectedProfileIds, setSelectedProfileIds] = useState<Set<string>>(
+    new Set(),
+  );
 
   // Issue modal state
   const [showIssueModal, setShowIssueModal] = useState(false);
-  const [selectedCertIds, setSelectedCertIds] = useState<Set<string>>(new Set());
-  const [trainerSigId, setTrainerSigId] = useState('');
-  const [coordinatorSigId, setCoordinatorSigId] = useState('');
+  const [selectedCertIds, setSelectedCertIds] = useState<Set<string>>(
+    new Set(),
+  );
+  const [trainerSigId, setTrainerSigId] = useState("");
+  const [coordinatorSigId, setCoordinatorSigId] = useState("");
   const [issuing, setIssuing] = useState(false);
 
   // Revoke modal
   const [revoking, setRevoking] = useState<string | null>(null);
-  const [revokeReason, setRevokeReason] = useState('');
+  const [revokeReason, setRevokeReason] = useState("");
 
   // Update signatures modal
   const [showUpdateSigModal, setShowUpdateSigModal] = useState(false);
   const [updateSigCertIds, setUpdateSigCertIds] = useState<string[]>([]);
-  const [updateTrainerSigId, setUpdateTrainerSigId] = useState('');
-  const [updateCoordinatorSigId, setUpdateCoordinatorSigId] = useState('');
+  const [updateTrainerSigId, setUpdateTrainerSigId] = useState("");
+  const [updateCoordinatorSigId, setUpdateCoordinatorSigId] = useState("");
   const [updating, setUpdating] = useState(false);
 
   // Manual certificate creation
   const [showManualCertForm, setShowManualCertForm] = useState(false);
-  const [manualName, setManualName] = useState('');
-  const [manualTrainerSigId, setManualTrainerSigId] = useState('');
-  const [manualCoordinatorSigId, setManualCoordinatorSigId] = useState('');
+  const [manualName, setManualName] = useState("");
+  const [manualTrainerSigId, setManualTrainerSigId] = useState("");
+  const [manualCoordinatorSigId, setManualCoordinatorSigId] = useState("");
   const [manualMetadata, setManualMetadata] = useState<Record<string, any>>({});
   const [creatingManual, setCreatingManual] = useState(false);
 
   // Attach profile modal
   const [attachCertId, setAttachCertId] = useState<string | null>(null);
-  const [profileSearchQuery, setProfileSearchQuery] = useState('');
-  const [profileSearchResults, setProfileSearchResults] = useState<{ id: string; fullNameEnglish: string | null; fullNameBangla: string | null; memberNumber: string }[]>([]);
+  const [profileSearchQuery, setProfileSearchQuery] = useState("");
+  const [profileSearchResults, setProfileSearchResults] = useState<
+    {
+      id: string;
+      fullNameEnglish: string | null;
+      fullNameBangla: string | null;
+      memberNumber: string;
+    }[]
+  >([]);
   const [profileSearching, setProfileSearching] = useState(false);
   const [attaching, setAttaching] = useState(false);
 
-  const canCreate = hasPermission('CERTIFICATE', 'CREATE');
-  const canUpdate = hasPermission('CERTIFICATE', 'UPDATE');
-  const canDelete = hasPermission('CERTIFICATE', 'DELETE');
+  const canCreate = hasPermission("CERTIFICATE", "CREATE");
+  const canUpdate = hasPermission("CERTIFICATE", "UPDATE");
+  const canDelete = hasPermission("CERTIFICATE", "DELETE");
 
   const fetchData = useCallback(async () => {
     if (!programId) return;
@@ -130,23 +143,34 @@ export default function ProgramCertificateManagement() {
 
       if (progRes.success && progRes.data) {
         setProgramTitle(progRes.data.title);
-        setProgramEndDate(progRes.data.endDate ? new Date(progRes.data.endDate) : null);
-        setProgramType(progRes.data.type || '');
-        setFieldMappings((progRes.data as any).programType?.fieldMappings || []);
-      } else if (!progRes.success) setFetchError(progRes.error || 'Failed to load program');
+        setProgramEndDate(
+          progRes.data.endDate ? new Date(progRes.data.endDate) : null,
+        );
+        setProgramType(progRes.data.type || "");
+        setFieldMappings(
+          (progRes.data as any).programType?.fieldMappings || [],
+        );
+      } else if (!progRes.success)
+        setFetchError(progRes.error || "Failed to load program");
 
       if (partRes.success && partRes.data) setParticipants(partRes.data);
-      else if (!partRes.success) setFetchError(partRes.error || 'Failed to load participants');
+      else if (!partRes.success)
+        setFetchError(partRes.error || "Failed to load participants");
 
-      if (certRes.success && certRes.data) setCertificates(certRes.data as CertRow[]);
-      else if (!certRes.success) setFetchError(certRes.error || 'Failed to load certificates');
+      if (certRes.success && certRes.data)
+        setCertificates(certRes.data as CertRow[]);
+      else if (!certRes.success)
+        setFetchError(certRes.error || "Failed to load certificates");
 
       if (sigRes.success && sigRes.data) setSignatures(sigRes.data);
-      else if (!sigRes.success) setFetchError(prev => prev || (sigRes.error || 'Failed to load signatures'));
+      else if (!sigRes.success)
+        setFetchError(
+          (prev) => prev || sigRes.error || "Failed to load signatures",
+        );
     } catch (err) {
-      console.error('[ProgramCertificateManagement] fetchData error:', err);
-      setFetchError('Failed to load data. Please try again.');
-      toast.error('Failed to load data');
+      console.error("[ProgramCertificateManagement] fetchData error:", err);
+      setFetchError("Failed to load data. Please try again.");
+      toast.error("Failed to load data");
     } finally {
       setLoading(false);
     }
@@ -158,77 +182,88 @@ export default function ProgramCertificateManagement() {
 
   // Participants without a certificate yet (and who have profiles)
   const uncertified = participants.filter(
-    (p) => p.profileId && !p.certificateId
+    (p) => p.profileId && !p.certificateId,
   );
 
   // Participants who registered but have no profile yet
   const noProfileParticipants = participants.filter((p) => !p.profileId);
 
   // Separate cert rows by status
-  const eligibleCerts = certificates.filter((c) => c.status === 'ELIGIBLE');
-  const issuedCerts = certificates.filter((c) => c.status === 'ISSUED');
-  const revokedCerts = certificates.filter((c) => c.status === 'REVOKED');
+  const eligibleCerts = certificates.filter((c) => c.status === "ELIGIBLE");
+  const issuedCerts = certificates.filter((c) => c.status === "ISSUED");
+  const revokedCerts = certificates.filter((c) => c.status === "REVOKED");
 
-  const trainerSigs = signatures.filter((s) => s.role === 'TRAINER');
-  const coordinatorSigs = signatures.filter((s) => s.role === 'COORDINATOR');
+  const trainerSigs = signatures.filter((s) => s.role === "TRAINER");
+  const coordinatorSigs = signatures.filter((s) => s.role === "COORDINATOR");
 
   // Determine workflow stage for stepper
-  const workflowStage = issuedCerts.length > 0
-    ? 3 // has issued certs
-    : eligibleCerts.length > 0
-      ? 2 // has eligible, ready to issue
-      : participants.length > 0
-        ? 1 // has participants, need to mark eligible
-        : 0; // no participants yet
+  const workflowStage =
+    issuedCerts.length > 0
+      ? 3 // has issued certs
+      : eligibleCerts.length > 0
+        ? 2 // has eligible, ready to issue
+        : participants.length > 0
+          ? 1 // has participants, need to mark eligible
+          : 0; // no participants yet
 
   // ---------------------------------------------------------------------------
   // Handlers
   // ---------------------------------------------------------------------------
 
-  const formatBeltRank = (rank?: string | null) => formatBeltRankLabel(rank, '—');
+  const formatBeltRank = (rank?: string | null) =>
+    formatBeltRankLabel(rank, "—");
 
   const handleAutoMark = () => {
     // Select all uncertified participants with approved or payment_verified status — frontend only
     const autoIds = uncertified
-      .filter((p) => p.profileId && (p.status === 'approved' || p.status === 'payment_verified'))
+      .filter(
+        (p) =>
+          p.profileId &&
+          (p.status === "approved" || p.status === "payment_verified"),
+      )
       .map((p) => p.profileId as string);
     if (autoIds.length === 0) {
-      toast.info('No verified/approved participants to auto-select');
+      toast.info("No verified/approved participants to auto-select");
       return;
     }
     setSelectedProfileIds(new Set(autoIds));
-    toast.success(`${autoIds.length} participant${autoIds.length !== 1 ? 's' : ''} selected — click "Mark Selected" to confirm`);
+    toast.success(
+      `${autoIds.length} participant${autoIds.length !== 1 ? "s" : ""} selected — click "Mark Selected" to confirm`,
+    );
   };
 
   const handleManualMark = async () => {
     if (selectedProfileIds.size === 0) {
-      toast.error('Select participants first');
+      toast.error("Select participants first");
       return;
     }
-    const result = await markEligible(programId, Array.from(selectedProfileIds));
+    const result = await markEligible(
+      programId,
+      Array.from(selectedProfileIds),
+    );
     if (result.success) {
-      toast.success('Marked as eligible');
+      toast.success("Marked as eligible");
       setSelectedProfileIds(new Set());
       fetchData();
     } else {
-      toast.error(result.error || 'Failed');
+      toast.error(result.error || "Failed");
     }
   };
 
   const handleRemoveEligibility = async (certId: string) => {
-    if (!confirm('Remove eligibility for this participant?')) return;
+    if (!confirm("Remove eligibility for this participant?")) return;
     const result = await removeEligibility(certId);
     if (result.success) {
-      toast.success('Eligibility removed');
+      toast.success("Eligibility removed");
       fetchData();
     } else {
-      toast.error(result.error || 'Failed');
+      toast.error(result.error || "Failed");
     }
   };
 
   const handleOpenIssueModal = () => {
     if (eligibleCerts.length === 0) {
-      toast.error('No eligible certificates to issue');
+      toast.error("No eligible certificates to issue");
       return;
     }
     // Pre-select all eligible
@@ -238,7 +273,7 @@ export default function ProgramCertificateManagement() {
 
   const handleIssueCertificates = async () => {
     if (selectedCertIds.size === 0) {
-      toast.error('No certificates selected');
+      toast.error("No certificates selected");
       return;
     }
 
@@ -248,17 +283,17 @@ export default function ProgramCertificateManagement() {
         Array.from(selectedCertIds),
         trainerSigId || null,
         coordinatorSigId || null,
-        programEndDate ?? undefined
+        programEndDate ?? undefined,
       );
       if (result.success) {
-        toast.success('Certificates issued successfully!');
+        toast.success("Certificates issued successfully!");
         setShowIssueModal(false);
         fetchData();
       } else {
-        toast.error(result.error || 'Failed to issue');
+        toast.error(result.error || "Failed to issue");
       }
     } catch {
-      toast.error('Failed to issue certificates');
+      toast.error("Failed to issue certificates");
     } finally {
       setIssuing(false);
     }
@@ -267,48 +302,53 @@ export default function ProgramCertificateManagement() {
   const handleRevoke = async () => {
     if (!revoking) return;
     if (!revokeReason.trim()) {
-      toast.error('Revoke reason is required');
+      toast.error("Revoke reason is required");
       return;
     }
     const result = await revokeCertificate(revoking, revokeReason.trim());
     if (result.success) {
-      toast.success('Certificate revoked');
+      toast.success("Certificate revoked");
       setRevoking(null);
-      setRevokeReason('');
+      setRevokeReason("");
       fetchData();
     } else {
-      toast.error(result.error || 'Failed to revoke');
+      toast.error(result.error || "Failed to revoke");
     }
   };
 
   const handleDeleteCert = async (certId: string) => {
-    if (!confirm('Permanently delete this revoked certificate? This cannot be undone.')) return;
+    if (
+      !confirm(
+        "Permanently delete this revoked certificate? This cannot be undone.",
+      )
+    )
+      return;
     const result = await deleteCertificate(certId);
     if (result.success) {
-      toast.success('Certificate deleted');
+      toast.success("Certificate deleted");
       fetchData();
     } else {
-      toast.error(result.error || 'Failed to delete certificate');
+      toast.error(result.error || "Failed to delete certificate");
     }
   };
 
   const handleOpenUpdateSigModal = (certIds?: string[]) => {
     const ids = certIds ?? issuedCerts.map((c) => c.id);
     if (ids.length === 0) {
-      toast.error('No issued certificates to update');
+      toast.error("No issued certificates to update");
       return;
     }
     setUpdateSigCertIds(ids);
     // Pre-fill with existing signatures from the first selected cert
     const firstCert = issuedCerts.find((c) => ids.includes(c.id));
-    setUpdateTrainerSigId(firstCert?.trainerSignatureId ?? '');
-    setUpdateCoordinatorSigId(firstCert?.coordinatorSignatureId ?? '');
+    setUpdateTrainerSigId(firstCert?.trainerSignatureId ?? "");
+    setUpdateCoordinatorSigId(firstCert?.coordinatorSignatureId ?? "");
     setShowUpdateSigModal(true);
   };
 
   const handleUpdateSignatures = async () => {
     if (updateSigCertIds.length === 0) {
-      toast.error('No certificates selected');
+      toast.error("No certificates selected");
       return;
     }
     setUpdating(true);
@@ -319,35 +359,43 @@ export default function ProgramCertificateManagement() {
         updateCoordinatorSigId || null,
       );
       if (result.success) {
-        toast.success(`Signatures updated for ${updateSigCertIds.length} certificate(s)`);
+        toast.success(
+          `Signatures updated for ${updateSigCertIds.length} certificate(s)`,
+        );
         setShowUpdateSigModal(false);
         fetchData();
       } else {
-        toast.error(result.error || 'Failed to update signatures');
+        toast.error(result.error || "Failed to update signatures");
       }
     } catch {
-      toast.error('Failed to update signatures');
+      toast.error("Failed to update signatures");
     } finally {
       setUpdating(false);
     }
   };
 
   const handleDownload = (certId: string) => {
-    window.open(`/api/certificates/${certId}/download?admin=true`, '_blank');
+    window.open(`/api/certificates/${certId}/download?admin=true`, "_blank");
   };
 
   const handleBulkDownload = () => {
-    window.open(`/api/certificates/bulk-download?programId=${programId}&admin=true`, '_blank');
+    window.open(
+      `/api/certificates/bulk-download?programId=${programId}&admin=true`,
+      "_blank",
+    );
   };
 
   const handleExportExcel = () => {
-    window.open(`/api/certificates/export-excel?programId=${programId}&admin=true`, '_blank');
+    window.open(
+      `/api/certificates/export-excel?programId=${programId}&admin=true`,
+      "_blank",
+    );
   };
 
   // Manual certificate creation
   const handleCreateManualCert = async () => {
     if (!manualName.trim()) {
-      toast.error('Participant name is required');
+      toast.error("Participant name is required");
       return;
     }
     setCreatingManual(true);
@@ -358,21 +406,21 @@ export default function ProgramCertificateManagement() {
         manualTrainerSigId || null,
         manualCoordinatorSigId || null,
         programEndDate ?? undefined,
-        manualMetadata
+        manualMetadata,
       );
       if (result.success) {
-        toast.success('Manual certificate created!');
-        setManualName('');
-        setManualTrainerSigId('');
-        setManualCoordinatorSigId('');
+        toast.success("Manual certificate created!");
+        setManualName("");
+        setManualTrainerSigId("");
+        setManualCoordinatorSigId("");
         setManualMetadata({});
         setShowManualCertForm(false);
         fetchData();
       } else {
-        toast.error(result.error || 'Failed to create');
+        toast.error(result.error || "Failed to create");
       }
     } catch {
-      toast.error('Failed to create manual certificate');
+      toast.error("Failed to create manual certificate");
     } finally {
       setCreatingManual(false);
     }
@@ -387,10 +435,10 @@ export default function ProgramCertificateManagement() {
       if (result.success && result.data) {
         setProfileSearchResults(result.data);
       } else {
-        toast.error(result.error || 'Search failed');
+        toast.error(result.error || "Search failed");
       }
     } catch {
-      toast.error('Search failed');
+      toast.error("Search failed");
     } finally {
       setProfileSearching(false);
     }
@@ -402,16 +450,16 @@ export default function ProgramCertificateManagement() {
     try {
       const result = await attachProfileToCertificate(attachCertId, profileId);
       if (result.success) {
-        toast.success('Profile linked to certificate');
+        toast.success("Profile linked to certificate");
         setAttachCertId(null);
-        setProfileSearchQuery('');
+        setProfileSearchQuery("");
         setProfileSearchResults([]);
         fetchData();
       } else {
-        toast.error(result.error || 'Failed to attach profile');
+        toast.error(result.error || "Failed to attach profile");
       }
     } catch {
-      toast.error('Failed to attach profile');
+      toast.error("Failed to attach profile");
     } finally {
       setAttaching(false);
     }
@@ -423,48 +471,45 @@ export default function ProgramCertificateManagement() {
 
   if (!programId) {
     return (
-      <div className="text-center py-12 text-muted-foreground dark:text-gray-400">
-        No program selected. Go back to Programs and click &quot;Certificates&quot;.
+      <div className="py-12 text-center text-muted-foreground dark:text-gray-400">
+        No program selected. Go back to Programs and click
+        &quot;Certificates&quot;.
       </div>
     );
   }
 
   if (rbacLoading || loading) {
-    return (
-      <div className="flex justify-center items-center min-h-[400px]">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500"></div>
-      </div>
-    );
+    return <PanelLoader />;
   }
 
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h1 className="text-2xl font-bold text-foreground dark:text-gray-100">
-            Certificates — {programTitle || 'Program'}
+            Certificates — {programTitle || "Program"}
           </h1>
           <p className="mt-1 text-sm text-muted-foreground dark:text-gray-400">
             Manage certificate eligibility and issuance for this program.
           </p>
         </div>
-        <div className="flex gap-2 flex-wrap">
+        <div className="flex flex-wrap gap-2">
           {issuedCerts.length > 0 && (
             <button
               onClick={handleBulkDownload}
-              className="inline-flex items-center px-3 py-2 bg-teal-600 text-white rounded-lg hover:bg-teal-700 text-sm"
+              className="inline-flex items-center rounded-lg bg-teal-600 px-3 py-2 text-sm text-white hover:bg-teal-700"
             >
-              <ArrowDownTrayIcon className="h-4 w-4 mr-1.5" />
+              <ArrowDownTrayIcon className="mr-1.5 h-4 w-4" />
               Download All ({issuedCerts.length})
             </button>
           )}
           {certificates.length > 0 && (
             <button
               onClick={handleExportExcel}
-              className="inline-flex items-center px-3 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 text-sm"
+              className="inline-flex items-center rounded-lg bg-emerald-600 px-3 py-2 text-sm text-white hover:bg-emerald-700"
             >
-              <TableCellsIcon className="h-4 w-4 mr-1.5" />
+              <TableCellsIcon className="mr-1.5 h-4 w-4" />
               Export Excel
             </button>
           )}
@@ -472,19 +517,24 @@ export default function ProgramCertificateManagement() {
             <>
               <button
                 onClick={() => setShowManualCertForm(true)}
-                className="inline-flex items-center px-3 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 text-sm"
+                className="inline-flex items-center rounded-lg bg-purple-600 px-3 py-2 text-sm text-white hover:bg-purple-700"
               >
-                <PlusCircleIcon className="h-4 w-4 mr-1.5" />
+                <PlusCircleIcon className="mr-1.5 h-4 w-4" />
                 Manual Certificate
               </button>
               <button
                 onClick={handleOpenIssueModal}
                 disabled={eligibleCerts.length === 0}
-                title={eligibleCerts.length === 0 ? 'Mark participants as eligible first' : `Issue ${eligibleCerts.length} certificate(s)`}
-                className="inline-flex items-center px-3 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-sm disabled:opacity-50 disabled:cursor-not-allowed"
+                title={
+                  eligibleCerts.length === 0
+                    ? "Mark participants as eligible first"
+                    : `Issue ${eligibleCerts.length} certificate(s)`
+                }
+                className="inline-flex items-center rounded-lg bg-primary px-3 py-2 text-sm text-primary-foreground hover:bg-primary/90 disabled:cursor-not-allowed disabled:opacity-50"
               >
-                <DocumentCheckIcon className="h-4 w-4 mr-1.5" />
-                Issue Certificates {eligibleCerts.length > 0 && `(${eligibleCerts.length})`}
+                <DocumentCheckIcon className="mr-1.5 h-4 w-4" />
+                Issue Certificates{" "}
+                {eligibleCerts.length > 0 && `(${eligibleCerts.length})`}
               </button>
             </>
           )}
@@ -493,14 +543,21 @@ export default function ProgramCertificateManagement() {
 
       {/* Error Banner */}
       {fetchError && (
-        <div className="rounded-lg border border-red-200 dark:border-red-800/50 bg-red-50 dark:bg-red-900/20 p-4">
+        <div className="rounded-lg border border-red-200 bg-red-50 p-4 dark:border-red-800/50 dark:bg-red-900/20">
           <div className="flex items-start gap-3">
-            <ExclamationTriangleIcon className="h-5 w-5 text-red-500 flex-shrink-0 mt-0.5" />
+            <ExclamationTriangleIcon className="mt-0.5 h-5 w-5 flex-shrink-0 text-red-500" />
             <div className="flex-1">
-              <h3 className="text-sm font-medium text-red-800 dark:text-red-300">Error loading data</h3>
-              <p className="mt-1 text-sm text-red-700 dark:text-red-400">{fetchError}</p>
+              <h3 className="text-sm font-medium text-red-800 dark:text-red-300">
+                Error loading data
+              </h3>
+              <p className="mt-1 text-sm text-red-700 dark:text-red-400">
+                {fetchError}
+              </p>
             </div>
-            <button onClick={fetchData} className="text-xs font-medium text-red-600 hover:text-red-800 underline">
+            <button
+              onClick={fetchData}
+              className="text-xs font-medium text-red-600 underline hover:text-red-800"
+            >
               Retry
             </button>
           </div>
@@ -508,34 +565,52 @@ export default function ProgramCertificateManagement() {
       )}
 
       {/* Workflow Guide */}
-      <div className="bg-white dark:bg-card rounded-lg border shadow-sm p-4">
+      <div className="rounded-lg border bg-white p-4 shadow-sm dark:bg-card">
         <div className="flex items-center justify-between">
           {[
-            { step: 0, label: 'Register', desc: 'Participants register' },
-            { step: 1, label: 'Mark Eligible', desc: 'Select who qualifies' },
-            { step: 2, label: 'Issue', desc: 'Generate certificates' },
-            { step: 3, label: 'Download', desc: 'Download PDFs' },
+            { step: 0, label: "Register", desc: "Participants register" },
+            { step: 1, label: "Mark Eligible", desc: "Select who qualifies" },
+            { step: 2, label: "Issue", desc: "Generate certificates" },
+            { step: 3, label: "Download", desc: "Download PDFs" },
           ].map(({ step, label, desc }, idx) => (
-            <div key={step} className="flex items-center flex-1">
-              <div className="flex flex-col items-center text-center flex-1">
-                <div className={`h-8 w-8 rounded-full flex items-center justify-center text-xs font-bold border-2 transition-colors ${
-                  workflowStage > step
-                    ? 'bg-green-500 border-green-500 text-white'
-                    : workflowStage === step
-                      ? 'bg-blue-500 border-blue-500 text-white'
-                      : 'bg-muted dark:bg-gray-700 border-gray-300 dark:border-gray-600 text-gray-400 dark:text-gray-500'
-                }`}>
-                  {workflowStage > step ? <CheckCircleIcon className="h-5 w-5" /> : step + 1}
+            <div key={step} className="flex flex-1 items-center">
+              <div className="flex flex-1 flex-col items-center text-center">
+                <div
+                  className={`flex h-8 w-8 items-center justify-center rounded-full border-2 text-xs font-bold transition-colors ${
+                    workflowStage > step
+                      ? "bg-green-500 border-green-500 text-white"
+                      : workflowStage === step
+                        ? "border-blue-500 bg-blue-500 text-white"
+                        : "border-gray-300 bg-muted text-gray-400 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-500"
+                  }`}
+                >
+                  {workflowStage > step ? (
+                    <CheckCircleIcon className="h-5 w-5" />
+                  ) : (
+                    step + 1
+                  )}
                 </div>
-                <span className={`mt-1 text-xs font-medium ${
-                  workflowStage >= step ? 'text-foreground dark:text-gray-100' : 'text-gray-400 dark:text-gray-500'
-                }`}>{label}</span>
-                <span className="text-[10px] text-gray-400 dark:text-gray-500 hidden sm:block">{desc}</span>
+                <span
+                  className={`mt-1 text-xs font-medium ${
+                    workflowStage >= step
+                      ? "text-foreground dark:text-gray-100"
+                      : "text-gray-400 dark:text-gray-500"
+                  }`}
+                >
+                  {label}
+                </span>
+                <span className="hidden text-[10px] text-gray-400 dark:text-gray-500 sm:block">
+                  {desc}
+                </span>
               </div>
               {idx < 3 && (
-                <div className={`h-0.5 w-full mx-1 ${
-                  workflowStage > step ? 'bg-green-400' : 'bg-gray-200 dark:bg-gray-700'
-                }`} />
+                <div
+                  className={`mx-1 h-0.5 w-full ${
+                    workflowStage > step
+                      ? "bg-green-400"
+                      : "bg-gray-200 dark:bg-gray-700"
+                  }`}
+                />
               )}
             </div>
           ))}
@@ -543,36 +618,65 @@ export default function ProgramCertificateManagement() {
       </div>
 
       {/* Stats */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-        <Stat label="Total Participants" value={participants.length} icon={UserGroupIcon} />
-        <Stat label="Eligible" value={eligibleCerts.length} icon={ShieldCheckIcon} color="amber" />
-        <Stat label="Issued" value={issuedCerts.length} icon={CheckCircleIcon} color="green" />
-        <Stat label="Revoked" value={revokedCerts.length} icon={ExclamationTriangleIcon} color="red" />
+      <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
+        <Stat
+          label="Total Participants"
+          value={participants.length}
+          icon={UserGroupIcon}
+        />
+        <Stat
+          label="Eligible"
+          value={eligibleCerts.length}
+          icon={ShieldCheckIcon}
+          color="amber"
+        />
+        <Stat
+          label="Issued"
+          value={issuedCerts.length}
+          icon={CheckCircleIcon}
+          color="green"
+        />
+        <Stat
+          label="Revoked"
+          value={revokedCerts.length}
+          icon={ExclamationTriangleIcon}
+          color="red"
+        />
       </div>
 
       {/* Warning: Participants without profiles */}
       {noProfileParticipants.length > 0 && (
-        <div className="rounded-lg border border-amber-200 dark:border-amber-800/50 bg-amber-50 dark:bg-amber-900/20 p-4">
+        <div className="rounded-lg border border-amber-200 bg-amber-50 p-4 dark:border-amber-800/50 dark:bg-amber-900/20">
           <div className="flex items-start gap-3">
-            <ExclamationTriangleIcon className="h-5 w-5 text-amber-500 flex-shrink-0 mt-0.5" />
+            <ExclamationTriangleIcon className="mt-0.5 h-5 w-5 flex-shrink-0 text-amber-500" />
             <div>
               <h3 className="text-sm font-medium text-amber-800 dark:text-amber-300">
-                {noProfileParticipants.length} participant{noProfileParticipants.length > 1 ? 's' : ''} without member profiles
+                {noProfileParticipants.length} participant
+                {noProfileParticipants.length > 1 ? "s" : ""} without member
+                profiles
               </h3>
               <p className="mt-1 text-xs text-amber-700 dark:text-amber-400">
-                These registered participants do not have member profiles yet. They must complete their profiles before certificates can be issued.
+                These registered participants do not have member profiles yet.
+                They must complete their profiles before certificates can be
+                issued.
               </p>
               <ul className="mt-2 space-y-1">
                 {noProfileParticipants.map((p) => (
-                  <li key={p.registrationId} className="text-xs text-amber-700 dark:text-amber-400 flex items-center gap-2">
-                    <span className="h-1.5 w-1.5 rounded-full bg-amber-400 flex-shrink-0" />
+                  <li
+                    key={p.registrationId}
+                    className="flex items-center gap-2 text-xs text-amber-700 dark:text-amber-400"
+                  >
+                    <span className="h-1.5 w-1.5 flex-shrink-0 rounded-full bg-amber-400" />
                     User ID: {p.userId.substring(0, 8)}…
-                    <span className={`px-1.5 py-0.5 rounded text-[10px] ${
-                      p.status === 'approved' || p.status === 'payment_verified'
-                        ? 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300'
-                        : 'bg-muted dark:bg-gray-700 text-muted-foreground dark:text-gray-400'
-                    }`}>
-                      {p.status.replace('_', ' ')}
+                    <span
+                      className={`rounded px-1.5 py-0.5 text-[10px] ${
+                        p.status === "approved" ||
+                        p.status === "payment_verified"
+                          ? "bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300"
+                          : "bg-muted text-muted-foreground dark:bg-gray-700 dark:text-gray-400"
+                      }`}
+                    >
+                      {p.status.replace("_", " ")}
                     </span>
                   </li>
                 ))}
@@ -584,15 +688,18 @@ export default function ProgramCertificateManagement() {
 
       {/* Empty state: no participants at all */}
       {participants.length === 0 && !fetchError && (
-        <div className="bg-white dark:bg-card rounded-lg border shadow-sm p-8 text-center">
-          <UserGroupIcon className="h-12 w-12 text-gray-300 dark:text-gray-600 mx-auto mb-3" />
-          <h3 className="text-lg font-semibold text-foreground dark:text-gray-100 mb-2">No Registrations Found</h3>
-          <p className="text-sm text-muted-foreground dark:text-gray-400 max-w-md mx-auto">
-            No one has registered for this program yet. Participants must register and complete payment before certificates can be issued.
+        <div className="rounded-lg border bg-white p-8 text-center shadow-sm dark:bg-card">
+          <UserGroupIcon className="mx-auto mb-3 h-12 w-12 text-gray-300 dark:text-gray-600" />
+          <h3 className="mb-2 text-lg font-semibold text-foreground dark:text-gray-100">
+            No Registrations Found
+          </h3>
+          <p className="mx-auto max-w-md text-sm text-muted-foreground dark:text-gray-400">
+            No one has registered for this program yet. Participants must
+            register and complete payment before certificates can be issued.
           </p>
           <Link
             href="/admin/programs"
-            className="inline-flex items-center mt-4 px-4 py-2 text-sm font-medium text-blue-600 hover:text-blue-800 hover:underline"
+            className="mt-4 inline-flex items-center px-4 py-2 text-sm font-medium text-blue-600 hover:text-blue-800 hover:underline"
           >
             ← Back to Programs
           </Link>
@@ -601,8 +708,8 @@ export default function ProgramCertificateManagement() {
 
       {/* Section: Mark Eligible — always visible when there are participants */}
       {canCreate && participants.length > 0 && (
-        <div className="bg-white dark:bg-card rounded-lg border shadow-sm p-5 space-y-4">
-          <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3">
+        <div className="space-y-4 rounded-lg border bg-white p-5 shadow-sm dark:bg-card">
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <h2 className="text-lg font-semibold text-foreground dark:text-gray-100">
               Mark Eligible
               {uncertified.length > 0 && (
@@ -615,14 +722,14 @@ export default function ProgramCertificateManagement() {
               <div className="flex gap-2">
                 <button
                   onClick={handleAutoMark}
-                  className="inline-flex items-center px-3 py-1.5 bg-amber-500 text-white rounded-md hover:bg-amber-600 text-xs font-medium"
+                  className="inline-flex items-center rounded-md bg-amber-500 px-3 py-1.5 text-xs font-medium text-white hover:bg-amber-600"
                 >
                   Auto-select (verified/approved)
                 </button>
                 <button
                   onClick={handleManualMark}
                   disabled={selectedProfileIds.size === 0}
-                  className="inline-flex items-center px-3 py-1.5 bg-blue-600 text-white rounded-md hover:bg-blue-700 text-xs font-medium disabled:opacity-50"
+                  className="inline-flex items-center rounded-md bg-primary px-3 py-1.5 text-xs font-medium text-primary-foreground hover:bg-primary/90 disabled:opacity-50"
                 >
                   Mark Selected ({selectedProfileIds.size})
                 </button>
@@ -631,54 +738,63 @@ export default function ProgramCertificateManagement() {
           </div>
 
           {uncertified.length > 0 ? (
-            <div className="max-h-64 overflow-y-auto divide-y divide-gray-100 dark:divide-gray-700">
+            <div className="max-h-64 divide-y divide-gray-100 overflow-y-auto dark:divide-gray-700">
               {uncertified.map((p) => (
                 <label
                   key={p.registrationId}
-                  className="flex items-center px-3 py-2 hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer"
+                  className="flex cursor-pointer items-center px-3 py-2 hover:bg-gray-50 dark:hover:bg-gray-700"
                 >
                   <input
                     type="checkbox"
-                    checked={p.profileId ? selectedProfileIds.has(p.profileId) : false}
+                    checked={
+                      p.profileId ? selectedProfileIds.has(p.profileId) : false
+                    }
                     disabled={!p.profileId}
                     onChange={(e) => {
                       if (!p.profileId) return;
                       const next = new Set(selectedProfileIds);
-                      e.target.checked ? next.add(p.profileId) : next.delete(p.profileId);
+                      e.target.checked
+                        ? next.add(p.profileId)
+                        : next.delete(p.profileId);
                       setSelectedProfileIds(next);
                     }}
                     className="mr-3 h-4 w-4 rounded border-gray-300"
                   />
-                  <span className="text-sm text-foreground dark:text-gray-100 flex-1">
-                    {p.profileName || p.profileNameBangla || 'Unknown'}
+                  <span className="flex-1 text-sm text-foreground dark:text-gray-100">
+                    {p.profileName || p.profileNameBangla || "Unknown"}
                     {p.memberNumber && (
-                      <span className="ml-2 text-xs text-gray-400 dark:text-gray-500 font-mono">#{p.memberNumber}</span>
+                      <span className="ml-2 font-mono text-xs text-gray-400 dark:text-gray-500">
+                        #{p.memberNumber}
+                      </span>
                     )}
-                    {programType === 'BELT_TEST' && p.newRank && (
+                    {programType === "BELT_TEST" && p.newRank && (
                       <span className="ml-2 text-xs text-muted-foreground dark:text-gray-400">
                         • {formatBeltRank(p.newRank)}
                       </span>
                     )}
                   </span>
-                  <span className={`text-xs px-2 py-0.5 rounded-full ${
-                    p.status === 'approved' || p.status === 'payment_verified'
-                      ? 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300'
-                      : 'bg-muted dark:bg-gray-700 text-muted-foreground dark:text-gray-400'
-                  }`}>
-                    {p.status.replace('_', ' ')}
+                  <span
+                    className={`rounded-full px-2 py-0.5 text-xs ${
+                      p.status === "approved" || p.status === "payment_verified"
+                        ? "bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300"
+                        : "bg-muted text-muted-foreground dark:bg-gray-700 dark:text-gray-400"
+                    }`}
+                  >
+                    {p.status.replace("_", " ")}
                   </span>
                 </label>
               ))}
             </div>
           ) : (
-            <div className="flex items-center gap-3 p-4 rounded-lg bg-muted dark:bg-background/30">
-              <InformationCircleIcon className="h-5 w-5 text-gray-400 flex-shrink-0" />
+            <div className="flex items-center gap-3 rounded-lg bg-muted p-4 dark:bg-background/30">
+              <InformationCircleIcon className="h-5 w-5 flex-shrink-0 text-gray-400" />
               <p className="text-sm text-muted-foreground dark:text-gray-400">
                 {certificates.length > 0
-                  ? 'All participants with profiles already have certificates (eligible, issued, or revoked).'
-                  : noProfileParticipants.length > 0 && noProfileParticipants.length === participants.length
-                    ? 'All registered participants are missing member profiles. They need to complete their profiles first.'
-                    : 'No participants are ready for eligibility marking. Ensure participants have registered and completed their profiles.'}
+                  ? "All participants with profiles already have certificates (eligible, issued, or revoked)."
+                  : noProfileParticipants.length > 0 &&
+                      noProfileParticipants.length === participants.length
+                    ? "All registered participants are missing member profiles. They need to complete their profiles first."
+                    : "No participants are ready for eligibility marking. Ensure participants have registered and completed their profiles."}
               </p>
             </div>
           )}
@@ -690,7 +806,7 @@ export default function ProgramCertificateManagement() {
         <CertTable
           title={`Eligible (${eligibleCerts.length})`}
           certs={eligibleCerts}
-          showBeltTestColumn={programType === 'BELT_TEST'}
+          showBeltTestColumn={programType === "BELT_TEST"}
           canUpdate={canUpdate}
           canDelete={canDelete}
           onRemove={handleRemoveEligibility}
@@ -703,18 +819,28 @@ export default function ProgramCertificateManagement() {
           <CertTable
             title={`Issued (${issuedCerts.length})`}
             certs={issuedCerts}
-            showBeltTestColumn={programType === 'BELT_TEST'}
+            showBeltTestColumn={programType === "BELT_TEST"}
             signatures={signatures}
             canUpdate={canUpdate}
             onDownload={handleDownload}
             onRevoke={canUpdate ? (id) => setRevoking(id) : undefined}
-            onUpdateSignatures={canUpdate ? (id) => handleOpenUpdateSigModal([id]) : undefined}
-            onAttachProfile={canUpdate ? (id) => { setAttachCertId(id); setProfileSearchQuery(''); setProfileSearchResults([]); } : undefined}
+            onUpdateSignatures={
+              canUpdate ? (id) => handleOpenUpdateSigModal([id]) : undefined
+            }
+            onAttachProfile={
+              canUpdate
+                ? (id) => {
+                    setAttachCertId(id);
+                    setProfileSearchQuery("");
+                    setProfileSearchResults([]);
+                  }
+                : undefined
+            }
             headerAction={
               canUpdate ? (
                 <button
                   onClick={() => handleOpenUpdateSigModal()}
-                  className="inline-flex items-center px-3 py-1.5 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 text-xs font-medium"
+                  className="inline-flex items-center rounded-md bg-indigo-600 px-3 py-1.5 text-xs font-medium text-white hover:bg-indigo-700"
                 >
                   Update All Signatures
                 </button>
@@ -729,7 +855,7 @@ export default function ProgramCertificateManagement() {
         <CertTable
           title={`Revoked (${revokedCerts.length})`}
           certs={revokedCerts}
-          showBeltTestColumn={programType === 'BELT_TEST'}
+          showBeltTestColumn={programType === "BELT_TEST"}
           canDelete={canDelete}
           onDelete={canDelete ? handleDeleteCert : undefined}
         />
@@ -737,332 +863,408 @@ export default function ProgramCertificateManagement() {
 
       {/* Issue Modal */}
       {showIssueModal && (
-        <div className="fixed inset-0 z-50 bg-black/50 overflow-y-auto">
-          <div className="min-h-full flex items-start sm:items-center justify-center p-4">
-            <div className="bg-white dark:bg-card rounded-lg shadow-sm w-full max-w-lg max-h-[calc(100dvh-2rem)] overflow-y-auto p-6 space-y-4">
-            <h2 className="text-lg font-semibold text-foreground dark:text-gray-100">
-              Issue Certificates
-            </h2>
-            <p className="text-sm text-muted-foreground dark:text-gray-400 mb-4">
-              {selectedCertIds.size} certificate(s) will be issued. Signatures and templates will be automatically applied according to the selected Program Type&apos;s configuration.
-            </p>
+        <div className="fixed inset-0 z-50 overflow-y-auto bg-black/50">
+          <div className="flex min-h-full items-start justify-center p-4 sm:items-center">
+            <div className="max-h-[calc(100dvh-2rem)] w-full max-w-lg space-y-4 overflow-y-auto rounded-lg bg-white p-6 shadow-sm dark:bg-card">
+              <h2 className="text-lg font-semibold text-foreground dark:text-gray-100">
+                Issue Certificates
+              </h2>
+              <p className="mb-4 text-sm text-muted-foreground dark:text-gray-400">
+                {selectedCertIds.size} certificate(s) will be issued. Signatures
+                and templates will be automatically applied according to the
+                selected Program Type&apos;s configuration.
+              </p>
 
-            <div className="flex justify-end gap-3 pt-4 border-t">
-              <button
-                onClick={() => setShowIssueModal(false)}
-                className="px-4 py-2 text-sm text-foreground dark:text-gray-300 bg-muted dark:bg-gray-700 rounded-md hover:bg-gray-200 dark:hover:bg-gray-600"
-              >
-                Cancel
-              </button>
-              <button
-                onClick={handleIssueCertificates}
-                disabled={issuing}
-                className="px-4 py-2 text-sm text-white bg-blue-600 rounded-md hover:bg-blue-700 disabled:opacity-50"
-              >
-                {issuing ? 'Issuing...' : `Issue ${selectedCertIds.size} Certificate(s)`}
-              </button>
+              <div className="flex justify-end gap-3 border-t pt-4">
+                <button
+                  onClick={() => setShowIssueModal(false)}
+                  className="rounded-md bg-muted px-4 py-2 text-sm text-foreground hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handleIssueCertificates}
+                  disabled={issuing}
+                  className="rounded-md bg-primary px-4 py-2 text-sm text-primary-foreground hover:bg-primary/90 disabled:opacity-50"
+                >
+                  {issuing
+                    ? "Issuing..."
+                    : `Issue ${selectedCertIds.size} Certificate(s)`}
+                </button>
+              </div>
             </div>
-          </div>
           </div>
         </div>
       )}
 
       {/* Revoke Modal */}
       {revoking && (
-        <div className="fixed inset-0 z-50 bg-black/50 overflow-y-auto">
-          <div className="min-h-full flex items-start sm:items-center justify-center p-4">
-            <div className="bg-white dark:bg-card rounded-lg shadow-sm w-full max-w-sm max-h-[calc(100dvh-2rem)] overflow-y-auto p-6 space-y-4">
-            <h2 className="text-lg font-semibold text-red-600">Revoke Certificate</h2>
-            <p className="text-sm text-muted-foreground dark:text-gray-400">
-              This action cannot be easily undone. Please provide a reason:
-            </p>
-            <textarea
-              value={revokeReason}
-              onChange={(e) => setRevokeReason(e.target.value)}
-              rows={3}
-              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-foreground dark:text-gray-100 outline-none"
-              placeholder="Reason for revocation..."
-            />
-            <div className="flex justify-end gap-3">
-              <button
-                onClick={() => { setRevoking(null); setRevokeReason(''); }}
-                className="px-4 py-2 text-sm text-foreground dark:text-gray-300 bg-muted dark:bg-gray-700 rounded-md"
-              >
-                Cancel
-              </button>
-              <button
-                onClick={handleRevoke}
-                disabled={!revokeReason.trim()}
-                className="px-4 py-2 text-sm text-white bg-red-600 rounded-md hover:bg-red-700 disabled:opacity-50"
-              >
-                Revoke
-              </button>
+        <div className="fixed inset-0 z-50 overflow-y-auto bg-black/50">
+          <div className="flex min-h-full items-start justify-center p-4 sm:items-center">
+            <div className="max-h-[calc(100dvh-2rem)] w-full max-w-sm space-y-4 overflow-y-auto rounded-lg bg-white p-6 shadow-sm dark:bg-card">
+              <h2 className="text-lg font-semibold text-red-600">
+                Revoke Certificate
+              </h2>
+              <p className="text-sm text-muted-foreground dark:text-gray-400">
+                This action cannot be easily undone. Please provide a reason:
+              </p>
+              <textarea
+                value={revokeReason}
+                onChange={(e) => setRevokeReason(e.target.value)}
+                rows={3}
+                className="w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-foreground outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100"
+                placeholder="Reason for revocation..."
+              />
+              <div className="flex justify-end gap-3">
+                <button
+                  onClick={() => {
+                    setRevoking(null);
+                    setRevokeReason("");
+                  }}
+                  className="rounded-md bg-muted px-4 py-2 text-sm text-foreground dark:bg-gray-700 dark:text-gray-300"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handleRevoke}
+                  disabled={!revokeReason.trim()}
+                  className="rounded-md bg-red-600 px-4 py-2 text-sm text-white hover:bg-red-700 disabled:opacity-50"
+                >
+                  Revoke
+                </button>
+              </div>
             </div>
-          </div>
           </div>
         </div>
       )}
 
       {/* Update Signatures Modal */}
       {showUpdateSigModal && (
-        <div className="fixed inset-0 z-50 bg-black/50 overflow-y-auto">
-          <div className="min-h-full flex items-start sm:items-center justify-center p-4">
-            <div className="bg-white dark:bg-card rounded-lg shadow-sm w-full max-w-lg max-h-[calc(100dvh-2rem)] overflow-y-auto p-6 space-y-4">
-            <h2 className="text-lg font-semibold text-foreground dark:text-gray-100">
-              Update Signatures
-            </h2>
-            <p className="text-sm text-muted-foreground dark:text-gray-400">
-              Update signatures for {updateSigCertIds.length} certificate(s). Certificate IDs and issue dates will remain unchanged.
-            </p>
+        <div className="fixed inset-0 z-50 overflow-y-auto bg-black/50">
+          <div className="flex min-h-full items-start justify-center p-4 sm:items-center">
+            <div className="max-h-[calc(100dvh-2rem)] w-full max-w-lg space-y-4 overflow-y-auto rounded-lg bg-white p-6 shadow-sm dark:bg-card">
+              <h2 className="text-lg font-semibold text-foreground dark:text-gray-100">
+                Update Signatures
+              </h2>
+              <p className="text-sm text-muted-foreground dark:text-gray-400">
+                Update signatures for {updateSigCertIds.length} certificate(s).
+                Certificate IDs and issue dates will remain unchanged.
+              </p>
 
-            {/* Trainer Signature */}
-            <div>
-              <label className="block text-sm font-medium text-foreground dark:text-gray-300 mb-1">
-                Trainer Signature <span className="text-xs font-normal text-gray-400">(optional)</span>
-              </label>
-              <select
-                value={updateTrainerSigId}
-                onChange={(e) => setUpdateTrainerSigId(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-foreground dark:text-gray-100 outline-none"
-              >
-                <option value="">— No trainer signature —</option>
-                {trainerSigs.map((s) => (
-                  <option key={s.id} value={s.id}>{s.name}{s.title ? ` — ${s.title}` : ''}</option>
-                ))}
-              </select>
-            </div>
+              {/* Trainer Signature */}
+              <div>
+                <label className="mb-1 block text-sm font-medium text-foreground dark:text-gray-300">
+                  Trainer Signature{" "}
+                  <span className="text-xs font-normal text-gray-400">
+                    (optional)
+                  </span>
+                </label>
+                <select
+                  value={updateTrainerSigId}
+                  onChange={(e) => setUpdateTrainerSigId(e.target.value)}
+                  className="w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-foreground outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100"
+                >
+                  <option value="">— No trainer signature —</option>
+                  {trainerSigs.map((s) => (
+                    <option key={s.id} value={s.id}>
+                      {s.name}
+                      {s.title ? ` — ${s.title}` : ""}
+                    </option>
+                  ))}
+                </select>
+              </div>
 
-            {/* Coordinator Signature */}
-            <div>
-              <label className="block text-sm font-medium text-foreground dark:text-gray-300 mb-1">
-                Coordinator Signature <span className="text-xs font-normal text-gray-400">(optional)</span>
-              </label>
-              <select
-                value={updateCoordinatorSigId}
-                onChange={(e) => setUpdateCoordinatorSigId(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-foreground dark:text-gray-100 outline-none"
-              >
-                <option value="">— No coordinator signature —</option>
-                {coordinatorSigs.map((s) => (
-                  <option key={s.id} value={s.id}>{s.name}{s.title ? ` — ${s.title}` : ''}</option>
-                ))}
-              </select>
-            </div>
+              {/* Coordinator Signature */}
+              <div>
+                <label className="mb-1 block text-sm font-medium text-foreground dark:text-gray-300">
+                  Coordinator Signature{" "}
+                  <span className="text-xs font-normal text-gray-400">
+                    (optional)
+                  </span>
+                </label>
+                <select
+                  value={updateCoordinatorSigId}
+                  onChange={(e) => setUpdateCoordinatorSigId(e.target.value)}
+                  className="w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-foreground outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100"
+                >
+                  <option value="">— No coordinator signature —</option>
+                  {coordinatorSigs.map((s) => (
+                    <option key={s.id} value={s.id}>
+                      {s.name}
+                      {s.title ? ` — ${s.title}` : ""}
+                    </option>
+                  ))}
+                </select>
+              </div>
 
-            <div className="flex justify-end gap-3 pt-4 border-t">
-              <button
-                onClick={() => setShowUpdateSigModal(false)}
-                className="px-4 py-2 text-sm text-foreground dark:text-gray-300 bg-muted dark:bg-gray-700 rounded-md hover:bg-gray-200 dark:hover:bg-gray-600"
-              >
-                Cancel
-              </button>
-              <button
-                onClick={handleUpdateSignatures}
-                disabled={updating}
-                className="px-4 py-2 text-sm text-white bg-indigo-600 rounded-md hover:bg-indigo-700 disabled:opacity-50"
-              >
-                {updating ? 'Updating...' : 'Update Signatures'}
-              </button>
+              <div className="flex justify-end gap-3 border-t pt-4">
+                <button
+                  onClick={() => setShowUpdateSigModal(false)}
+                  className="rounded-md bg-muted px-4 py-2 text-sm text-foreground hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handleUpdateSignatures}
+                  disabled={updating}
+                  className="rounded-md bg-indigo-600 px-4 py-2 text-sm text-white hover:bg-indigo-700 disabled:opacity-50"
+                >
+                  {updating ? "Updating..." : "Update Signatures"}
+                </button>
+              </div>
             </div>
-          </div>
           </div>
         </div>
       )}
 
       {/* Manual Certificate Modal */}
       {showManualCertForm && (
-        <div className="fixed inset-0 z-50 bg-black/50 overflow-y-auto">
-          <div className="min-h-full flex items-start sm:items-center justify-center p-4">
-            <div className="bg-white dark:bg-card rounded-lg shadow-sm w-full max-w-lg max-h-[calc(100dvh-2rem)] overflow-y-auto p-6 space-y-4">
-            <h2 className="text-lg font-semibold text-foreground dark:text-gray-100">
-              Create Manual Certificate
-            </h2>
-            <p className="text-sm text-muted-foreground dark:text-gray-400">
-              Create a certificate for someone not registered in the system. You can attach a profile later.
-              {programEndDate && (
-                <span className="block mt-1 text-xs">
-                  Certificate date: <strong>{programEndDate.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</strong> (program end date)
-                </span>
-              )}
-            </p>
+        <div className="fixed inset-0 z-50 overflow-y-auto bg-black/50">
+          <div className="flex min-h-full items-start justify-center p-4 sm:items-center">
+            <div className="max-h-[calc(100dvh-2rem)] w-full max-w-lg space-y-4 overflow-y-auto rounded-lg bg-white p-6 shadow-sm dark:bg-card">
+              <h2 className="text-lg font-semibold text-foreground dark:text-gray-100">
+                Create Manual Certificate
+              </h2>
+              <p className="text-sm text-muted-foreground dark:text-gray-400">
+                Create a certificate for someone not registered in the system.
+                You can attach a profile later.
+                {programEndDate && (
+                  <span className="mt-1 block text-xs">
+                    Certificate date:{" "}
+                    <strong>
+                      {programEndDate.toLocaleDateString("en-US", {
+                        year: "numeric",
+                        month: "long",
+                        day: "numeric",
+                      })}
+                    </strong>{" "}
+                    (program end date)
+                  </span>
+                )}
+              </p>
 
-            {/* Participant Name */}
-            <div>
-              <label className="block text-sm font-medium text-foreground dark:text-gray-300 mb-1">
-                Participant Name <span className="text-red-500">*</span>
-              </label>
-              <input
-                type="text"
-                value={manualName}
-                onChange={(e) => setManualName(e.target.value)}
-                placeholder="Full name of the participant"
-                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-foreground dark:text-gray-100 outline-none"
-              />
-            </div>
+              {/* Participant Name */}
+              <div>
+                <label className="mb-1 block text-sm font-medium text-foreground dark:text-gray-300">
+                  Participant Name <span className="text-red-500">*</span>
+                </label>
+                <input
+                  type="text"
+                  value={manualName}
+                  onChange={(e) => setManualName(e.target.value)}
+                  placeholder="Full name of the participant"
+                  className="w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-foreground outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100"
+                />
+              </div>
 
-            {/* Dynamic Mapped Fields */}
-            {fieldMappings
-              .filter((mapping: any) => mapping.kind === 'dynamic' && mapping.dynamicSource !== 'participant_name' && mapping.dynamicSource !== 'certificate_number')
-              .map((mapping: any, idx: number) => (
-                <div key={mapping.dynamicSource + idx}>
-                  <label className="block text-sm font-medium text-foreground dark:text-gray-300 mb-1 capitalize">
-                    {mapping.dynamicSource.replace(/_/g, ' ')}
-                  </label>
-                  {mapping.dynamicSource === 'belt_test_rank' ? (
-                    <select
-                      value={manualMetadata[mapping.dynamicSource] || ''}
-                      onChange={(e) => setManualMetadata({ ...manualMetadata, [mapping.dynamicSource]: e.target.value })}
-                      className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-foreground dark:text-gray-100 outline-none"
-                    >
-                      <option value="">Select Belt Rank</option>
-                      {BELT_RANK_OPTIONS.map((option) => (
-                        <option key={option.value} value={option.value}>{option.label}</option>
-                      ))}
-                    </select>
-                  ) : (
-                    <input
-                      type="text"
-                      value={manualMetadata[mapping.dynamicSource] || ''}
-                      onChange={(e) => setManualMetadata({ ...manualMetadata, [mapping.dynamicSource]: e.target.value })}
-                      placeholder={`Enter ${mapping.dynamicSource.replace(/_/g, ' ')}`}
-                      className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-foreground dark:text-gray-100 outline-none"
-                    />
-                  )}
-                </div>
-              ))}
-
-            {/* General Signature Note */}
-            <p className="text-xs text-muted-foreground dark:text-gray-400">
-              Signatures assigned here will override default program signatures.
-              Leave empty to adhere to Program Type configuration (if any).
-            </p>
-
-            {/* Trainer Signature */}
-            <div>
-              <label className="block text-sm font-medium text-foreground dark:text-gray-300 mb-1">
-                Trainer Signature <span className="text-xs font-normal text-gray-400">(optional)</span>
-              </label>
-              <select
-                value={manualTrainerSigId}
-                onChange={(e) => setManualTrainerSigId(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-foreground dark:text-gray-100 outline-none"
-              >
-                <option value="">— No trainer signature —</option>
-                {trainerSigs.map((s) => (
-                  <option key={s.id} value={s.id}>{s.name}{s.title ? ` — ${s.title}` : ''}</option>
+              {/* Dynamic Mapped Fields */}
+              {fieldMappings
+                .filter(
+                  (mapping: any) =>
+                    mapping.kind === "dynamic" &&
+                    mapping.dynamicSource !== "participant_name" &&
+                    mapping.dynamicSource !== "certificate_number",
+                )
+                .map((mapping: any, idx: number) => (
+                  <div key={mapping.dynamicSource + idx}>
+                    <label className="mb-1 block text-sm font-medium capitalize text-foreground dark:text-gray-300">
+                      {mapping.dynamicSource.replace(/_/g, " ")}
+                    </label>
+                    {mapping.dynamicSource === "belt_test_rank" ? (
+                      <select
+                        value={manualMetadata[mapping.dynamicSource] || ""}
+                        onChange={(e) =>
+                          setManualMetadata({
+                            ...manualMetadata,
+                            [mapping.dynamicSource]: e.target.value,
+                          })
+                        }
+                        className="w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-foreground outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100"
+                      >
+                        <option value="">Select Belt Rank</option>
+                        {BELT_RANK_OPTIONS.map((option) => (
+                          <option key={option.value} value={option.value}>
+                            {option.label}
+                          </option>
+                        ))}
+                      </select>
+                    ) : (
+                      <input
+                        type="text"
+                        value={manualMetadata[mapping.dynamicSource] || ""}
+                        onChange={(e) =>
+                          setManualMetadata({
+                            ...manualMetadata,
+                            [mapping.dynamicSource]: e.target.value,
+                          })
+                        }
+                        placeholder={`Enter ${mapping.dynamicSource.replace(/_/g, " ")}`}
+                        className="w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-foreground outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100"
+                      />
+                    )}
+                  </div>
                 ))}
-              </select>
-            </div>
 
-            {/* Coordinator Signature */}
-            <div>
-              <label className="block text-sm font-medium text-foreground dark:text-gray-300 mb-1">
-                Coordinator Signature <span className="text-xs font-normal text-gray-400">(optional)</span>
-              </label>
-              <select
-                value={manualCoordinatorSigId}
-                onChange={(e) => setManualCoordinatorSigId(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-foreground dark:text-gray-100 outline-none"
-              >
-                <option value="">— No coordinator signature —</option>
-                {coordinatorSigs.map((s) => (
-                  <option key={s.id} value={s.id}>{s.name}{s.title ? ` — ${s.title}` : ''}</option>
-                ))}
-              </select>
-            </div>
+              {/* General Signature Note */}
+              <p className="text-xs text-muted-foreground dark:text-gray-400">
+                Signatures assigned here will override default program
+                signatures. Leave empty to adhere to Program Type configuration
+                (if any).
+              </p>
 
-            <div className="flex justify-end gap-3 pt-4 border-t">
-              <button
-                onClick={() => { setShowManualCertForm(false); setManualName(''); }}
-                className="px-4 py-2 text-sm text-foreground dark:text-gray-300 bg-muted dark:bg-gray-700 rounded-md hover:bg-gray-200 dark:hover:bg-gray-600"
-              >
-                Cancel
-              </button>
-              <button
-                onClick={handleCreateManualCert}
-                disabled={creatingManual || !manualName.trim()}
-                className="px-4 py-2 text-sm text-white bg-purple-600 rounded-md hover:bg-purple-700 disabled:opacity-50"
-              >
-                {creatingManual ? 'Creating...' : 'Create & Issue'}
-              </button>
+              {/* Trainer Signature */}
+              <div>
+                <label className="mb-1 block text-sm font-medium text-foreground dark:text-gray-300">
+                  Trainer Signature{" "}
+                  <span className="text-xs font-normal text-gray-400">
+                    (optional)
+                  </span>
+                </label>
+                <select
+                  value={manualTrainerSigId}
+                  onChange={(e) => setManualTrainerSigId(e.target.value)}
+                  className="w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-foreground outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100"
+                >
+                  <option value="">— No trainer signature —</option>
+                  {trainerSigs.map((s) => (
+                    <option key={s.id} value={s.id}>
+                      {s.name}
+                      {s.title ? ` — ${s.title}` : ""}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              {/* Coordinator Signature */}
+              <div>
+                <label className="mb-1 block text-sm font-medium text-foreground dark:text-gray-300">
+                  Coordinator Signature{" "}
+                  <span className="text-xs font-normal text-gray-400">
+                    (optional)
+                  </span>
+                </label>
+                <select
+                  value={manualCoordinatorSigId}
+                  onChange={(e) => setManualCoordinatorSigId(e.target.value)}
+                  className="w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-foreground outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100"
+                >
+                  <option value="">— No coordinator signature —</option>
+                  {coordinatorSigs.map((s) => (
+                    <option key={s.id} value={s.id}>
+                      {s.name}
+                      {s.title ? ` — ${s.title}` : ""}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div className="flex justify-end gap-3 border-t pt-4">
+                <button
+                  onClick={() => {
+                    setShowManualCertForm(false);
+                    setManualName("");
+                  }}
+                  className="rounded-md bg-muted px-4 py-2 text-sm text-foreground hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handleCreateManualCert}
+                  disabled={creatingManual || !manualName.trim()}
+                  className="rounded-md bg-purple-600 px-4 py-2 text-sm text-white hover:bg-purple-700 disabled:opacity-50"
+                >
+                  {creatingManual ? "Creating..." : "Create & Issue"}
+                </button>
+              </div>
             </div>
-          </div>
           </div>
         </div>
       )}
 
       {/* Attach Profile Modal */}
       {attachCertId && (
-        <div className="fixed inset-0 z-50 bg-black/50 overflow-y-auto">
-          <div className="min-h-full flex items-start sm:items-center justify-center p-4">
-            <div className="bg-white dark:bg-card rounded-lg shadow-sm w-full max-w-lg max-h-[calc(100dvh-2rem)] overflow-y-auto p-6 space-y-4">
-            <h2 className="text-lg font-semibold text-foreground dark:text-gray-100">
-              Attach Member Profile
-            </h2>
-            <p className="text-sm text-muted-foreground dark:text-gray-400">
-              Search for a member profile to link to this certificate.
-            </p>
+        <div className="fixed inset-0 z-50 overflow-y-auto bg-black/50">
+          <div className="flex min-h-full items-start justify-center p-4 sm:items-center">
+            <div className="max-h-[calc(100dvh-2rem)] w-full max-w-lg space-y-4 overflow-y-auto rounded-lg bg-white p-6 shadow-sm dark:bg-card">
+              <h2 className="text-lg font-semibold text-foreground dark:text-gray-100">
+                Attach Member Profile
+              </h2>
+              <p className="text-sm text-muted-foreground dark:text-gray-400">
+                Search for a member profile to link to this certificate.
+              </p>
 
-            {/* Search */}
-            <div className="flex gap-2">
-              <div className="relative flex-1">
-                <MagnifyingGlassIcon className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
-                <input
-                  type="text"
-                  value={profileSearchQuery}
-                  onChange={(e) => setProfileSearchQuery(e.target.value)}
-                  onKeyDown={(e) => e.key === 'Enter' && handleSearchProfiles()}
-                  placeholder="Search by name or member number..."
-                  className="w-full pl-9 pr-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-foreground dark:text-gray-100 outline-none text-sm"
-                />
+              {/* Search */}
+              <div className="flex gap-2">
+                <div className="relative flex-1">
+                  <MagnifyingGlassIcon className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
+                  <input
+                    type="text"
+                    value={profileSearchQuery}
+                    onChange={(e) => setProfileSearchQuery(e.target.value)}
+                    onKeyDown={(e) =>
+                      e.key === "Enter" && handleSearchProfiles()
+                    }
+                    placeholder="Search by name or member number..."
+                    className="w-full rounded-md border border-gray-300 bg-white py-2 pl-9 pr-3 text-sm text-foreground outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100"
+                  />
+                </div>
+                <button
+                  onClick={handleSearchProfiles}
+                  disabled={profileSearching || !profileSearchQuery.trim()}
+                  className="rounded-md bg-primary px-4 py-2 text-sm text-primary-foreground hover:bg-primary/90 disabled:opacity-50"
+                >
+                  {profileSearching ? "..." : "Search"}
+                </button>
               </div>
-              <button
-                onClick={handleSearchProfiles}
-                disabled={profileSearching || !profileSearchQuery.trim()}
-                className="px-4 py-2 text-sm bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50"
-              >
-                {profileSearching ? '...' : 'Search'}
-              </button>
-            </div>
 
-            {/* Results */}
-            {profileSearchResults.length > 0 && (
-              <div className="max-h-52 overflow-y-auto divide-y divide-gray-100 dark:divide-gray-700 border rounded-md">
-                {profileSearchResults.map((p) => (
-                  <div
-                    key={p.id}
-                    className="flex items-center justify-between px-3 py-2 hover:bg-gray-50 dark:hover:bg-gray-700"
-                  >
-                    <div>
-                      <span className="text-sm text-foreground dark:text-gray-100">
-                        {p.fullNameEnglish || p.fullNameBangla || 'Unknown'}
-                      </span>
-                      <span className="ml-2 text-xs text-gray-400 font-mono">#{p.memberNumber}</span>
-                    </div>
-                    <button
-                      onClick={() => handleAttachProfile(p.id)}
-                      disabled={attaching}
-                      className="text-xs font-medium text-blue-600 hover:text-blue-800 disabled:opacity-50"
+              {/* Results */}
+              {profileSearchResults.length > 0 && (
+                <div className="max-h-52 divide-y divide-gray-100 overflow-y-auto rounded-md border dark:divide-gray-700">
+                  {profileSearchResults.map((p) => (
+                    <div
+                      key={p.id}
+                      className="flex items-center justify-between px-3 py-2 hover:bg-gray-50 dark:hover:bg-gray-700"
                     >
-                      {attaching ? '...' : 'Link'}
-                    </button>
-                  </div>
-                ))}
-              </div>
-            )}
-            {profileSearchResults.length === 0 && profileSearchQuery && !profileSearching && (
-              <p className="text-sm text-gray-400 text-center py-3">No profiles found. Try a different search.</p>
-            )}
+                      <div>
+                        <span className="text-sm text-foreground dark:text-gray-100">
+                          {p.fullNameEnglish || p.fullNameBangla || "Unknown"}
+                        </span>
+                        <span className="ml-2 font-mono text-xs text-gray-400">
+                          #{p.memberNumber}
+                        </span>
+                      </div>
+                      <button
+                        onClick={() => handleAttachProfile(p.id)}
+                        disabled={attaching}
+                        className="text-xs font-medium text-blue-600 hover:text-blue-800 disabled:opacity-50"
+                      >
+                        {attaching ? "..." : "Link"}
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
+              {profileSearchResults.length === 0 &&
+                profileSearchQuery &&
+                !profileSearching && (
+                  <p className="py-3 text-center text-sm text-gray-400">
+                    No profiles found. Try a different search.
+                  </p>
+                )}
 
-            <div className="flex justify-end pt-4 border-t">
-              <button
-                onClick={() => { setAttachCertId(null); setProfileSearchQuery(''); setProfileSearchResults([]); }}
-                className="px-4 py-2 text-sm text-foreground dark:text-gray-300 bg-muted dark:bg-gray-700 rounded-md hover:bg-gray-200 dark:hover:bg-gray-600"
-              >
-                Close
-              </button>
+              <div className="flex justify-end border-t pt-4">
+                <button
+                  onClick={() => {
+                    setAttachCertId(null);
+                    setProfileSearchQuery("");
+                    setProfileSearchResults([]);
+                  }}
+                  className="rounded-md bg-muted px-4 py-2 text-sm text-foreground hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600"
+                >
+                  Close
+                </button>
+              </div>
             </div>
-          </div>
           </div>
         </div>
       )}
@@ -1078,18 +1280,20 @@ function Stat({
   label,
   value,
   icon: Icon,
-  color = 'blue',
+  color = "blue",
 }: {
   label: string;
   value: number;
   icon: React.ElementType;
-  color?: 'blue' | 'green' | 'amber' | 'red';
+  color?: "blue" | "green" | "amber" | "red";
 }) {
   const colors = {
-    blue: 'bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300',
-    green: 'bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-300',
-    amber: 'bg-amber-50 dark:bg-amber-900/20 text-amber-700 dark:text-amber-300',
-    red: 'bg-red-50 dark:bg-red-900/20 text-red-700 dark:text-red-300',
+    blue: "bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300",
+    green:
+      "bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-300",
+    amber:
+      "bg-amber-50 dark:bg-amber-900/20 text-amber-700 dark:text-amber-300",
+    red: "bg-red-50 dark:bg-red-900/20 text-red-700 dark:text-red-300",
   };
   return (
     <div className={`rounded-lg p-4 ${colors[color]}`}>
@@ -1139,51 +1343,78 @@ function CertTable({
 
   const showSigColumns = !!signatures && signatures.length > 0;
 
-  const formatBeltRankLocal = (rank?: string | null) => formatBeltRankLabel(rank, '—');
+  const formatBeltRankLocal = (rank?: string | null) =>
+    formatBeltRankLabel(rank, "—");
 
   return (
-    <div className="bg-white dark:bg-card rounded-lg border shadow-sm overflow-hidden">
-      <div className="px-5 py-3 border-b bg-muted dark:bg-background/50 flex items-center justify-between">
-        <h3 className="text-sm font-semibold text-foreground dark:text-gray-300">{title}</h3>
+    <div className="overflow-hidden rounded-lg border bg-white shadow-sm dark:bg-card">
+      <div className="flex items-center justify-between border-b bg-muted px-5 py-3 dark:bg-background/50">
+        <h3 className="text-sm font-semibold text-foreground dark:text-gray-300">
+          {title}
+        </h3>
         {headerAction && <div>{headerAction}</div>}
       </div>
       <div className="overflow-x-auto">
         <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
           <thead className="bg-muted dark:bg-background/30">
             <tr>
-              <th className="px-4 py-2 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">Cert #</th>
-              <th className="px-4 py-2 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">Participant</th>
-              <th className="px-4 py-2 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">Member #</th>
+              <th className="px-4 py-2 text-left text-xs font-medium uppercase tracking-wider text-muted-foreground">
+                Cert #
+              </th>
+              <th className="px-4 py-2 text-left text-xs font-medium uppercase tracking-wider text-muted-foreground">
+                Participant
+              </th>
+              <th className="px-4 py-2 text-left text-xs font-medium uppercase tracking-wider text-muted-foreground">
+                Member #
+              </th>
               {showBeltTestColumn && (
-                <th className="px-4 py-2 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">Belt Test</th>
+                <th className="px-4 py-2 text-left text-xs font-medium uppercase tracking-wider text-muted-foreground">
+                  Belt Test
+                </th>
               )}
-              <th className="px-4 py-2 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">Status</th>
+              <th className="px-4 py-2 text-left text-xs font-medium uppercase tracking-wider text-muted-foreground">
+                Status
+              </th>
               {showSigColumns && (
                 <>
-                  <th className="px-4 py-2 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">Trainer</th>
-                  <th className="px-4 py-2 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">Coordinator</th>
+                  <th className="px-4 py-2 text-left text-xs font-medium uppercase tracking-wider text-muted-foreground">
+                    Trainer
+                  </th>
+                  <th className="px-4 py-2 text-left text-xs font-medium uppercase tracking-wider text-muted-foreground">
+                    Coordinator
+                  </th>
                 </>
               )}
-              <th className="px-4 py-2 text-right text-xs font-medium text-muted-foreground uppercase tracking-wider">Actions</th>
+              <th className="px-4 py-2 text-right text-xs font-medium uppercase tracking-wider text-muted-foreground">
+                Actions
+              </th>
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
             {certs.map((c) => {
-              const displayName = c.profileName || c.profileNameBangla || c.participantName || '—';
+              const displayName =
+                c.profileName ||
+                c.profileNameBangla ||
+                c.participantName ||
+                "—";
               const isManual = !c.profileId;
 
               return (
                 <tr key={c.id}>
-                  <td className="px-4 py-2 text-xs font-mono text-muted-foreground dark:text-gray-400">{c.certificateNumber}</td>
+                  <td className="px-4 py-2 font-mono text-xs text-muted-foreground dark:text-gray-400">
+                    {c.certificateNumber}
+                  </td>
                   <td className="px-4 py-2 text-sm text-foreground dark:text-gray-100">
                     {displayName}
                     {isManual && (
-                      <span className="ml-2 inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300">
+                      <span className="ml-2 inline-flex items-center rounded bg-purple-100 px-1.5 py-0.5 text-[10px] font-medium text-purple-700 dark:bg-purple-900/30 dark:text-purple-300">
                         Manual
                       </span>
                     )}
                   </td>
-                  <td className="px-4 py-2 text-xs text-muted-foreground dark:text-gray-400">{c.memberNumber || '—'}</td>
+                  <td className="px-4 py-2 text-xs text-muted-foreground dark:text-gray-400">
+                    {c.memberNumber || "—"}
+                  </td>
                   {showBeltTestColumn && (
                     <td className="px-4 py-2 text-xs text-muted-foreground dark:text-gray-400">
                       {formatBeltRankLocal(c.beltTestNewRank)}
@@ -1195,15 +1426,19 @@ function CertTable({
                   {showSigColumns && (
                     <>
                       <td className="px-4 py-2 text-xs text-muted-foreground dark:text-gray-400">
-                        {sigName(c.trainerSignatureId) || <span className="text-gray-400 italic">—</span>}
+                        {sigName(c.trainerSignatureId) || (
+                          <span className="italic text-gray-400">—</span>
+                        )}
                       </td>
                       <td className="px-4 py-2 text-xs text-muted-foreground dark:text-gray-400">
-                        {sigName(c.coordinatorSignatureId) || <span className="text-gray-400 italic">—</span>}
+                        {sigName(c.coordinatorSignatureId) || (
+                          <span className="italic text-gray-400">—</span>
+                        )}
                       </td>
                     </>
                   )}
-                  <td className="px-4 py-2 text-right space-x-2">
-                    {onDownload && c.status === 'ISSUED' && (
+                  <td className="space-x-2 px-4 py-2 text-right">
+                    {onDownload && c.status === "ISSUED" && (
                       <button
                         onClick={() => onDownload(c.id)}
                         className="text-green-600 hover:text-green-800 text-xs font-medium"
@@ -1211,42 +1446,44 @@ function CertTable({
                         Download
                       </button>
                     )}
-                    {onAttachProfile && isManual && c.status === 'ISSUED' && (
+                    {onAttachProfile && isManual && c.status === "ISSUED" && (
                       <button
                         onClick={() => onAttachProfile(c.id)}
-                        className="text-purple-600 hover:text-purple-800 text-xs font-medium"
+                        className="text-xs font-medium text-purple-600 hover:text-purple-800"
                       >
                         Attach Profile
                       </button>
                     )}
-                    {onUpdateSignatures && c.status === 'ISSUED' && canUpdate && (
-                      <button
-                        onClick={() => onUpdateSignatures(c.id)}
-                        className="text-blue-600 hover:text-blue-800 text-xs font-medium"
-                      >
-                        Edit Sig
-                      </button>
-                    )}
-                    {onRevoke && c.status === 'ISSUED' && canUpdate && (
+                    {onUpdateSignatures &&
+                      c.status === "ISSUED" &&
+                      canUpdate && (
+                        <button
+                          onClick={() => onUpdateSignatures(c.id)}
+                          className="text-xs font-medium text-blue-600 hover:text-blue-800"
+                        >
+                          Edit Sig
+                        </button>
+                      )}
+                    {onRevoke && c.status === "ISSUED" && canUpdate && (
                       <button
                         onClick={() => onRevoke(c.id)}
-                        className="text-red-600 hover:text-red-800 text-xs font-medium"
+                        className="text-xs font-medium text-red-600 hover:text-red-800"
                       >
                         Revoke
                       </button>
                     )}
-                    {onRemove && c.status === 'ELIGIBLE' && canDelete && (
+                    {onRemove && c.status === "ELIGIBLE" && canDelete && (
                       <button
                         onClick={() => onRemove(c.id)}
-                        className="text-red-600 hover:text-red-800 text-xs font-medium"
+                        className="text-xs font-medium text-red-600 hover:text-red-800"
                       >
                         Remove
                       </button>
                     )}
-                    {onDelete && c.status === 'REVOKED' && canDelete && (
+                    {onDelete && c.status === "REVOKED" && canDelete && (
                       <button
                         onClick={() => onDelete(c.id)}
-                        className="text-red-600 hover:text-red-800 text-xs font-medium"
+                        className="text-xs font-medium text-red-600 hover:text-red-800"
                       >
                         Delete
                       </button>
@@ -1264,12 +1501,16 @@ function CertTable({
 
 function StatusBadge({ status }: { status: string }) {
   const styles: Record<string, string> = {
-    ELIGIBLE: 'bg-amber-100 dark:bg-amber-900/30 text-amber-800 dark:text-amber-300',
-    ISSUED: 'bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300',
-    REVOKED: 'bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-300',
+    ELIGIBLE:
+      "bg-amber-100 dark:bg-amber-900/30 text-amber-800 dark:text-amber-300",
+    ISSUED:
+      "bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300",
+    REVOKED: "bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-300",
   };
   return (
-    <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${styles[status] ?? 'bg-muted text-muted-foreground'}`}>
+    <span
+      className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ${styles[status] ?? "bg-muted text-muted-foreground"}`}
+    >
       {status}
     </span>
   );

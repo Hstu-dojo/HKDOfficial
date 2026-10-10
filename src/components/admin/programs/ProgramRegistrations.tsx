@@ -1,5 +1,7 @@
 'use client';
 
+import { PanelLoader } from "@/components/loading";
+
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { useSearchParams } from 'next/navigation';
 import Image from 'next/image';
@@ -401,9 +403,7 @@ export default function ProgramRegistrations() {
 
   if (rbacLoading || loading) {
     return (
-      <div className="flex justify-center items-center min-h-[400px]">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500"></div>
-      </div>
+      <PanelLoader />
     );
   }
 
@@ -791,7 +791,7 @@ export default function ProgramRegistrations() {
                   <button
                     onClick={handleSearchCandidates}
                     disabled={candidateSearching}
-                    className="w-full px-4 py-2 rounded-lg bg-blue-600 text-white text-sm font-medium hover:bg-blue-700 disabled:opacity-50 sm:w-auto"
+                    className="w-full px-4 py-2 rounded-lg bg-primary text-primary-foreground text-sm font-medium hover:bg-primary/90 disabled:opacity-50 sm:w-auto"
                   >
                     {candidateSearching ? 'Searching...' : 'Search'}
                   </button>
@@ -1020,7 +1020,7 @@ function EditRegistrationModal({
               <button
                 type="submit"
                 disabled={saving}
-                className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50"
+                className="flex-1 px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 disabled:opacity-50"
               >
                 {saving ? 'Saving...' : 'Save Changes'}
               </button>
@@ -1104,7 +1104,7 @@ function RegistrationDetailModal({
                     <>
                       <button
                         onClick={onEdit}
-                        className="px-3 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 flex items-center gap-2 text-sm"
+                        className="px-3 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 flex items-center gap-2 text-sm"
                       >
                         <PencilSquareIcon className="h-4 w-4" /> Edit
                       </button>

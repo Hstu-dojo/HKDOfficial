@@ -1,5 +1,7 @@
 "use client";
 
+import { PanelLoader } from "@/components/loading";
+
 import { useState, useEffect, useCallback } from "react";
 import Image from "next/image";
 import { useRBAC } from "@/hooks/useRBAC";
@@ -383,9 +385,7 @@ export default function EnrollmentsManagement() {
 
   if (rbacLoading) {
     return (
-      <div className="flex min-h-[400px] items-center justify-center">
-        <div className="h-12 w-12 animate-spin rounded-full border-b-2 border-blue-500"></div>
-      </div>
+      <PanelLoader />
     );
   }
 
@@ -628,9 +628,7 @@ export default function EnrollmentsManagement() {
       {/* Main Table */}
       <div className="overflow-hidden rounded-lg border bg-white shadow-sm dark:bg-card dark:border-border">
         {loading ? (
-          <div className="flex items-center justify-center py-12">
-            <div className="h-8 w-8 animate-spin rounded-full border-b-2 border-blue-500"></div>
-          </div>
+          <PanelLoader />
         ) : activeTab === "applications" ? (
           applications.length === 0 ? (
             <div className="py-12 text-center">

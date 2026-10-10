@@ -1,8 +1,20 @@
-'use client';
+"use client";
 
-import Link from 'next/link';
-import { usePathname } from 'next/navigation';
-import { useRBAC } from '@/hooks/useRBAC';
+import Link from "next/link";
+import Image from "next/image";
+import {
+  Sidebar,
+  SidebarHeader,
+  SidebarContent,
+  SidebarFooter,
+  SidebarMenu,
+  SidebarMenuItem,
+  SidebarMenuButton,
+  SidebarRail,
+  useSidebar,
+} from "@/components/ui/sidebar";
+import { usePathname } from "next/navigation";
+import { useRBAC } from "@/hooks/useRBAC";
 import {
   ChartBarIcon,
   UserGroupIcon,
@@ -21,11 +33,11 @@ import {
   CreditCardIcon,
   ClipboardDocumentListIcon,
   BuildingOffice2Icon,
-  XMarkIcon,
-} from '@heroicons/react/24/outline';
-import { cn } from '@/lib/utils';
-import { canAccessAdminRoute } from '@/lib/rbac/admin-route-access';
-import { useCurrentLocale, useScopedI18n } from '@/locales/client';
+  ArrowLeftIcon,
+} from "@heroicons/react/24/outline";
+import { cn } from "@/lib/utils";
+import { canAccessAdminRoute } from "@/lib/rbac/admin-route-access";
+import { useCurrentLocale, useScopedI18n } from "@/locales/client";
 
 interface NavItem {
   name: string;
@@ -41,281 +53,266 @@ interface NavItem {
 
 const navigation: NavItem[] = [
   {
-    name: 'Competition Results',
-    href: '/admin/competition-results',
+    name: "Competition Results",
+    href: "/admin/competition-results",
     icon: ChartBarIcon,
-    description: 'Publish competition finishes and medal rankings',
-    requiredPermission: { resource: 'EVENT', action: 'READ' },
+    description: "Publish competition finishes and medal rankings",
+    requiredPermission: { resource: "EVENT", action: "READ" },
   },
   {
-    name: 'Dashboard',
-    href: '/admin',
+    name: "Dashboard",
+    href: "/admin",
     icon: ChartBarIcon,
-    description: 'Admin dashboard overview',
+    description: "Admin dashboard overview",
   },
   {
-    name: 'RBAC Management',
-    href: '/admin/rbac',
+    name: "RBAC Management",
+    href: "/admin/rbac",
     icon: ShieldCheckIcon,
-    description: 'Manage roles and permissions',
+    description: "Manage roles and permissions",
     requiredPermission: {
-      resource: 'ROLE',
-      action: 'READ',
+      resource: "ROLE",
+      action: "READ",
     },
   },
   {
-    name: 'Registrations',
-    href: '/admin/registrations',
+    name: "Registrations",
+    href: "/admin/registrations",
     icon: ClipboardDocumentListIcon,
-    description: 'View and manage member registrations',
+    description: "View and manage member registrations",
     requiredPermission: {
-      resource: 'MEMBER',
-      action: 'READ',
+      resource: "MEMBER",
+      action: "READ",
     },
   },
   {
-    name: 'Committees',
-    href: '/admin/committees',
+    name: "Committees",
+    href: "/admin/committees",
     icon: UserGroupIcon,
-    description: 'Manage committee terms and applications',
+    description: "Manage committee terms and applications",
     requiredPermission: {
-      resource: 'MEMBER',
-      action: 'READ',
+      resource: "MEMBER",
+      action: "READ",
     },
   },
   {
-    name: 'Class Schedule',
-    href: '/admin/class-schedule',
+    name: "Class Schedule",
+    href: "/admin/class-schedule",
     icon: CalendarIcon,
-    description: 'Manage class schedules',
+    description: "Manage class schedules",
     requiredPermission: {
-      resource: 'CLASS',
-      action: 'READ',
+      resource: "CLASS",
+      action: "READ",
     },
   },
   {
-    name: 'Course Management',
-    href: '/admin/courses',
+    name: "Course Management",
+    href: "/admin/courses",
     icon: DocumentTextIcon,
-    description: 'Manage courses and content',
+    description: "Manage courses and content",
     requiredPermission: {
-      resource: 'COURSE',
-      action: 'READ',
+      resource: "COURSE",
+      action: "READ",
     },
   },
   {
-    name: 'Media Gallery',
-    href: '/admin/gallery',
+    name: "Media Gallery",
+    href: "/admin/gallery",
     icon: PhotoIcon,
-    description: 'Manage media and images',
+    description: "Manage media and images",
     requiredPermission: {
-      resource: 'GALLERY',
-      action: 'READ',
+      resource: "GALLERY",
+      action: "READ",
     },
   },
   {
-    name: 'Programs & Events',
-    href: '/admin/programs',
+    name: "Programs & Events",
+    href: "/admin/programs",
     icon: TicketIcon,
-    description: 'Manage programs, belt tests, and events',
+    description: "Manage programs, belt tests, and events",
     requiredPermission: {
-      resource: 'PROGRAM',
-      action: 'READ',
+      resource: "PROGRAM",
+      action: "READ",
     },
   },
   {
-    name: 'Monthly Fees',
-    href: '/admin/monthly-fees',
+    name: "Monthly Fees",
+    href: "/admin/monthly-fees",
     icon: BanknotesIcon,
-    description: 'Manage student fee payments',
+    description: "Manage student fee payments",
     requiredPermission: {
-      resource: 'PAYMENT',
-      action: 'READ',
+      resource: "PAYMENT",
+      action: "READ",
     },
   },
   {
-    name: 'Org Billing',
-    href: '/admin/org-billing',
+    name: "Org Billing",
+    href: "/admin/org-billing",
     icon: BuildingOffice2Icon,
-    description: 'Organization billing overview',
+    description: "Organization billing overview",
     requiredPermission: {
-      resource: 'PARTNER_BILL',
-      action: 'READ',
+      resource: "PARTNER_BILL",
+      action: "READ",
     },
   },
   {
-    name: 'Payment Settings',
-    href: '/admin/payment-settings',
+    name: "Payment Settings",
+    href: "/admin/payment-settings",
     icon: CreditCardIcon,
-    description: 'Configure bKash, Nagad accounts',
+    description: "Configure bKash, Nagad accounts",
     requiredPermission: {
-      resource: 'PAYMENT',
-      action: 'MANAGE',
+      resource: "PAYMENT",
+      action: "MANAGE",
     },
   },
   {
-    name: 'Announcements',
-    href: '/admin/announcements',
+    name: "Announcements",
+    href: "/admin/announcements",
     icon: MegaphoneIcon,
-    description: 'Manage announcements',
+    description: "Manage announcements",
     requiredPermission: {
-      resource: 'ANNOUNCEMENT',
-      action: 'READ',
+      resource: "ANNOUNCEMENT",
+      action: "READ",
     },
   },
   {
-    name: 'Certificates',
-    href: '/admin/certificates',
+    name: "Certificates",
+    href: "/admin/certificates",
     icon: AcademicCapIcon,
-    description: 'Manage certificates',
+    description: "Manage certificates",
     requiredPermission: {
-      resource: 'CERTIFICATE',
-      action: 'READ',
+      resource: "CERTIFICATE",
+      action: "READ",
     },
   },
   {
-    name: 'Reports',
-    href: '/admin/reports',
+    name: "Reports",
+    href: "/admin/reports",
     icon: DocumentChartBarIcon,
-    description: 'View and generate reports',
+    description: "View and generate reports",
     requiredPermission: {
-      resource: 'REPORT',
-      action: 'READ',
+      resource: "REPORT",
+      action: "READ",
     },
   },
   {
-    name: 'Email Management',
-    href: '/admin/emails',
+    name: "Email Management",
+    href: "/admin/emails",
     icon: MapIcon,
-    description: 'Email templates and logs',
-    requiredRole: 'ADMIN',
+    description: "Email templates and logs",
+    requiredRole: "ADMIN",
   },
   {
-    name: 'Documentation',
-    href: '/admin/docs',
+    name: "Documentation",
+    href: "/admin/docs",
     icon: BookOpenIcon,
-    description: 'Developer & API docs index',
-    requiredRole: 'ADMIN',
+    description: "Developer & API docs index",
+    requiredRole: "ADMIN",
   },
   {
-    name: 'Partners',
-    href: '/admin/partners',
+    name: "Partners",
+    href: "/admin/partners",
     icon: BuildingOffice2Icon,
-    description: 'Manage partner organizations',
+    description: "Manage partner organizations",
     requiredPermission: {
-      resource: 'PARTNER',
-      action: 'READ',
+      resource: "PARTNER",
+      action: "READ",
     },
   },
   {
-    name: 'System Settings',
-    href: '/admin/settings',
+    name: "System Settings",
+    href: "/admin/settings",
     icon: CogIcon,
-    description: 'System configuration',
-    requiredRole: 'SUPER_ADMIN',
+    description: "System configuration",
+    requiredRole: "SUPER_ADMIN",
   },
 ];
 
-interface AdminSidebarProps {
-  className?: string;
-  onLinkClick?: () => void;
-}
-
-export function AdminSidebar({ className, onLinkClick }: AdminSidebarProps) {
+export function AdminSidebar() {
   const locale = useCurrentLocale();
-  const competitionText = useScopedI18n('competition');
+  const competitionText = useScopedI18n("competition");
   const pathname = usePathname();
-  const { permissions, loading } = useRBAC();
-
-  // Filter navigation based on permissions
-  const visibleNavigation = navigation.filter(item =>
-    !loading && permissions && canAccessAdminRoute(permissions, item.href)
+  const { permissions } = useRBAC();
+  const { setOpenMobile } = useSidebar();
+  const visibleNavigation = navigation.filter(
+    (item) => permissions && canAccessAdminRoute(permissions, item.href),
   );
 
-  if (loading) {
-    return (
-      <div className={cn("w-64 bg-white dark:bg-card border-r border-border dark:border-border min-h-screen", className)}>
-        <div className="p-6">
-          <div className="animate-pulse space-y-4">
-            {[...Array(6)].map((_, i) => (
-              <div key={i} className="h-10 bg-muted dark:bg-slate-700 rounded"></div>
-            ))}
-          </div>
-        </div>
-      </div>
-    );
-  }
-
   return (
-    <div className={cn("w-64 bg-white dark:bg-card border-r border-border dark:border-border h-full flex flex-col", className)}>
-      <div className="flex flex-col h-full">
-        <div className="flex items-center justify-between h-16 px-4 border-b border-border dark:border-border bg-white dark:bg-card flex-shrink-0">
-          <h1 className="text-xl font-bold text-foreground dark:text-foreground">Admin Panel</h1>
-          {/* Close button on mobile */}
-          <button
-            onClick={onLinkClick}
-            className="lg:hidden p-2 rounded-md text-muted-foreground hover:text-slate-700 hover:bg-slate-100 dark:text-muted-foreground dark:hover:text-slate-200 dark:hover:bg-slate-700"
-          >
-            <XMarkIcon className="h-6 w-6" />
-          </button>
-        </div>
-
-        <nav className="flex-1 px-4 py-6 space-y-1 overflow-y-auto custom-scrollbar">
+    <Sidebar collapsible="icon" className="portal-sidebar">
+      <SidebarHeader className="portal-sidebar-brand">
+        <Link
+          href={`/${locale}/admin`}
+          className="flex min-w-0 items-center gap-3"
+          onClick={() => setOpenMobile(false)}
+        >
+          <Image
+            src="/logo-badge.svg"
+            alt="Kaizen"
+            width={36}
+            height={36}
+            className="shrink-0"
+          />
+          <div className="min-w-0 group-data-[collapsible=icon]:hidden">
+            <p className="truncate text-sm font-semibold">
+              Academy administration
+            </p>
+            <p className="text-xs text-muted-foreground">
+              Kaizen Karate Academy
+            </p>
+          </div>
+        </Link>
+      </SidebarHeader>
+      <SidebarContent className="p-2 py-4">
+        <SidebarMenu>
           {visibleNavigation.map((item) => {
-            const isCompetition = item.href === '/admin/competition-results';
             const href = `/${locale}${item.href}`;
-            const isActive =
+            const active =
               pathname === href ||
-              (pathname && pathname.startsWith(href + '/'));
-
+              (item.href !== "/admin" && pathname?.startsWith(href + "/"));
+            const title =
+              item.href === "/admin/competition-results"
+                ? competitionText("adminTitle")
+                : item.name;
             return (
-              <Link
-                key={item.name}
-                href={href}
-                onClick={onLinkClick}
-                className={cn(
-                  "group flex items-center px-3 py-2.5 text-sm font-medium rounded-lg transition-all duration-200 mb-1",
-                  isActive
-                    ? "bg-secondary text-secondary-foreground shadow-none"
-                    : "text-muted-foreground dark:text-muted-foreground hover:bg-slate-100 dark:hover:bg-slate-700 hover:text-slate-900 dark:hover:text-slate-100"
-                )}
-              >
-                <item.icon
-                  className={cn(
-                    "mr-3 h-5 w-5 flex-shrink-0 transition-colors",
-                    isActive ? "text-white" : "text-slate-400 dark:text-slate-500 group-hover:text-slate-600 dark:group-hover:text-slate-300"
-                  )}
-                />
-                <div className="flex-1">
-                  <div className={cn("text-sm", isActive && "font-semibold")}>{isCompetition ? competitionText('adminTitle') : item.name}</div>
-                  {item.description && (
-                    <div className={cn("text-xs mt-0.5",
-                      isActive ? "text-slate-300 dark:text-muted-foreground" : "text-slate-400 dark:text-slate-500 group-hover:text-slate-500 dark:group-hover:text-slate-400"
-                    )}>
-                      {isCompetition ? competitionText('leaderboard') : item.description}
-                    </div>
-                  )}
-                </div>
-              </Link>
+              <SidebarMenuItem key={item.href}>
+                <SidebarMenuButton
+                  asChild
+                  isActive={!!active}
+                  tooltip={title}
+                  className="portal-nav-link"
+                >
+                  <Link
+                    href={href}
+                    onClick={() => setOpenMobile(false)}
+                    aria-current={active ? "page" : undefined}
+                  >
+                    <item.icon className="h-4 w-4 shrink-0" />
+                    <span className="truncate">{title}</span>
+                  </Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
             );
           })}
-        </nav>
-
-        {/* User info at bottom */}
-        <div className="p-4 border-t border-border dark:border-border bg-muted dark:bg-background">
-          <div className="flex items-center">
-            <div className="flex-shrink-0">
-              <div className="h-8 w-8 rounded-full bg-slate-200 dark:bg-slate-700 flex items-center justify-center border border-slate-300 dark:border-slate-600">
-                <UserGroupIcon className="h-4 w-4 text-muted-foreground dark:text-muted-foreground" />
-              </div>
-            </div>
-            <div className="ml-3">
-              <p className="text-sm font-medium text-foreground dark:text-foreground">Admin User</p>
-              <p className="text-xs text-muted-foreground dark:text-muted-foreground">Management Panel</p>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
+        </SidebarMenu>
+      </SidebarContent>
+      <SidebarFooter className="border-t p-2">
+        <SidebarMenu>
+          <SidebarMenuItem>
+            <SidebarMenuButton
+              asChild
+              tooltip="Back to site"
+              className="portal-nav-link"
+            >
+              <Link href={`/${locale}`}>
+                <ArrowLeftIcon className="h-4 w-4" />
+                <span>Back to site</span>
+              </Link>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+        </SidebarMenu>
+      </SidebarFooter>
+      <SidebarRail />
+    </Sidebar>
   );
 }

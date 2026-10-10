@@ -14,18 +14,18 @@ function buildTrail(width: number, height: number, boundaries: number[]) {
   let path = `M ${sideX(right)} 110`;
   const stops = [
     ...boundaries.filter((y) => y > 180 && y < height - 100),
-    height - 12,
+    height,
   ];
   let start = 110;
   for (const end of stops) {
     const span = end - start;
-    if (span < 100) continue;
+    if (span < 100 && end !== height) continue;
     const x = sideX(right);
     const inward = right ? -1 : 1;
     const at = (amount: number) => x + inward * radius * amount;
     path += ` C ${at(1.8)} ${start + span * 0.12}, ${at(-0.65)} ${start + span * 0.25}, ${at(0.8)} ${start + span * 0.36}`;
     path += ` C ${at(2.3)} ${start + span * 0.48}, ${at(-0.7)} ${start + span * 0.5}, ${at(0)} ${start + span * 0.34}`;
-    path += ` C ${at(-0.75)} ${start + span * 0.2}, ${at(1.7)} ${start + span * 0.65}, ${x} ${end - 24}`;
+    path += ` C ${at(-0.75)} ${start + span * 0.2}, ${at(1.7)} ${start + span * 0.65}, ${x} ${end === height ? height : end - 24}`;
     if (end < height - 20) {
       right = !right;
       const next = sideX(right);
@@ -39,6 +39,7 @@ function buildTrail(width: number, height: number, boundaries: number[]) {
 export default function HomeScrollTrail({ children }: { children: ReactNode }) {
   const container = useRef<HTMLDivElement>(null);
   const stroke = useRef<SVGPathElement>(null);
+  const overlay = useRef<HTMLDivElement>(null);
   const gradientId = `homepage-trail-${useId().replace(/:/g, "")}`;
   const [geometry, setGeometry] = useState<Geometry>({
     width: 1000,
@@ -56,13 +57,14 @@ export default function HomeScrollTrail({ children }: { children: ReactNode }) {
         const width = root.clientWidth;
         const height = root.offsetHeight;
         if (!width || !height) return;
-        const boundaries = Array.from(root.children)
-          .filter(
-            (child): child is HTMLElement =>
-              child instanceof HTMLElement && child.tagName === "SECTION",
-          )
+        const top = root.getBoundingClientRect().top;
+        const boundaries = Array.from(
+          root.querySelectorAll<HTMLElement>(
+            ":scope > section, :scope > main > [data-home-sections] > section",
+          ),
+        )
           .slice(1)
-          .map((section) => section.offsetTop);
+          .map((section) => section.getBoundingClientRect().top - top);
         const path = buildTrail(width, height, boundaries);
         setGeometry((previous) =>
           previous.width === width &&
@@ -75,9 +77,11 @@ export default function HomeScrollTrail({ children }: { children: ReactNode }) {
     };
     const observer = new ResizeObserver(measure);
     observer.observe(root);
-    Array.from(root.children).forEach((child) => {
-      if (child.tagName === "SECTION") observer.observe(child);
-    });
+    root
+      .querySelectorAll(
+        ":scope > section, :scope > main > [data-home-sections] > section",
+      )
+      .forEach((section) => observer.observe(section));
     window.addEventListener("resize", measure);
     measure();
     let active = true;
@@ -112,11 +116,21 @@ export default function HomeScrollTrail({ children }: { children: ReactNode }) {
     let frame = 0;
     const paint = () => {
       frame = 0;
+      const scrollTop = Math.max(0, window.scrollY);
+      const maxScroll = Math.max(
+        0,
+        (document.scrollingElement?.scrollHeight ??
+          document.documentElement.scrollHeight) - window.innerHeight,
+      );
+      const pageProgress =
+        maxScroll > 0 ? Math.min(1, scrollTop / maxScroll) : 0;
+      // Start with no drawn length, then reach the final point at page bottom.
       const readHead =
-        window.innerHeight * 0.72 - root.getBoundingClientRect().top;
+        samples[0].y + pageProgress * (geometry.height - samples[0].y);
       let progress = 0;
-      if (media.matches || readHead >= geometry.height - 24) progress = 1;
-      else if (readHead > samples[0].y) {
+      if (scrollTop > 0 && (media.matches || scrollTop >= maxScroll - 1))
+        progress = 1;
+      else if (scrollTop > 0 && readHead > samples[0].y) {
         let low = 0,
           high = samples.length - 1;
         while (low < high) {
@@ -136,6 +150,8 @@ export default function HomeScrollTrail({ children }: { children: ReactNode }) {
       progress = Math.max(0, Math.min(1, progress));
       path.style.strokeDashoffset = String(1 - progress);
       path.dataset.scrollTrailProgress = progress.toFixed(4);
+      if (overlay.current)
+        overlay.current.style.visibility = progress > 0 ? "visible" : "hidden";
     };
     const schedule = () => {
       if (!frame) frame = requestAnimationFrame(paint);
@@ -156,8 +172,10 @@ export default function HomeScrollTrail({ children }: { children: ReactNode }) {
     <div ref={container} className="relative isolate" data-home-scroll-trail>
       {children}
       <div
+        ref={overlay}
         aria-hidden="true"
         className="pointer-events-none absolute inset-0 z-20 overflow-hidden"
+        style={{ visibility: "hidden" }}
       >
         <svg
           viewBox={`0 0 ${geometry.width} ${geometry.height}`}

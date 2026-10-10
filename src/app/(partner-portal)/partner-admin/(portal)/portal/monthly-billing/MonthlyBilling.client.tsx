@@ -1,5 +1,7 @@
 'use client'
 
+import { PanelLoader } from "@/components/loading";
+
 import * as React from 'react'
 import { useSearchParams } from 'next/navigation'
 import { apiJSON } from '../../_lib/api.client'
@@ -318,9 +320,7 @@ export default function MonthlyBilling() {
             <tbody>
               {loading ? (
                 <tr>
-                  <td colSpan={7} className="px-4 py-6 text-center text-muted-foreground">
-                    Loading…
-                  </td>
+                  <td colSpan={7} className="px-4 py-6 text-center text-muted-foreground"><PanelLoader size="sm" /></td>
                 </tr>
               ) : fees.length === 0 ? (
                 <tr>

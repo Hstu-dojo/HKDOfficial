@@ -1,5 +1,7 @@
 'use client';
 
+import { PanelLoader } from "@/components/loading";
+
 import { useState, useEffect, useCallback } from 'react';
 import Image from 'next/image';
 import { useRBAC } from '@/hooks/useRBAC';
@@ -226,7 +228,7 @@ function SignatureFormModal({ isOpen, onClose, onSuccess, initialData }: Signatu
             <button
               type="submit"
               disabled={saving || uploading}
-              className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 disabled:opacity-50"
+              className="px-4 py-2 text-sm font-medium text-primary-foreground bg-primary rounded-md hover:bg-primary/90 disabled:opacity-50"
             >
               {saving ? 'Saving...' : initialData ? 'Update' : 'Create'}
             </button>
@@ -296,9 +298,7 @@ export default function SignatureManagement() {
 
   if (rbacLoading || loading) {
     return (
-      <div className="flex justify-center items-center min-h-[400px]">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500"></div>
-      </div>
+      <PanelLoader />
     );
   }
 
@@ -315,7 +315,7 @@ export default function SignatureManagement() {
         {canCreate && (
           <button
             onClick={() => { setEditing(null); setShowForm(true); }}
-            className="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
+            className="inline-flex items-center px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition"
           >
             <PlusIcon className="h-5 w-5 mr-2" />
             Add Signature

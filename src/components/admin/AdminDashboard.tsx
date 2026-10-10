@@ -1,16 +1,18 @@
-'use client';
+"use client";
 
-import { useRBAC } from '@/hooks/useRBAC';
-import { useSession } from '@/hooks/useSessionCompat';
+import { useRBAC } from "@/hooks/useRBAC";
+import { useSession } from "@/hooks/useSessionCompat";
 import {
   UserGroupIcon,
   CalendarIcon,
   DocumentTextIcon,
   PhotoIcon,
   ChartBarSquareIcon,
-  ShieldCheckIcon
-} from '@heroicons/react/24/outline';
-import Link from 'next/link';
+  ShieldCheckIcon,
+} from "@heroicons/react/24/outline";
+import Link from "next/link";
+import { PanelLoader } from "@/components/loading";
+import { useCurrentLocale } from "@/locales/client";
 
 interface StatCardProps {
   title: string;
@@ -24,28 +26,50 @@ interface StatCardProps {
   };
 }
 
-function StatCard({ title, value, description, icon: Icon, href, trend }: StatCardProps) {
+function StatCard({
+  title,
+  value,
+  description,
+  icon: Icon,
+  href,
+  trend,
+}: StatCardProps) {
+  const locale = useCurrentLocale();
   const content = (
-    <div className="bg-white dark:bg-card p-6 rounded-lg shadow-sm border border-border dark:border-border hover:shadow-md transition-shadow">
+    <div className="rounded-2xl border border-border bg-card p-6 shadow-sm transition-shadow hover:shadow-md dark:border-border">
       <div className="flex items-center">
         <div className="flex-shrink-0">
-          <Icon className="h-8 w-8 text-blue-600" />
+          <Icon className="h-8 w-8 text-primary" />
         </div>
-        <div className="ml-4 flex-1">
-          <p className="text-sm font-medium text-muted-foreground dark:text-gray-400">{title}</p>
-          <p className="text-2xl font-semibold text-foreground dark:text-gray-100">{value}</p>
+        <div className="ml-4 min-w-0 flex-1">
+          <p className="text-sm font-medium text-muted-foreground dark:text-gray-400">
+            {title}
+          </p>
+          <p className="text-2xl font-semibold text-foreground dark:text-gray-100">
+            {value}
+          </p>
           {trend && (
-            <p className={`text-sm ${trend.isPositive ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}`}>
-              {trend.isPositive ? '↗' : '↘'} {trend.value}
+            <p
+              className={`text-sm ${trend.isPositive ? "text-green-600 dark:text-green-400" : "text-red-600 dark:text-red-400"}`}
+            >
+              {trend.isPositive ? "↗" : "↘"} {trend.value}
             </p>
           )}
         </div>
       </div>
-      <p className="mt-2 text-sm text-muted-foreground dark:text-gray-400">{description}</p>
+      <p className="mt-2 text-sm text-muted-foreground dark:text-gray-400">
+        {description}
+      </p>
     </div>
   );
 
-  return href ? <Link href={href}>{content}</Link> : content;
+  return href ? (
+    <Link href={`/${locale}${href}`} className="block h-full">
+      {content}
+    </Link>
+  ) : (
+    content
+  );
 }
 
 interface QuickActionProps {
@@ -56,17 +80,28 @@ interface QuickActionProps {
   color: string;
 }
 
-function QuickAction({ title, description, href, icon: Icon, color }: QuickActionProps) {
+function QuickAction({
+  title,
+  description,
+  href,
+  icon: Icon,
+  color,
+}: QuickActionProps) {
+  const locale = useCurrentLocale();
   return (
-    <Link href={href}>
-      <div className="bg-white dark:bg-card p-4 rounded-lg shadow-sm border border-border dark:border-border hover:shadow-md transition-shadow">
+    <Link href={`/${locale}${href}`} className="block h-full">
+      <div className="rounded-2xl border border-border bg-card p-4 shadow-sm transition-shadow hover:shadow-md dark:border-border">
         <div className="flex items-center">
-          <div className={`flex-shrink-0 p-3 rounded-lg ${color}`}>
-            <Icon className="h-6 w-6 text-white" />
+          <div className={`flex-shrink-0 rounded-lg p-3 ${color}`}>
+            <Icon className="h-6 w-6 text-primary-foreground" />
           </div>
-          <div className="ml-4">
-            <h3 className="text-sm font-medium text-foreground dark:text-gray-100">{title}</h3>
-            <p className="text-sm text-muted-foreground dark:text-gray-400">{description}</p>
+          <div className="ml-4 min-w-0">
+            <h3 className="text-sm font-medium text-foreground dark:text-gray-100">
+              {title}
+            </h3>
+            <p className="text-sm text-muted-foreground dark:text-gray-400">
+              {description}
+            </p>
           </div>
         </div>
       </div>
@@ -82,7 +117,7 @@ interface DashboardData {
   };
   recentActivity: {
     id: string;
-    type: 'USER' | 'COURSE' | 'MEDIA' | 'CLASS';
+    type: "USER" | "COURSE" | "MEDIA" | "CLASS";
     message: string;
     timestamp: string;
   }[];
@@ -97,71 +132,60 @@ export default function AdminDashboard({ dashboardData }: AdminDashboardProps) {
   const { hasPermission, hasRole } = useRBAC();
 
   if (!dashboardData) {
-    return (
-      <div className="flex items-center justify-center min-h-[200px]">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-slate-900"></div>
-      </div>
-    );
+    return <PanelLoader />;
   }
 
   const stats = [
     {
-      title: 'Total Users',
+      title: "Total Users",
       value: dashboardData.stats.users.toLocaleString(),
-      description: 'Active registered users',
+      description: "Active registered users",
       icon: UserGroupIcon,
-      href: hasPermission('MEMBER', 'READ') ? '/admin/registrations' : undefined,
+      href: hasPermission("MEMBER", "READ")
+        ? "/admin/registrations"
+        : undefined,
     },
     {
-      title: 'Courses',
+      title: "Courses",
       value: dashboardData.stats.courses.toLocaleString(),
-      description: 'Available courses',
+      description: "Available courses",
       icon: DocumentTextIcon,
-      href: hasPermission('COURSE', 'READ') ? '/admin/courses' : undefined,
+      href: hasPermission("COURSE", "READ") ? "/admin/courses" : undefined,
     },
     {
-      title: 'Media Files',
+      title: "Media Files",
       value: dashboardData.stats.media.toLocaleString(),
-      description: 'Gallery images',
+      description: "Gallery images",
       icon: PhotoIcon,
-      href: hasPermission('GALLERY', 'READ') ? '/admin/gallery' : undefined,
+      href: hasPermission("GALLERY", "READ") ? "/admin/gallery" : undefined,
     },
   ];
 
   const quickActions = [
     {
-      title: 'Manage Permissions',
-      description: 'Configure user roles and permissions',
-      href: '/admin/rbac',
+      title: "Manage Permissions",
+      description: "Configure user roles and permissions",
+      href: "/admin/rbac",
       icon: ShieldCheckIcon,
-      color: 'bg-blue-500',
-      show: hasPermission('ROLE', 'READ'),
+      color: "bg-primary",
+      show: hasPermission("ROLE", "READ"),
     },
     {
-      title: 'Create Admin User',
-      description: 'Create and manage admin users',
-      href: '/admin/create-admin',
+      title: "Create Admin User",
+      description: "Create and manage admin users",
+      href: "/admin/create-admin",
       icon: UserGroupIcon,
-      color: 'bg-purple-500',
-      show: hasRole('SUPER_ADMIN'),
+      color: "bg-primary",
+      show: hasRole("SUPER_ADMIN"),
     },
-
-    {
-      title: 'System Analytics',
-      description: 'View detailed system reports',
-      href: '/admin/analytics',
-      icon: ChartBarSquareIcon,
-      color: 'bg-orange-500',
-      show: hasRole('SUPER_ADMIN') || hasRole('ADMIN'),
-    },
-  ].filter(action => action.show);
+  ].filter((action) => action.show);
 
   return (
     <div className="space-y-8">
       {/* Header */}
-      <div>
+      <div className="portal-overview-hero">
         <h1 className="text-3xl font-bold text-foreground dark:text-gray-100">
-          Welcome back, {session?.user?.name || 'Admin'}!
+          Welcome back, {session?.user?.name || "Admin"}!
         </h1>
         <p className="mt-2 text-muted-foreground dark:text-gray-400">
           Here&apos;s an overview of your admin dashboard and quick actions.
@@ -169,7 +193,7 @@ export default function AdminDashboard({ dashboardData }: AdminDashboardProps) {
       </div>
 
       {/* Stats Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 xl:grid-cols-3">
         {stats.map((stat) => (
           <StatCard key={stat.title} {...stat} />
         ))}
@@ -178,8 +202,10 @@ export default function AdminDashboard({ dashboardData }: AdminDashboardProps) {
       {/* Quick Actions */}
       {quickActions.length > 0 && (
         <div>
-          <h2 className="text-xl font-semibold text-foreground dark:text-gray-100 mb-4">Quick Actions</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <h2 className="mb-4 text-xl font-semibold text-foreground dark:text-gray-100">
+            Quick Actions
+          </h2>
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
             {quickActions.map((action) => (
               <QuickAction key={action.title} {...action} />
             ))}
@@ -188,12 +214,16 @@ export default function AdminDashboard({ dashboardData }: AdminDashboardProps) {
       )}
 
       {/* Recent Activity */}
-      <div className="bg-white dark:bg-card rounded-lg shadow-sm border border-border dark:border-border">
+      <div className="rounded-2xl border border-border bg-card shadow-sm dark:border-border">
         <div className="p-6">
-          <h2 className="text-xl font-semibold text-foreground dark:text-gray-100 mb-4">Recent Activity</h2>
+          <h2 className="mb-4 text-xl font-semibold text-foreground dark:text-gray-100">
+            Recent Activity
+          </h2>
           <div className="space-y-4">
             {dashboardData.recentActivity.length === 0 ? (
-              <p className="text-muted-foreground dark:text-gray-400 text-sm">No recent activity.</p>
+              <p className="text-sm text-muted-foreground dark:text-gray-400">
+                No recent activity.
+              </p>
             ) : (
               dashboardData.recentActivity.map((activity) => {
                 let Icon = ShieldCheckIcon;
@@ -201,22 +231,22 @@ export default function AdminDashboard({ dashboardData }: AdminDashboardProps) {
                 let bgClass = "bg-muted dark:bg-card/50";
 
                 switch (activity.type) {
-                  case 'USER':
+                  case "USER":
                     Icon = UserGroupIcon;
-                    colorClass = "text-blue-600 dark:text-blue-400";
+                    colorClass = "text-primary dark:text-blue-400";
                     bgClass = "bg-blue-50 dark:bg-blue-900/20";
                     break;
-                  case 'COURSE':
+                  case "COURSE":
                     Icon = DocumentTextIcon;
                     colorClass = "text-indigo-600 dark:text-indigo-400";
                     bgClass = "bg-indigo-50 dark:bg-indigo-900/20";
                     break;
-                  case 'MEDIA':
+                  case "MEDIA":
                     Icon = PhotoIcon;
                     colorClass = "text-emerald-600 dark:text-emerald-400";
                     bgClass = "bg-emerald-50 dark:bg-emerald-900/20";
                     break;
-                  case 'CLASS':
+                  case "CLASS":
                     Icon = CalendarIcon;
                     colorClass = "text-purple-600 dark:text-purple-400";
                     bgClass = "bg-purple-50 dark:bg-purple-900/20";
@@ -224,12 +254,17 @@ export default function AdminDashboard({ dashboardData }: AdminDashboardProps) {
                 }
 
                 return (
-                  <div key={activity.id} className={`flex items-center p-4 ${bgClass} rounded-lg`}>
+                  <div
+                    key={activity.id}
+                    className={`flex items-center p-4 ${bgClass} rounded-lg`}
+                  >
                     <div className="flex-shrink-0">
                       <Icon className={`h-8 w-8 ${colorClass}`} />
                     </div>
-                    <div className="ml-4">
-                      <p className="text-sm font-medium text-foreground dark:text-gray-100">{activity.message}</p>
+                    <div className="ml-4 min-w-0">
+                      <p className="text-sm font-medium text-foreground dark:text-gray-100">
+                        {activity.message}
+                      </p>
                       <p className="text-sm text-muted-foreground dark:text-gray-400">
                         {new Date(activity.timestamp).toLocaleString()}
                       </p>

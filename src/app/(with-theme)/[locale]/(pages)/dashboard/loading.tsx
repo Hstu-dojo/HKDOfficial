@@ -1,5 +1,5 @@
-import { PageLoader } from "@/components/loading";
+import { PanelLoader } from "@/components/loading";
 
 export default function DashboardLoading() {
-  return <PageLoader variant="dashboard" />;
+  return <PanelLoader />;
 }

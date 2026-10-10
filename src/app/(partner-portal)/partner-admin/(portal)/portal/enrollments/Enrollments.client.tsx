@@ -1,5 +1,7 @@
 'use client'
 
+import { PanelLoader } from "@/components/loading";
+
 import * as React from 'react'
 import { apiJSON } from '../../_lib/api.client'
 import { Button } from '@/components/ui/button'
@@ -253,7 +255,7 @@ function ApplicationsTab({
           </thead>
           <tbody>
             {loading ? (
-              <tr><td colSpan={8} className="px-3 py-6 text-center text-muted-foreground">Loading…</td></tr>
+              <tr><td colSpan={8} className="px-3 py-6 text-center text-muted-foreground"><PanelLoader size="sm" /></td></tr>
             ) : rows.length === 0 ? (
               <tr><td colSpan={8} className="px-3 py-6 text-center text-muted-foreground">No applications found.</td></tr>
             ) : (
@@ -494,7 +496,7 @@ function EnrollmentsTab({
           </thead>
           <tbody>
             {loading ? (
-              <tr><td colSpan={6} className="px-3 py-6 text-center text-muted-foreground">Loading…</td></tr>
+              <tr><td colSpan={6} className="px-3 py-6 text-center text-muted-foreground"><PanelLoader size="sm" /></td></tr>
             ) : rows.length === 0 ? (
               <tr><td colSpan={6} className="px-3 py-6 text-center text-muted-foreground">No enrollments found.</td></tr>
             ) : (

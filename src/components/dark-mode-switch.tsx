@@ -3,7 +3,7 @@ import { cn } from "@/lib/utils";
 import { useTheme } from "next-themes";
 
 export const DarkModeSwitch = ({ className }: { className?: string }) => {
-  const { theme, setTheme } = useTheme();
+  const { resolvedTheme, setTheme } = useTheme();
   return (
     <button
       className={cn(
@@ -11,7 +11,7 @@ export const DarkModeSwitch = ({ className }: { className?: string }) => {
         className,
       )}
       aria-label="Toggle color theme"
-      onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+      onClick={() => setTheme(resolvedTheme === "dark" ? "light" : "dark")}
     >
       <svg
         xmlns="http://www.w3.org/2000/svg"

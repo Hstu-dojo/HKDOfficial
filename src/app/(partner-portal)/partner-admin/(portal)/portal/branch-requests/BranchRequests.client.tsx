@@ -1,5 +1,7 @@
 'use client'
 
+import { PanelLoader } from "@/components/loading";
+
 import * as React from 'react'
 import { apiJSON } from '../../_lib/api.client'
 import { Button } from '@/components/ui/button'
@@ -299,9 +301,7 @@ export default function BranchRequests() {
       {/* List */}
       <div className="space-y-4">
         {loading ? (
-          <div className="rounded-lg border p-8 text-center text-muted-foreground">
-            Loading requests…
-          </div>
+          <PanelLoader />
         ) : rows.length === 0 ? (
           <div className="rounded-lg border p-8 text-center text-muted-foreground">
             No transfer requests found.

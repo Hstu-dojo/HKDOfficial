@@ -1,8 +1,9 @@
-'use client';
+"use client";
 
-import { useCompleteSession } from './useCompleteSession';
-import { useState, useEffect, useCallback, useRef } from 'react';
-import type { ResourceType, ActionType } from '@/lib/rbac/types';
+import { useCompleteSession } from "./useCompleteSession";
+import { useState, useEffect, useCallback, useRef, useContext } from "react";
+import { AdminPermissionsContext } from "@/context/AdminPermissionsContext";
+import type { ResourceType, ActionType } from "@/lib/rbac/types";
 
 interface UserPermissions {
   roles: Array<{
@@ -19,10 +20,15 @@ interface UserPermissions {
 
 export function useRBAC() {
   const { data: session, status, hasCompleteData } = useCompleteSession();
-  const [permissions, setPermissions] = useState<UserPermissions | null>(null);
+  const sharedPermissions = useContext(AdminPermissionsContext);
+  const [fetchedPermissions, setPermissions] = useState<UserPermissions | null>(
+    null,
+  );
   const [loading, setLoading] = useState(true);
   const [localUserId, setLocalUserId] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+
+  const permissions = sharedPermissions ?? fetchedPermissions;
 
   // Track the user ID we've already fetched RBAC data for,
   // so we don't re-fetch on token refreshes or session reference changes.
@@ -36,10 +42,15 @@ export function useRBAC() {
   // Fetch RBAC data using the Supabase user ID via header
   // This avoids cookie issues that can occur with getRBACContext
   useEffect(() => {
+    if (sharedPermissions) return;
+
     // Still waiting for auth to resolve
-    if (status === 'loading') {
+    if (status === "loading") {
       // Only show loading if we don't already have cached data for this user
-      if (!lastFetchedUserIdRef.current || lastFetchedUserIdRef.current !== userId) {
+      if (
+        !lastFetchedUserIdRef.current ||
+        lastFetchedUserIdRef.current !== userId
+      ) {
         setLoading(true);
       }
       return;
@@ -71,17 +82,17 @@ export function useRBAC() {
         if (!lastFetchedUserIdRef.current) {
           setLoading(true);
         }
-        
+
         // The API now validates the Supabase session via cookies (server-side).
         // No need to send user ID as a header — it's derived from the session.
-        const response = await fetch('/api/auth/get-user-rbac', {
-          method: 'GET',
-          credentials: 'same-origin',
+        const response = await fetch("/api/auth/get-user-rbac", {
+          method: "GET",
+          credentials: "same-origin",
         });
 
         if (response.ok) {
           const data = await response.json();
-          
+
           lastFetchedUserIdRef.current = userId;
           setLocalUserId(data.localUserId);
           setPermissions({
@@ -94,16 +105,22 @@ export function useRBAC() {
           setError(null);
         } else {
           const errorData = await response.json().catch(() => ({}));
-          console.error('[useRBAC] Failed to fetch RBAC data:', response.status, errorData);
+          console.error(
+            "[useRBAC] Failed to fetch RBAC data:",
+            response.status,
+            errorData,
+          );
           setLocalUserId(null);
           setPermissions(null);
-          setError(`Failed to fetch RBAC data: ${errorData.error || response.statusText}`);
+          setError(
+            `Failed to fetch RBAC data: ${errorData.error || response.statusText}`,
+          );
         }
       } catch (err) {
-        console.error('[useRBAC] Error fetching RBAC data:', err);
+        console.error("[useRBAC] Error fetching RBAC data:", err);
         setLocalUserId(null);
         setPermissions(null);
-        setError('Network error fetching RBAC data');
+        setError("Network error fetching RBAC data");
       } finally {
         fetchInFlightRef.current = false;
         setLoading(false);
@@ -111,40 +128,58 @@ export function useRBAC() {
     }
 
     fetchRBACData();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [userId, status]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [userId, status, sharedPermissions]);
 
-  const hasPermission = useCallback((resource: ResourceType, action: ActionType): boolean => {
-    if (!permissions) return false;
-    
-    return permissions.permissions.some(
-      (perm) => perm.resource === resource && (perm.action === action || perm.action === 'MANAGE')
-    );
-  }, [permissions]);
+  const hasPermission = useCallback(
+    (resource: ResourceType, action: ActionType): boolean => {
+      if (!permissions) return false;
 
-  const hasRole = useCallback((roleName: string): boolean => {
-    if (!permissions) return false;
-    
-    return permissions.roles.some(r => r.name === roleName);
-  }, [permissions]);
+      return permissions.permissions.some(
+        (perm) =>
+          perm.resource === resource &&
+          (perm.action === action || perm.action === "MANAGE"),
+      );
+    },
+    [permissions],
+  );
 
-  const hasAnyRole = useCallback((roleNames: string[]): boolean => {
-    if (!permissions) return false;
-    
-    return roleNames.some(role => permissions.roles.some(r => r.name === role));
-  }, [permissions]);
+  const hasRole = useCallback(
+    (roleName: string): boolean => {
+      if (!permissions) return false;
 
-  const hasAllRoles = useCallback((roleNames: string[]): boolean => {
-    if (!permissions) return false;
-    
-    return roleNames.every(role => permissions.roles.some(r => r.name === role));
-  }, [permissions]);
+      return permissions.roles.some((r) => r.name === roleName);
+    },
+    [permissions],
+  );
+
+  const hasAnyRole = useCallback(
+    (roleNames: string[]): boolean => {
+      if (!permissions) return false;
+
+      return roleNames.some((role) =>
+        permissions.roles.some((r) => r.name === role),
+      );
+    },
+    [permissions],
+  );
+
+  const hasAllRoles = useCallback(
+    (roleNames: string[]): boolean => {
+      if (!permissions) return false;
+
+      return roleNames.every((role) =>
+        permissions.roles.some((r) => r.name === role),
+      );
+    },
+    [permissions],
+  );
 
   return {
     permissions,
-    loading,
-    error,
-    localUserId,
+    loading: sharedPermissions ? false : loading,
+    error: sharedPermissions ? null : error,
+    localUserId: sharedPermissions?.userId ?? localUserId,
     hasPermission,
     hasRole,
     hasAnyRole,

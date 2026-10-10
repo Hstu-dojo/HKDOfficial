@@ -1,5 +1,7 @@
 'use client';
 
+import { PanelLoader } from "@/components/loading";
+
 import { useState, useEffect, useCallback } from 'react';
 import Image from 'next/image';
 import { useRBAC } from '@/hooks/useRBAC';
@@ -324,9 +326,7 @@ export default function RegistrationsManagement() {
 
   if (rbacLoading || loading) {
     return (
-      <div className="flex items-center justify-center py-12">
-        <LoadingSpinner size="large" />
-      </div>
+      <PanelLoader />
     );
   }
 
@@ -584,7 +584,7 @@ export default function RegistrationsManagement() {
                 onClick={() => goToPage(p)}
                 className={`rounded px-3 py-1 text-sm font-medium ${
                   p === pagination.page
-                    ? 'bg-blue-600 text-white'
+                    ? 'bg-primary text-primary-foreground'
                     : 'text-foreground dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'
                 } whitespace-nowrap`}
               >
@@ -891,7 +891,7 @@ function DetailModal({
                       type="button"
                       onClick={() => onGenerateProfile(registration.id)}
                       disabled={generatingProfileId === registration.id}
-                      className="text-xs bg-blue-600 hover:bg-blue-700 text-white px-2.5 py-1 rounded font-medium disabled:opacity-50"
+                      className="text-xs bg-primary hover:bg-primary/90 text-primary-foreground px-2.5 py-1 rounded font-medium disabled:opacity-50"
                     >
                       {generatingProfileId === registration.id ? 'Generating...' : 'Generate ID'}
                     </button>

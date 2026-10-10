@@ -4,6 +4,8 @@ import { useContext, useEffect, useId, useLayoutEffect, useState } from "react";
 import { createPortal } from "react-dom";
 import { usePathname } from "next/navigation";
 import type { LoaderVariant, ArcGreeting } from "./ArcRevealLoader";
+import { isPortalPath } from "./loader-state";
+import { PanelLoader } from "./PanelLoader";
 import { getLoadingCopy } from "./loading-copy";
 import { PageLoaderContext, PageLoaderScreen } from "./PageLoaderProvider";
 
@@ -29,19 +31,21 @@ export function PageLoader({
   const id = useId();
   const [mounted, setMounted] = useState(false);
   const greeting = greetings?.[0]?.text;
+  const inPortal = isPortalPath(pathname);
 
   useEffect(() => {
     if (!host) setMounted(true);
   }, [host]);
   useBrowserLayoutEffect(() => {
-    if (!host) return;
+    if (!host || inPortal) return;
     host.register(id, { pathname, variant, badgeText, className, greeting });
     return () => host.unregister(id);
-  }, [host, id, pathname, variant, badgeText, className, greeting]);
+  }, [host, id, pathname, variant, badgeText, className, greeting, inPortal]);
 
   // The fallback never renders its own pictures. Suspense may retain hidden
   // fallback markup after streaming; only the root host owns image elements.
   // Layout-effect cleanup also unregisters work when Suspense hides this tree.
+  if (inPortal) return <PanelLoader className={className} />;
   if (host) return null;
   const content = (
     <PageLoaderScreen

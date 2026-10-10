@@ -1,5 +1,7 @@
 'use client';
 
+import { PanelLoader } from "@/components/loading";
+
 import { useEffect, useMemo, useState } from 'react';
 import { toast } from 'sonner';
 import {
@@ -438,9 +440,7 @@ export default function CommitteesManagement() {
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center min-h-[400px]">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500"></div>
-      </div>
+      <PanelLoader />
     );
   }
 
@@ -513,7 +513,7 @@ export default function CommitteesManagement() {
               </div>
               <button
                 type="submit"
-                className="w-full rounded-lg bg-blue-600 text-white py-2 text-sm font-medium hover:bg-blue-700"
+                className="w-full rounded-lg bg-primary text-primary-foreground py-2 text-sm font-medium hover:bg-primary/90"
               >
                 Create Committee
               </button>
@@ -628,9 +628,7 @@ export default function CommitteesManagement() {
 
             <div className="mt-6 overflow-x-auto">
               {applicationsLoading ? (
-                <div className="flex justify-center items-center min-h-[200px]">
-                  <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-blue-500"></div>
-                </div>
+                <PanelLoader />
               ) : (
                 <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700 text-sm">
                   <thead className="bg-muted dark:bg-background/40">
@@ -749,7 +747,7 @@ export default function CommitteesManagement() {
               <button
                 onClick={handleUpdateCommittee}
                 disabled={editingCommittee}
-                className="px-4 py-2 text-sm rounded bg-blue-600 text-white disabled:opacity-50"
+                className="px-4 py-2 text-sm rounded bg-primary text-primary-foreground disabled:opacity-50"
               >
                 {editingCommittee ? 'Saving...' : 'Save Changes'}
               </button>
@@ -801,7 +799,7 @@ export default function CommitteesManagement() {
               <button
                 onClick={handleApprove}
                 disabled={approving}
-                className="px-4 py-2 text-sm rounded bg-blue-600 text-white disabled:opacity-50"
+                className="px-4 py-2 text-sm rounded bg-primary text-primary-foreground disabled:opacity-50"
               >
                 {approving ? 'Approving...' : 'Approve'}
               </button>
@@ -907,7 +905,7 @@ export default function CommitteesManagement() {
               <button
                 onClick={handleUpdateApplication}
                 disabled={editing}
-                className="px-4 py-2 text-sm rounded bg-blue-600 text-white disabled:opacity-50"
+                className="px-4 py-2 text-sm rounded bg-primary text-primary-foreground disabled:opacity-50"
               >
                 {editing ? 'Saving...' : 'Save Changes'}
               </button>
