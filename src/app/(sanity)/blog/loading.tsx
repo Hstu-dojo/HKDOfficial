@@ -1,19 +1,18 @@
 import { Skeleton } from "@/components/ui/skeleton";
-// import BlogLoader from "@/components/blogs/loader/BlogLoader";
-import { Header } from "@/components/blogs/shared/Header";
-export default function SkeletonCard() {
+export default function BlogLoading() {
   return (
-    <div className="m-auto text-center gap-6 flex w-full flex-col items-center justify-center overflow-hidden">
-      {/* <BlogLoader /> */}
-      <Header title={"loading.."} />
-      <div className="m-auto flex w-full flex-wrap items-center justify-evenly gap-3">
-        {Array.from({ length: 6 }).map((_, i) => (
-          <div key={i} className="flex flex-col space-y-3">
-            <Skeleton className="h-[125px] w-[125px] rounded-xl md:w-[200px] lg:w-[250px]" />
-            <div className="space-y-2">
-              <Skeleton className="h-4 w-[125px] md:w-[200px] lg:w-[250px]" />
-              <Skeleton className="h-4 w-[100px] md:w-[175px] lg:w-[225px]" />
-            </div>
+    <div className="journal-loading" role="status" aria-label="Loading journal">
+      <span className="sr-only">Loading journal…</span>
+      <Skeleton className="mb-5 h-4 w-32" />
+      <Skeleton className="mb-6 h-16 w-full max-w-xl" />
+      <Skeleton className="mb-10 h-5 w-full max-w-md" />
+      <div className="journal-story-grid">
+        {Array.from({ length: 3 }, (_, index) => (
+          <div key={index}>
+            <Skeleton className="aspect-[4/3] w-full rounded-xl" />
+            <Skeleton className="mt-5 h-6 w-4/5" />
+            <Skeleton className="mt-3 h-4 w-full" />
+            <Skeleton className="mt-2 h-4 w-2/3" />
           </div>
         ))}
       </div>

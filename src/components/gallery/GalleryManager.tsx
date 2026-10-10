@@ -24,7 +24,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
-  FolderOpen,
+  FolderPlus,
   MoreVertical,
   Edit,
   Trash2,
@@ -43,7 +43,6 @@ import { EditImageDialog } from "./EditImageDialog";
 import { EditFolderDialog } from "./EditFolderDialog";
 import { cn } from "@/lib/utils";
 import { AlbumFolder } from "../folders-ui/project-folder/AlbumFolder";
-import { NewAlbumSlot } from "../folders-ui/NewAlbumSlot";
 
 interface GalleryFolder {
   id: string;
@@ -193,7 +192,7 @@ export function GalleryManager() {
   };
 
   return (
-    <div className="w-full flex flex-col min-h-[600px] bg-background">
+    <div className="w-full min-w-0 space-y-6">
 
       {/* ── Drill-down Logic ── */}
       {!activeFolder ? (
@@ -201,29 +200,32 @@ export function GalleryManager() {
         <div className="flex flex-col gap-6">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b pb-4">
             <div>
-              <h1 className="text-2xl font-bold tracking-tight">Gallery Albums</h1>
-              <p className="text-muted-foreground">Manage your photo collections</p>
+              <h2 className="text-lg font-semibold tracking-tight">Albums</h2>
+              <p className="text-sm text-muted-foreground">Manage your photo collections</p>
             </div>
             <CreateFolderDialog parentId={null} onFolderCreated={loadFolders} />
           </div>
 
           {loadingFolders ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            <div className="admin-gallery-albums">
               {Array.from({ length: 8 }).map((_, i) => (
                 <Skeleton key={i} className="aspect-[288/224] rounded-xl" />
               ))}
             </div>
           ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-x-12 gap-y-16 items-start py-6 w-full">
+            <div className="admin-gallery-albums">
               <CreateFolderDialog parentId={null} onFolderCreated={loadFolders}>
-                <div className="flex items-center justify-center w-full">
-                  <NewAlbumSlot />
-                </div>
+                <button type="button" className="admin-gallery-create">
+                  <FolderPlus className="h-8 w-8 text-primary" />
+                  <span className="font-semibold text-foreground">New Album</span>
+                  <span className="text-sm text-muted-foreground">Create a photo collection</span>
+                </button>
               </CreateFolderDialog>
 
               {folders.map((folder, i) => (
-                <div key={folder.id} className="relative group w-full flex items-center justify-center">
+                <div key={folder.id} className="relative group w-full min-w-0">
                   <AlbumFolder
+                    isAdmin
                     index={i}
                     album={{
                       id: folder.id,
@@ -238,10 +240,10 @@ export function GalleryManager() {
                   />
 
                   {/* Context Menu Overlay */}
-                  <div className="absolute top-2 right-2 z-[60] opacity-0 group-hover:opacity-100 transition-opacity" onClick={(e) => e.stopPropagation()}>
+                  <div className="absolute top-2 right-2 z-10" onClick={(e) => e.stopPropagation()}>
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
-                        <Button variant="secondary" size="icon" className="h-8 w-8 bg-background/80 backdrop-blur-sm hover:bg-background">
+                        <Button aria-label={`Actions for ${folder.name}`} variant="secondary" size="icon" className="h-8 w-8 bg-background/80 backdrop-blur-sm hover:bg-background">
                           <MoreVertical className="h-4 w-4" />
                         </Button>
                       </DropdownMenuTrigger>
@@ -265,7 +267,7 @@ export function GalleryManager() {
                   </div>
 
                   {!folder.isPublished && (
-                    <Badge variant="secondary" className="absolute top-2 left-2 z-[60] bg-background/80 backdrop-blur-sm shadow-sm pointer-events-none">
+                    <Badge variant="secondary" className="absolute top-2 left-2 z-10 bg-background/80 backdrop-blur-sm shadow-sm pointer-events-none">
                       <EyeOff className="h-3 w-3 mr-1" /> Draft
                     </Badge>
                   )}
@@ -283,12 +285,12 @@ export function GalleryManager() {
                 <ArrowLeft className="h-4 w-4 mr-2" /> Back to Albums
               </Button>
               <div className="flex items-center gap-3">
-                <h1 className="text-2xl font-bold tracking-tight">{activeFolder.name}</h1>
+                <h2 className="text-lg font-semibold tracking-tight">{activeFolder.name}</h2>
                 {!activeFolder.isPublished && <Badge variant="secondary">Draft</Badge>}
               </div>
             </div>
 
-            <div className="flex items-center gap-3">
+            <div className="flex flex-wrap items-center gap-3">
               <Button variant="outline" onClick={() => setEditFolder(activeFolder)}>
                 <Edit className="mr-2 h-4 w-4" /> Edit Album
               </Button>
@@ -308,13 +310,13 @@ export function GalleryManager() {
           )}
 
           {loadingImages ? (
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+            <div className="admin-gallery-images">
               {Array.from({ length: 10 }).map((_, i) => (
                 <Skeleton key={i} className="aspect-square rounded-xl" />
               ))}
             </div>
           ) : images.length > 0 ? (
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+            <div className="admin-gallery-images">
               {images.map((image) => (
                 <div key={image.id} className="group relative aspect-square rounded-xl overflow-hidden bg-muted border">
                   <Image
@@ -343,10 +345,10 @@ export function GalleryManager() {
                   </div>
 
                   {/* Menu */}
-                  <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                  <div className="absolute top-2 right-2">
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
-                        <Button variant="secondary" size="icon" className="h-8 w-8 bg-background/80 backdrop-blur-sm hover:bg-background">
+                        <Button aria-label={`Actions for ${image.title || "image"}`} variant="secondary" size="icon" className="h-8 w-8 bg-background/80 backdrop-blur-sm hover:bg-background">
                           <MoreVertical className="h-4 w-4" />
                         </Button>
                       </DropdownMenuTrigger>

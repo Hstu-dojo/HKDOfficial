@@ -1,32 +1,31 @@
-import { PagePayload } from "../../../../../sanity/lib/sanity_types";
+import Link from "next/link";
+import { ArrowLeft } from "lucide-react";
+import type { PagePayload } from "../../../../../sanity/lib/sanity_types";
 import { CustomPortableText } from "../../shared/CustomPortableText";
-import { Header } from "../../shared/Header";
-
 export interface PageProps {
   data: PagePayload | null;
 }
-
 export function Page({ data }: PageProps) {
-  // Default to an empty object to allow previews on non-existent documents
-  const { body, overview, title } = data ?? {};
-
   return (
-    <div>
-      <div className="mb-14">
-        {/* Header */}
-        <Header title={title} description={overview} />
-
-        {/* Body */}
-        {body && (
-          <CustomPortableText
-            paragraphClasses="font-serif max-w-3xl text-muted-foreground text-xl"
-            value={body}
-          />
+    <article className="journal-article journal-information">
+      <Link href="/blog" className="journal-back">
+        <ArrowLeft size={16} aria-hidden="true" /> Back to the journal
+      </Link>
+      <header className="journal-article-header">
+        <span className="journal-kicker">Academy journal</span>
+        <h1>{data?.title}</h1>
+        {!!data?.overview?.length && (
+          <div className="journal-standfirst">
+            <CustomPortableText value={data.overview} />
+          </div>
         )}
-      </div>
-      <div className="absolute left-0 w-screen border-t" />
-    </div>
+      </header>
+      {!!data?.body?.length && (
+        <div className="journal-prose">
+          <CustomPortableText value={data.body} />
+        </div>
+      )}
+    </article>
   );
 }
-
 export default Page;

@@ -44,7 +44,7 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export const viewport: Viewport = {
-  themeColor: "#000",
+  themeColor: "#f8f7fa",
 };
 
 export default async function IndexRoute({
@@ -58,9 +58,9 @@ export default async function IndexRoute({
         <Suspense>
           <Navbar />
         </Suspense>
-        <div className="mx-auto w-full max-w-screen-xl flex-grow px-4 py-12 md:px-8 md:py-16 lg:px-10">
+        <main className="journal-container journal-main" id="journal-content">
           <Suspense fallback={<SkeletonCard />}>{children}</Suspense>
-        </div>
+        </main>
         <Suspense>
           <Footer />
         </Suspense>

@@ -30,7 +30,7 @@ export function Sidebar({ className }: SidebarProps) {
           <div className="flex gap-2 lg:flex-col lg:gap-1">
             <Button
               onClick={() => router.push("/admin/gallery")}
-              variant={isActive("/admin/gallery") && !isActive("favorite") ? "secondary" : "ghost"}
+              variant={isActive("/admin/gallery") && !isActive("favorite") ? "default" : "ghost"}
               className="w-full justify-start"
             >
               <LayoutGrid className="mr-2 h-4 w-4" />
@@ -38,7 +38,7 @@ export function Sidebar({ className }: SidebarProps) {
             </Button>
             <Button
               onClick={() => router.push("/admin/gallery/favorite")}
-              variant={isActive("favorite") ? "secondary" : "ghost"}
+              variant={isActive("favorite") ? "default" : "ghost"}
               className="w-full justify-start"
             >
               <Star className="mr-2 h-4 w-4" />

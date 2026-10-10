@@ -19,7 +19,7 @@ export interface AlbumFolderProps {
 }
 
 /** A photographic editorial cover with the same album destinations and callbacks. */
-export function AlbumFolder({ album, href, onClick }: AlbumFolderProps) {
+export function AlbumFolder({ album, href, onClick, isAdmin = false }: AlbumFolderProps) {
   const locale = useCurrentLocale();
   const t = useI18n() as any;
   const cover = album.previewImages?.[0]?.secureUrl;
@@ -29,7 +29,7 @@ export function AlbumFolder({ album, href, onClick }: AlbumFolderProps) {
   );
   const content = (
     <>
-      <div className="relative aspect-[4/3] overflow-hidden rounded-xl bg-muted">
+      <div className={`relative aspect-[4/3] overflow-hidden bg-muted ${isAdmin ? "" : "rounded-xl"}`}>
         {cover ? (
           <img
             src={cover}
@@ -42,11 +42,11 @@ export function AlbumFolder({ album, href, onClick }: AlbumFolderProps) {
             <ImageIcon className="h-10 w-10 text-muted-foreground/50" />
           </div>
         )}
-        <span className="absolute right-3 top-3 flex h-8 w-8 items-center justify-center rounded-full bg-background/95 text-foreground">
+        {!isAdmin && <span className="absolute right-3 top-3 flex h-8 w-8 items-center justify-center rounded-full bg-background/95 text-foreground">
           <ArrowUpRight className="h-4 w-4 transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
-        </span>
+        </span>}
       </div>
-      <div className="px-1 pb-2 pt-5">
+      <div className={isAdmin ? "p-4" : "px-1 pb-2 pt-5"}>
         <div className="mb-3 flex flex-wrap justify-between gap-2 text-xs text-muted-foreground">
           <span>{album.imageCount} {t("galleryPage.photoCount")}</span>
           <span>{formattedDate}</span>
@@ -62,7 +62,7 @@ export function AlbumFolder({ album, href, onClick }: AlbumFolderProps) {
       </div>
     </>
   );
-  const className = "editorial-image group block w-full min-w-0 text-left";
+  const className = `editorial-image group block w-full min-w-0 text-left ${isAdmin ? "h-full overflow-hidden rounded-xl border border-border bg-card transition-colors hover:border-primary/40 focus-visible:ring-2 focus-visible:ring-ring" : ""}`;
   if (onClick)
     return (
       <button type="button" className={className} onClick={onClick}>

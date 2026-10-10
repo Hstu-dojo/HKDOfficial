@@ -16,7 +16,7 @@ export default async function RootLayout({
       className={`${editorialFonts} editorial-site editorial-public editorial-blog`}
       lang="en"
     >
-      <ThemeProvider attribute="class" forcedTheme="light">
+      <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
         <EditorialMotion>{children}</EditorialMotion>
       </ThemeProvider>
       <Toaster richColors />
