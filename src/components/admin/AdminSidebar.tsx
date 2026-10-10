@@ -24,6 +24,7 @@ import {
   XMarkIcon,
 } from '@heroicons/react/24/outline';
 import { cn } from '@/lib/utils';
+import { useCurrentLocale, useScopedI18n } from '@/locales/client';
 
 interface NavItem {
   name: string;
@@ -38,6 +39,13 @@ interface NavItem {
 }
 
 const navigation: NavItem[] = [
+  {
+    name: 'Competition Results',
+    href: '/admin/competition-results',
+    icon: ChartBarIcon,
+    description: 'Publish competition finishes and medal rankings',
+    requiredPermission: { resource: 'EVENT', action: 'READ' },
+  },
   {
     name: 'Dashboard',
     href: '/admin',
@@ -213,6 +221,8 @@ interface AdminSidebarProps {
 }
 
 export function AdminSidebar({ className, onLinkClick }: AdminSidebarProps) {
+  const locale = useCurrentLocale();
+  const competitionText = useScopedI18n('competition');
   const pathname = usePathname();
   const { hasPermission, hasRole, loading } = useRBAC();
 
@@ -264,14 +274,16 @@ export function AdminSidebar({ className, onLinkClick }: AdminSidebarProps) {
 
         <nav className="flex-1 px-4 py-6 space-y-1 overflow-y-auto custom-scrollbar">
           {visibleNavigation.map((item) => {
+            const isCompetition = item.href === '/admin/competition-results';
+            const href = isCompetition ? `/${locale}${item.href}` : item.href;
             const isActive =
-              pathname === item.href ||
-              (pathname && pathname.startsWith(item.href + '/'));
+              pathname === href ||
+              (pathname && pathname.startsWith(href + '/'));
 
             return (
               <Link
                 key={item.name}
-                href={item.href}
+                href={href}
                 onClick={onLinkClick}
                 className={cn(
                   "group flex items-center px-3 py-2.5 text-sm font-medium rounded-lg transition-all duration-200 mb-1",
@@ -287,12 +299,12 @@ export function AdminSidebar({ className, onLinkClick }: AdminSidebarProps) {
                   )}
                 />
                 <div className="flex-1">
-                  <div className={cn("text-sm", isActive && "font-semibold")}>{item.name}</div>
+                  <div className={cn("text-sm", isActive && "font-semibold")}>{isCompetition ? competitionText('adminTitle') : item.name}</div>
                   {item.description && (
                     <div className={cn("text-xs mt-0.5",
                       isActive ? "text-slate-300 dark:text-muted-foreground" : "text-slate-400 dark:text-slate-500 group-hover:text-slate-500 dark:group-hover:text-slate-400"
                     )}>
-                      {item.description}
+                      {isCompetition ? competitionText('leaderboard') : item.description}
                     </div>
                   )}
                 </div>

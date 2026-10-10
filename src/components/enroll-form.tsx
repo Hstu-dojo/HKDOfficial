@@ -26,7 +26,6 @@ import { Textarea } from "@/components/ui/textarea";
 import { toast } from "@/components/ui/use-toast";
 import { Card, CardContent } from "@/components/ui/card"
 import { Checkbox } from "@/components/ui/checkbox";
-import MaxWidthWrapper from "./maxWidthWrapper"
 import Link from "next/link";
 
 const FormSchema = z.object({
@@ -133,9 +132,9 @@ export function EnrollForm({ className, initialData, isEditMode = false }: { cla
   }
 
   return (
-    <MaxWidthWrapper>
-      <Card className={cn("relative bottom-36 w-full", className)}>
-        <CardContent className="pt-6">
+    <div className="w-full min-w-0">
+      <Card className={cn("relative w-full", className)}>
+        <CardContent className="px-4 pt-6 sm:px-6">
           <Form {...form}>
             <form
               onSubmit={form.handleSubmit(onSubmit)}
@@ -347,6 +346,6 @@ export function EnrollForm({ className, initialData, isEditMode = false }: { cla
         </CardContent>
         {/* <CardFooter></CardFooter> */}
       </Card>
-    </MaxWidthWrapper>
+    </div>
   );
 }

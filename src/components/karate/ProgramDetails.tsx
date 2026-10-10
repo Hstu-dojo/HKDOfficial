@@ -150,14 +150,14 @@ export default function ProgramDetails({ slug, initialProgram }: ProgramDetailsP
 
         <div className="bg-white dark:bg-card rounded-2xl shadow-lg overflow-hidden border border-border dark:border-border">
            {/* Banner */}
-           <div className="h-56 w-full relative overflow-hidden">
+           <div className="relative flex min-h-56 w-full flex-col justify-end overflow-hidden">
               <div className="absolute inset-0 bg-gradient-to-br from-primary via-primary/90 to-primary/70"></div>
               <div className="absolute inset-0 bg-[url('/hero/pattern.svg')] opacity-10"></div>
-              <div className="absolute bottom-0 left-0 p-8 text-white">
-                 <span className="bg-white/20 px-3 py-1.5 rounded-full text-xs font-semibold backdrop-blur-sm uppercase tracking-wide">
+              <div className="relative p-6 text-primary-foreground sm:p-8">
+                 <span className="inline-flex max-w-full rounded-full bg-primary-foreground/20 px-3 py-1.5 text-xs font-semibold uppercase leading-5 tracking-wide text-primary-foreground backdrop-blur-sm">
                    {program.type.replace('_', ' ')}
                  </span>
-                 <h1 className="mt-4 text-3xl md:text-4xl font-bold">{program.title}</h1>
+                 <h1 className="mt-4 break-words text-3xl font-bold text-primary-foreground md:text-4xl">{program.title}</h1>
               </div>
            </div>
 

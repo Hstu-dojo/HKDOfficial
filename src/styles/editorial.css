@@ -218,7 +218,8 @@ html:lang(ne) .editorial-public :is(h1, h2, h3) {
   .editorial-public main > section {
     padding-block: 3.5rem;
   }
-  .editorial-public main > .editorial-hero {
+  .editorial-public main > .editorial-hero,
+  .editorial-public main > .onboarding-hero {
     padding-top: 7rem;
   }
   .editorial-public .editorial-portal main > section {

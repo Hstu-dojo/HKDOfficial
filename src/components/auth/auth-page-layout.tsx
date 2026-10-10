@@ -50,7 +50,7 @@ export default function AuthPageLayout({
       </div>
       <aside className={cn("relative hidden min-h-dvh min-w-0 overflow-hidden bg-secondary lg:flex lg:flex-col lg:justify-end", imageSide === "left" && "lg:order-1")}>
         <Image src={imageSrc} alt={brand} fill priority sizes="50vw" className="object-cover object-center" />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/20 to-black/10" />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-purple-950/45 to-purple-800/30" />
         <div className="relative z-10 max-w-2xl p-10 text-white xl:p-14">
           <h2 className="mb-4 text-3xl font-normal leading-tight text-white xl:text-4xl">{imageTitle}</h2>
           <p className="max-w-xl text-base leading-relaxed text-white/90 xl:text-lg">{imageDescription}</p>

@@ -3,9 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "turbo": "next dev --turbopack",
-    "dev": "next dev",
-    "build": "next build",
+    "turbo": "node scripts/next.mjs dev --turbopack",
+    "dev": "node scripts/next.mjs dev",
+    "build": "node scripts/next.mjs build",
     "db:generate": "drizzle-kit generate",
     "db:studio": "drizzle-kit studio --host 0.0.0.0",
     "db:migrate": "drizzle-kit migrate",

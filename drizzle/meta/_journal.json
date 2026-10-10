@@ -169,6 +169,13 @@
       "when": 1780762796828,
       "tag": "0023_wise_xavin",
       "breakpoints": true
+    },
+    {
+      "idx": 24,
+      "version": "7",
+      "when": 1791600914812,
+      "tag": "0024_flowery_redwing",
+      "breakpoints": true
     }
   ]
 }

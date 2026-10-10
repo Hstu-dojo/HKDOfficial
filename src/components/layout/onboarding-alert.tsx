@@ -1,18 +1,24 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { createPortal } from "react-dom";
 import Link from "next/link";
 import { useSession } from "@/hooks/useSessionCompat";
 import { getOnboardingStatus } from "@/actions/onboarding-actions";
 import { XMarkIcon, UserCircleIcon, ArrowRightIcon } from "@heroicons/react/24/outline";
 import { cn } from "@/lib/utils";
+import { useCurrentLocale } from "@/locales/client";
 
 export function OnboardingAlert() {
+  const locale = useCurrentLocale();
+  const [mounted, setMounted] = useState(false);
   const { data: session, status: sessionStatus } = useSession();
   const [show, setShow] = useState(false);
   const [loading, setLoading] = useState(true);
   const [dismissed, setDismissed] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
+
+  useEffect(() => { setMounted(true); }, []);
 
   useEffect(() => {
     // Check if user previously dismissed the alert this session
@@ -58,12 +64,12 @@ export function OnboardingAlert() {
     sessionStorage.setItem('onboarding-alert-dismissed', 'true');
   };
 
-  if (!show || loading || dismissed) return null;
+  if (!mounted || !show || loading || dismissed) return null;
 
-  return (
-    <div className="fixed bottom-6 right-6 z-50 max-w-sm animate-in slide-in-from-bottom-5 fade-in duration-500">
+  return createPortal(
+    <div className="fixed inset-x-4 bottom-[max(1rem,env(safe-area-inset-bottom))] z-50 mx-auto max-w-sm animate-in slide-in-from-bottom-5 fade-in duration-500 sm:bottom-6 sm:left-auto sm:right-6 sm:mx-0">
       <Link
-        href="/onboarding"
+        href={`/${locale}/onboarding`}
         className="block"
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
@@ -135,6 +141,7 @@ export function OnboardingAlert() {
           </div>
         </div>
       </Link>
-    </div>
+    </div>,
+    document.body,
   );
 }

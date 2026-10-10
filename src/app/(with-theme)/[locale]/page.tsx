@@ -2,6 +2,9 @@ import Header from "@/components/layout/header";
 import Footer from "@/components/layout/footer";
 import SectionCTA from "@/components/sections/section-cta";
 import SectionHero from "@/components/sections/section-hero";
+import HomeScrollTrail from "@/components/sections/home-scroll-trail";
+import SectionCompetitionResults from "@/components/sections/section-competition-results";
+import { getPublishedCompetitionResults } from "@/lib/competition-results-server";
 import SectionHomePrograms from "@/components/sections/section-home-programs";
 import SectionStatsBar from "@/components/sections/section-stats-bar";
 import SectionPartners from "@/components/sections/section-partners";
@@ -190,29 +193,33 @@ async function getBranches(): Promise<BranchData[]> {
 export default async function Home({ params }: { params: Promise<{ locale: string }> }) {
   // Params are handled by the layout, but we need to accept them here
   // to avoid Next.js routing errors with dynamic segments
-  const [heroImages, branches, recentAlbums] = await Promise.all([
+  const [heroImages, branches, recentAlbums, competition] = await Promise.all([
     getHeroImages(),
     getBranches(),
     getRecentAlbums(),
+    getPublishedCompetitionResults(),
   ]);
 
   return (
     <>
       <Header />
       <main className="relative">
-        <SectionHero initialProducts={heroImages} />
-        <SectionHomePrograms />
-        <SectionStatsBar />
-        <SectionBranches branches={branches} />
-        <SectionWhyUs />
-        <SectionRecentAlbums albums={recentAlbums} />
-        <SectionCertVerify />
-        <FeaturedPostsServer />
-        <SectionFAQ />
-        <SectionTestimonialsSlider />
-        <Furious5 />
-        <SectionPartners />
-        <SectionCTA />
+        <HomeScrollTrail>
+          <SectionHero initialProducts={heroImages} />
+          <SectionHomePrograms />
+          <SectionStatsBar />
+          <SectionCompetitionResults results={competition.results} unavailable={competition.unavailable} />
+          <SectionBranches branches={branches} />
+          <SectionWhyUs />
+          <SectionRecentAlbums albums={recentAlbums} />
+          <SectionCertVerify />
+          <FeaturedPostsServer />
+          <SectionFAQ />
+          <SectionTestimonialsSlider />
+          <Furious5 />
+          <SectionPartners />
+          <SectionCTA />
+        </HomeScrollTrail>
         <ChatPlugin />
       </main>
       <Footer />

@@ -39,9 +39,9 @@ export default async function OnboardingPage({
         <main className="relative min-h-screen">
           <AuroraBd />
           <MaxWidthWrapper>
-            <div className="pt-32 pb-16 relative z-10">
+            <div className="relative z-10 py-8 md:py-12">
               <div className="max-w-lg mx-auto text-center">
-                <div className="bg-white dark:bg-card rounded-2xl shadow-sm border border-border dark:border-border p-8">
+                <div className="bg-white dark:bg-card rounded-2xl shadow-sm border border-border dark:border-border p-5 sm:p-8">
                   <div className="w-16 h-16 bg-green-100 dark:bg-green-900/50 rounded-full flex items-center justify-center mx-auto mb-6">
                     <CheckCircleIcon className="h-10 w-10 text-green-600 dark:text-green-400" />
                   </div>
@@ -55,17 +55,17 @@ export default async function OnboardingPage({
                   <div className="bg-muted dark:bg-background/50 rounded-lg p-4 mb-6 text-left">
                     <h3 className="font-medium text-foreground dark:text-foreground mb-2">{t("onboarding.status.yourDetails")}</h3>
                     <dl className="space-y-1 text-sm">
-                      <div className="flex justify-between">
+                      <div className="grid grid-cols-[auto_minmax(0,1fr)] gap-3">
                         <dt className="text-muted-foreground dark:text-muted-foreground">{t("onboarding.status.name")}</dt>
-                        <dd className="text-foreground dark:text-foreground font-medium">{data?.username || t("onboarding.status.notAvailable")}</dd>
+                        <dd className="text-foreground dark:text-foreground min-w-0 break-words text-right font-medium">{data?.username || t("onboarding.status.notAvailable")}</dd>
                       </div>
-                      <div className="flex justify-between">
+                      <div className="grid grid-cols-[auto_minmax(0,1fr)] gap-3">
                         <dt className="text-muted-foreground dark:text-muted-foreground">{t("onboarding.status.email")}</dt>
-                        <dd className="text-foreground dark:text-foreground font-medium">{data?.email || t("onboarding.status.notAvailable")}</dd>
+                        <dd className="text-foreground dark:text-foreground min-w-0 break-all text-right font-medium">{data?.email || t("onboarding.status.notAvailable")}</dd>
                       </div>
-                      <div className="flex justify-between">
+                      <div className="grid grid-cols-[auto_minmax(0,1fr)] gap-3">
                         <dt className="text-muted-foreground dark:text-muted-foreground">{t("onboarding.status.phone")}</dt>
-                        <dd className="text-foreground dark:text-foreground font-medium">{data?.phone || t("onboarding.status.notAvailable")}</dd>
+                        <dd className="text-foreground dark:text-foreground min-w-0 break-words text-right font-medium">{data?.phone || t("onboarding.status.notAvailable")}</dd>
                       </div>
                     </dl>
                   </div>
@@ -103,7 +103,7 @@ export default async function OnboardingPage({
       <main className="relative min-h-screen">
         <AuroraBd />
         <MaxWidthWrapper>
-          <div className="pt-32 pb-16 relative z-10">
+          <div className="relative z-10 py-8 md:py-12">
             {isEditMode && (
               <div className="max-w-2xl mx-auto mb-6">
                 <Link

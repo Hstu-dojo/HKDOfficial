@@ -40,7 +40,7 @@ export function AlbumGrid({ albums }: AlbumGridProps) {
   return (
     <div ref={containerRef} className="min-h-screen bg-background">
       {/* Hero Section */}
-      <section className="relative h-[55vh] min-h-[420px] w-full overflow-hidden flex items-center justify-center">
+      <section className="relative flex min-h-[55vh] w-full items-center justify-center overflow-hidden pb-12 pt-28 md:min-h-[520px] md:pb-16 md:pt-32">
         {/* Parallax Background Image */}
         <motion.div 
           className="absolute inset-0 z-0"
@@ -56,7 +56,7 @@ export function AlbumGrid({ albums }: AlbumGridProps) {
         </motion.div>
 
         {/* Hero Content */}
-        <div className="container relative z-10 mx-auto mt-24 px-4 md:mt-12">
+        <div className="container relative z-10 mx-auto px-4">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
