@@ -24,7 +24,11 @@ import {
   positivePage,
 } from "./policy";
 
-export type BillingScope = { partnerId?: string; enrollmentId?: string; profileId?: string };
+export type BillingScope = {
+  partnerId?: string;
+  enrollmentId?: string;
+  profileId?: string;
+};
 /** Explicit monthly inactivity overrides the default active profile/enrollment state. */
 export function activeForPeriod(period: string): SQL {
   const { year, month } = billingPeriod(period);

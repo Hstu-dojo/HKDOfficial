@@ -11,12 +11,14 @@ export async function sendCredentialsEmail(
   email: string,
   password: string,
   name: string,
+  partnerId?: string,
 ): Promise<{ success: boolean; data?: any; error?: string }> {
   const apiKey = process.env.RESEND_API_KEY;
   if (!apiKey) {
     await trackEmail(
       {
         category: "credentials",
+        partnerId,
         provider: "resend",
         to: email,
         subject: "Welcome to Kaizen Karate Academy - Your Account Credentials",
@@ -43,6 +45,7 @@ export async function sendCredentialsEmail(
     const { data, error } = await trackEmail(
       {
         category: "credentials",
+        partnerId,
         provider: "resend",
         to: email,
         subject: "Welcome to Kaizen Karate Academy - Your Account Credentials",

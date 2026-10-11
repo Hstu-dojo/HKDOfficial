@@ -1,5 +1,6 @@
 "use client";
 
+import MemberBillingReminders from "@/components/billing/MemberBillingReminders";
 import { BillingReminders } from "@/components/billing/BillingReminders";
 import { businessDate, paisaFromInput } from "@/lib/billing/policy";
 import { PanelLoader } from "@/components/loading";
@@ -260,7 +261,11 @@ export default function MonthlyBilling() {
         </div>
       </div>
 
-      <BillingReminders endpoint="/api/partner-portal/monthly-fees/reminders" />
+      <MemberBillingReminders />
+      <BillingReminders
+        endpoint="/api/partner-portal/monthly-fees/reminders"
+        showHistory={false}
+      />
 
       <label className="flex items-center gap-2 text-sm">
         <input

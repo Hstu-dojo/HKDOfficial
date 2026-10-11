@@ -420,7 +420,7 @@ export async function POST(request: Request) {
     let resetEmailSent = false
     if (emailClient) {
       try {
-        const { error: resetErr } = await trackEmail({category:"password_reset",provider:"supabase",to:trimmedEmail,subject:"Password reset request"}, () => emailClient.auth.resetPasswordForEmail(trimmedEmail, {
+        const { error: resetErr } = await trackEmail({category:"password_reset",provider:"supabase",partnerId:partnerUser.partnerId,to:trimmedEmail,subject:"Password reset request"}, () => emailClient.auth.resetPasswordForEmail(trimmedEmail, {
           redirectTo: buildResetRedirectUrl(request),
         }))
         resetEmailSent = !resetErr
@@ -526,7 +526,7 @@ export async function POST(request: Request) {
 
     let credentialsEmailSent = false
     try {
-      const emailRes = await sendCredentialsEmail(trimmedEmail, trimmedPassword, trimmedFullName)
+      const emailRes = await sendCredentialsEmail(trimmedEmail, trimmedPassword, trimmedFullName, partnerUser.partnerId)
       credentialsEmailSent = emailRes.success
     } catch (emailErr) {
       console.error('[PartnerPortal] Failed to send credentials email:', emailErr)
@@ -697,7 +697,7 @@ export async function PATCH(request: Request) {
           process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || ''
         )
 
-        const { error: resetErr } = await trackEmail({category:"password_reset",provider:"supabase",to:targetEmail,subject:"Password reset request"}, () => supabaseClient.auth.resetPasswordForEmail(targetEmail, {
+        const { error: resetErr } = await trackEmail({category:"password_reset",provider:"supabase",partnerId:partnerUser.partnerId,to:targetEmail,subject:"Password reset request"}, () => supabaseClient.auth.resetPasswordForEmail(targetEmail, {
           redirectTo: buildResetRedirectUrl(request),
         }))
 

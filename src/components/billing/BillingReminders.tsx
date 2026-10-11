@@ -150,7 +150,8 @@ export function BillingReminders({
         .filter(
           (h) =>
             ["queued", "failed"].includes(h.status) &&
-            h.scopeKey === (partnerId || "all"),
+            (h.scopeKey === (partnerId || "all") ||
+              endpoint.startsWith("/api/partner-portal/")),
         )
         .map((h) => [h.campaignKey, h]),
     ).values(),

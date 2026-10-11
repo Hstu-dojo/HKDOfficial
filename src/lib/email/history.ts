@@ -8,6 +8,7 @@ type Attempt = {
   provider: string;
   to: string | string[];
   subject: string;
+  partnerId?: string;
 };
 /** Never retain message bodies, credentials, tokens or provider response objects. */
 export async function trackEmail<T>(
@@ -72,7 +73,10 @@ export async function trackEmail<T>(
 }
 
 /** Includes retained legacy provider events and billing sends without copying/duplicating them. */
-export async function listEmailHistory(params: URLSearchParams) {
+export async function listEmailHistory(
+  params: URLSearchParams,
+  partnerId?: string,
+) {
   const page = Math.max(1, Math.min(100000, Number(params.get("page")) || 1));
   const limit = 30;
   if (!Number.isInteger(page)) throw new Error("Invalid page");
@@ -80,15 +84,15 @@ export async function listEmailHistory(params: URLSearchParams) {
   const category = params.get("category") || "";
   const status = params.get("status") || "";
   const source = sql`(
-    SELECT 'billing:' || id AS id, recipient_email AS recipient, 'Billing reminder — ' || billing_month AS subject,
+    SELECT 'billing:' || id AS id, recipient_email AS recipient, 'Billing reminder — ' || coalesce((SELECT string_agg(DISTINCT f.billing_month, ', ' ORDER BY f.billing_month) FROM monthly_fees f WHERE billing_mail_deliveries.fee_ids ? f.id), billing_month) AS subject,
       'billing' AS category, 'smtp' AS provider, status, message_id AS "messageId", to_char(created_at AT TIME ZONE 'UTC', 'YYYY-MM-DD"T"HH24:MI:SS.MS"Z"') AS "createdAt", sent_at::text AS "sentAt", billing_month AS "billingMonth", campaign_key AS "campaignKey", scope_key AS "scopeKey", error_message AS error
-    FROM billing_mail_deliveries
+    FROM billing_mail_deliveries WHERE (${partnerId || null}::text IS NULL OR partner_id = ${partnerId || null} OR scope_key = ${partnerId || null})
     UNION ALL
     SELECT 'legacy-billing:' || r.id, coalesce(r.recipient_email, 'Recipient unavailable'),
       coalesce(r.subject, 'Billing reminder'), 'billing', 'legacy', coalesce(r.delivery_status, 'unknown'),
       r.metadata->>'messageId', to_char(r.created_at AT TIME ZONE 'UTC', 'YYYY-MM-DD"T"HH24:MI:SS.MS"Z"'), r.sent_at::text, NULL::text,
       r.metadata->>'campaignKey', NULL::text, r.error_message
-    FROM payment_reminders r WHERE r.reminder_type = 'email' AND NOT EXISTS (
+    FROM payment_reminders r WHERE r.reminder_type = 'email' AND (${partnerId || null}::text IS NULL OR EXISTS (SELECT 1 FROM monthly_fees f JOIN course_enrollments e ON e.id=f.enrollment_id JOIN courses c ON c.id=e.course_id WHERE f.id=r.monthly_fee_id AND c.partner_id=${partnerId || null})) AND NOT EXISTS (
       SELECT 1 FROM billing_mail_deliveries d WHERE d.id = r.metadata->>'deliveryId'
       OR (d.message_id IS NOT NULL AND d.message_id = r.metadata->>'messageId')
     )
@@ -99,7 +103,11 @@ export async function listEmailHistory(params: URLSearchParams) {
       coalesce(payload->>'status', payload->>'type', 'unknown'), coalesce(payload->>'messageId', payload#>>'{data,email_id}'),
       coalesce(payload->>'createdAt', payload->>'created_at', payload#>>'{data,created_at}'),
       NULL::text, NULL::text, NULL::text, NULL::text, payload->>'error'
-    FROM "email-log"
+    FROM "email-log" event WHERE (${partnerId || null}::text IS NULL OR payload->>'partnerId' = ${partnerId || null} OR EXISTS (
+      SELECT 1 FROM "email-log" attempt WHERE attempt.payload->>'partnerId' = ${partnerId || null}
+      AND attempt.payload->>'messageId' IS NOT NULL
+      AND attempt.payload->>'messageId' = event.payload#>>'{data,email_id}'
+    ))
   ) history`;
   const condition = sql`(${q} = '' OR recipient ILIKE ${"%" + q + "%"} OR subject ILIKE ${"%" + q + "%"}) AND (${category} = '' OR category = ${category}) AND (${status} = '' OR status = ${status})`;
   const [rows, totals] = await Promise.all([

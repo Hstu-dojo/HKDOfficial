@@ -16,7 +16,13 @@ type Email = {
   error: string | null;
 };
 type Result = { items: Email[]; page: number; limit: number; total: number };
-export default function EmailHistory() {
+export default function EmailHistory({
+  endpoint = "/api/admin/emails",
+  organizationOnly = false,
+}: {
+  endpoint?: string;
+  organizationOnly?: boolean;
+}) {
   const [q, setQ] = useState(""),
     [category, setCategory] = useState(""),
     [status, setStatus] = useState(""),
@@ -32,7 +38,7 @@ export default function EmailHistory() {
       setError("");
       try {
         const response = await fetch(
-          `/api/admin/emails?${new URLSearchParams({ q, category, status, page: String(page) })}`,
+          `${endpoint}?${new URLSearchParams({ q, category, status, page: String(page) })}`,
           { signal: abort.signal },
         );
         const result = await response.json();
@@ -52,7 +58,7 @@ export default function EmailHistory() {
       clearTimeout(timer);
       abort.abort();
     };
-  }, [q, category, status, page, refresh]);
+  }, [q, category, status, page, refresh, endpoint]);
   const date = (value: string | null) =>
     value && Number.isFinite(Date.parse(value))
       ? new Intl.DateTimeFormat("en-BD", {
@@ -67,8 +73,9 @@ export default function EmailHistory() {
         <div>
           <h1 className="text-3xl font-semibold tracking-tight">Emails</h1>
           <p className="mt-2 text-sm text-muted-foreground">
-            Platform email attempts, billing reminders and provider delivery
-            events.
+            {organizationOnly
+              ? "Email history for your organization only."
+              : "Platform email attempts, billing reminders and provider delivery events."}
           </p>
         </div>
         <Button variant="outline" onClick={() => setRefresh((n) => n + 1)}>

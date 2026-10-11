@@ -67,7 +67,10 @@ export function groupUnpaid(rows: Row[]) {
 const validEmail = (value: string | null) =>
   !!value && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
 /** Every selected bill must be active now and in its own historical billing month. */
-export async function selectedUnpaidFees(scope: BillingScope, months?: string[]) {
+export async function selectedUnpaidFees(
+  scope: BillingScope,
+  months?: string[],
+) {
   if (months) for (const month of months) billingPeriod(month);
   const rows = await feeRecords(scope, [
     months ? inArray(monthlyFees.billingMonth, months) : undefined,
@@ -75,7 +78,7 @@ export async function selectedUnpaidFees(scope: BillingScope, months?: string[])
     billingActivity(),
     sql`${monthlyFees.status} NOT IN ('paid','waived','payment_submitted')`,
   ]);
-  return rows.filter(r => feeBalance(r.fee) > 0);
+  return rows.filter((r) => feeBalance(r.fee) > 0);
 }
 
 export async function reminderPreview(
@@ -175,7 +178,9 @@ export async function processReminderBatch(
   const campaign = and(
     eq(billingMailDeliveries.campaignKey, campaignKey),
     eq(billingMailDeliveries.scopeKey, scopeKey),
-    scope.profileId ? eq(billingMailDeliveries.profileId, scope.profileId) : undefined,
+    scope.profileId
+      ? eq(billingMailDeliveries.profileId, scope.profileId)
+      : undefined,
   );
   await db
     .update(billingMailDeliveries)

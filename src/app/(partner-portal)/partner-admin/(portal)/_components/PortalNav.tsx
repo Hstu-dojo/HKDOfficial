@@ -13,6 +13,7 @@ import {
   Building2,
   Sliders,
   ShieldAlert,
+  Mail,
 } from "lucide-react";
 
 const iconMap = {
@@ -28,6 +29,7 @@ const iconMap = {
   Building2,
   Sliders,
   ShieldAlert,
+  Mail,
 };
 
 const groups = [
@@ -74,6 +76,11 @@ const groups = [
         href: "/partner-admin/portal/bills",
         label: "Bills",
         icon: "CreditCard",
+      },
+      {
+        href: "/partner-admin/portal/emails",
+        label: "Email History",
+        icon: "Mail",
       },
       {
         href: "/partner-admin/portal/monthly-status",

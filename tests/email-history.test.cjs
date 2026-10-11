@@ -165,16 +165,152 @@ test("history storage failure does not prevent sending or cause a duplicate disp
   assert.equal(sends, 1);
 });
 
-test('main billing reminder response omits recipient history but keeps campaign controls', async () => {
- const handler=load('src/lib/billing/reminder-handler.ts', {
-  'server-only':{}, '@/lib/connect-db':{db:{}}, '@/db/schema':{billingMailDeliveries:{}},
-  './policy':{billingPeriod:()=>({})},
-  './reminders':{reminderPreview:async()=>({recipients:[],total:0}),reminderHistory:async()=>[{campaignKey:'campaign',scopeKey:'all',billingMonth:'2026-10',status:'failed',email:'private@example.test',name:'Private Student'}]},
-  './http':{billingErrorResponse:error=>{throw error;}},
- });
- const response=await handler.getReminders(new Request('https://academy.test/api/admin/monthly-fees/reminders?billingMonth=2026-10'),{},false);
- const json=await response.json();
- assert.equal(json.history.length,0);
- assert.equal(json.campaigns[0].campaignKey,'campaign');
- assert.ok(!JSON.stringify(json).includes('private@example.test'));
+test("main billing reminder response omits recipient history but keeps campaign controls", async () => {
+  const handler = load("src/lib/billing/reminder-handler.ts", {
+    "server-only": {},
+    "@/lib/connect-db": { db: {} },
+    "@/db/schema": { billingMailDeliveries: {} },
+    "./policy": { billingPeriod: () => ({}) },
+    "./reminders": {
+      reminderPreview: async () => ({ recipients: [], total: 0 }),
+      reminderHistory: async () => [
+        {
+          campaignKey: "campaign",
+          scopeKey: "all",
+          billingMonth: "2026-10",
+          status: "failed",
+          email: "private@example.test",
+          name: "Private Student",
+        },
+      ],
+    },
+    "./http": {
+      billingErrorResponse: (error) => {
+        throw error;
+      },
+    },
+  });
+  const response = await handler.getReminders(
+    new Request(
+      "https://academy.test/api/admin/monthly-fees/reminders?billingMonth=2026-10",
+    ),
+    {},
+    false,
+  );
+  const json = await response.json();
+  assert.equal(json.history.length, 0);
+  assert.equal(json.campaigns[0].campaignKey, "campaign");
+  assert.ok(!JSON.stringify(json).includes("private@example.test"));
+});
+
+test("partner email history ignores client-supplied organization IDs", async () => {
+  let observed;
+  const api = load("src/app/api/partner-portal/emails/route.ts", {
+    "@/lib/partner-admin/auth": {
+      requirePartnerAdminUser: async () => ({
+        user: { partnerId: "own-organization" },
+      }),
+    },
+    "@/lib/email/history": {
+      listEmailHistory: async (params, partnerId) => {
+        observed = partnerId;
+        return { items: [], total: 0 };
+      },
+    },
+  });
+  assert.equal(
+    (
+      await api.GET(
+        new Request(
+          "https://academy.test/api/partner-portal/emails?partnerId=another-organization",
+        ),
+      )
+    ).status,
+    200,
+  );
+  assert.equal(observed, "own-organization");
+});
+test("partner targeted billing always uses authenticated organization and actor", async () => {
+  let observed;
+  const api = load("src/app/api/partner-portal/member-reminders/route.ts", {
+    "@/lib/partner-admin/auth": {
+      requirePartnerAdminUser: async () => ({
+        user: { partnerId: "own-organization", id: "admin" },
+      }),
+    },
+    "@/lib/billing/member-reminders": {
+      sendMemberReminders: async (request, partnerId, actor) => {
+        observed = { partnerId, actor };
+        return new Response("{}");
+      },
+    },
+  });
+  await api.POST(
+    new Request(
+      "https://academy.test/api/partner-portal/member-reminders?partnerId=foreign",
+      { method: "POST", body: JSON.stringify({ partnerId: "foreign" }) },
+    ),
+  );
+  assert.deepEqual(observed, {
+    partnerId: "own-organization",
+    actor: "partner-admin:admin",
+  });
+});
+for (const path of ["emails", "member-reminders"])
+  test(`partner ${path} denies anonymous access before history or dispatch`, async () => {
+    const unauthorized = new Response("{}", { status: 401 });
+    const api = load(`src/app/api/partner-portal/${path}/route.ts`, {
+      "@/lib/partner-admin/auth": {
+        requirePartnerAdminUser: async () => ({ error: unauthorized }),
+      },
+      "@/lib/email/history": {
+        listEmailHistory: () => {
+          throw new Error("Read before authorization");
+        },
+      },
+      "@/lib/billing/member-reminders": {
+        getMemberReminders: () => {
+          throw new Error("Read before authorization");
+        },
+        sendMemberReminders: () => {
+          throw new Error("Send before authorization");
+        },
+      },
+    });
+    assert.equal(
+      (await api.GET(new Request("https://academy.test/api"))).status,
+      401,
+    );
+    if (path === "member-reminders")
+      assert.equal(
+        (await api.POST(new Request("https://academy.test/api"))).status,
+        401,
+      );
+  });
+test("selected billing requires a member, distinct valid nonfuture months and an idempotent campaign", () => {
+  const billingPolicy = load("src/lib/billing/policy.ts");
+  const handler = load("src/lib/billing/member-reminders.ts", {
+    "server-only": {},
+    "@/lib/connect-db": { db: {} },
+    "@/db/schema": {},
+    "./policy": billingPolicy,
+    "./http": {},
+    "./service": {},
+    "./reminders": {},
+  });
+  const request = {
+    profileId: "student",
+    months: [billingPolicy.businessDate().month],
+    campaignId: "manual:00000000-0000-4000-8000-000000000010",
+  };
+  assert.equal(handler.selectedRequest(request).profileId, "student");
+  for (const body of [
+    { ...request, profileId: "" },
+    { ...request, months: [] },
+    { ...request, months: ["2026-13"] },
+    { ...request, months: ["2099-01"] },
+    { ...request, months: [request.months[0], request.months[0]] },
+    { ...request, campaignId: "arbitrary" },
+  ])
+    assert.throws(() => handler.selectedRequest(body));
 });

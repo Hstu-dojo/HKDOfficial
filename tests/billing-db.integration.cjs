@@ -360,8 +360,135 @@ require("tsx/cjs");
     );
     Module._load = beforeAuthLoad;
 
+    // Selected member/month reminders and strict organization mail ownership.
+    await client`INSERT INTO partners(id,name,slug,is_active) VALUES ('mail-a','Mail A','mail-a',true),('mail-b','Mail B','mail-b',true)`;
+    await client`INSERT INTO profiles(id,member_number,full_name_english,email,is_active) VALUES ('mail-p','MP1','Mail Student','mail-student@example.test',true)`;
+    await client`INSERT INTO courses(id,name,duration,monthly_fee,partner_id) VALUES ('mail-ca','Mail A training',12,10000,'mail-a'),('mail-cb','Mail B training',12,10000,'mail-b')`;
+    await client`INSERT INTO course_enrollments(id,course_id,profile_id,start_date,monthly_fee) VALUES ('mail-ea','mail-ca','mail-p','2025-01-01',10000),('mail-eb','mail-cb','mail-p','2025-01-01',99900)`;
+    await client`INSERT INTO monthly_fees(id,enrollment_id,profile_id,billing_month,billing_year,amount,amount_paid,status,due_date) VALUES
+      ('mail-sep','mail-ea','mail-p','2026-09',2026,10000,2500,'partial','2026-09-15'),
+      ('mail-oct','mail-ea','mail-p','2026-10',2026,10000,0,'pending','2026-10-15'),
+      ('mail-aug','mail-ea','mail-p','2026-08',2026,10000,0,'pending','2026-08-15'),
+      ('mail-other','mail-eb','mail-p','2026-09',2026,99900,0,'pending','2026-09-15')`;
+    await client`INSERT INTO profile_monthly_status(profile_id,partner_id,month,year,is_active) VALUES ('mail-p','mail-a',8,2026,false)`;
+    const eligibleSelected = await reminders.selectedUnpaidFees(
+      { partnerId: "mail-a", profileId: "mail-p" },
+      ["2026-08", "2026-09", "2026-10"],
+    );
+    assert.deepEqual(eligibleSelected.map((r) => r.fee.id).sort(), [
+      "mail-oct",
+      "mail-sep",
+    ]);
+    assert.equal(
+      eligibleSelected.reduce(
+        (sum, r) => sum + r.fee.amount - (r.fee.amountPaid || 0),
+        0,
+      ),
+      17500,
+    );
+    const selectedCampaign = "manual:00000000-0000-4000-8000-000000000011";
+    const memberHandlers = require("../src/lib/billing/member-reminders.ts");
+    const selectedBody = {
+      profileId: "mail-p",
+      months: ["2026-09", "2026-10"],
+      campaignId: selectedCampaign,
+    };
+    const selectedRequest = () =>
+      new Request("https://example.test/api/partner-portal/member-reminders", {
+        method: "POST",
+        body: JSON.stringify(selectedBody),
+      });
+    const beforeSelected = sent.length;
+    let selectedResponse = await memberHandlers.sendMemberReminders(
+      selectedRequest(),
+      "mail-a",
+      "partner-admin:mail-admin",
+    );
+    assert.equal(selectedResponse.status, 200, await selectedResponse.text());
+    assert.equal(
+      sent.length,
+      beforeSelected + 1,
+      "two months are sent in a single member email",
+    );
+    assert.ok(
+      sent.at(-1).text.includes("2026-09") &&
+        sent.at(-1).text.includes("2026-10"),
+    );
+    assert.ok(
+      !sent.at(-1).text.includes("2026-08") &&
+        !sent.at(-1).text.includes("Mail B training"),
+    );
+    selectedResponse = await memberHandlers.sendMemberReminders(
+      selectedRequest(),
+      "mail-a",
+      "partner-admin:mail-admin",
+    );
+    assert.equal(selectedResponse.status, 200);
+    assert.equal(
+      sent.length,
+      beforeSelected + 1,
+      "repeating a campaign never duplicates an email",
+    );
+    // A student shared with another branch must not expose the first branch's email.
+    const emailHistory = require("../src/lib/email/history.ts");
+    await client`INSERT INTO "email-log"(payload) VALUES
+      (${{ kind: "platform-email", partnerId: "mail-a", category: "password_reset", to: "mail-student@example.test", subject: "Owned request A", status: "requested", messageId: "resend-a", createdAt: new Date().toISOString() }}),
+      (${{ kind: "platform-email", partnerId: "mail-b", category: "password_reset", to: "mail-student@example.test", subject: "Owned request B", status: "requested", messageId: "resend-b", createdAt: new Date().toISOString() }}),
+      (${{ type: "email.delivered", data: { email_id: "resend-a", to: ["mail-student@example.test"], subject: "Owned event A" } }}),
+      (${{ kind: "platform-email", category: "verification", to: "mail-student@example.test", subject: "Unscoped private request", status: "sent" }})`;
+    const ownMail = await emailHistory.listEmailHistory(
+      new URLSearchParams(),
+      "mail-a",
+    );
+    assert.ok(ownMail.items.some((r) => r.id.startsWith("billing:")));
+    assert.ok(ownMail.items.some((r) => r.subject === "Owned request A"));
+    assert.ok(ownMail.items.some((r) => r.subject === "Owned event A"));
+    assert.ok(
+      !ownMail.items.some(
+        (r) =>
+          r.subject === "Owned request B" ||
+          r.subject === "Unscoped private request",
+      ),
+    );
+    const otherMail = await emailHistory.listEmailHistory(
+      new URLSearchParams(),
+      "mail-b",
+    );
+    assert.ok(
+      !otherMail.items.some(
+        (r) => r.scopeKey === "mail-a" || r.subject === "Owned event A",
+      ),
+    );
+    const pausedCampaign = "manual:00000000-0000-4000-8000-000000000012";
+    await reminders.enqueueReminders({
+      campaignKey: pausedCampaign,
+      period: "2026-10",
+      scope: { partnerId: "mail-a", profileId: "mail-p" },
+      actor: "partner-admin:mail-admin",
+      selectedMonths: ["2026-09", "2026-10"],
+    });
+    await client`INSERT INTO profile_monthly_status(profile_id,partner_id,month,year,is_active) VALUES ('mail-p','mail-a',10,2026,false)`;
+    await reminders.processReminderBatch(pausedCampaign, {
+      partnerId: "mail-a",
+      profileId: "mail-p",
+    });
+    assert.equal(
+      sent.length,
+      beforeSelected + 1,
+      "activity is rechecked immediately before SMTP",
+    );
+    assert.equal(
+      (
+        await reminders.selectedUnpaidFees({
+          partnerId: "mail-a",
+          profileId: "mail-p",
+        })
+      ).length,
+      0,
+    );
+
     console.log(
-      "PASS: migration, active billing, enrolled pricing, concurrent generation/payment/mail, pagination totals, partner isolation, SMTP failure history, inactive students and branch invoices.",
+      "PASS: migration, active billing, enrolled pricing, concurrent generation/payment/mail, pagination totals, partner isolation, SMTP failure history, inactive students, branch invoices, selected multi-month member mail and strict organization email history.",
     );
   } finally {
     if (global.kaizenPostgresClient) await global.kaizenPostgresClient.end();
