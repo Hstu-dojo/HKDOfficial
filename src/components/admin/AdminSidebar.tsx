@@ -96,6 +96,13 @@ const navigation: NavItem[] = [
     },
   },
   {
+    name: "Sensei & Team",
+    href: "/admin/instructors",
+    icon: UserGroupIcon,
+    description: "Edit sensei, instructor and black-belt profiles",
+    requiredPermission: { resource: "INSTRUCTOR", action: "READ" },
+  },
+  {
     name: "Class Schedule",
     href: "/admin/class-schedule",
     icon: CalendarIcon,

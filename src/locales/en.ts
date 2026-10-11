@@ -1,4 +1,15 @@
 export default {
+  academyTeam: {
+    kicker: "OUR PEOPLE",
+    title: "Guided by",
+    accent: "experience.",
+    description:
+      "Meet the people who guide our training and carry the spirit of the dojo.",
+    sensei: "Our Sensei",
+    instructors: "Our instructors",
+    blackBelts: "Black belts & senior members",
+    profileLink: "View profile",
+  },
   // Header & Navigation
   header: {
     brand: "Kaizen Karate Academy",

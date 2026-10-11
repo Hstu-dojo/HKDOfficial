@@ -13,6 +13,7 @@
 /.next-preview/
 /.next-build/
 /.next-editorial-*/
+/.next*/
 /out/
 /.next-billing-preview/
 /.next-seo-preview/

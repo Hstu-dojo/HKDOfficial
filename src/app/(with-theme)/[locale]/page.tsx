@@ -5,6 +5,8 @@ import SectionHero from "@/components/sections/section-hero";
 import HomeScrollTrail from "@/components/sections/home-scroll-trail";
 import SectionCompetitionResults from "@/components/sections/section-competition-results";
 import { getPublishedCompetitionResults } from "@/lib/competition-results-server";
+import SectionAcademyTeam from "@/components/sections/section-academy-team";
+import { getPublishedAcademyPeople } from "@/lib/academy-team/server";
 import SectionHomePrograms from "@/components/sections/section-home-programs";
 import SectionStatsBar from "@/components/sections/section-stats-bar";
 import SectionPartners from "@/components/sections/section-partners";
@@ -193,11 +195,12 @@ async function getBranches(): Promise<BranchData[]> {
 export default async function Home({ params }: { params: Promise<{ locale: string }> }) {
   // Params are handled by the layout, but we need to accept them here
   // to avoid Next.js routing errors with dynamic segments
-  const [heroImages, branches, recentAlbums, competition] = await Promise.all([
+  const [heroImages, branches, recentAlbums, competition, academyPeople] = await Promise.all([
     getHeroImages(),
     getBranches(),
     getRecentAlbums(),
     getPublishedCompetitionResults(),
+    getPublishedAcademyPeople(),
   ]);
 
   return (
@@ -209,6 +212,7 @@ export default async function Home({ params }: { params: Promise<{ locale: strin
             <SectionHero initialProducts={heroImages} />
             <SectionHomePrograms />
             <SectionStatsBar />
+            <SectionAcademyTeam people={academyPeople} />
             <SectionCompetitionResults results={competition.results} unavailable={competition.unavailable} />
             <SectionBranches branches={branches} />
             <SectionWhyUs />

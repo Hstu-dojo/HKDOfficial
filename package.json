@@ -30,7 +30,10 @@
     "test:billing": "node --test tests/billing.test.cjs",
     "test:billing:db": "node tests/billing-db.integration.cjs",
     "db:migrate:emails": "tsx scripts/migrate-email-history.ts",
-    "test:emails": "node --test tests/email-history.test.cjs"
+    "test:emails": "node --test tests/email-history.test.cjs",
+    "db:migrate:team": "tsx scripts/migrate-academy-team.ts",
+    "test:team": "node --test tests/academy-team.test.cjs",
+    "test:team:db": "node tests/academy-team-db.integration.cjs"
   },
   "dependencies": {
     "@auth/drizzle-adapter": "^1.11.3",

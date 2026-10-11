@@ -135,3 +135,5 @@ export type GalleryImage = typeof galleryImages.$inferSelect;
 export type NewGalleryImage = typeof galleryImages.$inferInsert;
 export * from './committees';
 export * from './competition-results';
+
+export * from './academy-people';

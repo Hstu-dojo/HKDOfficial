@@ -137,6 +137,11 @@ const defaultPermissions: Array<{
   
   // Report permissions
   { name: "create_report", resource: "REPORT", action: "CREATE", description: "Create new reports" },
+  { name: "create_instructor", resource: "INSTRUCTOR", action: "CREATE", description: "Create academy team biographies" },
+  { name: "read_instructor", resource: "INSTRUCTOR", action: "READ", description: "Read academy team biographies" },
+  { name: "update_instructor", resource: "INSTRUCTOR", action: "UPDATE", description: "Update academy team biographies" },
+  { name: "delete_instructor", resource: "INSTRUCTOR", action: "DELETE", description: "Delete academy team biographies" },
+  { name: "manage_instructor", resource: "INSTRUCTOR", action: "MANAGE", description: "Manage academy team biographies" },
   { name: "read_email", resource: "EMAIL", action: "READ", description: "View all platform email history" },
   { name: "read_report", resource: "REPORT", action: "READ", description: "View reports" },
   { name: "update_report", resource: "REPORT", action: "UPDATE", description: "Update reports" },
@@ -223,7 +228,7 @@ const rolePermissionMappings: { [key: string]: string[] } = {
     "create_event", "read_event", "update_event", "delete_event", "manage_event",
     "create_announcement", "read_announcement", "update_announcement", "delete_announcement", "manage_announcement",
     "create_certificate", "read_certificate", "update_certificate", "delete_certificate", "manage_certificate",
-    "create_report", "read_report", "update_report", "delete_report", "manage_report", "read_email",
+    "create_report", "read_report", "update_report", "delete_report", "manage_report", "read_email", "create_instructor", "read_instructor", "update_instructor", "delete_instructor", "manage_instructor",
     // Enrollment permissions
     "create_enrollment", "read_enrollment", "update_enrollment", "delete_enrollment", "manage_enrollment", "approve_enrollment", "verify_enrollment",
     // Monthly Fee permissions
@@ -261,7 +266,7 @@ const rolePermissionMappings: { [key: string]: string[] } = {
     "create_event", "read_event", "update_event", "delete_event", "manage_event",
     "create_announcement", "read_announcement", "update_announcement", "delete_announcement", "manage_announcement",
     "create_certificate", "read_certificate", "update_certificate", "delete_certificate", "manage_certificate",
-    "read_report", "create_report", "read_email",
+    "read_report", "create_report", "read_email", "create_instructor", "read_instructor", "update_instructor", "delete_instructor", "manage_instructor",
     // Enrollment permissions for admin
     "create_enrollment", "read_enrollment", "update_enrollment", "delete_enrollment", "manage_enrollment", "approve_enrollment", "verify_enrollment",
     // Monthly Fee permissions for admin
@@ -396,7 +401,7 @@ export async function seedRBACData() {
       "COURSE", "BLOG", "MEDIA", "CLASS", "EQUIPMENT", "MEMBER", "BILL", "PAYMENT",
       "GALLERY", "EVENT", "ANNOUNCEMENT", "CERTIFICATE", "REPORT",
       "ENROLLMENT", "MONTHLY_FEE", "SCHEDULE", "PROGRAM", "PROGRAM_REGISTRATION",
-      "PARTNER", "PARTNER_BILL", "ADMIN_PANEL", "EMAIL"
+      "PARTNER", "PARTNER_BILL", "ADMIN_PANEL", "EMAIL", "INSTRUCTOR"
     ] as const;
 
     for (const permData of defaultPermissions) {
