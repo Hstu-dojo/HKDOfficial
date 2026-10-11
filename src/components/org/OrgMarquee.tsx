@@ -13,11 +13,11 @@ export default function OrgMarquee({ items }: OrgMarqueeProps) {
       role="marquee"
       aria-label="Highlights"
     >
-      <div className="flex animate-marquee break-words">
+      <div className="flex animate-marquee w-max">
         {[...words, ...words].map((word, i) => (
           <span
             key={`${word}-${i}`}
-            className="font-display text-lg md:text-3xl text-primary-foreground mx-3 md:mx-10 tracking-wider uppercase"
+            className="shrink-0 whitespace-nowrap font-display text-lg md:text-3xl text-primary-foreground mx-3 md:mx-10 tracking-wider uppercase"
           >
             {word}
             <span className="text-primary-foreground/40 mx-3 md:mx-10">/</span>

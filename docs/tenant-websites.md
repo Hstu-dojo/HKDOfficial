@@ -29,6 +29,8 @@ Page-settings GET is read-only. PATCH validates types, colors, links and collect
 
 Malformed legacy settings have safe defaults. Images stored as Next optimizer URLs are unwrapped before rendering, and unavailable images have an accessible fallback. The expired Facebook-hosted portrait for AFEAC's Sensei Loveraj Acharya was replaced with the owner-provided `/sensei.jpeg`; no other organization content was rewritten.
 
+The tenant presentation retains its original full-height hero, staggered photo gallery, scrolling highlights, program rows, split About/stats panels, schedule tabs and outlined footer marquee. Corrections are limited to readable text, mobile sizing, accessible controls and displaying the configured organization content.
+
 ## Verification
 
 - `pnpm test:tenant`: URL/settings validation, hidden sections, public components, host routing and session boundaries.

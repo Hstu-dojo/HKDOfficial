@@ -9,6 +9,7 @@ import { getPartnerIdForSupabaseUser } from "@/lib/partner-assignment";
 import { orgTheme } from "@/lib/org/theme";
 import {
   OrgHero,
+  OrgMarquee,
   OrgGallery,
   OrgProgramGrid,
   OrgSplitFeature,
@@ -123,11 +124,23 @@ export default async function OrgPage({ params }: Props) {
         ctaLink={ctaLink}
         homeHref={homeHref}
       />
+      {s.showGallery && (
+        <OrgGallery images={s.galleryImages} orgName={partner.name} />
+      )}
+      <OrgMarquee
+        items={[
+          ...(s.showCourses
+            ? content.courses.map((course) => course.name)
+            : []),
+          ...s.features.map((feature) => feature.title),
+        ]}
+      />
       {s.showCourses && (
         <OrgProgramGrid
           courses={content.courses}
           orgName={partner.name}
           courseOrigin={mainOrigin}
+          heroImageUrl={s.heroImageUrl}
         />
       )}
       <OrgSplitFeature
@@ -141,6 +154,10 @@ export default async function OrgPage({ params }: Props) {
         founderBio={s.founderBio}
         showFounder={s.showFounder}
         features={s.features}
+        memberCount={content.memberCount}
+        courseCount={content.courses.length}
+        yearEstablished={s.yearEstablished}
+        showStats={s.showStats}
       />
       {s.showSchedule && (
         <OrgScheduleBlock
@@ -149,10 +166,8 @@ export default async function OrgPage({ params }: Props) {
           defaultDay={s.defaultScheduleDay}
         />
       )}
-      {s.showGallery && (
-        <OrgGallery images={s.galleryImages} orgName={partner.name} />
-      )}
       <OrgCtaBlock
+        showSchedule={navLinks.some((link) => link.href === "#schedule")}
         ctaText={s.ctaText}
         ctaLink={ctaLink}
         orgName={partner.name}
@@ -161,6 +176,10 @@ export default async function OrgPage({ params }: Props) {
         location={partner.location}
       />
       <OrgFooter
+        location={partner.location}
+        email={partner.contactEmail}
+        phone={partner.contactPhone}
+        yearEstablished={s.yearEstablished}
         name={partner.name}
         navLinks={navLinks}
         socialLinks={s.socialLinks}
