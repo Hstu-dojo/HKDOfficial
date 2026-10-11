@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { MotionValue, motion, useScroll, useTransform } from "framer-motion";
 import { cn } from "@/lib/utils";
 import {
@@ -32,96 +32,169 @@ export const MacbookScroll = ({
   showGradient,
   title,
   badge,
+  compact = false,
+  screenAlt = "Developer portfolio",
 }: {
   src?: string;
   showGradient?: boolean;
   title?: string | React.ReactNode;
   badge?: React.ReactNode;
+  compact?: boolean;
+  screenAlt?: string;
 }) => {
   const ref = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({
     target: ref,
-    offset: ["start start", "end start"],
+    offset: compact ? ["start end", "end start"] : ["start start", "end start"],
   });
 
   const [isMobile, setIsMobile] = useState(false);
+  const [deviceScale, setDeviceScale] = useState(0.5);
+  const [reduced, setReduced] = useState(false);
 
   useEffect(() => {
-    if (window && window.innerWidth < 768) {
-      setIsMobile(true);
-    }
+    const media = window.matchMedia("(max-width: 767px)");
+    const motionPreference = window.matchMedia(
+      "(prefers-reduced-motion: reduce)",
+    );
+    const update = () => setIsMobile(media.matches);
+    const updateMotion = () => setReduced(motionPreference.matches);
+    update();
+    updateMotion();
+    media.addEventListener("change", update);
+    motionPreference.addEventListener("change", updateMotion);
+    return () => {
+      media.removeEventListener("change", update);
+      motionPreference.removeEventListener("change", updateMotion);
+    };
   }, []);
+
+  useEffect(() => {
+    if (!compact || !ref.current) return;
+    const root = ref.current;
+    const resize = () =>
+      setDeviceScale(
+        Math.min(root.clientWidth / 640, root.clientHeight / 720, 0.85),
+      );
+    resize();
+    const observer = new ResizeObserver(resize);
+    observer.observe(root);
+    return () => observer.disconnect();
+  }, [compact]);
 
   const scaleX = useTransform(
     scrollYProgress,
-    [0, 0.3],
-    [1.2, isMobile ? 1 : 1.5],
+    compact ? [0.1, 0.6] : [0, 0.3],
+    compact
+      ? reduced
+        ? [1.12, 1.12]
+        : [1.05, 1.12]
+      : [1.2, isMobile ? 1 : 1.5],
   );
   const scaleY = useTransform(
     scrollYProgress,
-    [0, 0.3],
-    [0.6, isMobile ? 1 : 1.5],
+    compact ? [0.1, 0.6] : [0, 0.3],
+    compact
+      ? reduced
+        ? [0.85, 0.85]
+        : [0.6, 0.85]
+      : [0.6, isMobile ? 1 : 1.5],
   );
-  const translate = useTransform(scrollYProgress, [0, 1], [0, 1500]);
-  const rotate = useTransform(scrollYProgress, [0.1, 0.12, 0.3], [-28, -28, 0]);
+  const translate = useTransform(
+    scrollYProgress,
+    compact ? [0.1, 0.6] : [0, 1],
+    compact ? (reduced ? [-64, -64] : [0, -64]) : [0, 1500],
+  );
+  const rotate = useTransform(
+    scrollYProgress,
+    compact ? [0.1, 0.2, 0.6] : [0.1, 0.12, 0.3],
+    compact && reduced ? [0, 0, 0] : [-28, -28, 0],
+  );
   const textTransform = useTransform(scrollYProgress, [0, 0.3], [0, 100]);
   const textOpacity = useTransform(scrollYProgress, [0, 0.2], [1, 0]);
 
   return (
     <div
       ref={ref}
-      className="flex  min-h-[800px] md:min-h-[2200px] lg:min-h-[2500px] flex-shrink-0 scale-[0.35] transform flex-col items-center justify-start py-0 [perspective:800px] sm:scale-50  md:scale-100 md:py-80"
+      className={
+        compact
+          ? "relative h-[380px] w-full overflow-hidden sm:h-[440px] lg:h-[500px]"
+          : "flex min-h-[800px] flex-shrink-0 scale-[0.35] transform flex-col items-center justify-start py-0 [perspective:800px] sm:scale-50 md:min-h-[2200px] md:scale-100 md:py-80 lg:min-h-[2500px]"
+      }
     >
-      <motion.h2
-        style={{
-          translateY: textTransform,
-          opacity: textOpacity,
-        }}
-        className="mb-20 text-center text-3xl font-bold text-neutral-800 dark:text-white"
+      <div
+        className={
+          compact
+            ? "absolute left-1/2 top-1/2 flex h-[34rem] w-[32rem] flex-col items-center [perspective:800px]"
+            : "contents"
+        }
+        style={
+          compact
+            ? { transform: `translate(-50%, -50%) scale(${deviceScale})` }
+            : undefined
+        }
       >
-        {title || (
-          <span>
-            This Macbook is built with Tailwindcss. <br /> No kidding.
-          </span>
+        {(!compact || title) && (
+          <motion.h2
+            style={{
+              translateY: textTransform,
+              opacity: textOpacity,
+            }}
+            className="mb-20 text-center text-3xl font-bold text-neutral-800 dark:text-white"
+          >
+            {title || (
+              <span>
+                This Macbook is built with Tailwindcss. <br /> No kidding.
+              </span>
+            )}
+          </motion.h2>
         )}
-      </motion.h2>
-      {/* Lid */}
-      <Lid
-        src={src}
-        scaleX={scaleX}
-        scaleY={scaleY}
-        rotate={rotate}
-        translate={translate}
-      />
-      {/* Base area */}
-      <div className="relative -z-10 h-[22rem] w-[32rem] overflow-hidden rounded-2xl bg-gray-200 dark:bg-[#272729]">
-        {/* above keyboard bar */}
-        <div className="relative h-10 w-full">
-          <div className="absolute inset-x-0 mx-auto h-4 w-[80%] bg-[#050505]" />
+        {/* Lid */}
+        <Lid
+          src={src}
+          scaleX={scaleX}
+          scaleY={scaleY}
+          rotate={rotate}
+          translate={translate}
+          screenAlt={screenAlt}
+          staticView={compact && !!reduced}
+        />
+        {/* Base area */}
+        <div className="relative -z-10 h-[22rem] w-[32rem] overflow-hidden rounded-2xl bg-gray-200 dark:bg-[#272729]">
+          {/* above keyboard bar */}
+          <div className="relative h-10 w-full">
+            <div className="absolute inset-x-0 mx-auto h-4 w-[80%] bg-[#050505]" />
+          </div>
+          <div className="relative flex">
+            <div className="mx-auto h-full w-[10%]  overflow-hidden">
+              <SpeakerGrid />
+            </div>
+            <div className="mx-auto h-full w-[80%]">
+              <Keypad />
+            </div>
+            <div className="mx-auto h-full w-[10%]  overflow-hidden">
+              <SpeakerGrid />
+            </div>
+          </div>
+          <Trackpad />
+          <div className="absolute inset-x-0 bottom-0 mx-auto h-2 w-20 rounded-tl-3xl rounded-tr-3xl bg-gradient-to-t from-[#272729] to-[#050505]" />
+          {showGradient && (
+            <div className="absolute inset-x-0 bottom-0 z-50 h-40 w-full bg-gradient-to-t from-white via-white to-transparent dark:from-[#141C2E] dark:via-slate-800"></div>
+          )}
+          {badge && <div className="absolute bottom-4 left-4">{badge}</div>}
         </div>
-        <div className="relative flex">
-          <div className="mx-auto h-full w-[10%]  overflow-hidden">
-            <SpeakerGrid />
-          </div>
-          <div className="mx-auto h-full w-[80%]">
-            <Keypad />
-          </div>
-          <div className="mx-auto h-full w-[10%]  overflow-hidden">
-            <SpeakerGrid />
-          </div>
-        </div>
-        <Trackpad />
-        <div className="absolute inset-x-0 bottom-0 mx-auto h-2 w-20 rounded-tl-3xl rounded-tr-3xl bg-gradient-to-t from-[#272729] to-[#050505]" />
-        {showGradient && (
-          <div className="absolute inset-x-0 bottom-0 z-50 h-40 w-full bg-gradient-to-t from-white via-white to-transparent dark:from-[#141C2E] dark:via-slate-800"></div>
-        )}
-        {badge && <div className="absolute bottom-4 left-4">{badge}</div>}
       </div>
-      {/* @ts-ignore */}
-      <BackgroundBeams style={{
-          translateY: textTransform,
-          opacity: textOpacity,
-        }} />
+      {!compact && (
+        <motion.div
+          className="pointer-events-none absolute inset-0"
+          style={{
+            translateY: textTransform,
+            opacity: textOpacity,
+          }}
+        >
+          <BackgroundBeams />
+        </motion.div>
+      )}
     </div>
   );
 };
@@ -132,12 +205,16 @@ export const Lid = ({
   rotate,
   translate,
   src,
+  screenAlt = "Developer portfolio",
+  staticView = false,
 }: {
   scaleX: MotionValue<number>;
   scaleY: MotionValue<number>;
   rotate: MotionValue<number>;
   translate: MotionValue<number>;
   src?: string;
+  screenAlt?: string;
+  staticView?: boolean;
 }) => {
   return (
     <div className="relative [perspective:800px]">
@@ -162,20 +239,25 @@ export const Lid = ({
       </div>
       <motion.div
         style={{
-          scaleX: scaleX,
-          scaleY: scaleY,
-          rotateX: rotate,
-          translateY: translate,
+          scaleX: staticView ? 1.12 : scaleX,
+          scaleY: staticView ? 0.85 : scaleY,
+          rotateX: staticView ? 0 : rotate,
+          translateY: staticView ? -64 : translate,
           transformStyle: "preserve-3d",
           transformOrigin: "top",
         }}
         className="absolute inset-0 h-96 w-[32rem] rounded-2xl bg-[#010101] p-2"
       >
         <div className="absolute inset-0 rounded-lg bg-[#272729]" />
-        <Link href="https://shahriarhasan.vercel.app">
+        <Link
+          href="https://shahriarhasan.vercel.app"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
           <Image
-            src={src as string}
-            alt="aceternity logo"
+            src={src || "/hero/dev.png"}
+            alt={screenAlt}
+            sizes="(max-width: 767px) 100vw, 50vw"
             fill
             style={{
               objectFit: "cover", // cover, contain, none
@@ -575,7 +657,7 @@ export const KBtn = ({
     <div
       className={cn(
         "rounded-[4px] p-[0.5px]",
-        backlit && "shadow-sm bg-white/[0.2] shadow-white",
+        backlit && "bg-white/[0.2] shadow-sm shadow-white",
       )}
     >
       <div

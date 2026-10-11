@@ -1,5 +1,5 @@
 "use client";
-import Image from "next/image";
+import { MacbookScroll } from "@/components/ui/macbook-scroll";
 import { motion, useReducedMotion } from "framer-motion";
 import { useI18n } from "@/locales/client";
 import { ArrowUpRight } from "lucide-react";
@@ -15,13 +15,11 @@ export default function MeetDev() {
           viewport={{ once: true }}
           className="grid items-center gap-8 md:grid-cols-[minmax(0,1.2fr)_minmax(0,1fr)] md:gap-14"
         >
-          <div className="relative aspect-[4/3] overflow-hidden rounded-2xl border bg-muted">
-            <Image
+          <div className="min-w-0 overflow-hidden rounded-2xl border bg-muted/50">
+            <MacbookScroll
               src="/hero/dev.png"
-              alt={t("dev.name")}
-              fill
-              sizes="(max-width: 768px) 100vw, 55vw"
-              className="object-contain"
+              screenAlt={t("dev.name")}
+              compact
             />
           </div>
           <div className="min-w-0">
