@@ -1,196 +1,82 @@
-"use client";
-
-import { useState, useEffect, useRef } from "react";
-import Image from "next/image";
-
+import { formatCourseFee } from "@/lib/org/settings";
 interface Course {
   id: string;
   name: string;
-  description?: string | null;
-  fee?: number | null;
-  isActive: boolean;
+  description: string | null;
+  monthlyFee: number | null;
+  admissionFee: number | null;
+  currency: string;
+  isEnrollmentOpen: boolean;
+  duration: number;
+  sessionsPerWeek: number;
 }
-
-interface OrgProgramGridProps {
-  courses: Course[];
-  orgName: string;
-  heroImageUrl?: string | null;
-}
-
 export default function OrgProgramGrid({
   courses,
   orgName,
-  heroImageUrl,
-}: OrgProgramGridProps) {
-  const [hoveredId, setHoveredId] = useState<string | null>(null);
-  const sectionRef = useRef<HTMLDivElement>(null);
-  const [visible, setVisible] = useState(false);
-
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) setVisible(true);
-      },
-      { threshold: 0.1 }
-    );
-    if (sectionRef.current) observer.observe(sectionRef.current);
-    return () => observer.disconnect();
-  }, []);
-
-  if (courses.length === 0) return null;
-
+  courseOrigin,
+}: {
+  courses: Course[];
+  orgName: string;
+  courseOrigin: string;
+}) {
+  if (!courses.length) return null;
   return (
-    <section
-      id="programs"
-      ref={sectionRef}
-      className="relative px-4 md:px-8 lg:px-12 py-5 md:py-20 overflow-hidden"
-    >
-      <div className="max-w-[1400px] mx-auto">
-        {/* Header */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-2 lg:gap-0 mb-3 md:mb-8">
-          {/* Left: Title + description */}
-          <div className="flex flex-col justify-between">
-            <div>
-              <span
-                className={`font-body text-[8px] md:text-[10px] text-primary tracking-[0.2em] md:tracking-[0.3em] uppercase block mb-1 md:mb-3 ${visible ? "anim-cut-in" : "opacity-0"}`}
-                style={{ animationDelay: "0.1s" }}
-              >
-                [Programs]
-              </span>
-              <h2 className="font-display tracking-tight text-foreground leading-tight overflow-hidden">
-                <span
-                  className={`block text-[clamp(2.5rem,6vw,5rem)] sm:text-[clamp(2.5rem,6vw,5rem)] md:text-6xl lg:text-7xl break-words ${visible ? "anim-shutter-up" : "opacity-0"}`}
-                  style={{ animationDelay: "0.2s" }}
-                >
-                  Train Hard<span className="text-primary">.</span>
-                </span>
-              </h2>
-            </div>
-
-            <div
-              className={`mt-2 lg:mt-0 lg:pb-2 ${visible ? "anim-cut-in" : "opacity-0"}`}
-              style={{ animationDelay: "0.6s" }}
-            >
-              <p className="font-body text-[9px] md:text-xs text-foreground/50 max-w-[260px] md:max-w-xs leading-relaxed mb-2 md:mb-5">
-                Four distinct tracks. One standard: intensity. Every program is coached, programmed, and capped for quality.
+    <section id="programs" className="org-section org-container">
+      <p className="org-kicker">Training</p>
+      <h2 className="org-title">
+        Programs at <span className="italic text-primary">{orgName}</span>
+      </h2>
+      <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
+        {courses.map((c) => (
+          <article
+            key={c.id}
+            className="flex min-w-0 flex-col rounded-xl border bg-card p-6"
+          >
+            <p className="text-xs text-primary">
+              {c.isEnrollmentOpen
+                ? "Enrollment open"
+                : "Enrollment currently closed"}
+            </p>
+            <h3 className="mt-4 break-words font-serif text-2xl">{c.name}</h3>
+            {c.description && (
+              <p className="mt-4 whitespace-pre-line text-sm leading-relaxed text-muted-foreground">
+                {c.description}
               </p>
-              <div className="flex items-center gap-3 md:gap-6">
-                {[
-                  { v: String(courses.length).padStart(2, "0"), l: "Programs" },
-                  { v: String(courses.length * 3), l: "Daily Classes" },
-                ].map((s) => (
-                  <div key={s.l} className="flex items-baseline gap-1">
-                    <span className="font-display text-base md:text-2xl text-primary leading-none">
-                      {s.v}
-                    </span>
-                    <span className="font-body text-[6px] md:text-[9px] text-foreground/35 tracking-[0.1em] uppercase">
-                      {s.l}
-                    </span>
-                  </div>
-                ))}
+            )}
+            <dl className="my-6 grid grid-cols-2 gap-4 border-y py-4 text-sm">
+              <div>
+                <dt className="text-xs text-muted-foreground">Monthly fee</dt>
+                <dd className="mt-1 font-medium">
+                  {c.monthlyFee == null
+                    ? "Members only"
+                    : formatCourseFee(c.monthlyFee, c.currency)}
+                </dd>
               </div>
-            </div>
-          </div>
-
-          {/* Right: Image */}
-          {heroImageUrl && (
-            <div
-              className={`relative lg:pl-8 ${visible ? "anim-wipe-right" : "opacity-0"}`}
-              style={{ animationDelay: "0.4s" }}
+              <div>
+                <dt className="text-xs text-muted-foreground">Admission</dt>
+                <dd className="mt-1 font-medium">
+                  {c.admissionFee == null
+                    ? "Members only"
+                    : formatCourseFee(c.admissionFee, c.currency)}
+                </dd>
+              </div>
+              <div>
+                <dt className="text-xs text-muted-foreground">Duration</dt>
+                <dd className="mt-1">{c.duration} months</dd>
+              </div>
+              <div>
+                <dt className="text-xs text-muted-foreground">Sessions</dt>
+                <dd className="mt-1">{c.sessionsPerWeek} / week</dd>
+              </div>
+            </dl>
+            <a
+              href={`${courseOrigin}/en/karate/courses/${encodeURIComponent(c.id)}`}
+              className="mt-auto w-fit border-b border-primary/40 pb-1 text-sm text-primary"
             >
-              <div className="relative aspect-[16/9] overflow-hidden">
-                <Image
-                  src={heroImageUrl}
-                  alt={`${orgName} training`}
-                  fill
-                  className="object-cover grayscale hover:grayscale-0 transition-all duration-700"
-                />
-                <div className="absolute top-0 left-0 w-3 h-3 md:w-6 md:h-6 border-t-2 border-l-2 border-primary" />
-                <div className="absolute bottom-0 right-0 w-3 h-3 md:w-6 md:h-6 border-b-2 border-r-2 border-primary" />
-                <div className="absolute bottom-2 left-2 bg-background/90 px-1.5 py-0.5 md:px-2 md:py-1">
-                  <span className="font-body text-[6px] md:text-[9px] text-foreground/60 tracking-[0.12em] md:tracking-[0.2em] uppercase">
-                    {courses.length} Programs / Week
-                  </span>
-                </div>
-              </div>
-              <div
-                className={`h-[2px] bg-primary mt-1 md:mt-2 ${visible ? "line-expand" : "w-0"}`}
-                style={{ animationDelay: "0.8s" }}
-              />
-            </div>
-          )}
-        </div>
-
-        {/* Program rows */}
-        <div className="border-t border-border">
-          {courses.map((course, idx) => (
-            <div
-              key={course.id}
-              className={`border-b border-border group cursor-pointer relative ${visible ? "anim-counter-pop" : "opacity-0"}`}
-              style={{ animationDelay: `${0.7 + idx * 0.1}s` }}
-              onMouseEnter={() => setHoveredId(course.id)}
-              onMouseLeave={() => setHoveredId(null)}
-            >
-              <div
-                className={`absolute left-0 top-0 bottom-0 w-[3px] bg-primary transition-transform duration-300 origin-top ${
-                  hoveredId === course.id ? "scale-y-100" : "scale-y-0"
-                }`}
-              />
-
-              <div className="flex items-center justify-between py-3 md:py-6 pl-0 md:pl-4">
-                {/* Left: ID + Title */}
-                <div className="flex items-baseline gap-2 md:gap-8 min-w-0">
-                  <span className="font-body text-[8px] md:text-xs text-foreground/30 tabular-nums">
-                    {String(idx + 1).padStart(2, "0")}
-                  </span>
-                  <div>
-                    <h3
-                      className={`font-display text-xl md:text-6xl lg:text-7xl tracking-tighter leading-none uppercase transition-colors duration-300 ${
-                        hoveredId === course.id ? "text-primary" : "text-foreground"
-                      }`}
-                    >
-                      {course.name}
-                    </h3>
-                  </div>
-                </div>
-
-                {/* Description - desktop only */}
-                {course.description && (
-                  <p
-                    className={`font-body text-xs max-w-xs leading-relaxed text-foreground/60 transition-all duration-300 hidden lg:block ${
-                      hoveredId === course.id
-                        ? "opacity-100 translate-x-0"
-                        : "opacity-0 translate-x-2"
-                    }`}
-                  >
-                    {course.description}
-                  </p>
-                )}
-
-                {/* Meta */}
-                <div className="flex items-center gap-2 md:gap-6 shrink-0">
-                  {course.fee != null && course.fee > 0 && (
-                    <div className="hidden sm:block">
-                      <span className="font-body text-[6px] md:text-[10px] text-foreground/35 block tracking-[0.08em] md:tracking-[0.2em] uppercase mb-0.5">
-                        Fee
-                      </span>
-                      <span className="font-body text-[8px] md:text-xs text-foreground/75">
-                        ৳{course.fee}
-                      </span>
-                    </div>
-                  )}
-                  <div className="w-[1px] h-4 md:h-8 bg-border hidden sm:block" />
-                  <div>
-                    <span className="font-body text-[6px] md:text-[10px] text-foreground/35 block tracking-[0.08em] md:tracking-[0.2em] uppercase mb-0.5">
-                      Status
-                    </span>
-                    <span className="font-body text-[8px] md:text-xs text-primary">ACTIVE</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
+              View course details ↗
+            </a>
+          </article>
+        ))}
       </div>
     </section>
   );

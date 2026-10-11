@@ -1,182 +1,94 @@
 "use client";
-
 import { useEffect, useRef, useState } from "react";
-import Image from "next/image";
-
-interface OrgGalleryProps {
+import { OrgImage } from "./OrgImage";
+export default function OrgGallery({
+  images,
+  orgName,
+}: {
   images: string[];
   orgName: string;
-}
-
-const fallbackLabels = ["STRENGTH", "ENDURANCE", "GRIT", "POWER"];
-
-export default function OrgGallery({ images, orgName }: OrgGalleryProps) {
-  const sectionRef = useRef<HTMLDivElement>(null);
-  const [isVisible, setIsVisible] = useState(false);
-
+}) {
+  const [active, setActive] = useState<number | null>(null);
+  const closeButton = useRef<HTMLButtonElement>(null),
+    opener = useRef<HTMLButtonElement | null>(null);
   useEffect(() => {
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setIsVisible(true);
-          observer.disconnect();
-        }
-      },
-      { threshold: 0.1 }
-    );
-    if (sectionRef.current) observer.observe(sectionRef.current);
-    return () => observer.disconnect();
-  }, []);
-
-  const displayImages = images.slice(0, 4);
-
-  if (displayImages.length === 0) return null;
-
+    if (active === null) return;
+    const previous = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    closeButton.current?.focus();
+    const key = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setActive(null);
+      if (e.key === "Tab") {
+        e.preventDefault();
+        closeButton.current?.focus();
+      }
+    };
+    document.addEventListener("keydown", key);
+    return () => {
+      document.body.style.overflow = previous;
+      document.removeEventListener("keydown", key);
+      opener.current?.focus();
+    };
+  }, [active]);
+  if (!images.length) return null;
   return (
-    <section ref={sectionRef} className="relative bg-background overflow-hidden">
-      {/* Top accent line */}
-      <div
-        className="absolute top-0 left-0 h-[2px] bg-primary transition-all"
-        style={{ width: isVisible ? "100%" : "0%", transitionDuration: '1200ms', transitionTimingFunction: 'cubic-bezier(0.16, 1, 0.3, 1)' }}
-      />
-
-      {/* Section label */}
-      <div className="px-4 md:px-8 lg:px-12 pt-6 md:pt-16 pb-3 md:pb-8 max-w-[1400px] mx-auto w-full">
+    <section id="gallery" className="org-section org-container">
+      <p className="org-kicker">Photo gallery</p>
+      <h2 className="org-title">
+        Life at <span className="italic text-primary">{orgName}</span>
+      </h2>
+      <div className="grid grid-cols-2 gap-3 md:grid-cols-3 md:gap-5">
+        {images.map((src, i) => (
+          <button
+            type="button"
+            key={`${src}-${i}`}
+            aria-label={`Enlarge ${orgName} photo ${i + 1}`}
+            onClick={(e) => {
+              opener.current = e.currentTarget;
+              setActive(i);
+            }}
+            className="relative aspect-[4/3] overflow-hidden rounded-xl bg-muted focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary"
+          >
+            <OrgImage
+              src={src}
+              alt={`${orgName} photo ${i + 1}`}
+              sizes="(max-width:768px) 50vw, 33vw"
+              className="object-cover transition-transform duration-500 motion-safe:hover:scale-105"
+            />
+          </button>
+        ))}
+      </div>
+      {active !== null && (
         <div
-          className="flex items-center justify-between transition-all duration-700"
-          style={{
-            opacity: isVisible ? 1 : 0,
-            transform: isVisible ? "translateX(0)" : "translateX(-30px)",
-            transitionTimingFunction: 'cubic-bezier(0.16, 1, 0.3, 1)',
-          }}
+          role="dialog"
+          aria-modal="true"
+          aria-label={`${orgName} photo ${active + 1}`}
+          className="fixed inset-0 z-[100] flex items-center justify-center bg-black/90 p-5"
+          onClick={() => setActive(null)}
         >
-          <div className="flex items-center gap-2 md:gap-4">
-            <div className="w-5 md:w-8 h-[2px] bg-primary" />
-            <span className="font-body text-[8px] md:text-[10px] text-primary tracking-[0.2em] md:tracking-[0.4em] uppercase">
-              The Work Speaks
-            </span>
+          <button
+            ref={closeButton}
+            type="button"
+            aria-label="Close photo"
+            onClick={() => setActive(null)}
+            className="absolute right-5 top-5 z-10 flex h-12 w-12 items-center justify-center rounded-full bg-white text-2xl text-black"
+          >
+            ×
+          </button>
+          <div
+            className="relative h-[80svh] w-full max-w-5xl"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <OrgImage
+              key={images[active]}
+              src={images[active]}
+              alt={`${orgName} photo ${active + 1}`}
+              sizes="100vw"
+              className="object-contain"
+            />
           </div>
-          <span className="font-body text-[7px] md:text-[10px] text-muted-foreground tracking-[0.15em] hidden md:block">
-            {String(displayImages.length).padStart(3, "0")} FRAMES
-          </span>
         </div>
-      </div>
-
-      {/* Image Grid */}
-      <div className="px-4 md:px-8 lg:px-12 pb-6 md:pb-20 max-w-[1400px] mx-auto w-full">
-        {/* Desktop: 4-column staggered */}
-        <div
-          className={`hidden md:grid gap-3 ${
-            displayImages.length >= 4
-              ? "grid-cols-4"
-              : displayImages.length === 3
-                ? "grid-cols-3"
-                : "grid-cols-2"
-          }`}
-        >
-          {displayImages.map((src, i) => {
-            const offsets = [0, 48, 16, 64];
-            const aspects = ["aspect-[3/4]", "aspect-[4/5]", "aspect-[3/4]", "aspect-[4/5]"];
-            return (
-              <div
-                key={`${src}-${i}`}
-                className="relative group"
-                style={{ marginTop: `${offsets[i % 4]}px` }}
-              >
-                <div
-                  className="transition-all"
-                  style={{
-                    opacity: isVisible ? 1 : 0,
-                    transform: isVisible
-                      ? "translateY(0) skewY(0deg)"
-                      : "translateY(60px) skewY(2deg)",
-                    transitionDelay: `${i * 150}ms`,
-                    transitionDuration: '800ms',
-                    transitionTimingFunction: 'cubic-bezier(0.16, 1, 0.3, 1)',
-                  }}
-                >
-                  <div className={`relative overflow-hidden ${aspects[i % 4]}`}>
-                    <Image
-                      src={src || "/placeholder.svg"}
-                      alt={`${orgName} gallery image ${i + 1}`}
-                      fill
-                      className="object-cover grayscale group-hover:grayscale-0 transition-all duration-700 group-hover:scale-[1.025]"
-                    style={{ transitionTimingFunction: 'cubic-bezier(0.16, 1, 0.3, 1)' }}
-                    />
-                    <div className="absolute inset-0 bg-background/30 group-hover:bg-background/0 transition-colors duration-500" />
-                    <div className="absolute bottom-0 left-0 w-full h-[3px] bg-primary scale-x-0 group-hover:scale-x-100 transition-transform duration-500 origin-left" style={{ transitionTimingFunction: 'cubic-bezier(0.16, 1, 0.3, 1)' }} />
-                    <div className="absolute top-0 left-0 w-5 h-5 border-t-2 border-l-2 border-primary/0 group-hover:border-primary transition-colors duration-300" />
-                    <div className="absolute bottom-0 right-0 w-5 h-5 border-b-2 border-r-2 border-primary/0 group-hover:border-primary transition-colors duration-300" />
-                    <span className="absolute top-3 right-3 font-body text-[10px] text-foreground/30 group-hover:text-primary transition-colors duration-300 tracking-widest">
-                      0{i + 1}
-                    </span>
-                  </div>
-                  <div className="mt-4 flex items-center justify-between">
-                    <span className="font-display text-2xl lg:text-3xl text-foreground/70 group-hover:text-foreground transition-colors duration-300 tracking-tight">
-                      {fallbackLabels[i % fallbackLabels.length]}
-                    </span>
-                    <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                      <div className="w-4 h-[1px] bg-primary" />
-                      <svg
-                        width="12"
-                        height="12"
-                        viewBox="0 0 12 12"
-                        fill="none"
-                        className="text-primary"
-                        aria-hidden="true"
-                      >
-                        <path
-                          d="M1 11L11 1M11 1H3M11 1V9"
-                          stroke="currentColor"
-                          strokeWidth="1.5"
-                        />
-                      </svg>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            );
-          })}
-        </div>
-
-        {/* Mobile: 2-column tight, equal height, no stagger offset */}
-        <div className="grid grid-cols-2 gap-1.5 md:hidden">
-          {displayImages.map((src, i) => (
-            <div key={`mobile-${src}-${i}`} className="relative">
-              <div
-                className="transition-all"
-                style={{
-                  opacity: isVisible ? 1 : 0,
-                  transform: isVisible ? "translateY(0)" : "translateY(30px)",
-                  transitionDelay: `${i * 80}ms`,
-                  transitionDuration: '600ms',
-                  transitionTimingFunction: 'cubic-bezier(0.16, 1, 0.3, 1)',
-                }}
-              >
-                <div className="relative overflow-hidden aspect-[3/4]">
-                  <Image
-                    src={src || "/placeholder.svg"}
-                    alt={`${orgName} gallery image ${i + 1}`}
-                    fill
-                    className="object-cover grayscale"
-                  />
-                  <div className="absolute inset-0 bg-background/15" />
-                  <div className="absolute bottom-0 left-0 w-full h-[2px] bg-primary" />
-                  <span className="absolute top-1.5 right-1.5 font-body text-[7px] text-foreground/40 tracking-widest">
-                    0{i + 1}
-                  </span>
-                </div>
-                <span className="mt-1.5 block font-display text-sm text-foreground/70 tracking-tight">
-                  {fallbackLabels[i % fallbackLabels.length]}
-                </span>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {/* Bottom divider */}
-      <div className="h-[1px] bg-border" />
+      )}
     </section>
   );
 }

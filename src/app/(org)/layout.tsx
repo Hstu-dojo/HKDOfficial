@@ -1,4 +1,5 @@
 import React from "react";
+import { ThemeProvider } from "@/context/ThemeProvider";
 import { editorialFonts } from "@/styles/fonts";
 import { EditorialMotion } from "@/components/layout/editorial-motion";
 import { AuthProvider } from "@/context/AuthContext";
@@ -15,9 +16,11 @@ export default function OrgLayout({
       data-theme="editorial"
       className={`${editorialFonts} editorial-site editorial-public editorial-org min-h-screen bg-background text-foreground antialiased`}
     >
-      <AuthProvider>
-        <EditorialMotion>{children}</EditorialMotion>
-      </AuthProvider>
+      <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+        <AuthProvider>
+          <EditorialMotion>{children}</EditorialMotion>
+        </AuthProvider>
+      </ThemeProvider>
     </div>
   );
 }

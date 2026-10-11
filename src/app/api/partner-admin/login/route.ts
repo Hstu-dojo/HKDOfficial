@@ -1,3 +1,4 @@
+import { tenantFromHost } from '@/lib/org/host'
 import { NextResponse } from 'next/server'
 import { db } from '@/lib/connect-db'
 import { partners, partnerAdmins, partnerAdminSessions } from '@/db/schemas/partner'
@@ -42,6 +43,7 @@ export async function POST(request: Request) {
         partnerId: partnerAdmins.partnerId,
         partnerName: partners.name,
         partnerSlug: partners.slug,
+        partnerActive: partners.isActive,
       })
       .from(partnerAdmins)
       .innerJoin(partners, eq(partnerAdmins.partnerId, partners.id))
@@ -49,11 +51,12 @@ export async function POST(request: Request) {
       .limit(1)
 
     const admin = rows[0]
-    if (!admin) {
+    const tenant = tenantFromHost(request.headers.get('host'))
+    if (!admin || (tenant && tenant !== admin.partnerSlug)) {
       return NextResponse.json({ error: 'Invalid email or password' }, { status: 401 })
     }
 
-    if (!admin.isActive) {
+    if (!admin.isActive || !admin.partnerActive) {
       return NextResponse.json({ error: 'Your account has been deactivated' }, { status: 403 })
     }
 

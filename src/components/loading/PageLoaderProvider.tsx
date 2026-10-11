@@ -109,14 +109,14 @@ export function PageLoaderScreen({
 
 export function PageLoaderProvider({
   children,
+  introEnabled = true,
 }: {
   children: React.ReactNode;
+  introEnabled?: boolean;
 }) {
   const pathname = usePathname();
-  const [state, dispatch] = useReducer(
-    loaderReducer,
-    pathname,
-    initialLoaderState,
+  const [state, dispatch] = useReducer(loaderReducer, pathname, (path) =>
+    initialLoaderState(introEnabled ? path : null),
   );
   const register = useCallback((id: string, config: LoaderRegistration) => {
     dispatch({ type: "register", id, config });

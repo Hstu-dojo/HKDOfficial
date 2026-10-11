@@ -1,3 +1,4 @@
+import { tenantFromHost } from "@/lib/org/host";
 import { withSeoRequest } from "@/lib/seo/request";
 import { createNEMO } from "@rescale/nemo";
 import { NextResponse } from "next/server";
@@ -51,14 +52,7 @@ function getHostname(request: NextRequest): string {
 }
 
 function getTenantFromHost(hostname: string): string | null {
-  // Match: <tenant>.p.hstuma.com
-  const suffix = `.${TENANT_BASE_DOMAIN}`;
-  if (!hostname.endsWith(suffix)) return null;
-  const subdomainPart = hostname.slice(0, -suffix.length);
-  if (!subdomainPart) return null;
-  // Disallow obvious non-tenant subdomains
-  if (["www", "app", "api"].includes(subdomainPart)) return null;
-  return subdomainPart;
+  return tenantFromHost(hostname, TENANT_BASE_DOMAIN);
 }
 
 function withTenantRouting(request: NextRequest): NextResponse | null {
@@ -80,6 +74,7 @@ function withTenantRouting(request: NextRequest): NextResponse | null {
 
   // 1) Tenant subdomain: rewrite to the existing /org/[slug] route
   const tenant = getTenantFromHost(hostname);
+  if (hostname.endsWith(`.${TENANT_BASE_DOMAIN}`) && !tenant) return new NextResponse("Not found", {status:404});
   if (tenant) {
     // If a tenant subdomain is requested with ONLY a locale root segment,
     // strip it (e.g. tenant.p.hstuma.com/en -> tenant.p.hstuma.com/).
@@ -123,9 +118,23 @@ function withTenantRouting(request: NextRequest): NextResponse | null {
       /^\/[a-z]{2}\/auth\/callback(\/|$)/.test(pathname) ||
       /^\/[a-z]{2}\/dashboard(\/|$)/.test(pathname);
     if (isPassthroughOnTenant) return null;
+    // Shared academy pages have no tenant-specific implementation. Keep their canonical host.
+    if (/^\/(?:en\/|bn\/|ne\/)?(?:karate|courses|programs|blog|about|gallery|pricing|services|contact|terms|privacy|admin|docs|studio|notice)(?:\/|$)/.test(pathname)) {
+      const url = request.nextUrl.clone();
+      url.hostname = `www.${ROOT_DOMAIN}`;
+      url.protocol = "https:";
+      url.port = "";
+      return NextResponse.redirect(url);
+    }
 
     // If the tenant domain already requests an internal org path, don't rewrite again.
-    if (pathname.startsWith("/org/")) return null;
+    if (pathname.startsWith("/org/")) {
+      const match = pathname.match(/^\/org\/([^/]+)(\/.*)?$/);
+      if (!match || match[1] !== tenant) return new NextResponse("Not found", { status: 404 });
+      const url = request.nextUrl.clone();
+      url.pathname = match[2] || "/";
+      return NextResponse.redirect(url);
+    }
     const url = request.nextUrl.clone();
     // Map:
     //   orgName.p.hstuma.com/        -> /org/orgName
@@ -143,6 +152,7 @@ function withTenantRouting(request: NextRequest): NextResponse | null {
     const match = pathname.match(/^\/org\/([^\/]+)(\/.*)?$/);
     if (match) {
       const slug = match[1];
+      if (!tenantFromHost(`${slug}.${TENANT_BASE_DOMAIN}`, TENANT_BASE_DOMAIN)) return new NextResponse("Not found", { status: 404 });
       const rest = match[2] || "/";
 
       const url = request.nextUrl.clone();
@@ -308,6 +318,6 @@ export const config = {
   matcher: [
     // NOTE: /docs is intentionally NOT excluded — it needs withAdminMiddleware.
     // Routes like /blog, /unauthorized, /studio etc. need no middleware at all.
-    "/((?!api|auth|static|blog|unauthorized|studio|notice|p(?:/|$)|.*\\..*|_next|favicon.ico|sitemap.xml|robots.txt).*)",
+    "/((?!api|auth|static|unauthorized|p(?:/|$)|.*\\..*|_next|favicon.ico|sitemap.xml|robots.txt).*)",
   ],
 };

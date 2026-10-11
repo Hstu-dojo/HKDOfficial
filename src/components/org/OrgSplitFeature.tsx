@@ -1,134 +1,87 @@
-"use client";
-
-import { useEffect, useRef, useState } from "react";
-
-interface OrgSplitFeatureProps {
+import { OrgImage } from "./OrgImage";
+interface Props {
+  orgName: string;
   aboutTitle?: string | null;
   aboutText?: string | null;
   missionStatement?: string | null;
-  memberCount: number;
-  courseCount: number;
-  yearEstablished?: number | null;
   founderName?: string | null;
   founderTitle?: string | null;
   founderBio?: string | null;
   founderImageUrl?: string | null;
   showFounder: boolean;
+  features: { icon: string; title: string; description: string }[];
 }
-
-export default function OrgSplitFeature({
-  aboutTitle,
-  aboutText,
-  missionStatement,
-  memberCount,
-  courseCount,
-  yearEstablished,
-}: OrgSplitFeatureProps) {
-  const [visible, setVisible] = useState(false);
-  const ref = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) setVisible(true);
-      },
-      { threshold: 0.1 }
-    );
-    if (ref.current) observer.observe(ref.current);
-    return () => observer.disconnect();
-  }, []);
-
-  const stats = [
-    ...(yearEstablished
-      ? [{ value: String(yearEstablished), label: "Established", suffix: "" }]
-      : []),
-    ...(memberCount > 0
-      ? [{ value: String(memberCount), label: "Active Members", suffix: "+" }]
-      : []),
-    ...(courseCount > 0
-      ? [{ value: String(courseCount), label: "Programs", suffix: "" }]
-      : []),
-  ];
-
-  // Pad to 4 stats for grid
-  while (stats.length < 4) {
-    stats.push({ value: "∞", label: "Potential", suffix: "" });
-  }
-
-  // Parse title for accent word - if title contains a word in *asterisks*, make it accent colored
-  const renderTitle = (title: string) => {
-    const match = title.match(/^(.+?)\s+(\S+)$/);
-    if (match) {
-      return (
-        <>
-          {match[1]} <span className="text-primary">{match[2]}</span>
-        </>
-      );
-    }
-    return title;
-  };
-
-  const displayTitle = aboutTitle || "We Don't Do Easy.";
-  const displayText =
-    missionStatement ||
-    aboutText ||
-    "This is not a gym. It's a proving ground. Every rep is a question: how much do you want it? Every workout is an answer. We strip away the noise, the vanity, the comfort. What remains is raw human potential.";
-
+export default function OrgSplitFeature(p: Props) {
   return (
-    <section ref={ref} className="relative">
-      <div className="grid grid-cols-1 md:grid-cols-2">
-        {/* Left: Manifesto */}
-        <div className="relative bg-secondary flex flex-col justify-center px-4 md:px-12 lg:px-16 py-5 md:py-24">
-          <div
-            className="absolute top-0 right-0 w-16 md:w-20 h-full diagonal-stripes opacity-20 hidden md:block"
-            aria-hidden="true"
-          />
-
-          <div className={visible ? "brutal-reveal" : "opacity-0"}>
-            <span className="font-body text-[8px] md:text-[10px] text-primary tracking-[0.2em] md:tracking-[0.3em] uppercase block mb-2 md:mb-8">
-              [Manifesto]
-            </span>
-            {/* Single line on mobile */}
-            <h2 className="font-display text-[clamp(2.5rem,6vw,5rem)] sm:text-4xl md:text-7xl lg:text-8xl tracking-tighter text-foreground leading-[1.08] uppercase break-words mb-2 md:mb-8">
-              {renderTitle(displayTitle)}
+    <section id="about" className="org-section border-y bg-muted/30">
+      <div className="org-container">
+        <div className="grid gap-8 md:grid-cols-2 md:gap-16">
+          <div>
+            <p className="org-kicker">Our dojo</p>
+            <h2 className="org-title">
+              {p.aboutTitle || `About ${p.orgName}`}
             </h2>
-            <div className="w-8 md:w-16 h-[2px] bg-primary mb-2 md:mb-8" />
-            <p className="font-body text-[9px] md:text-sm text-muted-foreground leading-relaxed max-w-md">
-              {displayText}
-            </p>
+          </div>
+          <div className="space-y-6 self-center text-base leading-relaxed text-muted-foreground">
+            {p.aboutText && (
+              <p className="whitespace-pre-line">{p.aboutText}</p>
+            )}
+            {p.missionStatement && (
+              <blockquote className="border-l-2 border-primary pl-5 font-serif text-xl text-foreground">
+                {p.missionStatement}
+              </blockquote>
+            )}
           </div>
         </div>
-
-        {/* Right: Stats grid */}
-        <div className="relative bg-card">
-          <div className="grid grid-cols-2 h-full">
-            {stats.slice(0, 4).map((stat, i) => (
-              <div
-                key={stat.label}
-                className={`flex flex-col justify-center items-center p-3 md:p-10 lg:p-12 border-border ${
-                  i < 2 ? "border-b" : ""
-                } ${i % 2 === 0 ? "border-r" : ""}`}
-              >
-                <div
-                  className={visible ? "brutal-reveal" : "opacity-0"}
-                  style={{ animationDelay: `${0.2 + i * 0.15}s` }}
-                >
-                  <span className="font-display text-[clamp(2.5rem,6vw,5rem)] md:text-6xl lg:text-8xl text-foreground leading-none">
-                    {stat.value}
-                    <span className="text-primary">{stat.suffix}</span>
+        {p.features.length > 0 && (
+          <div className="mt-8 grid gap-6 border-t pt-8 sm:grid-cols-2 lg:grid-cols-3">
+            {p.features.map((f, i) => (
+              <article key={`${f.title}-${i}`} className="min-w-0">
+                {f.icon && (
+                  <span aria-hidden="true" className="mb-3 block text-2xl">
+                    {f.icon}
                   </span>
-                  <span className="font-body text-[7px] md:text-[10px] text-muted-foreground block mt-1 md:mt-3 tracking-[0.08em] md:tracking-[0.2em] uppercase text-center">
-                    {stat.label}
-                  </span>
-                </div>
-              </div>
+                )}
+                <h3 className="break-words font-serif text-2xl">{f.title}</h3>
+                {f.description && (
+                  <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
+                    {f.description}
+                  </p>
+                )}
+              </article>
             ))}
           </div>
-          <div
-            className="absolute bottom-0 right-0 w-6 h-6 md:w-16 md:h-16 bg-primary"
-            aria-hidden="true"
-          />
-        </div>
+        )}
+        {p.showFounder && p.founderName && (
+          <article
+            className={`mt-12 grid items-center gap-8 border-t pt-12 ${p.founderImageUrl ? "md:grid-cols-[minmax(0,.6fr)_minmax(0,1fr)]" : ""}`}
+          >
+            {p.founderImageUrl && (
+              <div className="relative aspect-[4/5] max-w-md overflow-hidden rounded-xl bg-muted">
+                <OrgImage
+                  key={p.founderImageUrl}
+                  src={p.founderImageUrl}
+                  alt={p.founderName}
+                  sizes="(max-width:768px) 100vw, 35vw"
+                />
+              </div>
+            )}
+            <div className="min-w-0">
+              <p className="org-kicker">Meet our instructor</p>
+              <h3 className="mt-5 break-words font-serif text-3xl sm:text-4xl">
+                {p.founderName}
+              </h3>
+              {p.founderTitle && (
+                <p className="mt-3 text-primary">{p.founderTitle}</p>
+              )}
+              {p.founderBio && (
+                <p className="mt-6 whitespace-pre-line leading-relaxed text-muted-foreground">
+                  {p.founderBio}
+                </p>
+              )}
+            </div>
+          </article>
+        )}
       </div>
     </section>
   );

@@ -2,7 +2,8 @@ import { trackEmail } from "@/lib/email/history";
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { db } from '@/lib/connect-db'
-import { user, registrations } from '@/db/schema'
+import { tenantFromHost } from '@/lib/org/host'
+import { user, registrations, partners } from '@/db/schema'
 import { and, eq, or } from 'drizzle-orm'
 import { ensureProfileForRegistration } from '@/lib/auth/profile-sync'
 
@@ -129,6 +130,10 @@ export async function POST(request: NextRequest) {
         { status: 400 }
       )
     }
+
+    const requestedTenant = tenantFromHost(request.headers.get('host'))
+    const branch = await db.query.partners.findFirst({where:and(eq(partners.id,partnerId),eq(partners.isActive,true),requestedTenant ? eq(partners.slug,requestedTenant) : undefined)})
+    if (!branch) return NextResponse.json({error:'Select an active branch belonging to this organization'}, {status:400})
 
     // Prevent duplicates in local DB early
     const existing = await db

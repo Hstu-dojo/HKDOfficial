@@ -1,309 +1,171 @@
-import { pageMetadata, noIndex } from "@/lib/seo/site";
-import { db } from "@/lib/connect-db";
-import {
-  partners,
-  courses,
-  courseSchedules,
-  courseInstructors,
-  members,
-  partnerPageSettings,
-} from "@/db/schema";
-import { user } from "@/db/schemas/auth";
-import { eq, and, count, inArray } from "drizzle-orm";
+import { pageMetadata, noIndex, siteOrigin, jsonLd } from "@/lib/seo/site";
 import { notFound } from "next/navigation";
+import { headers } from "next/headers";
+import { getOrgIdentity, getOrgContent } from "@/lib/org/server";
+import { tenantFromHost } from "@/lib/org/host";
+import { tenantPageLinks } from "@/lib/org/settings";
+import { createClient } from "@/lib/supabase/server";
+import { getPartnerIdForSupabaseUser } from "@/lib/partner-assignment";
+import { orgTheme } from "@/lib/org/theme";
 import {
   OrgHero,
   OrgGallery,
-  OrgMarquee,
   OrgProgramGrid,
   OrgSplitFeature,
   OrgScheduleBlock,
   OrgCtaBlock,
   OrgFooter,
 } from "@/components/org";
-
-const DAY_NAMES = [
-  "Sunday",
-  "Monday",
-  "Tuesday",
-  "Wednesday",
-  "Thursday",
-  "Friday",
-  "Saturday",
-];
-
-interface OrgPageProps {
-  params: Promise<{ slug: string }>;
+export const dynamic = "force-dynamic";
+type Props = { params: Promise<{ slug: string }> };
+async function identity(slug: string) {
+  const host = await headers();
+  const tenant = tenantFromHost(host.get("host"));
+  if (tenant && tenant !== slug) return null;
+  return getOrgIdentity(slug);
 }
-
-export async function generateMetadata({ params }: OrgPageProps) {
+export async function generateMetadata({ params }: Props) {
   const { slug } = await params;
-  const partner = await db.query.partners.findFirst({
-    where: eq(partners.slug, slug),
-  });
-
-  if (!partner || !partner.isActive)
-    return { title: "Branch not found", robots: noIndex };
-  const settings = await db.query.partnerPageSettings.findFirst({
-    where: eq(partnerPageSettings.partnerId, partner.id),
-  });
-  return pageMetadata({
+  const data = await identity(slug);
+  if (!data) return { title: "Branch not found", robots: noIndex };
+  const metadata = pageMetadata({
     path: `https://${slug}.${process.env.TENANT_BASE_DOMAIN || "p.hstuma.com"}/`,
-    title: partner.name,
-    description: partner.description || `Karate training at ${partner.name}.`,
-    image: settings?.heroImageUrl || settings?.logoUrl,
+    title: data.partner.name,
+    description:
+      data.settings.heroTagline ||
+      data.partner.description ||
+      `Karate training at ${data.partner.name}.`,
+    image: data.settings.heroImageUrl || data.settings.logoUrl,
   });
+  return {
+    ...metadata,
+    title: { absolute: data.partner.name },
+    openGraph: { ...metadata.openGraph, siteName: data.partner.name },
+    icons: data.settings.logoUrl ? { icon: data.settings.logoUrl } : undefined,
+  };
 }
-
-export default async function OrgPage({ params }: OrgPageProps) {
+export default async function OrgPage({ params }: Props) {
   const { slug } = await params;
-
-  const partner = await db.query.partners.findFirst({
-    where: eq(partners.slug, slug),
-  });
-
-  if (!partner || !partner.isActive) notFound();
-
-  // Fetch all data in parallel
-  const [partnerCourses, memberCountResult, pageSettings] = await Promise.all([
-    db.query.courses.findMany({
-      where: and(eq(courses.partnerId, partner.id), eq(courses.isActive, true)),
-    }),
-    db
-      .select({ value: count() })
-      .from(members)
-      .where(
-        and(eq(members.partnerId, partner.id), eq(members.isActive, true)),
-      ),
-    db.query.partnerPageSettings.findFirst({
-      where: eq(partnerPageSettings.partnerId, partner.id),
-    }),
-  ]);
-
-  const memberCount = memberCountResult[0]?.value ?? 0;
-  const settings = pageSettings ?? null;
-
-  // Fetch schedules for courses
-  const courseIds = partnerCourses.map((c) => c.id);
-  let scheduleItems: {
-    courseName: string;
-    dayName: string;
-    startTime: string;
-    endTime: string;
-    location?: string | null;
-    instructorName?: string | null;
-  }[] = [];
-  if (courseIds.length > 0) {
-    const allSchedules = await db.query.courseSchedules.findMany({
-      where: eq(courseSchedules.isActive, true),
-    });
-
-    // Fetch primary instructors for each course
-    const instructorRows = await db
-      .select({
-        courseId: courseInstructors.courseId,
-        name: user.userName,
-        isPrimary: courseInstructors.isPrimary,
-      })
-      .from(courseInstructors)
-      .leftJoin(user, eq(courseInstructors.instructorId, user.id))
-      .where(inArray(courseInstructors.courseId, courseIds));
-
-    // Build a map: courseId -> primary instructor name
-    const instructorMap = new Map<string, string>();
-    for (const row of instructorRows) {
-      if (row.isPrimary && row.name) {
-        instructorMap.set(row.courseId, row.name);
-      }
-    }
-    // Fall back to any instructor if no primary found
-    for (const row of instructorRows) {
-      if (!instructorMap.has(row.courseId) && row.name) {
-        instructorMap.set(row.courseId, row.name);
-      }
-    }
-
-    scheduleItems = allSchedules
-      .filter((s: any) => courseIds.includes(s.courseId))
-      .map((s: any) => {
-        const course = partnerCourses.find((c) => c.id === s.courseId);
-        return {
-          courseName: course?.name ?? "Unknown",
-          dayName: DAY_NAMES[s.dayOfWeek] ?? `Day ${s.dayOfWeek}`,
-          startTime: s.startTime ?? "",
-          endTime: s.endTime ?? "",
-          location: s.location ?? null,
-          instructorName: instructorMap.get(s.courseId) ?? null,
-        };
-      })
-      .sort(
-        (a, b) => DAY_NAMES.indexOf(a.dayName) - DAY_NAMES.indexOf(b.dayName),
-      );
-  }
-
-  // Build nav links
-  const navLinks = [
-    { label: "Programs", href: "#programs" },
-    { label: "Schedule", href: "#schedule" },
-    ...(settings?.showGallery !== false &&
-    (settings?.galleryImages as string[])?.length > 0
-      ? [{ label: "Gallery", href: "#gallery" }]
-      : []),
-    { label: "Contact", href: "#contact" },
-  ];
-
-  // Build marquee items from course names + feature titles
-  const marqueeItems = [
-    ...partnerCourses.map((c) => c.name.toUpperCase()),
-    ...((settings?.features as any[]) ?? [])
-      .map((f: any) => f.title?.toUpperCase())
-      .filter(Boolean),
-  ];
-
-  // Compute dynamic accent CSS variables if partner has a custom accent color
-  const accentStyle = settings?.accentColor
-    ? buildAccentStyle(settings.accentColor)
-    : undefined;
-
+  const data = await identity(slug);
+  if (!data) notFound();
+  const { partner, settings: s } = data;
+  const supabase = await createClient();
+  const {
+    data: { user: viewer },
+  } = await supabase.auth.getUser();
+  const viewerPartnerId = viewer
+    ? await getPartnerIdForSupabaseUser(viewer.id)
+    : null;
+  const content = await getOrgContent(partner.id, viewerPartnerId),
+    navLinks = tenantPageLinks(
+      s,
+      content.courses.length,
+      content.schedules.length,
+    );
+  const tenant = tenantFromHost((await headers()).get("host")),
+    homeHref = tenant ? "/" : `/org/${encodeURIComponent(slug)}`;
+  // Shared academy course pages live on the main site; authentication remains on this tenant.
+  const mainOrigin = siteOrigin();
+  let ctaLink = s.ctaLink || "/register";
+  if (
+    /^\/(?:en\/|bn\/|ne\/)?(?:karate|courses|programs|blog|about|gallery)(?:\/|$)/.test(
+      ctaLink,
+    )
+  )
+    ctaLink = `${mainOrigin}${ctaLink}`;
   return (
-    <main className="relative" style={accentStyle}>
-      {/* Noise overlay for industrial texture */}
-      <div className="noise-overlay" aria-hidden="true" />
-
-      {/* Hero */}
+    <main className="org-site" style={orgTheme(s.accentColor)}>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: jsonLd({
+            "@context": "https://schema.org",
+            "@graph": [
+              {
+                "@type": "Organization",
+                name: partner.name,
+                url: `https://${slug}.${process.env.TENANT_BASE_DOMAIN || "p.hstuma.com"}/`,
+                description: s.aboutText || partner.description || undefined,
+                email: partner.contactEmail || undefined,
+                telephone: partner.contactPhone || undefined,
+                ...(s.logoUrl
+                  ? {
+                      logo: new URL(
+                        s.logoUrl,
+                        `https://${slug}.${process.env.TENANT_BASE_DOMAIN || "p.hstuma.com"}/`,
+                      ).href,
+                    }
+                  : {}),
+              },
+              {
+                "@type": "WebSite",
+                name: partner.name,
+                url: `https://${slug}.${process.env.TENANT_BASE_DOMAIN || "p.hstuma.com"}/`,
+              },
+            ],
+          }),
+        }}
+      />
       <OrgHero
         name={partner.name}
         slug={slug}
         location={partner.location}
-        tagline={settings?.heroTagline}
-        heroImageUrl={settings?.heroImageUrl}
-        logoUrl={settings?.logoUrl}
-        yearEstablished={settings?.yearEstablished}
-        announcement={settings?.announcement}
-        memberCount={memberCount}
-        courseCount={partnerCourses.length}
+        tagline={s.heroTagline}
+        heroImageUrl={s.heroImageUrl}
+        logoUrl={s.logoUrl}
+        yearEstablished={s.yearEstablished}
+        announcement={s.announcement}
+        memberCount={content.memberCount}
+        courseCount={content.courses.length}
+        showStats={s.showStats}
         navLinks={navLinks}
-        ctaText={settings?.ctaText}
-        ctaLink={settings?.ctaLink}
+        ctaText={s.ctaText}
+        ctaLink={ctaLink}
+        homeHref={homeHref}
       />
-
-      {/* Gallery (hero images) */}
-      {settings?.showGallery !== false && (
-        <div id="gallery">
-          <OrgGallery
-            images={(settings?.galleryImages as string[]) ?? []}
-            orgName={partner.name}
-          />
-        </div>
-      )}
-
-      {/* Marquee strip */}
-      {marqueeItems.length > 0 && <OrgMarquee items={marqueeItems} />}
-
-      {/* Programs grid */}
-      {settings?.showCourses !== false && (
+      {s.showCourses && (
         <OrgProgramGrid
-          courses={partnerCourses}
+          courses={content.courses}
           orgName={partner.name}
-          heroImageUrl={settings?.heroImageUrl}
+          courseOrigin={mainOrigin}
         />
       )}
-
-      {/* Split feature: about / stats */}
       <OrgSplitFeature
-        aboutTitle={settings?.aboutTitle}
-        aboutText={settings?.aboutText ?? partner.description}
-        missionStatement={settings?.missionStatement}
-        memberCount={memberCount}
-        courseCount={partnerCourses.length}
-        yearEstablished={settings?.yearEstablished}
-        founderName={settings?.founderName}
-        founderTitle={settings?.founderTitle}
-        founderBio={settings?.founderBio}
-        founderImageUrl={settings?.founderImageUrl}
-        showFounder={settings?.showFounder !== false}
+        orgName={partner.name}
+        aboutTitle={s.aboutTitle}
+        aboutText={s.aboutText || partner.description}
+        missionStatement={s.missionStatement}
+        founderName={s.founderName}
+        founderTitle={s.founderTitle}
+        founderImageUrl={s.founderImageUrl}
+        founderBio={s.founderBio}
+        showFounder={s.showFounder}
+        features={s.features}
       />
-
-      {/* Schedule */}
-      {settings?.showSchedule !== false && (
+      {s.showSchedule && (
         <OrgScheduleBlock
-          schedules={scheduleItems}
+          schedules={content.schedules}
           orgName={partner.name}
-          defaultDay={settings?.defaultScheduleDay}
+          defaultDay={s.defaultScheduleDay}
         />
       )}
-
-      {/* CTA */}
+      {s.showGallery && (
+        <OrgGallery images={s.galleryImages} orgName={partner.name} />
+      )}
       <OrgCtaBlock
-        ctaText={settings?.ctaText}
-        ctaLink={settings?.ctaLink}
+        ctaText={s.ctaText}
+        ctaLink={ctaLink}
         orgName={partner.name}
         email={partner.contactEmail}
         phone={partner.contactPhone}
         location={partner.location}
       />
-
-      {/* Footer */}
       <OrgFooter
         name={partner.name}
-        location={partner.location}
-        email={partner.contactEmail}
-        phone={partner.contactPhone}
-        socialLinks={(settings?.socialLinks as Record<string, string>) ?? null}
-        yearEstablished={settings?.yearEstablished}
+        navLinks={navLinks}
+        socialLinks={s.socialLinks}
+        homeHref={homeHref}
       />
     </main>
   );
-}
-
-/**
- * Converts a hex accent color to HSL CSS variable overrides so
- * the brutalist theme picks up the partner's custom accent.
- */
-function buildAccentStyle(hex: string): React.CSSProperties | undefined {
-  const h = hex.replace("#", "");
-  if (h.length !== 6 && h.length !== 3) return undefined;
-
-  const full =
-    h.length === 3
-      ? h
-          .split("")
-          .map((c) => c + c)
-          .join("")
-      : h;
-
-  const r = parseInt(full.slice(0, 2), 16) / 255;
-  const g = parseInt(full.slice(2, 4), 16) / 255;
-  const b = parseInt(full.slice(4, 6), 16) / 255;
-
-  const max = Math.max(r, g, b);
-  const min = Math.min(r, g, b);
-  const l = (max + min) / 2;
-
-  let s = 0;
-  let hue = 0;
-
-  if (max !== min) {
-    const d = max - min;
-    s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
-    switch (max) {
-      case r:
-        hue = ((g - b) / d + (g < b ? 6 : 0)) * 60;
-        break;
-      case g:
-        hue = ((b - r) / d + 2) * 60;
-        break;
-      case b:
-        hue = ((r - g) / d + 4) * 60;
-        break;
-    }
-  }
-
-  const hslStr = `${Math.round(hue)} ${Math.round(s * 100)}% ${Math.round(l * 100)}%`;
-
-  return {
-    "--accent": hslStr,
-    "--ring": hslStr,
-    "--destructive": hslStr,
-  } as React.CSSProperties;
 }

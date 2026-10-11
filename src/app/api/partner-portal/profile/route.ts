@@ -10,6 +10,9 @@ import { db } from "@/lib/connect-db";
 import { partners } from "@/db/schemas/partner";
 import { getPartnerProfile } from "@/lib/partner-admin/profile";
 import { eq } from "drizzle-orm";
+import { partnerProfilePatchSchema } from "@/lib/org/settings";
+import { z } from "zod";
+import { revalidatePath } from "next/cache";
 
 export async function GET() {
   const { user: partnerUser, error } = await requirePartnerAdminUser();
@@ -35,32 +38,10 @@ export async function PATCH(request: Request) {
   if (error) return error;
 
   try {
-    const body = await request.json();
-
-    // Only allow updating specific fields
-    const allowedFields = [
-      "name",
-      "description",
-      "location",
-      "contactEmail",
-      "contactPhone",
-    ];
-    const updates: Record<string, unknown> = {};
-
-    for (const field of allowedFields) {
-      if (field in body) {
-        updates[field] = body[field];
-      }
-    }
-
-    if (Object.keys(updates).length === 0) {
-      return NextResponse.json(
-        { error: "No valid fields to update" },
-        { status: 400 },
-      );
-    }
-
-    updates.updatedAt = new Date();
+    const updates = {
+      ...partnerProfilePatchSchema.parse(await request.json()),
+      updatedAt: new Date(),
+    };
 
     const [updated] = await db
       .update(partners)
@@ -68,8 +49,16 @@ export async function PATCH(request: Request) {
       .where(eq(partners.id, partnerUser.partnerId))
       .returning();
 
+    revalidatePath(`/org/${partnerUser.partnerSlug}`);
     return NextResponse.json({ partner: updated });
   } catch (err) {
+    if (err instanceof z.ZodError)
+      return NextResponse.json(
+        { error: err.issues.map((i) => i.message).join("; ") },
+        { status: 400 },
+      );
+    if (err instanceof SyntaxError)
+      return NextResponse.json({ error: "Invalid JSON" }, { status: 400 });
     console.error("[PartnerPortal] Profile PATCH error:", err);
     return NextResponse.json(
       { error: "Failed to update profile" },

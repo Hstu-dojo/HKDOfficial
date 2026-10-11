@@ -1,115 +1,64 @@
-/**
- * Partner Portal — Page Settings API
- *
- * Allows partner admins (owner/admin) to customise their public org homepage.
- *
- * GET   /api/partner-portal/page-settings — Fetch current settings
- * PATCH /api/partner-portal/page-settings — Update settings (partial)
- */
-import { NextResponse } from 'next/server'
-import { requirePartnerAdminUser } from '@/lib/partner-admin/auth'
-import { db } from '@/lib/connect-db'
-import { partnerPageSettings } from '@/db/schema'
-import { eq } from 'drizzle-orm'
-
+import { NextResponse } from "next/server";
+import { requirePartnerAdminUser } from "@/lib/partner-admin/auth";
+import { db } from "@/lib/connect-db";
+import { partnerPageSettings } from "@/db/schema";
+import { eq } from "drizzle-orm";
+import {
+  pageSettingsPatchSchema,
+  normalizePageSettings,
+} from "@/lib/org/settings";
+import { revalidatePath } from "next/cache";
+import { z } from "zod";
 export async function GET() {
-  const { user: partnerUser, error } = await requirePartnerAdminUser()
-  if (error) return error
-
+  const { user, error } = await requirePartnerAdminUser();
+  if (error) return error;
   try {
-    let settings = await db.query.partnerPageSettings.findFirst({
-      where: eq(partnerPageSettings.partnerId, partnerUser.partnerId),
-    })
-
-    // Auto-create a default row if none exists
-    if (!settings) {
-      const [created] = await db
-        .insert(partnerPageSettings)
-        .values({ partnerId: partnerUser.partnerId })
-        .returning()
-      settings = created
-    }
-
-    return NextResponse.json({ settings })
-  } catch (err) {
-    console.error('[PartnerPortal] PageSettings GET error:', err)
-    return NextResponse.json({ error: 'Failed to fetch page settings' }, { status: 500 })
+    const settings = await db.query.partnerPageSettings.findFirst({
+      where: eq(partnerPageSettings.partnerId, user.partnerId),
+    });
+    return NextResponse.json({
+      settings: normalizePageSettings(settings),
+      publicUrl: `https://${user.partnerSlug}.${process.env.TENANT_BASE_DOMAIN || "p.hstuma.com"}/`,
+    });
+  } catch {
+    console.error("[PartnerPortal] Page settings unavailable");
+    return NextResponse.json(
+      { error: "Failed to fetch page settings" },
+      { status: 500 },
+    );
   }
 }
-
-// Allowed fields that partner admins can update
-const ALLOWED_FIELDS = new Set([
-  'heroImageUrl',
-  'heroTagline',
-  'aboutTitle',
-  'aboutText',
-  'missionStatement',
-  'logoUrl',
-  'accentColor',
-  'founderName',
-  'founderTitle',
-  'founderImageUrl',
-  'founderBio',
-  'galleryImages',
-  'features',
-  'socialLinks',
-  'showStats',
-  'showCourses',
-  'showSchedule',
-  'showGallery',
-  'showFounder',
-  'ctaText',
-  'ctaLink',
-  'yearEstablished',
-  'announcement',
-  'defaultScheduleDay',
-])
-
 export async function PATCH(request: Request) {
-  const { user: partnerUser, error } = await requirePartnerAdminUser()
-  if (error) return error
-
+  const { user, error } = await requirePartnerAdminUser();
+  if (error) return error;
   try {
-    const body = await request.json()
-
-    // Filter to only allowed fields
-    const updates: Record<string, unknown> = {}
-    for (const [key, value] of Object.entries(body)) {
-      if (ALLOWED_FIELDS.has(key)) {
-        updates[key] = value
-      }
-    }
-
-    if (Object.keys(updates).length === 0) {
-      return NextResponse.json({ error: 'No valid fields to update' }, { status: 400 })
-    }
-
-    updates.updatedAt = new Date()
-
-    // Upsert: create row if it doesn't exist, then update
-    const existing = await db.query.partnerPageSettings.findFirst({
-      where: eq(partnerPageSettings.partnerId, partnerUser.partnerId),
-    })
-
-    let settings
-    if (!existing) {
-      const [created] = await db
-        .insert(partnerPageSettings)
-        .values({ partnerId: partnerUser.partnerId, ...updates } as any)
-        .returning()
-      settings = created
-    } else {
-      const [updated] = await db
-        .update(partnerPageSettings)
-        .set(updates as any)
-        .where(eq(partnerPageSettings.partnerId, partnerUser.partnerId))
-        .returning()
-      settings = updated
-    }
-
-    return NextResponse.json({ settings })
-  } catch (err) {
-    console.error('[PartnerPortal] PageSettings PATCH error:', err)
-    return NextResponse.json({ error: 'Failed to update page settings' }, { status: 500 })
+    const updates = pageSettingsPatchSchema.parse(await request.json());
+    const [settings] = await db
+      .insert(partnerPageSettings)
+      .values({ partnerId: user.partnerId, ...updates })
+      .onConflictDoUpdate({
+        target: partnerPageSettings.partnerId,
+        set: { ...updates, updatedAt: new Date() },
+      })
+      .returning();
+    revalidatePath(`/org/${user.partnerSlug}`);
+    return NextResponse.json({ settings: normalizePageSettings(settings) });
+  } catch (error) {
+    if (error instanceof z.ZodError)
+      return NextResponse.json(
+        {
+          error: error.issues
+            .map((i) => `${i.path.join(".")}: ${i.message}`)
+            .join("; "),
+        },
+        { status: 400 },
+      );
+    if (error instanceof SyntaxError)
+      return NextResponse.json({ error: "Invalid JSON" }, { status: 400 });
+    console.error("[PartnerPortal] Page settings update failed");
+    return NextResponse.json(
+      { error: "Failed to update page settings" },
+      { status: 500 },
+    );
   }
 }

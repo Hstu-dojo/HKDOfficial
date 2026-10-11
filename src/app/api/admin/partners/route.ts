@@ -6,6 +6,7 @@
  * PATCH  /api/admin/partners — Update a partner
  * DELETE /api/admin/partners — Deactivate a partner
  */
+import { tenantFromHost } from '@/lib/org/host'
 import { NextResponse } from 'next/server'
 import { protectApiRoute } from '@/lib/rbac/middleware'
 import type { RBACContext } from '@/lib/rbac/types'
@@ -70,11 +71,14 @@ export const POST = protectApiRoute('PARTNER', 'CREATE', async (request: Request
       )
     }
 
+    const normalizedSlug = String(slug).trim().toLowerCase()
+    if (tenantFromHost(`${normalizedSlug}.p.hstuma.com`, 'p.hstuma.com') !== normalizedSlug) return NextResponse.json({error:'Use a valid subdomain slug: letters, numbers, and internal hyphens (maximum 63 characters)'}, {status:400})
+
     // Check slug uniqueness
     const existing = await db
       .select({ id: partners.id })
       .from(partners)
-      .where(eq(partners.slug, slug))
+      .where(eq(partners.slug, normalizedSlug))
       .limit(1)
 
     if (existing.length > 0) {
@@ -86,7 +90,7 @@ export const POST = protectApiRoute('PARTNER', 'CREATE', async (request: Request
       .insert(partners)
       .values({
         name,
-        slug: slug.toLowerCase().replace(/[^a-z0-9-]/g, '-'),
+        slug: normalizedSlug,
         description: description || null,
         location: location || null,
         contactEmail: contactEmail || adminEmail,
@@ -170,6 +174,12 @@ export const PATCH = protectApiRoute('PARTNER', 'UPDATE', async (request: Reques
 
     if (Object.keys(safeUpdates).length === 0) {
       return NextResponse.json({ error: 'No valid fields to update' }, { status: 400 })
+    }
+
+    if ('slug' in safeUpdates) {
+      const normalizedSlug = String(safeUpdates.slug).trim().toLowerCase()
+      if (tenantFromHost(`${normalizedSlug}.p.hstuma.com`, 'p.hstuma.com') !== normalizedSlug) return NextResponse.json({error:'Use a valid subdomain slug'}, {status:400})
+      safeUpdates.slug = normalizedSlug
     }
 
     safeUpdates.updatedAt = new Date()

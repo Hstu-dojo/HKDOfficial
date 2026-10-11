@@ -212,7 +212,10 @@ export function RegisterForm({ className, ...props }: UserAuthFormProps) {
         const response = await fetch('/api/partners');
         if (response.ok) {
           const data = await response.json();
-          if (Array.isArray(data)) setPartners(data);
+          if (Array.isArray(data)) {
+            setPartners(data);
+            if (data.length === 1) setPartnerId(data[0].id);
+          }
         }
       } catch (error) {
         console.error('Failed to fetch partners:', error);

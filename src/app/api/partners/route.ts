@@ -3,13 +3,15 @@
  *
  * GET /api/partners — List all active partner venues (used by onboarding form & homepage branches)
  */
+import { tenantFromHost } from '@/lib/org/host'
 import { NextResponse } from 'next/server'
 import { db } from '@/lib/connect-db'
 import { partners, partnerPageSettings } from '@/db/schemas/partner'
 import { members, courses } from '@/db/schema'
 import { eq, asc, and, count, inArray } from 'drizzle-orm'
 
-export async function GET() {
+export async function GET(request: Request) {
+  const tenant = tenantFromHost(request.headers.get('host'))
   try {
     const activePartners = await db
       .select({
@@ -26,7 +28,7 @@ export async function GET() {
       })
       .from(partners)
       .leftJoin(partnerPageSettings, eq(partnerPageSettings.partnerId, partners.id))
-      .where(eq(partners.isActive, true))
+      .where(and(eq(partners.isActive, true), tenant ? eq(partners.slug, tenant) : undefined))
       .orderBy(asc(partners.name))
 
     // Get member and course counts for each partner

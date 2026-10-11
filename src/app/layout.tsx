@@ -1,4 +1,5 @@
 import "./globals.css";
+import { tenantFromHost } from "@/lib/org/host";
 import { editorialFonts } from "@/styles/fonts";
 import { headers } from "next/headers";
 import type { Metadata } from "next";
@@ -49,38 +50,44 @@ export default async function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const pathname = (await headers()).get("x-seo-pathname") || "";
+  const requestHeaders = await headers();
+  const tenant = tenantFromHost(requestHeaders.get("host"));
+  const pathname = requestHeaders.get("x-seo-pathname") || "";
   const locale = localeFor(pathname.match(/^\/(en|bn|ne)(?:\/|$)/)?.[1]);
 
   return (
     <html lang={locale} className={editorialFonts} suppressHydrationWarning>
       <body className="editorial-site">
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{
-            __html: jsonLd({
-              "@context": "https://schema.org",
-              "@graph": [
-                {
-                  "@type": "Organization",
-                  "@id": absoluteUrl("/#organization"),
-                  name: academyName,
-                  url: siteOrigin(),
-                  logo: absoluteUrl("/logo.png"),
-                },
-                {
-                  "@type": "WebSite",
-                  "@id": absoluteUrl("/#website"),
-                  name: academyName,
-                  url: siteOrigin(),
-                  publisher: { "@id": absoluteUrl("/#organization") },
-                  inLanguage: ["en", "bn", "ne"],
-                },
-              ],
-            }),
-          }}
-        />
-        <PageLoaderProvider>{children}</PageLoaderProvider>
+        {!tenant && (
+          <script
+            type="application/ld+json"
+            dangerouslySetInnerHTML={{
+              __html: jsonLd({
+                "@context": "https://schema.org",
+                "@graph": [
+                  {
+                    "@type": "Organization",
+                    "@id": absoluteUrl("/#organization"),
+                    name: academyName,
+                    url: siteOrigin(),
+                    logo: absoluteUrl("/logo.png"),
+                  },
+                  {
+                    "@type": "WebSite",
+                    "@id": absoluteUrl("/#website"),
+                    name: academyName,
+                    url: siteOrigin(),
+                    publisher: { "@id": absoluteUrl("/#organization") },
+                    inLanguage: ["en", "bn", "ne"],
+                  },
+                ],
+              }),
+            }}
+          />
+        )}
+        <PageLoaderProvider introEnabled={!tenant}>
+          {children}
+        </PageLoaderProvider>
         <SpeedInsights />
         <Analytics />
       </body>

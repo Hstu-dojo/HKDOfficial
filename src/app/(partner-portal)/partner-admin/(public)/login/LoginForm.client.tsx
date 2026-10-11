@@ -10,7 +10,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 export default function LoginForm() {
   const router = useRouter()
   const searchParams = useSearchParams()
-  const next = searchParams?.get('next') || '/partner-admin'
+  const requestedNext = searchParams?.get('next') || '/partner-admin'
+  const next = /^\/partner-admin(?:\/|$)/.test(requestedNext) && !requestedNext.includes('\\') ? requestedNext : '/partner-admin'
 
   const [email, setEmail] = React.useState('')
   const [password, setPassword] = React.useState('')

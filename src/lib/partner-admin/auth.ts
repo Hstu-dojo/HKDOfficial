@@ -1,4 +1,5 @@
-import { cookies } from 'next/headers'
+import { tenantFromHost } from '@/lib/org/host'
+import { cookies, headers } from 'next/headers'
 import { db } from '@/lib/connect-db'
 import { partners, partnerAdmins, partnerAdminSessions } from '@/db/schemas/partner'
 import { and, eq, gt } from 'drizzle-orm'
@@ -47,6 +48,8 @@ export async function getPartnerAdminUser(): Promise<PartnerAdminUser | null> {
     if (!row) return null
 
     if (!row.adminIsActive || !row.partnerActive) return null
+    const tenant = tenantFromHost((await headers()).get('host'))
+    if (tenant && tenant !== row.partnerSlug) return null
 
     return {
       id: row.adminId,
