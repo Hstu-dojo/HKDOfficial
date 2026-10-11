@@ -1,57 +1,20 @@
+import { headers } from "next/headers";
+import { requestMetadata } from "@/lib/seo/site";
 import type { Metadata } from "next";
 
 import { Toaster } from "sonner";
-import { siteConfig } from "@/config/site";
 import BackToTop from "@/components/back-to-top";
 import React, { Suspense } from "react";
 import { I18nProviderClient } from "@/locales/client";
 import { VerificationHandler } from "@/components/layout/verification-handler";
 
-export const metadata: Metadata = {
-  metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL || siteConfig.url),
-  applicationName: siteConfig.name,
-  title: {
-    default: siteConfig.name,
-    template: `%s - ${siteConfig.name}`,
-  },
-  description: siteConfig.description,
-  manifest: "/manifest.json",
-  keywords: siteConfig.keywords,
-  authors: [
-    {
-      name: "Shahriar Hasan",
-      url: "https://shahriarhasan.vercel.app",
-    },
-  ],
-  creator: "Shahriar Hasan",
-  appleWebApp: {
-    capable: true,
-    statusBarStyle: "default",
-    title: siteConfig.name,
-    // startUpImage: [],
-  },
-  formatDetection: {
-    telephone: false,
-  },
-  openGraph: {
-    type: "website",
-    locale: "en_US",
-    url: siteConfig.url,
-    title: siteConfig.name,
-    description: siteConfig.description,
-    siteName: siteConfig.name,
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: siteConfig.name,
-    description: siteConfig.description,
-    images: [`${siteConfig.url}/og-image.png`],
-    creator: "shahriar hasan",
-  },
-  icons: {
-    icon: "/favicon.ico",
-  },
-};
+export async function generateMetadata({
+  params,
+}: Parameters<typeof RootLayout>[0]): Promise<Metadata> {
+  const { locale } = await params;
+  const pathname = (await headers()).get("x-seo-pathname") || `/${locale}`;
+  return requestMetadata(pathname);
+}
 
 export default async function RootLayout({
   children,
@@ -66,9 +29,7 @@ export default async function RootLayout({
   const locale = resolvedParams?.locale || "en";
 
   return (
-    <div
-      className="editorial-public bg-background text-foreground"
-    >
+    <div className="editorial-public bg-background text-foreground">
       <I18nProviderClient locale={locale}>
         <Suspense fallback={null}>
           <VerificationHandler />

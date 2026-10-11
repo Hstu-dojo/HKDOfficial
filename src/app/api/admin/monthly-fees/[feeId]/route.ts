@@ -6,7 +6,7 @@ import { updateFee } from "@/lib/billing/update-fee";
 import { actionPermissions, type FeeAction } from "@/lib/billing/transitions";
 import { billingErrorResponse, billingBody } from "@/lib/billing/http";
 import { db } from "@/lib/connect-db";
-import { paymentReminders, monthlyFeeEvents } from "@/db/schema";
+import { monthlyFeeEvents } from "@/db/schema";
 import { eq, desc } from "drizzle-orm";
 type Params = { params: Promise<{ feeId: string }> };
 export async function GET(request: NextRequest, { params }: Params) {
@@ -20,19 +20,12 @@ export async function GET(request: NextRequest, { params }: Params) {
       return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     const { feeId } = await params;
     const row = await feeById(feeId);
-    const [reminders, events] = await Promise.all([
-      db
-        .select()
-        .from(paymentReminders)
-        .where(eq(paymentReminders.monthlyFeeId, feeId))
-        .orderBy(desc(paymentReminders.createdAt)),
-      db
-        .select()
-        .from(monthlyFeeEvents)
-        .where(eq(monthlyFeeEvents.monthlyFeeId, feeId))
-        .orderBy(desc(monthlyFeeEvents.createdAt)),
-    ]);
-    return NextResponse.json({ ...row, reminders, events });
+    const events = await db
+      .select()
+      .from(monthlyFeeEvents)
+      .where(eq(monthlyFeeEvents.monthlyFeeId, feeId))
+      .orderBy(desc(monthlyFeeEvents.createdAt));
+    return NextResponse.json({ ...row, events });
   } catch (error) {
     return billingErrorResponse(error);
   }

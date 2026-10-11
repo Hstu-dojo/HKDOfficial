@@ -6,8 +6,9 @@ import {
   profileMonthlyStatus,
   courseEnrollments,
   courses,
+  user,
 } from "@/db/schema";
-import { and, eq, inArray } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 import {
   BillingError,
   billingPeriod,
@@ -25,12 +26,16 @@ async function eligibleProfiles(partnerId: string) {
       id: profiles.id,
       name: profiles.fullNameEnglish,
       nameBangla: profiles.fullNameBangla,
+      email: profiles.email,
+      userName: user.userName,
+      userEmail: user.email,
       memberNumber: profiles.memberNumber,
       isActive: profiles.isActive,
     })
     .from(profiles)
     .innerJoin(courseEnrollments, eq(courseEnrollments.profileId, profiles.id))
     .innerJoin(courses, eq(courseEnrollments.courseId, courses.id))
+    .leftJoin(user, eq(profiles.userId, user.id))
     .where(
       and(
         eq(courses.partnerId, partnerId),
@@ -69,7 +74,12 @@ export async function GET(request: Request) {
         const status = statuses.find((r) => r.profileId === s.id);
         return {
           profileId: s.id,
-          memberName: s.name || s.nameBangla,
+          memberName:
+            s.name?.trim() ||
+            s.nameBangla?.trim() ||
+            s.userName?.trim() ||
+            null,
+          memberEmail: s.email?.trim() || s.userEmail?.trim() || null,
           memberNumber: s.memberNumber,
           month,
           year,

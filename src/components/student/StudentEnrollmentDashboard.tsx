@@ -37,10 +37,9 @@ interface Application {
 interface Enrollment {
   enrollment: {
     id: string;
-    enrollmentNumber: string;
     profileId: string;
     courseId: string;
-    status: string;
+    isActive: boolean;
     startDate: string;
     endDate?: string;
     currentBeltLevel?: string;
@@ -260,10 +259,7 @@ export default function StudentEnrollmentDashboard() {
                 {t("enrollments.activeEnrollments")}
               </p>
               <p className="text-xl font-semibold text-foreground dark:text-gray-100">
-                {
-                  enrollments.filter((e) => e.enrollment.status === "active")
-                    .length
-                }
+                {enrollments.filter((e) => e.enrollment.isActive).length}
               </p>
             </div>
           </div>
@@ -418,17 +414,17 @@ export default function StudentEnrollmentDashboard() {
                     </h3>
                     <p className="text-sm text-muted-foreground dark:text-gray-400">
                       {t("enrollments.enrollmentNumberLabel")}:{" "}
-                      {enrollment.enrollment.enrollmentNumber}
+                      {enrollment.enrollment.id.slice(0, 8).toUpperCase()}
                     </p>
                   </div>
                   <span
                     className={`rounded-full px-3 py-1 text-sm font-medium ${
-                      enrollment.enrollment.status === "active"
+                      enrollment.enrollment.isActive
                         ? "bg-green-100 text-green-700 dark:bg-green-900/50 dark:text-green-400"
                         : "bg-muted text-foreground dark:bg-slate-700 dark:text-gray-300"
                     }`}
                   >
-                    {enrollment.enrollment.status === "active"
+                    {enrollment.enrollment.isActive
                       ? t("common.active")
                       : t("common.inactive")}
                   </span>

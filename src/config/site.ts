@@ -6,7 +6,7 @@ export const WP_REST_BASE_URL =
 export const siteConfig = {
   name: "Kaizen Karate Academy",
   description:
-    "Power up your skill with Kaizen Karate Academy. We offer junior to senior level karate trainings. Let us take you to your next level⚡",
+    "Learn Shito-Ryu karate at Kaizen Karate Academy. Explore training courses, branches, competitions and our community in Bangladesh.",
   keywords: [
     "Kaizen Karate Academy",
     "Kaizen Karate",

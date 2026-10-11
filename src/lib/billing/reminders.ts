@@ -66,6 +66,18 @@ export function groupUnpaid(rows: Row[]) {
 }
 const validEmail = (value: string | null) =>
   !!value && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
+/** Every selected bill must be active now and in its own historical billing month. */
+export async function selectedUnpaidFees(scope: BillingScope, months?: string[]) {
+  if (months) for (const month of months) billingPeriod(month);
+  const rows = await feeRecords(scope, [
+    months ? inArray(monthlyFees.billingMonth, months) : undefined,
+    sql`${monthlyFees.billingMonth} <= ${businessDate().month}`,
+    billingActivity(),
+    sql`${monthlyFees.status} NOT IN ('paid','waived','payment_submitted')`,
+  ]);
+  return rows.filter(r => feeBalance(r.fee) > 0);
+}
+
 export async function reminderPreview(
   period: string,
   scope: BillingScope = {},
@@ -98,12 +110,14 @@ export async function enqueueReminders({
   scope = {},
   actor,
   scheduled = false,
+  selectedMonths,
 }: {
   campaignKey: string;
   period: string;
   scope?: BillingScope;
   actor: string;
   scheduled?: boolean;
+  selectedMonths?: string[];
 }) {
   billingPeriod(period);
   smtpConfiguration();
@@ -114,7 +128,9 @@ export async function enqueueReminders({
         sql`${monthlyFees.status} NOT IN ('paid','waived','payment_submitted')`,
         billingActivity(),
       ])
-    : await unpaidFees(period, scope);
+    : selectedMonths
+      ? await selectedUnpaidFees(scope, selectedMonths)
+      : await unpaidFees(period, scope);
   const groups = groupUnpaid(rows.filter((r) => feeBalance(r.fee) > 0));
   const eligible = groups.filter((g) => validEmail(g.email));
   const scopeKey = scope.partnerId || "all";
@@ -159,6 +175,7 @@ export async function processReminderBatch(
   const campaign = and(
     eq(billingMailDeliveries.campaignKey, campaignKey),
     eq(billingMailDeliveries.scopeKey, scopeKey),
+    scope.profileId ? eq(billingMailDeliveries.profileId, scope.profileId) : undefined,
   );
   await db
     .update(billingMailDeliveries)
@@ -406,8 +423,9 @@ export async function reminderHistory(
     .where(
       and(
         scope.partnerId
-          ? sql`(${billingMailDeliveries.scopeKey} = ${scope.partnerId} OR EXISTS (SELECT 1 FROM monthly_fees f JOIN course_enrollments e ON e.id = f.enrollment_id JOIN courses c ON c.id = e.course_id WHERE c.partner_id = ${scope.partnerId} AND ${billingMailDeliveries.feeIds} ? f.id))`
+          ? sql`(${billingMailDeliveries.partnerId} = ${scope.partnerId} OR ${billingMailDeliveries.scopeKey} = ${scope.partnerId})`
           : undefined,
+
         period ? eq(billingMailDeliveries.billingMonth, period) : undefined,
       ),
     )

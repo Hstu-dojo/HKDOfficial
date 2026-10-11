@@ -1,6 +1,7 @@
 "use server";
 
 import { z } from "zod";
+import { trackEmail } from "@/lib/email/history";
 import { Resend } from "resend";
 import ContactFormEmail from "@/components/emails/contact-form-email";
 import { ContactFormSchema } from "@/lib/schema";
@@ -8,7 +9,6 @@ import { getErrorMessage } from "@/lib/utils";
 import { renderAsync } from "@react-email/render";
 
 type FormInputs = z.infer<typeof ContactFormSchema>;
-const resend = new Resend(process.env.RESEND_API_KEY);
 
 export const sendEmail = async (formData: FormInputs) => {
   const result = ContactFormSchema.safeParse(formData);
@@ -25,20 +25,30 @@ export const sendEmail = async (formData: FormInputs) => {
     );
 
     try {
-      data = await resend.emails.send({
-        from:
-          process.env.EMAIL_FROM_ADDRESS ||
-          "Contact Form <onboarding@resend.dev>",
-        to: process.env.EMAIL_TO_ADDRESS || "",
-        subject: "Message from contact form",
-        reply_to: email,
-        html: html,
-        // react: ContactFormEmail({
-        //   name: name,
-        //   email: email,
-        //   message: message,
-        // }),
-      });
+      data = await trackEmail(
+        {
+          category: "contact",
+          provider: "resend",
+          to: process.env.EMAIL_TO_ADDRESS || "",
+          subject: "Message from contact form",
+        },
+        () =>
+          new Resend(process.env.RESEND_API_KEY).emails.send({
+            from:
+              process.env.EMAIL_FROM_ADDRESS ||
+              "Contact Form <onboarding@resend.dev>",
+            to: process.env.EMAIL_TO_ADDRESS || "",
+            subject: "Message from contact form",
+            reply_to: email,
+            html: html,
+            // react: ContactFormEmail({
+            //   name: name,
+            //   email: email,
+            //   message: message,
+            // }),
+          }),
+      );
+      if (data.error) return { success: false, error: data.error.message };
       return { success: true, data };
     } catch (error: unknown) {
       console.log(error);
@@ -53,4 +63,3 @@ export const sendEmail = async (formData: FormInputs) => {
     data,
   };
 };
-

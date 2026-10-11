@@ -1,3 +1,4 @@
+import { trackEmail } from "@/lib/email/history";
 /**
  * Partner Portal — Members API
  * 
@@ -419,9 +420,9 @@ export async function POST(request: Request) {
     let resetEmailSent = false
     if (emailClient) {
       try {
-        const { error: resetErr } = await emailClient.auth.resetPasswordForEmail(trimmedEmail, {
+        const { error: resetErr } = await trackEmail({category:"password_reset",provider:"supabase",to:trimmedEmail,subject:"Password reset request"}, () => emailClient.auth.resetPasswordForEmail(trimmedEmail, {
           redirectTo: buildResetRedirectUrl(request),
-        })
+        }))
         resetEmailSent = !resetErr
         if (resetErr) {
           console.error('[PartnerPortal] Reset email send failed:', resetErr)
@@ -696,9 +697,9 @@ export async function PATCH(request: Request) {
           process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || ''
         )
 
-        const { error: resetErr } = await supabaseClient.auth.resetPasswordForEmail(targetEmail, {
+        const { error: resetErr } = await trackEmail({category:"password_reset",provider:"supabase",to:targetEmail,subject:"Password reset request"}, () => supabaseClient.auth.resetPasswordForEmail(targetEmail, {
           redirectTo: buildResetRedirectUrl(request),
-        })
+        }))
 
         if (resetErr) {
           console.error('[PartnerPortal] Reset email send failed after password change:', resetErr)

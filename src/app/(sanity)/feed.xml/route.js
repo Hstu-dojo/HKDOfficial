@@ -1,36 +1,32 @@
 import { loadAllProject } from "../../../../sanity/loader/loadQuery";
 import RSS from "rss";
 import { toPlainText } from "@portabletext/react";
-
+import { absoluteUrl, academyName } from "@/lib/seo/site";
 export async function GET() {
-  const page = 1; // specify the desired page number
-  const limit = 1500; // specify the number of items per page
-  const initial2 = await loadAllProject(page, limit);
-  const data = initial2?.data;
-  const BASE_URL = process.env.SITE_URL;
+  const { data = [] } = await loadAllProject(1, 1500);
   const feed = new RSS({
-    title: "Kaizen Karate Academy Blog POSTS",
+    title: `${academyName} Journal`,
     description:
-      "Kaizen Karate Academy blog posts section. Here you can find updated news of our karate academy",
-    site_url: BASE_URL,
-    feed_url: `${BASE_URL}/feed.xml`,
-    copyright: `${new Date().getFullYear()} - All Rights Reserved by Kaizen Karate Academy.`,
+      "Training stories, competition results and news from our academy.",
+    site_url: absoluteUrl("/blog"),
+    feed_url: absoluteUrl("/feed.xml"),
     language: "en",
-    pubDate: new Date(),
   });
-  data.forEach((post) => {
+  for (const post of data.filter((post) => post.slug))
     feed.item({
-      title: post?.title,
-      description: post?.overview ? toPlainText(post.overview) : post?.title,
-      guid: `${BASE_URL}/blog/post/${post.slug}`,
-      url: `${BASE_URL}/blog/post/${post.slug}`,
-      date: post?._updatedAt,
-      categories: post?.tags?.map(({name})=>name) || []
+      title: post.title,
+      description: post.overview?.length
+        ? toPlainText(post.overview)
+        : post.title,
+      guid: absoluteUrl(`/blog/post/${encodeURIComponent(post.slug)}`),
+      url: absoluteUrl(`/blog/post/${encodeURIComponent(post.slug)}`),
+      date: post._createdAt || post._updatedAt,
+      categories: post.tags || [],
     });
-  });
   return new Response(feed.xml(), {
     headers: {
-      "Content-Type": "application/atom+xml; charset=utf-8",
+      "Content-Type": "application/rss+xml; charset=utf-8",
+      "Cache-Control": "public, s-maxage=600, stale-while-revalidate=600",
     },
   });
 }

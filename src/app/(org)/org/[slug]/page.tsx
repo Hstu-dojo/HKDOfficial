@@ -1,5 +1,13 @@
+import { pageMetadata, noIndex } from "@/lib/seo/site";
 import { db } from "@/lib/connect-db";
-import { partners, courses, courseSchedules, courseInstructors, members, partnerPageSettings } from "@/db/schema";
+import {
+  partners,
+  courses,
+  courseSchedules,
+  courseInstructors,
+  members,
+  partnerPageSettings,
+} from "@/db/schema";
 import { user } from "@/db/schemas/auth";
 import { eq, and, count, inArray } from "drizzle-orm";
 import { notFound } from "next/navigation";
@@ -14,7 +22,15 @@ import {
   OrgFooter,
 } from "@/components/org";
 
-const DAY_NAMES = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+const DAY_NAMES = [
+  "Sunday",
+  "Monday",
+  "Tuesday",
+  "Wednesday",
+  "Thursday",
+  "Friday",
+  "Saturday",
+];
 
 interface OrgPageProps {
   params: Promise<{ slug: string }>;
@@ -26,12 +42,17 @@ export async function generateMetadata({ params }: OrgPageProps) {
     where: eq(partners.slug, slug),
   });
 
-  if (!partner) return { title: "Not Found" };
-
-  return {
-    title: `${partner.name} | Kaizen Partner`,
-    description: partner.description || `Training venue: ${partner.name}`,
-  };
+  if (!partner || !partner.isActive)
+    return { title: "Branch not found", robots: noIndex };
+  const settings = await db.query.partnerPageSettings.findFirst({
+    where: eq(partnerPageSettings.partnerId, partner.id),
+  });
+  return pageMetadata({
+    path: `https://${slug}.${process.env.TENANT_BASE_DOMAIN || "p.hstuma.com"}/`,
+    title: partner.name,
+    description: partner.description || `Karate training at ${partner.name}.`,
+    image: settings?.heroImageUrl || settings?.logoUrl,
+  });
 }
 
 export default async function OrgPage({ params }: OrgPageProps) {
@@ -51,7 +72,9 @@ export default async function OrgPage({ params }: OrgPageProps) {
     db
       .select({ value: count() })
       .from(members)
-      .where(and(eq(members.partnerId, partner.id), eq(members.isActive, true))),
+      .where(
+        and(eq(members.partnerId, partner.id), eq(members.isActive, true)),
+      ),
     db.query.partnerPageSettings.findFirst({
       where: eq(partnerPageSettings.partnerId, partner.id),
     }),
@@ -62,8 +85,14 @@ export default async function OrgPage({ params }: OrgPageProps) {
 
   // Fetch schedules for courses
   const courseIds = partnerCourses.map((c) => c.id);
-  let scheduleItems: { courseName: string; dayName: string; startTime: string; endTime: string; location?: string | null; instructorName?: string | null }[] =
-    [];
+  let scheduleItems: {
+    courseName: string;
+    dayName: string;
+    startTime: string;
+    endTime: string;
+    location?: string | null;
+    instructorName?: string | null;
+  }[] = [];
   if (courseIds.length > 0) {
     const allSchedules = await db.query.courseSchedules.findMany({
       where: eq(courseSchedules.isActive, true),
@@ -107,14 +136,17 @@ export default async function OrgPage({ params }: OrgPageProps) {
           instructorName: instructorMap.get(s.courseId) ?? null,
         };
       })
-      .sort((a, b) => DAY_NAMES.indexOf(a.dayName) - DAY_NAMES.indexOf(b.dayName));
+      .sort(
+        (a, b) => DAY_NAMES.indexOf(a.dayName) - DAY_NAMES.indexOf(b.dayName),
+      );
   }
 
   // Build nav links
   const navLinks = [
     { label: "Programs", href: "#programs" },
     { label: "Schedule", href: "#schedule" },
-    ...(settings?.showGallery !== false && (settings?.galleryImages as string[])?.length > 0
+    ...(settings?.showGallery !== false &&
+    (settings?.galleryImages as string[])?.length > 0
       ? [{ label: "Gallery", href: "#gallery" }]
       : []),
     { label: "Contact", href: "#contact" },
@@ -123,7 +155,9 @@ export default async function OrgPage({ params }: OrgPageProps) {
   // Build marquee items from course names + feature titles
   const marqueeItems = [
     ...partnerCourses.map((c) => c.name.toUpperCase()),
-    ...((settings?.features as any[]) ?? []).map((f: any) => f.title?.toUpperCase()).filter(Boolean),
+    ...((settings?.features as any[]) ?? [])
+      .map((f: any) => f.title?.toUpperCase())
+      .filter(Boolean),
   ];
 
   // Compute dynamic accent CSS variables if partner has a custom accent color

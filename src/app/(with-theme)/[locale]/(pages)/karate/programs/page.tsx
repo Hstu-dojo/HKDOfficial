@@ -7,10 +7,6 @@ import { db } from "@/lib/connect-db";
 import { programs } from "@/db/schemas/karate";
 import { eq, desc } from "drizzle-orm";
 
-export const metadata: Metadata = {
-  title: 'Events & Programs | Kaizen Karate Academy',
-  description: 'Upcoming belt tests, competitions, and special training events.',
-};
 
 // ISR: revalidate every 120 seconds
 export const revalidate = 120;

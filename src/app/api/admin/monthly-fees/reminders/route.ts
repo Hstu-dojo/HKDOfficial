@@ -11,9 +11,13 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   if (!(await hasPermission(context.userId, "MONTHLY_FEE", "READ")))
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
-  return getReminders(request, {
-    partnerId: request.nextUrl.searchParams.get("partnerId") || undefined,
-  });
+  return getReminders(
+    request,
+    {
+      partnerId: request.nextUrl.searchParams.get("partnerId") || undefined,
+    },
+    false,
+  );
 }
 export async function POST(request: NextRequest) {
   const context = await getRBACContext();

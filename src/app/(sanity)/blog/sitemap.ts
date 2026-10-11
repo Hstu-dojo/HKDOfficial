@@ -1,23 +1,30 @@
-import { loadAllProject } from "../../../../sanity/loader/loadQuery";
-import { MetadataRoute } from "next";
-
-export default async function sitemap({
-  id,
-}: {
-  id: number;
-}): Promise<MetadataRoute.Sitemap> {
-  // Google's limit is 50,000 URLs per sitemap
-  const page = 1; // specify the desired page number
-  const limit = 1500; // specify the number of items per page
-  const initial2 = await loadAllProject(page, limit);
-  const data: any = initial2?.data;
-  const BASE_URL = process.env.SITE_URL;
-  //   console.log(data[0].overview);
-
-  return data.map((blog: { _updatedAt: any; slug: any; date: any }) => ({
-    url: `${BASE_URL}/blog/post/${blog?.slug}`,
-    lastModified: blog._updatedAt,
-    changeFrequency: "weekly",
-    priority: 0.5,
-  }));
+import type { MetadataRoute } from "next";
+import { absoluteUrl } from "@/lib/seo/site";
+import { publishedDocuments } from "@/lib/seo/content";
+export const revalidate = 600;
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
+  let documents: Awaited<ReturnType<typeof publishedDocuments>> = [];
+  try {
+    documents = await publishedDocuments();
+  } catch (error) {
+    console.error(
+      "[SEO] Blog sitemap source unavailable",
+      error instanceof Error ? error.message : "Query failed",
+    );
+  }
+  return [
+    { url: absoluteUrl("/blog") },
+    ...documents
+      .filter(
+        (row) =>
+          row._type === "project" ||
+          (row._type === "page" && row.slug !== "post"),
+      )
+      .map((row) => ({
+        url: absoluteUrl(
+          `/blog/${row._type === "project" ? "post/" : ""}${encodeURIComponent(row.slug)}`,
+        ),
+        ...(row._updatedAt ? { lastModified: row._updatedAt } : {}),
+      })),
+  ];
 }

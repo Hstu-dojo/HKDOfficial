@@ -28,7 +28,9 @@
     "email:dev": "email dev --dir src/components/emails -p 3001",
     "db:migrate:billing": "tsx scripts/migrate-billing.ts",
     "test:billing": "node --test tests/billing.test.cjs",
-    "test:billing:db": "node tests/billing-db.integration.cjs"
+    "test:billing:db": "node tests/billing-db.integration.cjs",
+    "db:migrate:emails": "tsx scripts/migrate-email-history.ts",
+    "test:emails": "node --test tests/email-history.test.cjs"
   },
   "dependencies": {
     "@auth/drizzle-adapter": "^1.11.3",

@@ -18,6 +18,7 @@ const Home: NextPage = ({ currentPhoto, images }: { currentPhoto: ImageProps, im
     <div className="bg-black">
       <Head>
         <title>Kaizen Karate Images</title>
+        <meta name="robots" content="noindex, follow" />
         <meta property="og:image" content={currentPhotoUrl} />
         <meta name="twitter:image" content={currentPhotoUrl} />
       </Head>
@@ -49,6 +50,7 @@ export const getStaticProps: GetStaticProps = async (context) => {
   const currentPhoto = reducedResults.find(
     (img) => img.id === Number(context?.params?.photoId),
   );
+  if (!currentPhoto) return { notFound: true };
   if (currentPhoto) {
     currentPhoto.blurDataUrl = await getBase64ImageUrl(currentPhoto);
   }

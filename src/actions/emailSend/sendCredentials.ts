@@ -1,5 +1,6 @@
-import 'server-only';
+import "server-only";
 
+import { trackEmail } from "@/lib/email/history";
 import { Resend } from "resend";
 
 /**
@@ -9,26 +10,50 @@ import { Resend } from "resend";
 export async function sendCredentialsEmail(
   email: string,
   password: string,
-  name: string
+  name: string,
 ): Promise<{ success: boolean; data?: any; error?: string }> {
   const apiKey = process.env.RESEND_API_KEY;
   if (!apiKey) {
-    console.warn("[Email] RESEND_API_KEY is not defined in environment variables. Skipping email dispatch.");
-    return { success: false, error: "RESEND_API_KEY is missing from environment" };
+    await trackEmail(
+      {
+        category: "credentials",
+        provider: "resend",
+        to: email,
+        subject: "Welcome to Kaizen Karate Academy - Your Account Credentials",
+      },
+      async () => ({ error: { message: "Email provider is not configured" } }),
+    );
+    console.warn(
+      "[Email] RESEND_API_KEY is not defined in environment variables. Skipping email dispatch.",
+    );
+    return {
+      success: false,
+      error: "RESEND_API_KEY is missing from environment",
+    };
   }
 
   const resend = new Resend(apiKey);
   try {
-    const fromAddress = process.env.EMAIL_FROM_ADDRESS || "onboarding@resend.dev";
+    const fromAddress =
+      process.env.EMAIL_FROM_ADDRESS || "onboarding@resend.dev";
     const appUrl = process.env.NEXT_PUBLIC_APP_URL || "https://www.hstuma.com";
 
     console.log(`[Email] Dispatching credentials welcome email to: ${email}`);
-    
-    const { data, error } = await resend.emails.send({
-      from: fromAddress,
-      to: email,
-      subject: "Welcome to Kaizen Karate Academy - Your Account Credentials",
-      html: `
+
+    const { data, error } = await trackEmail(
+      {
+        category: "credentials",
+        provider: "resend",
+        to: email,
+        subject: "Welcome to Kaizen Karate Academy - Your Account Credentials",
+      },
+      () =>
+        resend.emails.send({
+          from: fromAddress,
+          to: email,
+          subject:
+            "Welcome to Kaizen Karate Academy - Your Account Credentials",
+          html: `
         <div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; max-width: 600px; margin: 0 auto; padding: 24px; border: 1px solid #e2e8f0; border-radius: 12px; background-color: #ffffff; color: #2d3748;">
           <div style="text-align: center; margin-bottom: 24px;">
             <h1 style="color: #1a365d; margin: 0; font-size: 24px; font-weight: 700; letter-spacing: -0.5px;">Welcome to Kaizen Karate Academy</h1>
@@ -64,17 +89,23 @@ export async function sendCredentialsEmail(
           </p>
         </div>
       `,
-    });
+        }),
+    );
 
     if (error) {
       console.error("[Email] Resend API error:", error);
       return { success: false, error: error.message };
     }
 
-    console.log(`[Email] Welcome credentials email sent successfully to ${email}. ID: ${data?.id}`);
+    console.log(
+      `[Email] Welcome credentials email sent successfully to ${email}. ID: ${data?.id}`,
+    );
     return { success: true, data };
   } catch (error: any) {
-    console.error("[Email] Exception caught during credentials email dispatch:", error);
+    console.error(
+      "[Email] Exception caught during credentials email dispatch:",
+      error,
+    );
     return { success: false, error: error.message || String(error) };
   }
 }

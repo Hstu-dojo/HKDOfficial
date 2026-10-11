@@ -352,6 +352,7 @@ export default function MonthlyFeesManagement({
       <BillingReminders
         key={partnerFilter}
         endpoint="/api/admin/monthly-fees/reminders"
+        showHistory={false}
         partnerId={partnerFilter || undefined}
         canSend={canManage}
       />

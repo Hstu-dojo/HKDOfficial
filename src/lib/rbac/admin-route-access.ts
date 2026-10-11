@@ -30,7 +30,7 @@ export const adminRouteRules: Record<string, Rule> = {
   '/admin/class-schedule': { permission: ['CLASS', 'READ'] },
   '/admin/announcements': { permission: ['ANNOUNCEMENT', 'READ'] },
   '/admin/reports': { permission: ['REPORT', 'READ'] },
-  '/admin/emails': { roles: ['ADMIN', 'SUPER_ADMIN'] },
+  '/admin/emails': { permission: ['EMAIL', 'READ'] },
   '/admin/docs': { roles: ['ADMIN', 'SUPER_ADMIN'] },
   '/admin/settings': { roles: ['SUPER_ADMIN'] },
 };

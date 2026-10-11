@@ -1,89 +1,46 @@
-import { loadAllProject } from "../../../../sanity/loader/loadQuery";
-
-/**
- * Google News Sitemap
- * Only includes articles from the last 2 days (Google News requirement)
- * Uses news:news XML tags for better indexing
- */
+import { publishedDocuments } from "@/lib/seo/content";
+import { absoluteUrl, academyName } from "@/lib/seo/site";
+export const revalidate = 600;
+const xml = (value: string) =>
+  value
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&apos;");
 export async function GET() {
+  const now = Date.now();
+  let entries = "";
   try {
-    // Get articles from the last 2 days (Google News requirement)
-    const twoDaysAgo = new Date();
-    twoDaysAgo.setDate(twoDaysAgo.getDate() - 2);
-
-    const page = 1;
-    const limit = 100;
-    const initial = await loadAllProject(page, limit);
-    const data = initial?.data || [];
-
-    // Filter articles from the last 2 days
-    const recentArticles = data.filter((post: any) => {
-      const postDate = new Date(post._createdAt || post._updatedAt);
-      return postDate >= twoDaysAgo;
-    });
-
-    const BASE_URL = process.env.SITE_URL || process.env.NEXT_PUBLIC_SITE_URL || "https://www.hstuma.com";
-    const PUBLICATION_NAME = "Kaizen Karate Academy";
-    const PUBLICATION_LANGUAGE = "en";
-
-    // Sanitize XML content
-    const sanitizeXML = (str: string) => {
-      if (!str) return "";
-      return str
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;")
-        .replace(/"/g, "&quot;")
-        .replace(/'/g, "&apos;");
-    };
-
-    // Generate Google News sitemap XML
-    const sitemap = `<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
-        xmlns:news="http://www.google.com/schemas/sitemap-news/0.9">
-${recentArticles
-  .map((post: any) => {
-    // Format date in W3C format (YYYY-MM-DDThh:mm:ssTZD)
-    const publicationDate = new Date(post._createdAt || post._updatedAt);
-    const formattedDate = publicationDate.toISOString();
-
-    const title = sanitizeXML(post.title || "");
-    const url = `${BASE_URL}/blog/post/${post.slug}`;
-
-    return `  <url>
-    <loc>${url}</loc>
-    <news:news>
-      <news:publication>
-        <news:name>${PUBLICATION_NAME}</news:name>
-        <news:language>${PUBLICATION_LANGUAGE}</news:language>
-      </news:publication>
-      <news:publication_date>${formattedDate}</news:publication_date>
-      <news:title>${title}</news:title>
-    </news:news>
-  </url>`;
-  })
-  .join("\n")}
-</urlset>`;
-
-    return new Response(sitemap, {
-      headers: {
-        "Content-Type": "application/xml; charset=utf-8",
-        "Cache-Control": "public, s-maxage=1800, stale-while-revalidate=3600",
-      },
-    });
+    const documents = await publishedDocuments();
+    entries = documents
+      .filter(
+        (row) =>
+          row._type === "project" &&
+          row.title &&
+          row._createdAt &&
+          Date.parse(row._createdAt) >= now - 48 * 60 * 60 * 1000 &&
+          Date.parse(row._createdAt) <= now,
+      )
+      .slice(0, 1000)
+      .map(
+        (row) =>
+          `<url><loc>${xml(absoluteUrl(`/blog/post/${encodeURIComponent(row.slug)}`))}</loc><news:news><news:publication><news:name>${xml(academyName)}</news:name><news:language>en</news:language></news:publication><news:publication_date>${row._createdAt}</news:publication_date><news:title>${xml(row.title!)}</news:title></news:news></url>`,
+      )
+      .join("\n");
   } catch (error) {
-    console.error("Error generating Google News sitemap:", error);
-    // Return empty but valid sitemap on error
-    return new Response(
-      `<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
-        xmlns:news="http://www.google.com/schemas/sitemap-news/0.9">
-</urlset>`,
-      {
-        headers: {
-          "Content-Type": "application/xml; charset=utf-8",
-        },
-      }
+    console.error(
+      "[SEO] News sitemap source unavailable",
+      error instanceof Error ? error.message : "Query failed",
     );
   }
+  return new Response(
+    `<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:news="http://www.google.com/schemas/sitemap-news/0.9">${entries}</urlset>`,
+    {
+      headers: {
+        "Content-Type": "application/xml; charset=utf-8",
+        "Cache-Control": "public, s-maxage=600, stale-while-revalidate=600",
+      },
+    },
+  );
 }

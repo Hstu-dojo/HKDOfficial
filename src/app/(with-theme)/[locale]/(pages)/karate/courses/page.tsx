@@ -11,10 +11,6 @@ import { eq, and, ne } from "drizzle-orm";
 import { createClient } from "@/lib/supabase/server";
 import { getPartnerIdForSupabaseUser } from '@/lib/partner-assignment';
 
-export const metadata: Metadata = {
-  title: 'Karate Courses | Kaizen Karate Academy',
-  description: 'Explore our karate courses and start your martial arts journey today. Various packages for kids, adults, and families.',
-};
 
 // ISR: revalidate every 120 seconds
 export const revalidate = 120;

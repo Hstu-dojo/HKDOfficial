@@ -1,3 +1,4 @@
+import { trackEmail } from "@/lib/email/history";
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { db } from '@/lib/connect-db'
@@ -155,7 +156,7 @@ export async function POST(request: NextRequest) {
     if (tenant) emailRedirectUrl.searchParams.set('tenant', tenant)
     emailRedirectUrl.searchParams.set('next', nextPath)
 
-    const { data: authData, error: authError } = await supabase.auth.signUp({
+    const { data: authData, error: authError } = await trackEmail({category:"signup",provider:"supabase",to:email,subject:"Account signup confirmation request"}, () => supabase.auth.signUp({
       email,
       password,
       options: {
@@ -166,7 +167,7 @@ export async function POST(request: NextRequest) {
         // Use canonical callback origin and hop to the tenant via `next=`.
         emailRedirectTo: emailRedirectUrl.toString(),
       }
-    })
+    }))
 
     if (authError) {
       console.error('Supabase Auth Error:', authError)

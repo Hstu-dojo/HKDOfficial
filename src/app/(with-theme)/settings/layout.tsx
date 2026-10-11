@@ -6,6 +6,7 @@ import { SidebarNav } from "./components/sidebar-nav"
 import MaxWidthWrapper from "@/components/maxWidthWrapper"
 
 export const metadata: Metadata = {
+  robots: { index: false, follow: false },
   title: "Forms",
   description: "Advanced form example using react-hook-form and Zod.",
 }

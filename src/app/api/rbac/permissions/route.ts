@@ -70,7 +70,7 @@ export const POST = protectApiRoute("PERMISSION", "CREATE", async (request, cont
       "COURSE", "BLOG", "MEDIA", "CLASS", "EQUIPMENT", "MEMBER", "BILL", "PAYMENT",
       "GALLERY", "EVENT", "ANNOUNCEMENT", "CERTIFICATE", "REPORT",
       "ENROLLMENT", "MONTHLY_FEE", "SCHEDULE", "PROGRAM", "PROGRAM_REGISTRATION",
-      "PARTNER", "PARTNER_BILL", "ADMIN_PANEL"
+      "PARTNER", "PARTNER_BILL", "ADMIN_PANEL", "EMAIL"
     ] as const;
 
     if (!allowedResources.includes(resource)) {

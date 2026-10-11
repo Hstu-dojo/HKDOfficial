@@ -1,3 +1,10 @@
+import {
+  pageMetadata,
+  absoluteUrl,
+  academyName,
+  jsonLd,
+  noIndex,
+} from "@/lib/seo/site";
 import { toPlainText } from "@portabletext/react";
 import { Metadata, ResolvingMetadata } from "next";
 import dynamic from "next/dynamic";
@@ -7,7 +14,6 @@ import { urlForOpenGraphImage } from "../../../../../../sanity/lib/utils";
 import { generateStaticSlugs } from "../../../../../../sanity/loader/generateStaticSlugs";
 import ProjectPage from "@/components/blogs/pages/project/ProjectPage";
 import ErrorPage from "@/app/not-found";
-import Script from "next/script";
 
 const ProjectPreview = dynamic(
   () => import("@/components/blogs/pages/project/ProjectPreview"),
@@ -25,16 +31,29 @@ export async function generateMetadata(
   const { data: project } = await loadProject(slug);
   const ogImage = urlForOpenGraphImage(project?.coverImage);
 
-  return {
-    title: project?.title,
-    description: project?.overview
+  if (!project) return { title: "Story not found", robots: noIndex };
+  const metadata = pageMetadata({
+    path: `/blog/post/${encodeURIComponent(slug)}`,
+    title: project.title || "Academy story",
+    description: project.overview?.length
       ? toPlainText(project.overview)
-      : (await parent).description,
-    openGraph: ogImage
-      ? {
-          images: [ogImage, ...((await parent).openGraph?.images || [])],
-        }
-      : {},
+      : undefined,
+    image: ogImage,
+    index: !(await draftMode()).isEnabled,
+  });
+  const dated = project as typeof project & {
+    _createdAt?: string;
+    _updatedAt?: string;
+  };
+  return {
+    ...metadata,
+    openGraph: {
+      ...metadata.openGraph,
+      type: "article",
+      publishedTime: dated._createdAt,
+      modifiedTime: dated._updatedAt,
+      authors: project.author?.name ? [project.author.name] : [academyName],
+    },
   };
 }
 
@@ -55,48 +74,53 @@ export default async function ProjectSlugRoute({ params }: Props) {
   }
 
   const project = initial.data;
-  const BASE_URL = process.env.SITE_URL || process.env.NEXT_PUBLIC_SITE_URL || "https://www.hstuma.com";
-  
+  const BASE_URL = new URL(absoluteUrl("/")).origin;
+
   // Generate NewsArticle structured data for Google News
   const structuredData = {
     "@context": "https://schema.org",
-    "@type": "NewsArticle",
-    "headline": project.title,
-    "description": project.overview ? toPlainText(project.overview) : project.title,
-    "image": project.coverImage ? urlForOpenGraphImage(project.coverImage) : undefined,
-    "datePublished": (project as any)._createdAt || new Date().toISOString(),
-    "dateModified": (project as any)._updatedAt || new Date().toISOString(),
-    "author": {
+    "@type": "BlogPosting",
+    headline: project.title,
+    description: project.overview
+      ? toPlainText(project.overview)
+      : project.title,
+    image: project.coverImage
+      ? urlForOpenGraphImage(project.coverImage)
+      : undefined,
+    datePublished: (project as any)._createdAt,
+    dateModified: (project as any)._updatedAt,
+    author: {
       "@type": project.author?.name ? "Person" : "Organization",
-      "name": project.author?.name || "Kaizen Karate Academy",
+      name: project.author?.name || "Kaizen Karate Academy",
       ...(project.author?.image && {
-        "image": project.author.image
-      })
+        image: urlForOpenGraphImage(project.author.image),
+      }),
     },
-    "publisher": {
+    publisher: {
       "@type": "Organization",
-      "name": "Kaizen Karate Academy",
-      "logo": {
+      name: "Kaizen Karate Academy",
+      logo: {
         "@type": "ImageObject",
-        "url": `${BASE_URL}/logo.png`
-      }
+        url: `${BASE_URL}/logo.png`,
+      },
     },
-    "mainEntityOfPage": {
+    mainEntityOfPage: {
       "@type": "WebPage",
-      "@id": `${BASE_URL}/blog/post/${slug}`
+      "@id": `${BASE_URL}/blog/post/${slug}`,
     },
-    ...(project.tags && project.tags.length > 0 && {
-      "keywords": project.tags.join(", ")
-    })
+    ...(project.tags &&
+      project.tags.length > 0 && {
+        keywords: project.tags.join(", "),
+      }),
   };
 
   return (
     <>
-      <Script
+      <script
         id="article-structured-data"
         type="application/ld+json"
         dangerouslySetInnerHTML={{
-          __html: JSON.stringify(structuredData),
+          __html: jsonLd(structuredData),
         }}
       />
       <ProjectPage data={project} />

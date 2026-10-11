@@ -1,5 +1,6 @@
 // @ts-nocheck
 import { render } from "@react-email/render";
+import { trackEmail } from "@/lib/email/history";
 import nodemailer from "nodemailer";
 import { CreateAccountMail } from "@/components/emails/body/createAccount";
 
@@ -16,7 +17,7 @@ const transporter = nodemailer.createTransport({
 // create a try - catch block
 
 export default async function accountVerify(email, token) {
-  const emailHtml = render(<CreateAccountMail token={token} />);
+  const emailHtml = await render(<CreateAccountMail token={token} />);
   const options = {
     from: process.env.EMAIL_FROM_ADDRESS || "noreply@kaizenkarate.com",
     bcc: "kaizen@paradox-bd.com",
@@ -26,7 +27,15 @@ export default async function accountVerify(email, token) {
   };
 
   try {
-    const result = await transporter.sendMail(options);
+    const result = await trackEmail(
+      {
+        category: "verification",
+        provider: "smtp",
+        to: options.to,
+        subject: options.subject,
+      },
+      () => transporter.sendMail(options),
+    );
     console.log(result);
     return result;
   } catch (error) {

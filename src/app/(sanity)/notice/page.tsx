@@ -1,3 +1,9 @@
+import { pageMetadata } from "@/lib/seo/site";
+export const metadata = pageMetadata({
+  path: "/notice",
+  title: "Academy notices",
+  description: "Announcements and updates from Kaizen Karate Academy.",
+});
 // ./app/page.tsx
 
 import { SanityDocument } from "next-sanity";

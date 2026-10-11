@@ -1,3 +1,4 @@
+import { trackEmail } from "@/lib/email/history";
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 
@@ -113,11 +114,11 @@ export async function POST(request: NextRequest) {
     if (tenant) redirectToUrl.searchParams.set('tenant', tenant)
     redirectToUrl.searchParams.set('next', nextPath)
 
-    const { error } = await supabase.auth.resetPasswordForEmail(email, {
+    const { error } = await trackEmail({category:"password_reset",provider:"supabase",to:email,subject:"Password reset request"}, () => supabase.auth.resetPasswordForEmail(email, {
       // Use canonical callback origin (usually www.<root>) and hop to the tenant via `next=`.
       // This avoids needing every tenant subdomain in Supabase's redirect allowlist.
       redirectTo: redirectToUrl.toString(),
-    });
+    }));
 
     if (error) {
       return NextResponse.json(

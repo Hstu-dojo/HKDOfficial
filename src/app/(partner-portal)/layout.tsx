@@ -1,3 +1,9 @@
+import type { Metadata } from "next";
+import { noIndex } from "@/lib/seo/site";
+export const metadata: Metadata = {
+  title: "Partner administration",
+  robots: noIndex,
+};
 import "../globals.css";
 import React from "react";
 import { editorialFonts } from "@/styles/fonts";

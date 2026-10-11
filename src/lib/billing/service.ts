@@ -24,7 +24,7 @@ import {
   positivePage,
 } from "./policy";
 
-export type BillingScope = { partnerId?: string; enrollmentId?: string };
+export type BillingScope = { partnerId?: string; enrollmentId?: string; profileId?: string };
 /** Explicit monthly inactivity overrides the default active profile/enrollment state. */
 export function activeForPeriod(period: string): SQL {
   const { year, month } = billingPeriod(period);
@@ -40,6 +40,7 @@ export function scopedFeeConditions(scope: BillingScope = {}) {
     scope.enrollmentId
       ? eq(courseEnrollments.id, scope.enrollmentId)
       : undefined,
+    scope.profileId ? eq(profiles.id, scope.profileId) : undefined,
   ];
 }
 export async function generateMonthlyFees(

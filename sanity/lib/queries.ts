@@ -94,6 +94,7 @@ export const allProjectSlugQuery = (page: number, limit: number) => groq`
     tags,
     title,
     isFeatured,
+    _createdAt,
     _updatedAt
   }
 `;

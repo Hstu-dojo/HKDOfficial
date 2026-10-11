@@ -1,3 +1,4 @@
+import { pageMetadata, academyName } from "@/lib/seo/site";
 import dynamic from "next/dynamic";
 import { draftMode } from "next/headers";
 import Link from "next/link";
@@ -46,4 +47,14 @@ export default async function IndexRoute() {
       trending={initial4?.data}
     />
   );
+}
+
+export async function generateMetadata() {
+  return pageMetadata({
+    path: "/blog",
+    title: "Academy journal",
+    description:
+      "Training stories, academy news, competition results and perspectives from the Kaizen Karate Academy community.",
+    index: !(await draftMode()).isEnabled,
+  });
 }

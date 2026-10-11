@@ -199,8 +199,8 @@ const navigation: NavItem[] = [
     name: "Email Management",
     href: "/admin/emails",
     icon: MapIcon,
-    description: "Email templates and logs",
-    requiredRole: "ADMIN",
+    description: "All platform email history",
+    requiredPermission: { resource: "EMAIL", action: "READ" },
   },
   {
     name: "Documentation",

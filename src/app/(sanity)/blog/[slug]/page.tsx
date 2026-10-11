@@ -1,3 +1,4 @@
+import { pageMetadata, noIndex } from "@/lib/seo/site";
 import { toPlainText } from "@portabletext/react";
 import { Metadata, ResolvingMetadata } from "next";
 import dynamic from "next/dynamic";
@@ -25,12 +26,13 @@ export async function generateMetadata(
   const { slug } = await params;
   const { data: page } = await loadPage(slug);
 
-  return {
-    title: page?.title,
-    description: page?.overview
-      ? toPlainText(page.overview)
-      : (await parent).description,
-  };
+  if (!page) return { title: "Page not found", robots: noIndex };
+  return pageMetadata({
+    path: `/blog/${encodeURIComponent(slug)}`,
+    title: page.title || "Academy journal",
+    description: page.overview?.length ? toPlainText(page.overview) : undefined,
+    index: !(await draftMode()).isEnabled && slug !== "post",
+  });
 }
 
 export function generateStaticParams() {

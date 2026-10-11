@@ -1,0 +1,11 @@
+# Central email history
+
+`/[locale]/admin/emails` is the central administrative listing. Both the page and `/api/admin/emails` require `ADMIN_PANEL:ACCESS` and `EMAIL:READ` (or resource-scoped `MANAGE`). Navigation follows the same permission rule. The permission is assignable in the existing RBAC matrix; the additive migration grants it to ADMIN and SUPER_ADMIN only, preserving custom role grants.
+
+Run `pnpm run db:migrate:emails` on each database before deploying. It adds the EMAIL enum/permission without recreating tables or changing billing records. The configured database has been migrated. The PostgreSQL enum statement commits separately before its permission is used, so use this runner on installations managed with db:push rather than wrapping the migration in one transaction.
+
+The listing reads retained billing-mail deliveries and existing provider webhook logs directly. New verification, welcome/credentials, contact, quotation, and managed Supabase signup/reset/resend requests record metadata in the existing email-log table. Pagination and recipient/subject/category/status filters run in SQL. Provider events are separate rows, identified by message ID; they are not extra dispatches.
+
+A `sent` record means SMTP/Resend accepted the message, not inbox delivery. Supabase `requested` means the authentication API accepted the request: privacy-preserving auth APIs may suppress messages, and the app cannot infer delivery. Delivery/bounce events appear if the provider calls the existing protected `/api/webhook` endpoint. Keep its webhook secret configured. Emails sent directly by Supabase outside application routes require provider callbacks to appear here.
+
+No passwords, verification tokens, HTML bodies or full provider responses are stored by the new attempt logger. Logging failures do not prevent sending or trigger duplicate sends. Previously unlogged sends cannot be recovered from the application's database. Monthly Fees retains preview/send/resume controls but does not return or render recipient email history. Partner history stays limited to its branch.

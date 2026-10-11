@@ -1,3 +1,4 @@
+import { academyName, absoluteUrl, siteOrigin } from "@/lib/seo/site";
 import { Navbar } from "@/components/blogs/global/Navbar";
 import { Footer } from "@/components/blogs/global/Footer";
 import "./index.css";
@@ -28,9 +29,14 @@ export async function generateMetadata(): Promise<Metadata> {
 
   const ogImage = urlForOpenGraphImage(settings?.ogImage);
   return {
+    metadataBase: new URL(siteOrigin()),
+    alternates: { types: { "application/rss+xml": absoluteUrl("/feed.xml") } },
+    robots: (await draftMode()).isEnabled
+      ? { index: false, follow: false }
+      : { index: true, follow: true },
     title: homePage?.title
       ? {
-          template: `%s | ${homePage.title}`,
+          template: `%s | ${academyName}`,
           default: homePage.title || "Personal website",
         }
       : undefined,

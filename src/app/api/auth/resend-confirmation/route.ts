@@ -1,3 +1,4 @@
+import { trackEmail } from "@/lib/email/history";
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/client'
 
@@ -113,13 +114,13 @@ export async function POST(request: NextRequest) {
     if (tenant) emailRedirectUrl.searchParams.set('tenant', tenant)
     emailRedirectUrl.searchParams.set('next', nextPath)
 
-    const { error } = await supabase.auth.resend({
+    const { error } = await trackEmail({category:"verification",provider:"supabase",to:email,subject:"Account confirmation request"}, () => supabase.auth.resend({
       type: 'signup',
       email: email,
       options: {
         emailRedirectTo: emailRedirectUrl.toString(),
       }
-    })
+    }))
 
     if (error) {
       console.error('Supabase Resend Error:', error)

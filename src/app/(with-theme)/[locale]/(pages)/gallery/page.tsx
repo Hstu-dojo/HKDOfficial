@@ -5,14 +5,6 @@ import { eq, asc, isNull, desc, count } from "drizzle-orm";
 import { AlbumGrid, AlbumWithPreviews } from "@/components/gallery/AlbumGrid";
 import Header from "@/components/layout/header";
 import Footer from "@/components/layout/footer";
-export const metadata: Metadata = {
-  title: "Gallery | Kaizen Karate Academy",
-  description: "Explore our collection of photos from events, tournaments, and training sessions.",
-  openGraph: {
-    title: "Gallery | Kaizen Karate Academy",
-    description: "Explore our collection of photos from events, tournaments, and training sessions.",
-  },
-};
 
 // ISR — revalidate every 30 seconds, allowing admin changes to appear quickly
 export const revalidate = 30;

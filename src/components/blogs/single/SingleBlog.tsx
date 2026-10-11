@@ -1,7 +1,7 @@
 // ./components/Post.tsx
 
 import Image from "../shared/SanityImage";
-import { PortableText } from "@portabletext/react";
+import { CustomPortableText } from "../shared/CustomPortableText";
 import imageUrlBuilder from "@sanity/image-url";
 import { SanityDocument } from "next-sanity";
 
@@ -10,7 +10,6 @@ import { dataset, projectId } from "../../../../sanity/env";
 const builder = imageUrlBuilder({ projectId, dataset });
 
 export default function SingleBlog({ post }: { post: SanityDocument }) {
-  console.log(post);
   const { title, mainImage, body } = post;
 
   return (
@@ -33,7 +32,7 @@ export default function SingleBlog({ post }: { post: SanityDocument }) {
           alt={mainImage.alt || ""}
         />
       ) : null}
-      {body ? <PortableText value={body} /> : null}
+      {body ? <CustomPortableText value={body} /> : null}
     </main>
   );
 }

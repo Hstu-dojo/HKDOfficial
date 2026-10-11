@@ -38,6 +38,7 @@ type Preview = {
   total: number;
   emailEligible: number;
   history: History[];
+  campaigns?: History[];
 };
 type Campaign = {
   campaignKey: string;
@@ -50,10 +51,12 @@ export function BillingReminders({
   endpoint,
   partnerId,
   canSend = true,
+  showHistory = true,
 }: {
   endpoint: string;
   partnerId?: string;
   canSend?: boolean;
+  showHistory?: boolean;
 }) {
   const [month, setMonth] = useState(() => businessDate().month),
     [preview, setPreview] = useState<Preview | null>(null);
@@ -143,7 +146,7 @@ export function BillingReminders({
     );
   const resumable = Array.from(
     new Map(
-      (preview?.history || [])
+      (showHistory ? preview?.history || [] : preview?.campaigns || [])
         .filter(
           (h) =>
             ["queued", "failed"].includes(h.status) &&
@@ -155,7 +158,7 @@ export function BillingReminders({
   return (
     <section
       className="min-w-0 overflow-hidden rounded-xl border bg-card shadow-sm"
-      aria-label="Unpaid balances and email history"
+      aria-label="Unpaid balances and reminders"
     >
       <div className="flex flex-col gap-4 border-b p-5 sm:flex-row sm:items-start sm:justify-between">
         <div>
@@ -315,59 +318,63 @@ export function BillingReminders({
               </Button>
             </div>
           ))}
-        <div>
-          <h3 className="font-semibold">Email history</h3>
-          <p className="mt-1 text-xs text-muted-foreground">
-            “Sent” means accepted by your SMTP server. Unconfirmed sends require
-            checking SMTP logs before sending again.
-          </p>
-        </div>
-        {!preview?.history.length ? (
-          <p className="text-sm text-muted-foreground">
-            No billing emails recorded yet.
-          </p>
-        ) : (
-          <div className="max-h-80 overflow-auto rounded-lg border">
-            <table className="w-full text-left text-sm">
-              <thead className="sticky top-0 bg-muted">
-                <tr>
-                  <th className="p-3 font-medium">Recipient</th>
-                  <th className="p-3 font-medium">Date / campaign month</th>
-                  <th className="p-3 font-medium">Status</th>
-                </tr>
-              </thead>
-              <tbody>
-                {preview.history.map((h) => (
-                  <tr key={h.id} className="border-t">
-                    <td className="p-3 align-top">
-                      <p>{h.name || "Student"}</p>
-                      <p className="max-w-56 break-all text-xs text-muted-foreground">
-                        {h.email}
-                      </p>
-                    </td>
-                    <td className="min-w-28 p-3 align-top text-xs text-muted-foreground">
-                      {new Intl.DateTimeFormat("en-BD", {
-                        timeZone: "Asia/Dhaka",
-                        dateStyle: "medium",
-                      }).format(new Date(h.sentAt || h.createdAt))}
-                      <br />
-                      {h.billingMonth}
-                    </td>
-                    <td className="p-3 align-top">
-                      <span className="inline-flex rounded-full border px-2.5 py-1 text-xs capitalize">
-                        {h.status}
-                      </span>
-                      {h.error && (
-                        <p className="mt-1 min-w-36 max-w-xs text-xs text-muted-foreground">
-                          {h.error}
-                        </p>
-                      )}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+        {showHistory && (
+          <>
+            <div>
+              <h3 className="font-semibold">Email history</h3>
+              <p className="mt-1 text-xs text-muted-foreground">
+                “Sent” means accepted by your SMTP server. Unconfirmed sends
+                require checking SMTP logs before sending again.
+              </p>
+            </div>
+            {!preview?.history.length ? (
+              <p className="text-sm text-muted-foreground">
+                No billing emails recorded yet.
+              </p>
+            ) : (
+              <div className="max-h-80 overflow-auto rounded-lg border">
+                <table className="w-full text-left text-sm">
+                  <thead className="sticky top-0 bg-muted">
+                    <tr>
+                      <th className="p-3 font-medium">Recipient</th>
+                      <th className="p-3 font-medium">Date / campaign month</th>
+                      <th className="p-3 font-medium">Status</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {preview.history.map((h) => (
+                      <tr key={h.id} className="border-t">
+                        <td className="p-3 align-top">
+                          <p>{h.name || "Student"}</p>
+                          <p className="max-w-56 break-all text-xs text-muted-foreground">
+                            {h.email}
+                          </p>
+                        </td>
+                        <td className="min-w-28 p-3 align-top text-xs text-muted-foreground">
+                          {new Intl.DateTimeFormat("en-BD", {
+                            timeZone: "Asia/Dhaka",
+                            dateStyle: "medium",
+                          }).format(new Date(h.sentAt || h.createdAt))}
+                          <br />
+                          {h.billingMonth}
+                        </td>
+                        <td className="p-3 align-top">
+                          <span className="inline-flex rounded-full border px-2.5 py-1 text-xs capitalize">
+                            {h.status}
+                          </span>
+                          {h.error && (
+                            <p className="mt-1 min-w-36 max-w-xs text-xs text-muted-foreground">
+                              {h.error}
+                            </p>
+                          )}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </>
         )}
       </div>
     </section>

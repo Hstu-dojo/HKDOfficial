@@ -12,7 +12,11 @@ import {
 } from "./reminders";
 import { billingErrorResponse, billingBody } from "./http";
 import type { BillingScope } from "./service";
-export async function getReminders(request: Request, scope: BillingScope) {
+export async function getReminders(
+  request: Request,
+  scope: BillingScope,
+  includeHistory = true,
+) {
   try {
     const period = new URL(request.url).searchParams.get("billingMonth");
     billingPeriod(period);
@@ -20,7 +24,20 @@ export async function getReminders(request: Request, scope: BillingScope) {
       reminderPreview(period!, scope),
       reminderHistory(scope),
     ]);
-    return NextResponse.json({ ...preview, history });
+    return NextResponse.json({
+      ...preview,
+      history: includeHistory ? history : [],
+      campaigns: includeHistory
+        ? []
+        : history
+            .filter((h) => ["queued", "failed"].includes(h.status))
+            .map((h) => ({
+              campaignKey: h.campaignKey,
+              scopeKey: h.scopeKey,
+              billingMonth: h.billingMonth,
+              status: h.status,
+            })),
+    });
   } catch (error) {
     return billingErrorResponse(error);
   }

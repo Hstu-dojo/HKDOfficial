@@ -30,6 +30,124 @@ function load(file, mocks = {}) {
   return module.exports;
 }
 const policy = load("src/lib/billing/policy.ts");
+test("monthly status includes account identity fallbacks and keeps unlinked members", async () => {
+  const students = [
+    {
+      id: "profile",
+      name: " Profile Name ",
+      nameBangla: "বাংলা",
+      email: " profile@example.test ",
+      userName: "account",
+      userEmail: "account@example.test",
+      isActive: true,
+    },
+    {
+      id: "account",
+      name: " ",
+      nameBangla: null,
+      email: null,
+      userName: " Account Name ",
+      userEmail: " account@example.test ",
+      isActive: true,
+    },
+    {
+      id: "unlinked",
+      name: null,
+      nameBangla: " বাংলা নাম ",
+      email: "offline@example.test",
+      userName: null,
+      userEmail: null,
+      isActive: false,
+    },
+    {
+      id: "missing",
+      name: null,
+      nameBangla: null,
+      email: null,
+      userName: null,
+      userEmail: null,
+      isActive: true,
+    },
+  ];
+  const joins = [];
+  const scopes = [];
+  const query = (rows) => ({
+    from() {
+      return this;
+    },
+    innerJoin() {
+      return this;
+    },
+    leftJoin(table) {
+      joins.push(table);
+      return this;
+    },
+    where(condition) {
+      scopes.push(condition);
+      return Promise.resolve(rows);
+    },
+  });
+  const schema = Object.fromEntries(
+    [
+      "profiles",
+      "profileMonthlyStatus",
+      "courseEnrollments",
+      "courses",
+      "user",
+    ].map((table) => [
+      table,
+      new Proxy({}, { get: (_, column) => `${table}.${String(column)}` }),
+    ]),
+  );
+  const route = load("src/app/api/partner-portal/monthly-status/route.ts", {
+    "@/lib/partner-admin/auth": {
+      requirePartnerAdminUser: async () => ({
+        user: { partnerId: "own-branch" },
+      }),
+    },
+    "@/lib/connect-db": {
+      db: { selectDistinct: () => query(students), select: () => query([]) },
+    },
+    "@/db/schema": schema,
+    "drizzle-orm": {
+      and: (...conditions) => conditions,
+      eq: (column, value) => [column, value],
+    },
+    "@/lib/billing/policy": policy,
+    "@/lib/billing/http": {
+      billingErrorResponse: (error) => {
+        throw error;
+      },
+    },
+  });
+  const response = await route.GET(
+    new Request(
+      "https://academy.example.test/api/partner-portal/monthly-status?month=10&year=2026",
+    ),
+  );
+  assert.equal(response.status, 200);
+  const { members, summary } = await response.json();
+  assert.deepEqual(
+    members.map((m) => [m.memberName, m.memberEmail]),
+    [
+      ["Profile Name", "profile@example.test"],
+      ["Account Name", "account@example.test"],
+      ["বাংলা নাম", "offline@example.test"],
+      [null, null],
+    ],
+  );
+  assert.equal(summary.total, 4);
+  assert.equal(members[2].isActiveThisMonth, false);
+  assert.equal(joins[0], schema.user);
+  assert.ok(
+    scopes.every((conditions) =>
+      conditions.some(
+        ([column, value]) =>
+          column.endsWith("partnerId") && value === "own-branch",
+      ),
+    ),
+  );
+});
 const transitions = load("src/lib/billing/transitions.ts", {
   "./policy": policy,
 });

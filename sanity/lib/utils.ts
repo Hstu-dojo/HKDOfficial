@@ -29,7 +29,7 @@ export function resolveHref(
     case "home":
       return "/blog";
     case "page":
-      return slug ? `/${slug}` : undefined;
+      return slug ? `/blog/${slug}` : undefined;
     case "project":
       return slug ? `/blog/post/${slug}` : undefined;
     default:
