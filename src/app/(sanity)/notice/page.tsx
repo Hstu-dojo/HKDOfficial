@@ -1,32 +1,32 @@
 import { pageMetadata } from "@/lib/seo/site";
+import { getNoticeBoard } from "@/lib/notices/server";
+import NoticeBoard from "@/components/notices/NoticeBoard";
+import { noticeLocale } from "@/lib/notices/copy";
+import { noticePreview } from "@/lib/notices/model";
+export const revalidate = 60;
 export const metadata = pageMetadata({
   path: "/notice",
-  title: "Academy notices",
-  description: "Announcements and updates from Kaizen Karate Academy.",
+  title: "Academy & federation notice board",
+  description:
+    "Official notices from Kaizen Karate Academy and Bangladesh Karate Federation. Training updates, grading dates and competitions.",
 });
-// ./app/page.tsx
-
-import { SanityDocument } from "next-sanity";
-import { draftMode } from "next/headers";
-
-import SanityBlogs from "@/components/blogs/sanity-blogs";
-import { POSTS_QUERY } from "../../../../sanity/lib/queries";
-import { loadQuery } from "../../../../sanity/lib/store";
-import BlogsPreview from "@/components/blogs/PostPreview";
-
-export default async function Page() {
-  const draftModeEnabled = (await draftMode()).isEnabled;
-  const initial = await loadQuery<SanityDocument[]>(
-    POSTS_QUERY,
-    {},
-    {
-      perspective: draftModeEnabled ? "drafts" : "published",
-    },
-  );
-
-  return draftModeEnabled ? (
-    <BlogsPreview initial={initial} />
-  ) : (
-    <SanityBlogs posts={initial.data} />
+export default async function Page({
+  searchParams,
+}: {
+  searchParams: Promise<{ lang?: string }>;
+}) {
+  const { lang } = await searchParams;
+  const data = await getNoticeBoard();
+  return (
+    <NoticeBoard
+      locale={noticeLocale(lang)}
+      data={{
+        ...data,
+        academy: {
+          ...data.academy,
+          items: data.academy.items.map(noticePreview),
+        },
+      }}
+    />
   );
 }

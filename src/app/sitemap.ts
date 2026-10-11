@@ -9,7 +9,7 @@ import {
   seoLocales,
   partnerOrigin,
 } from "@/lib/seo/site";
-import { publishedDocuments } from "@/lib/seo/content";
+import { getAcademyNotices } from "@/lib/notices/server";
 export const revalidate = 600;
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const entries: MetadataRoute.Sitemap = [];
@@ -45,7 +45,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       })
       .from(galleryFolders)
       .where(eq(galleryFolders.isPublished, true)),
-    publishedDocuments(),
+    getAcademyNotices(),
   ]);
   const labels = ["courses", "programs", "branches", "gallery", "notices"];
   sources.forEach((result, index) => {
@@ -82,13 +82,11 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       addLocalized(`/gallery/${encodeURIComponent(row.slug)}`, row.updatedAt),
     );
   if (sources[4].status === "fulfilled")
-    sources[4].value
-      .filter((row) => row._type === "post")
-      .forEach((row) =>
-        entries.push({
-          url: absoluteUrl(`/notice/${encodeURIComponent(row.slug)}`),
-          ...(row._updatedAt ? { lastModified: row._updatedAt } : {}),
-        }),
-      );
+    sources[4].value.items.forEach((row) =>
+      entries.push({
+        url: absoluteUrl(`/notice/${encodeURIComponent(row.id)}`),
+        ...(row.publishedAt ? { lastModified: new Date(row.publishedAt) } : {}),
+      }),
+    );
   return entries;
 }

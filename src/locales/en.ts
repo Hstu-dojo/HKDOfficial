@@ -1,5 +1,10 @@
 export default {
   academyTeam: {
+    bkfRegistration: "BKF registration",
+    blackBeltNumber: "Black belt no.",
+    verifyBKF: "Check BKF list",
+    bkfSearchHint: "Search the BKF list using the registration or black belt number.",
+
     kicker: "OUR PEOPLE",
     title: "Guided by",
     accent: "experience.",
@@ -12,6 +17,7 @@ export default {
   },
   // Header & Navigation
   header: {
+    noticeBoard: "Notice board",
     brand: "Kaizen Karate Academy",
     changelog: "Changelog",
     about: "About",

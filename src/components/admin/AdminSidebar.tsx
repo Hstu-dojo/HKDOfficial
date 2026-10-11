@@ -173,10 +173,10 @@ const navigation: NavItem[] = [
     },
   },
   {
-    name: "Announcements",
+    name: "Notice board",
     href: "/admin/announcements",
     icon: MegaphoneIcon,
-    description: "Manage announcements",
+    description: "Publish academy notices",
     requiredPermission: {
       resource: "ANNOUNCEMENT",
       action: "READ",

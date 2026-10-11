@@ -74,6 +74,13 @@ export const mainNav = [
         items: [],
       },
       {
+        title: "Notice board",
+        i18nKey: "header.noticeBoard",
+        href: "/notice",
+        skipLocale: true,
+        items: [],
+      },
+      {
         title: "Programs",
         i18nKey: "header.programs",
         href: "/karate/programs",

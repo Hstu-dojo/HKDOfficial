@@ -11,6 +11,7 @@ interface SectionHeaderProps {
   align?: "center" | "left";
   className?: string;
   lightText?: boolean;
+  headingLevel?: "h1" | "h2";
 }
 
 export function SectionHeader({
@@ -21,6 +22,7 @@ export function SectionHeader({
   align = "center",
   className,
   lightText = false,
+  headingLevel: Heading = "h2",
 }: SectionHeaderProps) {
   return (
     <motion.div
@@ -45,7 +47,7 @@ export function SectionHeader({
         {kicker}
         {align === "center" && <span className="h-px w-6 bg-primary" />}
       </span>
-      <h2
+      <Heading
         className={cn(
           "text-3xl md:text-5xl font-normal tracking-tight mb-4 leading-[1.15]",
           lightText ? "text-white" : "text-foreground"
@@ -57,7 +59,7 @@ export function SectionHeader({
             {titleAccent}
           </span>
         )}
-      </h2>
+      </Heading>
       {description && (
         <p
           className={cn(

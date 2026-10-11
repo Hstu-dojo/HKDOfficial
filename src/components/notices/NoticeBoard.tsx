@@ -1,0 +1,305 @@
+"use client";
+import { useState } from "react";
+import Link from "next/link";
+import {
+  ArrowUpRight,
+  Pin,
+  Paperclip,
+  Search,
+  ExternalLink,
+} from "lucide-react";
+import { SectionHeader } from "@/components/sections/section-header";
+import {
+  categories,
+  isNoticeExpired,
+  noticeDate,
+  noticeHref,
+  noticeText,
+} from "@/lib/notices/model";
+import type { AcademyNotice, FederationFeed } from "@/lib/notices/model";
+import { noticeCopy, type NoticeLocale } from "@/lib/notices/copy";
+export type NoticeBoardData = {
+  academy: { items: AcademyNotice[]; unavailable: boolean };
+  federation: FederationFeed;
+};
+export default function NoticeBoard({
+  data,
+  locale = "en",
+  compact = false,
+}: {
+  data: NoticeBoardData;
+  locale?: NoticeLocale;
+  compact?: boolean;
+}) {
+  const t = noticeCopy[locale],
+    [category, setCategory] = useState("all"),
+    [search, setSearch] = useState(""),
+    [past, setPast] = useState(false),
+    [page, setPage] = useState(1);
+  const query = search.toLocaleLowerCase(locale).trim();
+  const academy = data.academy.items.filter(
+    (n) =>
+      isNoticeExpired(n) === past &&
+      (category === "all" || n.category === category) &&
+      (!query ||
+        Object.values(noticeText(n, locale)).some((v) =>
+          v.toLocaleLowerCase(locale).includes(query),
+        )),
+  );
+  const federation = data.federation.items.filter(
+    (n) => !query || n.title.toLocaleLowerCase(locale).includes(query),
+  );
+  const size = compact ? 5 : 6,
+    shown = academy.slice(0, compact ? size : page * size),
+    bkf = federation.slice(0, compact ? 5 : page * size);
+  const change = () => setPage(1);
+  return (
+    <section
+      id="notice-board"
+      className="bg-background py-16 text-foreground md:py-24"
+    >
+      <div className="container mx-auto max-w-7xl px-4">
+        <div className="flex flex-col justify-between gap-4 md:flex-row md:items-start">
+          <SectionHeader
+            headingLevel={compact ? "h2" : "h1"}
+            align="left"
+            kicker={t.kicker}
+            title={t.title}
+            titleAccent={t.accent}
+            description={t.description}
+          />
+          {compact ? (
+            <Link
+              href={`/notice${locale === "en" ? "" : `?lang=${locale}`}`}
+              className="inline-flex min-h-11 shrink-0 items-center gap-2 self-start rounded-full border px-5 text-sm hover:bg-muted"
+            >
+              {t.viewAll}
+              <ArrowUpRight size={16} />
+            </Link>
+          ) : (
+            <nav aria-label={t.language} className="flex gap-2">
+              {(["en", "bn", "ne"] as const).map((l) => (
+                <a
+                  key={l}
+                  href={`/notice${l === "en" ? "" : `?lang=${l}`}`}
+                  aria-current={locale === l ? "page" : undefined}
+                  className={`rounded-full border px-3 py-2 text-sm ${locale === l ? "bg-primary text-primary-foreground" : ""}`}
+                >
+                  {l === "en" ? "English" : l === "bn" ? "বাংলা" : "नेपाली"}
+                </a>
+              ))}
+            </nav>
+          )}
+        </div>
+        {!compact && (
+          <label className="mb-6 flex max-w-lg items-center gap-3 rounded-xl border bg-card px-4">
+            <Search size={18} aria-hidden="true" />
+            <span className="sr-only">{t.search}</span>
+            <input
+              value={search}
+              onChange={(e) => {
+                setSearch(e.target.value);
+                change();
+              }}
+              className="min-h-12 min-w-0 flex-1 bg-transparent text-sm outline-none"
+              placeholder={t.searchPlaceholder}
+            />
+          </label>
+        )}
+        <div className="grid items-start gap-8 lg:grid-cols-[minmax(0,1.25fr)_minmax(0,1fr)]">
+          <div className="min-w-0">
+            <div className="mb-5 flex flex-wrap items-center justify-between gap-3 border-b pb-4">
+              <h3 className="font-serif text-2xl md:text-3xl">{t.academy}</h3>
+              <span className="rounded-full bg-primary/10 px-3 py-1 text-xs text-primary">
+                {t.academyHint}
+              </span>
+            </div>
+            <div className="mb-6 flex flex-wrap gap-2" aria-label={t.all}>
+              {["all", ...categories].map((c) => (
+                <button
+                  key={c}
+                  type="button"
+                  aria-pressed={category === c}
+                  onClick={() => {
+                    setCategory(c);
+                    change();
+                  }}
+                  className={`min-h-10 rounded-full border px-3 text-xs transition-colors ${category === c ? "border-primary bg-primary text-primary-foreground" : "bg-card text-muted-foreground hover:text-foreground"}`}
+                >
+                  {t[c as keyof typeof t]}
+                </button>
+              ))}
+            </div>
+            {!compact && (
+              <div className="mb-5 flex gap-5 text-sm">
+                {[false, true].map((value) => (
+                  <button
+                    key={String(value)}
+                    type="button"
+                    aria-pressed={past === value}
+                    onClick={() => {
+                      setPast(value);
+                      change();
+                    }}
+                    className={`min-h-10 border-b-2 ${past === value ? "border-primary text-primary" : "border-transparent text-muted-foreground"}`}
+                  >
+                    {value ? t.archive : t.active}
+                  </button>
+                ))}
+              </div>
+            )}
+            {shown.length ? (
+              <div className="space-y-3">
+                {shown.map((notice, index) => {
+                  const copy = noticeText(notice, locale);
+                  return (
+                    <article
+                      key={notice.id}
+                      className={`group relative rounded-2xl border p-5 md:p-6 ${index === 0 ? "bg-primary/5" : "bg-card"}`}
+                    >
+                      <div className="mb-4 flex flex-wrap items-center gap-3 text-xs text-muted-foreground">
+                        <span className="font-medium text-primary">
+                          {t[notice.category as keyof typeof t] || t.general}
+                        </span>
+                        <time dateTime={notice.publishedAt || undefined}>
+                          {noticeDate(notice.publishedAt, locale)}
+                        </time>
+                        {notice.isPinned && (
+                          <span className="inline-flex items-center gap-1">
+                            <Pin size={12} />
+                            {t.pinned}
+                          </span>
+                        )}
+                        {notice.priority > 0 && (
+                          <span
+                            className={
+                              notice.priority >= 2
+                                ? "text-destructive"
+                                : "text-primary"
+                            }
+                          >
+                            {notice.priority >= 2 ? t.urgent : t.important}
+                          </span>
+                        )}
+                      </div>
+                      <h4
+                        className={`break-words font-serif tracking-tight ${index === 0 ? "text-2xl md:text-3xl" : "text-xl"}`}
+                      >
+                        <Link
+                          href={noticeHref(notice.id, locale)}
+                          className="hover:text-primary"
+                        >
+                          {copy.title}
+                        </Link>
+                      </h4>
+                      <p className="mt-3 line-clamp-2 text-sm leading-relaxed text-muted-foreground">
+                        {copy.content}
+                      </p>
+                      <div className="mt-5 flex flex-wrap items-center justify-between gap-3 text-sm">
+                        <Link
+                          href={noticeHref(notice.id, locale)}
+                          className="inline-flex min-h-10 items-center gap-2 text-primary"
+                        >
+                          {t.open}
+                          <ArrowUpRight size={16} />
+                        </Link>
+                        {notice.attachmentUrl && (
+                          <span className="inline-flex items-center gap-1 text-xs text-muted-foreground">
+                            <Paperclip size={12} />
+                            {t.attachment}
+                          </span>
+                        )}
+                      </div>
+                    </article>
+                  );
+                })}
+              </div>
+            ) : (
+              <div className="rounded-2xl border border-dashed p-8 text-sm leading-relaxed text-muted-foreground">
+                {data.academy.unavailable
+                  ? t.unavailable
+                  : query || category !== "all" || past
+                    ? t.noResults
+                    : t.empty}
+              </div>
+            )}
+          </div>
+          <aside
+            className="min-w-0 rounded-2xl border bg-secondary/5 p-5 md:p-6"
+            aria-label={t.federation}
+          >
+            <div className="mb-4 flex items-start justify-between gap-4">
+              <div>
+                <p className="mb-2 text-xs font-medium uppercase tracking-[.15em] text-primary">
+                  BKF
+                </p>
+                <h3 className="font-serif text-2xl">{t.federation}</h3>
+              </div>
+              <a
+                href="https://bkf.gov.bd/all-notice"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label={t.source}
+                className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full border"
+              >
+                <ExternalLink size={18} />
+              </a>
+            </div>
+            <p className="mb-5 text-sm leading-relaxed text-muted-foreground">
+              {t.federationHint}
+            </p>
+            {data.federation.stale && (
+              <p className="mb-4 rounded-lg border p-3 text-xs text-muted-foreground">
+                {t.stale}
+              </p>
+            )}
+            <div className="divide-y">
+              {bkf.map((n) => (
+                <article key={n.id} className="py-5 first:pt-0">
+                  <time
+                    className="text-xs text-muted-foreground"
+                    dateTime={n.publishedAt}
+                  >
+                    {noticeDate(n.publishedAt, locale)}
+                  </time>
+                  <h4 className="mt-2 break-words text-base font-medium leading-relaxed">
+                    <a
+                      href={n.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="hover:text-primary"
+                    >
+                      {n.title}
+                      <ArrowUpRight className="ml-2 inline" size={14} />
+                      <span className="sr-only"> — {t.source}</span>
+                    </a>
+                  </h4>
+                </article>
+              ))}
+            </div>
+            {!bkf.length && (
+              <p className="py-5 text-sm text-muted-foreground">
+                {data.federation.unavailable ? t.bkfUnavailable : t.noResults}
+              </p>
+            )}
+            {data.federation.fetchedAt && (
+              <p className="mt-5 border-t pt-4 text-xs text-muted-foreground">
+                {t.updated}: {noticeDate(data.federation.fetchedAt, locale)}
+              </p>
+            )}
+          </aside>
+        </div>
+        {!compact &&
+          (academy.length > page * size || federation.length > page * size) && (
+            <button
+              type="button"
+              onClick={() => setPage(page + 1)}
+              className="mx-auto mt-8 block min-h-11 rounded-full border px-6 text-sm"
+            >
+              {t.viewAll} +
+            </button>
+          )}
+      </div>
+    </section>
+  );
+}

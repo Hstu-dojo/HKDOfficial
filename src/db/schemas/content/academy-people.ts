@@ -32,6 +32,8 @@ export const academyPeople = pgTable(
       .$type<"sensei" | "instructor" | "black_belt">()
       .notNull(),
     translations: jsonb("translations").$type<PersonTranslations>().notNull(),
+    bkfRegistrationNo: text("bkf_registration_no").notNull().default(""),
+    blackBeltNo: text("black_belt_no").notNull().default(""),
     profileUrl: text("profile_url").notNull().default(""),
     photoUrl: text("photo_url").notNull().default(""),
     displayOrder: integer("display_order").notNull().default(0),

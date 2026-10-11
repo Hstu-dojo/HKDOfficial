@@ -32,7 +32,7 @@ const getItemHref = (item: NavItem, locale: string, currentPath: string): string
   
   // If skipLocale is true, return the href as-is
   if (item.skipLocale && item.href) {
-    return item.href;
+    return item.href === "/notice" && locale !== "en" ? `/notice?lang=${locale}` : item.href;
   }
   
   // Default: prefix with locale

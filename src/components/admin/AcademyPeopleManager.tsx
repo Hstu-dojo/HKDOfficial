@@ -14,6 +14,8 @@ type Form = {
   translations: PersonTranslations;
   photoUrl: string;
   profileUrl: string;
+  bkfRegistrationNo: string;
+  blackBeltNo: string;
   displayOrder: number;
   isPublished: boolean;
 };
@@ -30,6 +32,8 @@ const empty = (): Form => ({
   translations: { en: blankCopy(), bn: blankCopy(), ne: blankCopy() },
   photoUrl: "",
   profileUrl: "",
+  bkfRegistrationNo: "",
+  blackBeltNo: "",
   displayOrder: 0,
   isPublished: false,
 });
@@ -289,6 +293,56 @@ export default function AcademyPeopleManager() {
                 />
               </div>
             </div>
+            <fieldset className="space-y-3 rounded-xl border p-4">
+              <legend className="px-2 text-sm font-medium">
+                BKF black belt credentials
+              </legend>
+              <div className="grid gap-4 sm:grid-cols-2">
+                <div className="space-y-2">
+                  <Label htmlFor="person-bkf">BKF registration number</Label>
+                  <Input
+                    id="person-bkf"
+                    value={form.bkfRegistrationNo}
+                    maxLength={13}
+                    placeholder="BKF018642"
+                    onChange={(e) =>
+                      setForm({
+                        ...form,
+                        bkfRegistrationNo: e.target.value.toUpperCase(),
+                      })
+                    }
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="person-belt">Black belt number</Label>
+                  <Input
+                    id="person-belt"
+                    value={form.blackBeltNo}
+                    maxLength={11}
+                    placeholder="D03135"
+                    onChange={(e) =>
+                      setForm({
+                        ...form,
+                        blackBeltNo: e.target.value.toUpperCase(),
+                      })
+                    }
+                  />
+                </div>
+              </div>
+              <p className="text-xs text-muted-foreground">
+                Optional. Published credentials appear on the homepage with a
+                link to the official BKF DAN Holder List. Leave blank for
+                credentials issued by other federations.
+              </p>
+              <a
+                href="https://bkf.gov.bd/dan-registrations-index"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex text-sm text-primary"
+              >
+                Check the BKF list ↗
+              </a>
+            </fieldset>
             <div className="space-y-2">
               <Label htmlFor="person-photo">Portrait image URL</Label>
               <Input

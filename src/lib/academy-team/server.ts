@@ -12,6 +12,8 @@ const published = unstable_cache(
         translations: academyPeople.translations,
         photoUrl: academyPeople.photoUrl,
         profileUrl: academyPeople.profileUrl,
+        bkfRegistrationNo: academyPeople.bkfRegistrationNo,
+        blackBeltNo: academyPeople.blackBeltNo,
       })
       .from(academyPeople)
       .where(eq(academyPeople.isPublished, true))

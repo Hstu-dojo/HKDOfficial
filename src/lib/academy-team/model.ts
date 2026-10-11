@@ -21,6 +21,21 @@ export const personSchema = z
       bn: copy.partial().optional(),
       ne: copy.partial().optional(),
     }),
+    bkfRegistrationNo: z
+      .string()
+      .trim()
+      .toUpperCase()
+      .regex(
+        /^(BKF\d{6,10})?$/,
+        "Use a BKF registration number, e.g. BKF018642",
+      )
+      .default(""),
+    blackBeltNo: z
+      .string()
+      .trim()
+      .toUpperCase()
+      .regex(/^(D\d{5,10})?$/, "Use a black belt number, e.g. D03135")
+      .default(""),
     profileUrl: z
       .string()
       .trim()

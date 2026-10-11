@@ -11,6 +11,8 @@ type Person = {
   photoUrl: string;
   profileUrl: string;
   translations: PersonTranslations;
+  bkfRegistrationNo?: string;
+  blackBeltNo?: string;
 };
 export default function SectionAcademyTeam({ people }: { people: Person[] }) {
   const locale = useCurrentLocale(),
@@ -25,6 +27,44 @@ export default function SectionAcademyTeam({ people }: { people: Person[] }) {
     transition: { duration: 0.5 },
   };
   const copy = sensei ? localizedPerson(sensei.translations, locale) : null;
+  const credentials = (person: Person) =>
+    person.bkfRegistrationNo || person.blackBeltNo ? (
+      <div className="mt-5 rounded-xl border bg-primary/5 p-4">
+        <dl className="space-y-2 text-xs">
+          {person.bkfRegistrationNo && (
+            <div className="flex flex-wrap items-baseline justify-between gap-2">
+              <dt className="text-muted-foreground">{t("bkfRegistration")}</dt>
+              <dd className="select-all font-mono font-medium tracking-wide">
+                {person.bkfRegistrationNo}
+              </dd>
+            </div>
+          )}
+          {person.blackBeltNo && (
+            <div className="flex flex-wrap items-baseline justify-between gap-2">
+              <dt className="text-muted-foreground">{t("blackBeltNumber")}</dt>
+              <dd className="select-all font-mono font-medium tracking-wide">
+                {person.blackBeltNo}
+              </dd>
+            </div>
+          )}
+        </dl>
+        <a
+          href="https://bkf.gov.bd/dan-registrations-index"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="mt-3 inline-flex min-h-9 items-center gap-2 text-sm text-primary"
+          aria-label={`${t("verifyBKF")} — ${localizedPerson(person.translations, locale).name}`}
+          title={`${t("bkfSearchHint")} ${person.bkfRegistrationNo || person.blackBeltNo}`}
+        >
+          {t("verifyBKF")}
+          <span aria-hidden>↗</span>
+        </a>
+        <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
+          {t("bkfSearchHint")}
+        </p>
+      </div>
+    ) : null;
+
   return (
     <section
       id="academy-team"
@@ -82,6 +122,7 @@ export default function SectionAcademyTeam({ people }: { people: Person[] }) {
                     </p>
                   ))}
               </div>
+              {credentials(sensei)}
               {sensei.profileUrl && (
                 <a
                   href={sensei.profileUrl}
@@ -141,6 +182,7 @@ export default function SectionAcademyTeam({ people }: { people: Person[] }) {
                       <p className="mt-4 whitespace-pre-line text-sm leading-relaxed text-muted-foreground">
                         {content.summary}
                       </p>
+                      {credentials(person)}
                     </motion.article>
                   );
                 })}

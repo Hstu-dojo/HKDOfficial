@@ -66,3 +66,9 @@ test('homepage feature renders rank, biography and cards as escaped text with tr
  assert.ok(!html.includes('<script>bad()'));assert.ok(html.includes('&lt;script&gt;'));
  assert.equal(renderToStaticMarkup(React.createElement(section,{people:[]})),'');
 });
+test('BKF credential fields normalize IDs, allow legacy profiles and reject invalid identifiers',()=>{
+ const normalized=model.personSchema.parse({...person,bkfRegistrationNo:' bkf018642 ',blackBeltNo:'d03135'});
+ assert.equal(normalized.bkfRegistrationNo,'BKF018642');assert.equal(normalized.blackBeltNo,'D03135');
+ assert.equal(model.personSchema.parse(person).bkfRegistrationNo,'');
+ for(const patch of [{bkfRegistrationNo:'javascript:alert(1)'},{bkfRegistrationNo:'BKFabc'},{blackBeltNo:'D03135<script>'},{blackBeltNo:'03135'}])assert.equal(model.personSchema.safeParse({...person,...patch}).success,false);
+});

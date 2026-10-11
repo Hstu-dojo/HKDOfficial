@@ -1,5 +1,10 @@
 export default {
   academyTeam: {
+    bkfRegistration: "বিকেএফ নিবন্ধন",
+    blackBeltNumber: "ব্ল্যাক বেল্ট নম্বর",
+    verifyBKF: "বিকেএফ তালিকায় দেখুন",
+    bkfSearchHint: "নিবন্ধন বা ব্ল্যাক বেল্ট নম্বর দিয়ে বিকেএফ তালিকায় খুঁজুন।",
+
     kicker: "আমাদের প্রশিক্ষক",
     title: "অভিজ্ঞতার",
     accent: "পথনির্দেশে।",
@@ -12,6 +17,7 @@ export default {
   },
   // হেডার এবং নেভিগেশন
   header: {
+    noticeBoard: "নোটিশ বোর্ড",
     brand: "কাইজেন কারাতে একাডেমি",
     changelog: "পরিবর্তনের তালিকা",
     about: "আমাদের সম্পর্কে",

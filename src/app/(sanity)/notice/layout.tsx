@@ -1,21 +1,12 @@
 import BackToTop from "@/components/back-to-top";
-import React from "react";
-import Header from "@/components/layout/header";
-import { draftMode } from "next/headers";
-import LiveVisualEditing from "@/components/blogs/LiveVisualEditing";
-export default async function RootLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
-  // get next theme color
+import { Suspense } from "react";
+import NoticeShell from "@/components/notices/NoticeShell";
+export default function Layout({ children }: { children: React.ReactNode }) {
   return (
-    <div className="editorial-public">
-      <Header />
-      <div className="mt-24 text-foreground">
-        {children}
-        {(await draftMode()).isEnabled && <LiveVisualEditing />}
-      </div>
+    <div className="editorial-public min-h-screen bg-background">
+      <Suspense>
+        <NoticeShell>{children}</NoticeShell>
+      </Suspense>
       <BackToTop />
     </div>
   );

@@ -35,7 +35,12 @@
     "test:team": "node --test tests/academy-team.test.cjs",
     "test:team:db": "node tests/academy-team-db.integration.cjs",
     "test:tenant": "node --test tests/tenant-site.test.cjs",
-    "test:tenant:db": "node tests/tenant-site-db.integration.cjs"
+    "test:tenant:db": "node tests/tenant-site-db.integration.cjs",
+    "db:migrate:notices": "tsx scripts/migrate-notices.ts",
+    "test:notices": "node --test tests/notices.test.cjs",
+    "test:notices:db": "node tests/notices-db.integration.cjs",
+    "test:bkf-events": "node --test tests/bkf-events.test.cjs",
+    "db:migrate:bkf-credentials": "tsx scripts/migrate-bkf-credentials.ts"
   },
   "dependencies": {
     "@auth/drizzle-adapter": "^1.11.3",
@@ -101,6 +106,7 @@
     "axios": "^1.19.0",
     "bcryptjs": "^2.4.3",
     "canvas": "^3.2.3",
+    "cheerio": "1.0.0",
     "class-variance-authority": "^0.7.1",
     "cloudinary": "^2.10.0",
     "clsx": "^2.1.1",
@@ -139,6 +145,7 @@
     "react-hooks-global-state": "^2.1.0",
     "react-icons": "^5.7.0",
     "react-intersection-observer": "^9.16.0",
+    "react-markdown": "9.0.3",
     "react-swipeable": "^7.0.2",
     "react-use-keypress": "^1.4.0",
     "remixicon": "^3.7.0",

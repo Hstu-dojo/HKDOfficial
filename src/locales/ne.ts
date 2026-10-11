@@ -1,5 +1,10 @@
 export default {
   academyTeam: {
+    bkfRegistration: "BKF दर्ता",
+    blackBeltNumber: "ब्ल्याक बेल्ट नम्बर",
+    verifyBKF: "BKF सूचीमा हेर्नुहोस्",
+    bkfSearchHint: "दर्ता वा ब्ल्याक बेल्ट नम्बरबाट BKF सूचीमा खोज्नुहोस्।",
+
     kicker: "हाम्रो टोली",
     title: "अनुभवको",
     accent: "मार्गदर्शनमा।",
@@ -12,6 +17,7 @@ export default {
   },
   // हेडर र नेभिगेसन
   header: {
+    noticeBoard: "सूचना बोर्ड",
     brand: "काइजेन कराते एकेडेमी",
     changelog: "परिवर्तन सूची",
     about: "हाम्रो बारेमा",

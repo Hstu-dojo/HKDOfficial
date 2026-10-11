@@ -1,3 +1,6 @@
+import { noticePreview } from "@/lib/notices/model";
+import { getNoticeBoard } from "@/lib/notices/server";
+import SectionNoticeBoard from "@/components/sections/section-notice-board";
 import Header from "@/components/layout/header";
 import Footer from "@/components/layout/footer";
 import SectionCTA from "@/components/sections/section-cta";
@@ -29,30 +32,64 @@ import { eq, asc, and, count, inArray, desc } from "drizzle-orm";
 
 // Pre-build locale pages at build time so first visit from external links (Facebook etc.) works instantly
 export function generateStaticParams() {
-  return [{ locale: 'en' }, { locale: 'bn' }];
+  return [{ locale: "en" }, { locale: "bn" }];
 }
 
 // Enable ISR with revalidation every 60 seconds
 export const revalidate = 60;
 
 // Fetch hero images server-side for instant render (no client-side loading spinner)
-async function getHeroImages(): Promise<{ title: string; thumbnail: string }[]> {
-  const cloudName = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME || "dksn30eyz";
-  const cinematicEffect = "c_fill,w_720,h_480,q_auto,e_vignette:30,e_contrast:10,e_vibrance:20,e_sharpen:80";
+async function getHeroImages(): Promise<
+  { title: string; thumbnail: string }[]
+> {
+  const cloudName =
+    process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME || "dksn30eyz";
+  const cinematicEffect =
+    "c_fill,w_720,h_480,q_auto,e_vignette:30,e_contrast:10,e_vibrance:20,e_sharpen:80";
   const baseUrl = `https://res.cloudinary.com/${cloudName}/image/upload/${cinematicEffect}`;
 
   // Fallback images
   const fallbackProducts = [
-    { title: "Kaizen Moment 1", thumbnail: `${baseUrl}/favourite/1762661158686_exjfut.jpg` },
-    { title: "Kaizen Moment 2", thumbnail: `${baseUrl}/favourite/1769317491047_xkymix.jpg` },
-    { title: "Kaizen Moment 3", thumbnail: `${baseUrl}/favourite/1769317492753_cx7f84.jpg` },
-    { title: "Kaizen Moment 4", thumbnail: `${baseUrl}/favourite/20250905_125038_bzghpl.jpg` },
-    { title: "Kaizen Moment 5", thumbnail: `${baseUrl}/favourite/IMG_1937_sendde.jpg` },
-    { title: "Kaizen Moment 6", thumbnail: `${baseUrl}/favourite/IMG_20251108_215737_zxprcw.jpg` },
-    { title: "Kaizen Moment 7", thumbnail: `${baseUrl}/favourite/IMG_20251108_221125_hfljw3.jpg` },
-    { title: "Kaizen Moment 8", thumbnail: `${baseUrl}/favourite/IMG-20250822-WA0053_qiobdp.jpg` },
-    { title: "Kaizen Moment 9", thumbnail: `${baseUrl}/favourite/IMG20241102150243_01_mujqjl.jpg` },
-    { title: "Kaizen Moment 10", thumbnail: `${baseUrl}/favourite/IMG20241102210222_yg3tws.jpg` },
+    {
+      title: "Kaizen Moment 1",
+      thumbnail: `${baseUrl}/favourite/1762661158686_exjfut.jpg`,
+    },
+    {
+      title: "Kaizen Moment 2",
+      thumbnail: `${baseUrl}/favourite/1769317491047_xkymix.jpg`,
+    },
+    {
+      title: "Kaizen Moment 3",
+      thumbnail: `${baseUrl}/favourite/1769317492753_cx7f84.jpg`,
+    },
+    {
+      title: "Kaizen Moment 4",
+      thumbnail: `${baseUrl}/favourite/20250905_125038_bzghpl.jpg`,
+    },
+    {
+      title: "Kaizen Moment 5",
+      thumbnail: `${baseUrl}/favourite/IMG_1937_sendde.jpg`,
+    },
+    {
+      title: "Kaizen Moment 6",
+      thumbnail: `${baseUrl}/favourite/IMG_20251108_215737_zxprcw.jpg`,
+    },
+    {
+      title: "Kaizen Moment 7",
+      thumbnail: `${baseUrl}/favourite/IMG_20251108_221125_hfljw3.jpg`,
+    },
+    {
+      title: "Kaizen Moment 8",
+      thumbnail: `${baseUrl}/favourite/IMG-20250822-WA0053_qiobdp.jpg`,
+    },
+    {
+      title: "Kaizen Moment 9",
+      thumbnail: `${baseUrl}/favourite/IMG20241102150243_01_mujqjl.jpg`,
+    },
+    {
+      title: "Kaizen Moment 10",
+      thumbnail: `${baseUrl}/favourite/IMG20241102210222_yg3tws.jpg`,
+    },
   ];
 
   try {
@@ -64,7 +101,9 @@ async function getHeroImages(): Promise<{ title: string; thumbnail: string }[]> 
     }
 
     const url = `https://api.cloudinary.com/v1_1/${cloudName}/resources/image?type=upload&prefix=favourite/&max_results=50`;
-    const credentials = Buffer.from(`${apiKey}:${apiSecret}`).toString("base64");
+    const credentials = Buffer.from(`${apiKey}:${apiSecret}`).toString(
+      "base64",
+    );
 
     const response = await fetch(url, {
       headers: { Authorization: `Basic ${credentials}` },
@@ -74,13 +113,14 @@ async function getHeroImages(): Promise<{ title: string; thumbnail: string }[]> 
     if (!response.ok) return fallbackProducts;
 
     const data = await response.json();
-    const cinematicTransform = "c_fill,w_720,h_480,q_auto,e_vignette:30,e_contrast:10,e_vibrance:20,e_sharpen:80";
+    const cinematicTransform =
+      "c_fill,w_720,h_480,q_auto,e_vignette:30,e_contrast:10,e_vibrance:20,e_sharpen:80";
 
     const images = (data.resources || []).map(
       (resource: { public_id: string; format: string }, index: number) => ({
         title: `Kaizen Moment ${index + 1}`,
         thumbnail: `https://res.cloudinary.com/${cloudName}/image/upload/${cinematicTransform}/${resource.public_id}.${resource.format || "jpg"}`,
-      })
+      }),
     );
 
     return images.length > 0 ? images : fallbackProducts;
@@ -129,7 +169,7 @@ async function getRecentAlbums() {
           createdAt: folder.createdAt.toISOString(),
           previewImages: previewImagesResult,
         };
-      })
+      }),
     );
 
     return albumsWithData;
@@ -155,7 +195,10 @@ async function getBranches(): Promise<BranchData[]> {
         yearEstablished: partnerPageSettings.yearEstablished,
       })
       .from(partners)
-      .leftJoin(partnerPageSettings, eq(partnerPageSettings.partnerId, partners.id))
+      .leftJoin(
+        partnerPageSettings,
+        eq(partnerPageSettings.partnerId, partners.id),
+      )
       .where(eq(partners.isActive, true))
       .orderBy(asc(partners.name));
 
@@ -164,17 +207,27 @@ async function getBranches(): Promise<BranchData[]> {
     const [memberCounts, courseCounts] = await Promise.all([
       partnerIds.length > 0
         ? db
-          .select({ partnerId: profiles.partnerId, count: count() })
-          .from(profiles)
-          .where(and(eq(profiles.isActive, true), inArray(profiles.partnerId, partnerIds)))
-          .groupBy(profiles.partnerId)
+            .select({ partnerId: profiles.partnerId, count: count() })
+            .from(profiles)
+            .where(
+              and(
+                eq(profiles.isActive, true),
+                inArray(profiles.partnerId, partnerIds),
+              ),
+            )
+            .groupBy(profiles.partnerId)
         : Promise.resolve([]),
       partnerIds.length > 0
         ? db
-          .select({ partnerId: courses.partnerId, count: count() })
-          .from(courses)
-          .where(and(eq(courses.isActive, true), inArray(courses.partnerId, partnerIds)))
-          .groupBy(courses.partnerId)
+            .select({ partnerId: courses.partnerId, count: count() })
+            .from(courses)
+            .where(
+              and(
+                eq(courses.isActive, true),
+                inArray(courses.partnerId, partnerIds),
+              ),
+            )
+            .groupBy(courses.partnerId)
         : Promise.resolve([]),
     ]);
 
@@ -192,15 +245,27 @@ async function getBranches(): Promise<BranchData[]> {
   }
 }
 
-export default async function Home({ params }: { params: Promise<{ locale: string }> }) {
+export default async function Home({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}) {
   // Params are handled by the layout, but we need to accept them here
   // to avoid Next.js routing errors with dynamic segments
-  const [heroImages, branches, recentAlbums, competition, academyPeople] = await Promise.all([
+  const [
+    heroImages,
+    branches,
+    recentAlbums,
+    competition,
+    academyPeople,
+    noticeBoard,
+  ] = await Promise.all([
     getHeroImages(),
     getBranches(),
     getRecentAlbums(),
     getPublishedCompetitionResults(),
     getPublishedAcademyPeople(),
+    getNoticeBoard(),
   ]);
 
   return (
@@ -210,10 +275,31 @@ export default async function Home({ params }: { params: Promise<{ locale: strin
         <main className="relative">
           <div className="relative isolate" data-home-sections>
             <SectionHero initialProducts={heroImages} />
+            <SectionNoticeBoard
+              data={{
+                ...noticeBoard,
+                academy: {
+                  ...noticeBoard.academy,
+                  items: noticeBoard.academy.items
+                    .filter(
+                      (n) => !n.expiresAt || new Date(n.expiresAt) > new Date(),
+                    )
+                    .slice(0, 18)
+                    .map(noticePreview),
+                },
+                federation: {
+                  ...noticeBoard.federation,
+                  items: noticeBoard.federation.items.slice(0, 5),
+                },
+              }}
+            />
             <SectionHomePrograms />
             <SectionStatsBar />
             <SectionAcademyTeam people={academyPeople} />
-            <SectionCompetitionResults results={competition.results} unavailable={competition.unavailable} />
+            <SectionCompetitionResults
+              results={competition.results}
+              unavailable={competition.unavailable}
+            />
             <SectionBranches branches={branches} />
             <SectionWhyUs />
             <SectionRecentAlbums albums={recentAlbums} />
