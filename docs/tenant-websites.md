@@ -11,7 +11,7 @@ Each active organization has its public homepage at `https://<slug>.p.hstuma.com
 | Hero & CTA | Hero image, tagline, announcement, establishment year and actual signup destination |
 | About | About title/text and mission displayed separately |
 | Founder | Instructor name, title, biography and portrait; hidden when its toggle is off |
-| Features | Icons, titles and descriptions in the About section; editable without raw JSON |
+| Features | Numbered titles and descriptions in the About section; editable without raw JSON |
 | Gallery | All configured image URLs, responsive grid and keyboard-accessible photo viewer |
 | Visibility | Stats, programs, schedules, gallery and instructor visibility; navigation excludes absent sections |
 | Social links | HTTPS links in the footer |

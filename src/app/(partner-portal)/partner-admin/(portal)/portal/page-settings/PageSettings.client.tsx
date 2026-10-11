@@ -8,6 +8,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { OrgImage } from "@/components/org/OrgImage";
+import { safePublicUrl } from "@/lib/org/settings";
 import { pageSettingsPatchSchema } from "@/lib/org/settings";
 import { Checkbox } from "@/components/ui/checkbox";
 
@@ -197,6 +199,11 @@ export default function PageSettings() {
                   value={settings.logoUrl || ""}
                   onChange={(e) => update("logoUrl", e.target.value)}
                 />
+                <ImagePreview
+                  src={settings.logoUrl || ""}
+                  alt="Organization logo"
+                  className="h-24 w-24"
+                />
               </div>
               <div className="space-y-2">
                 <Label htmlFor="accentColor">Accent color (hex)</Label>
@@ -220,6 +227,11 @@ export default function PageSettings() {
                   id="heroImageUrl"
                   value={settings.heroImageUrl || ""}
                   onChange={(e) => update("heroImageUrl", e.target.value)}
+                />
+                <ImagePreview
+                  src={settings.heroImageUrl || ""}
+                  alt="Hero image"
+                  className="aspect-video w-full max-w-xl"
                 />
               </div>
               <div className="space-y-2 sm:col-span-2">
@@ -346,6 +358,11 @@ export default function PageSettings() {
                   value={settings.founderImageUrl || ""}
                   onChange={(e) => update("founderImageUrl", e.target.value)}
                 />
+                <ImagePreview
+                  src={settings.founderImageUrl || ""}
+                  alt="Instructor portrait"
+                  className="aspect-[4/5] w-full max-w-xs"
+                />
               </div>
               <div className="space-y-2 sm:col-span-2">
                 <Label htmlFor="founderBio">Founder bio</Label>
@@ -435,6 +452,21 @@ export default function PageSettings() {
               value={galleryText}
               onChange={(e) => setGalleryText(e.target.value)}
             />
+            <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
+              {galleryText
+                .split("\n")
+                .map((value) => value.trim())
+                .filter(Boolean)
+                .slice(0, 60)
+                .map((src, index) => (
+                  <ImagePreview
+                    key={index}
+                    src={src}
+                    alt={`Gallery photo ${index + 1}`}
+                    className="aspect-[4/3] w-full"
+                  />
+                ))}
+            </div>
           </section>
 
           <section className="portal-surface space-y-4">
@@ -459,21 +491,6 @@ export default function PageSettings() {
                     Remove
                   </Button>
                 </div>
-                <Label htmlFor={`feature-icon-${index}`}>
-                  Icon or emoji (optional)
-                </Label>
-                <Input
-                  id={`feature-icon-${index}`}
-                  value={feature.icon}
-                  maxLength={100}
-                  onChange={(e) =>
-                    setFeatures(
-                      features.map((f, i) =>
-                        i === index ? { ...f, icon: e.target.value } : f,
-                      ),
-                    )
-                  }
-                />
                 <Input
                   id={`feature-title-${index}`}
                   placeholder="Title"
@@ -571,5 +588,35 @@ function SocialField({
       <Label htmlFor={id}>{label}</Label>
       <Input id={id} value={value} onChange={(e) => onChange(e.target.value)} />
     </div>
+  );
+}
+
+function ImagePreview({
+  src,
+  alt,
+  className,
+}: {
+  src: string;
+  alt: string;
+  className: string;
+}) {
+  const [value, setValue] = React.useState(src);
+  React.useEffect(() => {
+    const timer = setTimeout(() => setValue(src), 350);
+    return () => clearTimeout(timer);
+  }, [src]);
+  const source = safePublicUrl(value, true);
+  if (!source || source.startsWith("#")) return null;
+  return (
+    <figure
+      className={`relative overflow-hidden rounded-lg border bg-muted ${className}`}
+    >
+      <OrgImage
+        src={source}
+        alt={alt}
+        sizes="(max-width:640px) 50vw, 320px"
+        className="object-contain"
+      />
+    </figure>
   );
 }

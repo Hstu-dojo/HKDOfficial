@@ -148,23 +148,29 @@ export default function OrgSplitFeature({
         )}
       </div>
       {features.length > 0 && (
-        <div className="grid border-t border-border bg-card sm:grid-cols-2 lg:grid-cols-3">
+        <div
+          className={`grid border-t border-border bg-card sm:grid-cols-2 ${features.length === 4 ? "lg:grid-cols-4" : "lg:grid-cols-3"}`}
+        >
           {features.map((feature, index) => (
             <div
               key={`${feature.title}-${index}`}
-              className="border-b border-border px-4 py-6 md:px-12 md:py-10"
+              className="min-w-0 border-b border-border px-4 py-6 md:px-8 md:py-8"
             >
-              {feature.icon && (
-                <span aria-hidden="true" className="mb-3 block text-2xl">
-                  {feature.icon}
-                </span>
-              )}
+              <div
+                aria-hidden="true"
+                className="mb-4 flex items-center gap-3 text-xs tabular-nums text-muted-foreground"
+              >
+                <span>{String(index + 1).padStart(2, "0")}</span>
+                <span className="h-px w-6 bg-primary/50" />
+              </div>
               <h3 className="font-display text-2xl text-foreground">
                 {feature.title}
               </h3>
-              <p className="mt-3 font-body text-sm leading-relaxed text-muted-foreground">
-                {feature.description}
-              </p>
+              {feature.description && (
+                <p className="mt-3 font-body text-sm leading-relaxed text-muted-foreground">
+                  {feature.description}
+                </p>
+              )}
             </div>
           ))}
         </div>

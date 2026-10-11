@@ -2,21 +2,30 @@
 import Image from "next/image";
 import { publicImageSource } from "@/lib/org/settings";
 import { useState } from "react";
-export function OrgImage({
-  src,
-  alt,
-  sizes,
-  priority = false,
-  className = "object-cover",
-}: {
+type OrgImageProps = {
   src: string;
   alt: string;
   sizes: string;
   priority?: boolean;
   className?: string;
-}) {
-  const [failed, setFailed] = useState(false);
-  if (failed)
+};
+
+export function OrgImage(props: OrgImageProps) {
+  const source = publicImageSource(props.src);
+  return <ImageWithFallback key={source} {...props} src={source} />;
+}
+
+function ImageWithFallback({
+  src,
+  alt,
+  sizes,
+  priority = false,
+  className = "object-cover",
+}: OrgImageProps) {
+  const [attempt, setAttempt] = useState<"optimized" | "original" | "failed">(
+    "optimized",
+  );
+  if (attempt === "failed")
     return (
       <div
         role="img"
@@ -28,14 +37,19 @@ export function OrgImage({
     );
   return (
     <Image
-      src={publicImageSource(src)}
+      key={attempt}
+      src={src}
       alt={alt}
       fill
       sizes={sizes}
       priority={priority}
+      loading={attempt === "original" ? "eager" : undefined}
       quality={60}
+      unoptimized={attempt === "original"}
       className={className}
-      onError={() => setFailed(true)}
+      onError={() =>
+        setAttempt(attempt === "optimized" ? "original" : "failed")
+      }
     />
   );
 }

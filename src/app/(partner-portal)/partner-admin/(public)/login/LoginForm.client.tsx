@@ -1,14 +1,13 @@
 'use client'
 
 import * as React from 'react'
-import { useRouter, useSearchParams } from 'next/navigation'
+import { useSearchParams } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 
 export default function LoginForm() {
-  const router = useRouter()
   const searchParams = useSearchParams()
   const requestedNext = searchParams?.get('next') || '/partner-admin'
   const next = /^\/partner-admin(?:\/|$)/.test(requestedNext) && !requestedNext.includes('\\') ? requestedNext : '/partner-admin'
@@ -35,8 +34,8 @@ export default function LoginForm() {
         throw new Error(data?.message || data?.error || 'Login failed')
       }
 
-      router.replace(next)
-      router.refresh()
+      // Reload the protected route with the newly issued session cookie.
+      window.location.replace(next)
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Login failed')
     } finally {

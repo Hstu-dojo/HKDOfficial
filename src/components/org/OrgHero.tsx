@@ -245,7 +245,8 @@ export default function OrgHero({
               EST. {yearEstablished}
             </span>
           )}
-          <Link
+          {/* Cross the rewritten public-site / portal boundary with a document navigation. */}
+          <a
             href="/partner-admin"
             className="anim-snap-in group relative flex h-8 w-8 items-center justify-center border border-foreground/15 text-foreground/40 transition-all duration-300 hover:border-primary hover:text-primary md:h-9 md:w-9"
             style={d(320)}
@@ -270,7 +271,7 @@ export default function OrgHero({
                 d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
               />
             </svg>
-          </Link>
+          </a>
           <Link
             href={
               status === "authenticated" ? "/dashboard" : ctaLink || "/register"
@@ -348,9 +349,8 @@ export default function OrgHero({
               {link.label}
             </a>
           ))}
-          <Link
+          <a
             href="/partner-admin"
-            onClick={() => setMenuOpen(false)}
             className="mt-4 flex min-h-[48px] items-center gap-3 border-t border-foreground/10 pt-6 font-display text-2xl uppercase tracking-tighter text-foreground/40 transition-colors hover:text-primary"
           >
             <svg
@@ -372,7 +372,7 @@ export default function OrgHero({
               />
             </svg>
             Admin Portal
-          </Link>
+          </a>
         </div>
       )}
 
