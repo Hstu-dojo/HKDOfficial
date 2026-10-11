@@ -1,4 +1,4 @@
-import Image from "next/image";
+import Image from "./SanityImage";
 import { ImageIcon } from "lucide-react";
 
 import { urlForImage } from "../../../../sanity/lib/utils";

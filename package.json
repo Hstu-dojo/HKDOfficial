@@ -25,7 +25,10 @@
     "test:partner-assignment": "tsx scripts/test-partner-assignment.ts",
     "start": "next start",
     "lint": "next lint",
-    "email:dev": "email dev --dir src/components/emails -p 3001"
+    "email:dev": "email dev --dir src/components/emails -p 3001",
+    "db:migrate:billing": "tsx scripts/migrate-billing.ts",
+    "test:billing": "node --test tests/billing.test.cjs",
+    "test:billing:db": "node tests/billing-db.integration.cjs"
   },
   "dependencies": {
     "@auth/drizzle-adapter": "^1.11.3",

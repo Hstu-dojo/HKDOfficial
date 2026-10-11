@@ -113,7 +113,7 @@ export const profileMonthlyStatus = pgTable("profile_monthly_status", {
   createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
   updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow().notNull(),
 }, (table) => ({
-  profileMonthYearIdx: uniqueIndex("profile_month_year_idx").on(table.profileId, table.month, table.year),
+  profileMonthYearIdx: uniqueIndex("profile_month_year_idx").on(table.profileId, table.partnerId, table.month, table.year),
 }));
 
 // Branch change requests — profile transfer to a different partner/venue

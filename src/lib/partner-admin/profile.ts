@@ -1,3 +1,4 @@
+import { businessDate, feeBalance } from "@/lib/billing/policy";
 import "server-only";
 import { db } from "@/lib/connect-db";
 import { partners } from "@/db/schemas/partner";
@@ -72,7 +73,9 @@ export async function getPartnerProfile(partnerId: string) {
         eq(monthlyFees.enrollmentId, courseEnrollments.id),
       )
       .innerJoin(courses, eq(courseEnrollments.courseId, courses.id))
-      .where(eq(courses.partnerId, partner.id)),
+      .where(
+        and(eq(courses.partnerId, partner.id), eq(monthlyFees.currency, "BDT")),
+      ),
     db
       .select({
         id: courseEnrollments.id,
@@ -125,7 +128,7 @@ export async function getPartnerProfile(partnerId: string) {
   let prevMonthDue = 0;
   const prevMonthDueStudents = new Set<string>();
 
-  const now = new Date();
+  const now = new Date(`${businessDate().month}-01T12:00:00+06:00`);
   const currentMonthStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}`;
 
   const prevMonthDate = new Date(now.getFullYear(), now.getMonth() - 1, 1);
@@ -152,24 +155,34 @@ export async function getPartnerProfile(partnerId: string) {
   for (const record of feeRecords) {
     const amount = record.amount || 0;
     const paid = record.amountPaid || 0;
-    const outstanding = Math.max(amount - paid, 0);
+    const outstanding = feeBalance(record);
 
     totalRevenue += paid;
 
-    if (["due", "overdue", "partial", "pending"].includes(record.status)) {
+    if (
+      ["due", "overdue", "partial", "pending", "payment_submitted"].includes(
+        record.status,
+      )
+    ) {
       totalDueBalance += outstanding;
     }
 
     if (record.billingMonth === currentMonthStr) {
       thisMonthCollected += paid;
-      if (["due", "overdue", "partial", "pending"].includes(record.status)) {
+      if (
+        ["due", "overdue", "partial", "pending", "payment_submitted"].includes(
+          record.status,
+        )
+      ) {
         thisMonthDue += outstanding;
       }
     }
 
     if (record.billingMonth === prevMonthStr) {
       if (
-        ["due", "overdue", "partial", "pending"].includes(record.status) &&
+        ["due", "overdue", "partial", "pending", "payment_submitted"].includes(
+          record.status,
+        ) &&
         outstanding > 0
       ) {
         prevMonthDue += outstanding;
@@ -181,7 +194,11 @@ export async function getPartnerProfile(partnerId: string) {
 
     if (record.billingMonth in monthlyTrend) {
       monthlyTrend[record.billingMonth].collected += paid;
-      if (["due", "overdue", "partial", "pending"].includes(record.status)) {
+      if (
+        ["due", "overdue", "partial", "pending", "payment_submitted"].includes(
+          record.status,
+        )
+      ) {
         monthlyTrend[record.billingMonth].due += outstanding;
       }
     }
@@ -193,8 +210,8 @@ export async function getPartnerProfile(partnerId: string) {
     .sort()
     .map((k) => ({
       month: monthlyTrend[k].month,
-      collected: Math.round(monthlyTrend[k].collected / 100),
-      due: Math.round(monthlyTrend[k].due / 100),
+      collected: monthlyTrend[k].collected / 100,
+      due: monthlyTrend[k].due / 100,
     }));
 
   return {
@@ -204,21 +221,21 @@ export async function getPartnerProfile(partnerId: string) {
       totalCourses: courseStats[0]?.total || 0,
       activeEnrollments: activeEnrollmentStats[0]?.total || 0,
       totalEnrollments: totalEnrollmentStats[0]?.total || 0,
-      totalRevenue: Math.round(totalRevenue / 100),
-      totalDueBalance: Math.round(totalDueBalance / 100),
-      thisMonthDue: Math.round(thisMonthDue / 100),
-      thisMonthCollected: Math.round(thisMonthCollected / 100),
+      totalRevenue: totalRevenue / 100,
+      totalDueBalance: totalDueBalance / 100,
+      thisMonthDue: thisMonthDue / 100,
+      thisMonthCollected: thisMonthCollected / 100,
       prevMonthLabel,
-      prevMonthDue: Math.round(prevMonthDue / 100),
+      prevMonthDue: prevMonthDue / 100,
       prevMonthDueStudentCount,
       trend,
       recentEnrollments: recentEnrollments.map((e) => ({
         ...e,
-        monthlyFee: Math.round(e.monthlyFee / 100),
+        monthlyFee: e.monthlyFee / 100,
       })),
       recentApplications: recentApplications.map((a) => ({
         ...a,
-        admissionFeeAmount: Math.round(a.admissionFeeAmount / 100),
+        admissionFeeAmount: a.admissionFeeAmount / 100,
       })),
     },
   };

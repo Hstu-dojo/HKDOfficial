@@ -1,8 +1,9 @@
+import { runScheduledBilling } from "@/lib/billing/scheduled";
 import { NextResponse } from "next/server";
-import { runBackupWorkflow, listDatabaseBackups } from "@/lib/backup/backup-service";
+import { runBackupWorkflow } from "@/lib/backup/backup-service";
 import { isR2Configured } from "@/lib/storage/cloudflare-r2";
 
-export const maxDuration = 300; // Allow up to 5 minutes on Vercel Pro/Enterprise or server environments
+export const maxDuration = 300; // Shared budget for backup and bounded billing batches
 export const dynamic = "force-dynamic";
 
 /**
@@ -60,10 +61,11 @@ async function handleBackupExecution(request: Request) {
         error: "Unauthorized",
         message: "Invalid or missing cron authorization secret.",
       },
-      { status: 401 }
+      { status: 401 },
     );
   }
 
+  const startedAt = Date.now();
   if (!isR2Configured()) {
     return NextResponse.json(
       {
@@ -71,7 +73,7 @@ async function handleBackupExecution(request: Request) {
         message:
           "Cloudflare R2 credentials missing. Please set CLOUDFLARE_R2_ACCOUNT_ID, CLOUDFLARE_R2_ACCESS_KEY_ID, CLOUDFLARE_R2_SECRET_ACCESS_KEY, and CLOUDFLARE_R2_BUCKET_NAME.",
       },
-      { status: 503 }
+      { status: 503 },
     );
   }
 
@@ -81,10 +83,12 @@ async function handleBackupExecution(request: Request) {
       url.searchParams.get("retentionDays") ||
         process.env.BACKUP_RETENTION_DAYS ||
         "365",
-      10
+      10,
     );
 
-    console.log(`[CRON] Starting daily database backup to Cloudflare R2 (Retention: ${retentionDays} days)...`);
+    console.log(
+      `[CRON] Starting daily database backup to Cloudflare R2 (Retention: ${retentionDays} days)...`,
+    );
 
     const result = await runBackupWorkflow({
       retentionDays,
@@ -92,10 +96,19 @@ async function handleBackupExecution(request: Request) {
     });
 
     console.log(
-      `[CRON] Backup complete: ${result.backup.filename} (${result.backup.sizeKb} KB) uploaded to ${result.backup.bucket}. Kept: ${result.pruning.keptCount}, Deleted: ${result.pruning.deletedCount}.`
+      `[CRON] Backup complete: ${result.backup.filename} (${result.backup.sizeKb} KB) uploaded to ${result.backup.bucket}. Kept: ${result.pruning.keptCount}, Deleted: ${result.pruning.deletedCount}.`,
     );
 
-    return NextResponse.json(result, { status: 200 });
+    let billing: unknown;
+    try {
+      billing = await runScheduledBilling(new Date(), startedAt + 280000);
+    } catch (error) {
+      console.error("[CRON] Billing failed after successful backup:", error);
+      billing = {
+        errors: ["Billing failed; database backup completed successfully"],
+      };
+    }
+    return NextResponse.json({ ...result, billing }, { status: 200 });
   } catch (error: any) {
     console.error("[CRON] Database backup failed:", error);
     return NextResponse.json(
@@ -104,7 +117,7 @@ async function handleBackupExecution(request: Request) {
         error: error?.message || "Failed to execute database backup",
         timestamp: new Date().toISOString(),
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

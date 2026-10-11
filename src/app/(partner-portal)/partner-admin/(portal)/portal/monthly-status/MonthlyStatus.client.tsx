@@ -10,6 +10,7 @@ import { Label } from '@/components/ui/label'
 import { Checkbox } from '@/components/ui/checkbox'
 
 type MemberStatus = {
+  isProfileActive?: boolean;
   profileId: string
   memberName: string | null
   memberNumber: string | null
@@ -168,6 +169,7 @@ export default function MonthlyStatus() {
                         <td className="px-4 py-3">
                           <label className="flex items-center gap-2 cursor-pointer">
                             <Checkbox
+                              disabled={m.isProfileActive===false}
                               checked={!!local[m.profileId]}
                               onCheckedChange={(v) => setLocal((p) => ({ ...p, [m.profileId]: v === true }))}
                             />

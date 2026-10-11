@@ -1,9 +1,9 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import { useAuth } from '@/context/AuthContext';
-import Link from 'next/link';
-import { useCurrentLocale, useI18n } from '@/locales/client';
+import { useState, useEffect } from "react";
+import { useAuth } from "@/context/AuthContext";
+import Link from "next/link";
+import { useCurrentLocale, useI18n } from "@/locales/client";
 import {
   AcademicCapIcon,
   BanknotesIcon,
@@ -13,8 +13,8 @@ import {
   ExclamationTriangleIcon,
   XCircleIcon,
   ArrowRightIcon,
-} from '@heroicons/react/24/outline';
-import { toast } from 'sonner';
+} from "@heroicons/react/24/outline";
+import { toast } from "sonner";
 
 interface Application {
   application: {
@@ -44,6 +44,8 @@ interface Enrollment {
     startDate: string;
     endDate?: string;
     currentBeltLevel?: string;
+    monthlyFee: number;
+    currency: string;
   };
   course: {
     id: string;
@@ -54,6 +56,7 @@ interface Enrollment {
 }
 
 interface MonthlyFee {
+  canPay?: boolean;
   id: string;
   billingMonth: string;
   totalAmount: number;
@@ -79,45 +82,55 @@ const APP_STATUS_CONFIG: Record<
   }
 > = {
   pending_payment: {
-    labelKey: 'dashboard.paymentPending',
-    color: 'bg-yellow-100 text-yellow-700',
+    labelKey: "dashboard.paymentPending",
+    color: "bg-yellow-100 text-yellow-700",
     icon: ClockIcon,
   },
   payment_submitted: {
-    labelKey: 'dashboard.underReview',
-    color: 'bg-blue-100 text-blue-700',
+    labelKey: "dashboard.underReview",
+    color: "bg-blue-100 text-blue-700",
     icon: ClockIcon,
   },
   payment_verified: {
-    labelKey: 'dashboard.verified',
-    color: 'bg-indigo-100 text-indigo-700',
+    labelKey: "dashboard.verified",
+    color: "bg-indigo-100 text-indigo-700",
     icon: CheckCircleIcon,
   },
   approved: {
-    labelKey: 'dashboard.approved',
-    color: 'bg-green-100 text-green-700',
+    labelKey: "dashboard.approved",
+    color: "bg-green-100 text-green-700",
     icon: CheckCircleIcon,
   },
   rejected: {
-    labelKey: 'dashboard.rejected',
-    color: 'bg-red-100 text-red-700',
+    labelKey: "dashboard.rejected",
+    color: "bg-red-100 text-red-700",
     icon: XCircleIcon,
   },
 };
 
 const FEE_STATUS_CONFIG: Record<string, { labelKey: string; color: string }> = {
-  pending: { labelKey: 'dashboard.pending', color: 'bg-muted text-foreground' },
-  due: { labelKey: 'enrollments.due', color: 'bg-yellow-100 text-yellow-700' },
-  payment_submitted: { labelKey: 'dashboard.underReview', color: 'bg-blue-100 text-blue-700' },
-  paid: { labelKey: 'enrollments.paid', color: 'bg-green-100 text-green-700' },
-  overdue: { labelKey: 'enrollments.overdue', color: 'bg-red-100 text-red-700' },
-  waived: { labelKey: 'enrollments.waived', color: 'bg-purple-100 text-purple-700' },
+  pending: { labelKey: "dashboard.pending", color: "bg-muted text-foreground" },
+  due: { labelKey: "enrollments.due", color: "bg-yellow-100 text-yellow-700" },
+  payment_submitted: {
+    labelKey: "dashboard.underReview",
+    color: "bg-blue-100 text-blue-700",
+  },
+  paid: { labelKey: "enrollments.paid", color: "bg-green-100 text-green-700" },
+  overdue: {
+    labelKey: "enrollments.overdue",
+    color: "bg-red-100 text-red-700",
+  },
+  waived: {
+    labelKey: "enrollments.waived",
+    color: "bg-purple-100 text-purple-700",
+  },
 };
 
 export default function StudentEnrollmentDashboard() {
   const t = useI18n() as any;
   const locale = useCurrentLocale();
-  const intlLocale = locale === 'bn' ? 'bn-BD' : locale === 'ne' ? 'ne-NP' : 'en-BD';
+  const intlLocale =
+    locale === "bn" ? "bn-BD" : locale === "ne" ? "ne-NP" : "en-BD";
 
   const { user, loading: authLoading } = useAuth();
   const [applications, setApplications] = useState<Application[]>([]);
@@ -133,28 +146,28 @@ export default function StudentEnrollmentDashboard() {
         setLoading(true);
 
         // Fetch applications
-        const appResponse = await fetch('/api/enrollments/apply');
+        const appResponse = await fetch("/api/enrollments/apply");
         if (appResponse.ok) {
           const appData = await appResponse.json();
           setApplications(appData);
         }
 
         // Fetch enrollments
-        const enrollResponse = await fetch('/api/student/enrollments');
+        const enrollResponse = await fetch("/api/student/enrollments");
         if (enrollResponse.ok) {
           const enrollData = await enrollResponse.json();
           setEnrollments(enrollData);
         }
 
         // Fetch monthly fees
-        const feeResponse = await fetch('/api/student/monthly-fees');
+        const feeResponse = await fetch("/api/student/monthly-fees");
         if (feeResponse.ok) {
           const feeData = await feeResponse.json();
           setMonthlyFees(feeData);
         }
       } catch (error) {
-        console.error('Error fetching data:', error);
-        toast.error(t('enrollments.failedToLoad'));
+        console.error("Error fetching data:", error);
+        toast.error(t("enrollments.failedToLoad"));
       } finally {
         setLoading(false);
       }
@@ -165,7 +178,7 @@ export default function StudentEnrollmentDashboard() {
 
   const formatCurrency = (amount: number, currency: string) => {
     return new Intl.NumberFormat(intlLocale, {
-      style: 'currency',
+      style: "currency",
       currency: currency,
       minimumFractionDigits: 0,
     }).format(amount / 100);
@@ -173,130 +186,191 @@ export default function StudentEnrollmentDashboard() {
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString(intlLocale, {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric',
+      year: "numeric",
+      month: "short",
+      day: "numeric",
     });
   };
 
   const formatMonth = (monthStr: string) => {
-    const [year, month] = monthStr.split('-');
+    const [year, month] = monthStr.split("-");
     const date = new Date(parseInt(year), parseInt(month) - 1);
-    return date.toLocaleDateString(intlLocale, { year: 'numeric', month: 'long' });
+    return date.toLocaleDateString(intlLocale, {
+      year: "numeric",
+      month: "long",
+    });
   };
 
   if (authLoading || loading) {
     return (
-      <div className="flex justify-center items-center min-h-[400px]">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-red-600"></div>
+      <div className="flex min-h-[400px] items-center justify-center">
+        <div className="h-12 w-12 animate-spin rounded-full border-b-2 border-red-600"></div>
       </div>
     );
   }
 
   if (!user) {
     return (
-      <div className="text-center py-12">
-        <p className="text-muted-foreground dark:text-gray-400">{t('enrollments.authRequired')}</p>
-        <Link href="/login" className="text-red-600 hover:underline mt-2 inline-block">
-          {t('header.login')}
+      <div className="py-12 text-center">
+        <p className="text-muted-foreground dark:text-gray-400">
+          {t("enrollments.authRequired")}
+        </p>
+        <Link
+          href="/login"
+          className="mt-2 inline-block text-red-600 hover:underline"
+        >
+          {t("header.login")}
         </Link>
       </div>
     );
   }
 
   // Calculate stats
-  const pendingFees = monthlyFees.filter(f => ['pending', 'due', 'overdue'].includes(f.status));
-  const totalDue = pendingFees.reduce((sum, f) => sum + (f.totalAmount - f.paidAmount), 0);
+  const pendingFees = monthlyFees.filter(
+    (f) =>
+      f.canPay !== false &&
+      ["pending", "due", "overdue", "partial"].includes(f.status),
+  );
+  const totalDue = pendingFees.reduce(
+    (sum, f) => sum + (f.totalAmount - f.paidAmount),
+    0,
+  );
 
   return (
     <div className="portal-page space-y-6">
       {/* Header */}
       <div>
-        <h1 className="text-2xl font-bold text-foreground dark:text-gray-100">{t('enrollments.title')}</h1>
+        <h1 className="text-2xl font-bold text-foreground dark:text-gray-100">
+          {t("enrollments.title")}
+        </h1>
         <p className="mt-1 text-sm text-muted-foreground dark:text-gray-400">
-          {t('enrollments.description')}
+          {t("enrollments.description")}
         </p>
       </div>
 
       {/* Quick Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <div className="bg-white dark:bg-card p-4 rounded-lg border border-border dark:border-border">
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-4">
+        <div className="rounded-lg border border-border bg-white p-4 dark:border-border dark:bg-card">
           <div className="flex items-center gap-3">
-            <div className="p-2 bg-blue-100 dark:bg-blue-900/50 rounded-lg">
+            <div className="rounded-lg bg-blue-100 p-2 dark:bg-blue-900/50">
               <AcademicCapIcon className="h-6 w-6 text-blue-600 dark:text-blue-400" />
             </div>
             <div>
-              <p className="text-sm text-muted-foreground dark:text-gray-400">{t('enrollments.activeEnrollments')}</p>
-              <p className="text-xl font-semibold text-foreground dark:text-gray-100">{enrollments.filter(e => e.enrollment.status === 'active').length}</p>
-            </div>
-          </div>
-        </div>
-        <div className="bg-white dark:bg-card p-4 rounded-lg border border-border dark:border-border">
-          <div className="flex items-center gap-3">
-            <div className="p-2 bg-yellow-100 dark:bg-yellow-900/50 rounded-lg">
-              <ClockIcon className="h-6 w-6 text-yellow-600 dark:text-yellow-400" />
-            </div>
-            <div>
-              <p className="text-sm text-muted-foreground dark:text-gray-400">{t('enrollments.pendingApplications')}</p>
+              <p className="text-sm text-muted-foreground dark:text-gray-400">
+                {t("enrollments.activeEnrollments")}
+              </p>
               <p className="text-xl font-semibold text-foreground dark:text-gray-100">
-                {applications.filter(a => !['approved', 'rejected', 'cancelled'].includes(a.application.status)).length}
+                {
+                  enrollments.filter((e) => e.enrollment.status === "active")
+                    .length
+                }
               </p>
             </div>
           </div>
         </div>
-        <div className="bg-white dark:bg-card p-4 rounded-lg border border-border dark:border-border">
+        <div className="rounded-lg border border-border bg-white p-4 dark:border-border dark:bg-card">
           <div className="flex items-center gap-3">
-            <div className="p-2 bg-red-100 dark:bg-red-900/50 rounded-lg">
-              <BanknotesIcon className="h-6 w-6 text-red-600 dark:text-red-400" />
+            <div className="bg-yellow-100 dark:bg-yellow-900/50 rounded-lg p-2">
+              <ClockIcon className="text-yellow-600 dark:text-yellow-400 h-6 w-6" />
             </div>
             <div>
-              <p className="text-sm text-muted-foreground dark:text-gray-400">{t('enrollments.pendingFees')}</p>
-              <p className="text-xl font-semibold text-foreground dark:text-gray-100">{pendingFees.length}</p>
+              <p className="text-sm text-muted-foreground dark:text-gray-400">
+                {t("enrollments.pendingApplications")}
+              </p>
+              <p className="text-xl font-semibold text-foreground dark:text-gray-100">
+                {
+                  applications.filter(
+                    (a) =>
+                      !["approved", "rejected", "cancelled"].includes(
+                        a.application.status,
+                      ),
+                  ).length
+                }
+              </p>
             </div>
           </div>
         </div>
-        <div className="bg-white dark:bg-card p-4 rounded-lg border border-border dark:border-border">
+        <div className="rounded-lg border border-border bg-white p-4 dark:border-border dark:bg-card">
           <div className="flex items-center gap-3">
-            <div className="p-2 bg-green-100 dark:bg-green-900/50 rounded-lg">
-              <BanknotesIcon className="h-6 w-6 text-green-600 dark:text-green-400" />
+            <div className="rounded-lg bg-red-100 p-2 dark:bg-red-900/50">
+              <BanknotesIcon className="h-6 w-6 text-red-600 dark:text-red-400" />
             </div>
             <div>
-              <p className="text-sm text-muted-foreground dark:text-gray-400">{t('enrollments.amountDue')}</p>
-              <p className="text-xl font-semibold text-foreground dark:text-gray-100">{formatCurrency(totalDue, 'BDT')}</p>
+              <p className="text-sm text-muted-foreground dark:text-gray-400">
+                {t("enrollments.pendingFees")}
+              </p>
+              <p className="text-xl font-semibold text-foreground dark:text-gray-100">
+                {pendingFees.length}
+              </p>
+            </div>
+          </div>
+        </div>
+        <div className="rounded-lg border border-border bg-white p-4 dark:border-border dark:bg-card">
+          <div className="flex items-center gap-3">
+            <div className="bg-green-100 dark:bg-green-900/50 rounded-lg p-2">
+              <BanknotesIcon className="text-green-600 dark:text-green-400 h-6 w-6" />
+            </div>
+            <div>
+              <p className="text-sm text-muted-foreground dark:text-gray-400">
+                {t("enrollments.amountDue")}
+              </p>
+              <p className="text-xl font-semibold text-foreground dark:text-gray-100">
+                {formatCurrency(totalDue, "BDT")}
+              </p>
             </div>
           </div>
         </div>
       </div>
 
       {/* Pending Applications */}
-      {applications.filter(a => !['approved', 'rejected'].includes(a.application.status)).length > 0 && (
-        <div className="bg-white dark:bg-card rounded-lg border border-border dark:border-border">
-          <div className="p-4 border-b border-border dark:border-border">
-            <h2 className="text-lg font-semibold text-foreground dark:text-gray-100">{t('enrollments.pendingApplications')}</h2>
+      {applications.filter(
+        (a) => !["approved", "rejected"].includes(a.application.status),
+      ).length > 0 && (
+        <div className="rounded-lg border border-border bg-white dark:border-border dark:bg-card">
+          <div className="border-b border-border p-4 dark:border-border">
+            <h2 className="text-lg font-semibold text-foreground dark:text-gray-100">
+              {t("enrollments.pendingApplications")}
+            </h2>
           </div>
           <div className="divide-y divide-gray-200 dark:divide-slate-700">
             {applications
-              .filter(a => !['approved', 'rejected'].includes(a.application.status))
+              .filter(
+                (a) => !["approved", "rejected"].includes(a.application.status),
+              )
               .map((app) => {
                 const status = APP_STATUS_CONFIG[app.application.status];
                 const StatusIcon = status?.icon || ClockIcon;
-                const statusLabel = status ? t(status.labelKey) : app.application.status;
+                const statusLabel = status
+                  ? t(status.labelKey)
+                  : app.application.status;
                 return (
-                  <div key={app.application.id} className="p-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                  <div
+                    key={app.application.id}
+                    className="flex flex-col gap-3 p-4 sm:flex-row sm:items-center sm:justify-between"
+                  >
                     <div className="flex items-center gap-4">
-                      <div className="p-2 bg-muted dark:bg-slate-700 rounded-lg">
+                      <div className="rounded-lg bg-muted p-2 dark:bg-slate-700">
                         <AcademicCapIcon className="h-6 w-6 text-muted-foreground dark:text-gray-400" />
                       </div>
                       <div>
-                        <p className="font-medium text-foreground dark:text-gray-100">{app.course?.name || t('enrollments.unknownCourse')}</p>
+                        <p className="font-medium text-foreground dark:text-gray-100">
+                          {app.course?.name || t("enrollments.unknownCourse")}
+                        </p>
                         <p className="text-sm text-muted-foreground dark:text-gray-400">
-                          {t('enrollments.appliedOn')}: {formatDate(app.application.createdAt)} •{' '}
-                          {t('enrollments.fee')}: {formatCurrency(app.application.admissionFeeAmount, app.application.currency)}
+                          {t("enrollments.appliedOn")}:{" "}
+                          {formatDate(app.application.createdAt)} •{" "}
+                          {t("enrollments.fee")}:{" "}
+                          {formatCurrency(
+                            app.application.admissionFeeAmount,
+                            app.application.currency,
+                          )}
                         </p>
                       </div>
                     </div>
-                    <span className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${status?.color}`}>
-                      <StatusIcon className="h-4 w-4 mr-1" />
+                    <span
+                      className={`inline-flex items-center rounded-full px-3 py-1 text-sm font-medium ${status?.color}`}
+                    >
+                      <StatusIcon className="mr-1 h-4 w-4" />
                       {statusLabel}
                     </span>
                   </div>
@@ -307,61 +381,86 @@ export default function StudentEnrollmentDashboard() {
       )}
 
       {/* Active Enrollments */}
-      <div className="bg-white dark:bg-card rounded-lg border border-border dark:border-border">
-        <div className="p-4 border-b border-border dark:border-border flex justify-between items-center">
-          <h2 className="text-lg font-semibold text-foreground dark:text-gray-100">{t('enrollments.myCourses')}</h2>
+      <div className="rounded-lg border border-border bg-white dark:border-border dark:bg-card">
+        <div className="flex items-center justify-between border-b border-border p-4 dark:border-border">
+          <h2 className="text-lg font-semibold text-foreground dark:text-gray-100">
+            {t("enrollments.myCourses")}
+          </h2>
           <Link
             href="/karate/courses"
-            className="text-sm text-red-600 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300 flex items-center gap-1"
+            className="flex items-center gap-1 text-sm text-red-600 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300"
           >
-            {t('dashboard.browseCourses')} <ArrowRightIcon className="h-4 w-4" />
+            {t("dashboard.browseCourses")}{" "}
+            <ArrowRightIcon className="h-4 w-4" />
           </Link>
         </div>
         {enrollments.length === 0 ? (
           <div className="p-8 text-center">
-            <AcademicCapIcon className="h-12 w-12 mx-auto text-gray-400 mb-4" />
-            <p className="text-muted-foreground dark:text-gray-400">{t('enrollments.noActiveEnrollmentsDescription')}</p>
+            <AcademicCapIcon className="mx-auto mb-4 h-12 w-12 text-gray-400" />
+            <p className="text-muted-foreground dark:text-gray-400">
+              {t("enrollments.noActiveEnrollmentsDescription")}
+            </p>
             <Link
               href="/karate/courses"
-              className="inline-block mt-4 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700"
+              className="mt-4 inline-block rounded-lg bg-red-600 px-4 py-2 text-white hover:bg-red-700"
             >
-              {t('dashboard.browseCourses')}
+              {t("dashboard.browseCourses")}
             </Link>
           </div>
         ) : (
           <div className="divide-y divide-gray-200 dark:divide-slate-700">
             {enrollments.map((enrollment) => (
               <div key={enrollment.enrollment.id} className="p-4">
-                <div className="flex items-center justify-between mb-3">
+                <div className="mb-3 flex items-center justify-between">
                   <div>
-                    <h3 className="font-medium text-foreground dark:text-gray-100">{enrollment.course?.name}</h3>
+                    <h3 className="font-medium text-foreground dark:text-gray-100">
+                      {enrollment.course?.name}
+                    </h3>
                     <p className="text-sm text-muted-foreground dark:text-gray-400">
-                      {t('enrollments.enrollmentNumberLabel')}: {enrollment.enrollment.enrollmentNumber}
+                      {t("enrollments.enrollmentNumberLabel")}:{" "}
+                      {enrollment.enrollment.enrollmentNumber}
                     </p>
                   </div>
-                  <span className={`px-3 py-1 rounded-full text-sm font-medium ${
-                    enrollment.enrollment.status === 'active'
-                      ? 'bg-green-100 text-green-700 dark:bg-green-900/50 dark:text-green-400'
-                      : 'bg-muted text-foreground dark:bg-slate-700 dark:text-gray-300'
-                  }`}>
-                    {enrollment.enrollment.status === 'active' ? t('common.active') : t('common.inactive')}
+                  <span
+                    className={`rounded-full px-3 py-1 text-sm font-medium ${
+                      enrollment.enrollment.status === "active"
+                        ? "bg-green-100 text-green-700 dark:bg-green-900/50 dark:text-green-400"
+                        : "bg-muted text-foreground dark:bg-slate-700 dark:text-gray-300"
+                    }`}
+                  >
+                    {enrollment.enrollment.status === "active"
+                      ? t("common.active")
+                      : t("common.inactive")}
                   </span>
                 </div>
                 <div className="grid grid-cols-3 gap-4 text-sm">
                   <div>
-                    <p className="text-muted-foreground dark:text-gray-400">{t('enrollments.startDate')}</p>
-                    <p className="font-medium text-foreground dark:text-gray-100">{formatDate(enrollment.enrollment.startDate)}</p>
+                    <p className="text-muted-foreground dark:text-gray-400">
+                      {t("enrollments.startDate")}
+                    </p>
+                    <p className="font-medium text-foreground dark:text-gray-100">
+                      {formatDate(enrollment.enrollment.startDate)}
+                    </p>
                   </div>
                   <div>
-                    <p className="text-muted-foreground dark:text-gray-400">{t('enrollments.monthlyFee')}</p>
+                    <p className="text-muted-foreground dark:text-gray-400">
+                      {t("enrollments.monthlyFee")}
+                    </p>
                     <p className="font-medium text-foreground dark:text-gray-100">
-                      {enrollment.course ? formatCurrency(enrollment.course.monthlyFee, enrollment.course.currency) : '-'}
+                      {formatCurrency(
+                        enrollment.enrollment.monthlyFee,
+                        enrollment.enrollment.currency,
+                      )}
                     </p>
                   </div>
                   {enrollment.enrollment.currentBeltLevel && (
                     <div>
-                      <p className="text-muted-foreground dark:text-gray-400">{t('enrollments.currentBelt')}</p>
-                      <p className="font-medium capitalize text-foreground dark:text-gray-100">{enrollment.enrollment.currentBeltLevel}</p>
+                      <p className="text-muted-foreground dark:text-gray-400">
+                        {t("enrollments.currentBelt")}
+                      </p>
+                      <p className="font-medium capitalize text-foreground dark:text-gray-100">
+                        {enrollment.enrollment.currentBeltLevel}
+                      </p>
                     </div>
                   )}
                 </div>
@@ -372,76 +471,108 @@ export default function StudentEnrollmentDashboard() {
       </div>
 
       {/* Monthly Fees */}
-      <div className="bg-white dark:bg-card rounded-lg border border-border dark:border-border">
-        <div className="p-4 border-b border-border dark:border-border">
-          <h2 className="text-lg font-semibold text-foreground dark:text-gray-100">{t('enrollments.monthlyFees')}</h2>
+      <div className="rounded-lg border border-border bg-white dark:border-border dark:bg-card">
+        <div className="border-b border-border p-4 dark:border-border">
+          <h2 className="text-lg font-semibold text-foreground dark:text-gray-100">
+            {t("enrollments.monthlyFees")}
+          </h2>
         </div>
         {monthlyFees.length === 0 ? (
           <div className="p-8 text-center">
-            <BanknotesIcon className="h-12 w-12 mx-auto text-gray-400 mb-4" />
-            <p className="text-muted-foreground dark:text-gray-400">{t('enrollments.noMonthlyFeesDescription')}</p>
+            <BanknotesIcon className="mx-auto mb-4 h-12 w-12 text-gray-400" />
+            <p className="text-muted-foreground dark:text-gray-400">
+              {t("enrollments.noMonthlyFeesDescription")}
+            </p>
           </div>
         ) : (
           <div className="overflow-x-auto">
             <table className="min-w-full divide-y divide-gray-200 dark:divide-slate-700">
               <thead className="bg-muted dark:bg-background/50">
                 <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground dark:text-gray-400 uppercase">{t('enrollments.month')}</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground dark:text-gray-400 uppercase">{t('enrollments.course')}</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground dark:text-gray-400 uppercase">{t('enrollments.amount')}</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground dark:text-gray-400 uppercase">{t('enrollments.dueDate')}</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground dark:text-gray-400 uppercase">{t('common.status')}</th>
-                  <th className="px-6 py-3 text-right text-xs font-medium text-muted-foreground dark:text-gray-400 uppercase">{t('common.actions')}</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium uppercase text-muted-foreground dark:text-gray-400">
+                    {t("enrollments.month")}
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium uppercase text-muted-foreground dark:text-gray-400">
+                    {t("enrollments.course")}
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium uppercase text-muted-foreground dark:text-gray-400">
+                    {t("enrollments.amount")}
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium uppercase text-muted-foreground dark:text-gray-400">
+                    {t("enrollments.dueDate")}
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium uppercase text-muted-foreground dark:text-gray-400">
+                    {t("common.status")}
+                  </th>
+                  <th className="px-6 py-3 text-right text-xs font-medium uppercase text-muted-foreground dark:text-gray-400">
+                    {t("common.actions")}
+                  </th>
                 </tr>
               </thead>
-              <tbody className="bg-white dark:bg-card divide-y divide-gray-200 dark:divide-slate-700">
+              <tbody className="divide-y divide-gray-200 bg-white dark:divide-slate-700 dark:bg-card">
                 {monthlyFees.map((fee) => {
                   const status = FEE_STATUS_CONFIG[fee.status];
-                  const isOverdue = new Date(fee.dueDate) < new Date() &&
-                    !['paid', 'waived'].includes(fee.status);
+                  const isOverdue =
+                    new Date(fee.dueDate) < new Date() &&
+                    !["paid", "waived"].includes(fee.status);
                   const statusLabel = status ? t(status.labelKey) : fee.status;
 
                   return (
-                    <tr key={fee.id} className={isOverdue ? 'bg-red-50 dark:bg-red-900/20' : ''}>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-foreground dark:text-gray-100">
+                    <tr
+                      key={fee.id}
+                      className={
+                        isOverdue ? "bg-red-50 dark:bg-red-900/20" : ""
+                      }
+                    >
+                      <td className="whitespace-nowrap px-6 py-4 text-sm font-medium text-foreground dark:text-gray-100">
                         {formatMonth(fee.billingMonth)}
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-muted-foreground dark:text-gray-400">
-                        {fee.courseName || '-'}
+                      <td className="whitespace-nowrap px-6 py-4 text-sm text-muted-foreground dark:text-gray-400">
+                        {fee.courseName || "-"}
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-foreground dark:text-gray-100">
+                      <td className="whitespace-nowrap px-6 py-4 text-sm text-foreground dark:text-gray-100">
                         {formatCurrency(fee.totalAmount, fee.currency)}
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-muted-foreground dark:text-gray-400">
+                      <td className="whitespace-nowrap px-6 py-4 text-sm text-muted-foreground dark:text-gray-400">
                         {formatDate(fee.dueDate)}
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <span className={`px-2.5 py-0.5 rounded-full text-xs font-medium ${status?.color}`}>
+                      <td className="whitespace-nowrap px-6 py-4">
+                        <span
+                          className={`rounded-full px-2.5 py-0.5 text-xs font-medium ${status?.color}`}
+                        >
                           {statusLabel}
                         </span>
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-right">
-                        {fee.status === 'payment_submitted' && fee.transactionId && (
-                          <span className="text-xs text-blue-600 dark:text-blue-400 mr-2" title={`TxID: ${fee.transactionId}`}>
-                            TxID: {fee.transactionId.slice(0, 12)}{fee.transactionId.length > 12 ? '…' : ''}
-                          </span>
-                        )}
-                        {fee.status === 'paid' && fee.paidAt && (
-                          <span className="text-xs text-green-600 dark:text-green-400 mr-2">
+                      <td className="whitespace-nowrap px-6 py-4 text-right">
+                        {fee.status === "payment_submitted" &&
+                          fee.transactionId && (
+                            <span
+                              className="mr-2 text-xs text-blue-600 dark:text-blue-400"
+                              title={`TxID: ${fee.transactionId}`}
+                            >
+                              TxID: {fee.transactionId.slice(0, 12)}
+                              {fee.transactionId.length > 12 ? "…" : ""}
+                            </span>
+                          )}
+                        {fee.status === "paid" && fee.paidAt && (
+                          <span className="text-green-600 dark:text-green-400 mr-2 text-xs">
                             Paid {new Date(fee.paidAt).toLocaleDateString()}
                           </span>
                         )}
-                        {['pending', 'due', 'overdue'].includes(fee.status) && (
-                          <Link
-                            href={`/dashboard/pay-fee/${fee.id}`}
-                            className="text-sm text-red-600 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300 font-medium"
-                          >
-                            {t('dashboard.payNow')}
-                          </Link>
-                        )}
-                        {fee.status === 'payment_submitted' && (
-                          <span className="text-xs text-blue-600 dark:text-blue-400 font-medium">
-                            {t('dashboard.underReview')}
+                        {fee.canPay !== false &&
+                          ["pending", "due", "overdue", "partial"].includes(
+                            fee.status,
+                          ) && (
+                            <Link
+                              href={`/dashboard/pay-fee/${fee.id}`}
+                              className="text-sm font-medium text-red-600 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300"
+                            >
+                              {t("dashboard.payNow")}
+                            </Link>
+                          )}
+                        {fee.status === "payment_submitted" && (
+                          <span className="text-xs font-medium text-blue-600 dark:text-blue-400">
+                            {t("dashboard.underReview")}
                           </span>
                         )}
                       </td>

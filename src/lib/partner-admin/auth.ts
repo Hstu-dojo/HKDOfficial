@@ -35,6 +35,7 @@ export async function getPartnerAdminUser(): Promise<PartnerAdminUser | null> {
         partnerId: partners.id,
         partnerName: partners.name,
         partnerSlug: partners.slug,
+        partnerActive: partners.isActive,
       })
       .from(partnerAdminSessions)
       .innerJoin(partnerAdmins, eq(partnerAdminSessions.partnerAdminId, partnerAdmins.id))
@@ -45,7 +46,7 @@ export async function getPartnerAdminUser(): Promise<PartnerAdminUser | null> {
     const row = rows[0]
     if (!row) return null
 
-    if (!row.adminIsActive) return null
+    if (!row.adminIsActive || !row.partnerActive) return null
 
     return {
       id: row.adminId,

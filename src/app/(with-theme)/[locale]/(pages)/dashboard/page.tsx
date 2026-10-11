@@ -410,7 +410,7 @@ export default async function DashboardPage() {
               title={t("dashboard.billing")}
               action={
                 <Link
-                  href="/dashboard/payments"
+                  href="/dashboard/enrollments"
                   className="text-xs font-medium text-primary hover:underline"
                 >
                   {t("dashboard.viewAll")}
@@ -429,7 +429,10 @@ export default async function DashboardPage() {
                         {payment.courseName}
                       </span>
                       <span className="flex-shrink-0 font-mono text-sm font-semibold text-foreground dark:text-foreground">
-                        ৳{payment.amount}
+                        {new Intl.NumberFormat("en-BD", {
+                          style: "currency",
+                          currency: payment.currency,
+                        }).format(payment.amount / 100)}
                       </span>
                     </div>
                     <div className="mb-2.5 text-xs text-muted-foreground dark:text-muted-foreground">
@@ -443,10 +446,12 @@ export default async function DashboardPage() {
                     </div>
                     <div className="flex items-center justify-between">
                       <LocalizedStatusBadge status={payment.status} t={t} />
-                      {payment.status !== "paid" &&
-                        payment.status !== "waived" && (
+                      {payment.canPay &&
+                        ["pending", "due", "overdue", "partial"].includes(
+                          payment.status,
+                        ) && (
                           <Link
-                            href={`/dashboard/payments/${payment.id}`}
+                            href={`/dashboard/pay-fee/${payment.id}`}
                             className="text-xs font-semibold text-primary hover:underline"
                           >
                             {t("dashboard.pay")}

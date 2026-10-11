@@ -1,46 +1,50 @@
+import { generateInitialMonthlyFees } from "@/lib/billing/service";
 /**
  * Partner Portal — Enrollments API
- * 
+ *
  * GET /api/partner-portal/enrollments — List enrollments for partner's members
  */
-import { NextResponse } from 'next/server'
-import { requirePartnerAdminUser } from '@/lib/partner-admin/auth'
-import { db } from '@/lib/connect-db'
-import { courseEnrollments } from '@/db/schemas/karate/enrollments'
-import { enrollmentApplications } from '@/db/schemas/karate/enrollments'
-import { members } from '@/db/schemas/karate/members'
-import { courses } from '@/db/schemas/karate/courses'
-import { monthlyFees } from '@/db/schemas/karate/monthly-payments'
-import { eq, and, desc, count, sql } from 'drizzle-orm'
+import { NextResponse } from "next/server";
+import { requirePartnerAdminUser } from "@/lib/partner-admin/auth";
+import { db } from "@/lib/connect-db";
+import { courseEnrollments } from "@/db/schemas/karate/enrollments";
+import { enrollmentApplications } from "@/db/schemas/karate/enrollments";
+import { members } from "@/db/schemas/karate/members";
+import { courses } from "@/db/schemas/karate/courses";
+import { monthlyFees } from "@/db/schemas/karate/monthly-payments";
+import { eq, and, desc, count, sql } from "drizzle-orm";
 
 export async function GET(request: Request) {
-  const { user: partnerUser, error } = await requirePartnerAdminUser()
-  if (error) return error
+  const { user: partnerUser, error } = await requirePartnerAdminUser();
+  if (error) return error;
 
-  const url = new URL(request.url)
-  const page = parseInt(url.searchParams.get('page') || '1', 10)
-  const limit = Math.min(parseInt(url.searchParams.get('limit') || '20', 10), 100)
-  const status = url.searchParams.get('status') // 'active' | 'completed' | 'dropped'
-  const q = (url.searchParams.get('q') || '').trim()
+  const url = new URL(request.url);
+  const page = parseInt(url.searchParams.get("page") || "1", 10);
+  const limit = Math.min(
+    parseInt(url.searchParams.get("limit") || "20", 10),
+    100,
+  );
+  const status = url.searchParams.get("status"); // 'active' | 'completed' | 'dropped'
+  const q = (url.searchParams.get("q") || "").trim();
 
   try {
     // IMPORTANT:
     // Enrollments belong to an organization by course.partnerId (not by the member's current partnerId).
     // This ensures enrollments remain visible even if a member transfers branches later.
-    const conditions = [eq(courses.partnerId, partnerUser.partnerId)]
+    const conditions = [eq(courses.partnerId, partnerUser.partnerId)];
 
-    if (status === 'active') {
-      conditions.push(eq(courseEnrollments.isActive, true))
-    } else if (status === 'completed') {
-      conditions.push(eq(courseEnrollments.isActive, false))
-      conditions.push(sql`${courseEnrollments.completedAt} is not null`)
-    } else if (status === 'dropped') {
-      conditions.push(eq(courseEnrollments.isActive, false))
-      conditions.push(sql`${courseEnrollments.droppedAt} is not null`)
+    if (status === "active") {
+      conditions.push(eq(courseEnrollments.isActive, true));
+    } else if (status === "completed") {
+      conditions.push(eq(courseEnrollments.isActive, false));
+      conditions.push(sql`${courseEnrollments.completedAt} is not null`);
+    } else if (status === "dropped") {
+      conditions.push(eq(courseEnrollments.isActive, false));
+      conditions.push(sql`${courseEnrollments.droppedAt} is not null`);
     }
 
     if (q) {
-      const pattern = `%${q}%`
+      const pattern = `%${q}%`;
       conditions.push(
         sql`(
           coalesce(${members.fullNameEnglish}, '') ILIKE ${pattern}
@@ -51,11 +55,11 @@ export async function GET(request: Request) {
           OR coalesce(${courses.name}, '') ILIKE ${pattern}
           OR coalesce(${enrollmentApplications.transactionId}, '') ILIKE ${pattern}
           OR coalesce(${enrollmentApplications.applicationNumber}, '') ILIKE ${pattern}
-        )`
-      )
+        )`,
+      );
     }
 
-    const offset = (page - 1) * limit
+    const offset = (page - 1) * limit;
 
     const [results, totalResult] = await Promise.all([
       db
@@ -94,7 +98,10 @@ export async function GET(request: Request) {
         .from(courseEnrollments)
         .innerJoin(members, eq(courseEnrollments.profileId, members.id))
         .innerJoin(courses, eq(courseEnrollments.courseId, courses.id))
-        .leftJoin(enrollmentApplications, eq(courseEnrollments.applicationId, enrollmentApplications.id))
+        .leftJoin(
+          enrollmentApplications,
+          eq(courseEnrollments.applicationId, enrollmentApplications.id),
+        )
         .where(and(...conditions))
         .orderBy(desc(courseEnrollments.enrolledAt))
         .limit(limit)
@@ -105,11 +112,14 @@ export async function GET(request: Request) {
         .from(courseEnrollments)
         .innerJoin(members, eq(courseEnrollments.profileId, members.id))
         .innerJoin(courses, eq(courseEnrollments.courseId, courses.id))
-        .leftJoin(enrollmentApplications, eq(courseEnrollments.applicationId, enrollmentApplications.id))
+        .leftJoin(
+          enrollmentApplications,
+          eq(courseEnrollments.applicationId, enrollmentApplications.id),
+        )
         .where(and(...conditions)),
-    ])
+    ]);
 
-    const total = totalResult[0]?.total || 0
+    const total = totalResult[0]?.total || 0;
 
     return NextResponse.json({
       enrollments: results,
@@ -119,31 +129,37 @@ export async function GET(request: Request) {
         total,
         totalPages: Math.ceil(total / limit),
       },
-    })
+    });
   } catch (err) {
-    console.error('[PartnerPortal] Enrollments GET error:', err)
-    return NextResponse.json({ error: 'Failed to fetch enrollments' }, { status: 500 })
+    console.error("[PartnerPortal] Enrollments GET error:", err);
+    return NextResponse.json(
+      { error: "Failed to fetch enrollments" },
+      { status: 500 },
+    );
   }
 }
 
 export async function PATCH(request: Request) {
-  const { user: partnerUser, error } = await requirePartnerAdminUser()
-  if (error) return error
+  const { user: partnerUser, error } = await requirePartnerAdminUser();
+  if (error) return error;
 
   try {
-    const body = await request.json()
+    const body = await request.json();
     const { enrollmentId, action, dropReason } = body as {
-      enrollmentId?: string
-      action?: 'drop'
-      dropReason?: string
-    }
+      enrollmentId?: string;
+      action?: "drop";
+      dropReason?: string;
+    };
 
     if (!enrollmentId || !action) {
-      return NextResponse.json({ error: 'enrollmentId and action are required' }, { status: 400 })
+      return NextResponse.json(
+        { error: "enrollmentId and action are required" },
+        { status: 400 },
+      );
     }
 
-    if (action !== 'drop') {
-      return NextResponse.json({ error: 'Invalid action' }, { status: 400 })
+    if (action !== "drop") {
+      return NextResponse.json({ error: "Invalid action" }, { status: 400 });
     }
 
     const [row] = await db
@@ -156,18 +172,27 @@ export async function PATCH(request: Request) {
       })
       .from(courseEnrollments)
       .innerJoin(courses, eq(courseEnrollments.courseId, courses.id))
-      .where(eq(courseEnrollments.id, enrollmentId))
+      .where(eq(courseEnrollments.id, enrollmentId));
 
     if (!row || row.course.partnerId !== partnerUser.partnerId) {
-      return NextResponse.json({ error: 'Enrollment not found' }, { status: 404 })
+      return NextResponse.json(
+        { error: "Enrollment not found" },
+        { status: 404 },
+      );
     }
 
     if (row.enrollment.droppedAt) {
-      return NextResponse.json({ error: 'Enrollment is already dropped' }, { status: 400 })
+      return NextResponse.json(
+        { error: "Enrollment is already dropped" },
+        { status: 400 },
+      );
     }
 
     if (row.enrollment.completedAt) {
-      return NextResponse.json({ error: 'Enrollment is already completed' }, { status: 400 })
+      return NextResponse.json(
+        { error: "Enrollment is already completed" },
+        { status: 400 },
+      );
     }
 
     const [updated] = await db
@@ -175,11 +200,14 @@ export async function PATCH(request: Request) {
       .set({
         isActive: false,
         droppedAt: new Date(),
-        dropReason: typeof dropReason === 'string' && dropReason.trim() ? dropReason.trim() : null,
+        dropReason:
+          typeof dropReason === "string" && dropReason.trim()
+            ? dropReason.trim()
+            : null,
         updatedAt: new Date(),
       })
       .where(eq(courseEnrollments.id, enrollmentId))
-      .returning()
+      .returning();
 
     // Best-effort: decrement currentStudents
     try {
@@ -189,60 +217,86 @@ export async function PATCH(request: Request) {
           currentStudents: sql`GREATEST(${courses.currentStudents} - 1, 0)`,
           updatedAt: new Date(),
         })
-        .where(eq(courses.id, row.course.id))
+        .where(eq(courses.id, row.course.id));
     } catch (err) {
-      console.error('[PartnerPortal] Enrollments DROP: failed to decrement course count', err)
+      console.error(
+        "[PartnerPortal] Enrollments DROP: failed to decrement course count",
+        err,
+      );
     }
 
-    return NextResponse.json({ success: true, enrollment: updated })
+    return NextResponse.json({ success: true, enrollment: updated });
   } catch (err) {
-    console.error('[PartnerPortal] Enrollments PATCH error:', err)
-    return NextResponse.json({ error: 'Failed to update enrollment' }, { status: 500 })
+    console.error("[PartnerPortal] Enrollments PATCH error:", err);
+    return NextResponse.json(
+      { error: "Failed to update enrollment" },
+      { status: 500 },
+    );
   }
 }
 
 export async function POST(request: Request) {
-  const { user: partnerUser, error } = await requirePartnerAdminUser()
-  if (error) return error
+  const { user: partnerUser, error } = await requirePartnerAdminUser();
+  if (error) return error;
 
   try {
-    const body = await request.json()
-    const { memberId, courseId, studentInfo, paymentMethod, transactionId, paymentProofUrl } = body as {
-      memberId?: string
-      courseId?: string
-      studentInfo?: any
-      paymentMethod?: string
-      transactionId?: string
-      paymentProofUrl?: string
-    }
+    const body = await request.json();
+    const {
+      memberId,
+      courseId,
+      studentInfo,
+      paymentMethod,
+      transactionId,
+      paymentProofUrl,
+    } = body as {
+      memberId?: string;
+      courseId?: string;
+      studentInfo?: any;
+      paymentMethod?: string;
+      transactionId?: string;
+      paymentProofUrl?: string;
+    };
 
     if (!memberId || !courseId || !studentInfo || !paymentMethod) {
       return NextResponse.json(
-        { error: 'memberId, courseId, studentInfo, and paymentMethod are required' },
-        { status: 400 }
-      )
+        {
+          error:
+            "memberId, courseId, studentInfo, and paymentMethod are required",
+        },
+        { status: 400 },
+      );
     }
 
     // 1. Verify course ownership
     const [course] = await db
       .select()
       .from(courses)
-      .where(and(eq(courses.id, courseId), eq(courses.partnerId, partnerUser.partnerId)))
-      .limit(1)
+      .where(
+        and(
+          eq(courses.id, courseId),
+          eq(courses.partnerId, partnerUser.partnerId),
+        ),
+      )
+      .limit(1);
 
     if (!course) {
-      return NextResponse.json({ error: 'Course not found' }, { status: 404 })
+      return NextResponse.json({ error: "Course not found" }, { status: 404 });
     }
 
     // 2. Verify member ownership
     const [member] = await db
       .select()
       .from(members)
-      .where(and(eq(members.id, memberId), eq(members.partnerId, partnerUser.partnerId)))
-      .limit(1)
+      .where(
+        and(
+          eq(members.id, memberId),
+          eq(members.partnerId, partnerUser.partnerId),
+        ),
+      )
+      .limit(1);
 
     if (!member) {
-      return NextResponse.json({ error: 'Member not found' }, { status: 404 })
+      return NextResponse.json({ error: "Member not found" }, { status: 404 });
     }
 
     // 3. Prevent duplicate enrollment
@@ -253,17 +307,20 @@ export async function POST(request: Request) {
         and(
           eq(courseEnrollments.profileId, memberId),
           eq(courseEnrollments.courseId, courseId),
-          eq(courseEnrollments.isActive, true)
-        )
+          eq(courseEnrollments.isActive, true),
+        ),
       )
-      .limit(1)
+      .limit(1);
 
     if (existingEnrollment) {
-      return NextResponse.json({ error: 'Member is already active in this course' }, { status: 400 })
+      return NextResponse.json(
+        { error: "Member is already active in this course" },
+        { status: 400 },
+      );
     }
 
     // 4. Generate application number
-    const applicationNumber = `APP-DIR-${new Date().getFullYear()}${String(new Date().getMonth() + 1).padStart(2, '0')}-${Math.random().toString(36).substring(2, 8).toUpperCase()}`
+    const applicationNumber = `APP-DIR-${new Date().getFullYear()}${String(new Date().getMonth() + 1).padStart(2, "0")}-${Math.random().toString(36).substring(2, 8).toUpperCase()}`;
 
     // 5. Create approved enrollment application
     const [newApp] = await db
@@ -275,7 +332,7 @@ export async function POST(request: Request) {
         studentInfo,
         admissionFeeAmount: course.admissionFee,
         currency: course.currency,
-        status: 'approved',
+        status: "approved",
         paymentMethod,
         transactionId: transactionId || null,
         paymentProofUrl: paymentProofUrl || null,
@@ -286,12 +343,14 @@ export async function POST(request: Request) {
         profileId: memberId,
         updatedAt: new Date(),
       } as any)
-      .returning({ id: enrollmentApplications.id })
+      .returning({ id: enrollmentApplications.id });
 
     // 6. Create active course enrollment
-    const startDate = new Date()
-    const expectedEndDate = new Date(startDate)
-    expectedEndDate.setMonth(expectedEndDate.getMonth() + Number(course.duration || 0))
+    const startDate = new Date();
+    const expectedEndDate = new Date(startDate);
+    expectedEndDate.setMonth(
+      expectedEndDate.getMonth() + Number(course.duration || 0),
+    );
 
     const [enrollment] = await db
       .insert(courseEnrollments)
@@ -300,32 +359,16 @@ export async function POST(request: Request) {
         profileId: memberId,
         applicationId: newApp.id,
         startDate,
-        expectedEndDate: Number(course.duration || 0) > 0 ? expectedEndDate : null,
+        expectedEndDate:
+          Number(course.duration || 0) > 0 ? expectedEndDate : null,
         monthlyFee: course.monthlyFee,
         currency: course.currency,
         isActive: true,
         updatedAt: new Date(),
       } as any)
-      .returning({ id: courseEnrollments.id })
+      .returning({ id: courseEnrollments.id });
 
-    // 7. Create first month's fee as pending
-    const billingMonth = `${startDate.getFullYear()}-${String(startDate.getMonth() + 1).padStart(2, '0')}`
-    const dueDate = new Date(startDate.getFullYear(), startDate.getMonth() + 1, 10)
-
-    try {
-      await db.insert(monthlyFees).values({
-        enrollmentId: enrollment.id,
-        profileId: memberId,
-        billingMonth,
-        billingYear: startDate.getFullYear(),
-        amount: course.monthlyFee,
-        currency: course.currency,
-        dueDate,
-        status: 'pending',
-      } as any)
-    } catch (feeErr) {
-      console.error('[PartnerPortal] DirectEnrollment: failed to create monthly fee:', feeErr)
-    }
+    // First-month billing uses the shared monthly policy.
 
     // 8. Increment student count
     await db
@@ -334,15 +377,24 @@ export async function POST(request: Request) {
         currentStudents: sql`${courses.currentStudents} + 1`,
         updatedAt: new Date(),
       })
-      .where(eq(courses.id, courseId))
+      .where(eq(courses.id, courseId));
 
+    const billingWarning = await generateInitialMonthlyFees(
+      enrollment.id,
+      `partner-admin:${partnerUser.id}`,
+      partnerUser.partnerId,
+    );
     return NextResponse.json({
       success: true,
+      billingWarning,
       enrollmentId: enrollment.id,
       applicationId: newApp.id,
-    })
+    });
   } catch (err) {
-    console.error('[PartnerPortal] DirectEnrollment POST error:', err)
-    return NextResponse.json({ error: 'Failed to process enrollment' }, { status: 500 })
+    console.error("[PartnerPortal] DirectEnrollment POST error:", err);
+    return NextResponse.json(
+      { error: "Failed to process enrollment" },
+      { status: 500 },
+    );
   }
 }

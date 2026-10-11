@@ -788,6 +788,7 @@ export default {
   },
 
   feePayment: {
+    inactiveBilling: "यस सदस्यता अवधिको बिलिङ निष्क्रिय छ। आफ्नो शाखा प्रशासकसँग सम्पर्क गर्नुहोस्।",
     feeNotFound: "शुल्क भेटिएन",
     failedToLoadFeeDetails: "शुल्क विवरण लोड गर्न असफल",
     pleaseEnterTransactionId: "कृपया कारोबार ID प्रविष्ट गर्नुहोस्",

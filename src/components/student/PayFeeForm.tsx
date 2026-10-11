@@ -16,6 +16,7 @@ import {
 import { toast } from 'sonner';
 
 interface FeeDetails {
+  canPay?: boolean;
   id: string;
   billingMonth: string;
   feeAmount: number;
@@ -129,7 +130,7 @@ export default function PayFeeForm({ feeId }: { feeId: string }) {
   };
 
   const handleSubmitPayment = async () => {
-    if (!paymentInfo.transactionId) {
+    if (!paymentInfo.transactionId || !paymentInfo.paymentProofUrl) {
       toast.error(t('feePayment.pleaseEnterTransactionId'));
       return;
     }
@@ -170,12 +171,12 @@ export default function PayFeeForm({ feeId }: { feeId: string }) {
     return null;
   }
 
-  if (!['pending', 'due', 'overdue'].includes(feeDetails.status)) {
+  if (feeDetails.canPay === false || !['pending', 'due', 'overdue', 'partial'].includes(feeDetails.status)) {
     return (
       <div className="max-w-md mx-auto text-center py-12">
         <CheckCircleIcon className="h-16 w-16 mx-auto text-green-500 mb-4" />
         <h2 className="text-xl font-bold text-foreground mb-2">
-          {feeDetails.status === 'paid'
+          {feeDetails.canPay === false ? t('feePayment.inactiveBilling') : feeDetails.status === 'paid'
             ? t('feePayment.feeAlreadyPaid')
             : t('feePayment.feeStatus', { status: feeDetails.status })}
         </h2>
@@ -450,7 +451,7 @@ export default function PayFeeForm({ feeId }: { feeId: string }) {
       {/* Submit Button */}
       <button
         onClick={handleSubmitPayment}
-        disabled={submitting || !paymentInfo.transactionId}
+        disabled={submitting || !paymentInfo.transactionId || !paymentInfo.paymentProofUrl}
         className="w-full py-2.5 bg-primary text-primary-foreground font-semibold rounded-md hover:bg-primary/90 disabled:opacity-50 flex items-center justify-center gap-2"
       >
         {submitting ? (

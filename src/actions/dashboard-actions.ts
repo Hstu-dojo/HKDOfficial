@@ -1,19 +1,21 @@
-'use server';
+"use server";
 
 import { createServerClient } from "@supabase/ssr";
 import { cookies } from "next/headers";
 import { db } from "@/lib/connect-db";
-import { 
-  enrollmentApplications, 
-  courseEnrollments, 
+import {
+  enrollmentApplications,
+  courseEnrollments,
   courses,
   members,
   registrations,
   monthlyFees,
   programs,
-  programRegistrations
+  programRegistrations,
 } from "@/db/schemas/karate";
 import { user as userSchema } from "@/db/schemas/auth";
+import { feeRecords } from "@/lib/billing/service";
+import { feeBalance, businessDate } from "@/lib/billing/policy";
 import { eq, desc } from "drizzle-orm";
 import { ensureUserExists } from "@/lib/auth/user-sync";
 
@@ -38,6 +40,9 @@ export interface DashboardEnrollment {
 }
 
 export interface DashboardPayment {
+  currency: string;
+  balance: number;
+  canPay: boolean;
   id: string;
   month: string;
   year: number;
@@ -62,21 +67,23 @@ export interface DashboardProgramRegistration {
 }
 
 export interface DashboardData {
-    user: {
-        name: string | null;
-        email: string | null;
-        image: string | null;
-        profileId?: string | null;
-        registrationStatus?: string | null;
-        profileComplete: boolean;
-    };
-    applications: DashboardApplication[];
-    enrollments: DashboardEnrollment[];
-    payments: DashboardPayment[];
-    programRegistrations: DashboardProgramRegistration[];
+  user: {
+    name: string | null;
+    email: string | null;
+    image: string | null;
+    profileId?: string | null;
+    registrationStatus?: string | null;
+    profileComplete: boolean;
+  };
+  applications: DashboardApplication[];
+  enrollments: DashboardEnrollment[];
+  payments: DashboardPayment[];
+  programRegistrations: DashboardProgramRegistration[];
 }
 
-export async function getUserDashboardData(): Promise<DashboardData | { error: string }> {
+export async function getUserDashboardData(): Promise<
+  DashboardData | { error: string }
+> {
   const cookieStore = await cookies();
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -87,19 +94,22 @@ export async function getUserDashboardData(): Promise<DashboardData | { error: s
           return cookieStore.getAll();
         },
         setAll(cookiesToSet) {
-            try {
-              cookiesToSet.forEach(({ name, value, options }) =>
-                cookieStore.set(name, value, options)
-              )
-            } catch {
-              // The `setAll` method was called from a Server Component.
-            }
-          },
+          try {
+            cookiesToSet.forEach(({ name, value, options }) =>
+              cookieStore.set(name, value, options),
+            );
+          } catch {
+            // The `setAll` method was called from a Server Component.
+          }
+        },
       },
-    }
+    },
   );
 
-  const { data: { user: authUser }, error: authError } = await supabase.auth.getUser();
+  const {
+    data: { user: authUser },
+    error: authError,
+  } = await supabase.auth.getUser();
 
   if (authError || !authUser) {
     return { error: "Not authenticated" };
@@ -107,7 +117,7 @@ export async function getUserDashboardData(): Promise<DashboardData | { error: s
 
   // 1. Get public user to link with relational tables
   let publicUser = await db.query.user.findFirst({
-    where: eq(userSchema.supabaseUserId, authUser.id)
+    where: eq(userSchema.supabaseUserId, authUser.id),
   });
 
   if (!publicUser) {
@@ -124,17 +134,18 @@ export async function getUserDashboardData(): Promise<DashboardData | { error: s
 
   // 2. Get Member Profile
   const member = await db.query.members.findFirst({
-    where: eq(members.userId, publicUser.id)
+    where: eq(members.userId, publicUser.id),
   });
 
   // 2b. Get Membership Registration (if not a member yet, or historical)
   const registration = await db.query.registrations.findFirst({
-      where: eq(registrations.userId, publicUser.id),
-      orderBy: desc(registrations.createdAt)
+    where: eq(registrations.userId, publicUser.id),
+    orderBy: desc(registrations.createdAt),
   });
 
   // 3. Get Applications (can exist without member profile if they just applied)
-  const applications = await db.select({
+  const applications = await db
+    .select({
       id: enrollmentApplications.id,
       applicationNumber: enrollmentApplications.applicationNumber,
       status: enrollmentApplications.status,
@@ -142,55 +153,59 @@ export async function getUserDashboardData(): Promise<DashboardData | { error: s
       courseName: courses.name,
       courseSlug: courses.id,
       admissionFee: enrollmentApplications.admissionFeeAmount,
-      currency: enrollmentApplications.currency
-  })
-  .from(enrollmentApplications)
-  .leftJoin(courses, eq(enrollmentApplications.courseId, courses.id))
-  .where(eq(enrollmentApplications.userId, publicUser.id))
-  .orderBy(desc(enrollmentApplications.createdAt));
+      currency: enrollmentApplications.currency,
+    })
+    .from(enrollmentApplications)
+    .leftJoin(courses, eq(enrollmentApplications.courseId, courses.id))
+    .where(eq(enrollmentApplications.userId, publicUser.id))
+    .orderBy(desc(enrollmentApplications.createdAt));
 
   let enrollments: DashboardEnrollment[] = [];
   let feeStatus: DashboardPayment[] = [];
 
   if (member) {
     // 4. Get Active Enrollments
-    const enrollmentsData = await db.select({
+    const enrollmentsData = await db
+      .select({
         id: courseEnrollments.id,
         courseName: courses.name,
         courseSlug: courses.id,
         joinedAt: courseEnrollments.createdAt,
         level: courses.minimumBelt,
-    })
-    .from(courseEnrollments)
-    .leftJoin(courses, eq(courseEnrollments.courseId, courses.id))
-    .where(eq(courseEnrollments.profileId, member.id));
-    
+      })
+      .from(courseEnrollments)
+      .leftJoin(courses, eq(courseEnrollments.courseId, courses.id))
+      .where(eq(courseEnrollments.profileId, member.id));
+
     // Explicitly cast to ensure type compatibility
     enrollments = enrollmentsData as DashboardEnrollment[];
 
     // 5. Get Fee Status (Recent payments/dues)
-    const feesData = await db.select({
-        id: monthlyFees.id,
-        month: monthlyFees.billingMonth,
-        year: monthlyFees.billingYear,
-        amount: monthlyFees.amount,
-        status: monthlyFees.status,
-        dueDate: monthlyFees.dueDate,
-        paidAt: monthlyFees.paidAt,
-        courseName: courses.name
-    })
-    .from(monthlyFees)
-    .leftJoin(courseEnrollments, eq(monthlyFees.enrollmentId, courseEnrollments.id))
-    .leftJoin(courses, eq(courseEnrollments.courseId, courses.id))
-    .where(eq(monthlyFees.profileId, member.id))
-    .orderBy(desc(monthlyFees.dueDate))
-    .limit(5); // Just get recent 5
-
-    feeStatus = feesData as DashboardPayment[];
+    const feesData = await feeRecords({}, [eq(members.userId, publicUser.id)]);
+    const currentMonth = businessDate().month;
+    feesData.sort(
+      (a, b) =>
+        Number(b.fee.billingMonth === currentMonth) -
+        Number(a.fee.billingMonth === currentMonth),
+    );
+    feeStatus = feesData.slice(0, 8).map(({ fee, course, canPay }) => ({
+      id: fee.id,
+      month: fee.billingMonth,
+      year: fee.billingYear,
+      amount: fee.amount,
+      currency: fee.currency,
+      balance: feeBalance(fee),
+      canPay,
+      status: fee.status,
+      dueDate: fee.dueDate,
+      paidAt: fee.paidAt,
+      courseName: course.name,
+    }));
   }
 
   // 6. Get Program Registrations (Belt Tests, Competitions, etc.)
-  const programRegs = await db.select({
+  const programRegs = await db
+    .select({
       id: programRegistrations.id,
       programId: programRegistrations.programId,
       programTitle: programs.title,
@@ -200,25 +215,25 @@ export async function getUserDashboardData(): Promise<DashboardData | { error: s
       feeAmount: programRegistrations.feeAmount,
       status: programRegistrations.status,
       transactionId: programRegistrations.transactionId,
-      registeredAt: programRegistrations.createdAt
-  })
-  .from(programRegistrations)
-  .leftJoin(programs, eq(programRegistrations.programId, programs.id))
-  .where(eq(programRegistrations.userId, publicUser.id))
-  .orderBy(desc(programRegistrations.createdAt));
+      registeredAt: programRegistrations.createdAt,
+    })
+    .from(programRegistrations)
+    .leftJoin(programs, eq(programRegistrations.programId, programs.id))
+    .where(eq(programRegistrations.userId, publicUser.id))
+    .orderBy(desc(programRegistrations.createdAt));
 
   return {
     user: {
-        name: publicUser.userName || publicUser.email,
-        email: publicUser.email || "",
-        image: publicUser.userAvatar,
-        profileId: member?.memberNumber,
-        registrationStatus: registration?.status,
-        profileComplete: !!registration
+      name: publicUser.userName || publicUser.email,
+      email: publicUser.email || "",
+      image: publicUser.userAvatar,
+      profileId: member?.memberNumber,
+      registrationStatus: registration?.status,
+      profileComplete: !!registration,
     },
     applications: applications as DashboardApplication[],
     enrollments,
     payments: feeStatus,
-    programRegistrations: programRegs as DashboardProgramRegistration[]
+    programRegistrations: programRegs as DashboardProgramRegistration[],
   };
 }

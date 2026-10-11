@@ -143,7 +143,9 @@ export default function EnrollmentsManagement() {
   const { hasPermission, loading: rbacLoading } = useRBAC();
 
   // Tab states
-  const [activeTab, setActiveTab] = useState<"applications" | "enrollments">("applications");
+  const [activeTab, setActiveTab] = useState<"applications" | "enrollments">(
+    "applications",
+  );
 
   // Filter & Search states
   const [partners, setPartners] = useState<any[]>([]);
@@ -158,7 +160,8 @@ export default function EnrollmentsManagement() {
 
   // Enrollments tab states
   const [enrollments, setEnrollments] = useState<EnrollmentRow[]>([]);
-  const [enrollmentStatusFilter, setEnrollmentStatusFilter] = useState<string>("active");
+  const [enrollmentStatusFilter, setEnrollmentStatusFilter] =
+    useState<string>("active");
 
   // Shared form edit modal state
   const [selectedAppForFormModal, setSelectedAppForFormModal] = useState<{
@@ -195,7 +198,9 @@ export default function EnrollmentsManagement() {
       if (partnerFilter) params.append("partnerId", partnerFilter);
       if (searchQuery.trim()) params.append("q", searchQuery.trim());
 
-      const response = await fetch(`/api/admin/enrollments?${params.toString()}`);
+      const response = await fetch(
+        `/api/admin/enrollments?${params.toString()}`,
+      );
       if (!response.ok) throw new Error("Failed to fetch applications");
       const data = await response.json();
       setApplications(data);
@@ -217,7 +222,9 @@ export default function EnrollmentsManagement() {
       if (partnerFilter) params.append("partnerId", partnerFilter);
       if (searchQuery.trim()) params.append("q", searchQuery.trim());
 
-      const response = await fetch(`/api/admin/course-enrollments?${params.toString()}`);
+      const response = await fetch(
+        `/api/admin/course-enrollments?${params.toString()}`,
+      );
       if (!response.ok) throw new Error("Failed to fetch enrollments");
       const data = await response.json();
       setEnrollments(data);
@@ -256,7 +263,9 @@ export default function EnrollmentsManagement() {
         throw new Error(error.error || "Action failed");
       }
 
-      toast.success(`Application ${action.replace("_", " ")} successful`);
+      const result = await response.json();
+      if (result.billingWarning) toast.warning(result.billingWarning);
+      else toast.success(`Application ${action.replace("_", " ")} successful`);
       fetchApplications();
       setSelectedApplication(null);
     } catch (error) {
@@ -266,11 +275,17 @@ export default function EnrollmentsManagement() {
 
   const handleSaveForm = async (updatedInfo: any) => {
     if (!selectedAppForFormModal) return;
-    const response = await fetch(`/api/admin/enrollments/${selectedAppForFormModal.applicationId}`, {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ action: "update_info", studentInfo: updatedInfo }),
-    });
+    const response = await fetch(
+      `/api/admin/enrollments/${selectedAppForFormModal.applicationId}`,
+      {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          action: "update_info",
+          studentInfo: updatedInfo,
+        }),
+      },
+    );
 
     if (!response.ok) {
       const error = await response.json();
@@ -288,7 +303,7 @@ export default function EnrollmentsManagement() {
 
     // Keep modal state updated
     setSelectedAppForFormModal((prev) =>
-      prev ? { ...prev, studentInfo: updatedInfo } : null
+      prev ? { ...prev, studentInfo: updatedInfo } : null,
     );
   };
 
@@ -299,7 +314,11 @@ export default function EnrollmentsManagement() {
       const response = await fetch(`/api/admin/course-enrollments`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ enrollmentId, action: "drop", dropReason: reason || null }),
+        body: JSON.stringify({
+          enrollmentId,
+          action: "drop",
+          dropReason: reason || null,
+        }),
       });
 
       if (!response.ok) {
@@ -384,9 +403,7 @@ export default function EnrollmentsManagement() {
   };
 
   if (rbacLoading) {
-    return (
-      <PanelLoader />
-    );
+    return <PanelLoader />;
   }
 
   return (
@@ -395,7 +412,9 @@ export default function EnrollmentsManagement() {
       <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
         <div>
           <h1 className="text-2xl font-bold text-foreground dark:text-gray-100">
-            {activeTab === "applications" ? "Enrollment Applications" : "Active Enrollments"}
+            {activeTab === "applications"
+              ? "Enrollment Applications"
+              : "Active Enrollments"}
           </h1>
           <p className="mt-1 text-sm text-muted-foreground dark:text-gray-400">
             {activeTab === "applications"
@@ -459,9 +478,9 @@ export default function EnrollmentsManagement() {
             setActiveTab("applications");
             setLoading(true);
           }}
-          className={`py-2.5 px-5 text-sm font-semibold border-b-2 transition-colors ${
+          className={`border-b-2 px-5 py-2.5 text-sm font-semibold transition-colors ${
             activeTab === "applications"
-              ? "border-blue-500 text-blue-600 dark:text-blue-400 font-bold"
+              ? "border-blue-500 font-bold text-blue-600 dark:text-blue-400"
               : "border-transparent text-muted-foreground hover:text-gray-700 dark:hover:text-gray-300"
           }`}
         >
@@ -472,9 +491,9 @@ export default function EnrollmentsManagement() {
             setActiveTab("enrollments");
             setLoading(true);
           }}
-          className={`py-2.5 px-5 text-sm font-semibold border-b-2 transition-colors ${
+          className={`border-b-2 px-5 py-2.5 text-sm font-semibold transition-colors ${
             activeTab === "enrollments"
-              ? "border-blue-500 text-blue-600 dark:text-blue-400 font-bold"
+              ? "border-blue-500 font-bold text-blue-600 dark:text-blue-400"
               : "border-transparent text-muted-foreground hover:text-gray-700 dark:hover:text-gray-300"
           }`}
         >
@@ -483,9 +502,12 @@ export default function EnrollmentsManagement() {
       </div>
 
       {/* Filters Area */}
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-end bg-muted dark:bg-card/40 p-4 rounded-xl border border-border dark:border-border shadow-sm">
+      <div className="flex flex-col gap-3 rounded-xl border border-border bg-muted p-4 shadow-sm dark:border-border dark:bg-card/40 sm:flex-row sm:items-end">
         <div className="flex-1">
-          <label htmlFor="search-q" className="block text-xs font-semibold text-muted-foreground dark:text-gray-400 mb-1.5">
+          <label
+            htmlFor="search-q"
+            className="mb-1.5 block text-xs font-semibold text-muted-foreground dark:text-gray-400"
+          >
             Search Student
           </label>
           <input
@@ -494,18 +516,21 @@ export default function EnrollmentsManagement() {
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Search by student name, email, member number, txn ID..."
-            className="w-full text-sm rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-card px-3 py-2 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:text-white"
+            className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-blue-500 dark:border-gray-600 dark:bg-card dark:text-white"
           />
         </div>
         <div className="w-full sm:w-64">
-          <label htmlFor="filter-partner" className="block text-xs font-semibold text-muted-foreground dark:text-gray-400 mb-1.5">
+          <label
+            htmlFor="filter-partner"
+            className="mb-1.5 block text-xs font-semibold text-muted-foreground dark:text-gray-400"
+          >
             Organization (Partner)
           </label>
           <select
             id="filter-partner"
             value={partnerFilter}
             onChange={(e) => setPartnerFilter(e.target.value)}
-            className="w-full text-sm rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-card px-3 py-2 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:text-white"
+            className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-blue-500 dark:border-gray-600 dark:bg-card dark:text-white"
           >
             <option value="">All Organizations</option>
             {partners.map((p) => (
@@ -517,14 +542,17 @@ export default function EnrollmentsManagement() {
         </div>
         {activeTab === "applications" ? (
           <div className="w-full sm:w-56">
-            <label htmlFor="filter-status-app" className="block text-xs font-semibold text-muted-foreground dark:text-gray-400 mb-1.5">
+            <label
+              htmlFor="filter-status-app"
+              className="mb-1.5 block text-xs font-semibold text-muted-foreground dark:text-gray-400"
+            >
               Application Status
             </label>
             <select
               id="filter-status-app"
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value)}
-              className="w-full text-sm rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-card px-3 py-2 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:text-white"
+              className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-blue-500 dark:border-gray-600 dark:bg-card dark:text-white"
             >
               <option value="">All Statuses</option>
               <option value="pending_payment">Pending Payment</option>
@@ -537,14 +565,17 @@ export default function EnrollmentsManagement() {
           </div>
         ) : (
           <div className="w-full sm:w-56">
-            <label htmlFor="filter-status-en" className="block text-xs font-semibold text-muted-foreground dark:text-gray-400 mb-1.5">
+            <label
+              htmlFor="filter-status-en"
+              className="mb-1.5 block text-xs font-semibold text-muted-foreground dark:text-gray-400"
+            >
               Enrollment Status
             </label>
             <select
               id="filter-status-en"
               value={enrollmentStatusFilter}
               onChange={(e) => setEnrollmentStatusFilter(e.target.value)}
-              className="w-full text-sm rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-card px-3 py-2 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:text-white"
+              className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-blue-500 dark:border-gray-600 dark:bg-card dark:text-white"
             >
               <option value="active">Active</option>
               <option value="completed">Completed</option>
@@ -560,80 +591,106 @@ export default function EnrollmentsManagement() {
         <div className="grid grid-cols-2 gap-4 md:grid-cols-6">
           <button
             onClick={() => setStatusFilter("")}
-            className={`rounded-lg border p-4 text-left bg-white dark:bg-card shadow-sm ${
-              statusFilter === "" ? "border-blue-500 ring-2 ring-blue-500" : "dark:border-border"
+            className={`rounded-lg border bg-white p-4 text-left shadow-sm dark:bg-card ${
+              statusFilter === ""
+                ? "border-blue-500 ring-2 ring-blue-500"
+                : "dark:border-border"
             }`}
           >
-            <p className="text-sm text-muted-foreground dark:text-gray-400">All</p>
+            <p className="text-sm text-muted-foreground dark:text-gray-400">
+              All
+            </p>
             <p className="text-2xl font-semibold">{stats.total}</p>
           </button>
           <button
             onClick={() => setStatusFilter("pending_payment")}
-            className={`rounded-lg border p-4 text-left bg-white dark:bg-card shadow-sm ${
+            className={`rounded-lg border bg-white p-4 text-left shadow-sm dark:bg-card ${
               statusFilter === "pending_payment"
                 ? "ring-yellow-500 border-yellow-500 ring-2"
                 : "dark:border-border"
             }`}
           >
-            <p className="text-sm text-muted-foreground dark:text-gray-400">Pending Payment</p>
-            <p className="text-yellow-600 text-2xl font-semibold">{stats.pending_payment}</p>
+            <p className="text-sm text-muted-foreground dark:text-gray-400">
+              Pending Payment
+            </p>
+            <p className="text-yellow-600 text-2xl font-semibold">
+              {stats.pending_payment}
+            </p>
           </button>
           <button
             onClick={() => setStatusFilter("payment_submitted")}
-            className={`rounded-lg border p-4 text-left bg-white dark:bg-card shadow-sm ${
+            className={`rounded-lg border bg-white p-4 text-left shadow-sm dark:bg-card ${
               statusFilter === "payment_submitted"
                 ? "border-blue-500 ring-2 ring-blue-500"
                 : "dark:border-border"
             }`}
           >
-            <p className="text-sm text-muted-foreground dark:text-gray-400">Payment Submitted</p>
-            <p className="text-2xl font-semibold text-blue-600">{stats.payment_submitted}</p>
+            <p className="text-sm text-muted-foreground dark:text-gray-400">
+              Payment Submitted
+            </p>
+            <p className="text-2xl font-semibold text-blue-600">
+              {stats.payment_submitted}
+            </p>
           </button>
           <button
             onClick={() => setStatusFilter("payment_verified")}
-            className={`rounded-lg border p-4 text-left bg-white dark:bg-card shadow-sm ${
+            className={`rounded-lg border bg-white p-4 text-left shadow-sm dark:bg-card ${
               statusFilter === "payment_verified"
                 ? "border-indigo-500 ring-2 ring-indigo-500"
                 : "dark:border-border"
             }`}
           >
-            <p className="text-sm text-muted-foreground dark:text-gray-400">Payment Verified</p>
-            <p className="text-2xl font-semibold text-indigo-600">{stats.payment_verified}</p>
+            <p className="text-sm text-muted-foreground dark:text-gray-400">
+              Payment Verified
+            </p>
+            <p className="text-2xl font-semibold text-indigo-600">
+              {stats.payment_verified}
+            </p>
           </button>
           <button
             onClick={() => setStatusFilter("approved")}
-            className={`rounded-lg border p-4 text-left bg-white dark:bg-card shadow-sm ${
+            className={`rounded-lg border bg-white p-4 text-left shadow-sm dark:bg-card ${
               statusFilter === "approved"
                 ? "ring-green-500 border-green-500 ring-2"
                 : "dark:border-border"
             }`}
           >
-            <p className="text-sm text-muted-foreground dark:text-gray-400">Approved</p>
-            <p className="text-green-600 dark:text-green-400 text-2xl font-semibold">{stats.approved}</p>
+            <p className="text-sm text-muted-foreground dark:text-gray-400">
+              Approved
+            </p>
+            <p className="text-green-600 dark:text-green-400 text-2xl font-semibold">
+              {stats.approved}
+            </p>
           </button>
           <button
             onClick={() => setStatusFilter("rejected")}
-            className={`rounded-lg border p-4 text-left bg-white dark:bg-card shadow-sm ${
+            className={`rounded-lg border bg-white p-4 text-left shadow-sm dark:bg-card ${
               statusFilter === "rejected"
                 ? "border-red-500 ring-2 ring-red-500"
                 : "dark:border-border"
             }`}
           >
-            <p className="text-sm text-muted-foreground dark:text-gray-400">Rejected</p>
-            <p className="text-2xl font-semibold text-red-600 dark:text-red-400">{stats.rejected}</p>
+            <p className="text-sm text-muted-foreground dark:text-gray-400">
+              Rejected
+            </p>
+            <p className="text-2xl font-semibold text-red-600 dark:text-red-400">
+              {stats.rejected}
+            </p>
           </button>
         </div>
       )}
 
       {/* Main Table */}
-      <div className="overflow-hidden rounded-lg border bg-white shadow-sm dark:bg-card dark:border-border">
+      <div className="overflow-hidden rounded-lg border bg-white shadow-sm dark:border-border dark:bg-card">
         {loading ? (
           <PanelLoader />
         ) : activeTab === "applications" ? (
           applications.length === 0 ? (
             <div className="py-12 text-center">
               <UserIcon className="mx-auto h-12 w-12 text-gray-400 dark:text-gray-500" />
-              <h3 className="mt-2 text-sm font-medium text-foreground dark:text-gray-100">No applications</h3>
+              <h3 className="mt-2 text-sm font-medium text-foreground dark:text-gray-100">
+                No applications
+              </h3>
               <p className="mt-1 text-sm text-muted-foreground dark:text-gray-400">
                 {statusFilter || partnerFilter || searchQuery
                   ? "No matching enrollment applications found."
@@ -677,7 +734,10 @@ export default function EnrollmentsManagement() {
                     const StatusIcon = status?.icon || ClockIcon;
 
                     return (
-                      <tr key={app.application.id} className="hover:bg-gray-50 dark:hover:bg-gray-700/50">
+                      <tr
+                        key={app.application.id}
+                        className="hover:bg-gray-50 dark:hover:bg-gray-700/50"
+                      >
                         <td className="whitespace-nowrap px-6 py-4">
                           <div className="text-sm font-medium text-foreground dark:text-gray-100">
                             {app.application.applicationNumber}
@@ -688,7 +748,9 @@ export default function EnrollmentsManagement() {
                             {app.application.studentInfo.profilePhotoUrl ? (
                               <div className="relative h-8 w-8 overflow-hidden rounded-full">
                                 <Image
-                                  src={app.application.studentInfo.profilePhotoUrl}
+                                  src={
+                                    app.application.studentInfo.profilePhotoUrl
+                                  }
                                   alt=""
                                   fill
                                   unoptimized
@@ -703,7 +765,8 @@ export default function EnrollmentsManagement() {
                             )}
                             <div className="ml-3">
                               <div className="text-sm font-semibold text-foreground dark:text-gray-100">
-                                {app.application.studentInfo.fullNameEnglish || app.application.studentInfo.fullNameEnglish}
+                                {app.application.studentInfo.fullNameEnglish ||
+                                  app.application.studentInfo.fullNameEnglish}
                               </div>
                               <div className="text-xs text-muted-foreground dark:text-gray-400">
                                 {app.application.studentInfo.email}
@@ -715,24 +778,31 @@ export default function EnrollmentsManagement() {
                           </div>
                         </td>
                         <td className="whitespace-nowrap px-6 py-4">
-                          <div className="text-sm text-foreground dark:text-gray-100">{app.course?.name || "Unknown"}</div>
-                        </td>
-                        <td className="whitespace-nowrap px-6 py-4">
                           <div className="text-sm text-foreground dark:text-gray-100">
-                            {formatCurrency(app.application.admissionFeeAmount, app.application.currency)}
+                            {app.course?.name || "Unknown"}
                           </div>
                         </td>
                         <td className="whitespace-nowrap px-6 py-4">
-                          <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold ${status?.color}`}>
+                          <div className="text-sm text-foreground dark:text-gray-100">
+                            {formatCurrency(
+                              app.application.admissionFeeAmount,
+                              app.application.currency,
+                            )}
+                          </div>
+                        </td>
+                        <td className="whitespace-nowrap px-6 py-4">
+                          <span
+                            className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold ${status?.color}`}
+                          >
                             <StatusIcon className="mr-1 h-3.5 w-3.5" />
                             {status?.label || app.application.status}
                           </span>
                         </td>
                         <td className="whitespace-nowrap px-6 py-4">
-                          <div className="text-xs font-semibold text-foreground dark:text-gray-100 capitalize">
+                          <div className="text-xs font-semibold capitalize text-foreground dark:text-gray-100">
                             {app.application.paymentMethod || "—"}
                           </div>
-                          <div className="text-xs font-mono text-muted-foreground dark:text-gray-400">
+                          <div className="font-mono text-xs text-muted-foreground dark:text-gray-400">
                             {app.application.transactionId || "—"}
                           </div>
                         </td>
@@ -740,7 +810,7 @@ export default function EnrollmentsManagement() {
                           {formatDate(app.application.createdAt)}
                         </td>
                         <td className="whitespace-nowrap px-6 py-4 text-right text-sm font-medium">
-                          <div className="flex justify-end gap-2 items-center">
+                          <div className="flex items-center justify-end gap-2">
                             <button
                               onClick={() => setSelectedApplication(app)}
                               className="rounded p-1 text-muted-foreground hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-600"
@@ -758,7 +828,8 @@ export default function EnrollmentsManagement() {
                                   status: app.application.status,
                                   paymentInfo: {
                                     method: app.application.paymentMethod,
-                                    transactionId: app.application.transactionId,
+                                    transactionId:
+                                      app.application.transactionId,
                                     proofUrl: app.application.paymentProofUrl,
                                     amount: app.application.admissionFeeAmount,
                                     currency: app.application.currency,
@@ -770,38 +841,56 @@ export default function EnrollmentsManagement() {
                             >
                               <PencilSquareIcon className="h-5 w-5" />
                             </button>
-                            {app.application.status === "payment_submitted" && canVerify && (
-                              <button
-                                onClick={() => handleAction(app.application.id, "verify_payment")}
-                                className="rounded p-1 text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors"
-                                title="Verify Payment"
-                              >
-                                <CheckIcon className="h-5 w-5" />
-                              </button>
-                            )}
-                            {app.application.status === "payment_verified" && canApprove && (
-                              <>
+                            {app.application.status === "payment_submitted" &&
+                              canVerify && (
                                 <button
-                                  onClick={() => handleAction(app.application.id, "approve")}
-                                  className="rounded p-1 text-green-600 hover:text-green-800 dark:text-green-400 dark:hover:text-green-300 hover:bg-green-50 dark:hover:bg-green-900/20 transition-colors"
-                                  title="Approve Enrollment"
+                                  onClick={() =>
+                                    handleAction(
+                                      app.application.id,
+                                      "verify_payment",
+                                    )
+                                  }
+                                  className="rounded p-1 text-blue-600 transition-colors hover:bg-blue-50 hover:text-blue-800 dark:text-blue-400 dark:hover:bg-blue-900/20 dark:hover:text-blue-300"
+                                  title="Verify Payment"
                                 >
                                   <CheckIcon className="h-5 w-5" />
                                 </button>
-                                <button
-                                  onClick={() => {
-                                    const reason = prompt("Enter rejection reason:");
-                                    if (reason) {
-                                      handleAction(app.application.id, "reject", { rejectionReason: reason });
+                              )}
+                            {app.application.status === "payment_verified" &&
+                              canApprove && (
+                                <>
+                                  <button
+                                    onClick={() =>
+                                      handleAction(
+                                        app.application.id,
+                                        "approve",
+                                      )
                                     }
-                                  }}
-                                  className="rounded p-1 text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-300 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors"
-                                  title="Reject Application"
-                                >
-                                  <XMarkIcon className="h-5 w-5" />
-                                </button>
-                              </>
-                            )}
+                                    className="text-green-600 hover:text-green-800 dark:text-green-400 dark:hover:text-green-300 hover:bg-green-50 dark:hover:bg-green-900/20 rounded p-1 transition-colors"
+                                    title="Approve Enrollment"
+                                  >
+                                    <CheckIcon className="h-5 w-5" />
+                                  </button>
+                                  <button
+                                    onClick={() => {
+                                      const reason = prompt(
+                                        "Enter rejection reason:",
+                                      );
+                                      if (reason) {
+                                        handleAction(
+                                          app.application.id,
+                                          "reject",
+                                          { rejectionReason: reason },
+                                        );
+                                      }
+                                    }}
+                                    className="rounded p-1 text-red-600 transition-colors hover:bg-red-50 hover:text-red-800 dark:text-red-400 dark:hover:bg-red-900/20 dark:hover:text-red-300"
+                                    title="Reject Application"
+                                  >
+                                    <XMarkIcon className="h-5 w-5" />
+                                  </button>
+                                </>
+                              )}
                           </div>
                         </td>
                       </tr>
@@ -814,7 +903,9 @@ export default function EnrollmentsManagement() {
         ) : enrollments.length === 0 ? (
           <div className="py-12 text-center">
             <UserIcon className="mx-auto h-12 w-12 text-gray-400 dark:text-gray-500" />
-            <h3 className="mt-2 text-sm font-medium text-foreground dark:text-gray-100">No enrollments</h3>
+            <h3 className="mt-2 text-sm font-medium text-foreground dark:text-gray-100">
+              No enrollments
+            </h3>
             <p className="mt-1 text-sm text-muted-foreground dark:text-gray-400">
               {partnerFilter || searchQuery
                 ? "No matching student enrollments found."
@@ -849,14 +940,19 @@ export default function EnrollmentsManagement() {
               <tbody className="divide-y divide-gray-200 bg-white dark:divide-gray-700 dark:bg-card">
                 {enrollments.map((en) => {
                   return (
-                    <tr key={en.id} className="hover:bg-gray-50 dark:hover:bg-gray-700/50">
+                    <tr
+                      key={en.id}
+                      className="hover:bg-gray-50 dark:hover:bg-gray-700/50"
+                    >
                       <td className="whitespace-nowrap px-6 py-4">
                         <div className="flex items-center">
                           <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gray-200 dark:bg-gray-600">
                             <UserIcon className="h-4 w-4 text-muted-foreground dark:text-gray-400" />
                           </div>
                           <div className="ml-3">
-                            <div className="text-sm font-semibold text-foreground dark:text-gray-100">{en.memberName}</div>
+                            <div className="text-sm font-semibold text-foreground dark:text-gray-100">
+                              {en.memberName}
+                            </div>
                             <div className="text-xs text-muted-foreground dark:text-gray-400">
                               {en.memberNumber || "—"} · {en.memberPhone || "—"}
                             </div>
@@ -864,7 +960,9 @@ export default function EnrollmentsManagement() {
                         </div>
                       </td>
                       <td className="whitespace-nowrap px-6 py-4">
-                        <div className="text-sm text-foreground dark:text-gray-100">{en.courseName}</div>
+                        <div className="text-sm text-foreground dark:text-gray-100">
+                          {en.courseName}
+                        </div>
                       </td>
                       <td className="whitespace-nowrap px-6 py-4 text-sm text-muted-foreground dark:text-gray-400">
                         {formatDate(en.enrolledAt)}
@@ -878,15 +976,19 @@ export default function EnrollmentsManagement() {
                             en.isActive
                               ? "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400"
                               : en.droppedAt
-                              ? "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400"
-                              : "bg-muted text-foreground dark:bg-gray-700 dark:text-gray-300"
+                                ? "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400"
+                                : "bg-muted text-foreground dark:bg-gray-700 dark:text-gray-300"
                           }`}
                         >
-                          {en.isActive ? "Active" : en.droppedAt ? "Dropped" : "Completed"}
+                          {en.isActive
+                            ? "Active"
+                            : en.droppedAt
+                              ? "Dropped"
+                              : "Completed"}
                         </span>
                       </td>
                       <td className="whitespace-nowrap px-6 py-4 text-right text-sm font-medium">
-                        <div className="flex justify-end gap-2 items-center">
+                        <div className="flex items-center justify-end gap-2">
                           {en.applicationId ? (
                             <button
                               onClick={() =>
@@ -895,7 +997,11 @@ export default function EnrollmentsManagement() {
                                   courseId: en.courseId,
                                   courseName: en.courseName,
                                   studentInfo: null, // lazy load
-                                  status: en.isActive ? "active" : en.droppedAt ? "dropped" : "completed",
+                                  status: en.isActive
+                                    ? "active"
+                                    : en.droppedAt
+                                      ? "dropped"
+                                      : "completed",
                                   paymentInfo: {
                                     transactionId: en.transactionId,
                                     proofUrl: en.paymentProofUrl,

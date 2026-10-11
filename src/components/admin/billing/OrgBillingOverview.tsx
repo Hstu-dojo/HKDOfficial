@@ -1,9 +1,13 @@
-'use client';
+"use client";
 
+import { PartnerInvoices } from "@/components/billing/PartnerInvoices";
+import { BillingReminders } from "@/components/billing/BillingReminders";
+import { useRBAC } from "@/hooks/useRBAC";
+import { businessDate } from "@/lib/billing/policy";
 import { PanelLoader } from "@/components/loading";
 
-import { useState, useEffect } from 'react';
-import { toast } from 'sonner';
+import { useState, useEffect } from "react";
+import { toast } from "sonner";
 
 interface OrgSummary {
   partnerId: string;
@@ -28,12 +32,16 @@ interface GlobalTotals {
 }
 
 export default function OrgBillingOverview() {
+  const { hasPermission } = useRBAC();
   const [orgs, setOrgs] = useState<OrgSummary[]>([]);
   const [globalTotals, setGlobalTotals] = useState<GlobalTotals>({
-    totalOrganizations: 0, totalRevenue: 0, totalBills: 0, overallCollectionRate: 0,
+    totalOrganizations: 0,
+    totalRevenue: 0,
+    totalBills: 0,
+    overallCollectionRate: 0,
   });
   const [loading, setLoading] = useState(true);
-  const [monthFilter, setMonthFilter] = useState(new Date().toISOString().slice(0, 7));
+  const [monthFilter, setMonthFilter] = useState(businessDate().month);
   const [expandedOrg, setExpandedOrg] = useState<string | null>(null);
 
   useEffect(() => {
@@ -44,48 +52,53 @@ export default function OrgBillingOverview() {
     setLoading(true);
     try {
       const params = new URLSearchParams();
-      if (monthFilter) params.set('billingMonth', monthFilter);
+      if (monthFilter) params.set("billingMonth", monthFilter);
       const res = await fetch(`/api/admin/org-billing?${params.toString()}`);
-      if (!res.ok) throw new Error('Failed to load');
+      if (!res.ok) throw new Error("Failed to load");
       const data = await res.json();
       setOrgs(data.organizations || []);
-      setGlobalTotals(data.globalTotals || {
-        totalOrganizations: 0, totalRevenue: 0, totalBills: 0, overallCollectionRate: 0,
-      });
+      setGlobalTotals(
+        data.globalTotals || {
+          totalOrganizations: 0,
+          totalRevenue: 0,
+          totalBills: 0,
+          overallCollectionRate: 0,
+        },
+      );
     } catch {
-      toast.error('Failed to load org billing data');
+      toast.error("Failed to load org billing data");
     } finally {
       setLoading(false);
     }
   };
 
-  const fmtAmount = (amount: number) => `৳${(amount / 100).toFixed(0)}`;
+  const fmtAmount = (amount: number) => `৳${(amount / 100).toFixed(2)}`;
 
   const fmtMonth = (monthStr: string) => {
-    const [year, month] = monthStr.split('-');
+    const [year, month] = monthStr.split("-");
     const date = new Date(parseInt(year), parseInt(month) - 1);
-    return date.toLocaleDateString('en-BD', { year: 'numeric', month: 'long' });
+    return date.toLocaleDateString("en-BD", { year: "numeric", month: "long" });
   };
 
   // Month options
   const monthOptions = Array.from({ length: 12 }, (_, i) => {
-    const date = new Date();
-    date.setMonth(date.getMonth() - i + 1);
+    const date = new Date(`${businessDate().month}-01T12:00:00Z`);
+    date.setUTCMonth(date.getUTCMonth() - i + 1);
     return date.toISOString().slice(0, 7);
   });
 
   if (loading) {
-    return (
-      <PanelLoader />
-    );
+    return <PanelLoader />;
   }
 
   return (
     <div className="portal-page space-y-6">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-foreground dark:text-gray-100">Organization Billing Overview</h1>
+          <h1 className="text-2xl font-bold text-foreground dark:text-gray-100">
+            Organization Billing Overview
+          </h1>
           <p className="text-sm text-muted-foreground dark:text-gray-400">
             Aggregated billing data across all partner organizations.
           </p>
@@ -94,49 +107,59 @@ export default function OrgBillingOverview() {
           <select
             value={monthFilter}
             onChange={(e) => setMonthFilter(e.target.value)}
-            className="px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 bg-white dark:bg-card text-foreground dark:text-gray-100"
+            className="rounded-lg border bg-white px-4 py-2 text-foreground focus:ring-2 focus:ring-blue-500 dark:bg-card dark:text-gray-100"
           >
             <option value="">All Time</option>
             {monthOptions.map((m) => (
-              <option key={m} value={m}>{fmtMonth(m)}</option>
+              <option key={m} value={m}>
+                {fmtMonth(m)}
+              </option>
             ))}
           </select>
         </div>
       </div>
 
       {/* Global Summary */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="bg-white dark:bg-card rounded-lg border border-border dark:border-border p-5">
-          <p className="text-sm text-muted-foreground dark:text-gray-400">Organizations</p>
-          <p className="text-3xl font-bold text-foreground dark:text-gray-100 mt-1">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="rounded-lg border border-border bg-white p-5 dark:border-border dark:bg-card">
+          <p className="text-sm text-muted-foreground dark:text-gray-400">
+            Organizations
+          </p>
+          <p className="mt-1 text-3xl font-bold text-foreground dark:text-gray-100">
             {globalTotals.totalOrganizations}
           </p>
         </div>
-        <div className="bg-white dark:bg-card rounded-lg border border-border dark:border-border p-5">
-          <p className="text-sm text-muted-foreground dark:text-gray-400">Total Bills</p>
-          <p className="text-3xl font-bold text-foreground dark:text-gray-100 mt-1">
+        <div className="rounded-lg border border-border bg-white p-5 dark:border-border dark:bg-card">
+          <p className="text-sm text-muted-foreground dark:text-gray-400">
+            Total Bills
+          </p>
+          <p className="mt-1 text-3xl font-bold text-foreground dark:text-gray-100">
             {globalTotals.totalBills}
           </p>
         </div>
-        <div className="bg-white dark:bg-card rounded-lg border border-border dark:border-border p-5">
-          <p className="text-sm text-muted-foreground dark:text-gray-400">Total Revenue</p>
-          <p className="text-3xl font-bold text-green-600 dark:text-green-400 mt-1">
+        <div className="rounded-lg border border-border bg-white p-5 dark:border-border dark:bg-card">
+          <p className="text-sm text-muted-foreground dark:text-gray-400">
+            Total Revenue (BDT)
+          </p>
+          <p className="text-green-600 dark:text-green-400 mt-1 text-3xl font-bold">
             {fmtAmount(globalTotals.totalRevenue)}
           </p>
         </div>
-        <div className="bg-white dark:bg-card rounded-lg border border-border dark:border-border p-5">
-          <p className="text-sm text-muted-foreground dark:text-gray-400">Collection Rate</p>
-          <p className="text-3xl font-bold text-blue-600 dark:text-blue-400 mt-1">
+        <div className="rounded-lg border border-border bg-white p-5 dark:border-border dark:bg-card">
+          <p className="text-sm text-muted-foreground dark:text-gray-400">
+            Collection Rate (BDT)
+          </p>
+          <p className="mt-1 text-3xl font-bold text-blue-600 dark:text-blue-400">
             {globalTotals.overallCollectionRate}%
           </p>
         </div>
       </div>
 
       {/* Organization Table */}
-      <div className="bg-white dark:bg-card rounded-lg border border-border dark:border-border overflow-hidden">
-        <div className="p-4 border-b border-border dark:border-border">
+      <div className="overflow-hidden rounded-lg border border-border bg-white dark:border-border dark:bg-card">
+        <div className="border-b border-border p-4 dark:border-border">
           <h2 className="text-lg font-semibold text-foreground dark:text-gray-100">
-            Organizations {monthFilter ? `— ${fmtMonth(monthFilter)}` : ''}
+            Organizations {monthFilter ? `— ${fmtMonth(monthFilter)}` : ""}
           </h2>
         </div>
 
@@ -149,15 +172,33 @@ export default function OrgBillingOverview() {
             <table className="min-w-full divide-y divide-gray-200 dark:divide-slate-700">
               <thead className="bg-muted dark:bg-background/50">
                 <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground dark:text-gray-400 uppercase">Organization</th>
-                  <th className="px-6 py-3 text-center text-xs font-medium text-muted-foreground dark:text-gray-400 uppercase">Total</th>
-                  <th className="px-6 py-3 text-center text-xs font-medium text-muted-foreground dark:text-gray-400 uppercase">Paid</th>
-                  <th className="px-6 py-3 text-center text-xs font-medium text-muted-foreground dark:text-gray-400 uppercase">Pending</th>
-                  <th className="px-6 py-3 text-center text-xs font-medium text-muted-foreground dark:text-gray-400 uppercase">Submitted</th>
-                  <th className="px-6 py-3 text-center text-xs font-medium text-muted-foreground dark:text-gray-400 uppercase">Overdue</th>
-                  <th className="px-6 py-3 text-right text-xs font-medium text-muted-foreground dark:text-gray-400 uppercase">Collected</th>
-                  <th className="px-6 py-3 text-right text-xs font-medium text-muted-foreground dark:text-gray-400 uppercase">Total Amt</th>
-                  <th className="px-6 py-3 text-center text-xs font-medium text-muted-foreground dark:text-gray-400 uppercase">Rate</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium uppercase text-muted-foreground dark:text-gray-400">
+                    Organization
+                  </th>
+                  <th className="px-6 py-3 text-center text-xs font-medium uppercase text-muted-foreground dark:text-gray-400">
+                    Total
+                  </th>
+                  <th className="px-6 py-3 text-center text-xs font-medium uppercase text-muted-foreground dark:text-gray-400">
+                    Paid
+                  </th>
+                  <th className="px-6 py-3 text-center text-xs font-medium uppercase text-muted-foreground dark:text-gray-400">
+                    Pending
+                  </th>
+                  <th className="px-6 py-3 text-center text-xs font-medium uppercase text-muted-foreground dark:text-gray-400">
+                    Submitted
+                  </th>
+                  <th className="px-6 py-3 text-center text-xs font-medium uppercase text-muted-foreground dark:text-gray-400">
+                    Overdue
+                  </th>
+                  <th className="px-6 py-3 text-right text-xs font-medium uppercase text-muted-foreground dark:text-gray-400">
+                    Collected (BDT)
+                  </th>
+                  <th className="px-6 py-3 text-right text-xs font-medium uppercase text-muted-foreground dark:text-gray-400">
+                    Total Amt
+                  </th>
+                  <th className="px-6 py-3 text-center text-xs font-medium uppercase text-muted-foreground dark:text-gray-400">
+                    Rate
+                  </th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-200 dark:divide-slate-700">
@@ -165,32 +206,50 @@ export default function OrgBillingOverview() {
                   <tr
                     key={org.partnerId}
                     className={`cursor-pointer hover:bg-gray-50 dark:hover:bg-slate-700/50 ${
-                      expandedOrg === org.partnerId ? 'bg-blue-50 dark:bg-blue-900/20' : ''
+                      expandedOrg === org.partnerId
+                        ? "bg-blue-50 dark:bg-blue-900/20"
+                        : ""
                     }`}
-                    onClick={() => setExpandedOrg(expandedOrg === org.partnerId ? null : org.partnerId)}
+                    onClick={() =>
+                      setExpandedOrg(
+                        expandedOrg === org.partnerId ? null : org.partnerId,
+                      )
+                    }
                   >
                     <td className="px-6 py-4">
-                      <div className="font-medium text-foreground dark:text-gray-100">{org.partnerName}</div>
-                      <div className="text-xs text-muted-foreground dark:text-gray-400">{org.partnerSlug}</div>
+                      <div className="font-medium text-foreground dark:text-gray-100">
+                        {org.partnerName}
+                      </div>
+                      <div className="text-xs text-muted-foreground dark:text-gray-400">
+                        {org.partnerSlug}
+                      </div>
                     </td>
                     <td className="px-6 py-4 text-center text-sm text-foreground dark:text-gray-100">
                       {org.totalBills}
                     </td>
                     <td className="px-6 py-4 text-center">
-                      <span className="text-sm font-medium text-green-600 dark:text-green-400">{org.paidBills}</span>
+                      <span className="text-green-600 dark:text-green-400 text-sm font-medium">
+                        {org.paidBills}
+                      </span>
                     </td>
                     <td className="px-6 py-4 text-center">
-                      <span className="text-sm font-medium text-yellow-600 dark:text-yellow-400">{org.pendingBills}</span>
+                      <span className="text-yellow-600 dark:text-yellow-400 text-sm font-medium">
+                        {org.pendingBills}
+                      </span>
                     </td>
                     <td className="px-6 py-4 text-center">
-                      <span className="text-sm font-medium text-blue-600 dark:text-blue-400">{org.submittedBills}</span>
+                      <span className="text-sm font-medium text-blue-600 dark:text-blue-400">
+                        {org.submittedBills}
+                      </span>
                     </td>
                     <td className="px-6 py-4 text-center">
-                      <span className={`text-sm font-medium ${org.overdueBills > 0 ? 'text-red-600 dark:text-red-400' : 'text-gray-400'}`}>
+                      <span
+                        className={`text-sm font-medium ${org.overdueBills > 0 ? "text-red-600 dark:text-red-400" : "text-gray-400"}`}
+                      >
                         {org.overdueBills}
                       </span>
                     </td>
-                    <td className="px-6 py-4 text-right text-sm font-medium text-green-600 dark:text-green-400">
+                    <td className="text-green-600 dark:text-green-400 px-6 py-4 text-right text-sm font-medium">
                       {fmtAmount(org.collectedAmount)}
                     </td>
                     <td className="px-6 py-4 text-right text-sm text-foreground dark:text-gray-100">
@@ -198,13 +257,18 @@ export default function OrgBillingOverview() {
                     </td>
                     <td className="px-6 py-4 text-center">
                       <div className="flex items-center justify-center gap-2">
-                        <div className="w-16 bg-gray-200 dark:bg-slate-700 rounded-full h-2">
+                        <div className="h-2 w-16 rounded-full bg-gray-200 dark:bg-slate-700">
                           <div
                             className={`h-2 rounded-full ${
-                              org.collectionRate >= 80 ? 'bg-green-500' :
-                              org.collectionRate >= 50 ? 'bg-yellow-500' : 'bg-red-500'
+                              org.collectionRate >= 80
+                                ? "bg-green-500"
+                                : org.collectionRate >= 50
+                                  ? "bg-yellow-500"
+                                  : "bg-red-500"
                             }`}
-                            style={{ width: `${Math.min(org.collectionRate, 100)}%` }}
+                            style={{
+                              width: `${Math.min(org.collectionRate, 100)}%`,
+                            }}
                           />
                         </div>
                         <span className="text-xs font-medium text-foreground dark:text-gray-300">
@@ -220,12 +284,29 @@ export default function OrgBillingOverview() {
         )}
       </div>
 
+      {expandedOrg && (
+        <PartnerInvoices
+          key={expandedOrg}
+          partnerId={expandedOrg}
+          partnerName={
+            orgs.find((o) => o.partnerId === expandedOrg)?.partnerName ||
+            "Organization"
+          }
+        />
+      )}
+      {expandedOrg && hasPermission("MONTHLY_FEE", "READ") && (
+        <BillingReminders
+          endpoint="/api/admin/monthly-fees/reminders"
+          partnerId={expandedOrg}
+          canSend={hasPermission("MONTHLY_FEE", "MANAGE")}
+        />
+      )}
       {/* Expanded org link */}
       {expandedOrg && (
-        <div className="text-sm text-center">
+        <div className="text-center text-sm">
           <a
             href={`/admin/monthly-fees?partnerId=${expandedOrg}`}
-            className="text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 font-medium"
+            className="font-medium text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300"
           >
             View all fees for this organization →
           </a>

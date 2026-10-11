@@ -19,7 +19,7 @@ export default async function accountVerify(email, token) {
   const emailHtml = render(<CreateAccountMail token={token} />);
   const options = {
     from: process.env.EMAIL_FROM_ADDRESS || "noreply@kaizenkarate.com",
-    bcc: "kaizenkarateacademy@gmail.com",
+    bcc: "kaizen@paradox-bd.com",
     to: email || "mr.hasan3032@gmail.com",
     subject: "Kaizen Karate Academy: Account Verification",
     html: emailHtml,

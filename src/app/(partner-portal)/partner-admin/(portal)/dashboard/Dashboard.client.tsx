@@ -101,7 +101,7 @@ export default function Dashboard({
       style: "currency",
       currency: "BDT",
       minimumFractionDigits: 0,
-      maximumFractionDigits: 0,
+      maximumFractionDigits: 2,
     }).format(amount);
   };
 
@@ -194,7 +194,7 @@ export default function Dashboard({
       <div className="scrollbar-none flex gap-1 overflow-x-auto rounded-xl border border-b bg-card p-1 shadow-sm dark:border-gray-800">
         <button
           onClick={() => setActiveTab("overview")}
-          className={`flex flex-1 flex-shrink-0 shrink-0 items-center justify-center gap-2 rounded-lg px-3 py-2 text-xs font-semibold transition-all sm:flex-initial sm:px-4 sm:text-sm ${
+          className={`flex flex-none items-center justify-center gap-1.5 whitespace-nowrap rounded-lg px-2 py-2 text-xs font-semibold transition-all sm:px-4 sm:text-sm ${
             activeTab === "overview"
               ? "bg-primary text-primary-foreground shadow-sm"
               : "text-muted-foreground hover:bg-muted/50 hover:text-foreground"
@@ -205,7 +205,7 @@ export default function Dashboard({
         </button>
         <button
           onClick={() => setActiveTab("activity")}
-          className={`flex flex-1 flex-shrink-0 shrink-0 items-center justify-center gap-2 rounded-lg px-3 py-2 text-xs font-semibold transition-all sm:flex-initial sm:px-4 sm:text-sm ${
+          className={`flex flex-none items-center justify-center gap-1.5 whitespace-nowrap rounded-lg px-2 py-2 text-xs font-semibold transition-all sm:px-4 sm:text-sm ${
             activeTab === "activity"
               ? "bg-primary text-primary-foreground shadow-sm"
               : "text-muted-foreground hover:bg-muted/50 hover:text-foreground"
@@ -222,7 +222,7 @@ export default function Dashboard({
         </button>
         <button
           onClick={() => setActiveTab("actions")}
-          className={`flex flex-1 flex-shrink-0 shrink-0 items-center justify-center gap-2 rounded-lg px-3 py-2 text-xs font-semibold transition-all sm:flex-initial sm:px-4 sm:text-sm ${
+          className={`flex flex-none items-center justify-center gap-1.5 whitespace-nowrap rounded-lg px-2 py-2 text-xs font-semibold transition-all sm:px-4 sm:text-sm ${
             activeTab === "actions"
               ? "bg-primary text-primary-foreground shadow-sm"
               : "text-muted-foreground hover:bg-muted/50 hover:text-foreground"
@@ -270,7 +270,7 @@ export default function Dashboard({
             <div className="group relative overflow-hidden rounded-xl border bg-card p-5 shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md">
               <div className="flex items-center justify-between">
                 <span className="text-sm font-semibold text-muted-foreground">
-                  Cumulative Revenue
+                  Cumulative Revenue (BDT)
                 </span>
                 <div className="rounded-lg bg-primary/10 p-2 text-primary transition-transform group-hover:scale-[1.025]">
                   <DollarSign className="h-5 w-5" />
@@ -322,7 +322,7 @@ export default function Dashboard({
                       1,
                     );
                     return `${prevMonthDate.getFullYear()}-${String(prevMonthDate.getMonth() + 1).padStart(2, "0")}`;
-                  })()}&status=pending`}
+                  })()}&balance=outstanding`}
                   className="inline-flex shrink-0 items-center gap-1 rounded-lg bg-primary/10 px-2.5 py-1.5 text-xs font-bold text-primary opacity-0 shadow-sm transition-opacity duration-200 hover:bg-primary/20 hover:text-primary/80 group-hover:opacity-100"
                 >
                   Details <ChevronRight className="h-3.5 w-3.5" />
@@ -335,7 +335,7 @@ export default function Dashboard({
             <div className="group relative overflow-hidden rounded-xl border bg-card p-5 shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md">
               <div className="flex items-center justify-between">
                 <span className="text-sm font-semibold text-muted-foreground">
-                  Total Outstanding
+                  Total Outstanding (BDT)
                 </span>
                 <div className="rounded-lg bg-rose-50 p-2 text-rose-600 transition-transform group-hover:scale-[1.025] dark:bg-rose-950/30 dark:text-rose-400">
                   <TrendingDown className="h-5 w-5" />
@@ -361,10 +361,11 @@ export default function Dashboard({
                 <div className="flex items-center justify-between">
                   <div>
                     <h3 className="text-base font-bold text-foreground">
-                      Billing & Collections Trend
+                      Billing & Collections Trend (BDT)
                     </h3>
                     <p className="text-xs text-muted-foreground">
-                      6-Month billing performance overview (BDT)
+                      Six billing months · verified payments and remaining
+                      balances (BDT)
                     </p>
                   </div>
                   <div className="flex items-center gap-3 text-xs">

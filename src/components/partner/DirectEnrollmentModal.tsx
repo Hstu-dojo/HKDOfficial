@@ -1,16 +1,16 @@
-'use client';
+"use client";
 
-import { Fragment, useState, useEffect } from 'react';
-import { Dialog, Transition } from '@headlessui/react';
+import { Fragment, useState, useEffect } from "react";
+import { Dialog, Transition } from "@headlessui/react";
 import {
   XMarkIcon,
   ChevronLeftIcon,
   ChevronRightIcon,
   CheckIcon,
   AcademicCapIcon,
-} from '@heroicons/react/24/outline';
-import { FORM_SECTIONS, FORM_FIELDS } from '@/lib/pdf/form-fields';
-import { toast } from 'sonner';
+} from "@heroicons/react/24/outline";
+import { FORM_SECTIONS, FORM_FIELDS } from "@/lib/pdf/form-fields";
+import { toast } from "sonner";
 
 interface Member {
   id: string;
@@ -51,7 +51,11 @@ interface Course {
 }
 
 const visibleSections = FORM_SECTIONS.filter(
-  (s) => s.id !== 'payment' && s.id !== 'review' && s.id !== 'images' && s.id !== 'branch'
+  (s) =>
+    s.id !== "payment" &&
+    s.id !== "review" &&
+    s.id !== "images" &&
+    s.id !== "branch",
 );
 
 export default function DirectEnrollmentModal({
@@ -66,7 +70,7 @@ export default function DirectEnrollmentModal({
   const [loadingCourses, setLoadingCourses] = useState(false);
 
   // Selection
-  const [selectedCourseId, setSelectedCourseId] = useState('');
+  const [selectedCourseId, setSelectedCourseId] = useState("");
   const [selectedCourse, setSelectedCourse] = useState<Course | null>(null);
 
   // Form Details
@@ -75,8 +79,8 @@ export default function DirectEnrollmentModal({
   const [signatureFile, setSignatureFile] = useState<string | null>(null);
 
   // Payment State
-  const [paymentMethod, setPaymentMethod] = useState('cash');
-  const [transactionId, setTransactionId] = useState('');
+  const [paymentMethod, setPaymentMethod] = useState("cash");
+  const [transactionId, setTransactionId] = useState("");
 
   // Submission
   const [submitting, setSubmitting] = useState(false);
@@ -85,9 +89,9 @@ export default function DirectEnrollmentModal({
   useEffect(() => {
     if (isOpen) {
       setLoadingCourses(true);
-      fetch('/api/partner-portal/courses')
+      fetch("/api/partner-portal/courses")
         .then((res) => {
-          if (!res.ok) throw new Error('Failed to load courses');
+          if (!res.ok) throw new Error("Failed to load courses");
           return res.json();
         })
         .then((data) => {
@@ -95,7 +99,7 @@ export default function DirectEnrollmentModal({
         })
         .catch((err) => {
           console.error(err);
-          toast.error('Could not fetch active courses');
+          toast.error("Could not fetch active courses");
         })
         .finally(() => {
           setLoadingCourses(false);
@@ -106,33 +110,35 @@ export default function DirectEnrollmentModal({
   // Pre-fill form fields when member or selected course changes
   useEffect(() => {
     if (isOpen && member) {
-      const formattedDob = member.dateOfBirth ? member.dateOfBirth.split('T')[0] || '' : '';
+      const formattedDob = member.dateOfBirth
+        ? member.dateOfBirth.split("T")[0] || ""
+        : "";
       const mapped: Record<string, string> = {
-        name_en: member.fullNameEnglish || member.userName || '',
-        name_bn: member.fullNameBangla || '',
+        name_en: member.fullNameEnglish || member.userName || "",
+        name_bn: member.fullNameBangla || "",
         dob: formattedDob,
-        mobile: member.phoneNumber || '',
-        email: member.email || '',
-        nid: member.nid || '',
-        blood_group: member.bloodGroup || '',
-        father_name: member.fatherName || '',
-        mother_name: member.motherName || '',
-        occupation: member.occupation || 'Student',
-        institution: member.institute || '',
-        level_class: member.faculty || '',
-        present_address: member.address || '',
-        permanent_address: member.address || '',
-        emergency_contact: member.emergencyPhone || member.phoneNumber || '',
-        emergency_relation: 'Emergency Contact',
-        nationality: 'Bangladeshi',
-        religion: 'Islam',
-        roll_id: 'N/A',
-        father_occupation: 'Service',
-        mother_occupation: 'Housewife',
-        height: '5\'6"',
-        weight: '60 kg',
-        motive_first: 'To learn karate and self-defense.',
-        signature_date: new Date().toISOString().split('T')[0],
+        mobile: member.phoneNumber || "",
+        email: member.email || "",
+        nid: member.nid || "",
+        blood_group: member.bloodGroup || "",
+        father_name: member.fatherName || "",
+        mother_name: member.motherName || "",
+        occupation: member.occupation || "Student",
+        institution: member.institute || "",
+        level_class: member.faculty || "",
+        present_address: member.address || "",
+        permanent_address: member.address || "",
+        emergency_contact: member.emergencyPhone || member.phoneNumber || "",
+        emergency_relation: "Emergency Contact",
+        nationality: "Bangladeshi",
+        religion: "Islam",
+        roll_id: "N/A",
+        father_occupation: "Service",
+        mother_occupation: "Housewife",
+        height: "5'6\"",
+        weight: "60 kg",
+        motive_first: "To learn karate and self-defense.",
+        signature_date: new Date().toISOString().split("T")[0],
       };
 
       // Calculate age
@@ -148,10 +154,10 @@ export default function DirectEnrollmentModal({
       setPhotoFile(member.picture || null);
       setSignatureFile(null);
       setStep(1);
-      setSelectedCourseId('');
+      setSelectedCourseId("");
       setSelectedCourse(null);
-      setPaymentMethod('cash');
-      setTransactionId('');
+      setPaymentMethod("cash");
+      setTransactionId("");
     }
   }, [isOpen, member]);
 
@@ -166,31 +172,38 @@ export default function DirectEnrollmentModal({
     setFormData((prev) => ({ ...prev, [fieldId]: value }));
   };
 
-  const handleFileUpload = (type: 'photo' | 'signature') => (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    const reader = new FileReader();
-    reader.onloadend = () => {
-      if (type === 'photo') {
-        setPhotoFile(reader.result as string);
-      } else {
-        setSignatureFile(reader.result as string);
-      }
+  const handleFileUpload =
+    (type: "photo" | "signature") =>
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      const file = e.target.files?.[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        if (type === "photo") {
+          setPhotoFile(reader.result as string);
+        } else {
+          setSignatureFile(reader.result as string);
+        }
+      };
+      reader.readAsDataURL(file);
     };
-    reader.readAsDataURL(file);
-  };
 
   const formatCurrency = (amount: number, currency: string) => {
-    return new Intl.NumberFormat('en-BD', {
-      style: 'currency',
-      currency: currency || 'BDT',
+    return new Intl.NumberFormat("en-BD", {
+      style: "currency",
+      currency: currency || "BDT",
       minimumFractionDigits: 0,
     }).format(amount / 100);
   };
 
   const validateFormInfo = () => {
     const requiredFields = FORM_FIELDS.filter(
-      (f) => f.required && f.section !== 'payment' && f.section !== 'review' && f.section !== 'images' && f.section !== 'branch'
+      (f) =>
+        f.required &&
+        f.section !== "payment" &&
+        f.section !== "review" &&
+        f.section !== "images" &&
+        f.section !== "branch",
     );
     for (const field of requiredFields) {
       if (!formData[field.id]?.trim()) {
@@ -207,12 +220,15 @@ export default function DirectEnrollmentModal({
     try {
       // 1. Upload signature if base64 (photo can use member.picture as fallback if unchanged)
       let finalPhotoUrl = member.picture;
-      let finalSignatureUrl = '';
+      let finalSignatureUrl = "";
 
-      const uploadImage = async (dataUrl: string, type: 'photo' | 'signature') => {
-        const res = await fetch('/api/enrollments/upload-image', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+      const uploadImage = async (
+        dataUrl: string,
+        type: "photo" | "signature",
+      ) => {
+        const res = await fetch("/api/enrollments/upload-image", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ dataUrl, type, courseId: selectedCourseId }),
         });
         if (!res.ok) {
@@ -222,11 +238,11 @@ export default function DirectEnrollmentModal({
         return secureUrl as string;
       };
 
-      if (photoFile && photoFile.startsWith('data:')) {
-        finalPhotoUrl = await uploadImage(photoFile, 'photo');
+      if (photoFile && photoFile.startsWith("data:")) {
+        finalPhotoUrl = await uploadImage(photoFile, "photo");
       }
-      if (signatureFile && signatureFile.startsWith('data:')) {
-        finalSignatureUrl = await uploadImage(signatureFile, 'signature');
+      if (signatureFile && signatureFile.startsWith("data:")) {
+        finalSignatureUrl = await uploadImage(signatureFile, "signature");
       }
 
       // Merge upload links into studentInfo
@@ -239,29 +255,36 @@ export default function DirectEnrollmentModal({
       };
 
       // 2. Submit Enrollment POST
-      const res = await fetch('/api/partner-portal/enrollments', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+      const res = await fetch("/api/partner-portal/enrollments", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           memberId: member.id,
           courseId: selectedCourseId,
           studentInfo,
           paymentMethod,
-          transactionId: paymentMethod !== 'cash' && paymentMethod !== 'waived' ? transactionId.trim() : undefined,
+          transactionId:
+            paymentMethod !== "cash" && paymentMethod !== "waived"
+              ? transactionId.trim()
+              : undefined,
         }),
       });
 
       if (!res.ok) {
         const errData = await res.json();
-        throw new Error(errData.error || 'Failed to complete enrollment');
+        throw new Error(errData.error || "Failed to complete enrollment");
       }
 
-      toast.success('Member enrolled in course successfully!');
+      const result = await res.json();
+      if (result.billingWarning) toast.warning(result.billingWarning);
+      else toast.success("Member enrolled in course successfully!");
       onSuccess();
       onClose();
     } catch (err) {
       console.error(err);
-      toast.error(err instanceof Error ? err.message : 'Failed to enroll member');
+      toast.error(
+        err instanceof Error ? err.message : "Failed to enroll member",
+      );
     } finally {
       setSubmitting(false);
     }
@@ -283,7 +306,7 @@ export default function DirectEnrollmentModal({
         </Transition.Child>
 
         <div className="fixed inset-0 overflow-y-auto">
-          <div className="flex min-h-full items-start sm:items-center justify-center p-4">
+          <div className="flex min-h-full items-start justify-center p-4 sm:items-center">
             <Transition.Child
               as={Fragment}
               enter="ease-out duration-300"
@@ -293,9 +316,9 @@ export default function DirectEnrollmentModal({
               leaveFrom="opacity-100 scale-100"
               leaveTo="opacity-0 scale-95"
             >
-              <Dialog.Panel className="w-full max-w-4xl max-h-[calc(100vh-2rem)] transform overflow-hidden rounded-2xl bg-white dark:bg-card shadow-sm transition-all flex flex-col border border-gray-100 dark:border-border">
+              <Dialog.Panel className="flex max-h-[calc(100vh-2rem)] w-full max-w-4xl transform flex-col overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-sm transition-all dark:border-border dark:bg-card">
                 {/* Header */}
-                <div className="bg-muted dark:bg-background/50 px-6 py-4 border-b dark:border-border flex items-center justify-between">
+                <div className="flex items-center justify-between border-b bg-muted px-6 py-4 dark:border-border dark:bg-background/50">
                   <div className="flex items-center gap-2">
                     <AcademicCapIcon className="h-6 w-6 text-blue-600 dark:text-blue-400" />
                     <div>
@@ -303,51 +326,78 @@ export default function DirectEnrollmentModal({
                         Enroll Member to Course
                       </Dialog.Title>
                       <p className="text-xs text-muted-foreground dark:text-gray-400">
-                        Select a course and enter payment details to enroll{' '}
+                        Select a course and enter payment details to enroll{" "}
                         <span className="font-semibold text-foreground dark:text-gray-300">
-                          {member.fullNameEnglish || member.userName || 'this member'}
+                          {member.fullNameEnglish ||
+                            member.userName ||
+                            "this member"}
                         </span>
                       </p>
                     </div>
                   </div>
                   <button
                     onClick={onClose}
-                    className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 transition-colors rounded-lg p-1"
+                    className="rounded-lg p-1 text-gray-400 transition-colors hover:text-gray-600 dark:hover:text-gray-200"
                   >
                     <XMarkIcon className="h-5 w-5" />
                   </button>
                 </div>
 
                 {/* Step Indicators */}
-                <div className="flex justify-between border-b dark:border-border px-6 py-3 bg-muted/50 dark:bg-background/10 text-xs font-semibold text-muted-foreground dark:text-gray-400">
-                  <span className={step === 1 ? 'text-blue-600 dark:text-blue-400' : ''}>1. Select Course</span>
-                  <span className={step === 2 ? 'text-blue-600 dark:text-blue-400' : ''}>2. Confirm Member Details</span>
-                  <span className={step === 3 ? 'text-blue-600 dark:text-blue-400' : ''}>3. Payment Configuration</span>
-                  <span className={step === 4 ? 'text-blue-600 dark:text-blue-400' : ''}>4. Review & Submit</span>
+                <div className="flex justify-between border-b bg-muted/50 px-6 py-3 text-xs font-semibold text-muted-foreground dark:border-border dark:bg-background/10 dark:text-gray-400">
+                  <span
+                    className={
+                      step === 1 ? "text-blue-600 dark:text-blue-400" : ""
+                    }
+                  >
+                    1. Select Course
+                  </span>
+                  <span
+                    className={
+                      step === 2 ? "text-blue-600 dark:text-blue-400" : ""
+                    }
+                  >
+                    2. Confirm Member Details
+                  </span>
+                  <span
+                    className={
+                      step === 3 ? "text-blue-600 dark:text-blue-400" : ""
+                    }
+                  >
+                    3. Payment Configuration
+                  </span>
+                  <span
+                    className={
+                      step === 4 ? "text-blue-600 dark:text-blue-400" : ""
+                    }
+                  >
+                    4. Review & Submit
+                  </span>
                 </div>
 
                 {/* Scrollable Content */}
-                <div className="p-6 overflow-y-auto flex-1 bg-muted/20 dark:bg-background/5">
+                <div className="flex-1 overflow-y-auto bg-muted/20 p-6 dark:bg-background/5">
                   {/* Step 1: Select Course */}
                   {step === 1 && (
                     <div className="space-y-6">
                       {loadingCourses ? (
-                        <div className="flex justify-center items-center py-12">
+                        <div className="flex items-center justify-center py-12">
                           <span className="h-8 w-8 animate-spin rounded-full border-4 border-blue-600 border-t-transparent" />
                         </div>
                       ) : courses.length === 0 ? (
-                        <p className="text-sm text-center text-muted-foreground dark:text-gray-400 py-12">
-                          No active courses are available for your venue. Please create a course first.
+                        <p className="py-12 text-center text-sm text-muted-foreground dark:text-gray-400">
+                          No active courses are available for your venue. Please
+                          create a course first.
                         </p>
                       ) : (
-                        <div className="max-w-xl mx-auto space-y-4">
+                        <div className="mx-auto max-w-xl space-y-4">
                           <label className="block text-sm font-bold text-foreground dark:text-gray-300">
                             Available Dojo Courses *
                           </label>
                           <select
                             value={selectedCourseId}
                             onChange={(e) => handleCourseChange(e.target.value)}
-                            className="w-full text-sm rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:text-white"
+                            className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
                           >
                             <option value="">-- Choose a course --</option>
                             {courses.map((c) => (
@@ -358,19 +408,31 @@ export default function DirectEnrollmentModal({
                           </select>
 
                           {selectedCourse && (
-                            <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-100 dark:border-blue-800 rounded-xl p-4 mt-6 space-y-3">
-                              <h4 className="font-bold text-blue-900 dark:text-blue-400">{selectedCourse.name}</h4>
+                            <div className="mt-6 space-y-3 rounded-xl border border-blue-100 bg-blue-50 p-4 dark:border-blue-800 dark:bg-blue-900/20">
+                              <h4 className="font-bold text-blue-900 dark:text-blue-400">
+                                {selectedCourse.name}
+                              </h4>
                               <div className="grid grid-cols-2 gap-4 text-sm">
                                 <div>
-                                  <span className="text-muted-foreground dark:text-gray-400">Admission Fee:</span>{' '}
+                                  <span className="text-muted-foreground dark:text-gray-400">
+                                    Admission Fee:
+                                  </span>{" "}
                                   <strong className="text-foreground dark:text-gray-100">
-                                    {formatCurrency(selectedCourse.admissionFee, selectedCourse.currency)}
+                                    {formatCurrency(
+                                      selectedCourse.admissionFee,
+                                      selectedCourse.currency,
+                                    )}
                                   </strong>
                                 </div>
                                 <div>
-                                  <span className="text-muted-foreground dark:text-gray-400">Monthly Fee:</span>{' '}
+                                  <span className="text-muted-foreground dark:text-gray-400">
+                                    Monthly Fee:
+                                  </span>{" "}
                                   <strong className="text-foreground dark:text-gray-100">
-                                    {formatCurrency(selectedCourse.monthlyFee, selectedCourse.currency)}
+                                    {formatCurrency(
+                                      selectedCourse.monthlyFee,
+                                      selectedCourse.currency,
+                                    )}
                                   </strong>
                                 </div>
                               </div>
@@ -387,36 +449,56 @@ export default function DirectEnrollmentModal({
                       {visibleSections.map((section) => (
                         <div
                           key={section.id}
-                          className="bg-white dark:bg-card p-5 rounded-xl border border-gray-100 dark:border-border shadow-sm space-y-4"
+                          className="space-y-4 rounded-xl border border-gray-100 bg-white p-5 shadow-sm dark:border-border dark:bg-card"
                         >
-                          <h3 className="text-sm font-bold text-foreground dark:text-gray-100 pb-2 border-b dark:border-border flex items-center">
-                            {section.title} <span className="text-xs text-gray-400 dark:text-gray-500 ml-1.5">({section.titleBn})</span>
+                          <h3 className="flex items-center border-b pb-2 text-sm font-bold text-foreground dark:border-border dark:text-gray-100">
+                            {section.title}{" "}
+                            <span className="ml-1.5 text-xs text-gray-400 dark:text-gray-500">
+                              ({section.titleBn})
+                            </span>
                           </h3>
-                          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-                            {FORM_FIELDS.filter((f) => f.section === section.id).map((field) => {
-                              const value = formData[field.id] || '';
+                          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3">
+                            {FORM_FIELDS.filter(
+                              (f) => f.section === section.id,
+                            ).map((field) => {
+                              const value = formData[field.id] || "";
                               return (
                                 <div key={field.id} className="space-y-1">
-                                  <label className="text-xs font-semibold text-muted-foreground dark:text-gray-400 flex items-center gap-0.5">
+                                  <label className="flex items-center gap-0.5 text-xs font-semibold text-muted-foreground dark:text-gray-400">
                                     {field.label}
-                                    {field.required && <span className="text-red-500">*</span>}
+                                    {field.required && (
+                                      <span className="text-red-500">*</span>
+                                    )}
                                   </label>
-                                  {field.type === 'textarea' ? (
+                                  {field.type === "textarea" ? (
                                     <textarea
                                       value={value}
-                                      onChange={(e) => handleFieldChange(field.id, e.target.value)}
-                                      className="w-full text-sm rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 px-3 py-1.5 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:text-white"
+                                      onChange={(e) =>
+                                        handleFieldChange(
+                                          field.id,
+                                          e.target.value,
+                                        )
+                                      }
+                                      className="w-full rounded-lg border border-gray-300 bg-white px-3 py-1.5 text-sm focus:outline-none focus:ring-1 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
                                       rows={2}
                                     />
-                                  ) : field.type === 'select' ? (
+                                  ) : field.type === "select" ? (
                                     <select
                                       value={value}
-                                      onChange={(e) => handleFieldChange(field.id, e.target.value)}
-                                      className="w-full text-sm rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 px-3 py-1.5 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:text-white"
+                                      onChange={(e) =>
+                                        handleFieldChange(
+                                          field.id,
+                                          e.target.value,
+                                        )
+                                      }
+                                      className="w-full rounded-lg border border-gray-300 bg-white px-3 py-1.5 text-sm focus:outline-none focus:ring-1 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
                                     >
                                       <option value="">Select...</option>
                                       {field.options?.map((opt) => (
-                                        <option key={opt.value} value={opt.value}>
+                                        <option
+                                          key={opt.value}
+                                          value={opt.value}
+                                        >
                                           {opt.label}
                                         </option>
                                       ))}
@@ -425,8 +507,13 @@ export default function DirectEnrollmentModal({
                                     <input
                                       type={field.type}
                                       value={value}
-                                      onChange={(e) => handleFieldChange(field.id, e.target.value)}
-                                      className="w-full text-sm rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 px-3 py-1.5 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:text-white"
+                                      onChange={(e) =>
+                                        handleFieldChange(
+                                          field.id,
+                                          e.target.value,
+                                        )
+                                      }
+                                      className="w-full rounded-lg border border-gray-300 bg-white px-3 py-1.5 text-sm focus:outline-none focus:ring-1 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
                                     />
                                   )}
                                 </div>
@@ -437,41 +524,53 @@ export default function DirectEnrollmentModal({
                       ))}
 
                       {/* Image Upload box */}
-                      <div className="bg-white dark:bg-card p-5 rounded-xl border border-gray-100 dark:border-border shadow-sm space-y-4">
-                        <h3 className="text-sm font-bold text-foreground dark:text-gray-100 pb-2 border-b dark:border-border">
+                      <div className="space-y-4 rounded-xl border border-gray-100 bg-white p-5 shadow-sm dark:border-border dark:bg-card">
+                        <h3 className="border-b pb-2 text-sm font-bold text-foreground dark:border-border dark:text-gray-100">
                           Profile Picture & Signature
                         </h3>
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
                           {/* Profile photo */}
                           <div className="space-y-2">
-                            <label className="text-xs font-semibold text-muted-foreground dark:text-gray-400">Passport Photo</label>
+                            <label className="text-xs font-semibold text-muted-foreground dark:text-gray-400">
+                              Passport Photo
+                            </label>
                             {photoFile && (
-                              <div className="relative w-24 h-24 rounded-lg overflow-hidden border">
+                              <div className="relative h-24 w-24 overflow-hidden rounded-lg border">
                                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                                <img src={photoFile} alt="Profile Photo" className="w-full h-full object-cover" />
+                                <img
+                                  src={photoFile}
+                                  alt="Profile Photo"
+                                  className="h-full w-full object-cover"
+                                />
                               </div>
                             )}
                             <input
                               type="file"
                               accept="image/*"
-                              onChange={handleFileUpload('photo')}
-                              className="text-xs w-full text-muted-foreground dark:text-gray-400"
+                              onChange={handleFileUpload("photo")}
+                              className="w-full text-xs text-muted-foreground dark:text-gray-400"
                             />
                           </div>
                           {/* Signature photo */}
                           <div className="space-y-2">
-                            <label className="text-xs font-semibold text-muted-foreground dark:text-gray-400">Signature Image</label>
+                            <label className="text-xs font-semibold text-muted-foreground dark:text-gray-400">
+                              Signature Image
+                            </label>
                             {signatureFile && (
-                              <div className="relative w-32 h-16 rounded-lg overflow-hidden border bg-muted">
+                              <div className="relative h-16 w-32 overflow-hidden rounded-lg border bg-muted">
                                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                                <img src={signatureFile} alt="Signature" className="w-full h-full object-contain" />
+                                <img
+                                  src={signatureFile}
+                                  alt="Signature"
+                                  className="h-full w-full object-contain"
+                                />
                               </div>
                             )}
                             <input
                               type="file"
                               accept="image/*"
-                              onChange={handleFileUpload('signature')}
-                              className="text-xs w-full text-muted-foreground dark:text-gray-400"
+                              onChange={handleFileUpload("signature")}
+                              className="w-full text-xs text-muted-foreground dark:text-gray-400"
                             />
                           </div>
                         </div>
@@ -481,19 +580,27 @@ export default function DirectEnrollmentModal({
 
                   {/* Step 3: Payment */}
                   {step === 3 && selectedCourse && (
-                    <div className="max-w-md mx-auto space-y-6">
-                      <div className="bg-muted dark:bg-background/30 rounded-xl p-4 border border-gray-100 dark:border-border space-y-2">
-                        <h4 className="text-sm font-bold text-foreground dark:text-gray-300">Enrollment Fees Due</h4>
+                    <div className="mx-auto max-w-md space-y-6">
+                      <div className="space-y-2 rounded-xl border border-gray-100 bg-muted p-4 dark:border-border dark:bg-background/30">
+                        <h4 className="text-sm font-bold text-foreground dark:text-gray-300">
+                          Enrollment Fees Due
+                        </h4>
                         <div className="flex justify-between text-sm">
                           <span>Admission Fee:</span>
                           <span className="font-semibold text-foreground dark:text-gray-100">
-                            {formatCurrency(selectedCourse.admissionFee, selectedCourse.currency)}
+                            {formatCurrency(
+                              selectedCourse.admissionFee,
+                              selectedCourse.currency,
+                            )}
                           </span>
                         </div>
                         <div className="flex justify-between text-sm">
                           <span>First Month Fee:</span>
                           <span className="font-semibold text-foreground dark:text-gray-100">
-                            {formatCurrency(selectedCourse.monthlyFee, selectedCourse.currency)}
+                            {formatCurrency(
+                              selectedCourse.monthlyFee,
+                              selectedCourse.currency,
+                            )}
                           </span>
                         </div>
                       </div>
@@ -506,9 +613,11 @@ export default function DirectEnrollmentModal({
                           <select
                             value={paymentMethod}
                             onChange={(e) => setPaymentMethod(e.target.value)}
-                            className="mt-2 w-full text-sm rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:text-white"
+                            className="mt-2 w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
                           >
-                            <option value="cash">Cash (Direct Hand-over)</option>
+                            <option value="cash">
+                              Cash (Direct Hand-over)
+                            </option>
                             <option value="bkash">bKash</option>
                             <option value="nagad">Nagad</option>
                             <option value="rocket">Rocket</option>
@@ -516,78 +625,111 @@ export default function DirectEnrollmentModal({
                           </select>
                         </div>
 
-                        {paymentMethod !== 'cash' && paymentMethod !== 'waived' && (
-                          <div>
-                            <label className="block text-sm font-bold text-foreground dark:text-gray-300">
-                              Payment Transaction ID *
-                            </label>
-                            <input
-                              type="text"
-                              value={transactionId}
-                              required
-                              onChange={(e) => setTransactionId(e.target.value)}
-                              placeholder="Enter Transaction ID"
-                              className="mt-2 w-full text-sm rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:text-white"
-                            />
-                          </div>
-                        )}
+                        {paymentMethod !== "cash" &&
+                          paymentMethod !== "waived" && (
+                            <div>
+                              <label className="block text-sm font-bold text-foreground dark:text-gray-300">
+                                Payment Transaction ID *
+                              </label>
+                              <input
+                                type="text"
+                                value={transactionId}
+                                required
+                                onChange={(e) =>
+                                  setTransactionId(e.target.value)
+                                }
+                                placeholder="Enter Transaction ID"
+                                className="mt-2 w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
+                              />
+                            </div>
+                          )}
                       </div>
                     </div>
                   )}
 
                   {/* Step 4: Review */}
                   {step === 4 && selectedCourse && (
-                    <div className="max-w-md mx-auto space-y-6">
-                      <div className="bg-green-50 dark:bg-green-950/20 border border-green-200 dark:border-green-800 rounded-xl p-5 text-center space-y-2">
-                        <CheckIcon className="h-8 w-8 text-green-600 mx-auto" />
-                        <h4 className="font-bold text-green-950 dark:text-green-400">Ready to Enroll</h4>
+                    <div className="mx-auto max-w-md space-y-6">
+                      <div className="bg-green-50 dark:bg-green-950/20 border-green-200 dark:border-green-800 space-y-2 rounded-xl border p-5 text-center">
+                        <CheckIcon className="text-green-600 mx-auto h-8 w-8" />
+                        <h4 className="text-green-950 dark:text-green-400 font-bold">
+                          Ready to Enroll
+                        </h4>
                         <p className="text-xs text-muted-foreground dark:text-gray-400">
-                          Confirming the following will active the course enrollment instantly.
+                          Confirming the following will active the course
+                          enrollment instantly.
                         </p>
                       </div>
 
-                      <div className="divide-y dark:divide-gray-700 text-sm">
-                        <div className="py-2.5 flex justify-between">
-                          <span className="text-muted-foreground">Student:</span>
-                          <span className="font-semibold">{formData.name_en}</span>
-                        </div>
-                        <div className="py-2.5 flex justify-between">
-                          <span className="text-muted-foreground">Selected Course:</span>
-                          <span className="font-semibold">{selectedCourse.name}</span>
-                        </div>
-                        <div className="py-2.5 flex justify-between">
-                          <span className="text-muted-foreground">Admission Charge:</span>
+                      <div className="divide-y text-sm dark:divide-gray-700">
+                        <div className="flex justify-between py-2.5">
+                          <span className="text-muted-foreground">
+                            Student:
+                          </span>
                           <span className="font-semibold">
-                            {formatCurrency(selectedCourse.admissionFee, selectedCourse.currency)}
+                            {formData.name_en}
                           </span>
                         </div>
-                        <div className="py-2.5 flex justify-between">
-                          <span className="text-muted-foreground">Monthly Tuition:</span>
+                        <div className="flex justify-between py-2.5">
+                          <span className="text-muted-foreground">
+                            Selected Course:
+                          </span>
                           <span className="font-semibold">
-                            {formatCurrency(selectedCourse.monthlyFee, selectedCourse.currency)}
+                            {selectedCourse.name}
                           </span>
                         </div>
-                        <div className="py-2.5 flex justify-between">
-                          <span className="text-muted-foreground">Payment Channel:</span>
-                          <span className="font-semibold uppercase">{paymentMethod}</span>
+                        <div className="flex justify-between py-2.5">
+                          <span className="text-muted-foreground">
+                            Admission Charge:
+                          </span>
+                          <span className="font-semibold">
+                            {formatCurrency(
+                              selectedCourse.admissionFee,
+                              selectedCourse.currency,
+                            )}
+                          </span>
                         </div>
-                        {paymentMethod !== 'cash' && paymentMethod !== 'waived' && (
-                          <div className="py-2.5 flex justify-between">
-                            <span className="text-muted-foreground">TxID:</span>
-                            <span className="font-mono text-xs">{transactionId}</span>
-                          </div>
-                        )}
+                        <div className="flex justify-between py-2.5">
+                          <span className="text-muted-foreground">
+                            Monthly Tuition:
+                          </span>
+                          <span className="font-semibold">
+                            {formatCurrency(
+                              selectedCourse.monthlyFee,
+                              selectedCourse.currency,
+                            )}
+                          </span>
+                        </div>
+                        <div className="flex justify-between py-2.5">
+                          <span className="text-muted-foreground">
+                            Payment Channel:
+                          </span>
+                          <span className="font-semibold uppercase">
+                            {paymentMethod}
+                          </span>
+                        </div>
+                        {paymentMethod !== "cash" &&
+                          paymentMethod !== "waived" && (
+                            <div className="flex justify-between py-2.5">
+                              <span className="text-muted-foreground">
+                                TxID:
+                              </span>
+                              <span className="font-mono text-xs">
+                                {transactionId}
+                              </span>
+                            </div>
+                          )}
                       </div>
                     </div>
                   )}
                 </div>
 
                 {/* Footer Buttons */}
-                <div className="bg-muted dark:bg-background/50 px-6 py-4 border-t dark:border-border flex items-center justify-between">
+                <div className="flex items-center justify-between border-t bg-muted px-6 py-4 dark:border-border dark:bg-background/50">
                   <button
                     onClick={() => setStep((s) => Math.max(1, s - 1))}
                     disabled={step === 1 || submitting}
-                    className="inline-flex items-center gap-1 px-4 py-2 text-sm font-semibold text-foreground dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg disabled:opacity-30 transition-colors"
+                    className="inline-flex items-center gap-1 rounded-lg px-4 py-2 text-sm font-semibold text-foreground transition-colors hover:bg-gray-100 disabled:opacity-30 dark:text-gray-300 dark:hover:bg-gray-700"
                   >
                     <ChevronLeftIcon className="h-4 w-4" /> Previous
                   </button>
@@ -597,19 +739,24 @@ export default function DirectEnrollmentModal({
                       <button
                         onClick={() => {
                           if (step === 1 && !selectedCourseId) {
-                            toast.error('Please select a course to continue.');
+                            toast.error("Please select a course to continue.");
                             return;
                           }
                           if (step === 2 && !validateFormInfo()) {
                             return;
                           }
-                          if (step === 3 && paymentMethod !== 'cash' && paymentMethod !== 'waived' && !transactionId.trim()) {
-                            toast.error('Transaction ID is required.');
+                          if (
+                            step === 3 &&
+                            paymentMethod !== "cash" &&
+                            paymentMethod !== "waived" &&
+                            !transactionId.trim()
+                          ) {
+                            toast.error("Transaction ID is required.");
                             return;
                           }
                           setStep((s) => s + 1);
                         }}
-                        className="inline-flex items-center gap-1 px-5 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold rounded-lg shadow-sm transition-colors"
+                        className="inline-flex items-center gap-1 rounded-lg bg-blue-600 px-5 py-2 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-blue-700"
                       >
                         Next <ChevronRightIcon className="h-4 w-4" />
                       </button>
@@ -617,7 +764,7 @@ export default function DirectEnrollmentModal({
                       <button
                         onClick={handleSubmit}
                         disabled={submitting}
-                        className="inline-flex items-center gap-1.5 px-6 py-2 bg-green-600 hover:bg-green-700 text-white text-sm font-bold rounded-lg shadow-md transition-colors disabled:opacity-50"
+                        className="bg-green-600 hover:bg-green-700 inline-flex items-center gap-1.5 rounded-lg px-6 py-2 text-sm font-bold text-white shadow-md transition-colors disabled:opacity-50"
                       >
                         {submitting ? (
                           <>
@@ -626,7 +773,8 @@ export default function DirectEnrollmentModal({
                           </>
                         ) : (
                           <>
-                            <CheckIcon className="h-4 w-4" /> Complete Enrollment
+                            <CheckIcon className="h-4 w-4" /> Complete
+                            Enrollment
                           </>
                         )}
                       </button>

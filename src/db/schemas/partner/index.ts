@@ -1,4 +1,4 @@
-import { pgTable, text, boolean, timestamp, integer, jsonb } from "drizzle-orm/pg-core";
+import { pgTable, text, boolean, timestamp, integer, jsonb, index } from "drizzle-orm/pg-core";
 import { sql } from "drizzle-orm";
 import { user } from "../auth";
 
@@ -137,3 +137,13 @@ export type PartnerAdmin = typeof partnerAdmins.$inferSelect;
 export type NewPartnerAdmin = typeof partnerAdmins.$inferInsert;
 export type PartnerAdminSession = typeof partnerAdminSessions.$inferSelect;
 export type NewPartnerAdminSession = typeof partnerAdminSessions.$inferInsert;
+
+export const partnerBillEvents = pgTable("partner_bill_events", {
+  id: text("id").primaryKey().default(sql`gen_random_uuid()`),
+  billId: text("bill_id").notNull().references(() => partnerBills.id, {onDelete:'cascade'}),
+  actor: text("actor").notNull(),
+  action: text("action").notNull(),
+  previous: jsonb("previous").$type<Record<string,unknown>>().notNull(),
+  next: jsonb("next").$type<Record<string,unknown>>().notNull(),
+  createdAt: timestamp("created_at", {withTimezone:true}).defaultNow().notNull(),
+}, table => ({bill:index("partner_bill_events_bill_idx").on(table.billId)}));

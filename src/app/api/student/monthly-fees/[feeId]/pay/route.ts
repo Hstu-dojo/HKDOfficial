@@ -1,26 +1,31 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { db } from '@/lib/connect-db';
-import { monthlyFees, members } from '@/db/schema';
-import { eq, and } from 'drizzle-orm';
-import { getLocalUserId } from '@/lib/rbac/middleware';
-import { createClient } from '@/lib/supabase/server';
+import { updateFee } from "@/lib/billing/update-fee";
+import { studentBillingEligible } from "@/lib/billing/service";
+import { billingErrorResponse } from "@/lib/billing/http";
+import { NextRequest, NextResponse } from "next/server";
+import { db } from "@/lib/connect-db";
+import { monthlyFees, members } from "@/db/schema";
+import { eq, and } from "drizzle-orm";
+import { getLocalUserId } from "@/lib/rbac/middleware";
+import { createClient } from "@/lib/supabase/server";
 
 // POST /api/student/monthly-fees/[feeId]/pay - Submit payment for monthly fee
 export async function POST(
   request: NextRequest,
-  { params }: { params: Promise<{ feeId: string }> }
+  { params }: { params: Promise<{ feeId: string }> },
 ) {
   try {
     const supabase = await createClient();
-    const { data: { user } } = await supabase.auth.getUser();
-    
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
     if (!user?.id) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     const localUserId = await getLocalUserId(user.id);
     if (!localUserId) {
-      return NextResponse.json({ error: 'User not found' }, { status: 404 });
+      return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
 
     const { feeId } = await params;
@@ -29,8 +34,8 @@ export async function POST(
 
     if (!transactionId) {
       return NextResponse.json(
-        { error: 'Transaction ID is required' },
-        { status: 400 }
+        { error: "Transaction ID is required" },
+        { status: 400 },
       );
     }
 
@@ -42,7 +47,7 @@ export async function POST(
       .limit(1);
 
     if (memberRecord.length === 0) {
-      return NextResponse.json({ error: 'Member not found' }, { status: 404 });
+      return NextResponse.json({ error: "Member not found" }, { status: 404 });
     }
 
     // Get the fee
@@ -52,47 +57,38 @@ export async function POST(
       .where(
         and(
           eq(monthlyFees.id, feeId),
-          eq(monthlyFees.profileId, memberRecord[0].id)
-        )
+          eq(monthlyFees.profileId, memberRecord[0].id),
+        ),
       )
       .limit(1);
 
     if (feeRecord.length === 0) {
-      return NextResponse.json({ error: 'Fee not found' }, { status: 404 });
+      return NextResponse.json({ error: "Fee not found" }, { status: 404 });
     }
 
-    const fee = feeRecord[0];
-
-    // Check if payment can be submitted
-    if (!['pending', 'due', 'overdue'].includes(fee.status)) {
+    if (!(await studentBillingEligible(feeId, memberRecord[0].id)))
       return NextResponse.json(
-        { error: 'This fee has already been paid or processed' },
-        { status: 400 }
+        { error: "Billing is inactive for this membership period" },
+        { status: 403 },
       );
-    }
-
-    // Update fee with payment info
-    await db
-      .update(monthlyFees)
-      .set({
-        paymentMethod: paymentMethod || 'bkash',
+    await updateFee(
+      feeId,
+      {
+        action: "submit_payment",
+        paymentMethod,
         transactionId,
         paymentProofUrl,
-        paymentSubmittedAt: new Date(),
-        status: 'payment_submitted',
-        updatedAt: new Date(),
-      })
-      .where(eq(monthlyFees.id, feeId));
+      },
+      `user:${localUserId}`,
+      {},
+      memberRecord[0].id,
+    );
 
     return NextResponse.json({
       success: true,
-      message: 'Payment submitted for verification',
+      message: "Payment submitted for verification",
     });
   } catch (error) {
-    console.error('Error submitting payment:', error);
-    return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 }
-    );
+    return billingErrorResponse(error);
   }
 }

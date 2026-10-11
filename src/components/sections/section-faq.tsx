@@ -58,11 +58,11 @@ const SectionFAQ = () => {
 
               <div className="space-y-3 pt-2 border-t border-border/50 text-sm">
                 <a
-                  href="mailto:kaizenkarateacademy@gmail.com"
+                  href="mailto:kaizen@paradox-bd.com"
                   className="flex items-center gap-3 text-muted-foreground hover:text-primary transition-colors"
                 >
                   <Mail className="h-4 w-4 text-primary shrink-0" />
-                  <span>kaizenkarateacademy@gmail.com</span>
+                  <span>kaizen@paradox-bd.com</span>
                 </a>
                 <a
                   href="tel:+8801777-300309"

@@ -787,6 +787,7 @@ export default {
   },
 
   feePayment: {
+    inactiveBilling: "Billing is inactive for this membership period. Contact your branch administrator.",
     feeNotFound: "Fee not found",
     failedToLoadFeeDetails: "Failed to load fee details",
     pleaseEnterTransactionId: "Please enter the transaction ID",

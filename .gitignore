@@ -14,6 +14,7 @@
 /.next-build/
 /.next-editorial-*/
 /out/
+/.next-billing-preview/
 
 # production
 /build

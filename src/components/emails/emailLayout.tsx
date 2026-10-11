@@ -19,13 +19,15 @@ const baseUrl = process.env.VERCEL_URL
 
 export default function EmailLayout({
   children,
+  preview = "Kaizen Karate Academy Email Service",
 }: {
   children: React.ReactNode;
+  preview?: string;
 }) {
   return (
     <Html>
       <Head />
-      <Preview>Kaizen Karate Academy Email Service</Preview>
+      <Preview>{preview}</Preview>
       <Body style={main}>
         <Container style={container}>
           <Section style={coverSection}>
@@ -82,7 +84,7 @@ const main = {
 const container = {
   padding: "20px",
   margin: "0 auto",
-  backgroundColor: "#eee",
+  backgroundColor: "#f5f1fa",
 };
 
 const h1 = {
@@ -111,7 +113,7 @@ const text = {
 };
 
 const imageSection = {
-  backgroundColor: "#252f3d",
+  backgroundColor: "#39235b",
   testAlign: "center",
   placeItems: "center",
   padding: "20px",

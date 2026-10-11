@@ -1,6 +1,6 @@
 // ./components/Post.tsx
 
-import Image from "next/image";
+import Image from "../shared/SanityImage";
 import { PortableText } from "@portabletext/react";
 import imageUrlBuilder from "@sanity/image-url";
 import { SanityDocument } from "next-sanity";

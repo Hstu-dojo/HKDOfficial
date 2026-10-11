@@ -1,269 +1,162 @@
-/**
- * Partner Portal — Monthly Activity Status API
- *
- * GET   /api/partner-portal/monthly-status — Get monthly status for members
- * POST  /api/partner-portal/monthly-status — Set active/inactive for a member in a month
- * PATCH /api/partner-portal/monthly-status — Bulk update monthly status for multiple members
- */
-import { NextResponse } from 'next/server'
-import { requirePartnerAdminUser } from '@/lib/partner-admin/auth'
-import { db } from '@/lib/connect-db'
-import { members, memberMonthlyStatus } from '@/db/schemas/karate/members'
-import { courseEnrollments } from '@/db/schemas/karate/enrollments'
-import { courses } from '@/db/schemas/karate/courses'
-import { eq, and, inArray } from 'drizzle-orm'
-
-export async function GET(request: Request) {
-  const { user: partnerUser, error } = await requirePartnerAdminUser()
-  if (error) return error
-
-  const url = new URL(request.url)
-  const month = parseInt(url.searchParams.get('month') || String(new Date().getMonth() + 1), 10)
-  const year = parseInt(url.searchParams.get('year') || String(new Date().getFullYear()), 10)
-  const profileIdParam = url.searchParams.get('profileId') || url.searchParams.get('memberId') // backward compat
-
-  try {
-    const conditions = [
-      eq(memberMonthlyStatus.partnerId, partnerUser.partnerId),
-      eq(memberMonthlyStatus.month, month),
-      eq(memberMonthlyStatus.year, year),
-    ]
-
-    if (profileIdParam) {
-      conditions.push(eq(memberMonthlyStatus.profileId, profileIdParam))
-    }
-
-    const statuses = await db
-      .select({
-        id: memberMonthlyStatus.id,
-        profileId: memberMonthlyStatus.profileId,
-        memberName: members.fullNameEnglish,
-        memberNumber: members.memberNumber,
-        month: memberMonthlyStatus.month,
-        year: memberMonthlyStatus.year,
-        isActive: memberMonthlyStatus.isActive,
-        notes: memberMonthlyStatus.notes,
-        updatedAt: memberMonthlyStatus.updatedAt,
-      })
-      .from(memberMonthlyStatus)
-      .leftJoin(members, eq(memberMonthlyStatus.profileId, members.id))
-      .where(and(...conditions))
-
-    // Build the eligible profile list from enrollments in this partner's courses.
-    // This matches the billing intent: students belong to a partner for charging purposes
-    // when they are enrolled in that partner's courses.
-    const enrolledProfileRows = await db
-      .select({ profileId: courseEnrollments.profileId })
-      .from(courseEnrollments)
-      .innerJoin(courses, eq(courseEnrollments.courseId, courses.id))
-      .where(and(eq(courses.partnerId, partnerUser.partnerId), eq(courseEnrollments.isActive, true)))
-      .groupBy(courseEnrollments.profileId)
-
-    const enrolledProfileIds = enrolledProfileRows.map((r) => r.profileId)
-
-    const allMembers = enrolledProfileIds.length
-      ? await db
-          .select({
-            id: members.id,
-            fullNameEnglish: members.fullNameEnglish,
-            memberNumber: members.memberNumber,
-            isActive: members.isActive,
-          })
-          .from(members)
-          .where(inArray(members.id, enrolledProfileIds))
-      : []
-
-    // Build a map: profileId → monthlyStatus
-    const statusMap = new Map(statuses.map((s) => [s.profileId, s]))
-
-    // Merge: members with their monthly status.
-    // Default is INACTIVE unless a monthly record exists.
-    const merged = allMembers.map((m) => {
-      const ms = statusMap.get(m.id)
-      return {
-        profileId: m.id,
-        memberName: m.fullNameEnglish,
-        memberNumber: m.memberNumber,
-        month,
-        year,
-        isActiveThisMonth: ms ? ms.isActive : false,
-        hasMonthlyRecord: !!ms,
-        monthlyStatusId: ms?.id || null,
-        notes: ms?.notes || null,
-      }
+import { NextResponse } from "next/server";
+import { requirePartnerAdminUser } from "@/lib/partner-admin/auth";
+import { db } from "@/lib/connect-db";
+import {
+  profiles,
+  profileMonthlyStatus,
+  courseEnrollments,
+  courses,
+} from "@/db/schema";
+import { and, eq, inArray } from "drizzle-orm";
+import {
+  BillingError,
+  billingPeriod,
+  businessDate,
+} from "@/lib/billing/policy";
+import { billingErrorResponse, billingBody } from "@/lib/billing/http";
+function period(month: unknown, year: unknown) {
+  if (!Number.isInteger(Number(month)) || !Number.isInteger(Number(year)))
+    throw new BillingError("Invalid month or year");
+  return billingPeriod(`${year}-${String(month).padStart(2, "0")}`);
+}
+async function eligibleProfiles(partnerId: string) {
+  return db
+    .selectDistinct({
+      id: profiles.id,
+      name: profiles.fullNameEnglish,
+      nameBangla: profiles.fullNameBangla,
+      memberNumber: profiles.memberNumber,
+      isActive: profiles.isActive,
     })
-
+    .from(profiles)
+    .innerJoin(courseEnrollments, eq(courseEnrollments.profileId, profiles.id))
+    .innerJoin(courses, eq(courseEnrollments.courseId, courses.id))
+    .where(
+      and(
+        eq(courses.partnerId, partnerId),
+        eq(courseEnrollments.isActive, true),
+        eq(courses.isActive, true),
+      ),
+    );
+}
+export async function GET(request: Request) {
+  const { user, error } = await requirePartnerAdminUser();
+  if (error) return error;
+  try {
+    const params = new URL(request.url).searchParams;
+    const current = billingPeriod(businessDate().month);
+    const { month, year } = period(
+      params.get("month") || current.month,
+      params.get("year") || current.year,
+    );
+    const [students, statuses] = await Promise.all([
+      eligibleProfiles(user.partnerId),
+      db
+        .select()
+        .from(profileMonthlyStatus)
+        .where(
+          and(
+            eq(profileMonthlyStatus.partnerId, user.partnerId),
+            eq(profileMonthlyStatus.month, month),
+            eq(profileMonthlyStatus.year, year),
+          ),
+        ),
+    ]);
+    const requested = params.get("profileId") || params.get("memberId");
+    const members = students
+      .filter((s) => !requested || s.id === requested)
+      .map((s) => {
+        const status = statuses.find((r) => r.profileId === s.id);
+        return {
+          profileId: s.id,
+          memberName: s.name || s.nameBangla,
+          memberNumber: s.memberNumber,
+          month,
+          year,
+          isActiveThisMonth: s.isActive && (status?.isActive ?? true),
+          hasMonthlyRecord: !!status,
+          monthlyStatusId: status?.id || null,
+          notes: status?.notes || null,
+          isProfileActive: s.isActive,
+        };
+      });
     return NextResponse.json({
       month,
       year,
-      members: merged,
+      members,
       summary: {
-        total: merged.length,
-        activeThisMonth: merged.filter((m) => m.isActiveThisMonth).length,
-        inactiveThisMonth: merged.filter((m) => !m.isActiveThisMonth).length,
+        total: members.length,
+        activeThisMonth: members.filter((s) => s.isActiveThisMonth).length,
+        inactiveThisMonth: members.filter((s) => !s.isActiveThisMonth).length,
       },
-    })
-  } catch (err) {
-    console.error('[PartnerPortal] MonthlyStatus GET error:', err)
-    return NextResponse.json({ error: 'Failed to fetch monthly status' }, { status: 500 })
+    });
+  } catch (error) {
+    return billingErrorResponse(error);
   }
 }
-
-export async function POST(request: Request) {
-  const { user: partnerUser, error } = await requirePartnerAdminUser()
-  if (error) return error
-
+async function save(request: Request, bulk: boolean) {
+  const { user, error } = await requirePartnerAdminUser();
+  if (error) return error;
   try {
-    const body = await request.json()
-    const { profileId: bodyProfileId, memberId: bodyMemberId, month, year, isActive, notes } = body
-    const profileId = bodyProfileId || bodyMemberId // backward compat
-
-    if (!profileId || !month || !year) {
-      return NextResponse.json({ error: 'profileId, month, and year are required' }, { status: 400 })
-    }
-
-    // Verify profile is eligible for this partner (enrolled in a course owned by this partner)
-    const [eligible] = await db
-      .select({ id: courseEnrollments.id })
-      .from(courseEnrollments)
-      .innerJoin(courses, eq(courseEnrollments.courseId, courses.id))
-      .where(
-        and(
-          eq(courseEnrollments.profileId, profileId),
-          eq(courses.partnerId, partnerUser.partnerId),
-          eq(courseEnrollments.isActive, true)
-        )
-      )
-      .limit(1)
-
-    if (!eligible) return NextResponse.json({ error: 'Member not found in your enrollments' }, { status: 404 })
-
-    // Upsert: create or update the monthly status
-    const existing = await db
-      .select({ id: memberMonthlyStatus.id })
-      .from(memberMonthlyStatus)
-      .where(
-        and(
-          eq(memberMonthlyStatus.profileId, profileId),
-          eq(memberMonthlyStatus.month, month),
-          eq(memberMonthlyStatus.year, year)
-        )
-      )
-      .limit(1)
-
-    if (existing.length > 0) {
-      await db
-        .update(memberMonthlyStatus)
-        .set({
-          isActive: isActive ?? true,
-          markedBy: partnerUser.name,
-          notes: notes || null,
-          updatedAt: new Date(),
-        })
-        .where(eq(memberMonthlyStatus.id, existing[0].id))
-    } else {
-      await db.insert(memberMonthlyStatus).values({
-        profileId: profileId,
-        partnerId: partnerUser.partnerId,
-        month,
-        year,
-        isActive: isActive ?? true,
-        markedBy: partnerUser.name,
-        notes: notes || null,
-      })
-    }
-
-    return NextResponse.json({
-      success: true,
-      message: `Monthly status updated for ${month}/${year}.`,
-    })
-  } catch (err) {
-    console.error('[PartnerPortal] MonthlyStatus POST error:', err)
-    return NextResponse.json({ error: 'Failed to update monthly status' }, { status: 500 })
-  }
-}
-
-export async function PATCH(request: Request) {
-  const { user: partnerUser, error } = await requirePartnerAdminUser()
-  if (error) return error
-
-  try {
-    const body = await request.json()
-    const { month, year, updates } = body
-    // updates: Array<{ profileId: string; isActive: boolean; notes?: string }>
-
-    if (!month || !year || !Array.isArray(updates) || updates.length === 0) {
-      return NextResponse.json(
-        { error: 'month, year, and updates array are required' },
-        { status: 400 }
-      )
-    }
-
-    // Verify all profiles are eligible for this partner (enrolled in partner-owned courses)
-    const memberIds = updates.map((u: any) => u.profileId || u.memberId)
-    const eligibleProfiles = await db
-      .select({ profileId: courseEnrollments.profileId })
-      .from(courseEnrollments)
-      .innerJoin(courses, eq(courseEnrollments.courseId, courses.id))
-      .where(
-        and(
-          eq(courses.partnerId, partnerUser.partnerId),
-          eq(courseEnrollments.isActive, true),
-          inArray(courseEnrollments.profileId, memberIds)
-        )
-      )
-      .groupBy(courseEnrollments.profileId)
-
-    const validIds = new Set(eligibleProfiles.map((m) => m.profileId))
-
-    let processed = 0
+    const body = await billingBody(request);
+    const { month, year } = period(body.month, body.year);
+    const updates = bulk ? body.updates : [body];
+    if (!Array.isArray(updates) || !updates.length || updates.length > 1000)
+      throw new BillingError("Provide 1–1000 activity updates");
+    const ids = new Set<string>();
     for (const update of updates) {
-      const updateProfileId = update.profileId || update.memberId
-      if (!validIds.has(updateProfileId)) continue
-
-      const existing = await db
-        .select({ id: memberMonthlyStatus.id })
-        .from(memberMonthlyStatus)
-        .where(
-          and(
-            eq(memberMonthlyStatus.profileId, updateProfileId),
-            eq(memberMonthlyStatus.month, month),
-            eq(memberMonthlyStatus.year, year)
-          )
-        )
-        .limit(1)
-
-      if (existing.length > 0) {
-        await db
-          .update(memberMonthlyStatus)
-          .set({
-            isActive: update.isActive ?? true,
-            markedBy: partnerUser.name,
-            notes: update.notes || null,
-            updatedAt: new Date(),
-          })
-          .where(eq(memberMonthlyStatus.id, existing[0].id))
-      } else {
-        await db.insert(memberMonthlyStatus).values({
-          profileId: updateProfileId,
-          partnerId: partnerUser.partnerId,
-          month,
-          year,
-          isActive: update.isActive ?? true,
-          markedBy: partnerUser.name,
-          notes: update.notes || null,
-        })
-      }
-      processed++
+      const id = update.profileId || update.memberId;
+      if (
+        typeof id !== "string" ||
+        typeof update.isActive !== "boolean" ||
+        ids.has(id) ||
+        (update.notes != null &&
+          (typeof update.notes !== "string" || update.notes.length > 2000))
+      )
+        throw new BillingError("Invalid or duplicate activity update");
+      ids.add(id);
     }
-
-    return NextResponse.json({
-      success: true,
-      message: `Updated monthly status for ${processed} member(s) in ${month}/${year}.`,
-      processed,
-    })
-  } catch (err) {
-    console.error('[PartnerPortal] MonthlyStatus PATCH error:', err)
-    return NextResponse.json({ error: 'Failed to bulk update monthly status' }, { status: 500 })
+    const students = await eligibleProfiles(user.partnerId);
+    const allowed = new Set(students.map((s) => s.id));
+    if ([...ids].some((id) => !allowed.has(id)))
+      throw new BillingError("A member does not belong to this partner", 403);
+    await db.transaction(async (tx) => {
+      for (const update of updates) {
+        await tx
+          .insert(profileMonthlyStatus)
+          .values({
+            profileId: update.profileId || update.memberId,
+            partnerId: user.partnerId,
+            month,
+            year,
+            isActive: update.isActive,
+            notes: update.notes || null,
+            markedBy: `partner-admin:${user.id}`,
+          })
+          .onConflictDoUpdate({
+            target: [
+              profileMonthlyStatus.profileId,
+              profileMonthlyStatus.partnerId,
+              profileMonthlyStatus.month,
+              profileMonthlyStatus.year,
+            ],
+            set: {
+              isActive: update.isActive,
+              notes: update.notes || null,
+              markedBy: `partner-admin:${user.id}`,
+              updatedAt: new Date(),
+            },
+          });
+      }
+    });
+    return NextResponse.json({ success: true, updated: updates.length });
+  } catch (error) {
+    return billingErrorResponse(error);
   }
+}
+export async function POST(request: Request) {
+  return save(request, false);
+}
+export async function PATCH(request: Request) {
+  return save(request, true);
 }

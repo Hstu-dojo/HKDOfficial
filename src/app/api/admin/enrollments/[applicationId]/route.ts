@@ -1,12 +1,13 @@
+import { generateInitialMonthlyFees } from "@/lib/billing/service";
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/connect-db";
-import { 
-  enrollmentApplications, 
-  courses, 
-  members, 
+import {
+  enrollmentApplications,
+  courses,
+  members,
   courseEnrollments,
   monthlyFees,
-  user 
+  user,
 } from "@/db/schema";
 import { eq, and, sql } from "drizzle-orm";
 import { hasPermission } from "@/lib/rbac/permissions";
@@ -39,7 +40,7 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
   try {
     const { applicationId } = await params;
     const context = await getRBACContext();
-    
+
     if (!context) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
@@ -73,11 +74,18 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
       .where(eq(enrollmentApplications.id, applicationId));
 
     if (!application) {
-      return NextResponse.json({ error: "Application not found" }, { status: 404 });
+      return NextResponse.json(
+        { error: "Application not found" },
+        { status: 404 },
+      );
     }
 
     // Check if user can view this application
-    const canManage = await hasPermission(context.userId, "ENROLLMENT", "MANAGE");
+    const canManage = await hasPermission(
+      context.userId,
+      "ENROLLMENT",
+      "MANAGE",
+    );
     if (!canManage && application.application.userId !== context.userId) {
       return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
@@ -87,7 +95,7 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
     console.error("Error fetching application:", error);
     return NextResponse.json(
       { error: "Failed to fetch application" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -135,13 +143,20 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
   try {
     const { applicationId } = await params;
     const context = await getRBACContext();
-    
+
     if (!context) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     const body = await request.json();
-    const { action, transactionId, paymentProofUrl, notes, rejectionReason, studentInfo } = body;
+    const {
+      action,
+      transactionId,
+      paymentProofUrl,
+      notes,
+      rejectionReason,
+      studentInfo,
+    } = body;
 
     // Get existing application
     const [application] = await db
@@ -150,7 +165,10 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
       .where(eq(enrollmentApplications.id, applicationId));
 
     if (!application) {
-      return NextResponse.json({ error: "Application not found" }, { status: 404 });
+      return NextResponse.json(
+        { error: "Application not found" },
+        { status: 404 },
+      );
     }
 
     // Handle different actions
@@ -158,7 +176,11 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
       case "submit_payment": {
         // User submitting payment proof
         if (application.userId !== context.userId) {
-          const canManage = await hasPermission(context.userId, "ENROLLMENT", "MANAGE");
+          const canManage = await hasPermission(
+            context.userId,
+            "ENROLLMENT",
+            "MANAGE",
+          );
           if (!canManage) {
             return NextResponse.json({ error: "Forbidden" }, { status: 403 });
           }
@@ -167,14 +189,14 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
         if (application.status !== "pending_payment") {
           return NextResponse.json(
             { error: "Payment has already been submitted" },
-            { status: 400 }
+            { status: 400 },
           );
         }
 
         if (!transactionId || !paymentProofUrl) {
           return NextResponse.json(
             { error: "Transaction ID and payment proof are required" },
-            { status: 400 }
+            { status: 400 },
           );
         }
 
@@ -195,7 +217,11 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
 
       case "verify_payment": {
         // Admin/Moderator verifying payment
-        const canVerify = await hasPermission(context.userId, "ENROLLMENT", "VERIFY");
+        const canVerify = await hasPermission(
+          context.userId,
+          "ENROLLMENT",
+          "VERIFY",
+        );
         if (!canVerify) {
           return NextResponse.json({ error: "Forbidden" }, { status: 403 });
         }
@@ -203,7 +229,7 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
         if (application.status !== "payment_submitted") {
           return NextResponse.json(
             { error: "Application is not in payment submitted status" },
-            { status: 400 }
+            { status: 400 },
           );
         }
 
@@ -224,7 +250,11 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
 
       case "approve": {
         // Admin approving admission
-        const canApprove = await hasPermission(context.userId, "ENROLLMENT", "APPROVE");
+        const canApprove = await hasPermission(
+          context.userId,
+          "ENROLLMENT",
+          "APPROVE",
+        );
         if (!canApprove) {
           return NextResponse.json({ error: "Forbidden" }, { status: 403 });
         }
@@ -232,7 +262,7 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
         if (application.status !== "payment_verified") {
           return NextResponse.json(
             { error: "Payment must be verified before approval" },
-            { status: 400 }
+            { status: 400 },
           );
         }
 
@@ -243,7 +273,10 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
           .where(eq(courses.id, application.courseId));
 
         if (!course) {
-          return NextResponse.json({ error: "Course not found" }, { status: 404 });
+          return NextResponse.json(
+            { error: "Course not found" },
+            { status: 404 },
+          );
         }
 
         // Get user details to check for existing member profile
@@ -303,7 +336,9 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
               fatherNameBangla: studentData.fatherNameBangla,
               motherName: studentData.motherName,
               motherNameBangla: studentData.motherNameBangla,
-              dateOfBirth: studentData.dateOfBirth ? new Date(studentData.dateOfBirth) : undefined,
+              dateOfBirth: studentData.dateOfBirth
+                ? new Date(studentData.dateOfBirth)
+                : undefined,
               gender: studentData.gender,
               bloodGroup: studentData.bloodGroup,
               religion: studentData.religion,
@@ -327,7 +362,10 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
         }
 
         // Sync program registrations profileId
-        await syncProgramRegistrationsProfileId(application.userId, memberProfile.id);
+        await syncProgramRegistrationsProfileId(
+          application.userId,
+          memberProfile.id,
+        );
 
         // Create course enrollment
         const startDate = new Date();
@@ -348,21 +386,7 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
           })
           .returning();
 
-        // Create first month's fee record
-        const now = new Date();
-        const billingMonth = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}`;
-        const dueDate = new Date(now.getFullYear(), now.getMonth() + 1, 10); // Due on 10th of next month
-
-        await db.insert(monthlyFees).values({
-          enrollmentId: enrollment.id,
-          profileId: memberProfile.id,
-          billingMonth,
-          billingYear: now.getFullYear(),
-          amount: course.monthlyFee,
-          currency: course.currency,
-          dueDate,
-          status: "pending",
-        });
+        // Initial fees use the same activity, amount, due-day and uniqueness rules as monthly generation.
 
         // Update course student count
         await db
@@ -387,8 +411,13 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
           .where(eq(enrollmentApplications.id, applicationId))
           .returning();
 
+        const billingWarning = await generateInitialMonthlyFees(
+          enrollment.id,
+          `user:${context.userId}`,
+        );
         return NextResponse.json({
           ...updated,
+          billingWarning,
           profileId: memberProfile.id,
           enrollmentId: enrollment.id,
         });
@@ -396,7 +425,11 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
 
       case "reject": {
         // Admin rejecting application
-        const canApprove = await hasPermission(context.userId, "ENROLLMENT", "APPROVE");
+        const canApprove = await hasPermission(
+          context.userId,
+          "ENROLLMENT",
+          "APPROVE",
+        );
         if (!canApprove) {
           return NextResponse.json({ error: "Forbidden" }, { status: 403 });
         }
@@ -404,7 +437,7 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
         if (!rejectionReason) {
           return NextResponse.json(
             { error: "Rejection reason is required" },
-            { status: 400 }
+            { status: 400 },
           );
         }
 
@@ -427,7 +460,11 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
       case "cancel": {
         // User cancelling their own application
         if (application.userId !== context.userId) {
-          const canManage = await hasPermission(context.userId, "ENROLLMENT", "MANAGE");
+          const canManage = await hasPermission(
+            context.userId,
+            "ENROLLMENT",
+            "MANAGE",
+          );
           if (!canManage) {
             return NextResponse.json({ error: "Forbidden" }, { status: 403 });
           }
@@ -436,7 +473,7 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
         if (application.status === "approved") {
           return NextResponse.json(
             { error: "Cannot cancel an approved application" },
-            { status: 400 }
+            { status: 400 },
           );
         }
 
@@ -453,8 +490,16 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
       }
 
       case "update_info": {
-        const canManage = await hasPermission(context.userId, "ENROLLMENT", "MANAGE");
-        const canApprove = await hasPermission(context.userId, "ENROLLMENT", "APPROVE");
+        const canManage = await hasPermission(
+          context.userId,
+          "ENROLLMENT",
+          "MANAGE",
+        );
+        const canApprove = await hasPermission(
+          context.userId,
+          "ENROLLMENT",
+          "APPROVE",
+        );
         const isAdmin = canManage || canApprove;
 
         if (!isAdmin) {
@@ -466,7 +511,7 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
           if (application.status !== "pending_payment") {
             return NextResponse.json(
               { error: "Cannot update info after payment submission" },
-              { status: 400 }
+              { status: 400 },
             );
           }
         }
@@ -474,7 +519,7 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
         if (!studentInfo) {
           return NextResponse.json(
             { error: "Student info is required" },
-            { status: 400 }
+            { status: 400 },
           );
         }
 
@@ -491,24 +536,52 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
         if (updated.profileId) {
           const studentData = (studentInfo || {}) as any;
           const fullNameEnglish =
-            studentData.fullNameEnglish || studentData.username || studentData.fullName || studentData.name || studentData.name_en || null;
-          const fullNameBangla = studentData.fullNameBangla || studentData.name_bn || null;
-          const phoneNumber = studentData.phoneNumber || studentData.phone || studentData.mobile || null;
+            studentData.fullNameEnglish ||
+            studentData.username ||
+            studentData.fullName ||
+            studentData.name ||
+            studentData.name_en ||
+            null;
+          const fullNameBangla =
+            studentData.fullNameBangla || studentData.name_bn || null;
+          const phoneNumber =
+            studentData.phoneNumber ||
+            studentData.phone ||
+            studentData.mobile ||
+            null;
           const email = studentData.email || null;
-          const dateOfBirthRaw = studentData.dateOfBirth || studentData.dob || null;
+          const dateOfBirthRaw =
+            studentData.dateOfBirth || studentData.dob || null;
           const gender = studentData.gender || studentData.sex || null;
-          const bloodGroup = studentData.bloodGroup || studentData.blood_group || null;
+          const bloodGroup =
+            studentData.bloodGroup || studentData.blood_group || null;
           const religion = studentData.religion || null;
           const nationality = studentData.nationality || null;
-          const presentAddress = studentData.presentAddress || studentData.address || studentData.present_address || null;
-          const permanentAddress = studentData.permanentAddress || studentData.permanent_address || null;
+          const presentAddress =
+            studentData.presentAddress ||
+            studentData.address ||
+            studentData.present_address ||
+            null;
+          const permanentAddress =
+            studentData.permanentAddress ||
+            studentData.permanent_address ||
+            null;
           const nid = studentData.nid || studentData.nationalIdNumber || null;
           const birthCertificateNo = studentData.birthCertificateNo || null;
           const passportNo = studentData.passportNo || null;
-          const profession = studentData.profession || studentData.occupation || null;
-          const educationQualification = studentData.educationQualification || null;
-          const emergencyContactName = studentData.emergencyContactName || studentData.emergencyContact || null;
-          const emergencyContactPhone = studentData.emergencyContactPhone || studentData.emergencyPhone || studentData.emergency_contact || null;
+          const profession =
+            studentData.profession || studentData.occupation || null;
+          const educationQualification =
+            studentData.educationQualification || null;
+          const emergencyContactName =
+            studentData.emergencyContactName ||
+            studentData.emergencyContact ||
+            null;
+          const emergencyContactPhone =
+            studentData.emergencyContactPhone ||
+            studentData.emergencyPhone ||
+            studentData.emergency_contact ||
+            null;
 
           await db
             .update(members)
@@ -519,7 +592,9 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
               fatherNameBangla: studentData.fatherNameBangla || null,
               motherName: studentData.motherName || null,
               motherNameBangla: studentData.motherNameBangla || null,
-              dateOfBirth: dateOfBirthRaw ? new Date(dateOfBirthRaw) : undefined,
+              dateOfBirth: dateOfBirthRaw
+                ? new Date(dateOfBirthRaw)
+                : undefined,
               gender,
               bloodGroup,
               religion,
@@ -545,16 +620,13 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
       }
 
       default:
-        return NextResponse.json(
-          { error: "Invalid action" },
-          { status: 400 }
-        );
+        return NextResponse.json({ error: "Invalid action" }, { status: 400 });
     }
   } catch (error) {
     console.error("Error updating application:", error);
     return NextResponse.json(
       { error: "Failed to update application" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

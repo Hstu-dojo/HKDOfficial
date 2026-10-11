@@ -1,4 +1,4 @@
-import { pgTable, text, integer, boolean, timestamp, jsonb } from "drizzle-orm/pg-core";
+import { pgTable, text, integer, boolean, timestamp, jsonb, uniqueIndex, index } from "drizzle-orm/pg-core";
 import { sql } from "drizzle-orm";
 import { pgEnum } from "drizzle-orm/pg-core";
 import { user } from "../auth";
@@ -62,7 +62,7 @@ export const monthlyFees = pgTable("monthly_fees", {
   notes: text("notes"),
   createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
   updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow().notNull(),
-});
+}, (table) => ({ period: uniqueIndex("monthly_fees_enrollment_period_idx").on(table.enrollmentId, table.billingMonth) }));
 
 // Payment Reminders - track notification history
 export const paymentReminders = pgTable("payment_reminders", {
@@ -168,3 +168,36 @@ export type PaymentSetting = typeof paymentSettings.$inferSelect;
 export type NewPaymentSetting = typeof paymentSettings.$inferInsert;
 export type PaymentAccount = typeof paymentAccounts.$inferSelect;
 export type NewPaymentAccount = typeof paymentAccounts.$inferInsert;
+
+// One durable delivery per student, scope and campaign; SMTP acceptance is distinct from delivery.
+export const billingMailDeliveries = pgTable("billing_mail_deliveries", {
+  id: text("id").primaryKey().default(sql`gen_random_uuid()`),
+  campaignKey: text("campaign_key").notNull(),
+  scopeKey: text("scope_key").notNull(),
+  partnerId: text("partner_id").references(() => partners.id, {onDelete:'set null'}),
+  profileId: text("profile_id").notNull().references(() => profiles.id, {onDelete:'cascade'}),
+  billingMonth: text("billing_month").notNull(),
+  recipientEmail: text("recipient_email").notNull(),
+  status: text("status").notNull().default('queued'),
+  feeIds: jsonb("fee_ids").$type<string[]>().notNull(),
+  actor: text("actor").notNull(),
+  messageId: text("message_id"),
+  errorMessage: text("error_message"),
+  claimedAt: timestamp("claimed_at", {withTimezone:true}),
+  sentAt: timestamp("sent_at", {withTimezone:true}),
+  createdAt: timestamp("created_at", {withTimezone:true}).defaultNow().notNull(),
+  updatedAt: timestamp("updated_at", {withTimezone:true}).defaultNow().notNull(),
+}, table => ({
+  recipient: uniqueIndex("billing_mail_campaign_recipient_idx").on(table.campaignKey,table.scopeKey,table.profileId),
+  queue: index("billing_mail_queue_idx").on(table.campaignKey,table.scopeKey,table.status),
+}));
+
+export const monthlyFeeEvents = pgTable("monthly_fee_events", {
+  id: text("id").primaryKey().default(sql`gen_random_uuid()`),
+  monthlyFeeId: text("monthly_fee_id").notNull().references(() => monthlyFees.id, {onDelete:'cascade'}),
+  actor: text("actor").notNull(), // user:<id>, partner-admin:<id>, system
+  action: text("action").notNull(),
+  previous: jsonb("previous").$type<Record<string,unknown>>().notNull(),
+  next: jsonb("next").$type<Record<string,unknown>>().notNull(),
+  createdAt: timestamp("created_at", {withTimezone:true}).defaultNow().notNull(),
+}, table => ({ fee: index("monthly_fee_events_fee_idx").on(table.monthlyFeeId) }));

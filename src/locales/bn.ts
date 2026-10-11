@@ -657,6 +657,7 @@ export default {
   },
 
   feePayment: {
+    inactiveBilling: "এই সদস্যপদের সময়সীমার বিলিং নিষ্ক্রিয়। আপনার শাখার প্রশাসকের সঙ্গে যোগাযোগ করুন।",
     feeNotFound: "ফি পাওয়া যায়নি",
     failedToLoadFeeDetails: "ফি বিস্তারিত লোড করা যায়নি",
     pleaseEnterTransactionId: "অনুগ্রহ করে ট্রানজ্যাকশন আইডি লিখুন",

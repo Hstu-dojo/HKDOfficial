@@ -3,6 +3,12 @@
 import { PanelLoader } from "@/components/loading";
 
 import { useState, useEffect, useCallback } from "react";
+import { BillingReminders } from "@/components/billing/BillingReminders";
+import {
+  businessDate,
+  summarizeFees,
+  paisaFromInput,
+} from "@/lib/billing/policy";
 import { useRBAC } from "@/hooks/useRBAC";
 import {
   CheckCircleIcon,
@@ -98,18 +104,26 @@ const STATUS_CONFIG: Record<
   },
 };
 
-export default function MonthlyFeesManagement() {
+export default function MonthlyFeesManagement({
+  initialPartnerId = "",
+  initialMonth = "",
+}: {
+  initialPartnerId?: string;
+  initialMonth?: string;
+}) {
   const { hasPermission, loading: rbacLoading } = useRBAC();
   const [fees, setFees] = useState<MonthlyFee[]>([]);
   const [loading, setLoading] = useState(true);
   const [statusFilter, setStatusFilter] = useState<string>("");
-  const [monthFilter, setMonthFilter] = useState<string>("");
+  const [monthFilter, setMonthFilter] = useState<string>(initialMonth);
   const [searchQuery, setSearchQuery] = useState("");
-  const [partnerFilter, setPartnerFilter] = useState<string>("");
+  const [partnerFilter, setPartnerFilter] = useState<string>(initialPartnerId);
   const [partnersList, setPartnersList] = useState<
     { id: string; name: string }[]
   >([]);
 
+  const canManage = hasPermission("MONTHLY_FEE", "MANAGE");
+  const canCreate = hasPermission("MONTHLY_FEE", "CREATE");
   const canVerify = hasPermission("MONTHLY_FEE", "VERIFY");
 
   // Fetch partners list for the filter
@@ -148,11 +162,19 @@ export default function MonthlyFeesManagement() {
   }, [rbacLoading, fetchFees]);
 
   const handleVerifyPayment = async (feeId: string) => {
+    const record = fees.find((f) => f.fee.id === feeId);
+    if (!record) return;
+    const input = prompt(
+      `Total verified paid amount (${record.fee.currency}), including previously verified payments:`,
+      (record.fee.amount / 100).toFixed(2),
+    );
+    if (input === null) return;
     try {
+      const amountPaid = paisaFromInput(input);
       const response = await fetch(`/api/admin/monthly-fees/${feeId}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ action: "verify_payment" }),
+        body: JSON.stringify({ action: "verify_payment", amountPaid }),
       });
 
       if (!response.ok) {
@@ -194,11 +216,16 @@ export default function MonthlyFeesManagement() {
 
   const handleTogglePaid = async (feeId: string, currentStatus: string) => {
     const newAction = currentStatus === "paid" ? "mark_unpaid" : "mark_paid";
+    const notes =
+      currentStatus === "paid"
+        ? prompt("Reason for reversing this payment:")
+        : undefined;
+    if (currentStatus === "paid" && !notes?.trim()) return;
     try {
       const response = await fetch(`/api/admin/monthly-fees/${feeId}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ action: newAction }),
+        body: JSON.stringify({ action: newAction, notes }),
       });
 
       if (!response.ok) {
@@ -218,7 +245,7 @@ export default function MonthlyFeesManagement() {
   const handleGenerateMonthlyFees = async () => {
     const month = prompt(
       "Enter billing month (YYYY-MM):",
-      new Date().toISOString().slice(0, 7),
+      businessDate().month,
     );
     if (!month) return;
 
@@ -226,7 +253,10 @@ export default function MonthlyFeesManagement() {
       const response = await fetch("/api/admin/monthly-fees/generate", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ billingMonth: month }),
+        body: JSON.stringify({
+          billingMonth: month,
+          partnerId: partnerFilter || undefined,
+        }),
       });
 
       if (!response.ok) {
@@ -275,26 +305,19 @@ export default function MonthlyFeesManagement() {
     );
   });
 
-  // Stats
+  const summary = summarizeFees(fees.map((f) => f.fee));
   const stats = {
-    total: fees.length,
-    pending: fees.filter(
-      (f) => f.fee.status === "pending" || f.fee.status === "due",
-    ).length,
-    payment_submitted: fees.filter((f) => f.fee.status === "payment_submitted")
-      .length,
-    paid: fees.filter((f) => f.fee.status === "paid").length,
-    overdue: fees.filter((f) => f.fee.status === "overdue").length,
-    totalAmount: fees.reduce((sum, f) => sum + f.fee.amount, 0),
-    collectedAmount: fees
-      .filter((f) => f.fee.status === "paid")
-      .reduce((sum, f) => sum + (f.fee.amountPaid || 0), 0),
+    ...summary,
+    payment_submitted: summary.submitted,
+    collectedAmount: summarizeFees(
+      fees.filter((f) => f.fee.currency === "BDT").map((f) => f.fee),
+    ).collected,
   };
 
   // Generate month options
   const monthOptions = Array.from({ length: 12 }, (_, i) => {
-    const date = new Date();
-    date.setMonth(date.getMonth() - i);
+    const date = new Date(`${businessDate().month}-01T12:00:00Z`);
+    date.setUTCMonth(date.getUTCMonth() - i);
     const value = date.toISOString().slice(0, 7);
     return { value, label: formatMonth(value) };
   });
@@ -315,14 +338,23 @@ export default function MonthlyFeesManagement() {
             Track and manage student monthly payments
           </p>
         </div>
-        <button
-          onClick={handleGenerateMonthlyFees}
-          className="flex w-full items-center justify-center gap-2 rounded-lg bg-primary px-4 py-2 text-primary-foreground hover:bg-primary/90 sm:w-auto"
-        >
-          <PlusIcon className="h-5 w-5" />
-          Generate Monthly Fees
-        </button>
+        {canCreate && (
+          <button
+            onClick={handleGenerateMonthlyFees}
+            className="flex w-full items-center justify-center gap-2 rounded-lg bg-primary px-4 py-2 text-primary-foreground hover:bg-primary/90 sm:w-auto"
+          >
+            <PlusIcon className="h-5 w-5" />
+            Generate Monthly Fees
+          </button>
+        )}
       </div>
+
+      <BillingReminders
+        key={partnerFilter}
+        endpoint="/api/admin/monthly-fees/reminders"
+        partnerId={partnerFilter || undefined}
+        canSend={canManage}
+      />
 
       {/* Stats */}
       <div className="grid grid-cols-2 gap-4 md:grid-cols-4 lg:grid-cols-6">
@@ -366,7 +398,7 @@ export default function MonthlyFeesManagement() {
         </div>
         <div className="rounded-lg border bg-white p-4 dark:bg-card">
           <p className="text-sm text-muted-foreground dark:text-gray-400">
-            Collected
+            Collected (BDT)
           </p>
           <p className="text-green-600 dark:text-green-400 text-2xl font-semibold">
             {formatCurrency(stats.collectedAmount, "BDT")}
@@ -561,10 +593,46 @@ export default function MonthlyFeesManagement() {
                                 Verify
                               </button>
                             )}
-                          {["pending", "due", "overdue"].includes(
+                          {item.fee.status === "payment_submitted" &&
+                            canVerify && (
+                              <button
+                                className="rounded bg-destructive/10 px-2 py-1 text-xs text-destructive"
+                                onClick={async () => {
+                                  const notes = prompt(
+                                    "Reason for rejecting payment:",
+                                  );
+                                  if (!notes?.trim()) return;
+                                  const response = await fetch(
+                                    `/api/admin/monthly-fees/${item.fee.id}`,
+                                    {
+                                      method: "PUT",
+                                      headers: {
+                                        "Content-Type": "application/json",
+                                      },
+                                      body: JSON.stringify({
+                                        action: "reject_payment",
+                                        notes,
+                                      }),
+                                    },
+                                  );
+                                  if (response.ok) {
+                                    toast.success("Payment rejected");
+                                    void fetchFees();
+                                  } else {
+                                    const data = await response.json();
+                                    toast.error(
+                                      data.error || "Could not reject payment",
+                                    );
+                                  }
+                                }}
+                              >
+                                Reject
+                              </button>
+                            )}
+                          {["pending", "due", "overdue", "partial"].includes(
                             item.fee.status,
                           ) &&
-                            canVerify && (
+                            canManage && (
                               <>
                                 <button
                                   onClick={() =>
@@ -585,7 +653,7 @@ export default function MonthlyFeesManagement() {
                                 </button>
                               </>
                             )}
-                          {item.fee.status === "paid" && canVerify && (
+                          {item.fee.status === "paid" && canManage && (
                             <button
                               onClick={() =>
                                 handleTogglePaid(item.fee.id, item.fee.status)
