@@ -26,9 +26,9 @@ const SectionStats = () => {
   ];
 
   return (
-    <section className="relative py-16 bg-foreground dark:bg-card text-background dark:text-white overflow-hidden">
+    <section className="relative py-16 bg-muted/50 text-foreground overflow-hidden">
       <div className="container mx-auto px-4 max-w-7xl relative z-10">
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-0 lg:divide-x lg:divide-background/20">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-0 lg:divide-x lg:divide-border">
           {statistics.map((item, index) => (
             <motion.div
               key={index}
@@ -38,10 +38,10 @@ const SectionStats = () => {
               transition={{ delay: index * 0.1 }}
               className="flex flex-col items-center text-center lg:px-6"
             >
-              <span className="text-4xl lg:text-5xl font-black mb-2 tracking-tight">
+              <span className="text-4xl lg:text-5xl font-normal text-primary mb-2 tracking-tight">
                 {item.number}
               </span>
-              <span className="text-sm font-medium text-background/70 dark:text-muted-foreground uppercase tracking-wider">
+              <span className="text-sm font-medium text-muted-foreground uppercase tracking-wider">
                 {item.title}
               </span>
             </motion.div>

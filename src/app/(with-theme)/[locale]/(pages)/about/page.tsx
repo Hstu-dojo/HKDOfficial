@@ -20,7 +20,7 @@ export default async function PageAbout() {
   return (
     <>
       <Header />
-      <main className="relative">
+      <main className="public-page relative">
         <SectionPageTitle kicker={t('about.kicker')} subtitle={t('about.subtitle')}>
           {t('about.title')}
         </SectionPageTitle>

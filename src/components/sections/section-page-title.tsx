@@ -1,8 +1,5 @@
 "use client";
-
-import { motion } from "framer-motion";
-import { cn } from "@/lib/utils";
-
+import PublicPageHeading from "@/components/public/page-heading";
 type SectionPageTitleProps = {
   children: React.ReactNode;
   subtitle?: string;
@@ -10,52 +7,24 @@ type SectionPageTitleProps = {
   titleClasses?: string;
   subtitleClasses?: string;
 };
-
-const SectionPageTitle = ({
+export default function SectionPageTitle({
   children,
   subtitle,
   kicker,
   titleClasses,
   subtitleClasses,
-}: SectionPageTitleProps) => {
+}: SectionPageTitleProps) {
   return (
-    <section className="relative pt-32 pb-14 md:pt-36 md:pb-20 bg-muted/50 border-b border-border/40 overflow-hidden">
-      <div className="container mx-auto px-4 max-w-7xl relative z-10">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-          className="mx-auto max-w-3xl text-center"
-        >
-          {kicker && (
-            <span className="inline-flex items-center justify-center gap-2 text-xs font-bold tracking-[0.2em] uppercase text-primary mb-4">
-              <span className="h-px w-6 bg-primary" />
-              {kicker}
-              <span className="h-px w-6 bg-primary" />
-            </span>
-          )}
-          <h1
-            className={cn(
-              "text-4xl md:text-6xl font-normal tracking-tight mb-4 text-foreground",
-              titleClasses
-            )}
-          >
-            {children}
-          </h1>
-          {subtitle && (
-            <p
-              className={cn(
-                "text-lg text-muted-foreground max-w-2xl mx-auto leading-relaxed",
-                subtitleClasses
-              )}
-            >
-              {subtitle}
-            </p>
-          )}
-        </motion.div>
+    <section className="public-page-masthead">
+      <div className="public-page-container">
+        <PublicPageHeading
+          title={children}
+          kicker={kicker}
+          description={subtitle}
+          titleClasses={titleClasses}
+          descriptionClasses={subtitleClasses}
+        />
       </div>
     </section>
   );
-};
-
-export default SectionPageTitle;
+}

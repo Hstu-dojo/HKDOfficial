@@ -93,7 +93,7 @@ export default async function ProgramDetailsPage({
         />
       )}
       <Header />
-      <main className="min-h-screen bg-muted pt-20 dark:bg-background">
+      <main className="public-page public-page-inset">
         <ProgramDetails slug={slug} initialProgram={program} />
       </main>
       <Footer />

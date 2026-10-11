@@ -14,7 +14,7 @@ export default async function PageServices() {
   return (
     <>
       <Header />
-      <main className="relative">
+      <main className="public-page relative">
         <SectionPageTitle kicker={t("services.kicker")} subtitle={t("services.pageSubtitle")}>
           {t("services.pageTitle")}
         </SectionPageTitle>

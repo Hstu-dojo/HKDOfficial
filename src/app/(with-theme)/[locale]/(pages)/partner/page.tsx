@@ -1,3 +1,5 @@
+import SectionPageTitle from "@/components/sections/section-page-title";
+import { getI18n } from "@/locales/server";
 import Header from "@/components/layout/header";
 import Footer from "@/components/layout/footer";
 import SectionBranches from "@/components/sections/section-branches";
@@ -68,6 +70,7 @@ async function getBranches(): Promise<BranchData[]> {
 }
 
 export default async function PartnerPage({ params }: { params: Promise<{ locale: string }> }) {
+  const t = await getI18n();
   // Params are handled by the layout, but we need to accept them here
   // to avoid Next.js routing errors with dynamic segments
   const branches = await getBranches();
@@ -75,8 +78,9 @@ export default async function PartnerPage({ params }: { params: Promise<{ locale
   return (
     <>
       <Header />
-      <main className="relative">
-        <SectionBranches branches={branches} />
+      <main className="public-page relative">
+        <SectionPageTitle kicker={t("homepage.branches.kicker")} subtitle={t("homepage.branches.description")}>{t("homepage.branches.titlePrefix")} <span className="italic text-primary">{t("homepage.branches.titleAccent")}</span></SectionPageTitle>
+        <SectionBranches branches={branches} showHeading={false} />
       </main>
       <Footer />
     </>

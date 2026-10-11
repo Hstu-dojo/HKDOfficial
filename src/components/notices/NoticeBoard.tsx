@@ -9,6 +9,7 @@ import {
   ExternalLink,
   Bell,
 } from "lucide-react";
+import PublicPageHeading from "@/components/public/page-heading";
 import { SectionHeader } from "@/components/sections/section-header";
 import {
   categories,
@@ -257,43 +258,28 @@ export default function NoticeBoard({
     );
   }
   return (
-    <section
-      id="notice-board"
-      className="bg-background py-16 text-foreground md:py-24"
-    >
-      <div className="container mx-auto max-w-7xl px-4">
-        <div className="flex flex-col justify-between gap-4 md:flex-row md:items-start">
-          <SectionHeader
-            headingLevel={compact ? "h2" : "h1"}
-            align="left"
-            kicker={t.kicker}
-            title={t.title}
-            titleAccent={t.accent}
-            description={t.description}
-          />
-          {compact ? (
-            <Link
-              href={`/notice${locale === "en" ? "" : `?lang=${locale}`}`}
-              className="inline-flex min-h-11 shrink-0 items-center gap-2 self-start rounded-full border px-5 text-sm hover:bg-muted"
-            >
-              {t.viewAll}
-              <ArrowUpRight size={16} />
-            </Link>
-          ) : (
-            <nav aria-label={t.language} className="flex gap-2">
+    <section id="notice-board" className="public-page public-page-inset">
+      <div className="public-page-container">
+        <PublicPageHeading
+          kicker={t.kicker}
+          title={t.title}
+          accent={t.accent}
+          description={t.description}
+          actions={
+            <nav aria-label={t.language} className="flex flex-wrap gap-2">
               {(["en", "bn", "ne"] as const).map((l) => (
                 <a
                   key={l}
                   href={`/notice${l === "en" ? "" : `?lang=${l}`}`}
                   aria-current={locale === l ? "page" : undefined}
-                  className={`rounded-full border px-3 py-2 text-sm ${locale === l ? "bg-primary text-primary-foreground" : ""}`}
+                  className={`inline-flex min-h-11 items-center rounded-full border px-4 text-sm ${locale === l ? "border-primary bg-primary text-primary-foreground" : "hover:bg-muted"}`}
                 >
                   {l === "en" ? "English" : l === "bn" ? "বাংলা" : "नेपाली"}
                 </a>
               ))}
             </nav>
-          )}
-        </div>
+          }
+        />
         {!compact && (
           <label className="mb-6 flex max-w-lg items-center gap-3 rounded-xl border bg-card px-4">
             <Search size={18} aria-hidden="true" />
@@ -309,7 +295,9 @@ export default function NoticeBoard({
             />
           </label>
         )}
-        <div className="grid items-start gap-8 lg:grid-cols-[minmax(0,1.25fr)_minmax(0,1fr)]">
+        <div
+          className={`grid items-start gap-8 ${shown.length ? "lg:grid-cols-[minmax(0,1.25fr)_minmax(0,1fr)]" : ""}`}
+        >
           <div className="min-w-0">
             <div className="mb-5 flex flex-wrap items-center justify-between gap-3 border-b pb-4">
               <h3 className="font-serif text-2xl md:text-3xl">{t.academy}</h3>
@@ -456,9 +444,16 @@ export default function NoticeBoard({
                 {t.stale}
               </p>
             )}
-            <div className="divide-y">
+            <div
+              className={
+                shown.length ? "divide-y" : "grid gap-x-6 md:grid-cols-3"
+              }
+            >
               {bkf.map((n) => (
-                <article key={n.id} className="py-5 first:pt-0">
+                <article
+                  key={n.id}
+                  className={`py-5 ${shown.length ? "first:pt-0" : "border-t"}`}
+                >
                   <time
                     className="text-xs text-muted-foreground"
                     dateTime={n.publishedAt}

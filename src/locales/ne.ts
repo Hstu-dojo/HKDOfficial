@@ -1,4 +1,5 @@
 export default {
+  testimonialPortal: { title: "मेरो अनुभव" },
   academyTeam: {
     bkfRegistration: "BKF दर्ता",
     blackBeltNumber: "ब्ल्याक बेल्ट नम्बर",

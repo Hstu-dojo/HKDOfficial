@@ -1,123 +1,105 @@
 "use client";
-
-import { motion } from "framer-motion";
-import { Navigation } from "swiper/modules";
-import { Swiper, SwiperSlide } from "swiper/react";
-import "swiper/css";
-import "swiper/css/navigation";
-import Image from "next/image";
-import { Star, Quote } from "lucide-react";
-import { useScopedI18n } from "@/locales/client";
+import { motion, useReducedMotion } from "framer-motion";
+import Link from "next/link";
+import { ArrowUpRight, Star } from "lucide-react";
+import { useCurrentLocale, useScopedI18n } from "@/locales/client";
 import { SectionHeader } from "./section-header";
-
-const cloudName = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME || "dksn30eyz";
-const avatarTransform = "c_fill,w_300,h_300,g_face,q_auto,r_max";
-const baseUrl = `https://res.cloudinary.com/${cloudName}/image/upload/${avatarTransform}`;
-
-const SectionTestimonialsSlider = () => {
-  const t = useScopedI18n("homepage.testimonials");
-  const tStats = useScopedI18n("homepage.stats");
-
-  const testimonials = [
-    {
-      name: "Md. Hasan",
-      affiliation: t("academyStudent"),
-      comment: t("hasan1"),
-      image: `${baseUrl}/favourite/IMG_1937_sendde.jpg`,
-      rating: 5,
-    },
-    {
-      name: "Loveraj Acharya",
-      affiliation: t("seniorPractitioner"),
-      comment: t("loveraj"),
-      image: `${baseUrl}/favourite/IMG_20251108_215737_zxprcw.jpg`,
-      rating: 4,
-    },
-    {
-      name: "Rafiq Ahmed",
-      affiliation: t("academyAlumni"),
-      comment: t("hasan2"),
-      image: `${baseUrl}/favourite/IMG_20251108_221125_hfljw3.jpg`,
-      rating: 5,
-    },
-    {
-      name: "Shahriar Hossain",
-      affiliation: t("martialArtsPractitioner"),
-      comment: t("shahriar"),
-      image: `${baseUrl}/favourite/IMG-20250822-WA0053_qiobdp.jpg`,
-      rating: 5,
-    },
-  ];
-
+import type { PublicTestimonial } from "@/lib/testimonials/model";
+import { testimonialCopy, testimonialLocale } from "@/lib/testimonials/copy";
+export default function SectionTestimonialsSlider({
+  testimonials = [],
+}: {
+  testimonials?: PublicTestimonial[];
+}) {
+  const locale = useCurrentLocale(),
+    t = useScopedI18n("homepage.testimonials"),
+    copy = testimonialCopy[testimonialLocale(locale)],
+    reduced = useReducedMotion();
+  const demo = testimonials.length === 0;
+  const items: PublicTestimonial[] = demo
+    ? copy.demoComments.map((comment, i) => ({
+        id: `demo-${i}`,
+        displayName: `${copy.demoName} ${String(i + 1).padStart(2, "0")}`,
+        affiliation: "",
+        rating: 5,
+        comment,
+      }))
+    : testimonials;
   return (
-    <section className="relative py-20 md:py-28 bg-[#191919]      overflow-hidden">
-      <div className="container mx-auto px-4 max-w-7xl relative z-10">
-        <SectionHeader
-          kicker={t("kicker")}
-          title={t("titlePrefix")}
-          titleAccent={t("titleAccent")}
-          description={tStats("satisfiedDesc")}
-          lightText
-        />
-
-        {/* Slider */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-60px" }}
-          transition={{ duration: 0.6, delay: 0.15, ease: [0.16, 1, 0.3, 1] }}
-        >
-          <Swiper
-            modules={[Navigation]}
-            navigation
-            spaceBetween={24}
-            slidesPerView={1}
-            breakpoints={{ 1024: { slidesPerView: 2 } }}
-            className="!pb-4"
+    <section
+      id="testimonials"
+      className="border-y bg-primary/[0.025] py-16 text-foreground md:py-24"
+    >
+      <div className="container mx-auto max-w-7xl px-4">
+        <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-start">
+          <SectionHeader
+            kicker={t("kicker")}
+            title={t("titlePrefix")}
+            titleAccent={t("titleAccent")}
+            align="left"
+            className="mb-6 md:mb-8"
+          />
+          <Link
+            href={`/${locale}/dashboard/testimonials`}
+            className="mb-6 inline-flex min-h-11 shrink-0 items-center gap-2 self-start rounded-full border bg-background px-4 text-sm transition-colors hover:bg-muted"
           >
-            {testimonials.map((t) => (
-              <SwiperSlide key={t.name}>
-                <div className="relative group bg-slate-800/60 border border-slate-700/60 hover:border-primary/40 rounded-3xl p-7 md:p-8 transition-all duration-500 hover:shadow-sm  backdrop-blur-sm h-full">
-                  {/* Quote Icon */}
-                  <Quote className="h-8 w-8 text-primary/30 mb-5" />
-
-                  {/* Stars */}
-                  <div className="flex gap-1 mb-5">
-                    {Array.from({ length: 5 }).map((_, i) => (
-                      <Star
-                        key={i}
-                        className={`h-4 w-4 ${
-                          i < t.rating
-                            ? "fill-amber-400 text-amber-400"
-                            : "fill-slate-700 text-foreground"
-                        }`}
-                      />
-                    ))}
-                  </div>
-
-                  {/* Comment */}
-                  <p className="text-slate-300 text-base leading-relaxed mb-8 flex-1">
-                    &ldquo;{t.comment}&rdquo;
+            {copy.share}
+            <ArrowUpRight size={16} aria-hidden="true" />
+          </Link>
+        </div>
+        {demo && (
+          <p className="mb-5 text-xs text-muted-foreground">{copy.demo}</p>
+        )}
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+          {items.map((item, index) => (
+            <motion.figure
+              key={item.id}
+              initial={reduced ? false : { opacity: 0, y: 16 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, amount: 0.1 }}
+              transition={{ duration: 0.4, delay: index * 0.05 }}
+              className="flex min-w-0 flex-col rounded-2xl border bg-background p-6 sm:p-7"
+            >
+              <div className="mb-5 flex items-center gap-2 text-xs text-muted-foreground">
+                <Star
+                  size={14}
+                  className="fill-primary text-primary"
+                  aria-hidden="true"
+                />
+                <span aria-label={copy.rating}>
+                  {new Intl.NumberFormat(locale).format(item.rating)} /{" "}
+                  {new Intl.NumberFormat(locale).format(5)}
+                </span>
+              </div>
+              <blockquote className="mb-7 whitespace-pre-line break-words font-serif text-xl leading-relaxed tracking-tight">
+                “{item.comment}”
+              </blockquote>
+              <figcaption className="mt-auto flex items-center gap-3 border-t pt-5">
+                <span
+                  aria-hidden="true"
+                  className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-secondary/10 text-sm font-medium text-foreground"
+                >
+                  {item.displayName
+                    .split(/\s+/)
+                    .slice(0, 2)
+                    .map((part) => part[0])
+                    .join("")}
+                </span>
+                <div className="min-w-0">
+                  <p className="break-words text-sm font-medium">
+                    {item.displayName}
                   </p>
-
-                  {/* Author */}
-                  <div className="flex items-center gap-4">
-                    <div className="relative w-11 h-11 rounded-full overflow-hidden ring-2 ring-primary/30 shrink-0">
-                      <Image src={t.image} alt={t.name} fill className="object-cover" />
-                    </div>
-                    <div>
-                      <div className="font-bold text-white text-sm">{t.name}</div>
-                      <div className="text-xs text-muted-foreground">{t.affiliation}</div>
-                    </div>
-                  </div>
+                  {item.affiliation && (
+                    <p className="mt-1 break-words text-xs text-muted-foreground">
+                      {item.affiliation}
+                    </p>
+                  )}
                 </div>
-              </SwiperSlide>
-            ))}
-          </Swiper>
-        </motion.div>
+              </figcaption>
+            </motion.figure>
+          ))}
+        </div>
       </div>
     </section>
   );
-};
-
-export default SectionTestimonialsSlider;
+}

@@ -3,7 +3,7 @@ import { breadcrumbSchema, absoluteUrl, academyName } from "@/lib/seo/site";
 import { pageMetadata, noIndex } from "@/lib/seo/site";
 import Header from "@/components/layout/header";
 import Footer from "@/components/layout/footer";
-import MaxWidthWrapper from "@/components/maxWidthWrapper";
+import PublicPageHeading from "@/components/public/page-heading";
 import Link from "next/link";
 import Image from "next/image";
 import { db } from "@/lib/connect-db";
@@ -126,10 +126,14 @@ export default async function CourseDetailsPage({
         ]}
       />
       <Header />
-      <main className="min-h-screen bg-muted pt-20 dark:bg-background">
-        <div className="py-8 pb-16">
-          <MaxWidthWrapper>
-            <div className="overflow-hidden rounded-2xl border border-border bg-white shadow-lg dark:border-border dark:bg-card">
+      <main className="public-page public-page-inset">
+        <div className="">
+          <div className="public-page-container">
+            <PublicPageHeading
+              title={course.name}
+              description={course.nameBangla || undefined}
+            />
+            <div className="overflow-hidden rounded-2xl border border-border bg-card">
               {/* Banner */}
               <div className="relative h-56 w-full overflow-hidden">
                 {course.bannerUrl ? (
@@ -159,14 +163,6 @@ export default async function CourseDetailsPage({
                       </span>
                     )}
                   </div>
-                  <h1 className="text-3xl font-bold md:text-4xl">
-                    {course.name}
-                  </h1>
-                  {course.nameBangla && (
-                    <p className="mt-1 text-lg opacity-90">
-                      {course.nameBangla}
-                    </p>
-                  )}
                 </div>
               </div>
 
@@ -356,7 +352,7 @@ export default async function CourseDetailsPage({
                 </div>
               </div>
             </div>
-          </MaxWidthWrapper>
+          </div>
         </div>
       </main>
       <Footer />

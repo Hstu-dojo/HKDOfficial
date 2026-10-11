@@ -2,7 +2,6 @@ import { Metadata } from 'next';
 import KarateCoursesPage from '@/components/karate/KarateCoursesPage';
 import Header from "@/components/layout/header";
 import Footer from "@/components/layout/footer";
-import MaxWidthWrapper from "@/components/maxWidthWrapper";
 import { db } from "@/lib/connect-db";
 import { courses, courseSchedules } from "@/db/schemas/karate/courses";
 import { enrollmentApplications } from "@/db/schemas/karate/enrollments";
@@ -113,15 +112,15 @@ export default async function CoursesPage() {
   return (
     <>
       <Header />
-      <main className="relative pt-24 pb-16 min-h-screen bg-muted dark:bg-background">
-        <MaxWidthWrapper>
+      <main className="public-page public-page-inset">
+        <div className="public-page-container">
             <KarateCoursesPage
               initialCourses={coursesData}
               enrolledCourseIds={enrolledData.courseIds}
               enrolledApplicationMap={enrolledData.applicationMap}
               applicationNumberMap={enrolledData.applicationNumberMap}
             />
-        </MaxWidthWrapper>
+        </div>
       </main>
       <Footer />
     </>

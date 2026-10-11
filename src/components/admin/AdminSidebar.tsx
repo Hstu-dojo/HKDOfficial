@@ -96,6 +96,20 @@ const navigation: NavItem[] = [
     },
   },
   {
+    name: "FAQs",
+    href: "/admin/faqs",
+    icon: DocumentTextIcon,
+    description: "Edit homepage questions and translations",
+    requiredPermission: { resource: "FAQ", action: "READ" },
+  },
+  {
+    name: "Testimonials",
+    href: "/admin/testimonials",
+    icon: DocumentTextIcon,
+    description: "Review member testimonials before publication",
+    requiredPermission: { resource: "TESTIMONIAL", action: "READ" },
+  },
+  {
     name: "Sensei & Team",
     href: "/admin/instructors",
     icon: UserGroupIcon,

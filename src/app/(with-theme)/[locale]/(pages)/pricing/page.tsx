@@ -12,7 +12,7 @@ export default function PagePricing() {
   return (
     <>
       <Header />
-      <main className="relative">
+      <main className="public-page relative">
         <SectionPageTitle subtitle="Here are the best features that makes Margin the most powerful, fast and user-friendly platform.">
           Price Transparency
         </SectionPageTitle>

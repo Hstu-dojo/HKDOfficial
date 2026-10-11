@@ -9,7 +9,7 @@ import {
   ExternalLink,
 } from "lucide-react";
 import { ProfileCompletionBanner } from "@/components/layout/profile-completion-banner";
-import { SectionHeader } from "@/components/sections/section-header";
+import PublicPageHeading from "@/components/public/page-heading";
 import { useCurrentLocale, useScopedI18n } from "@/locales/client";
 import { noticeDate } from "@/lib/notices/model";
 import { programCopy } from "@/lib/programs/copy";
@@ -87,34 +87,35 @@ export default function ProgramList({
       );
   return (
     <div className="mx-auto max-w-7xl">
-      <div className="border-b pb-10 md:pb-14">
-        <SectionHeader
-          headingLevel="h1"
-          align="left"
+      <div>
+        <PublicPageHeading
           kicker={copy.kicker}
           title={copy.title}
-          titleAccent={copy.accent}
+          accent={copy.accent}
           description={copy.description}
-          className="mb-8 md:mb-10"
-        />
-        <nav className="flex flex-wrap gap-3" aria-label={t("catalog.heading")}>
-          <a
-            href="#academy-programs"
-            className="inline-flex min-h-11 items-center gap-3 rounded-full border border-primary/25 bg-primary/5 px-5 text-sm text-primary"
+        >
+          <nav
+            className="flex flex-wrap gap-3"
+            aria-label={t("catalog.heading")}
           >
-            {copy.academy}
-            <span className="text-xs">{number(initialPrograms.length)}</span>
-            <ArrowUpRight size={16} />
-          </a>
-          <a
-            href="#bkf-events"
-            className="inline-flex min-h-11 items-center gap-3 rounded-full border border-secondary/30 bg-secondary/10 px-5 text-sm"
-          >
-            {copy.federation}
-            <span className="text-xs">{number(events.length)}</span>
-            <ArrowUpRight size={16} />
-          </a>
-        </nav>
+            <a
+              href="#academy-programs"
+              className="inline-flex min-h-11 items-center gap-3 rounded-full border border-primary/25 bg-primary/5 px-5 text-sm text-primary"
+            >
+              {copy.academy}
+              <span className="text-xs">{number(initialPrograms.length)}</span>
+              <ArrowUpRight size={16} />
+            </a>
+            <a
+              href="#bkf-events"
+              className="inline-flex min-h-11 items-center gap-3 rounded-full border border-secondary/30 bg-secondary/10 px-5 text-sm"
+            >
+              {copy.federation}
+              <span className="text-xs">{number(events.length)}</span>
+              <ArrowUpRight size={16} />
+            </a>
+          </nav>
+        </PublicPageHeading>
       </div>
       <ProfileCompletionBanner variant="inline" />
       <section id="academy-programs" className="scroll-mt-28 py-10 md:py-14">

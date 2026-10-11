@@ -222,3 +222,7 @@ export const noticeFeeds = pgTable("notice_feeds", {
     .defaultNow(),
 });
 export * from "./newsletter";
+
+export * from "./testimonials";
+
+export * from "./faqs";

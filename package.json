@@ -43,7 +43,12 @@
     "db:migrate:bkf-credentials": "tsx scripts/migrate-bkf-credentials.ts",
     "db:migrate:newsletter": "tsx scripts/migrate-newsletter.ts",
     "test:newsletter": "node --test tests/newsletter.test.cjs",
-    "test:newsletter:db": "node tests/newsletter-db.integration.cjs"
+    "test:newsletter:db": "node tests/newsletter-db.integration.cjs",
+    "db:migrate:testimonials": "tsx scripts/migrate-testimonials.ts",
+    "test:testimonials": "node --test tests/testimonials.test.cjs",
+    "test:testimonials:db": "node tests/testimonials-db.integration.cjs",
+    "db:migrate:faqs": "tsx scripts/migrate-faqs.ts",
+    "test:faqs": "node --test tests/faqs.test.cjs"
   },
   "dependencies": {
     "@auth/drizzle-adapter": "^1.11.3",

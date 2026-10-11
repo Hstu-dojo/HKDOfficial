@@ -43,6 +43,12 @@ const navItems = [
     icon: AcademicCapIcon,
   },
   {
+    title: "My Testimonial",
+    i18nKey: "testimonialPortal.title",
+    href: "/dashboard/testimonials",
+    icon: DocumentCheckIcon,
+  },
+  {
     title: "Certificates",
     i18nKey: "certificates.title",
     href: "/dashboard/certificates",

@@ -1,4 +1,5 @@
 export default {
+  testimonialPortal: { title: "My Testimonial" },
   academyTeam: {
     bkfRegistration: "BKF registration",
     blackBeltNumber: "Black belt no.",

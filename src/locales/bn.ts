@@ -1,4 +1,5 @@
 export default {
+  testimonialPortal: { title: "আমার অভিজ্ঞতা" },
   academyTeam: {
     bkfRegistration: "বিকেএফ নিবন্ধন",
     blackBeltNumber: "ব্ল্যাক বেল্ট নম্বর",

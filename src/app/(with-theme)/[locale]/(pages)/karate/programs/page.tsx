@@ -2,7 +2,6 @@ import { getBKFEvents } from "@/lib/programs/server";
 import ProgramList from "@/components/karate/ProgramList";
 import Header from "@/components/layout/header";
 import Footer from "@/components/layout/footer";
-import MaxWidthWrapper from "@/components/maxWidthWrapper";
 import { db } from "@/lib/connect-db";
 import { programs } from "@/db/schemas/karate";
 import { eq, desc } from "drizzle-orm";
@@ -48,15 +47,15 @@ export default async function ProgramsList() {
   return (
     <>
       <Header />
-      <main className="relative min-h-screen bg-background pb-16 pt-32 md:pb-24 md:pt-40">
-        <MaxWidthWrapper>
+      <main className="public-page public-page-inset">
+        <div className="public-page-container">
           <ProgramList
             initialPrograms={programsData}
             federation={federation}
             unavailable={academy.unavailable}
             asOf={new Date().toISOString()}
           />
-        </MaxWidthWrapper>
+        </div>
       </main>
       <Footer />
     </>

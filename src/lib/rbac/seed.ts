@@ -137,6 +137,15 @@ const defaultPermissions: Array<{
   
   // Report permissions
   { name: "create_report", resource: "REPORT", action: "CREATE", description: "Create new reports" },
+  { name: "read_faq", resource: "FAQ", action: "READ", description: "Read homepage FAQs" },
+  { name: "create_faq", resource: "FAQ", action: "CREATE", description: "Create homepage FAQs" },
+  { name: "update_faq", resource: "FAQ", action: "UPDATE", description: "Edit and publish homepage FAQs" },
+  { name: "delete_faq", resource: "FAQ", action: "DELETE", description: "Delete homepage FAQs" },
+  { name: "manage_faq", resource: "FAQ", action: "MANAGE", description: "Manage homepage FAQs" },
+  { name: "read_testimonial", resource: "TESTIMONIAL", action: "READ", description: "Read submitted testimonials" },
+  { name: "approve_testimonial", resource: "TESTIMONIAL", action: "APPROVE", description: "Approve, reject or unpublish testimonials" },
+  { name: "delete_testimonial", resource: "TESTIMONIAL", action: "DELETE", description: "Delete testimonials" },
+  { name: "manage_testimonial", resource: "TESTIMONIAL", action: "MANAGE", description: "Manage testimonials" },
   { name: "create_instructor", resource: "INSTRUCTOR", action: "CREATE", description: "Create academy team biographies" },
   { name: "read_instructor", resource: "INSTRUCTOR", action: "READ", description: "Read academy team biographies" },
   { name: "update_instructor", resource: "INSTRUCTOR", action: "UPDATE", description: "Update academy team biographies" },
@@ -231,7 +240,7 @@ const rolePermissionMappings: { [key: string]: string[] } = {
     "create_event", "read_event", "update_event", "delete_event", "manage_event",
     "create_announcement", "read_announcement", "update_announcement", "delete_announcement", "manage_announcement",
     "create_certificate", "read_certificate", "update_certificate", "delete_certificate", "manage_certificate",
-    "create_report", "read_report", "update_report", "delete_report", "manage_report", "read_email", "create_instructor", "read_instructor", "update_instructor", "delete_instructor", "manage_instructor",
+    "create_report", "read_report", "update_report", "delete_report", "manage_report", "read_email", "create_instructor", "read_instructor", "update_instructor", "delete_instructor", "manage_instructor", "read_testimonial", "approve_testimonial", "delete_testimonial", "manage_testimonial", "read_faq", "create_faq", "update_faq", "delete_faq", "manage_faq",
     // Enrollment permissions
     "create_enrollment", "read_enrollment", "update_enrollment", "delete_enrollment", "manage_enrollment", "approve_enrollment", "verify_enrollment",
     // Monthly Fee permissions
@@ -269,7 +278,7 @@ const rolePermissionMappings: { [key: string]: string[] } = {
     "create_event", "read_event", "update_event", "delete_event", "manage_event",
     "create_announcement", "read_announcement", "update_announcement", "delete_announcement", "manage_announcement",
     "create_certificate", "read_certificate", "update_certificate", "delete_certificate", "manage_certificate",
-    "read_report", "create_report", "read_email", "create_instructor", "read_instructor", "update_instructor", "delete_instructor", "manage_instructor",
+    "read_report", "create_report", "read_email", "create_instructor", "read_instructor", "update_instructor", "delete_instructor", "manage_instructor", "read_testimonial", "approve_testimonial", "delete_testimonial", "manage_testimonial", "read_faq", "create_faq", "update_faq", "delete_faq", "manage_faq",
     // Enrollment permissions for admin
     "create_enrollment", "read_enrollment", "update_enrollment", "delete_enrollment", "manage_enrollment", "approve_enrollment", "verify_enrollment",
     // Monthly Fee permissions for admin
@@ -404,7 +413,7 @@ export async function seedRBACData() {
       "COURSE", "BLOG", "MEDIA", "CLASS", "EQUIPMENT", "MEMBER", "BILL", "PAYMENT",
       "GALLERY", "EVENT", "ANNOUNCEMENT", "CERTIFICATE", "REPORT",
       "ENROLLMENT", "MONTHLY_FEE", "SCHEDULE", "PROGRAM", "PROGRAM_REGISTRATION",
-      "PARTNER", "PARTNER_BILL", "ADMIN_PANEL", "EMAIL", "INSTRUCTOR"
+      "PARTNER", "PARTNER_BILL", "ADMIN_PANEL", "EMAIL", "INSTRUCTOR", "TESTIMONIAL", "FAQ"
     ] as const;
 
     for (const permData of defaultPermissions) {

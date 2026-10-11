@@ -59,7 +59,7 @@ export default async function GalleryPage() {
   return (
     <>
       <Header />
-      <main className="relative">
+      <main className="public-page relative">
         <AlbumGrid albums={albums} />
       </main>
       <Footer />

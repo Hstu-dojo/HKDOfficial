@@ -1,0 +1,123 @@
+import type { PublicFaq } from "./model";
+export const defaultFaqs: PublicFaq[] = [
+  {
+    id: "32f00000-0000-4000-8000-000000000001",
+    translations: {
+      en: {
+        question: "What is Kaizen Karate Academy?",
+        answer:
+          "Kaizen Karate Academy is an elite martial arts academy dedicated to traditional Shitoryu karate, focused on continuous improvement, mental toughness, and physical mastery.",
+      },
+      bn: {
+        question: "কাইজেন কারাতে একাডেমি কি?",
+        answer:
+          "কাইজেন কারাতে একাডেমি হল ঐতিহ্যবাহী শিতোরিউ কারাতে ভিত্তিক একটি শীর্ষস্থানীয় মার্শাল আর্ট একাডেমি, যা ধারাবাহিক উন্নতি, মানসিক দৃঢ়তা এবং শারীরিক দক্ষতা অর্জনে নিবেদিত।",
+      },
+      ne: {
+        question: "काइजेन कराते एकेडेमी के हो?",
+        answer:
+          "काइजेन कराते एकेडेमी परम्परागत शितोरियू करातेमा समर्पित एक प्रतिष्ठित मार्शल आर्ट एकेडेमी हो, जुन निरन्तर सुधार, मानसिक दृढता र शारीरिक निपुणतामा केन्द्रित छ।",
+      },
+    },
+  },
+  {
+    id: "32f00000-0000-4000-8000-000000000002",
+    translations: {
+      en: {
+        question: "Who can join the dojo?",
+        answer:
+          "Anyone with a passion for discipline and martial arts is welcome to join the dojo, regardless of their prior experience in karate.",
+      },
+      bn: {
+        question: "কারা একাডেমিতে যোগ দিতে পারেন?",
+        answer:
+          "কারাতেতে পূর্ব অভিজ্ঞতা যাই থাকুক না কেন, শৃঙ্খলা ও আত্মউন্নয়নে আগ্রহী যে কেউ আমাদের একাডেমিতে যোগ দিতে পারেন।",
+      },
+      ne: {
+        question: "एकेडेमीमा को सामेल हुन सक्छ?",
+        answer:
+          "अनुशासन र मार्शल आर्ट्स सिक्न चाहने जो कोही पनि एकेडेमीमा सामेल हुन स्वागत छ, करातेमा उनीहरूको पूर्व अनुभव जे भए पनि।",
+      },
+    },
+  },
+  {
+    id: "32f00000-0000-4000-8000-000000000003",
+    translations: {
+      en: {
+        question: "What types of activities does the dojo offer?",
+        answer:
+          "The dojo offers rigorous training sessions, participation in intra-university and inter-university championships, workshops, seminars, and community engagement activities.",
+      },
+      bn: {
+        question: "ডোজো কি ধরনের কার্যক্রম অফার করে?",
+        answer:
+          "ডোজোটি কঠোর প্রশিক্ষণ সেশন, আন্তঃ-বিশ্ববিদ্যালয় এবং আন্তঃ-বিশ্ববিদ্যালয় চ্যাম্পিয়নশিপে অংশগ্রহণ, কর্মশালা, সেমিনার এবং সম্প্রদায়ের সম্পৃক্ততামূলক কার্যক্রম অফার করে।",
+      },
+      ne: {
+        question: "डोजोले कस्ता प्रकारका गतिविधिहरू प्रदान गर्छ?",
+        answer:
+          "डोजोले कठोर प्रशिक्षण सत्रहरू, अन्तर-विश्वविद्यालय च्याम्पियनसिपमा सहभागिता, कार्यशालाहरू, सेमिनारहरू, र सामुदायिक सहभागिता गतिविधिहरू प्रदान गर्छ।",
+      },
+    },
+  },
+  {
+    id: "32f00000-0000-4000-8000-000000000004",
+    translations: {
+      en: {
+        question: "How do I enroll?",
+        answer:
+          "Create an account, complete your member profile, and choose an available course from the Training Courses page. Contact the academy if you need help with your application.",
+      },
+      bn: {
+        question: "কীভাবে ভর্তি হব?",
+        answer:
+          "একটি অ্যাকাউন্ট তৈরি করুন, সদস্য প্রোফাইল পূরণ করুন এবং প্রশিক্ষণ কোর্সের পৃষ্ঠা থেকে একটি উন্মুক্ত কোর্স বেছে নিন। আবেদনে সাহায্য প্রয়োজন হলে একাডেমির সঙ্গে যোগাযোগ করুন।",
+      },
+      ne: {
+        question: "कसरी भर्ना हुने?",
+        answer:
+          "खाता खोल्नुहोस्, सदस्य प्रोफाइल पूरा गर्नुहोस् र प्रशिक्षण पाठ्यक्रम पृष्ठबाट उपलब्ध पाठ्यक्रम रोज्नुहोस्। आवेदनमा सहयोग चाहिएमा एकेडेमीलाई सम्पर्क गर्नुहोस्।",
+      },
+    },
+  },
+  {
+    id: "32f00000-0000-4000-8000-000000000005",
+    translations: {
+      en: {
+        question: "Where can I find training times and locations?",
+        answer:
+          "Open a course to see its training schedule and location. Schedules can differ between branches, so check your selected course or contact the branch before attending.",
+      },
+      bn: {
+        question: "প্রশিক্ষণের সময় ও স্থান কোথায় পাব?",
+        answer:
+          "কোর্সের বিস্তারিত পৃষ্ঠায় প্রশিক্ষণের সময়সূচি ও স্থান দেখুন। শাখাভেদে সময়সূচি ভিন্ন হতে পারে, তাই উপস্থিত হওয়ার আগে নির্বাচিত কোর্সের তথ্য দেখুন অথবা শাখার সঙ্গে যোগাযোগ করুন।",
+      },
+      ne: {
+        question: "प्रशिक्षणको समय र स्थान कहाँ हेर्ने?",
+        answer:
+          "पाठ्यक्रमको विवरणमा प्रशिक्षण तालिका र स्थान हेर्नुहोस्। शाखाअनुसार तालिका फरक हुन सक्छ, त्यसैले आउनुअघि आफ्नो पाठ्यक्रम जाँच्नुहोस् वा शाखालाई सम्पर्क गर्नुहोस्।",
+      },
+    },
+  },
+  {
+    id: "32f00000-0000-4000-8000-000000000006",
+    translations: {
+      en: {
+        question: "How can I check course fees?",
+        answer:
+          "Fees depend on the course and branch. Check the course details while signed in, or contact the academy for the fees and payment instructions that apply to you.",
+      },
+      bn: {
+        question: "কোর্সের ফি কীভাবে জানব?",
+        answer:
+          "কোর্স ও শাখাভেদে ফি ভিন্ন হয়। লগইন করে কোর্সের বিস্তারিত দেখুন অথবা আপনার জন্য প্রযোজ্য ফি ও পরিশোধের নিয়ম জানতে একাডেমির সঙ্গে যোগাযোগ করুন।",
+      },
+      ne: {
+        question: "पाठ्यक्रमको शुल्क कसरी थाहा पाउने?",
+        answer:
+          "शुल्क पाठ्यक्रम र शाखामा निर्भर हुन्छ। लगइन गरेर पाठ्यक्रमको विवरण हेर्नुहोस् वा आफूलाई लागू हुने शुल्क र भुक्तानी निर्देशनका लागि एकेडेमीलाई सम्पर्क गर्नुहोस्।",
+      },
+    },
+  },
+];

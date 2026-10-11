@@ -215,7 +215,7 @@ html:lang(ne) .editorial-public :is(h1, h2, h3) {
   line-height: 1.4;
 }
 @media (max-width: 767px) {
-  .editorial-public main > section {
+  .editorial-public main:not(.public-page) > section {
     padding-block: 3.5rem;
   }
   .editorial-public main > .editorial-hero,
@@ -613,3 +613,72 @@ html:lang(ne) .editorial-public :is(h1, h2, h3) {
   grid-template-columns: repeat(auto-fit, minmax(min(100%, 9rem), 1fr));
   gap: 1rem;
 }
+
+/* Public information pages share a masthead, grid and reading rhythm. */
+.public-page {
+  min-width: 0;
+  min-height: 70vh;
+  background: hsl(var(--background));
+  color: hsl(var(--foreground));
+}
+.public-page-container {
+  width: 100%;
+  min-width: 0;
+  max-width: 1280px;
+  margin-inline: auto;
+  padding-inline: clamp(1rem, 3vw, 2.5rem);
+}
+.public-page-masthead {
+  padding-top: 8rem;
+  padding-bottom: 0;
+}
+.public-page-inset {
+  padding-top: 8rem;
+  padding-bottom: 4rem;
+}
+.public-page-heading {
+  margin-bottom: 2.5rem;
+  padding-bottom: 2.5rem;
+  border-bottom: 1px solid hsl(var(--border));
+}
+.public-page-title {
+  max-width: 22ch;
+  overflow-wrap: break-word;
+  font-family: var(--font-serif), var(--font-bengali), var(--font-devanagari), Georgia, serif;
+  font-size: clamp(2.25rem, 4.5vw, 4rem);
+  font-weight: 400;
+  line-height: 1.12;
+  letter-spacing: -0.04em;
+}
+.public-page-description {
+  max-width: 48rem;
+  margin-top: 1.25rem;
+  color: hsl(var(--muted-foreground));
+  font-size: clamp(1rem, 1.5vw, 1.125rem);
+  line-height: 1.75;
+}
+.public-page-content {
+  padding-bottom: 4rem;
+}
+.public-page-card {
+  min-width: 0;
+  border: 1px solid hsl(var(--border));
+  border-radius: 1rem;
+  background: hsl(var(--card));
+  padding: clamp(1.25rem, 2vw, 1.75rem);
+}
+.public-page :is(h2, h3, h4) {
+  overflow-wrap: break-word;
+}
+.public-page:not(.public-page-inset) > section:not(.public-page-masthead):not(.public-page-inset) {
+  padding-block: 3rem;
+}
+@media (min-width: 768px) {
+  .public-page-masthead, .public-page-inset { padding-top: 10rem; }
+  .public-page-heading { margin-bottom: 3.5rem; padding-bottom: 3rem; }
+  .public-page-inset, .public-page-content { padding-bottom: 6rem; }
+  .public-page:not(.public-page-inset) > section:not(.public-page-masthead):not(.public-page-inset) { padding-block: 4rem; }
+}
+.public-page > .public-page-masthead { border-bottom: 0; }
+.public-page-masthead .public-page-heading { margin-bottom: 0; }
+.public-page-masthead + .public-page-content { padding-top: 2.5rem; }

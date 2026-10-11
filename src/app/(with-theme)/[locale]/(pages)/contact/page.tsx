@@ -18,7 +18,7 @@ export default async function PageContact() {
   return (
     <>
       <Header />
-      <main className="relative">
+      <main className="public-page relative">
         <SectionPageTitle kicker={t('contact.kicker')} subtitle={t('contact.subtitle')}>
           {t('contact.title')}
         </SectionPageTitle>

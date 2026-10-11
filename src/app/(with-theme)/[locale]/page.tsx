@@ -1,3 +1,5 @@
+import { getPublishedFaqs } from "@/lib/faqs/server";
+import { getApprovedTestimonials } from "@/lib/testimonials/server";
 import { noticePreview } from "@/lib/notices/model";
 import { getNoticeBoard } from "@/lib/notices/server";
 import SectionNoticeBoard from "@/components/sections/section-notice-board";
@@ -5,7 +7,6 @@ import Header from "@/components/layout/header";
 import Footer from "@/components/layout/footer";
 import SectionCTA from "@/components/sections/section-cta";
 import SectionHero from "@/components/sections/section-hero";
-import HomeScrollTrail from "@/components/sections/home-scroll-trail";
 import SectionCompetitionResults from "@/components/sections/section-competition-results";
 import { getPublishedCompetitionResults } from "@/lib/competition-results-server";
 import SectionAcademyTeam from "@/components/sections/section-academy-team";
@@ -259,6 +260,8 @@ export default async function Home({
     competition,
     academyPeople,
     noticeBoard,
+    testimonials,
+    faqs,
   ] = await Promise.all([
     getHeroImages(),
     getBranches(),
@@ -266,12 +269,14 @@ export default async function Home({
     getPublishedCompetitionResults(),
     getPublishedAcademyPeople(),
     getNoticeBoard(),
+    getApprovedTestimonials(),
+    getPublishedFaqs(),
   ]);
 
   return (
     <>
       <Header />
-      <HomeScrollTrail>
+      <div className="relative isolate">
         <main className="relative">
           <div className="relative isolate" data-home-sections>
             <SectionHero initialProducts={heroImages} />
@@ -305,8 +310,8 @@ export default async function Home({
             <SectionRecentAlbums albums={recentAlbums} />
             <SectionCertVerify />
             <FeaturedPostsServer />
-            <SectionFAQ />
-            <SectionTestimonialsSlider />
+            <SectionFAQ faqs={faqs} />
+            <SectionTestimonialsSlider testimonials={testimonials} />
             <Furious5 />
             <SectionPartners />
             <SectionCTA />
@@ -314,7 +319,7 @@ export default async function Home({
           <ChatPlugin />
         </main>
         <Footer />
-      </HomeScrollTrail>
+      </div>
     </>
   );
 }

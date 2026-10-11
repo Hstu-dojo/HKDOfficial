@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
+import PublicPageHeading from "@/components/public/page-heading";
 import Header from "@/components/layout/header";
 import Footer from "@/components/layout/footer";
 import { useCurrentLocale, useScopedI18n } from "@/locales/client";
@@ -140,19 +141,11 @@ function CertVerifyContent() {
   return (
     <>
       <Header />
-      <main className="relative min-h-screen">
+      <main className="public-page public-page-inset">
         {/* Hero / Search section */}
-        <section className="bg-gradient-to-br from-primary/5 via-white to-tertiary/5 dark:from-primary/10 dark:via-slate-900 dark:to-tertiary/10 border-b border-border dark:border-border">
-          <div className="max-w-3xl mx-auto px-4 py-16 sm:py-20 text-center">
-            <div className="inline-flex items-center justify-center h-16 w-16 rounded-2xl bg-primary/10 mb-6">
-              <ShieldCheckIcon className="h-8 w-8 text-primary" />
-            </div>
-            <h1 className="text-3xl sm:text-4xl font-extrabold text-foreground dark:text-foreground mb-3">
-              {t("title")}
-            </h1>
-            <p className="text-muted-foreground dark:text-muted-foreground text-base sm:text-lg max-w-xl mx-auto mb-8">
-              {t("subtitle")}
-            </p>
+        <section className="public-page-container">
+          <div className="">
+            <PublicPageHeading title={t("title")} description={t("subtitle")} />
 
             {/* Search box */}
             <form
@@ -160,7 +153,7 @@ function CertVerifyContent() {
                 e.preventDefault();
                 verify();
               }}
-              className="flex flex-col sm:flex-row gap-3 max-w-lg mx-auto"
+              className="flex flex-col sm:flex-row gap-3 max-w-xl"
             >
               <div className="relative flex-1">
                 <MagnifyingGlassIcon className="absolute left-3.5 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400" />
@@ -190,7 +183,7 @@ function CertVerifyContent() {
         </section>
 
         {/* Results */}
-        <section className="max-w-3xl mx-auto px-4 py-10">
+        <section className="public-page-container py-10">
           {/* Loading */}
           {loading && (
             <div className="flex items-center justify-center py-16">

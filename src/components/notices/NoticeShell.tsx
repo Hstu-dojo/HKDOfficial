@@ -18,7 +18,7 @@ export default function NoticeShell({
   return (
     <div lang={locale}>
       <header className="fixed inset-x-0 top-0 z-40 border-b bg-background/95 backdrop-blur-md">
-        <div className="mx-auto flex min-h-20 max-w-7xl items-center justify-between gap-3 px-4">
+        <div className="public-page-container flex min-h-20 items-center justify-between gap-3">
           <Link href={`/${locale}`} aria-label="Kaizen Karate Academy">
             <SiteLogo
               width={175}
@@ -41,7 +41,7 @@ export default function NoticeShell({
           </nav>
         </div>
       </header>
-      <main className="pt-20 text-foreground">{children}</main>
+      <main className="public-page text-foreground">{children}</main>
     </div>
   );
 }

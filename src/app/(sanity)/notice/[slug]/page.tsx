@@ -32,7 +32,7 @@ export default async function Page({ params, searchParams }: Props) {
   if (!notice) notFound();
   const copy = noticeText(notice, locale);
   return (
-    <article className="mx-auto max-w-4xl px-4 py-12 md:py-20">
+    <article className="public-page-container public-page-inset">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
@@ -65,7 +65,7 @@ export default async function Page({ params, searchParams }: Props) {
           <span className="rounded-full border px-3 py-1">{t.expired}</span>
         )}
       </div>
-      <h1 className="mt-6 break-words font-serif text-4xl leading-tight md:text-5xl">
+      <h1 className="public-page-title mt-6">
         {copy.title}
       </h1>
       {notice.expiresAt && (
@@ -73,7 +73,7 @@ export default async function Page({ params, searchParams }: Props) {
           {t.expires}: {noticeDate(notice.expiresAt, locale)}
         </p>
       )}
-      <div className="prose prose-neutral mt-10 max-w-none break-words dark:prose-invert">
+      <div className="prose prose-neutral mt-10 max-w-[70ch] break-words dark:prose-invert">
         <ReactMarkdown
           skipHtml
           disallowedElements={["img"]}
