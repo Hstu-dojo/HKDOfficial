@@ -13,7 +13,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { useTransition } from "react";
+import { useState } from "react";
 import { NewsletterFormSchema } from "@/lib/schema";
 import { Spinner } from "../icons/icons";
 import { useScopedI18n } from "@/locales/client";
@@ -22,7 +22,7 @@ export type FormInputs = z.infer<typeof NewsletterFormSchema>;
 
 const NewsletterForm = () => {
   const t = useScopedI18n("hero.newsletter");
-  const [isPending, startTransition] = useTransition();
+  const [isPending, setPending] = useState(false);
 
   const form = useForm<FormInputs>({
     resolver: zodResolver(NewsletterFormSchema),
@@ -32,9 +32,11 @@ const NewsletterForm = () => {
     },
   });
 
-  function onSubmit(values: FormInputs) {
-    startTransition(async () => {
-      const res = await fetch("/api/mailchimp", {
+  async function onSubmit(values: FormInputs) {
+    if (isPending) return;
+    setPending(true);
+    try {
+      const res = await fetch("/api/newsletter/subscribe", {
         method: "POST",
         body: JSON.stringify({
           name: values.name,
@@ -65,17 +67,18 @@ const NewsletterForm = () => {
 
       toast.success(t("subscribed"));
       form.reset();
-    });
+    } catch {
+      toast.error(t("somethingWrong"));
+    } finally {
+      setPending(false);
+    }
   }
 
   return (
     <div className="relative z-10 rounded-2xl bg-muted p-5 sm:p-6">
       <h2 className="mb-5 text-2xl">{t("title")}</h2>
       <Form {...form}>
-        <form
-          onSubmit={form.handleSubmit(onSubmit)}
-          className="space-y-3"
-        >
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-3">
           <FormField
             control={form.control}
             name="name"
@@ -119,7 +122,11 @@ const NewsletterForm = () => {
               </FormItem>
             )}
           />
-          <Button type="submit" disabled={isPending} className="w-full rounded-full">
+          <Button
+            type="submit"
+            disabled={isPending}
+            className="w-full rounded-full"
+          >
             {isPending ? (
               <>
                 <Spinner className="mr-2 h-5 w-5 animate-spin" />

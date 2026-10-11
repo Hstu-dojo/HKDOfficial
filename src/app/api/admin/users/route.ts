@@ -1,3 +1,4 @@
+import { registrationNewsletter } from "@/lib/newsletter/server";
 import { hasPermission } from '@/lib/rbac/permissions';
 import { NextRequest, NextResponse } from "next/server";
 import { protectApiRoute } from "@/lib/rbac/middleware";
@@ -172,6 +173,7 @@ export const POST = protectApiRoute("USER", "CREATE", async (request, context) =
       })
       .returning();
 
+    await registrationNewsletter(newUser[0].email, newUser[0].userName, !!newUser[0].emailVerified);
     return NextResponse.json(
       { message: "User created successfully", user: newUser[0] },
       { status: 201 }

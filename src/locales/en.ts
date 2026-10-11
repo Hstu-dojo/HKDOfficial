@@ -277,6 +277,7 @@ export default {
       quoteAuthor: "Hasan",
     },
     register: {
+      newsletterDisclosure: "Your account includes academy newsletter updates. You can unsubscribe anytime.",
       title: "Create an account",
       subtitle: "Enter your credentials below to create your account",
       usernameLabel: "Username",

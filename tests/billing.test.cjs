@@ -345,6 +345,7 @@ test("billing errors cannot turn a successful backup into failure", async () => 
   let backup = 0,
     billing = 0;
   const route = load("src/app/api/cron/db-backup/route.ts", {
+    "@/lib/newsletter/server": { processNewsletterQueue: async () => ({configured:false}) },
     "@/lib/backup/backup-service": {
       runBackupWorkflow: async () => {
         backup++;

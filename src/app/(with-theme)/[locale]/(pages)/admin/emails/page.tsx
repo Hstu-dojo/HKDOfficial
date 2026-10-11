@@ -1,5 +1,5 @@
 import { requireAdminPageAccess } from "@/lib/rbac/page-access";
-import EmailHistory from "@/components/admin/emails/EmailHistory";
+import EmailCenter from "@/components/admin/emails/EmailCenter";
 export default async function Page({
   params,
 }: {
@@ -7,5 +7,5 @@ export default async function Page({
 }) {
   const { locale } = await params;
   await requireAdminPageAccess("/admin/emails", locale);
-  return <EmailHistory />;
+  return <EmailCenter />;
 }

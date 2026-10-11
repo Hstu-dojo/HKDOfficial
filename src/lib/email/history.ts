@@ -97,6 +97,10 @@ export async function listEmailHistory(
       OR (d.message_id IS NOT NULL AND d.message_id = r.metadata->>'messageId')
     )
     UNION ALL
+    SELECT 'broadcast:' || id, 'Academy newsletter segment', subject, 'broadcast', 'resend', status, provider_id,
+      to_char(created_at AT TIME ZONE 'UTC', 'YYYY-MM-DD"T"HH24:MI:SS.MS"Z"'), sent_at::text, NULL::text, source_key, NULL::text, error
+    FROM newsletter_broadcasts WHERE ${partnerId || null}::text IS NULL
+    UNION ALL
     SELECT 'email:' || id, coalesce(payload->>'to', payload#>>'{data,to}', 'Recipient unavailable'),
       coalesce(payload->>'subject', payload#>>'{data,subject}', 'Email provider event'),
       coalesce(payload->>'category', 'provider_event'), coalesce(payload->>'provider', 'resend'),
@@ -106,7 +110,7 @@ export async function listEmailHistory(
     FROM "email-log" event WHERE (${partnerId || null}::text IS NULL OR payload->>'partnerId' = ${partnerId || null} OR EXISTS (
       SELECT 1 FROM "email-log" attempt WHERE attempt.payload->>'partnerId' = ${partnerId || null}
       AND attempt.payload->>'messageId' IS NOT NULL
-      AND attempt.payload->>'messageId' = event.payload#>>'{data,email_id}'
+      AND attempt.payload->>'messageId' = coalesce(event.payload->>'messageId', event.payload#>>'{data,email_id}')
     ))
   ) history`;
   const condition = sql`(${q} = '' OR recipient ILIKE ${"%" + q + "%"} OR subject ILIKE ${"%" + q + "%"}) AND (${category} = '' OR category = ${category}) AND (${status} = '' OR status = ${status})`;

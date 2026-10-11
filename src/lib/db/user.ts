@@ -1,3 +1,4 @@
+import { registrationNewsletter } from "@/lib/newsletter/server";
 import { db } from "@/lib/connect-db";
 import { user, provider, NewUser } from "@/db/schema";
 import { eq } from "drizzle-orm";
@@ -22,6 +23,7 @@ export const createUser = async ({
     userAvatar,
   }).returning();
   
+  await registrationNewsletter(result[0].email, result[0].userName, !!result[0].emailVerified);
   return result[0];
 };
 

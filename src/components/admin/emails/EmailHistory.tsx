@@ -105,6 +105,7 @@ export default function EmailHistory({
             <option value="">All categories</option>
             {[
               "billing",
+              ...(!organizationOnly ? ["broadcast"] : []),
               "verification",
               "credentials",
               "password_reset",
@@ -129,7 +130,10 @@ export default function EmailHistory({
           >
             <option value="">All statuses</option>
             {[
+              "draft",
               "queued",
+              "creating",
+              "canceled",
               "sending",
               "sent",
               "requested",

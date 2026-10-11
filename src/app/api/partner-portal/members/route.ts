@@ -1,3 +1,4 @@
+import { registrationNewsletter } from "@/lib/newsletter/server";
 import { trackEmail } from "@/lib/email/history";
 /**
  * Partner Portal — Members API
@@ -366,6 +367,7 @@ export async function POST(request: Request) {
           .returning({ id: user.id })
 
         userId = newUser?.id
+        await registrationNewsletter(trimmedEmail, trimmedFullName || resolvedUserName, true);
         accountCreated = true
       } else {
         await db

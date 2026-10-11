@@ -13,7 +13,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { useTransition } from "react";
+import { useState } from "react";
 import { NewsletterFormSchema } from "@/lib/schema";
 import { Spinner } from "@/components/icons/icons";
 import SendPlaneFillIcon from "remixicon-react/SendPlaneFillIcon";
@@ -21,7 +21,7 @@ import SendPlaneFillIcon from "remixicon-react/SendPlaneFillIcon";
 export type FormInputs = z.infer<typeof NewsletterFormSchema>;
 
 const NewsletterFormLayout2 = () => {
-  const [isPending, startTransition] = useTransition();
+  const [isPending, setPending] = useState(false);
 
   const form = useForm<FormInputs>({
     resolver: zodResolver(NewsletterFormSchema),
@@ -30,9 +30,11 @@ const NewsletterFormLayout2 = () => {
     },
   });
 
-  function onSubmit(values: FormInputs) {
-    startTransition(async () => {
-      const res = await fetch("/api/mailchimp", {
+  async function onSubmit(values: FormInputs) {
+    if (isPending) return;
+    setPending(true);
+    try {
+      const res = await fetch("/api/newsletter/subscribe", {
         method: "POST",
         body: JSON.stringify({
           email: values.email,
@@ -62,7 +64,11 @@ const NewsletterFormLayout2 = () => {
 
       toast.success("You have been subscribed to our newsletter.");
       form.reset();
-    });
+    } catch {
+      toast.error("Unable to subscribe. Please try again.");
+    } finally {
+      setPending(false);
+    }
   }
 
   return (

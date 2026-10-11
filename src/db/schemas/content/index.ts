@@ -221,3 +221,4 @@ export const noticeFeeds = pgTable("notice_feeds", {
     .notNull()
     .defaultNow(),
 });
+export * from "./newsletter";

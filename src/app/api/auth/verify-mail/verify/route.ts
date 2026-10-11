@@ -1,3 +1,4 @@
+import { registrationNewsletter } from "@/lib/newsletter/server";
 //@ts-nocheck
 import { NextResponse, NextRequest } from "next/server";
 import { db } from "@/lib/connect-db";
@@ -71,6 +72,7 @@ export const POST = async (req: NextRequest) => {
     .where(eq(user.id, existingUser[0].id))
     .returning();
 
+  await registrationNewsletter(updatedUser[0].email, updatedUser[0].userName, true, true);
   return NextResponse.json(
     { message: "Verification successful!" },
     { status: 200, statusText: "Verification successful!" },

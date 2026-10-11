@@ -510,6 +510,7 @@ export function RegisterForm({ className, ...props }: UserAuthFormProps) {
             </div>
           )}
 
+          <p className="text-xs leading-relaxed text-muted-foreground">{t("auth.register.newsletterDisclosure")}</p>
           <div className="flex items-center justify-between gap-3">
             <Button
               type="button"

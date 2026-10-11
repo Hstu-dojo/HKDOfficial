@@ -1,3 +1,4 @@
+import { processNewsletterQueue } from "@/lib/newsletter/server";
 import { runScheduledBilling } from "@/lib/billing/scheduled";
 import { NextResponse } from "next/server";
 import { runBackupWorkflow } from "@/lib/backup/backup-service";
@@ -108,7 +109,10 @@ async function handleBackupExecution(request: Request) {
         errors: ["Billing failed; database backup completed successfully"],
       };
     }
-    return NextResponse.json({ ...result, billing }, { status: 200 });
+    let newsletter: unknown;
+    try { newsletter = await processNewsletterQueue(startedAt + 290000); }
+    catch { newsletter = { error: "Newsletter processing failed; backup completed successfully" }; }
+    return NextResponse.json({ ...result, billing, newsletter }, { status: 200 });
   } catch (error: any) {
     console.error("[CRON] Database backup failed:", error);
     return NextResponse.json(

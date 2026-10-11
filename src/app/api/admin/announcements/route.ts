@@ -1,3 +1,5 @@
+import { after } from "next/server";
+import { queueNotice, processNewsletterQueue } from "@/lib/newsletter/server";
 import { NextResponse } from "next/server";
 import { revalidateTag, revalidatePath } from "next/cache";
 import { z } from "zod";
@@ -6,8 +8,9 @@ import { notices } from "@/db/schema";
 import { and, eq, desc, count, ilike, or } from "drizzle-orm";
 import { getRBACContext } from "@/lib/rbac/middleware";
 import { hasPermission } from "@/lib/rbac/permissions";
-import { noticeSchema } from "@/lib/notices/model";
+import { noticeSchema, isNoticePublic } from "@/lib/notices/model";
 import type { ActionType } from "@/lib/rbac/types";
+export const maxDuration = 60;
 async function access(action: ActionType) {
   const context = await getRBACContext();
   if (!context)
@@ -114,11 +117,23 @@ export async function POST(request: Request) {
   const { context, error } = await access("CREATE");
   if (error) return error;
   try {
-    const [notice] = await db
-      .insert(notices)
-      .values({ ...values(await request.json()), authorId: context!.userId })
-      .returning();
+    const input = values(await request.json());
+    const notice = await db.transaction(async (tx) => {
+      const [row] = await tx
+        .insert(notices)
+        .values({ ...input, authorId: context!.userId })
+        .returning();
+      await queueNotice(tx, row);
+      return row;
+    });
     refresh();
+    after(async () => {
+      try {
+        await processNewsletterQueue();
+      } catch {
+        console.error("[Newsletter] Notice broadcast deferred");
+      }
+    });
     return NextResponse.json({ notice }, { status: 201 });
   } catch (error) {
     return failure(error);
@@ -133,14 +148,39 @@ export async function PATCH(request: Request) {
         .passthrough()
         .parse(await request.json()),
       noticeId = id;
-    const [notice] = await db
-      .update(notices)
-      .set({ ...values(body), updatedAt: new Date() })
-      .where(eq(notices.id, noticeId))
-      .returning();
+    const input = values(body);
+    const notice = await db.transaction(async (tx) => {
+      const [previous] = await tx
+        .select()
+        .from(notices)
+        .where(eq(notices.id, noticeId))
+        .limit(1)
+        .for("update");
+      const [row] = await tx
+        .update(notices)
+        .set({ ...input, updatedAt: new Date() })
+        .where(eq(notices.id, noticeId))
+        .returning();
+      if (row && previous)
+        await queueNotice(
+          tx,
+          row,
+          !previous.isPublished ||
+            previous.isArchived ||
+            (!isNoticePublic(previous) && isNoticePublic(row)),
+        );
+      return row;
+    });
     if (!notice)
       return NextResponse.json({ error: "Notice not found" }, { status: 404 });
     refresh();
+    after(async () => {
+      try {
+        await processNewsletterQueue();
+      } catch {
+        console.error("[Newsletter] Notice broadcast deferred");
+      }
+    });
     return NextResponse.json({ notice });
   } catch (error) {
     return failure(error);

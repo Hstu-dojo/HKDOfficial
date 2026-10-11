@@ -1,3 +1,4 @@
+import { registrationNewsletter } from "@/lib/newsletter/server";
 import { trackEmail } from "@/lib/email/history";
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
@@ -224,6 +225,8 @@ export async function POST(request: NextRequest) {
         ] as any,
       })
       .returning({ id: user.id })
+
+    await registrationNewsletter(email, userName, !!authData.user.email_confirmed_at);
 
     const fullName = userName
     const nameParts = fullName.split(' ')

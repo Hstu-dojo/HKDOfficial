@@ -1,3 +1,4 @@
+import { registrationNewsletter } from "@/lib/newsletter/server";
 import { db } from "@/lib/connect-db";
 import { user } from "@/db/schemas/auth";
 import { eq } from "drizzle-orm";
@@ -62,6 +63,7 @@ export async function ensureUserExists(supabaseUser: SupabaseUserLike) {
         .set(updates)
         .where(eq(user.id, existing.id));
     }
+    await registrationNewsletter(existing.email, existing.userName, !!existing.emailVerified, true);
     return existing;
   }
 
@@ -87,6 +89,7 @@ export async function ensureUserExists(supabaseUser: SupabaseUserLike) {
         .where(eq(user.id, existing.id))
         .returning();
 
+      await registrationNewsletter(updated.email, updated.userName, !!updated.emailVerified, true);
       return updated;
     }
   }
@@ -166,6 +169,7 @@ export async function ensureUserExists(supabaseUser: SupabaseUserLike) {
       .returning();
 
     console.log(`✅ Local user record created successfully: ${created.id} (${created.userName})`);
+    await registrationNewsletter(created.email, created.userName, !!created.emailVerified);
     return created;
   } catch (err: any) {
     // If a concurrent insert occurred, attempt a final re-fetch

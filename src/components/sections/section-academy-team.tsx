@@ -27,12 +27,12 @@ export default function SectionAcademyTeam({ people }: { people: Person[] }) {
     transition: { duration: 0.5 },
   };
   const copy = sensei ? localizedPerson(sensei.translations, locale) : null;
-  const credentials = (person: Person) =>
+  const credentials = (person: Person, showLink = true) =>
     person.bkfRegistrationNo || person.blackBeltNo ? (
-      <div className="mt-5 rounded-xl border bg-primary/5 p-4">
-        <dl className="space-y-2 text-xs">
+      <div className="mt-4">
+        <dl className="flex flex-wrap gap-x-5 gap-y-2 text-xs">
           {person.bkfRegistrationNo && (
-            <div className="flex flex-wrap items-baseline justify-between gap-2">
+            <div className="flex flex-wrap items-baseline gap-2">
               <dt className="text-muted-foreground">{t("bkfRegistration")}</dt>
               <dd className="select-all font-mono font-medium tracking-wide">
                 {person.bkfRegistrationNo}
@@ -40,7 +40,7 @@ export default function SectionAcademyTeam({ people }: { people: Person[] }) {
             </div>
           )}
           {person.blackBeltNo && (
-            <div className="flex flex-wrap items-baseline justify-between gap-2">
+            <div className="flex flex-wrap items-baseline gap-2">
               <dt className="text-muted-foreground">{t("blackBeltNumber")}</dt>
               <dd className="select-all font-mono font-medium tracking-wide">
                 {person.blackBeltNo}
@@ -48,20 +48,19 @@ export default function SectionAcademyTeam({ people }: { people: Person[] }) {
             </div>
           )}
         </dl>
-        <a
-          href="https://bkf.gov.bd/dan-registrations-index"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="mt-3 inline-flex min-h-9 items-center gap-2 text-sm text-primary"
-          aria-label={`${t("verifyBKF")} — ${localizedPerson(person.translations, locale).name}`}
-          title={`${t("bkfSearchHint")} ${person.bkfRegistrationNo || person.blackBeltNo}`}
-        >
-          {t("verifyBKF")}
-          <span aria-hidden>↗</span>
-        </a>
-        <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
-          {t("bkfSearchHint")}
-        </p>
+        {showLink && (
+          <a
+            href="https://bkf.gov.bd/dan-registrations-index"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="mt-3 inline-flex min-h-9 items-center gap-2 text-sm text-primary"
+            aria-label={`${t("verifyBKF")} — ${localizedPerson(person.translations, locale).name}`}
+            title={`${t("bkfSearchHint")} ${person.bkfRegistrationNo || person.blackBeltNo}`}
+          >
+            {t("verifyBKF")}
+            <span aria-hidden>↗</span>
+          </a>
+        )}
       </div>
     ) : null;
 
@@ -139,11 +138,123 @@ export default function SectionAcademyTeam({ people }: { people: Person[] }) {
         {(["instructor", "black_belt"] as const).map((kind) => {
           const group = people.filter((p) => p.kind === kind);
           if (!group.length) return null;
+          if (kind === "black_belt") {
+            const generic = {
+              en: {
+                title: "Black belt member",
+                rank: "Black belt",
+                summary: "A black-belt member of Kaizen Karate Academy.",
+              },
+              bn: {
+                title: "ব্ল্যাক বেল্ট সদস্য",
+                rank: "ব্ল্যাক বেল্ট",
+                summary: "কাইজেন কারাতে একাডেমির একজন ব্ল্যাক বেল্ট সদস্য।",
+              },
+              ne: {
+                title: "ब्ल्याक बेल्ट सदस्य",
+                rank: "ब्ल्याक बेल्ट",
+                summary: "काइजेन कराते एकेडेमीका ब्ल्याक बेल्ट सदस्य।",
+              },
+            };
+            const isGeneric = (
+              field: "title" | "rank" | "summary",
+              value: string,
+            ) =>
+              Object.values(generic).some(
+                (copy) =>
+                  copy[field].toLowerCase() === value.trim().toLowerCase(),
+              );
+            const hasCredentials = group.some(
+              (p) => p.bkfRegistrationNo || p.blackBeltNo,
+            );
+            return (
+              <div key={kind} className="mt-14 md:mt-20">
+                <div className="mb-6 flex flex-col justify-between gap-3 sm:flex-row sm:items-center">
+                  <h3 className="font-serif text-2xl tracking-tight sm:text-3xl">
+                    {t("blackBelts")}
+                  </h3>
+                  {hasCredentials && (
+                    <a
+                      href="https://bkf.gov.bd/dan-registrations-index"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      title={t("bkfSearchHint")}
+                      className="inline-flex min-h-11 w-fit items-center gap-2 rounded-full border px-4 text-xs transition-colors hover:bg-muted"
+                    >
+                      {t("verifyBKF")}
+                      <span aria-hidden>↗</span>
+                    </a>
+                  )}
+                </div>
+                <div className="grid gap-x-10 md:grid-cols-2">
+                  {group.map((person) => {
+                    const content = localizedPerson(
+                      person.translations,
+                      locale,
+                    );
+                    const title = !isGeneric("title", content.title)
+                      ? content.title
+                      : "";
+                    const rank =
+                      !isGeneric("rank", content.rank) && content.rank !== title
+                        ? content.rank
+                        : "";
+                    const summary = !isGeneric("summary", content.summary)
+                      ? content.summary
+                      : "";
+                    return (
+                      <motion.article
+                        key={person.id}
+                        {...reveal}
+                        className="min-w-0 border-t py-6 sm:py-7"
+                      >
+                        <div className="flex items-start gap-4">
+                          {person.photoUrl && (
+                            <div className="relative h-16 w-16 shrink-0 overflow-hidden rounded-xl bg-muted">
+                              <Image
+                                src={person.photoUrl}
+                                alt={content.name}
+                                fill
+                                unoptimized
+                                sizes="64px"
+                                className="object-cover"
+                              />
+                            </div>
+                          )}
+                          <div className="min-w-0 flex-1">
+                            <h4 className="break-words font-serif text-2xl tracking-tight">
+                              {content.name}
+                            </h4>
+                            {(title || rank) && (
+                              <p className="mt-2 text-sm text-primary">
+                                {[title, rank].filter(Boolean).join(" · ")}
+                              </p>
+                            )}
+                            {summary && (
+                              <p className="mt-3 whitespace-pre-line text-sm leading-relaxed text-muted-foreground">
+                                {summary}
+                              </p>
+                            )}
+                            {credentials(person, false)}
+                          </div>
+                        </div>
+                      </motion.article>
+                    );
+                  })}
+                </div>
+                {hasCredentials && (
+                  <p className="border-t pt-4 text-xs leading-relaxed text-muted-foreground">
+                    {t("bkfSearchHint")}
+                  </p>
+                )}
+              </div>
+            );
+          }
           return (
             <div key={kind} className="mt-14 md:mt-20">
               <div className="mb-7 flex items-center gap-4">
                 <h3 className="font-serif text-2xl sm:text-3xl">
-                  {kind === "instructor" ? t("instructors") : t("blackBelts")}
+                  {t("instructors")}
                 </h3>
                 <div className="h-px flex-1 bg-border" />
               </div>

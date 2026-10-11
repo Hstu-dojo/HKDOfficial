@@ -429,6 +429,9 @@ require("tsx/cjs");
       beforeSelected + 1,
       "repeating a campaign never duplicates an email",
     );
+    await client.unsafe("ALTER TYPE resource_type ADD VALUE IF NOT EXISTS 'EMAIL'");
+    for (const statement of fs.readFileSync("drizzle/0030_newsletter.sql", "utf8").split("--> statement-breakpoint")) if(statement.trim()) await client.unsafe(statement);
+    await client`INSERT INTO newsletter_broadcasts(source_key,subject,body,status) VALUES ('notice:global','Global newsletter','Global content','sent')`;
     // A student shared with another branch must not expose the first branch's email.
     const emailHistory = require("../src/lib/email/history.ts");
     await client`INSERT INTO "email-log"(payload) VALUES
@@ -447,7 +450,7 @@ require("tsx/cjs");
       !ownMail.items.some(
         (r) =>
           r.subject === "Owned request B" ||
-          r.subject === "Unscoped private request",
+          r.subject === "Unscoped private request" || r.subject === "Global newsletter",
       ),
     );
     const otherMail = await emailHistory.listEmailHistory(

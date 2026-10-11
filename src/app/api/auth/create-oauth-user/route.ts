@@ -1,3 +1,4 @@
+import { registrationNewsletter } from "@/lib/newsletter/server";
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/connect-db';
 import { user } from '@/db/schema';
@@ -157,6 +158,7 @@ export async function POST(request: NextRequest) {
       ] as any,
     });
 
+    await registrationNewsletter(email, userName, true);
     console.log('✅ User created successfully');
 
     return NextResponse.json({
