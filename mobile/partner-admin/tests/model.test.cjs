@@ -98,4 +98,20 @@ test("CSV quotes multiline notes and escapes spreadsheet formulas", () => {
   ]);
   assert.ok(output.includes('"\' =CMD()"'));
   assert.ok(output.includes('"Line 1\n""Line 2"""'));
+  assert.ok(output.includes("=== STUDENT MONTHLY SUMMARY ==="));
+  assert.ok(output.includes("=== DETAILED SESSION-BY-SESSION LOGS ==="));
+});
+test("month shifting and labeling format accurately across years", () => {
+  assert.equal(model.shiftMonth("2026-10-15", -1), "2026-09-01");
+  assert.equal(model.shiftMonth("2026-01-10", -1), "2025-12-01");
+  assert.equal(model.shiftMonth("2026-12-01", 1), "2027-01-01");
+  assert.equal(model.formatMonthLabel("2026-10-01"), "October 2026");
+  assert.equal(model.formatMonthLabel("2025-05-15"), "May 2025");
+});
+test("student performance classifications match thresholds", () => {
+  assert.equal(model.studentPerformance(90).label, "Excellent");
+  assert.equal(model.studentPerformance(75).label, "Good");
+  assert.equal(model.studentPerformance(60).label, "Average");
+  assert.equal(model.studentPerformance(40).label, "At Risk");
+  assert.equal(model.studentPerformance(null).label, "Unmarked");
 });

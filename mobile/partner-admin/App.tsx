@@ -39,7 +39,7 @@ export default function App() {
 function Workspace() {
   const [session, setSession] = useState<Session | null>(null),
     [restoring, setRestoring] = useState(true),
-    [origin, setOrigin] = useState(appConfig.expo.extra.apiOrigin),
+    [origin] = useState(appConfig.expo.extra.apiOrigin || "https://www.hstuma.com"),
     [email, setEmail] = useState(""),
     [password, setPassword] = useState(""),
     [busy, setBusy] = useState(false),
@@ -257,14 +257,6 @@ function Workspace() {
                 secureTextEntry
                 autoCapitalize="none"
                 autoComplete="current-password"
-              />
-              <Field
-                label="Website address"
-                value={origin}
-                onChangeText={setOrigin}
-                keyboardType="url"
-                autoCapitalize="none"
-                autoCorrect={false}
               />
               <ErrorBanner message={error} />
               <Action

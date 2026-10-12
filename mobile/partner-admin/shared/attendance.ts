@@ -73,30 +73,126 @@ export function attendanceMetrics(sessions: Register[]) {
     { label: "Attendance rate", value: rate === null ? "—" : `${rate}%` },
   ];
 }
-export function attendanceCSV(sessions: Register[]) {
-  const cell = (value: string) =>
-    '"' +
-    (/^\s*[=+@\-\t\r]/.test(value) ? "'" : "") +
-    value.replaceAll('"', '""') +
-    '"';
-  return (
-    "\uFEFF" +
+export function shiftMonth(date: string, months: number): string {
+  const [y, m] = date.split("-").map(Number);
+  const target = new Date(Date.UTC(y, m - 1 + months, 1));
+  const year = target.getUTCFullYear();
+  const month = String(target.getUTCMonth() + 1).padStart(2, "0");
+  return `${year}-${month}-01`;
+}
+export function formatMonthLabel(date: string): string {
+  const [y, m] = date.split("-").map(Number);
+  const target = new Date(Date.UTC(y, m - 1, 1));
+  return new Intl.DateTimeFormat("en-US", {
+    month: "long",
+    year: "numeric",
+    timeZone: "UTC",
+  }).format(target);
+}
+export function formatDayName(date: string): string {
+  const [y, m, d] = date.split("-").map(Number);
+  const target = new Date(Date.UTC(y, m - 1, d, 12, 0, 0));
+  return new Intl.DateTimeFormat("en-US", {
+    weekday: "short",
+    timeZone: "UTC",
+  }).format(target);
+}
+export function studentPerformance(rate: number | null): {
+  label: string;
+  color: string;
+  badgeBg: string;
+} {
+  if (rate === null) return { label: "Unmarked", color: "#727180", badgeBg: "#ece9f4" };
+  if (rate >= 85) return { label: "Excellent", color: "#157552", badgeBg: "#e3f5ec" };
+  if (rate >= 70) return { label: "Good", color: "#6020ec", badgeBg: "#eee7ff" };
+  if (rate >= 50) return { label: "Average", color: "#966014", badgeBg: "#fff2df" };
+  return { label: "At Risk", color: "#c03648", badgeBg: "#ffe7ea" };
+}
+export function attendanceCSV(sessions: Register[], courseName?: string) {
+  const cell = (value: string | number) => {
+    const str = String(value ?? "");
+    return (
+      '"' +
+      (/^\s*[=+@\-\t\r]/.test(str) ? "'" : "") +
+      str.replaceAll('"', '""') +
+      '"'
+    );
+  };
+  const rows = sessions.flatMap((s) => s.records);
+  const overallRate = attendanceRate(rows);
+  const monthStr = sessions[0]?.date ? sessions[0].date.slice(0, 7) : businessDate().slice(0, 7);
+  const studentsSummaries = monthlySummary(sessions);
+
+  const metadataRows: (string | number)[][] = [
+    ["KAIZEN KARATE ACADEMY - ATTENDANCE REPORT"],
+    ["Course", courseName || "Dojo Course Attendance"],
+    ["Month Period", monthStr],
+    ["Generated Date", businessDate()],
+    ["Total Sessions Recorded", sessions.length],
+    ["Total Students Evaluated", studentsSummaries.length],
+    ["Overall Attendance Rate", overallRate === null ? "—" : `${overallRate}%`],
+    [],
+    ["=== STUDENT MONTHLY SUMMARY ==="],
     [
-      ["Date", "Session", "Name", "Member number", "Status", "Notes"],
-      ...sessions.flatMap((s) =>
-        s.records.map((r) => [
-          s.date,
-          s.label,
-          r.name,
-          r.memberNumber,
-          r.status,
-          r.notes,
-        ]),
-      ),
-    ]
-      .map((row) => row.map(cell).join(","))
-      .join("\r\n")
-  );
+      "Member ID",
+      "Student Name",
+      "Total Sessions",
+      "Present Count",
+      "Late Count",
+      "Attended Total (Present + Late)",
+      "Absent Count",
+      "Excused Count",
+      "Attendance Rate (%)",
+      "Performance Status",
+    ],
+    ...studentsSummaries.map(({ student, records }) => {
+      const studentRate = attendanceRate(records);
+      const presentCount = records.filter((r) => r.status === "present").length;
+      const lateCount = records.filter((r) => r.status === "late").length;
+      const attendedCount = presentCount + lateCount;
+      const absentCount = records.filter((r) => r.status === "absent").length;
+      const excusedCount = records.filter((r) => r.status === "excused").length;
+      const perf = studentPerformance(studentRate);
+      return [
+        student.memberNumber,
+        student.name,
+        records.length,
+        presentCount,
+        lateCount,
+        attendedCount,
+        absentCount,
+        excusedCount,
+        studentRate === null ? "—" : `${studentRate}%`,
+        perf.label,
+      ];
+    }),
+    [],
+    ["=== DETAILED SESSION-BY-SESSION LOGS ==="],
+    [
+      "Date",
+      "Day",
+      "Session",
+      "Member ID",
+      "Student Name",
+      "Status",
+      "Student Notes",
+      "Session Notes",
+    ],
+    ...sessions.flatMap((s) =>
+      s.records.map((r) => [
+        s.date,
+        formatDayName(s.date),
+        s.label,
+        r.memberNumber,
+        r.name,
+        r.status,
+        r.notes,
+        s.notes || "",
+      ]),
+    ),
+  ];
+
+  return "\uFEFF" + metadataRows.map((row) => row.map(cell).join(",")).join("\r\n");
 }
 export const attendanceCopy = {
   title: "Course attendance",
