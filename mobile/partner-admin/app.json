@@ -2,14 +2,14 @@
   "expo": {
     "name": "Kaizen Partner Admin",
     "slug": "kaizen-partner-admin",
-    "version": "1.0.0",
+    "version": "1.1.0",
     "icon": "./assets/icon.png",
     "orientation": "portrait",
     "scheme": "kaizenpartner",
     "userInterfaceStyle": "light",
     "android": {
       "package": "com.kaizenkarateacademy.partneradmin",
-      "versionCode": 1,
+      "versionCode": 2,
       "permissions": []
     },
     "plugins": [

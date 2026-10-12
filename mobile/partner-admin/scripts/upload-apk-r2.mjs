@@ -19,6 +19,7 @@ async function uploadToR2({
   body,
   contentType = "application/octet-stream",
   contentDisposition,
+  cacheControl,
 }) {
   const now = new Date();
   const amzDate = now.toISOString().replace(/[:-]|\.\d{3}/g, "");
@@ -77,6 +78,10 @@ async function uploadToR2({
 
   if (contentDisposition) {
     reqHeaders["Content-Disposition"] = contentDisposition;
+  }
+
+  if (cacheControl) {
+    reqHeaders["Cache-Control"] = cacheControl;
   }
 
   const response = await fetch(endpoint, {
@@ -147,6 +152,7 @@ async function main() {
     body: apkBuffer,
     contentType: "application/vnd.android.package-archive",
     contentDisposition: 'attachment; filename="kaizen-partner-admin.apk"',
+    cacheControl: "public, max-age=0, must-revalidate",
   });
   console.log(`   ✅ Uploaded: ${publicUrlBase}/${latestKey}`);
 
@@ -177,9 +183,20 @@ async function main() {
   console.log(`   ✅ Uploaded: ${publicUrlBase}/${sha256Key}`);
 
   console.log(`4️⃣  Uploading metadata JSON -> ${metadataKey}...`);
+  let appVersion = "1.1.0";
+  let appVersionCode = 2;
+  try {
+    const appConfig = JSON.parse(
+      readFileSync(resolve(projectRoot, "app.json"), "utf8"),
+    );
+    appVersion = appConfig?.expo?.version || appVersion;
+    appVersionCode = appConfig?.expo?.android?.versionCode || appVersionCode;
+  } catch {}
+
   const metadata = {
     appName: "Kaizen Karate Academy - Partner Admin",
-    version: "1.0.0",
+    version: appVersion,
+    versionCode: appVersionCode,
     buildNumber: runNumber,
     filename: "kaizen-partner-admin-latest.apk",
     downloadUrl: `${publicUrlBase}/${latestKey}`,
@@ -197,6 +214,7 @@ async function main() {
     key: metadataKey,
     body: Buffer.from(JSON.stringify(metadata, null, 2), "utf-8"),
     contentType: "application/json",
+    cacheControl: "public, max-age=0, must-revalidate",
   });
   console.log(`   ✅ Uploaded: ${publicUrlBase}/${metadataKey}\n`);
 

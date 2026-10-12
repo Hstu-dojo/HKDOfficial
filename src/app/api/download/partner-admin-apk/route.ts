@@ -26,6 +26,18 @@ export async function GET(request: Request) {
     });
   }
 
-  // Redirect directly to the standalone APK file in Cloudflare storage
-  return NextResponse.redirect(downloadUrl, 307);
+  // Redirect directly to the standalone APK file in Cloudflare storage with cache-busting
+  const timestamp = Date.now();
+  const directTarget = `${downloadUrl}?t=${timestamp}`;
+
+  const response = NextResponse.redirect(directTarget, 307);
+  response.headers.set(
+    "Cache-Control",
+    "no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0",
+  );
+  response.headers.set("Pragma", "no-cache");
+  response.headers.set("Expires", "0");
+  response.headers.set("Surrogate-Control", "no-store");
+  return response;
 }
+
