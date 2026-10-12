@@ -1,18 +1,12 @@
-'use client'
-
-export async function apiJSON<T>(input: RequestInfo | URL, init?: RequestInit): Promise<T> {
-  const res = await fetch(input, {
-    credentials: 'include',
+"use client";
+import { requestJSON } from "@partner-shared/transport";
+export function apiJSON<T>(
+  input: RequestInfo | URL,
+  init?: RequestInit,
+): Promise<T> {
+  return requestJSON<T>(input, {
+    credentials: "include",
     ...init,
-    headers: {
-      'Content-Type': 'application/json',
-      ...(init?.headers || {}),
-    },
-  })
-
-  const data = await res.json().catch(() => null)
-  if (!res.ok) {
-    throw new Error(data?.error || data?.message || 'Request failed')
-  }
-  return data as T
+    headers: { "Content-Type": "application/json", ...(init?.headers || {}) },
+  });
 }

@@ -1,0 +1,6 @@
+{
+  "name": "@kaizen/partner-admin-shared",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Shared partner portal logic and UI definitions for Next.js and Expo"
+}

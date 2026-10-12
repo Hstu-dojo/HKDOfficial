@@ -1,41 +1,559 @@
-const test=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs'),vm=require('node:vm'),ts=require('typescript');
-function load(file,mocks={},globals={}){const module={exports:{}};vm.runInNewContext(ts.transpileModule(fs.readFileSync(file,'utf8'),{compilerOptions:{module:ts.ModuleKind.CommonJS,target:ts.ScriptTarget.ES2022,jsx:ts.JsxEmit.ReactJSX,esModuleInterop:true}}).outputText,{module,exports:module.exports,require:n=>Object.hasOwn(mocks,n)?mocks[n]:require(n),console,Date,URL,Request,Response,Headers,Buffer,File,process,...globals});return module.exports;}
-const form=load('src/lib/pdf/form-fields.ts'),model=load('src/lib/student-enrollment/model.ts',{'@/lib/pdf/form-fields':form});
-const draftId='733c90fd-16dd-4a77-b3d5-62a9bd3ec280';
-function payload(){return {draftId,courseId:'course',fields:{...model.blankFields,name_en:'Test Student',dob:'2013-11-18',mobile:'01700000000',email:'fixture@example.invalid',present_address:'Test town',gender:'other'},photoBox:null,signatureBox:null,startDate:'2026-10-12',paymentCollected:false,paymentReference:'',agreement:true,reviewed:true};}
-test('review validation rejects missing contact, fabricated ownership, invalid dates/crops and unchecked consent',()=>{assert.equal(model.submitSchema.safeParse(payload()).success,true);for(const change of [{reviewed:false},{agreement:false},{partnerId:'other'},{photoBox:[0,0,1100,100]},{signatureBox:[10,50,10,60]},{fields:{...payload().fields,email:''}},{fields:{...payload().fields,gender:''}},{fields:{...payload().fields,dob:'2013-02-31'}}])assert.equal(model.submitSchema.safeParse({...payload(),...change}).success,false);});
-test('storage folders preserve names and isolate same-name students using stable IDs',()=>{const a=model.studentFolder({name:'Test Branch',id:'org-a'},{name:'Student A',id:'one'}),b=model.studentFolder({name:'Test Branch',id:'org-a'},{name:'Student A',id:'two'});assert.notEqual(a,b);assert.ok(a.includes('Test-Branch--org-a/Student-A--one'));assert.ok(!model.folderPart('../../injected').includes('/'));});
-function submitAPI(options={}){
- const state={authCreated:0,authDeleted:0,email:0,billing:0,values:[],statuses:[],conditions:[]};
- const tables=Object.fromEntries(['quickEnrollmentDrafts','studentDocuments','profiles','user','registrations','enrollmentApplications','courseEnrollments','courses','partners'].map(name=>[name,new Proxy({name},{get:(target,key)=>key==='name'?name:`${name}.${String(key)}`})]));
- const draft={id:draftId,status:options.completed?'completed':'draft',profileId:'saved',createdAt:new Date(),partnerId:'branch',adminId:'admin'};
- const course={id:'course',partnerId:'branch',admissionFee:50000,monthlyFee:20000,currency:'BDT',duration:6,maxStudents:30,currentStudents:2};
- const selectRows=(table)=>{if(table===tables.quickEnrollmentDrafts)return options.foreign?[]:[draft];if(table===tables.courses)return [course];if(table===tables.user)return options.existing?[{id:'existing'}]:[];if(table===tables.partners)return [{id:'branch',name:'Test Branch'}];return [{id:'source',bucket:'private',objectKey:'source-key',mimeType:'image/jpeg',filename:'paper.jpg'}];};
- const db={select:()=>{let table;return {from(value){table=value;return this},where(value){state.conditions.push(value);return this},limit:async()=>selectRows(table)}},update:()=>({set(value){state.statuses.push(value.status);return {where:()=>({returning:async()=>options.claimed?[]:[draft]})}}}),transaction:async callback=>callback({select:()=>({from(){return this},where(){return this},for:async()=>[course]}),insert:table=>({values:async value=>{state.values.push({table:table.name,value});if(options.rollback&&table===tables.profiles)throw Error('write failed')}}),update:()=>({set:()=>({where:async()=>{}})}),delete:()=>({where:async()=>{}})})};
- const mocks={'@/lib/partner-admin/auth':{requirePartnerAdminUser:async()=>options.anonymous?{user:null,error:Response.json({}, {status:401})}:{user:{id:'admin',partnerId:'branch',partnerSlug:'branch',name:'Admin'},error:null}},'@/lib/connect-db':{db},'@/db/schema':tables,'@supabase/supabase-js':{createClient:()=>({auth:{admin:{createUser:async()=>{state.authCreated++;return {data:{user:{id:'supabase-id'}},error:null}},deleteUser:async()=>{state.authDeleted++;return {error:null}}}}})},'@/lib/student-enrollment/model':model,'@/lib/student-enrollment/storage':{readDocument:async()=>Buffer.from('scan'),putDocument:async()=>{},cropDocument:async()=>Buffer.from('crop'),removeDocument:async()=>{}},'@/lib/student-enrollment/email':{sendEnrollmentCredentials:async()=>{state.email++;if(options.emailFail)throw Error('smtp failed');return {accepted:['fixture@example.invalid']}}},'@/lib/org/domain-server':{organizationOrigin:async()=> 'https://branch.example.invalid'},'@/lib/billing/service':{generateInitialMonthlyFees:async()=>{state.billing++;return null}},'@/lib/newsletter/server':{registrationNewsletter:async()=>{}},'drizzle-orm':{eq:(field,value)=>({field,value}),and:(...items)=>items,ilike:()=>{},sql:()=>{}}};
- const api=load('src/app/api/partner-portal/quick-enrollment/submit/route.ts',mocks,{process:{env:{NEXT_PUBLIC_SUPABASE_URL:'https://fixture.invalid',SUPABASE_SERVICE_ROLE_KEY:'test-service'}}});
- return {api,state};
+const test = require("node:test"),
+  assert = require("node:assert/strict"),
+  fs = require("node:fs"),
+  vm = require("node:vm"),
+  ts = require("typescript");
+function load(file, mocks = {}, globals = {}) {
+  const module = { exports: {} };
+  vm.runInNewContext(
+    ts.transpileModule(fs.readFileSync(file, "utf8"), {
+      compilerOptions: {
+        module: ts.ModuleKind.CommonJS,
+        target: ts.ScriptTarget.ES2022,
+        jsx: ts.JsxEmit.ReactJSX,
+        esModuleInterop: true,
+      },
+    }).outputText,
+    {
+      module,
+      exports: module.exports,
+      require: (n) => (Object.hasOwn(mocks, n) ? mocks[n] : require(n)),
+      console,
+      Date,
+      URL,
+      Request,
+      Response,
+      Headers,
+      Buffer,
+      File,
+      process,
+      ...globals,
+    },
+  );
+  return module.exports;
 }
-function request(data=payload()){return new Request('https://branch.example.invalid/api/partner-portal/quick-enrollment/submit',{method:'POST',body:JSON.stringify(data)});}
-test('multipart review submissions retain the enrollment workflow', async()=>{
- const {api,state}=submitAPI(); const body=new FormData(); body.append('payload',JSON.stringify(payload()));
- const response=await api.POST(new Request('https://branch.example.invalid/api/partner-portal/quick-enrollment/submit',{method:'POST',body}));
- assert.equal(response.status,201); assert.equal(state.authCreated,1);
+const form = load("src/lib/pdf/form-fields.ts"),
+  model = load("src/lib/student-enrollment/model.ts", {
+    "@/lib/pdf/form-fields": form,
+  });
+const draftId = "733c90fd-16dd-4a77-b3d5-62a9bd3ec280";
+function payload() {
+  return {
+    draftId,
+    courseId: "course",
+    fields: {
+      ...model.blankFields,
+      name_en: "Test Student",
+      dob: "2013-11-18",
+      mobile: "01700000000",
+      email: "fixture@example.invalid",
+      present_address: "Test town",
+      gender: "other",
+    },
+    photoBox: null,
+    signatureBox: null,
+    startDate: "2026-10-12",
+    paymentCollected: false,
+    paymentReference: "",
+    agreement: true,
+    reviewed: true,
+  };
+}
+test("review validation rejects missing contact, fabricated ownership, invalid dates/crops and unchecked consent", () => {
+  assert.equal(model.submitSchema.safeParse(payload()).success, true);
+  for (const change of [
+    { reviewed: false },
+    { agreement: false },
+    { partnerId: "other" },
+    { photoBox: [0, 0, 1100, 100] },
+    { signatureBox: [10, 50, 10, 60] },
+    { fields: { ...payload().fields, email: "" } },
+    { fields: { ...payload().fields, gender: "unknown-value" } },
+    { fields: { ...payload().fields, dob: "2013-02-31" } },
+  ])
+    assert.equal(
+      model.submitSchema.safeParse({ ...payload(), ...change }).success,
+      false,
+    );
 });
-test('oversized manual images fail before draft claim or account creation', async()=>{
- const {api,state}=submitAPI(); const body=new FormData(); body.append('payload',JSON.stringify({...payload(),photoBox:[0,0,1000,1000]}));
- body.append('photo',new File([Buffer.alloc(3*1024*1024+1)],'large.jpg',{type:'image/jpeg'}));
- const response=await api.POST(new Request('https://branch.example.invalid/api/partner-portal/quick-enrollment/submit',{method:'POST',body}));
- assert.equal(response.status,400); assert.equal(state.authCreated,0); assert.equal(state.statuses.length,0);
+test("paper forms without gender can enroll without inventing a value", async () => {
+  const input = { ...payload(), fields: { ...payload().fields, gender: "" } };
+  assert.equal(model.submitSchema.safeParse(input).success, true);
+  const { api, state } = submitAPI();
+  assert.equal((await api.POST(request(input))).status, 201);
+  assert.equal(
+    state.values.find((v) => v.table === "profiles").value.gender,
+    null,
+  );
+  assert.equal(
+    state.values.find((v) => v.table === "enrollmentApplications").value
+      .studentInfo.gender,
+    null,
+  );
 });
-test('anonymous submissions stop before provisioning',async()=>{const {api,state}=submitAPI({anonymous:true});assert.equal((await api.POST(request())).status,401);assert.equal(state.authCreated,0);});
-test('foreign drafts and concurrent duplicate submit are rejected before external account creation',async()=>{for(const options of [{foreign:true},{claimed:true}]){const {api,state}=submitAPI(options);assert.ok([404,409].includes((await api.POST(request())).status));assert.equal(state.authCreated,0);assert.ok(state.conditions[0].some(c=>c?.value==='branch'));assert.ok(state.conditions[0].some(c=>c?.value==='admin'));}});
-test('existing accounts are never overwritten or sent a false password',async()=>{const {api,state}=submitAPI({existing:true});assert.equal((await api.POST(request())).status,409);assert.equal(state.authCreated+state.email,0);});
-test('pending admission saves account, full student form and application without marking paid or creating billing',async()=>{const {api,state}=submitAPI();const response=await api.POST(request());assert.equal(response.status,201);const data=await response.json();assert.equal(data.admissionApproved,false);assert.equal(state.authCreated,1);assert.equal(state.email,1);assert.equal(state.billing,0);const application=state.values.find(v=>v.table==='enrollmentApplications').value;assert.equal(application.status,'pending_payment');assert.equal(application.paymentVerifiedAt,null);assert.equal(application.studentInfo.name_en,'Test Student');assert.ok(!JSON.stringify(state.values).includes(data.temporaryPassword));});
-test('explicit collected admission produces linked approved application, enrollment and initial billing',async()=>{const {api,state}=submitAPI();assert.equal((await api.POST(request({...payload(),paymentCollected:true}))).status,201);assert.equal(state.values.find(v=>v.table==='enrollmentApplications').value.status,'approved');assert.equal(state.values.filter(v=>v.table==='courseEnrollments').length,1);assert.equal(state.billing,1);});
-test('failed database transaction compensates new Supabase account and unlocks draft',async()=>{const {api,state}=submitAPI({rollback:true});assert.equal((await api.POST(request())).status,400);assert.equal(state.authCreated,1);assert.equal(state.authDeleted,1);assert.equal(state.email,0);assert.equal(state.statuses.at(-1),'draft');});
-test('failed email does not repeat provisioning; completed retry returns result without another password/send',async()=>{const {api,state}=submitAPI({emailFail:true});const response=await api.POST(request());assert.equal(response.status,201);const data=await response.json();assert.equal(data.credentialsEmailSent,false);assert.ok(data.warnings.length);const replay=submitAPI({completed:true});assert.equal((await replay.api.POST(request())).status,200);assert.equal(replay.state.authCreated+replay.state.email,0);});
-test('media admins cannot view student records and member viewing does not grant document upload',async()=>{for(const grants of [[],['ADMIN_PANEL:ACCESS','GALLERY:MANAGE'],['ADMIN_PANEL:ACCESS','MEMBER:READ']]){const access=load('src/lib/student-enrollment/access.ts',{'server-only':{},'@/lib/partner-admin/auth':{requirePartnerAdminUser:async()=>({user:null})},'@/lib/rbac/middleware':{getRBACContext:async()=>({userId:'admin'})},'@/lib/rbac/permissions':{hasPermission:async(_,r,a)=>grants.includes(`${r}:${a}`)}});assert.equal(await access.studentAccess(true),null);assert.equal(!!await access.studentAccess(),grants.includes('MEMBER:READ'));}});
-test('legacy application fields and profile fallback produce readable unified form values',()=>{const values=model.studentFormValues({fullNameEnglish:'Legacy Student',phoneNumber:'01700000000',presentAddress:'Saved address',dateOfBirth:'2013-11-18T00:00:00.000Z'},{institute:'Saved school',fatherName:'Parent'});assert.equal(values.name_en,'Legacy Student');assert.equal(values.mobile,'01700000000');assert.equal(values.dob,'2013-11-18');assert.equal(values.institution,'Saved school');assert.equal(values.father_name,'Parent');assert.equal(values.email,'');});
-test('document ciphertext conceals contents, authenticates tampering and requires the server key',()=>{const encryption=load('src/lib/student-enrollment/encryption.ts',{}, {process:{env:{STUDENT_DOCUMENTS_ENCRYPTION_KEY:'11'.repeat(32)}}});const original=Buffer.from('private birth certificate fixture');const encrypted=encryption.encryptStudentDocument(original);assert.ok(!encrypted.includes(original));assert.deepEqual(encryption.decryptStudentDocument(encrypted),original);const damaged=Buffer.from(encrypted);damaged[damaged.length-1]^=1;assert.throws(()=>encryption.decryptStudentDocument(damaged));const missing=load('src/lib/student-enrollment/encryption.ts',{}, {process:{env:{}}});assert.throws(()=>missing.encryptStudentDocument(original));});
-test('knowing another student document ID never authorizes partner/anonymous file access',async()=>{for(const access of [null,{actorId:'partner-admin:admin',partnerId:'own',admin:false}]){let storageReads=0;const tables={studentDocuments:{id:'document-id'},profiles:{id:'profile-id'},quickEnrollmentDrafts:{}};let selected;const api=load('src/app/api/student-documents/[documentId]/file/route.ts',{'@/lib/connect-db':{db:{select:()=>({from(table){selected=table;return this},where(){return this},limit:async()=>selected===tables.studentDocuments?[{id:'doc',profileId:'student',partnerId:'other',bucket:'private',objectKey:'protected',mimeType:'image/jpeg'}]:[{partnerId:'other',userId:'other-user'}]})}},'@/db/schema':tables,'drizzle-orm':{eq:()=>{},and:()=>{}},'@/lib/student-enrollment/access':{studentAccess:async()=>access},'@/lib/rbac/middleware':{getRBACContext:async()=>null},'@/lib/partner-admin/auth':{requirePartnerAdminUser:async()=>({user:null})},'@/lib/student-enrollment/storage':{readDocument:async()=>{storageReads++;return Buffer.from('private')}}});assert.equal((await api.GET(new Request('https://own.example.invalid/api/student-documents/doc/file'),{params:Promise.resolve({documentId:'doc'})})).status,404);assert.equal(storageReads,0);}});
+test("course selection uses only available organization IDs and defaults when not printed", () => {
+  const courses = [{ id: "first" }, { id: "second" }];
+  assert.equal(model.enrollmentCourseId(courses), "first");
+  assert.equal(model.enrollmentCourseId(courses, "second"), "second");
+  assert.equal(model.enrollmentCourseId(courses, "foreign"), "first");
+  assert.equal(model.enrollmentCourseId([]), "");
+});
+test("storage folders preserve names and isolate same-name students using stable IDs", () => {
+  const a = model.studentFolder(
+      { name: "Test Branch", id: "org-a" },
+      { name: "Student A", id: "one" },
+    ),
+    b = model.studentFolder(
+      { name: "Test Branch", id: "org-a" },
+      { name: "Student A", id: "two" },
+    );
+  assert.notEqual(a, b);
+  assert.ok(a.includes("Test-Branch--org-a/Student-A--one"));
+  assert.ok(!model.folderPart("../../injected").includes("/"));
+});
+function submitAPI(options = {}) {
+  const state = {
+    authCreated: 0,
+    authDeleted: 0,
+    email: 0,
+    billing: 0,
+    values: [],
+    statuses: [],
+    conditions: [],
+  };
+  const tables = Object.fromEntries(
+    [
+      "quickEnrollmentDrafts",
+      "studentDocuments",
+      "profiles",
+      "user",
+      "registrations",
+      "enrollmentApplications",
+      "courseEnrollments",
+      "courses",
+      "partners",
+    ].map((name) => [
+      name,
+      new Proxy(
+        { name },
+        {
+          get: (target, key) =>
+            key === "name" ? name : `${name}.${String(key)}`,
+        },
+      ),
+    ]),
+  );
+  const draft = {
+    id: draftId,
+    status: options.completed ? "completed" : "draft",
+    profileId: "saved",
+    createdAt: new Date(),
+    partnerId: "branch",
+    adminId: "admin",
+  };
+  const course = {
+    id: "course",
+    partnerId: "branch",
+    admissionFee: 50000,
+    monthlyFee: 20000,
+    currency: "BDT",
+    duration: 6,
+    maxStudents: 30,
+    currentStudents: 2,
+  };
+  const selectRows = (table) => {
+    if (table === tables.quickEnrollmentDrafts)
+      return options.foreign ? [] : [draft];
+    if (table === tables.courses) return [course];
+    if (table === tables.user)
+      return options.existing ? [{ id: "existing" }] : [];
+    if (table === tables.partners)
+      return [{ id: "branch", name: "Test Branch" }];
+    return [
+      {
+        id: "source",
+        bucket: "private",
+        objectKey: "source-key",
+        mimeType: "image/jpeg",
+        filename: "paper.jpg",
+      },
+    ];
+  };
+  const db = {
+    select: () => {
+      let table;
+      return {
+        from(value) {
+          table = value;
+          return this;
+        },
+        where(value) {
+          state.conditions.push(value);
+          return this;
+        },
+        limit: async () => selectRows(table),
+      };
+    },
+    update: () => ({
+      set(value) {
+        state.statuses.push(value.status);
+        return {
+          where: () => ({
+            returning: async () => (options.claimed ? [] : [draft]),
+          }),
+        };
+      },
+    }),
+    transaction: async (callback) =>
+      callback({
+        select: () => ({
+          from() {
+            return this;
+          },
+          where() {
+            return this;
+          },
+          for: async () => [course],
+        }),
+        insert: (table) => ({
+          values: async (value) => {
+            state.values.push({ table: table.name, value });
+            if (options.rollback && table === tables.profiles)
+              throw Error("write failed");
+          },
+        }),
+        update: () => ({ set: () => ({ where: async () => {} }) }),
+        delete: () => ({ where: async () => {} }),
+      }),
+  };
+  const mocks = {
+    "@/lib/partner-admin/auth": {
+      requirePartnerAdminUser: async () =>
+        options.anonymous
+          ? { user: null, error: Response.json({}, { status: 401 }) }
+          : {
+              user: {
+                id: "admin",
+                partnerId: "branch",
+                partnerSlug: "branch",
+                name: "Admin",
+              },
+              error: null,
+            },
+    },
+    "@/lib/connect-db": { db },
+    "@/db/schema": tables,
+    "@supabase/supabase-js": {
+      createClient: () => ({
+        auth: {
+          admin: {
+            createUser: async () => {
+              state.authCreated++;
+              return { data: { user: { id: "supabase-id" } }, error: null };
+            },
+            deleteUser: async () => {
+              state.authDeleted++;
+              return { error: null };
+            },
+          },
+        },
+      }),
+    },
+    "@/lib/student-enrollment/model": model,
+    "@/lib/enrollment-number": {
+      nextApplicationNumber: async (_, partnerId) => {
+        assert.equal(partnerId, "branch");
+        return "2601001";
+      },
+    },
+    "@/lib/student-enrollment/storage": {
+      readDocument: async () => Buffer.from("scan"),
+      putDocument: async () => {},
+      cropDocument: async () => Buffer.from("crop"),
+      removeDocument: async () => {},
+    },
+    "@/lib/student-enrollment/email": {
+      sendEnrollmentCredentials: async () => {
+        state.email++;
+        if (options.emailFail) throw Error("smtp failed");
+        return { accepted: ["fixture@example.invalid"] };
+      },
+    },
+    "@/lib/org/domain-server": {
+      organizationOrigin: async () => "https://branch.example.invalid",
+    },
+    "@/lib/billing/service": {
+      generateInitialMonthlyFees: async () => {
+        state.billing++;
+        return null;
+      },
+    },
+    "@/lib/newsletter/server": { registrationNewsletter: async () => {} },
+    "drizzle-orm": {
+      eq: (field, value) => ({ field, value }),
+      and: (...items) => items,
+      ilike: () => {},
+      sql: () => {},
+    },
+  };
+  const api = load(
+    "src/app/api/partner-portal/quick-enrollment/submit/route.ts",
+    mocks,
+    {
+      process: {
+        env: {
+          NEXT_PUBLIC_SUPABASE_URL: "https://fixture.invalid",
+          SUPABASE_SERVICE_ROLE_KEY: "test-service",
+        },
+      },
+    },
+  );
+  return { api, state };
+}
+function request(data = payload()) {
+  return new Request(
+    "https://branch.example.invalid/api/partner-portal/quick-enrollment/submit",
+    { method: "POST", body: JSON.stringify(data) },
+  );
+}
+test("multipart review submissions retain the enrollment workflow", async () => {
+  const { api, state } = submitAPI();
+  const body = new FormData();
+  body.append("payload", JSON.stringify(payload()));
+  const response = await api.POST(
+    new Request(
+      "https://branch.example.invalid/api/partner-portal/quick-enrollment/submit",
+      { method: "POST", body },
+    ),
+  );
+  assert.equal(response.status, 201);
+  assert.equal(state.authCreated, 1);
+});
+test("oversized manual images fail before draft claim or account creation", async () => {
+  const { api, state } = submitAPI();
+  const body = new FormData();
+  body.append(
+    "payload",
+    JSON.stringify({ ...payload(), photoBox: [0, 0, 1000, 1000] }),
+  );
+  body.append(
+    "photo",
+    new File([Buffer.alloc(3 * 1024 * 1024 + 1)], "large.jpg", {
+      type: "image/jpeg",
+    }),
+  );
+  const response = await api.POST(
+    new Request(
+      "https://branch.example.invalid/api/partner-portal/quick-enrollment/submit",
+      { method: "POST", body },
+    ),
+  );
+  assert.equal(response.status, 400);
+  assert.equal(state.authCreated, 0);
+  assert.equal(state.statuses.length, 0);
+});
+test("anonymous submissions stop before provisioning", async () => {
+  const { api, state } = submitAPI({ anonymous: true });
+  assert.equal((await api.POST(request())).status, 401);
+  assert.equal(state.authCreated, 0);
+});
+test("foreign drafts and concurrent duplicate submit are rejected before external account creation", async () => {
+  for (const options of [{ foreign: true }, { claimed: true }]) {
+    const { api, state } = submitAPI(options);
+    assert.ok([404, 409].includes((await api.POST(request())).status));
+    assert.equal(state.authCreated, 0);
+    assert.ok(state.conditions[0].some((c) => c?.value === "branch"));
+    assert.ok(state.conditions[0].some((c) => c?.value === "admin"));
+  }
+});
+test("existing accounts are never overwritten or sent a false password", async () => {
+  const { api, state } = submitAPI({ existing: true });
+  assert.equal((await api.POST(request())).status, 409);
+  assert.equal(state.authCreated + state.email, 0);
+});
+test("pending admission saves account, full student form and application without marking paid or creating billing", async () => {
+  const { api, state } = submitAPI();
+  const response = await api.POST(request());
+  assert.equal(response.status, 201);
+  const data = await response.json();
+  assert.equal(data.admissionApproved, false);
+  assert.equal(state.authCreated, 1);
+  assert.equal(state.email, 1);
+  assert.equal(state.billing, 0);
+  const application = state.values.find(
+    (v) => v.table === "enrollmentApplications",
+  ).value;
+  assert.equal(application.status, "pending_payment");
+  assert.equal(application.paymentVerifiedAt, null);
+  assert.equal(application.studentInfo.name_en, "Test Student");
+  assert.ok(!JSON.stringify(state.values).includes(data.temporaryPassword));
+});
+test("explicit collected admission produces linked approved application, enrollment and initial billing", async () => {
+  const { api, state } = submitAPI();
+  assert.equal(
+    (await api.POST(request({ ...payload(), paymentCollected: true }))).status,
+    201,
+  );
+  assert.equal(
+    state.values.find((v) => v.table === "enrollmentApplications").value.status,
+    "approved",
+  );
+  assert.equal(
+    state.values.filter((v) => v.table === "courseEnrollments").length,
+    1,
+  );
+  assert.equal(state.billing, 1);
+});
+test("failed database transaction compensates new Supabase account and unlocks draft", async () => {
+  const { api, state } = submitAPI({ rollback: true });
+  assert.equal((await api.POST(request())).status, 400);
+  assert.equal(state.authCreated, 1);
+  assert.equal(state.authDeleted, 1);
+  assert.equal(state.email, 0);
+  assert.equal(state.statuses.at(-1), "draft");
+});
+test("failed email does not repeat provisioning; completed retry returns result without another password/send", async () => {
+  const { api, state } = submitAPI({ emailFail: true });
+  const response = await api.POST(request());
+  assert.equal(response.status, 201);
+  const data = await response.json();
+  assert.equal(data.credentialsEmailSent, false);
+  assert.ok(data.warnings.length);
+  const replay = submitAPI({ completed: true });
+  assert.equal((await replay.api.POST(request())).status, 200);
+  assert.equal(replay.state.authCreated + replay.state.email, 0);
+});
+test("media admins cannot view student records and member viewing does not grant document upload", async () => {
+  for (const grants of [
+    [],
+    ["ADMIN_PANEL:ACCESS", "GALLERY:MANAGE"],
+    ["ADMIN_PANEL:ACCESS", "MEMBER:READ"],
+  ]) {
+    const access = load("src/lib/student-enrollment/access.ts", {
+      "server-only": {},
+      "@/lib/partner-admin/auth": {
+        requirePartnerAdminUser: async () => ({ user: null }),
+      },
+      "@/lib/rbac/middleware": {
+        getRBACContext: async () => ({ userId: "admin" }),
+      },
+      "@/lib/rbac/permissions": {
+        hasPermission: async (_, r, a) => grants.includes(`${r}:${a}`),
+      },
+    });
+    assert.equal(await access.studentAccess(true), null);
+    assert.equal(
+      !!(await access.studentAccess()),
+      grants.includes("MEMBER:READ"),
+    );
+  }
+});
+test("legacy application fields and profile fallback produce readable unified form values", () => {
+  const values = model.studentFormValues(
+    {
+      fullNameEnglish: "Legacy Student",
+      phoneNumber: "01700000000",
+      presentAddress: "Saved address",
+      dateOfBirth: "2013-11-18T00:00:00.000Z",
+    },
+    { institute: "Saved school", fatherName: "Parent" },
+  );
+  assert.equal(values.name_en, "Legacy Student");
+  assert.equal(values.mobile, "01700000000");
+  assert.equal(values.dob, "2013-11-18");
+  assert.equal(values.institution, "Saved school");
+  assert.equal(values.father_name, "Parent");
+  assert.equal(values.email, "");
+});
+test("document ciphertext conceals contents, authenticates tampering and requires the server key", () => {
+  const encryption = load(
+    "src/lib/student-enrollment/encryption.ts",
+    {},
+    { process: { env: { STUDENT_DOCUMENTS_ENCRYPTION_KEY: "11".repeat(32) } } },
+  );
+  const original = Buffer.from("private birth certificate fixture");
+  const encrypted = encryption.encryptStudentDocument(original);
+  assert.ok(!encrypted.includes(original));
+  assert.deepEqual(encryption.decryptStudentDocument(encrypted), original);
+  const damaged = Buffer.from(encrypted);
+  damaged[damaged.length - 1] ^= 1;
+  assert.throws(() => encryption.decryptStudentDocument(damaged));
+  const missing = load(
+    "src/lib/student-enrollment/encryption.ts",
+    {},
+    { process: { env: {} } },
+  );
+  assert.throws(() => missing.encryptStudentDocument(original));
+});
+test("knowing another student document ID never authorizes partner/anonymous file access", async () => {
+  for (const access of [
+    null,
+    { actorId: "partner-admin:admin", partnerId: "own", admin: false },
+  ]) {
+    let storageReads = 0;
+    const tables = {
+      studentDocuments: { id: "document-id" },
+      profiles: { id: "profile-id" },
+      quickEnrollmentDrafts: {},
+    };
+    let selected;
+    const api = load(
+      "src/app/api/student-documents/[documentId]/file/route.ts",
+      {
+        "@/lib/connect-db": {
+          db: {
+            select: () => ({
+              from(table) {
+                selected = table;
+                return this;
+              },
+              where() {
+                return this;
+              },
+              limit: async () =>
+                selected === tables.studentDocuments
+                  ? [
+                      {
+                        id: "doc",
+                        profileId: "student",
+                        partnerId: "other",
+                        bucket: "private",
+                        objectKey: "protected",
+                        mimeType: "image/jpeg",
+                      },
+                    ]
+                  : [{ partnerId: "other", userId: "other-user" }],
+            }),
+          },
+        },
+        "@/db/schema": tables,
+        "drizzle-orm": { eq: () => {}, and: () => {} },
+        "@/lib/student-enrollment/access": {
+          studentAccess: async () => access,
+        },
+        "@/lib/rbac/middleware": { getRBACContext: async () => null },
+        "@/lib/partner-admin/auth": {
+          requirePartnerAdminUser: async () => ({ user: null }),
+        },
+        "@/lib/student-enrollment/storage": {
+          readDocument: async () => {
+            storageReads++;
+            return Buffer.from("private");
+          },
+        },
+      },
+    );
+    assert.equal(
+      (
+        await api.GET(
+          new Request(
+            "https://own.example.invalid/api/student-documents/doc/file",
+          ),
+          { params: Promise.resolve({ documentId: "doc" }) },
+        )
+      ).status,
+      404,
+    );
+    assert.equal(storageReads, 0);
+  }
+});

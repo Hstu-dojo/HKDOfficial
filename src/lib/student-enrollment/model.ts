@@ -38,12 +38,16 @@ export const extractionSchema = z
     warnings: z.array(z.string().max(300)).max(40),
     photoBox: boxSchema.nullable(),
     signatureBox: boxSchema.nullable(),
+    courseId: z.string().max(100).optional().default(""),
   })
   .strict();
 export const submitSchema = z
   .object({
     draftId: z.string().uuid(),
-    courseId: z.string().min(1).max(100),
+    courseId: z
+      .string()
+      .min(1, "Select an available organization course")
+      .max(100),
     fields: fieldsSchema,
     photoBox: boxSchema.nullable(),
     signatureBox: boxSchema.nullable(),
@@ -68,11 +72,11 @@ export const submitSchema = z
         path: ["fields", "email"],
         message: "A reviewed email is required to create the account",
       });
-    if (!["male", "female", "other"].includes(data.fields.gender))
+    if (!["", "male", "female", "other"].includes(data.fields.gender))
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
         path: ["fields", "gender"],
-        message: "Select gender",
+        message: "Use male, female, other, or leave gender not recorded",
       });
     for (const value of [data.fields.dob, data.startDate])
       if (
@@ -93,6 +97,14 @@ export const submitSchema = z
         message: "Birth date cannot be in the future",
       });
   });
+/** IDs always come from the organization's available courses, never invented by AI. */
+export function enrollmentCourseId(courses: { id: string }[], suggested = "") {
+  return (
+    courses.find((course) => course.id === suggested)?.id ||
+    courses[0]?.id ||
+    ""
+  );
+}
 export const documentKinds = [
   "registration_form",
   "photo",

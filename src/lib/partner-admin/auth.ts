@@ -1,6 +1,7 @@
 import { isPlatformHost } from "@/lib/org/domains";
 import { resolveTenantHost } from "@/lib/org/domain-server";
 import { cookies, headers } from "next/headers";
+import { partnerBearerToken } from "./mobile";
 import { db } from "@/lib/connect-db";
 import {
   partners,
@@ -26,6 +27,7 @@ export async function getPartnerAdminUser(): Promise<PartnerAdminUser | null> {
   try {
     const cookieStore = await cookies();
     const token =
+      partnerBearerToken((await headers()).get("authorization")) ||
       cookieStore.get(PARTNER_ADMIN_SESSION_COOKIE)?.value ||
       cookieStore.get(LEGACY_PARTNER_ADMIN_SESSION_COOKIE)?.value;
     if (!token) return null;

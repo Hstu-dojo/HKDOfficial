@@ -135,6 +135,7 @@ export async function POST(request: Request) {
     });
 
     const res = NextResponse.json({
+      ...(body?.client === "mobile" ? { token, expiresAt: expiresAt.toISOString() } : {}),
       user: {
         id: admin.id,
         email: admin.email,
@@ -144,6 +145,7 @@ export async function POST(request: Request) {
         partnerSlug: admin.partnerSlug,
       },
     });
+    res.headers.set("Cache-Control", "private, no-store");
 
     res.cookies.set({
       name: PARTNER_ADMIN_SESSION_COOKIE,

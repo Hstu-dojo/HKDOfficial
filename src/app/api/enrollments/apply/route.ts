@@ -5,14 +5,7 @@ import { eq, and } from 'drizzle-orm';
 import { user as userSchema } from '@/db/schemas/auth';
 import { getLocalUserId } from '@/lib/rbac/middleware';
 import { createClient } from '@/lib/supabase/server';
-
-// Helper to generate application number
-function generateApplicationNumber(): string {
-  const year = new Date().getFullYear();
-  const month = String(new Date().getMonth() + 1).padStart(2, '0');
-  const random = Math.random().toString(36).substring(2, 8).toUpperCase();
-  return `APP-${year}${month}-${random}`;
-}
+import { nextApplicationNumber } from '@/lib/enrollment-number';
 
 // POST /api/enrollments/apply - Create new enrollment application
 export async function POST(request: NextRequest) {
@@ -165,7 +158,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Generate application number
-    const applicationNumber = generateApplicationNumber();
+    const applicationNumber = await nextApplicationNumber(db, course[0].partnerId);
 
     // Create enrollment application
     const [newApplication] = await db

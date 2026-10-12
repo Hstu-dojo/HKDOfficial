@@ -1,13 +1,15 @@
 import { NextResponse } from 'next/server'
 import { cookies } from 'next/headers'
+import { partnerBearerToken } from '@/lib/partner-admin/mobile'
 import { db } from '@/lib/connect-db'
 import { partnerAdminSessions } from '@/db/schemas/partner'
 import { eq } from 'drizzle-orm'
 import { PARTNER_ADMIN_SESSION_COOKIE, LEGACY_PARTNER_ADMIN_SESSION_COOKIE } from '@/lib/partner-admin/auth'
 
-export async function POST() {
+export async function POST(request: Request) {
   const cookieStore = await cookies()
   const token =
+    partnerBearerToken(request.headers.get('authorization')) ||
     cookieStore.get(PARTNER_ADMIN_SESSION_COOKIE)?.value ||
     cookieStore.get(LEGACY_PARTNER_ADMIN_SESSION_COOKIE)?.value
 

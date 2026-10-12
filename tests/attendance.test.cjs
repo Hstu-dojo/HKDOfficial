@@ -29,7 +29,10 @@ function load(file, mocks = {}) {
   );
   return module.exports;
 }
-const model = load("src/lib/attendance/model.ts");
+const {
+  createLoader,
+} = require("../mobile/partner-admin/shared/test-support/load.cjs");
+const model = createLoader()("src/lib/attendance/model.ts");
 const input = () => ({
   courseId: "course",
   date: "2026-01-10",

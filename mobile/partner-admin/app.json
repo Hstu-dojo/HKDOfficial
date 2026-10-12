@@ -1,0 +1,27 @@
+{
+  "expo": {
+    "name": "Kaizen Partner Admin",
+    "slug": "kaizen-partner-admin",
+    "version": "1.0.0",
+    "icon": "./assets/icon.png",
+    "orientation": "portrait",
+    "scheme": "kaizenpartner",
+    "userInterfaceStyle": "light",
+    "android": {
+      "package": "com.kaizenkarateacademy.partneradmin",
+      "versionCode": 1,
+      "permissions": []
+    },
+    "plugins": [
+      "expo-secure-store",
+      "expo-status-bar",
+      "@react-native-community/datetimepicker",
+      "expo-sharing",
+      "expo-build-properties",
+      "expo-font"
+    ],
+    "extra": {
+      "apiOrigin": "https://www.hstuma.com"
+    }
+  }
+}

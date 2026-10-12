@@ -33,7 +33,7 @@ export const enrollmentApplications = pgTable("enrollment_applications", {
     motherName: string;
     motherNameBangla?: string;
     dateOfBirth: string; // ISO date
-    gender: 'male' | 'female' | 'other';
+    gender: 'male' | 'female' | 'other' | null;
     bloodGroup: string;
     religion?: string;
     nationality: string;

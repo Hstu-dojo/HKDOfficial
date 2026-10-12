@@ -4,6 +4,7 @@ import { enrollmentApplications, courses, members, user } from "@/db/schema";
 import { eq, desc, and, sql, or, inArray } from "drizzle-orm";
 import { hasPermission } from "@/lib/rbac/permissions";
 import { getRBACContext } from "@/lib/rbac/middleware";
+import { nextApplicationNumber } from "@/lib/enrollment-number";
 
 /**
  * @swagger
@@ -253,12 +254,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Generate application number
-    const year = new Date().getFullYear();
-    const [countResult] = await db
-      .select({ count: sql<number>`count(*)` })
-      .from(enrollmentApplications);
-    const count = Number(countResult?.count) || 0;
-    const applicationNumber = `KKA-${year}-${String(count + 1).padStart(4, "0")}`;
+    const applicationNumber = await nextApplicationNumber(db, course.partnerId);
 
     // Create application
     const [newApplication] = await db

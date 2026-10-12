@@ -163,6 +163,7 @@ function ApplicationsTab({
   const [error, setError] = React.useState<string | null>(null);
   const [message, setMessage] = React.useState<string | null>(null);
   const [rows, setRows] = React.useState<ApplicationRow[]>([]);
+  const [acting, setActing] = React.useState<string | null>(null);
   const [pagination, setPagination] = React.useState<Pagination>({
     page: 1,
     limit: 20,
@@ -202,29 +203,78 @@ function ApplicationsTab({
 
   const act = async (
     applicationId: string,
-    action: "verify_payment" | "approve" | "reject" | "cancel",
+    action:
+      "record_payment" | "verify_payment" | "approve" | "reject" | "cancel",
   ) => {
+    if (acting) return;
     setMessage(null);
     setError(null);
     try {
       let rejectionReason: string | undefined;
+      let paymentMethod: string | undefined, transactionId: string | undefined;
+      if (action === "record_payment") {
+        const method = prompt(
+          "Payment received by: cash, bkash, or bank_transfer",
+          "cash",
+        );
+        if (!method) return;
+        paymentMethod = method.trim().toLowerCase();
+        if (!["cash", "bkash", "bank_transfer"].includes(paymentMethod)) {
+          setError("Choose cash, bkash, or bank_transfer.");
+          return;
+        }
+        const reference = prompt(
+          paymentMethod === "cash"
+            ? "Receipt/reference (optional):"
+            : "Transaction/reference number:",
+        );
+        if (reference === null) return;
+        transactionId = reference.trim();
+        if (paymentMethod !== "cash" && !transactionId) {
+          setError("Enter the payment reference.");
+          return;
+        }
+        const row = rows.find((r) => r.id === applicationId);
+        if (
+          !confirm(
+            `Confirm you received the full admission fee: ${row?.currency || ""} ${((row?.admissionFeeAmount || 0) / 100).toFixed(2)}?`,
+          )
+        )
+          return;
+      }
+      if (
+        action === "approve" &&
+        !confirm(
+          "Enroll this student in the selected course? Monthly billing starts from enrollment.",
+        )
+      )
+        return;
       if (action === "reject") {
         const reason = prompt("Rejection reason:");
         if (!reason) return;
         rejectionReason = reason;
       }
 
+      setActing(applicationId);
       const result = await apiJSON<{ billingWarning?: string }>(
         "/api/partner-portal/enrollment-applications",
         {
           method: "PATCH",
-          body: JSON.stringify({ applicationId, action, rejectionReason }),
+          body: JSON.stringify({
+            applicationId,
+            action,
+            rejectionReason,
+            paymentMethod,
+            transactionId,
+          }),
         },
       );
       setMessage(result.billingWarning || "Updated.");
       await fetchRows();
     } catch (e) {
       setError(e instanceof Error ? e.message : "Failed to update application");
+    } finally {
+      setActing(null);
     }
   };
 
@@ -249,6 +299,7 @@ function ApplicationsTab({
             className="flex h-10 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
           >
             <option value="all">All Statuses</option>
+            <option value="pending_payment">Pending payment</option>
             <option value="payment_submitted">Payment submitted</option>
             <option value="payment_verified">Payment verified</option>
             <option value="approved">Approved</option>
@@ -301,7 +352,9 @@ function ApplicationsTab({
                 <th className="px-4 py-3 font-medium">Status</th>
                 <th className="px-4 py-3 font-medium">Payment Info</th>
                 <th className="px-4 py-3 font-medium">Created</th>
-                <th className="px-4 py-3 text-right font-medium">Actions</th>
+                <th className="sticky right-0 bg-card px-4 py-3 text-right font-medium">
+                  Actions
+                </th>
               </tr>
             </thead>
             <tbody>
@@ -371,7 +424,7 @@ function ApplicationsTab({
                       </div>
                     </td>
                     <td className="px-4 py-3">{fmtDate(r.createdAt)}</td>
-                    <td className="px-4 py-3 text-right">
+                    <td className="sticky right-0 border-l bg-card px-4 py-3 text-right">
                       <div className="flex items-center justify-end gap-1">
                         <Button
                           variant="ghost"
@@ -397,26 +450,40 @@ function ApplicationsTab({
                         >
                           <Eye className="h-4 w-4" />
                         </Button>
+                        {r.status === "pending_payment" && (
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            disabled={!!acting}
+                            onClick={() => act(r.id, "record_payment")}
+                          >
+                            Record payment
+                          </Button>
+                        )}
                         {r.status === "payment_submitted" && (
                           <Button
                             variant="ghost"
-                            size="icon"
+                            size="sm"
+                            disabled={!!acting}
                             onClick={() => act(r.id, "verify_payment")}
-                            className="h-8 w-8 text-blue-600 hover:bg-blue-50 hover:text-blue-700 dark:hover:bg-blue-900/20"
+                            className="h-8 gap-2 whitespace-nowrap text-blue-600 hover:bg-blue-50 hover:text-blue-700 dark:hover:bg-blue-900/20"
                             title="Verify Payment"
                           >
                             <CheckCircle2 className="h-4 w-4" />
+                            Verify payment
                           </Button>
                         )}
                         {r.status === "payment_verified" && (
                           <Button
                             variant="ghost"
-                            size="icon"
+                            size="sm"
+                            disabled={!!acting}
                             onClick={() => act(r.id, "approve")}
-                            className="h-8 w-8 text-emerald-600 hover:bg-emerald-50 hover:text-emerald-700 dark:hover:bg-emerald-900/20"
+                            className="h-8 gap-2 whitespace-nowrap text-emerald-600 hover:bg-emerald-50 hover:text-emerald-700 dark:hover:bg-emerald-900/20"
                             title="Approve Enrollment"
                           >
                             <CheckCircle2 className="h-4 w-4" />
+                            Enroll student
                           </Button>
                         )}
                         {r.status !== "approved" && r.status !== "rejected" && (

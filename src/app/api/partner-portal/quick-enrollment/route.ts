@@ -11,11 +11,12 @@ import {
   removeDocument,
 } from "@/lib/student-enrollment/storage";
 import { extractPaperForm } from "@/lib/student-enrollment/gemini";
-import { blankFields } from "@/lib/student-enrollment/model";
+import {
+  blankFields,
+  enrollmentCourseId,
+} from "@/lib/student-enrollment/model";
 export const maxDuration = 60;
-export async function GET() {
-  const { user, error } = await requirePartnerAdminUser();
-  if (error) return error;
+async function availableCourses(partnerId: string) {
   const list = await db
     .select({
       id: courses.id,
@@ -27,15 +28,27 @@ export async function GET() {
     .from(courses)
     .where(
       and(
-        eq(courses.partnerId, user.partnerId),
+        eq(courses.partnerId, partnerId),
         eq(courses.isActive, true),
         eq(courses.isEnrollmentOpen, true),
       ),
     );
+  return list.sort(
+    (a, b) => a.name.localeCompare(b.name) || a.id.localeCompare(b.id),
+  );
+}
+export async function GET() {
+  const { user, error } = await requirePartnerAdminUser();
+  if (error) return error;
+  const list = await availableCourses(user.partnerId);
   return NextResponse.json({
     courses: list,
     aiConfigured: !!(
-      process.env.GEMINI_API_KEY || process.env.GOOGLE_GENERATIVE_AI_API_KEY
+      process.env.GEMINI_API_KEY ||
+      process.env.GOOGLE_GENERATIVE_AI_API_KEY ||
+      process.env.GROQ_API_KEY ||
+      (process.env.CLOUDFLARE_AI_API_TOKEN &&
+        process.env.CLOUDFLARE_AI_ACCOUNT_ID)
     ),
     authConfigured: !!process.env.SUPABASE_SERVICE_ROLE_KEY,
     storageConfigured: /^[a-fA-F0-9]{64}$/.test(
@@ -63,6 +76,8 @@ export async function POST(request: Request) {
   let key: string | undefined,
     originalKey: string | undefined,
     bucket: string | undefined;
+  let stage: "image" | "ai" | "storage" | "database" = "image";
+  const requestId = randomUUID();
   try {
     const form = await request.formData();
     const file = form.get("file");
@@ -75,19 +90,27 @@ export async function POST(request: Request) {
     const id = randomUUID(),
       docId = randomUUID(),
       originalId = randomUUID();
-    bucket = documentBucket();
     key = `enrollment-drafts/${user.partnerId}/${id}/${docId}.jpg`;
     let extracted = {
       fields: blankFields,
       warnings: ["Enter all fields manually."],
       photoBox: null as number[] | null,
       signatureBox: null as number[] | null,
+      courseId: "",
     };
-    if (form.get("manual") !== "true")
-      extracted = await extractPaperForm(clean.buffer);
+    stage = "database";
+    const list = await availableCourses(user.partnerId);
+    if (form.get("manual") !== "true") {
+      stage = "ai";
+      extracted = await extractPaperForm(clean.buffer, list);
+    }
+    extracted.courseId = enrollmentCourseId(list, extracted.courseId);
+    stage = "storage";
+    bucket = documentBucket();
     await putDocument(bucket, key, clean.buffer, clean.type);
     originalKey = `enrollment-drafts/${user.partnerId}/${id}/${originalId}.${clean.originalExtension}`;
     await putDocument(bucket, originalKey, clean.original, clean.originalType);
+    stage = "database";
     await db.transaction(async (tx) => {
       await tx
         .insert(quickEnrollmentDrafts)
@@ -120,9 +143,23 @@ export async function POST(request: Request) {
     return NextResponse.json({
       draftId: id,
       sourceUrl: `/api/student-documents/${docId}/file`,
+      courses: list,
       ...extracted,
     });
   } catch (error) {
+    const details = error as {
+      name?: string;
+      code?: string;
+      $metadata?: { httpStatusCode?: number };
+    };
+    // Never log image contents, extracted fields, SDK error messages or credentials.
+    console.error("[Quick enrollment] Processing failed", {
+      requestId,
+      stage,
+      name: details?.name,
+      code: details?.code,
+      status: details?.$metadata?.httpStatusCode,
+    });
     if (key && bucket)
       try {
         await removeDocument(bucket, key);
@@ -135,11 +172,21 @@ export async function POST(request: Request) {
       {
         error:
           error instanceof Error &&
-          /Gemini|GEMINI|Upload|Use a|Crop/.test(error.message)
+          /^(Gemini|Groq|Cloudflare AI|AI form extraction|Set GEMINI_API_KEY|Upload|Use a|Crop)/.test(
+            error.message,
+          )
             ? error.message
-            : "Could not process form. Check image format and private storage configuration.",
+            : stage === "ai"
+              ? "Gemini could not read this form. Retry or enter it manually."
+              : stage === "storage"
+                ? "Could not save the scanned form to document storage. Check the production Cloudflare R2 bucket and write permissions."
+                : stage === "database"
+                  ? "Could not save the enrollment draft. Check the database connection and student-document migration."
+                  : "Could not read this image. Upload a valid JPEG, PNG or WebP smaller than 3 MB.",
+        stage,
+        requestId,
       },
-      { status: 400 },
+      { status: stage === "image" ? 400 : stage === "ai" ? 422 : 503 },
     );
   }
 }

@@ -16,6 +16,7 @@ import { and, eq, ilike, sql } from "drizzle-orm";
 import { randomUUID, randomBytes } from "node:crypto";
 import { createClient } from "@supabase/supabase-js";
 import { submitSchema, studentFolder } from "@/lib/student-enrollment/model";
+import { nextApplicationNumber } from "@/lib/enrollment-number";
 import {
   readDocument,
   putDocument,
@@ -31,11 +32,15 @@ export const maxDuration = 60;
 async function submitDraft(request: Request) {
   const { user: actor, error } = await requirePartnerAdminUser();
   if (error) return error;
-  const multipart = request.headers.get("content-type")?.includes("multipart/form-data");
+  const multipart = request.headers
+    .get("content-type")
+    ?.includes("multipart/form-data");
   const form = multipart ? await request.formData().catch(() => null) : null;
   let payload: unknown = null;
   if (multipart) {
-    try { payload = JSON.parse(String(form?.get("payload") || "null")); } catch {}
+    try {
+      payload = JSON.parse(String(form?.get("payload") || "null"));
+    } catch {}
   } else payload = await request.json().catch(() => null);
   const parsed = submitSchema.safeParse(payload);
   if (!parsed.success)
@@ -56,12 +61,19 @@ async function submitDraft(request: Request) {
       const upload = form?.get(kind);
       if (upload instanceof File) {
         totalBytes += upload.size;
-        if (totalBytes > 3 * 1024 * 1024) throw Error("Photo and signature uploads must total less than 3 MB");
+        if (totalBytes > 3 * 1024 * 1024)
+          throw Error("Photo and signature uploads must total less than 3 MB");
         uploadedImages[kind] = (await validateFile(upload, true)).buffer;
       }
     }
   } catch {
-    return NextResponse.json({ error: "Use valid JPEG, PNG or WebP images totaling less than 3 MB for the photo and signature." }, { status: 400 });
+    return NextResponse.json(
+      {
+        error:
+          "Use valid JPEG, PNG or WebP images totaling less than 3 MB for the photo and signature.",
+      },
+      { status: 400 },
+    );
   }
   if (
     !process.env.SUPABASE_SERVICE_ROLE_KEY ||
@@ -277,7 +289,7 @@ async function submitDraft(request: Request) {
       fatherName: f.father_name,
       motherName: f.mother_name,
       dateOfBirth: f.dob,
-      gender: f.gender as "male" | "female" | "other",
+      gender: (f.gender || null) as "male" | "female" | "other" | null,
       bloodGroup: f.blood_group,
       nationality: f.nationality,
       religion: f.religion,
@@ -359,7 +371,7 @@ async function submitDraft(request: Request) {
         fatherName: f.father_name,
         motherName: f.mother_name,
         dateOfBirth: new Date(f.dob),
-        gender: f.gender,
+        gender: f.gender || null,
         email: f.email.toLowerCase(),
         phoneNumber: f.mobile,
         presentAddress: f.present_address,
@@ -412,7 +424,7 @@ async function submitDraft(request: Request) {
       });
       await tx.insert(enrollmentApplications).values({
         id: applicationId,
-        applicationNumber: `APP-PAPER-${draft.id.toUpperCase()}`,
+        applicationNumber: await nextApplicationNumber(tx, actor.partnerId),
         userId: localUserId,
         courseId: course.id,
         profileId,

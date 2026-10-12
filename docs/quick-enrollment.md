@@ -1,8 +1,29 @@
 # Paper-form quick enrollment and student documents
 
-Partner Portal → Members → **Quick enroll from form** accepts one JPEG, PNG or WebP scan up to 3 MB. Gemini reads the handwriting into the existing unified PDF-form field definitions. The administrator reviews the scan beside editable fields, adjusts the detected photo/applicant-signature crop percentages, selects an organization-owned course, start date and admission payment state, and explicitly confirms review/consent. Unclear or missing information stays blank with warnings. Gender and medical information are never inferred from the photo. Supply a reviewed unique email; missing emails are not invented.
+Partner Portal → Members → **Quick enroll from form** accepts one JPEG, PNG or WebP scan up to 3 MB. The selected vision model reads the form into the existing unified PDF-form field definitions. The administrator reviews the scan beside editable fields, adjusts the photo/applicant-signature crops visually, selects an organization-owned course, start date and admission payment state, and explicitly confirms review/consent. Unclear or missing information stays blank with warnings. Gender and medical information are never inferred from the photo. Supply a reviewed unique email; missing emails are not invented.
 
-Gemini is configured server-side with `GEMINI_API_KEY` and `GEMINI_ENROLLMENT_MODEL=gemini-3.8-flash`, the latest stable Flash model available during this implementation. The supplied key successfully listed models and generated structured JSON; a live synthetic scan extracted matching name, date and email. No real student scan was used in that live test. If extraction is unavailable, the same uploaded-form workflow supports manual entry.
+The active provider order is `groq,cloudflare,gemini`, configurable through server-only `ENROLLMENT_AI_PROVIDERS`:
+
+1. Groq: `qwen/qwen3.8-27b` (`GROQ_API_KEY`, `GROQ_ENROLLMENT_MODEL`).
+2. Cloudflare Workers AI: `@cf/qwen/qwen3.8-27b` (`CLOUDFLARE_AI_API_TOKEN`, `CLOUDFLARE_AI_ACCOUNT_ID`, `CLOUDFLARE_ENROLLMENT_MODEL`).
+3. Gemini: `gemini-3.8-flash` (`GEMINI_API_KEY`, `GEMINI_ENROLLMENT_MODEL`).
+
+Vercel AI Gateway has been removed from extraction and from the local/example configuration because its account rejected inference with a credit-card requirement. An old Gateway key does not activate it. Groq stays because its live extraction results were satisfactory. Gemini stays as the last fallback for when it recovers from temporary outages.
+
+Only configured providers are attempted. Credential rejection, timeouts, network failures, rate limits, service failures and malformed output switch to the next provider. All attempts share one 45-second deadline. With the default three-provider order, a slow Groq call can consume up to 8 seconds, Cloudflare up to 30, and Gemini gets the remaining time (at least 7 seconds if the previous attempts used their full budgets). Custom orders reserve 6 seconds for each remaining provider. A sole provider can use the full deadline. Cloudflare uses `rejectIfBusy` to avoid waiting in a capacity queue; its longer timeout accommodates the measured bilingual extraction latency.
+
+Invalid image/request responses and provider safety refusals do not switch providers. Every output uses the same form validation, crop normalization and organization-course allowlist. No successful AI result automatically creates a student: administrator review and submission remain required. If no provider succeeds, manual entry is available.
+
+Both Qwen adapters disable thinking for OCR. Cloudflare uses its OpenAI-compatible image/chat endpoint with JSON-object output and server validation. See [Cloudflare model documentation](https://developers.cloudflare.com/workers-ai/models/qwen3.8-27b/) and [API configuration](https://developers.cloudflare.com/workers-ai/configuration/open-ai-compatibility/). Groq currently labels its supported Qwen vision model preview; its model remains configurable. See [Groq model catalog](https://console.groq.com/docs/models).
+
+Live checks on October 12, 2026:
+
+| Provider        | English synthetic form  | Tilted, lower-quality English/Bangla synthetic form |
+| --------------- | ----------------------- | --------------------------------------------------- |
+| Groq Qwen       | 7/7 checks, 1.5 seconds | 10/10 checks, 1.5 seconds                           |
+| Cloudflare Qwen | 7/7 checks, 9.7 seconds | 10/10 checks, 26 seconds                            |
+
+The bilingual checks covered English/Bangla names, birth date, email, phone, address, absent gender, organization course and absent photo/signature crops. These were single-request diagnostics on printed synthetic images, not a real-handwriting benchmark. No real student records, drafts or emails were created. All provider credentials are server-only; configure the Cloudflare credentials/model and provider order in Vercel before deployment. The existing R2 settings are separate and unchanged.
 
 ## Submission
 
@@ -26,6 +47,14 @@ Stable organization/profile IDs distinguish identical names; document UUIDs dist
 Main-admin access requires `ADMIN_PANEL:ACCESS` and `MEMBER:READ`; document upload additionally requires `MEMBER:UPDATE` (MANAGE covers actions). Media-only access does not grant student-document access. Partner portal sessions are scoped to their authenticated organization using the existing tenant/custom-host checks. New schemas are `quick_enrollment_drafts` and `student_documents`; run `pnpm db:migrate:student-documents` on each database before deployment. The additive migration was applied to the locally configured database during implementation; it creates no student accounts or document records.
 
 ## Verification and deployment
+
+New applications use seven-digit references such as `2601158`: year `26`, organization `01`, and that organization's annual serial `158`. Organization codes are permanent (`00` is the academy; partners use `01`–`99`), and serials run from `001` to `999` independently per organization/year using an atomic database counter. Deleting an application does not release its number. Existing references are preserved; counters continue beyond historical applications. Run `pnpm db:migrate:application-numbers` before deploying the new code. The database keeps the full UUID as its internal ID.
+
+For admission fees collected later, the partner's Enrollments page offers **Record payment** on pending applications. Cash may use an optional receipt; bKash and bank transfers require a reference. After verifying receipt of the full admission fee, use **Enroll student**. Application and course locks keep approval atomic and prevent duplicate enrollment; monthly billing runs after the enrollment transaction commits.
+
+Course selection is prefilled from active, enrollment-open courses belonging to the authenticated organization. Gemini receives only that scoped course list and may match a written course name; missing or invalid suggestions fall back to the first available course (ordered by name). The preview keeps the course and its fees editable before submission. The submit API still checks course ownership and enrollment availability. When no course is available, create or reopen a course first.
+
+Paper forms without gender show “Not recorded on paper” and can be submitted. Missing gender is stored as null, with no guess from a photo or name. Explicitly written gender is extracted and remains editable. This requires no database migration: the profile column and enrollment JSON already support missing information.
 
 - `node --test tests/quick-enrollment.test.cjs tests/rbac-access.test.cjs` validates review schema, unique folders, ownership, replay, account protection, paid/pending handling, rollback compensation, email failure and read/write boundaries.
 - Browser tests exercised scan preview, editing, crop rendering, explicit review, one submit, result and student record at 1440px and 390px, using mocked API responses. No page errors or horizontal overflow.

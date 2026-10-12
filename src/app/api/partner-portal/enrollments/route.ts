@@ -1,4 +1,5 @@
 import { generateInitialMonthlyFees } from "@/lib/billing/service";
+import { nextApplicationNumber } from "@/lib/enrollment-number";
 /**
  * Partner Portal — Enrollments API
  *
@@ -320,7 +321,7 @@ export async function POST(request: Request) {
     }
 
     // 4. Generate application number
-    const applicationNumber = `APP-DIR-${new Date().getFullYear()}${String(new Date().getMonth() + 1).padStart(2, "0")}-${Math.random().toString(36).substring(2, 8).toUpperCase()}`;
+    const applicationNumber = await nextApplicationNumber(db, partnerUser.partnerId);
 
     // 5. Create approved enrollment application
     const [newApp] = await db

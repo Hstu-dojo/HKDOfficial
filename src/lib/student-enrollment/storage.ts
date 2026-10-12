@@ -10,7 +10,8 @@ import sharp from "sharp";
 export const maxUploadBytes = 3 * 1024 * 1024;
 export function documentBucket() {
   return (
-    process.env.CLOUDFLARE_R2_STUDENT_BUCKET_NAME || getR2Config().bucketName
+    process.env.CLOUDFLARE_R2_STUDENT_BUCKET_NAME?.trim() ||
+    getR2Config().bucketName
   );
 }
 export async function readDocument(bucket: string, key: string) {

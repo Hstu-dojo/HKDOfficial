@@ -10,6 +10,7 @@ import {
   enrollmentSections,
   blankFields,
   submitSchema,
+  enrollmentCourseId,
 } from "@/lib/student-enrollment/model";
 import { XMarkIcon } from "@heroicons/react/24/outline";
 type Scan = {
@@ -19,6 +20,7 @@ type Scan = {
   warnings: string[];
   photoBox: number[] | null;
   signatureBox: number[] | null;
+  courseId?: string;
 };
 type Course = {
   id: string;
@@ -29,11 +31,9 @@ type Course = {
 };
 async function jsonFetch(url: string, options?: RequestInit) {
   const response = await fetch(url, options);
-  const data = await response
-    .json()
-    .catch(() => ({
-      error: "The service is temporarily unavailable. Please retry.",
-    }));
+  const data = await response.json().catch(() => ({
+    error: "The service is temporarily unavailable. Please retry.",
+  }));
   if (!response.ok) throw Error(data.error || "Request failed");
   return data;
 }
@@ -94,7 +94,10 @@ function CropEditor({
   const [upload, setUpload] = useState<File | null>(null);
   const [uploadUrl, setUploadUrl] = useState("");
   useEffect(() => {
-    if (!upload) { setUploadUrl(""); return; }
+    if (!upload) {
+      setUploadUrl("");
+      return;
+    }
     const url = URL.createObjectURL(upload);
     setUploadUrl(url);
     return () => URL.revokeObjectURL(url);
@@ -115,33 +118,75 @@ function CropEditor({
       </div>
       {box && (
         <>
-          <ReactCrop crop={{ unit: "%", x: box[1] / 10, y: box[0] / 10, width: (box[3] - box[1]) / 10, height: (box[2] - box[0]) / 10 }}
+          <ReactCrop
+            crop={{
+              unit: "%",
+              x: box[1] / 10,
+              y: box[0] / 10,
+              width: (box[3] - box[1]) / 10,
+              height: (box[2] - box[0]) / 10,
+            }}
             onChange={(_, crop) => {
-              const next = [crop.y * 10, crop.x * 10, (crop.y + crop.height) * 10, (crop.x + crop.width) * 10];
+              const next = [
+                crop.y * 10,
+                crop.x * 10,
+                (crop.y + crop.height) * 10,
+                (crop.x + crop.width) * 10,
+              ];
               onChange(next);
               if (upload) onUpload(upload, next);
-            }}>
-            <img src={cropSource} alt={`Adjust ${label.toLowerCase()} crop`} className="max-h-96 w-auto max-w-full object-contain" />
+            }}
+          >
+            <img
+              src={cropSource}
+              alt={`Adjust ${label.toLowerCase()} crop`}
+              className="max-h-96 w-auto max-w-full object-contain"
+            />
           </ReactCrop>
           <CropPreview source={cropSource} box={box} />
           <p className="text-xs text-muted-foreground">
-            Drag the selection or its edges to adjust. You can also draw a new selection.
+            Drag the selection or its edges to adjust. You can also draw a new
+            selection.
           </p>
         </>
       )}
       <label className="block text-xs text-muted-foreground">
         Upload a separate {label.toLowerCase()} (JPEG, PNG or WebP, up to 3 MB)
-        <Input className="mt-2" type="file" accept="image/jpeg,image/png,image/webp" onChange={(event) => {
-          const file = event.target.files?.[0] || null;
-          if (file && file.size > 3 * 1024 * 1024) { event.target.setCustomValidity("Choose an image smaller than 3 MB"); event.target.reportValidity(); return; }
-          event.target.setCustomValidity("");
-          setUpload(file);
-          const next = file ? [0, 0, 1000, 1000] : null;
-          onChange(next);
-          onUpload(file, next);
-        }} />
+        <Input
+          className="mt-2"
+          type="file"
+          accept="image/jpeg,image/png,image/webp"
+          onChange={(event) => {
+            const file = event.target.files?.[0] || null;
+            if (file && file.size > 3 * 1024 * 1024) {
+              event.target.setCustomValidity(
+                "Choose an image smaller than 3 MB",
+              );
+              event.target.reportValidity();
+              return;
+            }
+            event.target.setCustomValidity("");
+            setUpload(file);
+            const next = file ? [0, 0, 1000, 1000] : null;
+            onChange(next);
+            onUpload(file, next);
+          }}
+        />
       </label>
-      {upload && <Button type="button" variant="outline" size="sm" onClick={() => { setUpload(null); onUpload(null, null); onChange(null); }}>Use scanned form instead</Button>}
+      {upload && (
+        <Button
+          type="button"
+          variant="outline"
+          size="sm"
+          onClick={() => {
+            setUpload(null);
+            onUpload(null, null);
+            onChange(null);
+          }}
+        >
+          Use scanned form instead
+        </Button>
+      )}
     </div>
   );
 }
@@ -152,7 +197,9 @@ export default function QuickEnrollment({
   onClose: () => void;
   onSuccess: () => void;
 }) {
-  const [manualImages, setManualImages] = useState<Record<string, File | null>>({});
+  const [manualImages, setManualImages] = useState<Record<string, File | null>>(
+    {},
+  );
   const [courses, setCourses] = useState<Course[]>([]),
     [scan, setScan] = useState<Scan | null>(null),
     [file, setFile] = useState<File | null>(null),
@@ -182,6 +229,7 @@ export default function QuickEnrollment({
     jsonFetch("/api/partner-portal/quick-enrollment")
       .then((data) => {
         setCourses(data.courses);
+        setCourseId((previous) => enrollmentCourseId(data.courses, previous));
         setConfigured(data);
         if (!data.aiConfigured) setManual(true);
       })
@@ -195,12 +243,14 @@ export default function QuickEnrollment({
       const body = new FormData();
       body.append("file", file);
       body.append("manual", String(manual));
-      setScan(
-        await jsonFetch("/api/partner-portal/quick-enrollment", {
-          method: "POST",
-          body,
-        }),
-      );
+      const preview = await jsonFetch("/api/partner-portal/quick-enrollment", {
+        method: "POST",
+        body,
+      });
+      setScan(preview);
+      const available = preview.courses || courses;
+      setCourses(available);
+      setCourseId(enrollmentCourseId(available, preview.courseId || courseId));
     } catch (error: any) {
       setError(error.message);
     } finally {
@@ -217,8 +267,16 @@ export default function QuickEnrollment({
   }
   async function submit() {
     if (!scan) return;
-    if (Object.values(manualImages).reduce((total, file) => total + (file?.size || 0), 0) > 3 * 1024 * 1024) {
-      setError("The separate photo and signature must total less than 3 MB. Choose smaller images.");
+    if (
+      Object.values(manualImages).reduce(
+        (total, file) => total + (file?.size || 0),
+        0,
+      ) >
+      3 * 1024 * 1024
+    ) {
+      setError(
+        "The separate photo and signature must total less than 3 MB. Choose smaller images.",
+      );
       return;
     }
     const payload = {
@@ -436,7 +494,13 @@ export default function QuickEnrollment({
                       <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-1">
                         <CropEditor
                           label="Student photo"
-                          onUpload={(file) => { setManualImages((previous) => ({ ...previous, photo: file })); setReviewed(false); }}
+                          onUpload={(file) => {
+                            setManualImages((previous) => ({
+                              ...previous,
+                              photo: file,
+                            }));
+                            setReviewed(false);
+                          }}
                           source={scan.sourceUrl}
                           box={scan.photoBox}
                           onChange={(box) => {
@@ -446,7 +510,13 @@ export default function QuickEnrollment({
                         />
                         <CropEditor
                           label="Applicant signature"
-                          onUpload={(file) => { setManualImages((previous) => ({ ...previous, signature: file })); setReviewed(false); }}
+                          onUpload={(file) => {
+                            setManualImages((previous) => ({
+                              ...previous,
+                              signature: file,
+                            }));
+                            setReviewed(false);
+                          }}
                           source={scan.sourceUrl}
                           box={scan.signatureBox}
                           onChange={(box) => {
@@ -534,7 +604,7 @@ export default function QuickEnrollment({
                       <section className="space-y-4 rounded-xl border p-4">
                         <h3 className="font-semibold">Account & enrollment</h3>
                         <label className="block text-sm">
-                          Gender *
+                          Gender
                           <select
                             className="mt-1 w-full rounded-md border bg-background p-2"
                             value={scan.fields.gender || ""}
@@ -542,7 +612,7 @@ export default function QuickEnrollment({
                               change("gender", event.target.value)
                             }
                           >
-                            <option value="">Select explicitly</option>
+                            <option value="">Not recorded on paper</option>
                             {["male", "female", "other"].map((value) => (
                               <option key={value}>{value}</option>
                             ))}
@@ -599,7 +669,9 @@ export default function QuickEnrollment({
                             }
                           >
                             <option value="">
-                              Select this organization's course
+                              {courses.length
+                                ? "Select this organization's course"
+                                : "No courses open for enrollment"}
                             </option>
                             {courses.map((course) => (
                               <option key={course.id} value={course.id}>

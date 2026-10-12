@@ -1,132 +1,67 @@
 "use client";
-import { useEffect, useMemo, useState } from "react";
+import React, { useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { attendanceRate, attendanceStatuses } from "@/lib/attendance/model";
-type Student = { profileId: string; name: string; memberNumber: string };
-type RecordRow = Student & { status: string; notes: string };
-type Session = {
-  id: string;
-  date: string;
-  label: string;
-  notes: string;
-  records: RecordRow[];
-  updatedAt: string;
-};
-type Course = {
-  id: string;
-  name: string;
-  organization: string;
-  isActive: boolean;
-};
-const today = () =>
-  new Intl.DateTimeFormat("en-CA", {
-    timeZone: "Asia/Dhaka",
-    year: "numeric",
-    month: "2-digit",
-    day: "2-digit",
-  }).format(new Date());
-async function api(url: string, options?: RequestInit) {
-  const response = await fetch(url, options);
-  const data = await response
-    .json()
-    .catch(() => ({ error: "Service unavailable. Retry." }));
-  if (!response.ok) throw Error(data.error);
-  return data;
-}
+import { apiJSON } from "@/app/(partner-portal)/partner-admin/(portal)/_lib/api.client";
+import { createAttendanceHook } from "@partner-shared/controller";
+import {
+  attendanceRate,
+  attendanceStatuses,
+  attendanceCSV,
+  attendanceCopy,
+  businessDate as today,
+} from "@partner-shared/attendance";
+import type { AttendanceStatus, Client } from "@partner-shared/types";
+import AttendanceSummary from "./AttendanceSummary";
+const useAttendance = createAttendanceHook(React);
+const api: Client = (path, body) =>
+  apiJSON(
+    path,
+    body === undefined
+      ? undefined
+      : { method: "POST", body: JSON.stringify(body) },
+  );
 export default function AttendanceWorkspace({
   admin = false,
 }: {
   admin?: boolean;
 }) {
-  const [courses, setCourses] = useState<Course[]>([]),
-    [courseId, setCourseId] = useState(""),
-    [date, setDate] = useState(today),
-    [label, setLabel] = useState("Training"),
-    [students, setStudents] = useState<Student[]>([]),
-    [sessions, setSessions] = useState<Session[]>([]),
-    [records, setRecords] = useState<RecordRow[]>([]),
-    [notes, setNotes] = useState(""),
-    [version, setVersion] = useState<string | null>(null),
-    [canWrite, setCanWrite] = useState(false),
-    [busy, setBusy] = useState(false),
-    [loading, setLoading] = useState(true),
-    [error, setError] = useState(""),
-    [message, setMessage] = useState(""),
-    [search, setSearch] = useState(""),
-    [dirty, setDirty] = useState(false),
-    [reload, setReload] = useState(0);
+  const {
+    courses,
+    courseId,
+    setCourseId,
+    date,
+    setDate,
+    label,
+    setLabel,
+    students,
+    sessions,
+    records,
+    notes,
+    setNotes,
+    version,
+    canWrite,
+    busy,
+    loading,
+    error,
+    message,
+    search,
+    setSearch,
+    dirty,
+    active,
+    visible,
+    monthly,
+    mark,
+    markAllPresent,
+    setStudentNote,
+    save,
+    retry,
+  } = useAttendance(api);
   useEffect(() => {
-    let stopped = false;
-    api("/api/course-attendance")
-      .then((data) => {
-        if (stopped) return;
-        setCourses(data.courses);
-        setCourseId(
-          data.courses.find((c: Course) => c.isActive)?.id ||
-            data.courses[0]?.id ||
-            "",
-        );
-        setCanWrite(data.canWrite);
-      })
-      .catch((e) => setError(e.message))
-      .finally(() => {
-        if (!stopped) setLoading(false);
-      });
-    return () => {
-      stopped = true;
-    };
-  }, []);
-  useEffect(() => {
-    if (!courseId) return;
-    const controller = new AbortController();
-    setLoading(true);
-    setStudents([]);
-    setSessions([]);
-    setError("");
-    setMessage("");
-    api(
-      `/api/course-attendance?courseId=${encodeURIComponent(courseId)}&date=${date}`,
-      { signal: controller.signal },
-    )
-      .then((data) => {
-        if (controller.signal.aborted) return;
-        setStudents(data.students);
-        setSessions(data.sessions);
-        setCanWrite(data.canWrite);
-      })
-      .catch((e) => {
-        if (e.name !== "AbortError") setError(e.message);
-      })
-      .finally(() => {
-        if (!controller.signal.aborted) setLoading(false);
-      });
-    return () => controller.abort();
-  }, [courseId, date, reload]);
-  useEffect(() => {
-    const session = sessions.find((s) => s.date === date && s.label === label);
-    const current = new Set(students.map((s) => s.profileId));
-    setRecords([
-      ...students.map((s) => ({
-        ...s,
-        status:
-          session?.records.find((r) => r.profileId === s.profileId)?.status ||
-          "unmarked",
-        notes:
-          session?.records.find((r) => r.profileId === s.profileId)?.notes ||
-          "",
-      })),
-      ...(session?.records.filter((r) => !current.has(r.profileId)) || []),
-    ]);
-    setNotes(session?.notes || "");
-    setVersion(session?.updatedAt || null);
-    setDirty(false);
-  }, [students, sessions, date, label]);
-  useEffect(() => {
-    const handler = (e: BeforeUnloadEvent) => {
+    const handler = (event: BeforeUnloadEvent) => {
       if (dirty) {
-        e.preventDefault();
-        e.returnValue = "";
+        event.preventDefault();
+        event.returnValue = "";
       }
     };
     window.addEventListener("beforeunload", handler);
@@ -136,84 +71,9 @@ export default function AttendanceWorkspace({
     if (!dirty || window.confirm("Discard unsaved attendance changes?"))
       action();
   }
-  const active = new Set(students.map((s) => s.profileId));
-  const visible = records.filter((r) =>
-    `${r.name} ${r.memberNumber}`.toLowerCase().includes(search.toLowerCase()),
-  );
-  const monthly = useMemo(() => {
-    const map = new Map<
-      string,
-      { student: Student; records: { status: string }[] }
-    >();
-    for (const session of sessions)
-      for (const row of session.records) {
-        if (!map.has(row.profileId))
-          map.set(row.profileId, { student: row, records: [] });
-        map.get(row.profileId)!.records.push(row);
-      }
-    return [...map.values()];
-  }, [sessions]);
-  async function save() {
-    if (records.some((r) => r.status === "unmarked")) {
-      setError("Mark each active student before saving.");
-      return;
-    }
-    setBusy(true);
-    setError("");
-    try {
-      const data = await api("/api/course-attendance", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          courseId,
-          date,
-          label,
-          notes,
-          updatedAt: version,
-          records: records.map(({ profileId, status, notes }) => ({
-            profileId,
-            status,
-            notes,
-          })),
-        }),
-      });
-      setSessions((previous) => [
-        ...previous.filter((s) => s.id !== data.session.id),
-        data.session,
-      ]);
-      setLabel(data.session.label);
-      setDirty(false);
-      setMessage("Attendance saved.");
-    } catch (e: any) {
-      setError(e.message);
-    } finally {
-      setBusy(false);
-    }
-  }
   function csv() {
-    const cell = (value: string) =>
-      '"' +
-      (/^\s*[=+@\-\t\r]/.test(value) ? "'" : "") +
-      value.replaceAll('"', '""') +
-      '"';
-    const lines = [
-      ["Date", "Session", "Student", "Member number", "Status", "Notes"],
-      ...sessions.flatMap((s) =>
-        s.records.map((r) => [
-          s.date,
-          s.label,
-          r.name,
-          r.memberNumber,
-          r.status,
-          r.notes,
-        ]),
-      ),
-    ];
     const url = URL.createObjectURL(
-      new Blob(
-        ["\uFEFF" + lines.map((row) => row.map(cell).join(",")).join("\r\n")],
-        { type: "text/csv;charset=utf-8" },
-      ),
+      new Blob([attendanceCSV(sessions)], { type: "text/csv;charset=utf-8" }),
     );
     const link = document.createElement("a");
     link.href = url;
@@ -225,7 +85,7 @@ export default function AttendanceWorkspace({
     <div className="mx-auto w-full max-w-7xl space-y-6 p-4 sm:p-6">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
-          <h1 className="text-2xl font-semibold">Course attendance</h1>
+          <h1 className="text-2xl font-semibold">{attendanceCopy.title}</h1>
           <p className="mt-2 text-sm text-muted-foreground">
             {admin
               ? "Review training attendance across partner branches."
@@ -246,11 +106,7 @@ export default function AttendanceWorkspace({
           className="rounded-xl border border-red-300 p-4 text-sm text-red-600"
         >
           {error}{" "}
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => navigate(() => setReload((r) => r + 1))}
-          >
+          <Button variant="outline" size="sm" onClick={() => navigate(retry)}>
             Reload
           </Button>
         </div>
@@ -304,38 +160,7 @@ export default function AttendanceWorkspace({
           />
         </label>
       </div>
-      <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-        {[
-          ["Sessions this month", sessions.length],
-          [
-            "Present / late",
-            sessions.reduce(
-              (n, s) =>
-                n +
-                s.records.filter((r) => ["present", "late"].includes(r.status))
-                  .length,
-              0,
-            ),
-          ],
-          [
-            "Absent",
-            sessions.reduce(
-              (n, s) =>
-                n + s.records.filter((r) => r.status === "absent").length,
-              0,
-            ),
-          ],
-          [
-            "Attendance rate",
-            `${attendanceRate(sessions.flatMap((s) => s.records)) ?? "—"}%`,
-          ],
-        ].map(([title, value]) => (
-          <div key={title} className="rounded-xl border bg-card p-4">
-            <p className="text-xs text-muted-foreground">{title}</p>
-            <p className="mt-2 text-2xl font-semibold">{value}</p>
-          </div>
-        ))}
-      </div>
+      <AttendanceSummary sessions={sessions} />
       {loading ? (
         <div role="status" className="rounded-xl border p-8 text-sm">
           Loading register…
@@ -359,23 +184,16 @@ export default function AttendanceWorkspace({
             <div className="flex flex-wrap gap-3">
               <Input
                 className="w-full sm:max-w-xs"
-                placeholder="Search name or member number"
+                placeholder={attendanceCopy.search}
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
               />
               <Button
                 variant="outline"
                 disabled={!canWrite || busy || !students.length}
-                onClick={() => {
-                  setRecords((rows) =>
-                    rows.map((r) =>
-                      active.has(r.profileId) ? { ...r, status: "present" } : r,
-                    ),
-                  );
-                  setDirty(true);
-                }}
+                onClick={markAllPresent}
               >
-                Mark all present
+                {attendanceCopy.bulk}
               </Button>
             </div>
             {!records.length ? (
@@ -404,16 +222,9 @@ export default function AttendanceWorkspace({
                       className="rounded-md border bg-background p-2 text-sm"
                       value={r.status}
                       disabled={!canWrite || busy || !active.has(r.profileId)}
-                      onChange={(e) => {
-                        setRecords((rows) =>
-                          rows.map((row) =>
-                            row.profileId === r.profileId
-                              ? { ...row, status: e.target.value }
-                              : row,
-                          ),
-                        );
-                        setDirty(true);
-                      }}
+                      onChange={(e) =>
+                        mark(r.profileId, e.target.value as AttendanceStatus)
+                      }
                     >
                       <option value="unmarked">Not marked</option>
                       {attendanceStatuses.map((status) => (
@@ -428,16 +239,9 @@ export default function AttendanceWorkspace({
                       maxLength={300}
                       value={r.notes}
                       disabled={!canWrite || busy || !active.has(r.profileId)}
-                      onChange={(e) => {
-                        setRecords((rows) =>
-                          rows.map((row) =>
-                            row.profileId === r.profileId
-                              ? { ...row, notes: e.target.value }
-                              : row,
-                          ),
-                        );
-                        setDirty(true);
-                      }}
+                      onChange={(e) =>
+                        setStudentNote(r.profileId, e.target.value)
+                      }
                     />
                   </div>
                 ))}
@@ -450,22 +254,18 @@ export default function AttendanceWorkspace({
                 value={notes}
                 maxLength={1000}
                 disabled={!canWrite || busy}
-                onChange={(e) => {
-                  setNotes(e.target.value);
-                  setDirty(true);
-                }}
+                onChange={(e) => setNotes(e.target.value)}
               />
             </label>
             <div className="flex flex-wrap items-center justify-between gap-3">
               <p className="text-xs text-muted-foreground">
-                Late counts as attended. Excused absences are excluded from the
-                attendance rate.
+                {attendanceCopy.rateHelp}
               </p>
               <Button
                 disabled={!canWrite || busy || !records.length || !label.trim()}
                 onClick={save}
               >
-                {busy ? "Saving…" : "Save attendance"}
+                {busy ? "Saving…" : attendanceCopy.save}
               </Button>
             </div>
           </section>

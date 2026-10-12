@@ -52,8 +52,9 @@
     "db:migrate:partner-domains": "tsx scripts/migrate-partner-domains.ts",
     "test:partner-domains": "node --test tests/partner-domains.test.cjs",
     "db:migrate:student-documents": "tsx scripts/migrate-student-documents.ts",
-    "test:quick-enrollment": "node --test tests/quick-enrollment.test.cjs",
+    "test:quick-enrollment": "node --test tests/quick-enrollment.test.cjs tests/quick-enrollment-extraction.test.cjs",
     "db:migrate:attendance": "tsx scripts/migrate-attendance.ts",
+    "db:migrate:application-numbers": "tsx scripts/migrate-application-numbers.ts",
     "test:attendance": "node --test tests/attendance.test.cjs"
   },
   "dependencies": {

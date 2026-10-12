@@ -1,0 +1,120 @@
+name: Partner Admin APK
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '**'
+      - '.github/workflows/partner-admin-apk.yml'
+  pull_request:
+    paths:
+      - '**'
+      - '.github/workflows/partner-admin-apk.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: partner-admin-apk-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  apk:
+    name: Build standalone Android APK
+    runs-on: ubuntu-24.04
+    timeout-minutes: 90
+    defaults:
+      run:
+        working-directory: .
+    env:
+      CI: 'true'
+      EXPO_NO_TELEMETRY: '1'
+      # Keep Kotlin compilation within the Gradle heap on smaller hosted runners.
+      GRADLE_OPTS: '-Dorg.gradle.project.kotlin.compiler.execution.strategy=in-process'
+    steps:
+      - name: Check out source
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+
+      - name: Set up Node
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7
+        with:
+          node-version: '24'
+          cache: npm
+          cache-dependency-path: package-lock.json
+
+      - name: Set up Java 17
+        uses: actions/setup-java@b6effb05e454b25005698d916606bdc6ffcbf961 # v5
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@be39fa834029ff78f1a44aa3bb0819b8fc2bd8fd # v4
+
+      - name: Install Android build tools
+        run: sdkmanager 'platform-tools' 'platforms;android-36' 'build-tools;36.0.0' 'ndk;27.1.12297006' 'cmake;3.22.1'
+
+      - name: Cache Gradle dependencies
+        uses: gradle/actions/setup-gradle@07d1f8453baaff67fb503883367f8b13e6158a54 # v6
+        with:
+          cache-provider: basic
+          cache-read-only: ${{ github.event_name == 'pull_request' }}
+
+      - name: Install mobile dependencies
+        run: npm ci
+
+      - name: Validate configured backend origin
+        run: |
+          node --input-type=module -e '
+            const { readFileSync } = await import("node:fs");
+            const config = JSON.parse(readFileSync("app.json", "utf8"));
+            const url = new URL(config.expo.extra.apiOrigin);
+            if (url.protocol !== "https:" || url.username || url.password || url.pathname !== "/" || url.search || url.hash) {
+              throw new Error("The APK backend must be an HTTPS origin without credentials, paths, or query parameters.");
+            }
+          '
+
+      - name: Check types, tests and Expo dependency compatibility
+        run: |
+          npm run typecheck
+          npm test
+          npx expo install --check
+
+      - name: Build standalone ARM64 preview APK
+        run: npm run apk
+
+      - name: Verify APK signature and create checksum
+        run: |
+          "$ANDROID_HOME/build-tools/36.0.0/apksigner" verify artifacts/kaizen-partner-admin-preview.apk
+          node --input-type=module -e '
+            import { readFileSync, writeFileSync } from "node:fs";
+            import { createHash } from "node:crypto";
+            const name = "kaizen-partner-admin-preview.apk";
+            const hash = createHash("sha256").update(readFileSync(`artifacts/${name}`)).digest("hex");
+            writeFileSync(`artifacts/${name}.sha256`, `${hash}  ${name}\n`);
+          '
+
+      - name: Upload installable APK
+        id: apk
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6
+        with:
+          name: kaizen-partner-admin-apk-${{ github.run_number }}
+          path: |
+            artifacts/kaizen-partner-admin-preview.apk
+            artifacts/kaizen-partner-admin-preview.apk.sha256
+          if-no-files-found: error
+          compression-level: 0
+          retention-days: 30
+
+      - name: Add download link to build summary
+        env:
+          APK_ARTIFACT_URL: ${{ steps.apk.outputs.artifact-url }}
+        run: |
+          node --input-type=module -e '
+            import { appendFileSync } from "node:fs";
+            appendFileSync(process.env.GITHUB_STEP_SUMMARY,
+              `## Partner Admin APK\n\n[Download APK artifact](${process.env.APK_ARTIFACT_URL})\n\nUnzip the artifact and install kaizen-partner-admin-preview.apk on an ARM64 Android phone.\n\nThis is an internal preview signed with the generated debug key. The JavaScript is bundled; Expo Go and Metro are not required. The matching website mobile-authentication changes must be deployed for live login.\n`);
+          '
