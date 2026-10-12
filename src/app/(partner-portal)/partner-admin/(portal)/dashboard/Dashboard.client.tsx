@@ -161,7 +161,8 @@ export default function Dashboard({
       href: "/api/download/partner-admin-apk",
       icon: Smartphone,
       badge: "Mobile App",
-      color: "bg-blue-50 dark:bg-blue-950/20 text-blue-600 dark:text-blue-400 border-blue-100 dark:border-blue-950",
+      color:
+        "bg-blue-50 dark:bg-blue-950/20 text-blue-600 dark:text-blue-400 border-blue-100 dark:border-blue-950",
     },
   ];
 
@@ -519,8 +520,8 @@ export default function Dashboard({
                       Current Month Collection Rate
                     </p>
                     <p className="mx-auto mt-1 max-w-[200px] text-xs text-muted-foreground">
-                      Percentage of this month's generated invoices that have
-                      been verified and paid.
+                      Percentage of this month&apos;s generated invoices that
+                      have been verified and paid.
                     </p>
                   </div>
                 </div>
