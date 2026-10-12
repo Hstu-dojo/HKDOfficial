@@ -42,6 +42,7 @@ const groups = [
         label: "Members",
         icon: "Users",
       },
+      { href:"/partner-admin/portal/attendance", label:"Attendance", icon:"UserCheck" },
     ],
   },
   {

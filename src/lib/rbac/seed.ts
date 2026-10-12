@@ -137,6 +137,9 @@ const defaultPermissions: Array<{
   
   // Report permissions
   { name: "create_report", resource: "REPORT", action: "CREATE", description: "Create new reports" },
+  { name: "read_attendance", resource: "ATTENDANCE", action: "READ", description: "View course attendance and reports" },
+  { name: "update_attendance", resource: "ATTENDANCE", action: "UPDATE", description: "Record and correct course attendance" },
+  { name: "manage_attendance", resource: "ATTENDANCE", action: "MANAGE", description: "Manage course attendance" },
   { name: "read_faq", resource: "FAQ", action: "READ", description: "Read homepage FAQs" },
   { name: "create_faq", resource: "FAQ", action: "CREATE", description: "Create homepage FAQs" },
   { name: "update_faq", resource: "FAQ", action: "UPDATE", description: "Edit and publish homepage FAQs" },
@@ -413,7 +416,7 @@ export async function seedRBACData() {
       "COURSE", "BLOG", "MEDIA", "CLASS", "EQUIPMENT", "MEMBER", "BILL", "PAYMENT",
       "GALLERY", "EVENT", "ANNOUNCEMENT", "CERTIFICATE", "REPORT",
       "ENROLLMENT", "MONTHLY_FEE", "SCHEDULE", "PROGRAM", "PROGRAM_REGISTRATION",
-      "PARTNER", "PARTNER_BILL", "ADMIN_PANEL", "EMAIL", "INSTRUCTOR", "TESTIMONIAL", "FAQ"
+      "PARTNER", "PARTNER_BILL", "ADMIN_PANEL", "EMAIL", "INSTRUCTOR", "TESTIMONIAL", "FAQ", "ATTENDANCE"
     ] as const;
 
     for (const permData of defaultPermissions) {

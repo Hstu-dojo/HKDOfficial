@@ -9,3 +9,4 @@ export * from './program-types';
 export * from './programs';
 export * from './certificates';
 export * from "./student-documents";
+export * from "./course-attendance";

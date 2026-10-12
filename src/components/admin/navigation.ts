@@ -24,6 +24,7 @@ export interface NavItem {
 }
 
 const navigation: NavItem[] = [
+  { name:"Attendance", href:"/admin/attendance", icon:ClipboardDocumentListIcon, description:"Review course registers and monthly attendance across branches" },
   {
     name: "Competition Results",
     href: "/admin/competition-results",
@@ -157,6 +158,7 @@ const groups = [
     routes: [
       "/admin/registrations",
       "/admin/students",
+      "/admin/attendance",
       "/admin/enrollments",
       "/admin/committees",
       "/admin/instructors",
