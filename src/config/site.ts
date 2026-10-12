@@ -99,12 +99,6 @@ export const mainNav = [
         items: [],
       },
       {
-        title: "Download App",
-        i18nKey: "header.downloadApp",
-        href: "/dashboard/apk-download",
-        items: [],
-      },
-      {
         title: "Developer",
         i18nKey: "header.developer",
         href: "/dev",

@@ -102,9 +102,6 @@ export default function MemberTestimonial() {
         <h1 className="text-2xl font-semibold tracking-tight sm:text-3xl">
           {t.title}
         </h1>
-        <p className="mt-2 max-w-2xl text-sm leading-relaxed text-muted-foreground">
-          {t.description}
-        </p>
       </div>
       {message && (
         <p role="status" className="rounded-xl border bg-card p-4 text-sm">

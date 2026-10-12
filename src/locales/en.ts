@@ -24,6 +24,7 @@ export default {
     about: "About",
     login: "Login",
     dashboard: "Dashboard",
+    adminPanel: "Admin Panel",
     contact: "Contact",
     docs: "Docs",
     developer: "Developer",

@@ -27,14 +27,11 @@ export const testimonialCopy = {
     reviewNote: "Admin feedback",
     loading: "Loading your testimonial…",
     error: "Unable to load or save. Please try again.",
-    demo: "Design preview · sample testimonials",
-    demoName: "Demo member",
+    emptyEyebrow: "From the dojo",
+    emptyTitle: "Your story belongs here.",
+    emptyDescription:
+      "Every student's journey is different. Share what training at Kaizen has meant to you.",
     share: "Share your experience",
-    demoComments: [
-      "The structured sessions make it easy to build confidence and keep progressing, one technique at a time.",
-      "A welcoming place to practise, learn discipline and train alongside people who support each other.",
-      "Regular training brings focus to my week. Every session is another chance to improve.",
-    ],
   },
   bn: {
     cancel: "বাতিল",
@@ -63,14 +60,11 @@ export const testimonialCopy = {
     reviewNote: "অ্যাডমিনের মতামত",
     loading: "আপনার অভিজ্ঞতা লোড হচ্ছে…",
     error: "লোড বা সংরক্ষণ করা যায়নি। আবার চেষ্টা করুন।",
-    demo: "ডিজাইনের নমুনা · পরীক্ষামূলক মতামত",
-    demoName: "নমুনা সদস্য",
+    emptyEyebrow: "ডোজোর কথা",
+    emptyTitle: "আপনার গল্প এখানে বলা হোক।",
+    emptyDescription:
+      "প্রত্যেক শিক্ষার্থীর যাত্রা আলাদা। কাইজেনে প্রশিক্ষণ আপনার কাছে কী অর্থ বহন করে, তা আমাদের জানান।",
     share: "আপনার অভিজ্ঞতা জানান",
-    demoComments: [
-      "ধাপে ধাপে প্রশিক্ষণ আত্মবিশ্বাস বাড়াতে সাহায্য করে। প্রতিটি অনুশীলনে নতুন কিছু শেখার সুযোগ পাই।",
-      "এখানে সবাই একে অপরকে উৎসাহ দেয়। অনুশীলনের পাশাপাশি শৃঙ্খলা ও সহযোগিতা শিখি।",
-      "নিয়মিত প্রশিক্ষণ আমার মনোযোগ বাড়ায়। প্রতিটি সেশন নিজেকে আরও উন্নত করার সুযোগ।",
-    ],
   },
   ne: {
     cancel: "रद्द गर्नुहोस्",
@@ -99,14 +93,11 @@ export const testimonialCopy = {
     reviewNote: "प्रशासकको प्रतिक्रिया",
     loading: "तपाईंको अनुभव लोड हुँदैछ…",
     error: "लोड वा सुरक्षित गर्न सकिएन। फेरि प्रयास गर्नुहोस्।",
-    demo: "डिजाइन नमुना · उदाहरण अनुभव",
-    demoName: "नमुना सदस्य",
+    emptyEyebrow: "डोजोबाट",
+    emptyTitle: "तपाईंको कथा यहाँ अटाउँछ।",
+    emptyDescription:
+      "हरेक विद्यार्थीको यात्रा फरक हुन्छ। काइजेनको प्रशिक्षणले तपाईंका लागि के अर्थ राख्छ, हामीसँग साझा गर्नुहोस्।",
     share: "आफ्नो अनुभव साझा गर्नुहोस्",
-    demoComments: [
-      "क्रमबद्ध प्रशिक्षणले आत्मविश्वास बढाउँछ। हरेक अभ्यासमा नयाँ सीप सिक्ने मौका पाउँछु।",
-      "यहाँ सबैले एकअर्कालाई प्रोत्साहन गर्छन्। अभ्याससँगै अनुशासन र सहकार्य सिक्छु।",
-      "नियमित प्रशिक्षणले मेरो ध्यान बढाउँछ। हरेक सत्र आफूलाई सुधार्ने अवसर हो।",
-    ],
   },
 } as const;
 export function testimonialLocale(locale: string) {

@@ -5,6 +5,8 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useSession } from "@/hooks/useSessionCompat";
 import { useAuth } from "@/context/AuthContext";
+import { useRBAC } from "@/hooks/useRBAC";
+import { adminRouteRules, canAccessAdminRoute } from "@/lib/rbac/admin-route-access";
 import { getOnboardingStatus } from "@/actions/onboarding-actions";
 import { useCurrentLocale, useI18n } from "@/locales/client";
 import { cn } from "@/lib/utils";
@@ -20,6 +22,7 @@ import {
   ArrowRightOnRectangleIcon,
   ClipboardDocumentListIcon,
   Squares2X2Icon,
+  ShieldCheckIcon,
   DevicePhoneMobileIcon
 } from "@heroicons/react/24/outline";
 import { ChevronDownIcon } from "@heroicons/react/20/solid";
@@ -27,6 +30,7 @@ import { ChevronDownIcon } from "@heroicons/react/20/solid";
 export function UserNav() {
   const { data: session, status } = useSession();
   const { signOut } = useAuth();
+  const { permissions, loading: permissionsLoading } = useRBAC();
   const router = useRouter();
   const locale = useCurrentLocale();
   const t = useI18n();
@@ -100,6 +104,9 @@ export function UserNav() {
   const userName = session.user.name ||
                    session.user.email?.split('@')[0] ||
                    'User';
+  const adminDestination = !permissionsLoading && permissions
+    ? Object.keys(adminRouteRules).find(route => canAccessAdminRoute(permissions, route))
+    : undefined;
 
   return (
     <DropdownMenu>
@@ -160,6 +167,15 @@ export function UserNav() {
             {t('header.dashboard') || 'Dashboard'}
           </Link>
         </DropdownMenuItem>
+
+        {adminDestination && (
+          <DropdownMenuItem asChild>
+            <Link href={`/${locale}${adminDestination}`} className="cursor-pointer">
+              <ShieldCheckIcon className="h-4 w-4 mr-2" />
+              {t('header.adminPanel')}
+            </Link>
+          </DropdownMenuItem>
+        )}
 
         {/* Profile */}
         <DropdownMenuItem asChild>
