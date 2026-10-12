@@ -7,7 +7,7 @@ import { PortalContent } from "@/components/portal/portal-content";
 import * as React from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
-import { LogOut } from "lucide-react";
+import { LogOut, Download, Smartphone } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 import PortalNav from "./PortalNav";
 import {
@@ -101,6 +101,22 @@ export default function PortalShell({
             </div>
           </div>
           <Button
+            asChild
+            variant="outline"
+            className="mb-2 w-full justify-start border-primary/30 bg-primary/5 text-primary transition-all duration-200 hover:border-primary hover:bg-primary/15 group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:px-2"
+          >
+            <a
+              href="/api/download/partner-admin-apk"
+              download="kaizen-partner-admin.apk"
+              title="Download Partner Admin Android App"
+            >
+              <Smartphone className="h-4 w-4 shrink-0" />
+              <span className="ml-2 truncate text-xs font-medium group-data-[collapsible=icon]:hidden">
+                Download Android App
+              </span>
+            </a>
+          </Button>
+          <Button
             variant="outline"
             className="w-full justify-start border-destructive/20 text-destructive transition-all duration-200 hover:border-destructive hover:bg-destructive hover:text-destructive-foreground group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:px-2"
             onClick={onLogout}
@@ -123,7 +139,20 @@ export default function PortalShell({
           <div className="portal-header-title">
             {partnerName || "Partner Portal"}
           </div>
-          <DarkModeSwitch className="ml-auto mr-0 shrink-0" />
+          <div className="ml-auto flex items-center gap-2">
+            <Button
+              asChild
+              variant="outline"
+              size="sm"
+              className="hidden sm:inline-flex gap-1.5 text-xs font-medium border-primary/30 text-primary hover:bg-primary/10"
+            >
+              <a href="/api/download/partner-admin-apk" download="kaizen-partner-admin.apk">
+                <Download className="h-3.5 w-3.5" />
+                Get Android App
+              </a>
+            </Button>
+            <DarkModeSwitch className="mr-0 shrink-0" />
+          </div>
         </header>
 
         {/* Main Dashboard Pane */}

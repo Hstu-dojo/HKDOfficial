@@ -20,6 +20,7 @@ import {
   ShieldCheckIcon,
   TrashIcon,
   UserPlusIcon,
+  ArrowDownTrayIcon,
 } from '@heroicons/react/24/outline'
 
 interface Partner {
@@ -355,6 +356,15 @@ export default function PartnersManagement() {
           </p>
         </div>
         <div className="flex flex-col sm:flex-row gap-2">
+          <a
+            href="/api/download/partner-admin-apk"
+            download="kaizen-partner-admin.apk"
+            className="inline-flex items-center gap-2 rounded-lg border border-primary/20 bg-primary/5 px-4 py-2 text-sm font-medium text-primary shadow-sm hover:bg-primary/15 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
+            title="Download the latest Kaizen Partner Admin Android APK"
+          >
+            <ArrowDownTrayIcon className="h-5 w-5" />
+            Download Partner App (APK)
+          </a>
           <button
             onClick={openTenantModal}
             className="inline-flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-foreground shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:border-gray-600 dark:bg-card dark:text-gray-100 dark:hover:bg-gray-700"

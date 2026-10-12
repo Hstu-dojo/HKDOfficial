@@ -23,6 +23,7 @@ import {
   Briefcase,
   ChevronRight,
   Sparkles,
+  Smartphone,
 } from "lucide-react";
 
 type ProfileResponse = {
@@ -154,6 +155,14 @@ export default function Dashboard({
       badge: "Scheduling",
       color: "bg-secondary/10 text-secondary border-secondary/20",
     },
+    {
+      title: "Download Android App",
+      description: "Direct APK install for venue staff and mobile check-in",
+      href: "/api/download/partner-admin-apk",
+      icon: Smartphone,
+      badge: "Mobile App",
+      color: "bg-blue-50 dark:bg-blue-950/20 text-blue-600 dark:text-blue-400 border-blue-100 dark:border-blue-950",
+    },
   ];
 
   return (
@@ -177,7 +186,16 @@ export default function Dashboard({
               {data.partner.location || "Branch Dojo Location Not Set"}
             </p>
           </div>
-          <div className="flex flex-row gap-2 self-start md:self-auto">
+          <div className="flex flex-row flex-wrap items-center gap-2 self-start md:self-auto">
+            <a
+              href="/api/download/partner-admin-apk"
+              download="kaizen-partner-admin.apk"
+              className="inline-flex items-center gap-1.5 rounded-xl border border-primary/30 bg-primary/10 px-3.5 py-2 text-xs font-semibold text-primary shadow-sm transition-all hover:bg-primary/20"
+              title="Download standalone Android APK"
+            >
+              <Smartphone className="h-4 w-4" />
+              Download Android App
+            </a>
             <span className="flex items-center gap-1.5 rounded-xl border border-border bg-background px-3 py-2 text-xs text-muted-foreground">
               <Calendar className="h-4 w-4 text-primary" />
               {new Date().toLocaleDateString(undefined, {

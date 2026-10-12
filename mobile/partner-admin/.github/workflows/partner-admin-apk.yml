@@ -92,6 +92,16 @@ jobs:
             writeFileSync(`artifacts/${name}.sha256`, `${hash}  ${name}\n`);
           '
 
+      - name: Upload standalone APK directly to Cloudflare R2
+        env:
+          CLOUDFLARE_R2_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_R2_ACCOUNT_ID }}
+          CLOUDFLARE_R2_ACCESS_KEY_ID: ${{ secrets.CLOUDFLARE_R2_ACCESS_KEY_ID }}
+          CLOUDFLARE_R2_SECRET_ACCESS_KEY: ${{ secrets.CLOUDFLARE_R2_SECRET_ACCESS_KEY }}
+          CLOUDFLARE_R2_BUCKET_NAME: ${{ secrets.CLOUDFLARE_R2_BUCKET_NAME || 'hstuma' }}
+          CLOUDFLARE_R2_PUBLIC_URL: ${{ secrets.CLOUDFLARE_R2_PUBLIC_URL || 'https://storage.hstuma.com' }}
+          GITHUB_RUN_NUMBER: ${{ github.run_number }}
+        run: node scripts/upload-apk-r2.mjs
+
       - name: Upload installable APK
         id: apk
         uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6

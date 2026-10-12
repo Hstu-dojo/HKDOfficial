@@ -18,7 +18,7 @@ import {
 } from "@/components/ui/sidebar";
 import { usePathname } from "next/navigation";
 import { useRBAC } from "@/hooks/useRBAC";
-import { ArrowLeftIcon } from "@heroicons/react/24/outline";
+import { ArrowLeftIcon, DevicePhoneMobileIcon, ArrowDownTrayIcon } from "@heroicons/react/24/outline";
 import {
   getVisibleAdminNavigation,
   isAdminNavigationActive,
@@ -104,6 +104,22 @@ export function AdminSidebar() {
       </SidebarContent>
       <SidebarFooter className="border-t p-2">
         <SidebarMenu>
+          <SidebarMenuItem>
+            <SidebarMenuButton
+              asChild
+              tooltip="Download Partner Admin Android App (APK)"
+              className="portal-nav-link text-primary hover:text-primary"
+            >
+              <a
+                href="/api/download/partner-admin-apk"
+                download="kaizen-partner-admin.apk"
+                title="Download Partner Admin Android App (APK)"
+              >
+                <DevicePhoneMobileIcon className="h-4 w-4 shrink-0" />
+                <span>Partner Admin App (APK)</span>
+              </a>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
           <SidebarMenuItem>
             <SidebarMenuButton
               asChild

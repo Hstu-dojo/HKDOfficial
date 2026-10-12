@@ -16,7 +16,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuItem,
 } from "@/components/ui/dropdown-menu";
-import { User, LogOut, ArrowUpRight } from "lucide-react";
+import { User, LogOut, ArrowUpRight, Smartphone } from "lucide-react";
 import Link from "next/link";
 
 export function AdminHeader() {
@@ -33,6 +33,21 @@ export function AdminHeader() {
       <span className="portal-header-title capitalize">{title}</span>
       <div className="ml-auto flex shrink-0 items-center gap-2">
         <DarkModeSwitch className="mr-0" />
+        <Button
+          asChild
+          variant="outline"
+          size="sm"
+          className="hidden md:inline-flex gap-1.5 border-primary/30 text-primary hover:bg-primary/10"
+        >
+          <a
+            href="/api/download/partner-admin-apk"
+            download="kaizen-partner-admin.apk"
+            title="Download the latest Kaizen Partner Admin Android APK"
+          >
+            <Smartphone className="h-3.5 w-3.5" />
+            Partner App (APK)
+          </a>
+        </Button>
         <Button
           asChild
           variant="outline"

@@ -9,6 +9,7 @@ import {
   PhotoIcon,
   ArrowUpRightIcon,
   ShieldCheckIcon,
+  DevicePhoneMobileIcon,
 } from "@heroicons/react/24/outline";
 import Link from "next/link";
 import { getVisibleAdminNavigation } from "./navigation";
@@ -130,13 +131,26 @@ export default function AdminDashboard({ dashboardData }: AdminDashboardProps) {
   return (
     <div className="portal-page space-y-6">
       {/* Header */}
-      <div className="portal-overview-hero">
-        <h1 className="text-3xl font-bold text-foreground dark:text-gray-100">
-          Welcome back, {session?.user?.name || "Admin"}!
-        </h1>
-        <p className="mt-2 text-muted-foreground dark:text-gray-400">
-          Manage your academy using the sections below.
-        </p>
+      <div className="portal-overview-hero flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+        <div>
+          <h1 className="text-3xl font-bold text-foreground dark:text-gray-100">
+            Welcome back, {session?.user?.name || "Admin"}!
+          </h1>
+          <p className="mt-2 text-muted-foreground dark:text-gray-400">
+            Manage your academy using the sections below.
+          </p>
+        </div>
+        <div className="flex items-center gap-2 self-start md:self-auto">
+          <a
+            href="/api/download/partner-admin-apk"
+            download="kaizen-partner-admin.apk"
+            className="inline-flex items-center gap-2 rounded-xl border border-primary/30 bg-primary/10 px-4 py-2.5 text-xs font-semibold text-primary shadow-sm hover:bg-primary/20 transition-all"
+            title="Download the latest Kaizen Partner Admin Android APK"
+          >
+            <DevicePhoneMobileIcon className="h-4 w-4" />
+            Download Partner App (APK)
+          </a>
+        </div>
       </div>
 
       {/* Stats Grid */}
