@@ -1,3 +1,4 @@
+import { organizationOrigin } from "@/lib/org/domain-server";
 import { NextResponse } from "next/server";
 import { requirePartnerAdminUser } from "@/lib/partner-admin/auth";
 import { db } from "@/lib/connect-db";
@@ -18,7 +19,7 @@ export async function GET() {
     });
     return NextResponse.json({
       settings: normalizePageSettings(settings),
-      publicUrl: `https://${user.partnerSlug}.${process.env.TENANT_BASE_DOMAIN || "p.hstuma.com"}/`,
+      publicUrl: `${await organizationOrigin(user.partnerSlug)}/`,
     });
   } catch {
     console.error("[PartnerPortal] Page settings unavailable");

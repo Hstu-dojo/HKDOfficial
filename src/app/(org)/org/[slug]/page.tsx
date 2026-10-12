@@ -2,7 +2,7 @@ import { pageMetadata, noIndex, siteOrigin, jsonLd } from "@/lib/seo/site";
 import { notFound } from "next/navigation";
 import { headers } from "next/headers";
 import { getOrgIdentity, getOrgContent } from "@/lib/org/server";
-import { tenantFromHost } from "@/lib/org/host";
+import { resolveTenantHost, organizationOrigin } from "@/lib/org/domain-server";
 import { tenantPageLinks } from "@/lib/org/settings";
 import { createClient } from "@/lib/supabase/server";
 import { getPartnerIdForSupabaseUser } from "@/lib/partner-assignment";
@@ -21,7 +21,7 @@ export const dynamic = "force-dynamic";
 type Props = { params: Promise<{ slug: string }> };
 async function identity(slug: string) {
   const host = await headers();
-  const tenant = tenantFromHost(host.get("host"));
+  const tenant = await resolveTenantHost(host.get("host"));
   if (tenant && tenant !== slug) return null;
   return getOrgIdentity(slug);
 }
@@ -29,8 +29,9 @@ export async function generateMetadata({ params }: Props) {
   const { slug } = await params;
   const data = await identity(slug);
   if (!data) return { title: "Branch not found", robots: noIndex };
+  const origin = await organizationOrigin(slug);
   const metadata = pageMetadata({
-    path: `https://${slug}.${process.env.TENANT_BASE_DOMAIN || "p.hstuma.com"}/`,
+    path: `${origin}/`,
     title: data.partner.name,
     description:
       data.settings.heroTagline ||
@@ -50,6 +51,7 @@ export default async function OrgPage({ params }: Props) {
   const data = await identity(slug);
   if (!data) notFound();
   const { partner, settings: s } = data;
+  const origin = await organizationOrigin(slug);
   const supabase = await createClient();
   const {
     data: { user: viewer },
@@ -63,7 +65,7 @@ export default async function OrgPage({ params }: Props) {
       content.courses.length,
       content.schedules.length,
     );
-  const tenant = tenantFromHost((await headers()).get("host")),
+  const tenant = await resolveTenantHost((await headers()).get("host")),
     homeHref = tenant ? "/" : `/org/${encodeURIComponent(slug)}`;
   // Shared academy course pages live on the main site; authentication remains on this tenant.
   const mainOrigin = siteOrigin();
@@ -85,23 +87,20 @@ export default async function OrgPage({ params }: Props) {
               {
                 "@type": "Organization",
                 name: partner.name,
-                url: `https://${slug}.${process.env.TENANT_BASE_DOMAIN || "p.hstuma.com"}/`,
+                url: `${origin}/`,
                 description: s.aboutText || partner.description || undefined,
                 email: partner.contactEmail || undefined,
                 telephone: partner.contactPhone || undefined,
                 ...(s.logoUrl
                   ? {
-                      logo: new URL(
-                        s.logoUrl,
-                        `https://${slug}.${process.env.TENANT_BASE_DOMAIN || "p.hstuma.com"}/`,
-                      ).href,
+                      logo: new URL(s.logoUrl, `${origin}/`).href,
                     }
                   : {}),
               },
               {
                 "@type": "WebSite",
                 name: partner.name,
-                url: `https://${slug}.${process.env.TENANT_BASE_DOMAIN || "p.hstuma.com"}/`,
+                url: `${origin}/`,
               },
             ],
           }),

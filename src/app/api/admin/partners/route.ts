@@ -11,9 +11,9 @@ import { NextResponse } from 'next/server'
 import { protectApiRoute } from '@/lib/rbac/middleware'
 import type { RBACContext } from '@/lib/rbac/types'
 import { db } from '@/lib/connect-db'
-import { partners } from '@/db/schemas/partner'
+import { partners, partnerDomains } from '@/db/schemas/partner'
 import { members } from '@/db/schemas/karate/members'
-import { eq, desc, count, and } from 'drizzle-orm'
+import { eq, desc, count, and, asc } from 'drizzle-orm'
 import { partnerAdmins } from '@/db/schemas/partner'
 import { hash } from '@/lib/hash'
 
@@ -23,6 +23,8 @@ export const GET = protectApiRoute('PARTNER', 'READ', async (request: Request, c
       .select()
       .from(partners)
       .orderBy(desc(partners.createdAt))
+
+    const domains = await db.select({ domain: partnerDomains.domain, partnerId: partnerDomains.partnerId }).from(partnerDomains).orderBy(asc(partnerDomains.createdAt), asc(partnerDomains.domain))
 
     // Get member counts for each partner
     const partnersWithStats = await Promise.all(
@@ -34,6 +36,7 @@ export const GET = protectApiRoute('PARTNER', 'READ', async (request: Request, c
 
         return {
           ...partner,
+          publicUrl: `https://${domains.find(domain => domain.partnerId === partner.id)?.domain || `${partner.slug}.${process.env.TENANT_BASE_DOMAIN || "p.hstuma.com"}`}/`,
           memberCount: memberCount?.total || 0,
         }
       })

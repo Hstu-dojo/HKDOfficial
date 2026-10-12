@@ -1,18 +1,24 @@
+import { isPlatformHost } from "@/lib/org/domains";
 /**
  * Public Partners API
  *
  * GET /api/partners — List all active partner venues (used by onboarding form & homepage branches)
  */
-import { tenantFromHost } from '@/lib/org/host'
-import { NextResponse } from 'next/server'
-import { db } from '@/lib/connect-db'
-import { partners, partnerPageSettings } from '@/db/schemas/partner'
-import { members, courses } from '@/db/schema'
-import { eq, asc, and, count, inArray } from 'drizzle-orm'
+import { resolveTenantHost } from "@/lib/org/domain-server";
+import { NextResponse } from "next/server";
+import { db } from "@/lib/connect-db";
+import { partners, partnerPageSettings } from "@/db/schemas/partner";
+import { members, courses } from "@/db/schema";
+import { eq, asc, and, count, inArray } from "drizzle-orm";
 
 export async function GET(request: Request) {
-  const tenant = tenantFromHost(request.headers.get('host'))
   try {
+    const tenant = await resolveTenantHost(request.headers.get("host"));
+    if (!tenant && !isPlatformHost(request.headers.get("host")))
+      return NextResponse.json(
+        { error: "Organization not found" },
+        { status: 404 },
+      );
     const activePartners = await db
       .select({
         id: partners.id,
@@ -27,44 +33,64 @@ export async function GET(request: Request) {
         yearEstablished: partnerPageSettings.yearEstablished,
       })
       .from(partners)
-      .leftJoin(partnerPageSettings, eq(partnerPageSettings.partnerId, partners.id))
-      .where(and(eq(partners.isActive, true), tenant ? eq(partners.slug, tenant) : undefined))
-      .orderBy(asc(partners.name))
+      .leftJoin(
+        partnerPageSettings,
+        eq(partnerPageSettings.partnerId, partners.id),
+      )
+      .where(
+        and(
+          eq(partners.isActive, true),
+          tenant ? eq(partners.slug, tenant) : undefined,
+        ),
+      )
+      .orderBy(asc(partners.name));
 
     // Get member and course counts for each partner
-    const partnerIds = activePartners.map(p => p.id)
+    const partnerIds = activePartners.map((p) => p.id);
 
-    const memberCounts = partnerIds.length > 0
-      ? await db
-          .select({ partnerId: members.partnerId, count: count() })
-          .from(members)
-          .where(and(eq(members.isActive, true), inArray(members.partnerId, partnerIds)))
-          .groupBy(members.partnerId)
-      : []
+    const memberCounts =
+      partnerIds.length > 0
+        ? await db
+            .select({ partnerId: members.partnerId, count: count() })
+            .from(members)
+            .where(
+              and(
+                eq(members.isActive, true),
+                inArray(members.partnerId, partnerIds),
+              ),
+            )
+            .groupBy(members.partnerId)
+        : [];
 
-    const courseCounts = partnerIds.length > 0
-      ? await db
-          .select({ partnerId: courses.partnerId, count: count() })
-          .from(courses)
-          .where(and(eq(courses.isActive, true), inArray(courses.partnerId, partnerIds)))
-          .groupBy(courses.partnerId)
-      : []
+    const courseCounts =
+      partnerIds.length > 0
+        ? await db
+            .select({ partnerId: courses.partnerId, count: count() })
+            .from(courses)
+            .where(
+              and(
+                eq(courses.isActive, true),
+                inArray(courses.partnerId, partnerIds),
+              ),
+            )
+            .groupBy(courses.partnerId)
+        : [];
 
-    const memberMap = new Map(memberCounts.map(m => [m.partnerId, m.count]))
-    const courseMap = new Map(courseCounts.map(c => [c.partnerId, c.count]))
+    const memberMap = new Map(memberCounts.map((m) => [m.partnerId, m.count]));
+    const courseMap = new Map(courseCounts.map((c) => [c.partnerId, c.count]));
 
-    const enriched = activePartners.map(p => ({
+    const enriched = activePartners.map((p) => ({
       ...p,
       memberCount: memberMap.get(p.id) ?? 0,
       courseCount: courseMap.get(p.id) ?? 0,
-    }))
+    }));
 
-    return NextResponse.json(enriched)
+    return NextResponse.json(enriched);
   } catch (err) {
-    console.error('[Partners API] GET error:', err)
+    console.error("[Partners API] GET error:", err);
     return NextResponse.json(
-      { error: 'Failed to fetch partners' },
-      { status: 500 }
-    )
+      { error: "Failed to fetch partners" },
+      { status: 500 },
+    );
   }
 }

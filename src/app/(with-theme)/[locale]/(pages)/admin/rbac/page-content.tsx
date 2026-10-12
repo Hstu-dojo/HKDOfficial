@@ -1,5 +1,6 @@
 "use client";
 
+import RoleUsers from "./components/RoleUsers";
 import { useState } from "react";
 import RolesPage from "./RolesPage";
 import PermissionsPage from "./PermissionsPage";
@@ -7,16 +8,43 @@ import PermissionMatrix from "./components/PermissionMatrix";
 import UserRolesManagement from "./components/UserRolesManagement";
 import RolePermissionsManagement from "./components/RolePermissionsManagement";
 
-type TabType = "matrix" | "user-roles" | "role-permissions" | "permissions" | "roles";
+type TabType =
+  | "role-users"
+  | "matrix"
+  | "user-roles"
+  | "role-permissions"
+  | "permissions"
+  | "roles";
 
 export default function RBACDashboardPage() {
   const [activeTab, setActiveTab] = useState<TabType>("matrix");
 
   const tabs: { id: TabType; label: string; description: string }[] = [
-    { id: "matrix", label: "Permission Matrix", description: "Visual overview of all role permissions" },
-    { id: "user-roles", label: "User Roles", description: "Assign roles to users" },
-    { id: "role-permissions", label: "Role Permissions", description: "Manage permissions per role" },
-    { id: "permissions", label: "Permissions", description: "Create and manage permissions" },
+    {
+      id: "matrix",
+      label: "Permission Matrix",
+      description: "Visual overview of all role permissions",
+    },
+    {
+      id: "role-users",
+      label: "Users by Role",
+      description: "Find members assigned to a role",
+    },
+    {
+      id: "user-roles",
+      label: "User Roles",
+      description: "Assign roles to users",
+    },
+    {
+      id: "role-permissions",
+      label: "Role Permissions",
+      description: "Manage permissions per role",
+    },
+    {
+      id: "permissions",
+      label: "Permissions",
+      description: "Create and manage permissions",
+    },
     { id: "roles", label: "Roles", description: "View and manage roles" },
   ];
 
@@ -24,15 +52,15 @@ export default function RBACDashboardPage() {
     <div className="portal-page space-y-6">
       <div className="shadow rounded-lg border bg-white dark:bg-card">
         <div className="overflow-x-auto">
-          <div className="flex gap-2 p-2 min-w-max">
+          <div className="flex min-w-max gap-2 p-2">
             {tabs.map((tab) => (
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
-                className={`py-2 px-4 font-medium rounded-lg transition-colors whitespace-nowrap ${
+                className={`whitespace-nowrap rounded-lg px-4 py-2 font-medium transition-colors ${
                   activeTab === tab.id
                     ? "bg-primary text-primary-foreground"
-                    : "bg-muted dark:bg-background text-muted-foreground dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700"
+                    : "bg-muted text-muted-foreground hover:bg-gray-200 dark:bg-background dark:text-gray-300 dark:hover:bg-gray-700"
                 }`}
                 title={tab.description}
               >
@@ -44,6 +72,7 @@ export default function RBACDashboardPage() {
       </div>
 
       <div>
+        {activeTab === "role-users" && <RoleUsers />}
         {activeTab === "matrix" && <PermissionMatrix />}
         {activeTab === "user-roles" && <UserRolesManagement />}
         {activeTab === "role-permissions" && <RolePermissionsManagement />}

@@ -2,11 +2,9 @@
 
 import { useState, useEffect } from "react";
 import {
-  CheckIcon,
   XMarkIcon,
   ArrowPathIcon,
   ShieldCheckIcon,
-  CheckCircleIcon,
 } from "@heroicons/react/24/outline";
 import { CheckCircleIcon as CheckCircleSolid } from "@heroicons/react/24/solid";
 import { Button } from "@/components/ui/button";
@@ -38,24 +36,25 @@ interface MatrixData {
   totalPermissions: number;
 }
 
-const actionColors: Record<string, string> = {
-  CREATE: "bg-green-500",
-  READ: "bg-blue-500",
-  UPDATE: "bg-yellow-500",
-  DELETE: "bg-red-500",
-  MANAGE: "bg-purple-500",
-  APPROVE: "bg-indigo-500",
-  VERIFY: "bg-teal-500",
-};
-
 const actionLabels: Record<string, string> = {
-  CREATE: "C",
-  READ: "R",
-  UPDATE: "U",
-  DELETE: "D",
-  MANAGE: "M",
-  APPROVE: "A",
-  VERIFY: "V",
+  CREATE: "Create",
+  READ: "View",
+  UPDATE: "Edit",
+  DELETE: "Delete",
+  MANAGE: "Full access",
+  APPROVE: "Approve",
+  VERIFY: "Verify",
+  ACCESS: "Access",
+};
+const actionDescriptions: Record<string, string> = {
+  CREATE: "Add new records",
+  READ: "View records",
+  UPDATE: "Edit existing records",
+  DELETE: "Delete records",
+  MANAGE: "Includes every action for this resource",
+  APPROVE: "Approve submissions",
+  VERIFY: "Verify records or payments",
+  ACCESS: "Enter this area",
 };
 
 export default function PermissionMatrix() {
@@ -92,7 +91,11 @@ export default function PermissionMatrix() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  async function togglePermission(roleId: string, permissionId: string, hasPermission: boolean) {
+  async function togglePermission(
+    roleId: string,
+    permissionId: string,
+    hasPermission: boolean,
+  ) {
     const key = `${roleId}-${permissionId}`;
     setUpdating(key);
 
@@ -118,15 +121,23 @@ export default function PermissionMatrix() {
             if (hasPermission) {
               return {
                 ...role,
-                permissionIds: role.permissionIds.filter((id) => id !== permissionId),
-                permissions: role.permissions.filter((p) => p.id !== permissionId),
+                permissionIds: role.permissionIds.filter(
+                  (id) => id !== permissionId,
+                ),
+                permissions: role.permissions.filter(
+                  (p) => p.id !== permissionId,
+                ),
               };
             } else {
-              const permission = prev.permissions.find((p) => p.id === permissionId);
+              const permission = prev.permissions.find(
+                (p) => p.id === permissionId,
+              );
               return {
                 ...role,
                 permissionIds: [...role.permissionIds, permissionId],
-                permissions: permission ? [...role.permissions, permission] : role.permissions,
+                permissions: permission
+                  ? [...role.permissions, permission]
+                  : role.permissions,
               };
             }
           }),
@@ -135,7 +146,9 @@ export default function PermissionMatrix() {
 
       toast({
         title: "Success",
-        description: hasPermission ? "Permission removed" : "Permission granted",
+        description: hasPermission
+          ? "Permission removed"
+          : "Permission granted",
       });
     } catch (err: any) {
       toast({
@@ -151,7 +164,11 @@ export default function PermissionMatrix() {
   async function grantAllPermissions(roleId: string, roleName: string) {
     if (!matrixData) return;
 
-    if (!confirm(`Grant ALL permissions to ${roleName}? This will give this role full access.`)) {
+    if (
+      !confirm(
+        `Grant ALL permissions to ${roleName}? This will give this role full access.`,
+      )
+    ) {
       return;
     }
 
@@ -163,7 +180,7 @@ export default function PermissionMatrix() {
     if (!role) return;
 
     const missingPermissions = matrixData.permissions.filter(
-      (p) => !role.permissionIds.includes(p.id)
+      (p) => !role.permissionIds.includes(p.id),
     );
 
     for (const permission of missingPermissions) {
@@ -192,16 +209,21 @@ export default function PermissionMatrix() {
   if (loading) {
     return (
       <div className="flex items-center justify-center py-12">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+        <div className="h-8 w-8 animate-spin rounded-full border-b-2 border-blue-600"></div>
       </div>
     );
   }
 
   if (error || !matrixData) {
     return (
-      <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-400 px-4 py-3 rounded-lg">
+      <div className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-red-700 dark:border-red-800 dark:bg-red-900/20 dark:text-red-400">
         {error || "No data available"}
-        <Button variant="outline" size="sm" className="ml-4" onClick={fetchMatrix}>
+        <Button
+          variant="outline"
+          size="sm"
+          className="ml-4"
+          onClick={fetchMatrix}
+        >
           Retry
         </Button>
       </div>
@@ -215,34 +237,49 @@ export default function PermissionMatrix() {
   return (
     <div className="portal-page space-y-6">
       {/* Header */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div className="flex flex-col justify-between gap-4 md:flex-row md:items-center">
         <div>
-          <h2 className="text-xl font-semibold flex items-center gap-2">
-            <ShieldCheckIcon className="h-6 w-6 text-green-600 dark:text-green-400" />
+          <h2 className="flex items-center gap-2 text-xl font-semibold">
+            <ShieldCheckIcon className="text-green-600 dark:text-green-400 h-6 w-6" />
             Role-Permission Matrix
           </h2>
           <p className="text-sm text-muted-foreground dark:text-gray-400">
-            {matrixData.totalRoles} roles × {matrixData.totalPermissions} permissions
+            {matrixData.totalRoles} roles × {matrixData.totalPermissions}{" "}
+            permissions
           </p>
         </div>
         <div className="flex gap-2">
-          <Button variant="outline" size="sm" onClick={fetchMatrix} disabled={loading}>
-            <ArrowPathIcon className={`h-4 w-4 mr-2 ${loading ? "animate-spin" : ""}`} />
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={fetchMatrix}
+            disabled={loading}
+          >
+            <ArrowPathIcon
+              className={`mr-2 h-4 w-4 ${loading ? "animate-spin" : ""}`}
+            />
             Refresh
           </Button>
-
         </div>
       </div>
 
-      {/* Legend */}
-      <div className="flex flex-wrap items-center gap-4 p-3 bg-muted dark:bg-card/50 rounded-lg">
-        <span className="text-sm font-medium">Actions:</span>
-        {Object.entries(actionColors).map(([action, color]) => (
-          <div key={action} className="flex items-center gap-1">
-            <div className={`w-4 h-4 rounded ${color}`}></div>
-            <span className="text-xs">{action}</span>
-          </div>
-        ))}
+      <div className="space-y-2 rounded-xl border bg-muted/40 p-4 text-sm">
+        <p>
+          Each column is an action for the resource above it. Click a permission
+          to grant or remove it.
+        </p>
+        <div className="flex flex-wrap items-center gap-x-5 gap-y-2 text-muted-foreground">
+          <span className="inline-flex items-center gap-2">
+            <CheckCircleSolid className="h-4 w-4 text-primary" /> Granted
+          </span>
+          <span className="inline-flex items-center gap-2">
+            <XMarkIcon className="h-4 w-4" /> Not assigned
+          </span>
+          <span>
+            <strong className="font-medium text-foreground">Full access</strong>{" "}
+            includes every action for that resource.
+          </span>
+        </div>
       </div>
 
       {/* Resource Filter */}
@@ -267,11 +304,15 @@ export default function PermissionMatrix() {
       </div>
 
       {/* Matrix Table */}
-      <div className="overflow-x-auto border rounded-lg">
+      <div className="overflow-x-auto rounded-lg border">
         <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
           <thead className="bg-muted dark:bg-card">
             <tr>
-              <th className="sticky left-0 z-10 bg-muted dark:bg-card px-4 py-3 text-left text-xs font-medium text-muted-foreground dark:text-gray-400 uppercase tracking-wider min-w-[200px]">
+              <th
+                rowSpan={2}
+                scope="col"
+                className="sticky left-0 z-10 min-w-[200px] bg-muted px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted-foreground dark:bg-card dark:text-gray-400"
+              >
                 Role
               </th>
               {filteredResources.map((resource) => {
@@ -280,40 +321,57 @@ export default function PermissionMatrix() {
                   <th
                     key={resource}
                     colSpan={perms.length}
-                    className="px-2 py-3 text-center text-xs font-medium text-muted-foreground dark:text-gray-400 uppercase tracking-wider border-l border-border dark:border-border"
+                    scope="colgroup"
+                    className="border-l border-border px-2 py-3 text-center text-xs font-medium uppercase tracking-wider text-muted-foreground dark:border-border dark:text-gray-400"
                   >
-                    {resource}
-                    <div className="flex justify-center gap-1 mt-1">
-                      {perms.map((p) => (
-                        <span
-                          key={p.id}
-                          className={`w-5 h-5 rounded text-white text-[10px] flex items-center justify-center ${actionColors[p.action] || "bg-gray-500"}`}
-                          title={p.action}
-                        >
-                          {actionLabels[p.action] || p.action[0]}
-                        </span>
-                      ))}
-                    </div>
+                    {resource.replace(/_/g, " ")}
                   </th>
                 );
               })}
-              <th className="px-4 py-3 text-center text-xs font-medium text-muted-foreground dark:text-gray-400 uppercase tracking-wider">
+              <th
+                rowSpan={2}
+                scope="col"
+                className="px-4 py-3 text-center text-xs font-medium uppercase tracking-wider text-muted-foreground dark:text-gray-400"
+              >
                 Actions
               </th>
             </tr>
+            <tr>
+              {filteredResources.flatMap((resource) =>
+                (matrixData.permissionsByResource[resource] || []).map(
+                  (permission) => (
+                    <th
+                      key={permission.id}
+                      scope="col"
+                      className="min-w-[88px] border-l border-border px-3 py-3 text-center text-xs font-semibold text-foreground"
+                      title={
+                        actionDescriptions[permission.action] ||
+                        permission.description ||
+                        permission.action
+                      }
+                    >
+                      {actionLabels[permission.action] || permission.action}
+                    </th>
+                  ),
+                ),
+              )}
+            </tr>
           </thead>
-          <tbody className="bg-white dark:bg-card divide-y divide-gray-200 dark:divide-gray-700">
+          <tbody className="divide-y divide-gray-200 bg-white dark:divide-gray-700 dark:bg-card">
             {matrixData.roles
               .filter((r) => r.isActive)
               .map((role) => (
-                <tr key={role.id} className="hover:bg-gray-50 dark:hover:bg-gray-700">
-                  <td className="sticky left-0 z-10 bg-white dark:bg-card px-4 py-3 whitespace-nowrap border-r border-border dark:border-border">
+                <tr
+                  key={role.id}
+                  className="hover:bg-gray-50 dark:hover:bg-gray-700"
+                >
+                  <td className="sticky left-0 z-10 whitespace-nowrap border-r border-border bg-white px-4 py-3 dark:border-border dark:bg-card">
                     <div className="flex items-center gap-2">
                       <ShieldCheckIcon
                         className={`h-5 w-5 ${role.name === "SUPER_ADMIN" ? "text-yellow-500" : "text-green-600 dark:text-green-400"}`}
                       />
                       <div>
-                        <div className="font-medium text-sm">{role.name}</div>
+                        <div className="text-sm font-medium">{role.name}</div>
                         <div className="text-xs text-muted-foreground dark:text-gray-400">
                           {role.permissionIds.length} perms
                         </div>
@@ -321,34 +379,40 @@ export default function PermissionMatrix() {
                     </div>
                   </td>
                   {filteredResources.map((resource) => {
-                    const perms = matrixData.permissionsByResource[resource] || [];
+                    const perms =
+                      matrixData.permissionsByResource[resource] || [];
                     return perms.map((permission) => {
-                      const hasPermission = role.permissionIds.includes(permission.id);
-                      const isUpdating = updating === `${role.id}-${permission.id}`;
+                      const hasPermission = role.permissionIds.includes(
+                        permission.id,
+                      );
+                      const isUpdating =
+                        updating === `${role.id}-${permission.id}`;
 
                       return (
                         <td
                           key={permission.id}
-                          className="px-1 py-2 text-center border-l border-gray-100 dark:border-gray-800"
+                          className="border-l border-gray-100 px-1 py-2 text-center dark:border-gray-800"
                         >
                           <button
-                            onClick={() => togglePermission(role.id, permission.id, hasPermission)}
-                            disabled={isUpdating || updating === `all-${role.id}`}
-                            className={`w-6 h-6 rounded flex items-center justify-center transition-all ${
-                              isUpdating
-                                ? "bg-gray-200 dark:bg-gray-700"
-                                : hasPermission
-                                ? "bg-green-100 dark:bg-green-900/30 hover:bg-green-200 dark:hover:bg-green-800/50"
-                                : "bg-muted dark:bg-gray-700 dark:bg-card hover:bg-gray-200 dark:hover:bg-gray-600 dark:hover:bg-gray-700"
-                            }`}
+                            onClick={() =>
+                              togglePermission(
+                                role.id,
+                                permission.id,
+                                hasPermission,
+                              )
+                            }
+                            disabled={updating !== null}
+                            aria-pressed={hasPermission}
+                            aria-label={`${role.name}: ${resource.replace(/_/g, " ")} — ${actionLabels[permission.action] || permission.action}, ${hasPermission ? "granted; click to remove" : "not assigned; click to grant"}`}
+                            className={`mx-auto flex h-10 w-10 items-center justify-center rounded-lg border transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-wait disabled:opacity-60 ${hasPermission ? "border-primary/20 bg-primary/10 text-primary hover:bg-primary/20" : "border-border bg-background text-muted-foreground hover:bg-muted"}`}
                             title={`${hasPermission ? "Remove" : "Grant"} ${permission.name}`}
                           >
                             {isUpdating ? (
                               <ArrowPathIcon className="h-4 w-4 animate-spin text-muted-foreground dark:text-gray-400" />
                             ) : hasPermission ? (
-                              <CheckCircleSolid className="h-4 w-4 text-green-600 dark:text-green-400" />
+                              <CheckCircleSolid className="h-5 w-5 text-primary" />
                             ) : (
-                              <XMarkIcon className="h-4 w-4 text-gray-400 dark:text-gray-500" />
+                              <XMarkIcon className="h-5 w-5 text-muted-foreground" />
                             )}
                           </button>
                         </td>
@@ -361,8 +425,9 @@ export default function PermissionMatrix() {
                       size="sm"
                       onClick={() => grantAllPermissions(role.id, role.name)}
                       disabled={
-                        updating === `all-${role.id}` ||
-                        role.permissionIds.length === matrixData.totalPermissions
+                        updating !== null ||
+                        role.permissionIds.length ===
+                          matrixData.totalPermissions
                       }
                       className="text-xs"
                     >
@@ -380,15 +445,15 @@ export default function PermissionMatrix() {
       </div>
 
       {/* Role Summary Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
         {matrixData.roles
           .filter((r) => r.isActive)
           .map((role) => (
             <div
               key={role.id}
-              className="p-4 border rounded-lg bg-white dark:bg-card"
+              className="rounded-lg border bg-white p-4 dark:bg-card"
             >
-              <div className="flex items-center justify-between mb-3">
+              <div className="mb-3 flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <ShieldCheckIcon
                     className={`h-5 w-5 ${role.name === "SUPER_ADMIN" ? "text-yellow-500" : "text-green-600 dark:text-green-400"}`}
@@ -400,20 +465,23 @@ export default function PermissionMatrix() {
                 </span>
               </div>
               {role.description && (
-                <p className="text-xs text-muted-foreground dark:text-gray-400 mb-3">
+                <p className="mb-3 text-xs text-muted-foreground dark:text-gray-400">
                   {role.description}
                 </p>
               )}
               <div className="flex flex-wrap gap-1">
                 {Object.entries(
-                  role.permissions.reduce((acc, p) => {
-                    acc[p.resource] = (acc[p.resource] || 0) + 1;
-                    return acc;
-                  }, {} as Record<string, number>)
+                  role.permissions.reduce(
+                    (acc, p) => {
+                      acc[p.resource] = (acc[p.resource] || 0) + 1;
+                      return acc;
+                    },
+                    {} as Record<string, number>,
+                  ),
                 ).map(([resource, count]) => (
                   <span
                     key={resource}
-                    className="text-xs px-2 py-0.5 bg-muted dark:bg-gray-700 rounded"
+                    className="rounded bg-muted px-2 py-0.5 text-xs dark:bg-gray-700"
                   >
                     {resource}: {count}
                   </span>

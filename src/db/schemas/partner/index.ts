@@ -147,3 +147,11 @@ export const partnerBillEvents = pgTable("partner_bill_events", {
   next: jsonb("next").$type<Record<string,unknown>>().notNull(),
   createdAt: timestamp("created_at", {withTimezone:true}).defaultNow().notNull(),
 }, table => ({bill:index("partner_bill_events_bill_idx").on(table.billId)}));
+
+// Exact custom-host assignment. Apex and www hosts are independent mappings.
+export const partnerDomains = pgTable("partner_domains", {
+  domain: text("domain").primaryKey(),
+  partnerId: text("partner_id").notNull().references(() => partners.id, { onDelete: "cascade" }),
+  createdBy: text("created_by").references(() => user.id, { onDelete: "set null" }),
+  createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
+}, table => ({ partnerIndex: index("partner_domains_partner_idx").on(table.partnerId) }));

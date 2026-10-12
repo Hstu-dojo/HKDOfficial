@@ -7,10 +7,11 @@ import {
   CalendarIcon,
   DocumentTextIcon,
   PhotoIcon,
-  ChartBarSquareIcon,
+  ArrowUpRightIcon,
   ShieldCheckIcon,
 } from "@heroicons/react/24/outline";
 import Link from "next/link";
+import { getVisibleAdminNavigation } from "./navigation";
 import { PanelLoader } from "@/components/loading";
 import { useCurrentLocale } from "@/locales/client";
 
@@ -72,43 +73,6 @@ function StatCard({
   );
 }
 
-interface QuickActionProps {
-  title: string;
-  description: string;
-  href: string;
-  icon: React.ComponentType<{ className?: string }>;
-  color: string;
-}
-
-function QuickAction({
-  title,
-  description,
-  href,
-  icon: Icon,
-  color,
-}: QuickActionProps) {
-  const locale = useCurrentLocale();
-  return (
-    <Link href={`/${locale}${href}`} className="block h-full">
-      <div className="rounded-2xl border border-border bg-card p-4 shadow-sm transition-shadow hover:shadow-md dark:border-border">
-        <div className="flex items-center">
-          <div className={`flex-shrink-0 rounded-lg p-3 ${color}`}>
-            <Icon className="h-6 w-6 text-primary-foreground" />
-          </div>
-          <div className="ml-4 min-w-0">
-            <h3 className="text-sm font-medium text-foreground dark:text-gray-100">
-              {title}
-            </h3>
-            <p className="text-sm text-muted-foreground dark:text-gray-400">
-              {description}
-            </p>
-          </div>
-        </div>
-      </div>
-    </Link>
-  );
-}
-
 interface DashboardData {
   stats: {
     users: number;
@@ -129,7 +93,9 @@ interface AdminDashboardProps {
 
 export default function AdminDashboard({ dashboardData }: AdminDashboardProps) {
   const { data: session } = useSession();
-  const { hasPermission, hasRole } = useRBAC();
+  const { hasPermission, permissions } = useRBAC();
+  const locale = useCurrentLocale();
+  const navigationGroups = getVisibleAdminNavigation(permissions);
 
   if (!dashboardData) {
     return <PanelLoader />;
@@ -161,25 +127,6 @@ export default function AdminDashboard({ dashboardData }: AdminDashboardProps) {
     },
   ];
 
-  const quickActions = [
-    {
-      title: "Manage Permissions",
-      description: "Configure user roles and permissions",
-      href: "/admin/rbac",
-      icon: ShieldCheckIcon,
-      color: "bg-primary",
-      show: hasPermission("ROLE", "READ"),
-    },
-    {
-      title: "Create Admin User",
-      description: "Create and manage admin users",
-      href: "/admin/create-admin",
-      icon: UserGroupIcon,
-      color: "bg-primary",
-      show: hasRole("SUPER_ADMIN"),
-    },
-  ].filter((action) => action.show);
-
   return (
     <div className="portal-page space-y-6">
       {/* Header */}
@@ -188,7 +135,7 @@ export default function AdminDashboard({ dashboardData }: AdminDashboardProps) {
           Welcome back, {session?.user?.name || "Admin"}!
         </h1>
         <p className="mt-2 text-muted-foreground dark:text-gray-400">
-          Here&apos;s an overview of your admin dashboard and quick actions.
+          Manage your academy using the sections below.
         </p>
       </div>
 
@@ -199,19 +146,35 @@ export default function AdminDashboard({ dashboardData }: AdminDashboardProps) {
         ))}
       </div>
 
-      {/* Quick Actions */}
-      {quickActions.length > 0 && (
-        <div>
-          <h2 className="mb-4 text-xl font-semibold text-foreground dark:text-gray-100">
-            Quick Actions
-          </h2>
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
-            {quickActions.map((action) => (
-              <QuickAction key={action.title} {...action} />
-            ))}
-          </div>
-        </div>
-      )}
+      <section aria-label="Administration navigation" className="space-y-6">
+        {navigationGroups.map((group) => (
+          <section key={group.title} aria-label={group.title}>
+            <h2 className="mb-3 text-base font-semibold">{group.title}</h2>
+            <div className="grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-3">
+              {group.items.map((item) => (
+                <Link
+                  key={item.href}
+                  href={`/${locale}${item.href}`}
+                  className="group flex min-w-0 items-start gap-3 rounded-xl border border-border bg-card p-4 transition-colors hover:border-primary/40 hover:bg-primary/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                >
+                  <span className="rounded-lg bg-primary/10 p-2 text-primary">
+                    <item.icon className="h-5 w-5" />
+                  </span>
+                  <span className="min-w-0 flex-1">
+                    <span className="block text-sm font-semibold">
+                      {item.name}
+                    </span>
+                    <span className="mt-1 block text-sm leading-relaxed text-muted-foreground">
+                      {item.description}
+                    </span>
+                  </span>
+                  <ArrowUpRightIcon className="mt-1 h-4 w-4 shrink-0 text-muted-foreground group-hover:text-primary" />
+                </Link>
+              ))}
+            </div>
+          </section>
+        ))}
+      </section>
 
       {/* Recent Activity */}
       <div className="rounded-2xl border border-border bg-card shadow-sm dark:border-border">

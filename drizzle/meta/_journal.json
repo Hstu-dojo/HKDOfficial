@@ -232,6 +232,20 @@
       "when": 1791690000006,
       "tag": "0032_faqs",
       "breakpoints": true
+    },
+    {
+      "idx": 33,
+      "version": "7",
+      "when": 1791690000007,
+      "tag": "0033_partner_domains",
+      "breakpoints": true
+    },
+    {
+      "idx": 34,
+      "version": "7",
+      "when": 1791690000008,
+      "tag": "0034_student_documents",
+      "breakpoints": true
     }
   ]
 }

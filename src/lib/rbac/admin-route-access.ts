@@ -11,6 +11,7 @@ export const adminRouteRules: Record<string, Rule> = {
   '/admin': { permission: ['REPORT', 'READ'] },
   '/admin/rbac': { permission: ['ROLE', 'READ'] },
   '/admin/create-admin': { permission: ['ROLE', 'UPDATE'] },
+  '/admin/students': { permission: ['MEMBER', 'READ'] },
   '/admin/registrations': { permission: ['MEMBER', 'READ'] },
   '/admin/faqs': { permission: ['FAQ', 'READ'] },
   '/admin/testimonials': { permission: ['TESTIMONIAL', 'READ'] },

@@ -1,3 +1,4 @@
+import { isPlatformHost } from "@/lib/org/domains";
 import { tenantFromHost } from "@/lib/org/host";
 import { withSeoRequest } from "@/lib/seo/request";
 import { createNEMO } from "@rescale/nemo";
@@ -55,7 +56,9 @@ function getTenantFromHost(hostname: string): string | null {
   return tenantFromHost(hostname, TENANT_BASE_DOMAIN);
 }
 
-function withTenantRouting(request: NextRequest): NextResponse | null {
+async function withTenantRouting(
+  request: NextRequest,
+): Promise<NextResponse | null> {
   const hostname = getHostname(request);
   const pathname = request.nextUrl.pathname;
 
@@ -73,8 +76,42 @@ function withTenantRouting(request: NextRequest): NextResponse | null {
   }
 
   // 1) Tenant subdomain: rewrite to the existing /org/[slug] route
-  const tenant = getTenantFromHost(hostname);
-  if (hostname.endsWith(`.${TENANT_BASE_DOMAIN}`) && !tenant) return new NextResponse("Not found", {status:404});
+  let tenant = getTenantFromHost(hostname);
+  if (
+    !tenant &&
+    !isPlatformHost(hostname) &&
+    !hostname.endsWith(`.${TENANT_BASE_DOMAIN}`)
+  ) {
+    // Use a fixed trusted origin: never fetch a user-supplied Host as an upstream.
+    const origin =
+      process.env.TENANT_LOOKUP_ORIGIN || `https://www.${ROOT_DOMAIN}`;
+    try {
+      const lookup = await fetch(
+        `${origin}/api/tenant-domain?host=${encodeURIComponent(hostname)}`,
+        { cache: "no-store", signal: AbortSignal.timeout(5000) },
+      );
+      if (!lookup.ok)
+        return new NextResponse("Domain routing temporarily unavailable", {
+          status: 503,
+        });
+      const data = await lookup.json();
+      tenant =
+        typeof data.slug === "string" &&
+        tenantFromHost(
+          `${data.slug}.${TENANT_BASE_DOMAIN}`,
+          TENANT_BASE_DOMAIN,
+        ) === data.slug
+          ? data.slug
+          : null;
+      if (!tenant) return new NextResponse("Not found", { status: 404 });
+    } catch {
+      return new NextResponse("Domain routing temporarily unavailable", {
+        status: 503,
+      });
+    }
+  }
+  if (hostname.endsWith(`.${TENANT_BASE_DOMAIN}`) && !tenant)
+    return new NextResponse("Not found", { status: 404 });
   if (tenant) {
     // If a tenant subdomain is requested with ONLY a locale root segment,
     // strip it (e.g. tenant.p.hstuma.com/en -> tenant.p.hstuma.com/).
@@ -119,7 +156,11 @@ function withTenantRouting(request: NextRequest): NextResponse | null {
       /^\/[a-z]{2}\/dashboard(\/|$)/.test(pathname);
     if (isPassthroughOnTenant) return null;
     // Shared academy pages have no tenant-specific implementation. Keep their canonical host.
-    if (/^\/(?:en\/|bn\/|ne\/)?(?:karate|courses|programs|blog|about|gallery|pricing|services|contact|terms|privacy|admin|docs|studio|notice)(?:\/|$)/.test(pathname)) {
+    if (
+      /^\/(?:en\/|bn\/|ne\/)?(?:karate|courses|programs|blog|about|gallery|pricing|services|contact|terms|privacy|admin|docs|studio|notice)(?:\/|$)/.test(
+        pathname,
+      )
+    ) {
       const url = request.nextUrl.clone();
       url.hostname = `www.${ROOT_DOMAIN}`;
       url.protocol = "https:";
@@ -130,7 +171,8 @@ function withTenantRouting(request: NextRequest): NextResponse | null {
     // If the tenant domain already requests an internal org path, don't rewrite again.
     if (pathname.startsWith("/org/")) {
       const match = pathname.match(/^\/org\/([^/]+)(\/.*)?$/);
-      if (!match || match[1] !== tenant) return new NextResponse("Not found", { status: 404 });
+      if (!match || match[1] !== tenant)
+        return new NextResponse("Not found", { status: 404 });
       const url = request.nextUrl.clone();
       url.pathname = match[2] || "/";
       return NextResponse.redirect(url);
@@ -152,7 +194,8 @@ function withTenantRouting(request: NextRequest): NextResponse | null {
     const match = pathname.match(/^\/org\/([^\/]+)(\/.*)?$/);
     if (match) {
       const slug = match[1];
-      if (!tenantFromHost(`${slug}.${TENANT_BASE_DOMAIN}`, TENANT_BASE_DOMAIN)) return new NextResponse("Not found", { status: 404 });
+      if (!tenantFromHost(`${slug}.${TENANT_BASE_DOMAIN}`, TENANT_BASE_DOMAIN))
+        return new NextResponse("Not found", { status: 404 });
       const rest = match[2] || "/";
 
       const url = request.nextUrl.clone();
@@ -279,7 +322,7 @@ const nemoMiddleware = createNEMO(middlewares);
 
 async function routeMiddleware(request: NextRequest) {
   // Subdomain multitenancy (run before everything else)
-  const tenantResult = withTenantRouting(request);
+  const tenantResult = await withTenantRouting(request);
   if (tenantResult) return tenantResult;
 
   // Always run the partner-admin fix first for any matched route

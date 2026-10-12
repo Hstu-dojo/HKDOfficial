@@ -1,140 +1,142 @@
+import { resolveTenantHost } from "@/lib/org/domain-server";
 import { registrationNewsletter } from "@/lib/newsletter/server";
 import { trackEmail } from "@/lib/email/history";
 /**
  * Partner Portal — Members API
- * 
+ *
  * GET  /api/partner-portal/members — List members for the partner
  * POST /api/partner-portal/members — Add a new member (simplified enrollment)
  * PATCH /api/partner-portal/members — Update member details
  */
-import { NextResponse } from 'next/server'
-import { requirePartnerAdminUser } from '@/lib/partner-admin/auth'
-import { db } from '@/lib/connect-db'
-import { members, registrations } from '@/db/schemas/karate/members'
-import { courseEnrollments } from '@/db/schemas/karate/enrollments'
-import { user } from '@/db/schemas/auth'
-import { eq, and, ilike, or, desc, sql, count } from 'drizzle-orm'
-import { sendCredentialsEmail } from '@/actions/emailSend/sendCredentials'
-import avatarsData from '@/db/avatars.json'
-import { createClient as createSupabaseAdminClient, createClient as createSupabaseClient } from '@supabase/supabase-js'
+import { NextResponse } from "next/server";
+import { requirePartnerAdminUser } from "@/lib/partner-admin/auth";
+import { db } from "@/lib/connect-db";
+import { members, registrations } from "@/db/schemas/karate/members";
+import { courseEnrollments } from "@/db/schemas/karate/enrollments";
+import { user } from "@/db/schemas/auth";
+import { eq, and, ilike, or, desc, sql, count } from "drizzle-orm";
+import { sendCredentialsEmail } from "@/actions/emailSend/sendCredentials";
+import avatarsData from "@/db/avatars.json";
+import {
+  createClient as createSupabaseAdminClient,
+  createClient as createSupabaseClient,
+} from "@supabase/supabase-js";
 
 /** Escape LIKE/ILIKE wildcard characters to prevent pattern injection. */
 function escapeLikeWildcards(input: string): string {
-  return input.replace(/[%_\\]/g, (ch) => `\\${ch}`)
+  return input.replace(/[%_\\]/g, (ch) => `\\${ch}`);
 }
 
 /** Valid belt rank values — reject anything not in this set. */
 const VALID_BELT_RANKS = new Set([
-  'white', 'yellow', 'orange', 'green', 'blue', 'purple',
-  'brown', 'black', 'brown_kyu3', 'brown_kyu2', 'brown_kyu1',
+  "white",
+  "yellow",
+  "orange",
+  "green",
+  "blue",
+  "purple",
+  "brown",
+  "black",
+  "brown_kyu3",
+  "brown_kyu2",
+  "brown_kyu1",
 ]);
 
 function getLocaleFromReferer(request: Request): string | null {
-  const referer = request.headers.get('referer')
-  if (!referer) return null
+  const referer = request.headers.get("referer");
+  if (!referer) return null;
   try {
-    const url = new URL(referer)
-    const firstSeg = url.pathname.split('/')[1] || ''
-    if (/^[a-z]{2}(-[A-Z]{2})?$/.test(firstSeg)) return firstSeg
-    return null
+    const url = new URL(referer);
+    const firstSeg = url.pathname.split("/")[1] || "";
+    if (/^[a-z]{2}(-[A-Z]{2})?$/.test(firstSeg)) return firstSeg;
+    return null;
   } catch {
-    return null
+    return null;
   }
 }
 
-function getTenantSlugFromRequest(request: Request): string | null {
-  const tenantBaseDomain = (process.env.TENANT_BASE_DOMAIN || 'p.hstuma.com').toLowerCase()
-  const suffix = `.${tenantBaseDomain}`
-
-  const candidates = [
-    request.headers.get('x-forwarded-host'),
-    request.headers.get('host'),
-    new URL(request.url).host,
-  ]
-    .filter(Boolean)
-    .map((h) => (h as string).split(',')[0]!.trim().toLowerCase())
-
-  for (const host of candidates) {
-    if (!host.endsWith(suffix)) continue
-    const slug = host.slice(0, -suffix.length)
-    if (!slug || !/^[a-z0-9-]+$/.test(slug)) continue
-    return slug
-  }
-
-  return null
-}
-
-function buildResetRedirectUrl(request: Request): string {
-  const refererLocale = getLocaleFromReferer(request) || 'en'
-  const tenant = getTenantSlugFromRequest(request)
+async function buildResetRedirectUrl(request: Request): Promise<string> {
+  const refererLocale = getLocaleFromReferer(request) || "en";
+  const tenant = await resolveTenantHost(
+    request.headers.get("host") || new URL(request.url).host,
+  );
   const callbackOrigin = (() => {
-    const rootDomain = (process.env.ROOT_DOMAIN || 'hstuma.com').toLowerCase()
-    const wwwRoot = `www.${rootDomain}`
-    const requestUrl = new URL(request.url)
-    const host = (request.headers.get('host') || requestUrl.host || '').split(',')[0]!.trim().toLowerCase()
-    const isRootRequest = host === rootDomain || host === wwwRoot
-    const callbackHost = isRootRequest ? (host || wwwRoot) : wwwRoot
-    return `${requestUrl.protocol}//${callbackHost}`
-  })()
+    const rootDomain = (process.env.ROOT_DOMAIN || "hstuma.com").toLowerCase();
+    const wwwRoot = `www.${rootDomain}`;
+    const requestUrl = new URL(request.url);
+    const host = (request.headers.get("host") || requestUrl.host || "")
+      .split(",")[0]!
+      .trim()
+      .toLowerCase();
+    const isRootRequest = host === rootDomain || host === wwwRoot;
+    const callbackHost = isRootRequest ? host || wwwRoot : wwwRoot;
+    return `${requestUrl.protocol}//${callbackHost}`;
+  })();
 
-  const redirectToUrl = new URL('/auth/callback', callbackOrigin)
-  if (tenant) redirectToUrl.searchParams.set('tenant', tenant)
-  redirectToUrl.searchParams.set('next', `/${refererLocale}/reset-password`)
-  return redirectToUrl.toString()
+  const redirectToUrl = new URL("/auth/callback", callbackOrigin);
+  if (tenant) redirectToUrl.searchParams.set("tenant", tenant);
+  redirectToUrl.searchParams.set("next", `/${refererLocale}/reset-password`);
+  return redirectToUrl.toString();
 }
 
 function pickDefaultAvatar(): string {
-  const avatars = Array.isArray(avatarsData) ? (avatarsData as Array<{ icon?: string }>) : []
-  const icon = avatars[Math.floor(Math.random() * Math.max(avatars.length, 1))]?.icon
-  return icon || '/image/avatar/Milo.svg'
+  const avatars = Array.isArray(avatarsData)
+    ? (avatarsData as Array<{ icon?: string }>)
+    : [];
+  const icon =
+    avatars[Math.floor(Math.random() * Math.max(avatars.length, 1))]?.icon;
+  return icon || "/image/avatar/Milo.svg";
 }
 
 function buildBaseUsername(value: string) {
   return value
     .toLowerCase()
-    .replace(/[^a-z0-9]/g, '')
-    .slice(0, 20)
+    .replace(/[^a-z0-9]/g, "")
+    .slice(0, 20);
 }
 
 async function generateUniqueUserName(base: string) {
-  let userName = `${base}${Math.floor(Math.random() * 10000)}`
+  let userName = `${base}${Math.floor(Math.random() * 10000)}`;
 
   for (let i = 0; i < 10; i++) {
     const existingName = await db
       .select({ id: user.id })
       .from(user)
       .where(eq(user.userName, userName))
-      .limit(1)
-    if (existingName.length === 0) break
-    userName = `${base}${Math.floor(Math.random() * 10000)}`
+      .limit(1);
+    if (existingName.length === 0) break;
+    userName = `${base}${Math.floor(Math.random() * 10000)}`;
   }
 
-  return userName
+  return userName;
 }
 
 export async function GET(request: Request) {
-  const { user: partnerUser, error } = await requirePartnerAdminUser()
-  if (error) return error
+  const { user: partnerUser, error } = await requirePartnerAdminUser();
+  if (error) return error;
 
-  const url = new URL(request.url)
-  const page = parseInt(url.searchParams.get('page') || '1', 10)
-  const limit = Math.min(parseInt(url.searchParams.get('limit') || '20', 10), 100)
-  const search = url.searchParams.get('search') || ''
-  const status = url.searchParams.get('status') // 'active' | 'inactive' | null
+  const url = new URL(request.url);
+  const page = parseInt(url.searchParams.get("page") || "1", 10);
+  const limit = Math.min(
+    parseInt(url.searchParams.get("limit") || "20", 10),
+    100,
+  );
+  const search = url.searchParams.get("search") || "";
+  const status = url.searchParams.get("status"); // 'active' | 'inactive' | null
 
   try {
-    const conditions = [eq(members.partnerId, partnerUser.partnerId)]
+    const conditions = [eq(members.partnerId, partnerUser.partnerId)];
 
-    if (status === 'active') {
-      conditions.push(eq(members.isActive, true))
-    } else if (status === 'inactive') {
-      conditions.push(eq(members.isActive, false))
+    if (status === "active") {
+      conditions.push(eq(members.isActive, true));
+    } else if (status === "inactive") {
+      conditions.push(eq(members.isActive, false));
     }
 
     // Build the query
     // Apply search filter — merge into conditions before single .where()
     if (search) {
-      const safeSearch = escapeLikeWildcards(search)
+      const safeSearch = escapeLikeWildcards(search);
       conditions.push(
         or(
           ilike(members.fullNameEnglish, `%${safeSearch}%`),
@@ -142,8 +144,8 @@ export async function GET(request: Request) {
           ilike(user.userName, `%${safeSearch}%`),
           ilike(members.memberNumber, `%${safeSearch}%`),
           ilike(members.phoneNumber, `%${safeSearch}%`),
-        )!
-      )
+        )!,
+      );
     }
 
     const baseQuery = db
@@ -182,22 +184,19 @@ export async function GET(request: Request) {
       })
       .from(members)
       .leftJoin(user, eq(members.userId, user.id))
-      .where(and(...conditions))
+      .where(and(...conditions));
 
-    const offset = (page - 1) * limit
+    const offset = (page - 1) * limit;
 
     const [results, totalResult] = await Promise.all([
-      baseQuery
-        .orderBy(desc(members.createdAt))
-        .limit(limit)
-        .offset(offset),
+      baseQuery.orderBy(desc(members.createdAt)).limit(limit).offset(offset),
       db
         .select({ total: count() })
         .from(members)
         .where(and(...conditions)),
-    ])
+    ]);
 
-    const total = totalResult[0]?.total || 0
+    const total = totalResult[0]?.total || 0;
 
     return NextResponse.json({
       members: results,
@@ -207,19 +206,22 @@ export async function GET(request: Request) {
         total,
         totalPages: Math.ceil(total / limit),
       },
-    })
+    });
   } catch (err) {
-    console.error('[PartnerPortal] Members GET error:', err)
-    return NextResponse.json({ error: 'Failed to fetch members' }, { status: 500 })
+    console.error("[PartnerPortal] Members GET error:", err);
+    return NextResponse.json(
+      { error: "Failed to fetch members" },
+      { status: 500 },
+    );
   }
 }
 
 export async function POST(request: Request) {
-  const { user: partnerUser, error } = await requirePartnerAdminUser()
-  if (error) return error
+  const { user: partnerUser, error } = await requirePartnerAdminUser();
+  if (error) return error;
 
   try {
-    const body = await request.json()
+    const body = await request.json();
 
     const {
       fullNameEnglish,
@@ -244,60 +246,86 @@ export async function POST(request: Request) {
       bloodGroup,
       fatherName,
       motherName,
-    } = body
+    } = body;
 
-    const trimmedEmail = typeof email === 'string' ? email.trim() : ''
-    const trimmedPassword = typeof password === 'string' ? password.trim() : ''
-    const trimmedFullName = typeof fullNameEnglish === 'string' ? fullNameEnglish.trim() : ''
-    const trimmedPhone = typeof phoneNumber === 'string' ? phoneNumber.trim() : ''
-    const resolvedSex = typeof sex === 'string' && sex.trim() ? sex.trim() : typeof gender === 'string' ? gender.trim() : ''
-    const resolvedDateOfBirth = typeof dateOfBirth === 'string' ? dateOfBirth.trim() : ''
+    const trimmedEmail = typeof email === "string" ? email.trim() : "";
+    const trimmedPassword = typeof password === "string" ? password.trim() : "";
+    const trimmedFullName =
+      typeof fullNameEnglish === "string" ? fullNameEnglish.trim() : "";
+    const trimmedPhone =
+      typeof phoneNumber === "string" ? phoneNumber.trim() : "";
+    const resolvedSex =
+      typeof sex === "string" && sex.trim()
+        ? sex.trim()
+        : typeof gender === "string"
+          ? gender.trim()
+          : "";
+    const resolvedDateOfBirth =
+      typeof dateOfBirth === "string" ? dateOfBirth.trim() : "";
 
-    if (!trimmedFullName || !trimmedPhone || !trimmedEmail || !trimmedPassword || !resolvedSex || !resolvedDateOfBirth || agreement !== true) {
+    if (
+      !trimmedFullName ||
+      !trimmedPhone ||
+      !trimmedEmail ||
+      !trimmedPassword ||
+      !resolvedSex ||
+      !resolvedDateOfBirth ||
+      agreement !== true
+    ) {
       return NextResponse.json(
         {
           error:
-            'Full name, phone number, email, password, sex, date of birth, and agreement are required',
+            "Full name, phone number, email, password, sex, date of birth, and agreement are required",
         },
-        { status: 400 }
-      )
+        { status: 400 },
+      );
     }
 
     if (trimmedPassword.length < 6) {
-      return NextResponse.json({ error: 'Password must be at least 6 characters' }, { status: 400 })
+      return NextResponse.json(
+        { error: "Password must be at least 6 characters" },
+        { status: 400 },
+      );
     }
 
     // Generate member number: KKA-PARTNER_SLUG-XXXX
-    const prefix = `KKA-${partnerUser.partnerSlug.toUpperCase().slice(0, 8)}`
+    const prefix = `KKA-${partnerUser.partnerSlug.toUpperCase().slice(0, 8)}`;
     const existingCount = await db
       .select({ total: count() })
       .from(members)
-      .where(eq(members.partnerId, partnerUser.partnerId))
+      .where(eq(members.partnerId, partnerUser.partnerId));
 
-    const memberNumber = `${prefix}-${String((existingCount[0]?.total || 0) + 1).padStart(4, '0')}`
+    const memberNumber = `${prefix}-${String((existingCount[0]?.total || 0) + 1).padStart(4, "0")}`;
 
     // If email is provided, try to link to an existing user account first.
-    let userId: string | undefined = undefined
-    let accountCreated = false
-    let supabaseUserId: string | null = null
+    let userId: string | undefined = undefined;
+    let accountCreated = false;
+    let supabaseUserId: string | null = null;
 
     const existingUser = await db
-      .select({ id: user.id, supabaseUserId: user.supabaseUserId, userAvatar: user.userAvatar })
+      .select({
+        id: user.id,
+        supabaseUserId: user.supabaseUserId,
+        userAvatar: user.userAvatar,
+      })
       .from(user)
       .where(eq(user.email, trimmedEmail))
-      .limit(1)
+      .limit(1);
 
     if (existingUser.length > 0) {
-      userId = existingUser[0].id
-      supabaseUserId = existingUser[0].supabaseUserId ?? null
+      userId = existingUser[0].id;
+      supabaseUserId = existingUser[0].supabaseUserId ?? null;
     }
 
     if (!supabaseUserId) {
-      if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.SUPABASE_SERVICE_ROLE_KEY) {
+      if (
+        !process.env.NEXT_PUBLIC_SUPABASE_URL ||
+        !process.env.SUPABASE_SERVICE_ROLE_KEY
+      ) {
         return NextResponse.json(
-          { error: 'Auth provisioning is not configured on the server' },
-          { status: 500 }
-        )
+          { error: "Auth provisioning is not configured on the server" },
+          { status: 500 },
+        );
       }
 
       const supabaseAdmin = createSupabaseAdminClient(
@@ -308,39 +336,45 @@ export async function POST(request: Request) {
             autoRefreshToken: false,
             persistSession: false,
           },
-        }
-      )
+        },
+      );
 
       const generatedUsernameBase =
         buildBaseUsername(
-          typeof requestedUserName === 'string' && requestedUserName.trim()
+          typeof requestedUserName === "string" && requestedUserName.trim()
             ? requestedUserName.trim()
-            : trimmedFullName || trimmedEmail.split('@')[0] || 'member'
-        ) || 'member'
-      const resolvedUserName = await generateUniqueUserName(generatedUsernameBase)
-      const resolvedAvatar = typeof userAvatar === 'string' && userAvatar.trim() ? userAvatar.trim() : pickDefaultAvatar()
+            : trimmedFullName || trimmedEmail.split("@")[0] || "member",
+        ) || "member";
+      const resolvedUserName = await generateUniqueUserName(
+        generatedUsernameBase,
+      );
+      const resolvedAvatar =
+        typeof userAvatar === "string" && userAvatar.trim()
+          ? userAvatar.trim()
+          : pickDefaultAvatar();
 
-      const { data: created, error: createErr } = await supabaseAdmin.auth.admin.createUser({
-        email: trimmedEmail,
-        password: trimmedPassword,
-        email_confirm: true,
-        user_metadata: {
-          createdByPartner: partnerUser.partnerId,
-          createdByPartnerAdmin: partnerUser.name,
-          username: resolvedUserName,
-          avatar_url: resolvedAvatar,
-        },
-      })
+      const { data: created, error: createErr } =
+        await supabaseAdmin.auth.admin.createUser({
+          email: trimmedEmail,
+          password: trimmedPassword,
+          email_confirm: true,
+          user_metadata: {
+            createdByPartner: partnerUser.partnerId,
+            createdByPartnerAdmin: partnerUser.name,
+            username: resolvedUserName,
+            avatar_url: resolvedAvatar,
+          },
+        });
 
       if (createErr || !created?.user) {
-        console.error('[PartnerPortal] Supabase user create error:', createErr)
+        console.error("[PartnerPortal] Supabase user create error:", createErr);
         return NextResponse.json(
-          { error: 'Failed to create auth account for this email' },
-          { status: 500 }
-        )
+          { error: "Failed to create auth account for this email" },
+          { status: 500 },
+        );
       }
 
-      supabaseUserId = created.user.id
+      supabaseUserId = created.user.id;
 
       if (!userId) {
         const [newUser] = await db
@@ -352,11 +386,11 @@ export async function POST(request: Request) {
             password: `supabase_${supabaseUserId}`,
             userName: resolvedUserName,
             userAvatar: resolvedAvatar,
-            defaultRole: 'GUEST',
+            defaultRole: "GUEST",
             hasPassword: true,
             authProviders: [
               {
-                provider: 'email',
+                provider: "email",
                 email: trimmedEmail,
                 providerId: supabaseUserId,
                 linkedAt: new Date().toISOString(),
@@ -364,11 +398,15 @@ export async function POST(request: Request) {
             ] as any,
             updatedAt: new Date(),
           })
-          .returning({ id: user.id })
+          .returning({ id: user.id });
 
-        userId = newUser?.id
-        await registrationNewsletter(trimmedEmail, trimmedFullName || resolvedUserName, true);
-        accountCreated = true
+        userId = newUser?.id;
+        await registrationNewsletter(
+          trimmedEmail,
+          trimmedFullName || resolvedUserName,
+          true,
+        );
+        accountCreated = true;
       } else {
         await db
           .update(user)
@@ -379,11 +417,11 @@ export async function POST(request: Request) {
             password: `supabase_${supabaseUserId}`,
             userName: resolvedUserName,
             userAvatar: resolvedAvatar,
-            defaultRole: 'GUEST',
+            defaultRole: "GUEST",
             hasPassword: true,
             authProviders: [
               {
-                provider: 'email',
+                provider: "email",
                 email: trimmedEmail,
                 providerId: supabaseUserId,
                 linkedAt: new Date().toISOString(),
@@ -391,15 +429,20 @@ export async function POST(request: Request) {
             ] as any,
             updatedAt: new Date(),
           })
-          .where(eq(user.id, userId))
+          .where(eq(user.id, userId));
       }
     }
 
     const resolvedUserName =
-      typeof requestedUserName === 'string' && requestedUserName.trim()
+      typeof requestedUserName === "string" && requestedUserName.trim()
         ? buildBaseUsername(requestedUserName.trim())
-        : buildBaseUsername(trimmedFullName || trimmedEmail.split('@')[0] || 'member') || 'member'
-    const resolvedAvatar = typeof userAvatar === 'string' && userAvatar.trim() ? userAvatar.trim() : pickDefaultAvatar()
+        : buildBaseUsername(
+            trimmedFullName || trimmedEmail.split("@")[0] || "member",
+          ) || "member";
+    const resolvedAvatar =
+      typeof userAvatar === "string" && userAvatar.trim()
+        ? userAvatar.trim()
+        : pickDefaultAvatar();
 
     if (userId && existingUser.length > 0) {
       await db
@@ -412,25 +455,40 @@ export async function POST(request: Request) {
           hasPassword: true,
           updatedAt: new Date(),
         })
-        .where(eq(user.id, userId))
+        .where(eq(user.id, userId));
     }
 
-    const emailClient = process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
-      ? createSupabaseClient(process.env.NEXT_PUBLIC_SUPABASE_URL, process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY)
-      : null
+    const emailClient =
+      process.env.NEXT_PUBLIC_SUPABASE_URL &&
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+        ? createSupabaseClient(
+            process.env.NEXT_PUBLIC_SUPABASE_URL,
+            process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
+          )
+        : null;
 
-    let resetEmailSent = false
+    let resetEmailSent = false;
     if (emailClient) {
       try {
-        const { error: resetErr } = await trackEmail({category:"password_reset",provider:"supabase",partnerId:partnerUser.partnerId,to:trimmedEmail,subject:"Password reset request"}, () => emailClient.auth.resetPasswordForEmail(trimmedEmail, {
-          redirectTo: buildResetRedirectUrl(request),
-        }))
-        resetEmailSent = !resetErr
+        const { error: resetErr } = await trackEmail(
+          {
+            category: "password_reset",
+            provider: "supabase",
+            partnerId: partnerUser.partnerId,
+            to: trimmedEmail,
+            subject: "Password reset request",
+          },
+          async () =>
+            emailClient.auth.resetPasswordForEmail(trimmedEmail, {
+              redirectTo: await buildResetRedirectUrl(request),
+            }),
+        );
+        resetEmailSent = !resetErr;
         if (resetErr) {
-          console.error('[PartnerPortal] Reset email send failed:', resetErr)
+          console.error("[PartnerPortal] Reset email send failed:", resetErr);
         }
       } catch (resetErr) {
-        console.error('[PartnerPortal] Reset email exception:', resetErr)
+        console.error("[PartnerPortal] Reset email exception:", resetErr);
       }
     }
 
@@ -441,23 +499,49 @@ export async function POST(request: Request) {
         userId: userId || null,
         memberNumber,
         fullNameEnglish: trimmedFullName,
-        fullNameBangla: typeof fullNameBangla === 'string' && fullNameBangla.trim() ? fullNameBangla.trim() : null,
+        fullNameBangla:
+          typeof fullNameBangla === "string" && fullNameBangla.trim()
+            ? fullNameBangla.trim()
+            : null,
         phoneNumber: trimmedPhone,
         email: trimmedEmail,
         dateOfBirth: new Date(resolvedDateOfBirth),
         gender: resolvedSex,
-        bloodGroup: typeof bloodGroup === 'string' && bloodGroup.trim() ? bloodGroup.trim() : null,
-        fatherName: typeof fatherName === 'string' && fatherName.trim() ? fatherName.trim() : null,
-        motherName: typeof motherName === 'string' && motherName.trim() ? motherName.trim() : null,
+        bloodGroup:
+          typeof bloodGroup === "string" && bloodGroup.trim()
+            ? bloodGroup.trim()
+            : null,
+        fatherName:
+          typeof fatherName === "string" && fatherName.trim()
+            ? fatherName.trim()
+            : null,
+        motherName:
+          typeof motherName === "string" && motherName.trim()
+            ? motherName.trim()
+            : null,
         partnerId: partnerUser.partnerId,
         isActive: true,
-        nid: typeof nid === 'string' && nid.trim() ? nid.trim() : null,
-        profession: typeof occupation === 'string' && occupation.trim() ? occupation.trim() : null,
-        institute: typeof institute === 'string' && institute.trim() ? institute.trim() : null,
-        faculty: typeof faculty === 'string' && faculty.trim() ? faculty.trim() : null,
-        presentAddress: typeof address === 'string' && address.trim() ? address.trim() : null,
-        emergencyContact: typeof emergencyContact === 'string' && emergencyContact.trim() ? emergencyContact.trim() : null,
-        emergencyPhone: typeof emergencyPhone === 'string' && emergencyPhone.trim() ? emergencyPhone.trim() : null,
+        nid: typeof nid === "string" && nid.trim() ? nid.trim() : null,
+        profession:
+          typeof occupation === "string" && occupation.trim()
+            ? occupation.trim()
+            : null,
+        institute:
+          typeof institute === "string" && institute.trim()
+            ? institute.trim()
+            : null,
+        faculty:
+          typeof faculty === "string" && faculty.trim() ? faculty.trim() : null,
+        presentAddress:
+          typeof address === "string" && address.trim() ? address.trim() : null,
+        emergencyContact:
+          typeof emergencyContact === "string" && emergencyContact.trim()
+            ? emergencyContact.trim()
+            : null,
+        emergencyPhone:
+          typeof emergencyPhone === "string" && emergencyPhone.trim()
+            ? emergencyPhone.trim()
+            : null,
         picture: resolvedAvatar,
         isProfileComplete: true,
         notes: JSON.stringify({
@@ -467,14 +551,14 @@ export async function POST(request: Request) {
           generatedAvatar: resolvedAvatar,
         }),
       })
-      .returning()
+      .returning();
 
     if (userId) {
       const existingReg = await db
         .select({ id: registrations.id })
         .from(registrations)
         .where(eq(registrations.userId, userId))
-        .limit(1)
+        .limit(1);
 
       const onboardingPayload = {
         username: trimmedFullName,
@@ -489,13 +573,13 @@ export async function POST(request: Request) {
         partnerId: partnerUser.partnerId,
         agreement: true,
         email: trimmedEmail,
-        emergencyContact: emergencyContact || 'Not Provided',
+        emergencyContact: emergencyContact || "Not Provided",
         emergencyPhone: emergencyPhone || trimmedPhone,
-      }
+      };
 
-      const nameParts = trimmedFullName.split(' ')
-      const firstName = nameParts[0] || 'Unknown'
-      const lastName = nameParts.slice(1).join(' ') || '.'
+      const nameParts = trimmedFullName.split(" ");
+      const firstName = nameParts[0] || "Unknown";
+      const lastName = nameParts.slice(1).join(" ") || ".";
 
       if (existingReg.length === 0) {
         await db.insert(registrations).values({
@@ -505,33 +589,41 @@ export async function POST(request: Request) {
           email: trimmedEmail,
           phoneNumber: trimmedPhone,
           dateOfBirth: new Date(resolvedDateOfBirth),
-          emergencyContact: emergencyContact || 'Not Provided',
+          emergencyContact: emergencyContact || "Not Provided",
           emergencyPhone: emergencyPhone || trimmedPhone,
           partnerId: partnerUser.partnerId,
           notes: JSON.stringify(onboardingPayload),
-          status: 'approved',
+          status: "approved",
           reviewedBy: partnerUser.id,
           reviewedAt: new Date(),
-        })
+        });
       } else {
         await db
           .update(registrations)
           .set({
-            status: 'approved',
+            status: "approved",
             reviewedBy: partnerUser.id,
             reviewedAt: new Date(),
             updatedAt: new Date(),
           })
-          .where(eq(registrations.id, existingReg[0].id))
+          .where(eq(registrations.id, existingReg[0].id));
       }
     }
 
-    let credentialsEmailSent = false
+    let credentialsEmailSent = false;
     try {
-      const emailRes = await sendCredentialsEmail(trimmedEmail, trimmedPassword, trimmedFullName, partnerUser.partnerId)
-      credentialsEmailSent = emailRes.success
+      const emailRes = await sendCredentialsEmail(
+        trimmedEmail,
+        trimmedPassword,
+        trimmedFullName,
+        partnerUser.partnerId,
+      );
+      credentialsEmailSent = emailRes.success;
     } catch (emailErr) {
-      console.error('[PartnerPortal] Failed to send credentials email:', emailErr)
+      console.error(
+        "[PartnerPortal] Failed to send credentials email:",
+        emailErr,
+      );
     }
 
     return NextResponse.json(
@@ -541,84 +633,103 @@ export async function POST(request: Request) {
         resetEmailSent,
         credentialsEmailSent,
       },
-      { status: 201 }
-    )
+      { status: 201 },
+    );
   } catch (err) {
-    console.error('[PartnerPortal] Members POST error:', err)
-    return NextResponse.json({ error: 'Failed to create member' }, { status: 500 })
+    console.error("[PartnerPortal] Members POST error:", err);
+    return NextResponse.json(
+      { error: "Failed to create member" },
+      { status: 500 },
+    );
   }
 }
 
 export async function PATCH(request: Request) {
-  const { user: partnerUser, error } = await requirePartnerAdminUser()
-  if (error) return error
+  const { user: partnerUser, error } = await requirePartnerAdminUser();
+  if (error) return error;
 
   try {
-    const body = await request.json()
-    const { memberId, ...updates } = body
+    const body = await request.json();
+    const { memberId, ...updates } = body;
 
     // Validate memberId
-    if (!memberId) return NextResponse.json({ error: 'Member ID required' }, { status: 400 })
+    if (!memberId)
+      return NextResponse.json(
+        { error: "Member ID required" },
+        { status: 400 },
+      );
 
     // Check member belongs to partner
     const existingMember = await db
       .select({ id: members.id })
       .from(members)
-      .where(and(eq(members.id, memberId), eq(members.partnerId, partnerUser.partnerId)))
-      .limit(1)
+      .where(
+        and(
+          eq(members.id, memberId),
+          eq(members.partnerId, partnerUser.partnerId),
+        ),
+      )
+      .limit(1);
 
-    if (!existingMember.length) return NextResponse.json({ error: 'Member not found' }, { status: 404 })
+    if (!existingMember.length)
+      return NextResponse.json({ error: "Member not found" }, { status: 404 });
 
     // Build update data - map field names to DB columns
-    const updateData: any = {}
+    const updateData: any = {};
     const allowedFields = [
-      'fullNameEnglish',
-      'fullNameBangla',
-      'phoneNumber',
-      'beltRank',
-      'sex',
-      'dateOfBirth',
-      'nid',
-      'bloodGroup',
-      'fatherName',
-      'motherName',
-      'occupation',
-      'institute',
-      'faculty',
-      'address',
-      'emergencyContact',
-      'emergencyPhone',
-    ]
+      "fullNameEnglish",
+      "fullNameBangla",
+      "phoneNumber",
+      "beltRank",
+      "sex",
+      "dateOfBirth",
+      "nid",
+      "bloodGroup",
+      "fatherName",
+      "motherName",
+      "occupation",
+      "institute",
+      "faculty",
+      "address",
+      "emergencyContact",
+      "emergencyPhone",
+    ];
 
-    const newPassword = typeof updates.newPassword === 'string' ? updates.newPassword.trim() : ''
+    const newPassword =
+      typeof updates.newPassword === "string" ? updates.newPassword.trim() : "";
 
     for (const field of allowedFields) {
       if (field in updates) {
         // Map field names to DB column names
-        if (field === 'sex') {
-          updateData.gender = updates[field]
-        } else if (field === 'beltRank') {
+        if (field === "sex") {
+          updateData.gender = updates[field];
+        } else if (field === "beltRank") {
           // Validate beltRank against the Postgres enum values
-          const rank = updates[field] || 'white'
+          const rank = updates[field] || "white";
           if (!VALID_BELT_RANKS.has(rank)) {
-            return NextResponse.json({ error: `Invalid belt rank: ${rank}` }, { status: 400 })
+            return NextResponse.json(
+              { error: `Invalid belt rank: ${rank}` },
+              { status: 400 },
+            );
           }
-          updateData.beltRank = rank
-        } else if (field === 'occupation') {
-          updateData.profession = updates[field]
-        } else if (field === 'address') {
-          updateData.presentAddress = updates[field]
-        } else if (field === 'dateOfBirth') {
+          updateData.beltRank = rank;
+        } else if (field === "occupation") {
+          updateData.profession = updates[field];
+        } else if (field === "address") {
+          updateData.presentAddress = updates[field];
+        } else if (field === "dateOfBirth") {
           // Convert date string to Date object for timestamp field
-          updateData.dateOfBirth = updates[field] ? new Date(updates[field]) : null
+          updateData.dateOfBirth = updates[field]
+            ? new Date(updates[field])
+            : null;
         } else {
-          updateData[field] = updates[field]
+          updateData[field] = updates[field];
         }
       }
     }
 
     // Always update the updatedAt timestamp
-    updateData.updatedAt = new Date()
+    updateData.updatedAt = new Date();
 
     const memberUser = await db
       .select({
@@ -628,14 +739,17 @@ export async function PATCH(request: Request) {
       .from(members)
       .leftJoin(user, eq(members.userId, user.id))
       .where(eq(members.id, memberId))
-      .limit(1)
+      .limit(1);
 
-    const targetEmail = memberUser[0]?.email || ''
-    const targetSupabaseUserId = memberUser[0]?.supabaseUserId || null
+    const targetEmail = memberUser[0]?.email || "";
+    const targetSupabaseUserId = memberUser[0]?.supabaseUserId || null;
 
     if (newPassword) {
       if (newPassword.length < 6) {
-        return NextResponse.json({ error: 'Password must be at least 6 characters' }, { status: 400 })
+        return NextResponse.json(
+          { error: "Password must be at least 6 characters" },
+          { status: 400 },
+        );
       }
 
       // Security: only allow password changes for accounts created by partner portal,
@@ -644,25 +758,32 @@ export async function PATCH(request: Request) {
         .select({ notes: members.notes, userId: members.userId })
         .from(members)
         .where(eq(members.id, memberId))
-        .limit(1)
-      let profileNotes: any = {}
+        .limit(1);
+      let profileNotes: any = {};
       try {
-        profileNotes = typeof memberProfile[0]?.notes === 'string'
-          ? JSON.parse(memberProfile[0].notes)
-          : (memberProfile[0]?.notes || {})
+        profileNotes =
+          typeof memberProfile[0]?.notes === "string"
+            ? JSON.parse(memberProfile[0].notes)
+            : memberProfile[0]?.notes || {};
       } catch {}
       if (!profileNotes.createdByPartnerAdmin) {
         return NextResponse.json(
-          { error: 'Cannot change password for accounts not created through the partner portal. The member should use the "Forgot Password" flow instead.' },
-          { status: 403 }
-        )
+          {
+            error:
+              'Cannot change password for accounts not created through the partner portal. The member should use the "Forgot Password" flow instead.',
+          },
+          { status: 403 },
+        );
       }
 
-      if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.SUPABASE_SERVICE_ROLE_KEY) {
+      if (
+        !process.env.NEXT_PUBLIC_SUPABASE_URL ||
+        !process.env.SUPABASE_SERVICE_ROLE_KEY
+      ) {
         return NextResponse.json(
-          { error: 'Auth provisioning is not configured on the server' },
-          { status: 500 }
-        )
+          { error: "Auth provisioning is not configured on the server" },
+          { status: 500 },
+        );
       }
 
       const supabaseAdmin = createSupabaseAdminClient(
@@ -673,38 +794,52 @@ export async function PATCH(request: Request) {
             autoRefreshToken: false,
             persistSession: false,
           },
-        }
-      )
+        },
+      );
 
       if (targetSupabaseUserId) {
-        const { error: updatePasswordError } = await supabaseAdmin.auth.admin.updateUserById(
-          targetSupabaseUserId,
-          {
+        const { error: updatePasswordError } =
+          await supabaseAdmin.auth.admin.updateUserById(targetSupabaseUserId, {
             password: newPassword,
-          }
-        )
+          });
 
         if (updatePasswordError) {
-          console.error('[PartnerPortal] Supabase password update error:', updatePasswordError)
+          console.error(
+            "[PartnerPortal] Supabase password update error:",
+            updatePasswordError,
+          );
           return NextResponse.json(
-            { error: 'Failed to update member password' },
-            { status: 500 }
-          )
+            { error: "Failed to update member password" },
+            { status: 500 },
+          );
         }
       }
 
       if (targetEmail) {
         const supabaseClient = createSupabaseClient(
           process.env.NEXT_PUBLIC_SUPABASE_URL,
-          process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || ''
-        )
+          process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "",
+        );
 
-        const { error: resetErr } = await trackEmail({category:"password_reset",provider:"supabase",partnerId:partnerUser.partnerId,to:targetEmail,subject:"Password reset request"}, () => supabaseClient.auth.resetPasswordForEmail(targetEmail, {
-          redirectTo: buildResetRedirectUrl(request),
-        }))
+        const { error: resetErr } = await trackEmail(
+          {
+            category: "password_reset",
+            provider: "supabase",
+            partnerId: partnerUser.partnerId,
+            to: targetEmail,
+            subject: "Password reset request",
+          },
+          async () =>
+            supabaseClient.auth.resetPasswordForEmail(targetEmail, {
+              redirectTo: await buildResetRedirectUrl(request),
+            }),
+        );
 
         if (resetErr) {
-          console.error('[PartnerPortal] Reset email send failed after password change:', resetErr)
+          console.error(
+            "[PartnerPortal] Reset email send failed after password change:",
+            resetErr,
+          );
         }
       }
     }
@@ -714,7 +849,7 @@ export async function PATCH(request: Request) {
       .update(members)
       .set(updateData)
       .where(eq(members.id, memberId))
-      .returning()
+      .returning();
 
     // Fetch full member data with all fields to return
     const [fullMember] = await db
@@ -753,11 +888,14 @@ export async function PATCH(request: Request) {
       })
       .from(members)
       .leftJoin(user, eq(members.userId, user.id))
-      .where(eq(members.id, memberId))
+      .where(eq(members.id, memberId));
 
-    return NextResponse.json({ member: fullMember }, { status: 200 })
+    return NextResponse.json({ member: fullMember }, { status: 200 });
   } catch (err) {
-    console.error('[PartnerPortal] Members PATCH error:', err)
-    return NextResponse.json({ error: 'Failed to update member' }, { status: 500 })
+    console.error("[PartnerPortal] Members PATCH error:", err);
+    return NextResponse.json(
+      { error: "Failed to update member" },
+      { status: 500 },
+    );
   }
 }

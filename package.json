@@ -48,7 +48,11 @@
     "test:testimonials": "node --test tests/testimonials.test.cjs",
     "test:testimonials:db": "node tests/testimonials-db.integration.cjs",
     "db:migrate:faqs": "tsx scripts/migrate-faqs.ts",
-    "test:faqs": "node --test tests/faqs.test.cjs"
+    "test:faqs": "node --test tests/faqs.test.cjs",
+    "db:migrate:partner-domains": "tsx scripts/migrate-partner-domains.ts",
+    "test:partner-domains": "node --test tests/partner-domains.test.cjs",
+    "db:migrate:student-documents": "tsx scripts/migrate-student-documents.ts",
+    "test:quick-enrollment": "node --test tests/quick-enrollment.test.cjs"
   },
   "dependencies": {
     "@auth/drizzle-adapter": "^1.11.3",

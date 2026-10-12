@@ -1,7 +1,7 @@
 "use client";
 import { motion, useReducedMotion } from "framer-motion";
 import Link from "next/link";
-import { ArrowUpRight, MessageSquareQuote, Star } from "lucide-react";
+import { ArrowUpRight, MessageSquare, Star } from "lucide-react";
 import { useCurrentLocale, useScopedI18n } from "@/locales/client";
 import { SectionHeader } from "./section-header";
 import type { PublicTestimonial } from "@/lib/testimonials/model";
@@ -93,7 +93,7 @@ export default function SectionTestimonialsSlider({
               aria-hidden="true"
               className="flex h-16 w-16 items-center justify-center rounded-2xl bg-primary/10 text-primary"
             >
-              <MessageSquareQuote className="h-8 w-8" strokeWidth={1.5} />
+              <MessageSquare className="h-8 w-8" strokeWidth={1.5} />
             </div>
             <div className="max-w-2xl">
               <p className="mb-2 text-xs font-medium uppercase tracking-[0.15em] text-muted-foreground">

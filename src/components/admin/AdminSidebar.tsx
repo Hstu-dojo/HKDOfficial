@@ -11,243 +11,19 @@ import {
   SidebarMenuItem,
   SidebarMenuButton,
   SidebarRail,
+  SidebarGroup,
+  SidebarGroupLabel,
+  SidebarGroupContent,
   useSidebar,
 } from "@/components/ui/sidebar";
 import { usePathname } from "next/navigation";
 import { useRBAC } from "@/hooks/useRBAC";
+import { ArrowLeftIcon } from "@heroicons/react/24/outline";
 import {
-  ChartBarIcon,
-  UserGroupIcon,
-  CogIcon,
-  CalendarIcon,
-  DocumentTextIcon,
-  PhotoIcon,
-  MapIcon,
-  ShieldCheckIcon,
-  MegaphoneIcon,
-  AcademicCapIcon,
-  DocumentChartBarIcon,
-  TicketIcon,
-  BookOpenIcon,
-  BanknotesIcon,
-  CreditCardIcon,
-  ClipboardDocumentListIcon,
-  BuildingOffice2Icon,
-  ArrowLeftIcon,
-} from "@heroicons/react/24/outline";
-import { cn } from "@/lib/utils";
-import { canAccessAdminRoute } from "@/lib/rbac/admin-route-access";
+  getVisibleAdminNavigation,
+  isAdminNavigationActive,
+} from "./navigation";
 import { useCurrentLocale, useScopedI18n } from "@/locales/client";
-
-interface NavItem {
-  name: string;
-  href: string;
-  icon: React.ComponentType<{ className?: string }>;
-  description: string;
-  requiredPermission?: {
-    resource: string;
-    action: string;
-  };
-  requiredRole?: string;
-}
-
-const navigation: NavItem[] = [
-  {
-    name: "Competition Results",
-    href: "/admin/competition-results",
-    icon: ChartBarIcon,
-    description: "Publish competition finishes and medal rankings",
-    requiredPermission: { resource: "EVENT", action: "READ" },
-  },
-  {
-    name: "Dashboard",
-    href: "/admin",
-    icon: ChartBarIcon,
-    description: "Admin dashboard overview",
-  },
-  {
-    name: "RBAC Management",
-    href: "/admin/rbac",
-    icon: ShieldCheckIcon,
-    description: "Manage roles and permissions",
-    requiredPermission: {
-      resource: "ROLE",
-      action: "READ",
-    },
-  },
-  {
-    name: "Registrations",
-    href: "/admin/registrations",
-    icon: ClipboardDocumentListIcon,
-    description: "View and manage member registrations",
-    requiredPermission: {
-      resource: "MEMBER",
-      action: "READ",
-    },
-  },
-  {
-    name: "Committees",
-    href: "/admin/committees",
-    icon: UserGroupIcon,
-    description: "Manage committee terms and applications",
-    requiredPermission: {
-      resource: "MEMBER",
-      action: "READ",
-    },
-  },
-  {
-    name: "FAQs",
-    href: "/admin/faqs",
-    icon: DocumentTextIcon,
-    description: "Edit homepage questions and translations",
-    requiredPermission: { resource: "FAQ", action: "READ" },
-  },
-  {
-    name: "Testimonials",
-    href: "/admin/testimonials",
-    icon: DocumentTextIcon,
-    description: "Review member testimonials before publication",
-    requiredPermission: { resource: "TESTIMONIAL", action: "READ" },
-  },
-  {
-    name: "Sensei & Team",
-    href: "/admin/instructors",
-    icon: UserGroupIcon,
-    description: "Edit sensei, instructor and black-belt profiles",
-    requiredPermission: { resource: "INSTRUCTOR", action: "READ" },
-  },
-  {
-    name: "Class Schedule",
-    href: "/admin/class-schedule",
-    icon: CalendarIcon,
-    description: "Manage class schedules",
-    requiredPermission: {
-      resource: "CLASS",
-      action: "READ",
-    },
-  },
-  {
-    name: "Course Management",
-    href: "/admin/courses",
-    icon: DocumentTextIcon,
-    description: "Manage courses and content",
-    requiredPermission: {
-      resource: "COURSE",
-      action: "READ",
-    },
-  },
-  {
-    name: "Media Gallery",
-    href: "/admin/gallery",
-    icon: PhotoIcon,
-    description: "Manage media and images",
-    requiredPermission: {
-      resource: "GALLERY",
-      action: "READ",
-    },
-  },
-  {
-    name: "Programs & Events",
-    href: "/admin/programs",
-    icon: TicketIcon,
-    description: "Manage programs, belt tests, and events",
-    requiredPermission: {
-      resource: "PROGRAM",
-      action: "READ",
-    },
-  },
-  {
-    name: "Monthly Fees",
-    href: "/admin/monthly-fees",
-    icon: BanknotesIcon,
-    description: "Manage student fee payments",
-    requiredPermission: {
-      resource: "PAYMENT",
-      action: "READ",
-    },
-  },
-  {
-    name: "Org Billing",
-    href: "/admin/org-billing",
-    icon: BuildingOffice2Icon,
-    description: "Organization billing overview",
-    requiredPermission: {
-      resource: "PARTNER_BILL",
-      action: "READ",
-    },
-  },
-  {
-    name: "Payment Settings",
-    href: "/admin/payment-settings",
-    icon: CreditCardIcon,
-    description: "Configure bKash, Nagad accounts",
-    requiredPermission: {
-      resource: "PAYMENT",
-      action: "MANAGE",
-    },
-  },
-  {
-    name: "Notice board",
-    href: "/admin/announcements",
-    icon: MegaphoneIcon,
-    description: "Publish academy notices",
-    requiredPermission: {
-      resource: "ANNOUNCEMENT",
-      action: "READ",
-    },
-  },
-  {
-    name: "Certificates",
-    href: "/admin/certificates",
-    icon: AcademicCapIcon,
-    description: "Manage certificates",
-    requiredPermission: {
-      resource: "CERTIFICATE",
-      action: "READ",
-    },
-  },
-  {
-    name: "Reports",
-    href: "/admin/reports",
-    icon: DocumentChartBarIcon,
-    description: "View and generate reports",
-    requiredPermission: {
-      resource: "REPORT",
-      action: "READ",
-    },
-  },
-  {
-    name: "Email Management",
-    href: "/admin/emails",
-    icon: MapIcon,
-    description: "All platform email history",
-    requiredPermission: { resource: "EMAIL", action: "READ" },
-  },
-  {
-    name: "Documentation",
-    href: "/admin/docs",
-    icon: BookOpenIcon,
-    description: "Developer & API docs index",
-    requiredRole: "ADMIN",
-  },
-  {
-    name: "Partners",
-    href: "/admin/partners",
-    icon: BuildingOffice2Icon,
-    description: "Manage partner organizations",
-    requiredPermission: {
-      resource: "PARTNER",
-      action: "READ",
-    },
-  },
-  {
-    name: "System Settings",
-    href: "/admin/settings",
-    icon: CogIcon,
-    description: "System configuration",
-    requiredRole: "SUPER_ADMIN",
-  },
-];
 
 export function AdminSidebar() {
   const locale = useCurrentLocale();
@@ -255,9 +31,7 @@ export function AdminSidebar() {
   const pathname = usePathname();
   const { permissions } = useRBAC();
   const { setOpenMobile } = useSidebar();
-  const visibleNavigation = navigation.filter(
-    (item) => permissions && canAccessAdminRoute(permissions, item.href),
-  );
+  const visibleGroups = getVisibleAdminNavigation(permissions);
 
   return (
     <Sidebar collapsible="icon" className="portal-sidebar">
@@ -285,37 +59,48 @@ export function AdminSidebar() {
         </Link>
       </SidebarHeader>
       <SidebarContent className="p-2 py-4">
-        <SidebarMenu>
-          {visibleNavigation.map((item) => {
-            const href = `/${locale}${item.href}`;
-            const active =
-              pathname === href ||
-              (item.href !== "/admin" && pathname?.startsWith(href + "/"));
-            const title =
-              item.href === "/admin/competition-results"
-                ? competitionText("adminTitle")
-                : item.name;
-            return (
-              <SidebarMenuItem key={item.href}>
-                <SidebarMenuButton
-                  asChild
-                  isActive={!!active}
-                  tooltip={title}
-                  className="portal-nav-link"
-                >
-                  <Link
-                    href={href}
-                    onClick={() => setOpenMobile(false)}
-                    aria-current={active ? "page" : undefined}
-                  >
-                    <item.icon className="h-4 w-4 shrink-0" />
-                    <span className="truncate">{title}</span>
-                  </Link>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-            );
-          })}
-        </SidebarMenu>
+        {visibleGroups.map((group) => (
+          <SidebarGroup key={group.title} className="mb-5 p-0 last:mb-0">
+            <SidebarGroupLabel className="px-3 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
+              {group.title}
+            </SidebarGroupLabel>
+            <SidebarGroupContent>
+              <SidebarMenu>
+                {group.items.map((item) => {
+                  const href = `/${locale}${item.href}`;
+                  const active = isAdminNavigationActive(
+                    pathname || "",
+                    item.href,
+                    locale,
+                  );
+                  const title =
+                    item.href === "/admin/competition-results"
+                      ? competitionText("adminTitle")
+                      : item.name;
+                  return (
+                    <SidebarMenuItem key={item.href}>
+                      <SidebarMenuButton
+                        asChild
+                        isActive={!!active}
+                        tooltip={title}
+                        className="portal-nav-link"
+                      >
+                        <Link
+                          href={href}
+                          onClick={() => setOpenMobile(false)}
+                          aria-current={active ? "page" : undefined}
+                        >
+                          <item.icon className="h-4 w-4 shrink-0" />
+                          <span className="truncate">{title}</span>
+                        </Link>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+                  );
+                })}
+              </SidebarMenu>
+            </SidebarGroupContent>
+          </SidebarGroup>
+        ))}
       </SidebarContent>
       <SidebarFooter className="border-t p-2">
         <SidebarMenu>

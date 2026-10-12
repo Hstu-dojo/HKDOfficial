@@ -1,132 +1,199 @@
-import { NextResponse, type NextRequest } from 'next/server'
-import { protectApiRoute } from '@/lib/rbac/middleware'
-import type { RBACContext } from '@/lib/rbac/types'
-
-const VERCEL_API_BASE = 'https://api.vercel.com'
-
-function getVercelConfig() {
-  const projectId = process.env.VERCEL_PROJECT_ID
-  const apiToken = process.env.VERCEL_API_TOKEN
-  const tenantBase = process.env.TENANT_BASE_DOMAIN || 'p.hstuma.com'
-
-  if (!projectId || !apiToken) {
-    throw new Error('Missing VERCEL_PROJECT_ID or VERCEL_API_TOKEN in environment')
-  }
-
-  return { projectId, apiToken, tenantBase }
+import { revalidatePath } from "next/cache";
+import { NextResponse } from "next/server";
+import { protectApiRoute } from "@/lib/rbac/middleware";
+import { hasPermission } from "@/lib/rbac/permissions";
+import { db } from "@/lib/connect-db";
+import { partners, partnerDomains } from "@/db/schemas/partner";
+import { eq } from "drizzle-orm";
+import { normalizeDomain, isAssignableDomain } from "@/lib/org/domains";
+import { tenantFromHost } from "@/lib/org/host";
+import {
+  listProjectDomains,
+  vercelDomainRequest,
+} from "@/lib/org/vercel-domains";
+const base = process.env.TENANT_BASE_DOMAIN || "p.hstuma.com";
+async function allowed(userId: string) {
+  return hasPermission(userId, "ADMIN_PANEL", "ACCESS");
 }
-
-export const GET = protectApiRoute('PARTNER', 'READ', async (_request: NextRequest, _context: RBACContext) => {
-  try {
-    const { projectId, apiToken, tenantBase } = getVercelConfig()
-
-    const res = await fetch(`${VERCEL_API_BASE}/v1/projects/${projectId}/domains`, {
-      method: 'GET',
-      headers: {
-        Authorization: `Bearer ${apiToken}`,
-        'Content-Type': 'application/json',
-      },
-    })
-
-    if (!res.ok) {
-      const err = await res.text()
-      console.error('[TenantDomains] Vercel GET failed:', err)
-      return NextResponse.json({ error: 'Failed to fetch domains from Vercel' }, { status: 502 })
+export const GET = protectApiRoute(
+  "PARTNER",
+  "READ",
+  async (_request, context) => {
+    if (!(await allowed(context.userId)))
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    try {
+      const [projectDomains, assignments] = await Promise.all([
+        listProjectDomains(),
+        db
+          .select({
+            domain: partnerDomains.domain,
+            partnerId: partnerDomains.partnerId,
+            partnerName: partners.name,
+            partnerSlug: partners.slug,
+          })
+          .from(partnerDomains)
+          .innerJoin(partners, eq(partnerDomains.partnerId, partners.id)),
+      ]);
+      const projectNames = new Set(projectDomains.map((d) => d.name));
+      return NextResponse.json({
+        domains: projectDomains
+          .filter((d) => isAssignableDomain(d.name) || d.name === `*.${base}`)
+          .map((d) => ({
+            domain: d.name,
+            slug: tenantFromHost(d.name),
+            verified: d.verified === true,
+            redirect: d.redirect || null,
+            assignable:
+              isAssignableDomain(d.name) &&
+              d.verified === true &&
+              !d.redirect &&
+              !d.gitBranch &&
+              !d.customEnvironmentId,
+            ...assignments.find((a) => a.domain === d.name),
+          })),
+        assignments,
+        missingDomains: assignments.filter((a) => !projectNames.has(a.domain)),
+        tenantBase: base,
+      });
+    } catch {
+      return NextResponse.json(
+        {
+          error:
+            "Could not load domains. Check Vercel credentials and database migration.",
+        },
+        { status: 502 },
+      );
     }
-
-    const data = await res.json()
-    const domains = Array.isArray(data.domains) ? data.domains : data
-
-    const tenantSuffix = `.${tenantBase}`
-
-    const filtered = (domains as Array<any>)
-      .filter((item) => item?.name && item.name.endsWith(tenantSuffix))
-      .map((item) => {
-        const normalized = item.name.replace(tenantSuffix, '')
-        return {
-          slug: normalized,
-          domain: item.name,
-          ...item,
-        }
-      })
-
-    return NextResponse.json({ domains: filtered })
-  } catch (err) {
-    console.error('[TenantDomains] GET error:', err)
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
-  }
-})
-
-export const POST = protectApiRoute('PARTNER', 'CREATE', async (request: NextRequest, _context: RBACContext) => {
-  try {
-    const body = await request.json()
-    const { slug } = body
-
-    if (!slug || typeof slug !== 'string') {
-      return NextResponse.json({ error: 'Slug is required' }, { status: 400 })
+  },
+);
+export const POST = protectApiRoute(
+  "PARTNER",
+  "CREATE",
+  async (request, context) => {
+    if (!(await allowed(context.userId)))
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    try {
+      const { slug } = await request.json();
+      if (
+        typeof slug !== "string" ||
+        tenantFromHost(`${slug}.${base}`, base) !== slug
+      )
+        return NextResponse.json(
+          { error: "Enter a valid tenant slug" },
+          { status: 400 },
+        );
+      const domain = await vercelDomainRequest("", "POST", {
+        name: `${slug}.${base}`,
+      });
+      return NextResponse.json({ domain });
+    } catch {
+      return NextResponse.json(
+        { error: "Could not add the subdomain to Vercel" },
+        { status: 502 },
+      );
     }
-
-    const { projectId, apiToken, tenantBase } = getVercelConfig()
-    const normalizedSlug = slug.trim().toLowerCase().replace(/[^a-z0-9-]/g, '-').replace(/^-|-$/g, '')
-
-    if (!normalizedSlug) {
-      return NextResponse.json({ error: 'Invalid slug' }, { status: 400 })
+  },
+);
+export const PATCH = protectApiRoute(
+  "PARTNER",
+  "UPDATE",
+  async (request, context) => {
+    if (!(await allowed(context.userId)))
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    try {
+      const body = await request.json();
+      const domain =
+        typeof body.domain === "string" ? normalizeDomain(body.domain) : null;
+      if (
+        !domain ||
+        !isAssignableDomain(domain) ||
+        typeof body.partnerId !== "string"
+      )
+        return NextResponse.json(
+          { error: "Select an assignable domain and organization" },
+          { status: 400 },
+        );
+      const [partner] = await db
+        .select({ id: partners.id, slug: partners.slug })
+        .from(partners)
+        .where(eq(partners.id, body.partnerId))
+        .limit(1);
+      if (!partner)
+        return NextResponse.json(
+          { error: "Organization not found" },
+          { status: 404 },
+        );
+      const subdomainSlug = tenantFromHost(domain, base);
+      if (domain.endsWith(`.${base}`) && subdomainSlug !== partner.slug)
+        return NextResponse.json(
+          { error: "A tenant subdomain must match its organization's slug" },
+          { status: 400 },
+        );
+      const projectDomain = await vercelDomainRequest(
+        `/${encodeURIComponent(domain)}`,
+      );
+      if (
+        projectDomain.name !== domain ||
+        projectDomain.verified !== true ||
+        projectDomain.redirect ||
+        projectDomain.gitBranch ||
+        projectDomain.customEnvironmentId
+      )
+        return NextResponse.json(
+          {
+            error:
+              "Domain must be verified, serve production, and have no Vercel redirect",
+          },
+          { status: 409 },
+        );
+      const [assignment] = await db
+        .insert(partnerDomains)
+        .values({ domain, partnerId: partner.id, createdBy: context.userId })
+        .onConflictDoNothing()
+        .returning();
+      if (!assignment)
+        return NextResponse.json(
+          {
+            error:
+              "This domain is already assigned. Unassign it before changing organizations.",
+          },
+          { status: 409 },
+        );
+      revalidatePath("/sitemap.xml");
+      revalidatePath(`/org/${partner.slug}`);
+      return NextResponse.json({ assignment });
+    } catch {
+      return NextResponse.json(
+        {
+          error:
+            "Could not assign domain. Check Vercel credentials and database migration.",
+        },
+        { status: 502 },
+      );
     }
-
-    const domainName = `${normalizedSlug}.${tenantBase}`
-
-    const res = await fetch(`${VERCEL_API_BASE}/v1/projects/${projectId}/domains`, {
-      method: 'POST',
-      headers: {
-        Authorization: `Bearer ${apiToken}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ name: domainName }),
-    })
-
-    const data = await res.json()
-    if (!res.ok) {
-      console.error('[TenantDomains] POST failed:', data)
-      return NextResponse.json({ error: data.error?.message || 'Failed to add domain' }, { status: 502 })
+  },
+);
+export const DELETE = protectApiRoute(
+  "PARTNER",
+  "UPDATE",
+  async (request, context) => {
+    if (!(await allowed(context.userId)))
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    const domain = normalizeDomain(
+      new URL(request.url).searchParams.get("domain") || "",
+    );
+    if (!domain || !isAssignableDomain(domain))
+      return NextResponse.json({ error: "Invalid domain" }, { status: 400 });
+    try {
+      await db.delete(partnerDomains).where(eq(partnerDomains.domain, domain));
+      revalidatePath("/sitemap.xml");
+      // Unassigning must never remove a project domain from Vercel or disturb other sites.
+      return NextResponse.json({ success: true });
+    } catch {
+      return NextResponse.json(
+        { error: "Could not unassign domain" },
+        { status: 500 },
+      );
     }
-
-    return NextResponse.json({ domain: data, slug: normalizedSlug })
-  } catch (err) {
-    console.error('[TenantDomains] POST error:', err)
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
-  }
-})
-
-export const DELETE = protectApiRoute('PARTNER', 'DELETE', async (request: NextRequest, _context: RBACContext) => {
-  try {
-    const { projectId, apiToken, tenantBase } = getVercelConfig()
-    const url = new URL(request.url)
-    const slug = url.searchParams.get('slug')
-
-    if (!slug) {
-      return NextResponse.json({ error: 'Slug query is required' }, { status: 400 })
-    }
-
-    const normalizedSlug = slug.trim().toLowerCase().replace(/[^a-z0-9-]/g, '-').replace(/^-|-$/g, '')
-    const domainName = `${normalizedSlug}.${tenantBase}`
-
-    const res = await fetch(`${VERCEL_API_BASE}/v1/projects/${projectId}/domains/${encodeURIComponent(domainName)}`, {
-      method: 'DELETE',
-      headers: {
-        Authorization: `Bearer ${apiToken}`,
-        'Content-Type': 'application/json',
-      },
-    })
-
-    if (!res.ok) {
-      const data = await res.json()
-      console.error('[TenantDomains] DELETE failed:', data)
-      return NextResponse.json({ error: data.error?.message || 'Failed to remove domain' }, { status: 502 })
-    }
-
-    return NextResponse.json({ success: true })
-  } catch (err) {
-    console.error('[TenantDomains] DELETE error:', err)
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
-  }
-})
+  },
+);

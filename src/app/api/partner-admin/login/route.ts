@@ -1,36 +1,46 @@
-import { tenantFromHost } from '@/lib/org/host'
-import { NextResponse } from 'next/server'
-import { db } from '@/lib/connect-db'
-import { partners, partnerAdmins, partnerAdminSessions } from '@/db/schemas/partner'
-import { eq, sql } from 'drizzle-orm'
-import { compare } from '@/lib/hash'
-import { PARTNER_ADMIN_SESSION_COOKIE } from '@/lib/partner-admin/auth'
-import { randomBytes } from 'crypto'
+import { isPlatformHost } from "@/lib/org/domains";
+import { resolveTenantHost } from "@/lib/org/domain-server";
+import { NextResponse } from "next/server";
+import { db } from "@/lib/connect-db";
+import {
+  partners,
+  partnerAdmins,
+  partnerAdminSessions,
+} from "@/db/schemas/partner";
+import { eq, sql } from "drizzle-orm";
+import { compare } from "@/lib/hash";
+import { PARTNER_ADMIN_SESSION_COOKIE } from "@/lib/partner-admin/auth";
+import { randomBytes } from "crypto";
 
 function newToken() {
-  return randomBytes(32).toString('hex')
+  return randomBytes(32).toString("hex");
 }
 
 function getPostgresErrorCode(err: unknown): string | undefined {
-  if (!err || typeof err !== 'object') return undefined
-  const maybeCode = (err as { code?: unknown }).code
-  return typeof maybeCode === 'string' ? maybeCode : undefined
+  if (!err || typeof err !== "object") return undefined;
+  const maybeCode = (err as { code?: unknown }).code;
+  return typeof maybeCode === "string" ? maybeCode : undefined;
 }
 
 function getNodeErrorCode(err: unknown): string | undefined {
-  if (!err || typeof err !== 'object') return undefined
-  const maybeCode = (err as { code?: unknown }).code
-  return typeof maybeCode === 'string' ? maybeCode : undefined
+  if (!err || typeof err !== "object") return undefined;
+  const maybeCode = (err as { code?: unknown }).code;
+  return typeof maybeCode === "string" ? maybeCode : undefined;
 }
 
 export async function POST(request: Request) {
   try {
-    const body = await request.json().catch(() => null)
-    const email = String(body?.email || '').trim().toLowerCase()
-    const password = String(body?.password || '')
+    const body = await request.json().catch(() => null);
+    const email = String(body?.email || "")
+      .trim()
+      .toLowerCase();
+    const password = String(body?.password || "");
 
     if (!email || !password) {
-      return NextResponse.json({ error: 'Email and password are required' }, { status: 400 })
+      return NextResponse.json(
+        { error: "Email and password are required" },
+        { status: 400 },
+      );
     }
 
     const rows = await db
@@ -48,60 +58,81 @@ export async function POST(request: Request) {
       .from(partnerAdmins)
       .innerJoin(partners, eq(partnerAdmins.partnerId, partners.id))
       .where(sql`lower(${partnerAdmins.email}) = ${email}`)
-      .limit(1)
+      .limit(1);
 
-    const admin = rows[0]
-    const tenant = tenantFromHost(request.headers.get('host'))
-    if (!admin || (tenant && tenant !== admin.partnerSlug)) {
-      return NextResponse.json({ error: 'Invalid email or password' }, { status: 401 })
+    const admin = rows[0];
+    const tenant = await resolveTenantHost(request.headers.get("host"));
+    if (
+      !admin ||
+      (tenant && tenant !== admin.partnerSlug) ||
+      (!tenant && !isPlatformHost(request.headers.get("host")))
+    ) {
+      return NextResponse.json(
+        { error: "Invalid email or password" },
+        { status: 401 },
+      );
     }
 
     if (!admin.isActive || !admin.partnerActive) {
-      return NextResponse.json({ error: 'Your account has been deactivated' }, { status: 403 })
+      return NextResponse.json(
+        { error: "Your account has been deactivated" },
+        { status: 403 },
+      );
     }
 
-    let ok = false
+    let ok = false;
     try {
-      ok = await compare(password, admin.passwordHash)
+      ok = await compare(password, admin.passwordHash);
     } catch (err) {
-      console.warn('[PartnerAdminLogin] Stored password hash is invalid for user:', admin.id)
-      return NextResponse.json({ error: 'Invalid email or password' }, { status: 401 })
+      console.warn(
+        "[PartnerAdminLogin] Stored password hash is invalid for user:",
+        admin.id,
+      );
+      return NextResponse.json(
+        { error: "Invalid email or password" },
+        { status: 401 },
+      );
     }
     if (!ok) {
-      return NextResponse.json({ error: 'Invalid email or password' }, { status: 401 })
+      return NextResponse.json(
+        { error: "Invalid email or password" },
+        { status: 401 },
+      );
     }
 
-    const token = newToken()
-    const expiresAt = new Date(Date.now() + 1000 * 60 * 60 * 24) // 24h
+    const token = newToken();
+    const expiresAt = new Date(Date.now() + 1000 * 60 * 60 * 24); // 24h
 
     // ── Cleanup: prune expired sessions globally & limit concurrent sessions ──
     try {
       // Delete all globally-expired sessions
-      await db.delete(partnerAdminSessions).where(
-        sql`${partnerAdminSessions.expiresAt} < now()`
-      )
+      await db
+        .delete(partnerAdminSessions)
+        .where(sql`${partnerAdminSessions.expiresAt} < now()`);
       // Delete old sessions for this admin (keep most recent 2, we're about to add 1 more)
       const existingSessions = await db
         .select({ token: partnerAdminSessions.token })
         .from(partnerAdminSessions)
         .where(eq(partnerAdminSessions.partnerAdminId, admin.id))
-        .orderBy(sql`${partnerAdminSessions.createdAt} DESC`)
+        .orderBy(sql`${partnerAdminSessions.createdAt} DESC`);
       if (existingSessions.length >= 3) {
-        const tokensToDelete = existingSessions.slice(2).map(s => s.token)
+        const tokensToDelete = existingSessions.slice(2).map((s) => s.token);
         for (const t of tokensToDelete) {
-          await db.delete(partnerAdminSessions).where(eq(partnerAdminSessions.token, t))
+          await db
+            .delete(partnerAdminSessions)
+            .where(eq(partnerAdminSessions.token, t));
         }
       }
     } catch (cleanupErr) {
       // Non-fatal — log and continue with login
-      console.warn('[PartnerAdminLogin] Session cleanup failed:', cleanupErr)
+      console.warn("[PartnerAdminLogin] Session cleanup failed:", cleanupErr);
     }
 
     await db.insert(partnerAdminSessions).values({
       token,
       partnerAdminId: admin.id,
       expiresAt,
-    })
+    });
 
     const res = NextResponse.json({
       user: {
@@ -112,67 +143,86 @@ export async function POST(request: Request) {
         partnerName: admin.partnerName,
         partnerSlug: admin.partnerSlug,
       },
-    })
+    });
 
     res.cookies.set({
       name: PARTNER_ADMIN_SESSION_COOKIE,
       value: token,
       httpOnly: true,
-      sameSite: 'lax',
-      secure: process.env.NODE_ENV === 'production',
-      path: '/',
+      sameSite: "lax",
+      secure: process.env.NODE_ENV === "production",
+      path: "/",
       expires: expiresAt,
-    })
+    });
 
-    return res
+    return res;
   } catch (err) {
-    const pgCode = getPostgresErrorCode(err)
-    const nodeCode = getNodeErrorCode(err)
+    const pgCode = getPostgresErrorCode(err);
+    const nodeCode = getNodeErrorCode(err);
 
     // Postgres: undefined_table (typically migrations not applied)
-    if (pgCode === '42P01') {
-      console.error('[PartnerAdminLogin] Database tables missing (run migrations):', err)
+    if (pgCode === "42P01") {
+      console.error(
+        "[PartnerAdminLogin] Database tables missing (run migrations):",
+        err,
+      );
       return NextResponse.json(
-        { error: 'Partner admin system is not initialized. Please run database migrations.' },
-        { status: 503 }
-      )
+        {
+          error:
+            "Partner admin system is not initialized. Please run database migrations.",
+        },
+        { status: 503 },
+      );
     }
 
     // Postgres: invalid_password / insufficient_privilege / too_many_connections
-    if (pgCode === '28P01') {
-      console.error('[PartnerAdminLogin] Database authentication failed:', err)
+    if (pgCode === "28P01") {
+      console.error("[PartnerAdminLogin] Database authentication failed:", err);
       return NextResponse.json(
-        { error: 'Database authentication failed. Please check server configuration.' },
-        { status: 503 }
-      )
+        {
+          error:
+            "Database authentication failed. Please check server configuration.",
+        },
+        { status: 503 },
+      );
     }
 
-    if (pgCode === '42501') {
-      console.error('[PartnerAdminLogin] Database permission denied:', err)
+    if (pgCode === "42501") {
+      console.error("[PartnerAdminLogin] Database permission denied:", err);
       return NextResponse.json(
-        { error: 'Database permission error. Please check database roles/policies.' },
-        { status: 503 }
-      )
+        {
+          error:
+            "Database permission error. Please check database roles/policies.",
+        },
+        { status: 503 },
+      );
     }
 
-    if (pgCode === '53300') {
-      console.error('[PartnerAdminLogin] Database is at connection limit:', err)
+    if (pgCode === "53300") {
+      console.error(
+        "[PartnerAdminLogin] Database is at connection limit:",
+        err,
+      );
       return NextResponse.json(
-        { error: 'Database is busy. Please try again later.' },
-        { status: 503 }
-      )
+        { error: "Database is busy. Please try again later." },
+        { status: 503 },
+      );
     }
 
     // Common Node/network failures
-    if (nodeCode === 'ECONNREFUSED' || nodeCode === 'ENOTFOUND' || nodeCode === 'ETIMEDOUT') {
-      console.error('[PartnerAdminLogin] Database connection error:', err)
+    if (
+      nodeCode === "ECONNREFUSED" ||
+      nodeCode === "ENOTFOUND" ||
+      nodeCode === "ETIMEDOUT"
+    ) {
+      console.error("[PartnerAdminLogin] Database connection error:", err);
       return NextResponse.json(
-        { error: 'Database connection failed. Please try again later.' },
-        { status: 503 }
-      )
+        { error: "Database connection failed. Please try again later." },
+        { status: 503 },
+      );
     }
 
-    console.error('[PartnerAdminLogin] Error:', err)
-    return NextResponse.json({ error: 'Login failed' }, { status: 500 })
+    console.error("[PartnerAdminLogin] Error:", err);
+    return NextResponse.json({ error: "Login failed" }, { status: 500 });
   }
 }

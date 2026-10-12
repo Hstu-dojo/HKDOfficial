@@ -1,5 +1,6 @@
 'use client'
 
+import TenantDomainManager from "./TenantDomainManager";
 import { PanelLoader } from "@/components/loading";
 
 import { useState, useEffect, useCallback } from 'react'
@@ -32,6 +33,7 @@ interface Partner {
   isActive: boolean
   createdAt: string
   updatedAt: string
+  publicUrl?: string
   memberCount: number
 }
 
@@ -79,15 +81,7 @@ export default function PartnersManagement() {
     phone: '',
   })
 
-  // Tenant domains state
   const [showTenantModal, setShowTenantModal] = useState(false)
-  const [tenantDomains, setTenantDomains] = useState<Array<{slug:string; domain:string}>>([])
-  const [tenantLoading, setTenantLoading] = useState(false)
-  const [tenantError, setTenantError] = useState('')
-  const [tenantSuccess, setTenantSuccess] = useState('')
-  const [newTenantSlug, setNewTenantSlug] = useState('')
-  const [tenantSaving, setTenantSaving] = useState(false)
-
   // Form state
   const [form, setForm] = useState({
     name: '',
@@ -144,81 +138,7 @@ export default function PartnersManagement() {
     fetchAdmins(partner.id)
   }
 
-  const fetchTenantDomains = async () => {
-    setTenantLoading(true)
-    setTenantError('')
-    try {
-      const res = await fetch('/api/admin/partners/tenant-domains')
-      if (!res.ok) throw new Error('Failed to fetch tenant domains')
-      const data = await res.json()
-      setTenantDomains(data.domains || [])
-    } catch (err: any) {
-      setTenantError(err?.message || 'Could not fetch tenant domains')
-    } finally {
-      setTenantLoading(false)
-    }
-  }
-
-  const openTenantModal = async () => {
-    setShowTenantModal(true)
-    setTenantSuccess('')
-    setTenantError('')
-    setNewTenantSlug('')
-    await fetchTenantDomains()
-  }
-
-  const handleAddTenant = async (e: React.FormEvent) => {
-    e.preventDefault()
-    const sanitizedSlug = slugify(newTenantSlug || '')
-    if (!sanitizedSlug) {
-      setTenantError('Please enter a valid slug')
-      return
-    }
-
-    setTenantSaving(true)
-    setTenantError('')
-    setTenantSuccess('')
-
-    try {
-      const res = await fetch('/api/admin/partners/tenant-domains', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ slug: sanitizedSlug }),
-      })
-
-      const data = await res.json()
-      if (!res.ok) throw new Error(data.error || 'Failed to add tenant domain')
-
-      setTenantSuccess(`Added tenant subdomain: ${sanitizedSlug}`)
-      setNewTenantSlug('')
-      await fetchTenantDomains()
-    } catch (err: any) {
-      setTenantError(err?.message || 'Failed to add tenant domain')
-    } finally {
-      setTenantSaving(false)
-    }
-  }
-
-  const handleRemoveTenant = async (slug: string) => {
-    if (!confirm(`Remove tenant subdomain '${slug}'?`)) return
-
-    setTenantError('')
-    setTenantSuccess('')
-
-    try {
-      const res = await fetch(`/api/admin/partners/tenant-domains?slug=${encodeURIComponent(slug)}`, {
-        method: 'DELETE',
-      })
-
-      const data = await res.json()
-      if (!res.ok) throw new Error(data.error || 'Failed to remove tenant domain')
-
-      setTenantSuccess(`Removed tenant subdomain: ${slug}`)
-      await fetchTenantDomains()
-    } catch (err: any) {
-      setTenantError(err?.message || 'Failed to remove tenant domain')
-    }
-  }
+  const openTenantModal = () => setShowTenantModal(true)
 
   const handleAddAdmin = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -440,7 +360,7 @@ export default function PartnersManagement() {
             className="inline-flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-foreground shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:border-gray-600 dark:bg-card dark:text-gray-100 dark:hover:bg-gray-700"
           >
             <UserPlusIcon className="h-5 w-5" />
-            Tenant Subdomains
+            Organization Domains
           </button>
           <button
             onClick={openCreateModal}
@@ -571,7 +491,7 @@ export default function PartnersManagement() {
                   Admins
                 </button>
                 <a
-                  href={`/org/${partner.slug}`}
+                  href={partner.publicUrl || `/org/${partner.slug}`}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="ml-auto inline-flex items-center gap-1 rounded px-2 py-1 text-xs font-medium text-muted-foreground hover:bg-gray-50 dark:text-gray-400 dark:hover:bg-gray-700"
@@ -979,76 +899,7 @@ export default function PartnersManagement() {
         </div>
         </div>
       )}
-      {/* Tenant Subdomains Modal */}
-      {showTenantModal && (
-        <div className="fixed inset-0 z-50 bg-black/50 overflow-y-auto">
-          <div className="min-h-full flex items-start sm:items-center justify-center p-4">
-            <div className="w-full max-w-2xl max-h-[calc(100dvh-2rem)] overflow-y-auto rounded-xl bg-white shadow-sm dark:bg-card">
-            <div className="flex items-center justify-between border-b p-5 dark:border-border">
-              <div>
-                <h2 className="text-lg font-semibold text-foreground dark:text-gray-100">Tenant Subdomains</h2>
-                <p className="text-sm text-muted-foreground dark:text-gray-400">Add or remove tenant subdomains under {process.env.NEXT_PUBLIC_TENANT_BASE_DOMAIN || 'p.hstuma.com'}.</p>
-              </div>
-              <button
-                onClick={() => setShowTenantModal(false)}
-                className="text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300"
-              >
-                <XMarkIcon className="h-6 w-6" />
-              </button>
-            </div>
-
-            <div className="p-5 space-y-4">
-              {tenantError && <div className="rounded-lg bg-red-50 p-3 text-sm text-red-700 dark:bg-red-900/20 dark:text-red-400">{tenantError}</div>}
-              {tenantSuccess && <div className="rounded-lg bg-green-50 p-3 text-sm text-green-700 dark:bg-green-900/20 dark:text-green-400">{tenantSuccess}</div>}
-
-              <form onSubmit={handleAddTenant} className="grid grid-cols-1 gap-2 sm:grid-cols-[1fr_auto]">
-                <input
-                  type="text"
-                  value={newTenantSlug}
-                  onChange={(e) => setNewTenantSlug(e.target.value)}
-                  placeholder="Add tenant slug (e.g. this, that)"
-                  className="rounded-lg border border-gray-300 px-3 py-2 text-sm dark:border-gray-600 dark:bg-gray-700 dark:text-white"
-                />
-                <button
-                  type="submit"
-                  disabled={tenantSaving}
-                  className="rounded-lg bg-green-600 px-4 py-2 text-sm font-medium text-white hover:bg-green-700 disabled:opacity-50"
-                >
-                  {tenantSaving ? 'Adding...' : 'Add Tenant'}
-                </button>
-              </form>
-
-              <div className="mt-2 max-h-72 overflow-y-auto rounded-lg border border-border dark:border-border">
-                {tenantLoading ? (
-                  <div className="flex h-24 items-center justify-center">
-                    <div className="h-6 w-6 animate-spin rounded-full border-b-2 border-blue-600" />
-                  </div>
-                ) : tenantDomains.length === 0 ? (
-                  <div className="p-4 text-sm text-muted-foreground dark:text-gray-400">No tenant subdomains found.</div>
-                ) : (
-                  <ul className="divide-y divide-gray-200 dark:divide-gray-700">
-                    {tenantDomains.map((domain) => (
-                      <li key={domain.slug} className="flex items-center justify-between px-4 py-2">
-                        <div>
-                          <div className="font-medium text-foreground dark:text-gray-100">{domain.slug}</div>
-                          <div className="text-xs text-muted-foreground dark:text-gray-400">{domain.domain}</div>
-                        </div>
-                        <button
-                          type="button"
-                          onClick={() => handleRemoveTenant(domain.slug)}
-                          className="rounded-lg bg-red-600 px-3 py-1.5 text-xs font-medium text-white hover:bg-red-700"
-                        >
-                          Remove
-                        </button>
-                      </li>
-                    ))}
-                  </ul>
-                )}
-              </div>
-            </div>
-          </div>
-        </div>
-        </div>
-      )}    </div>
+      {showTenantModal && <TenantDomainManager partners={partners} onClose={() => { setShowTenantModal(false); fetchPartners(); }} />}
+    </div>
   )
 }

@@ -1,6 +1,6 @@
 import { headers } from "next/headers";
 import { notFound } from "next/navigation";
-import { tenantFromHost } from "@/lib/org/host";
+import { resolveTenantHost } from "@/lib/org/domain-server";
 import { getOrgIdentity } from "@/lib/org/server";
 import { orgTheme } from "@/lib/org/theme";
 import { OrgImage } from "@/components/org/OrgImage";
@@ -35,7 +35,7 @@ export default async function AuthPageLayout({
   imageTitle,
   imageDescription,
 }: AuthPageLayoutProps) {
-  const tenant = tenantFromHost((await headers()).get("host"));
+  const tenant = await resolveTenantHost((await headers()).get("host"));
   const organization = tenant ? await getOrgIdentity(tenant) : null;
   if (tenant && !organization) notFound();
   const actualBrand = organization?.partner.name || brand;

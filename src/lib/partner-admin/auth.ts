@@ -1,31 +1,36 @@
-import { tenantFromHost } from '@/lib/org/host'
-import { cookies, headers } from 'next/headers'
-import { db } from '@/lib/connect-db'
-import { partners, partnerAdmins, partnerAdminSessions } from '@/db/schemas/partner'
-import { and, eq, gt } from 'drizzle-orm'
+import { isPlatformHost } from "@/lib/org/domains";
+import { resolveTenantHost } from "@/lib/org/domain-server";
+import { cookies, headers } from "next/headers";
+import { db } from "@/lib/connect-db";
+import {
+  partners,
+  partnerAdmins,
+  partnerAdminSessions,
+} from "@/db/schemas/partner";
+import { and, eq, gt } from "drizzle-orm";
 
-export const PARTNER_ADMIN_SESSION_COOKIE = 'kka_partner_admin_session'
-export const LEGACY_PARTNER_ADMIN_SESSION_COOKIE = 'hkd_partner_admin_session'
+export const PARTNER_ADMIN_SESSION_COOKIE = "kka_partner_admin_session";
+export const LEGACY_PARTNER_ADMIN_SESSION_COOKIE = "hkd_partner_admin_session";
 
 export interface PartnerAdminUser {
-  id: string
-  email: string
-  name: string
-  partnerId: string
-  partnerName: string
-  partnerSlug: string
-  isActive: boolean
+  id: string;
+  email: string;
+  name: string;
+  partnerId: string;
+  partnerName: string;
+  partnerSlug: string;
+  isActive: boolean;
 }
 
 export async function getPartnerAdminUser(): Promise<PartnerAdminUser | null> {
   try {
-    const cookieStore = await cookies()
+    const cookieStore = await cookies();
     const token =
       cookieStore.get(PARTNER_ADMIN_SESSION_COOKIE)?.value ||
-      cookieStore.get(LEGACY_PARTNER_ADMIN_SESSION_COOKIE)?.value
-    if (!token) return null
+      cookieStore.get(LEGACY_PARTNER_ADMIN_SESSION_COOKIE)?.value;
+    if (!token) return null;
 
-    const now = new Date()
+    const now = new Date();
 
     const rows = await db
       .select({
@@ -39,17 +44,29 @@ export async function getPartnerAdminUser(): Promise<PartnerAdminUser | null> {
         partnerActive: partners.isActive,
       })
       .from(partnerAdminSessions)
-      .innerJoin(partnerAdmins, eq(partnerAdminSessions.partnerAdminId, partnerAdmins.id))
+      .innerJoin(
+        partnerAdmins,
+        eq(partnerAdminSessions.partnerAdminId, partnerAdmins.id),
+      )
       .innerJoin(partners, eq(partnerAdmins.partnerId, partners.id))
-      .where(and(eq(partnerAdminSessions.token, token), gt(partnerAdminSessions.expiresAt, now)))
-      .limit(1)
+      .where(
+        and(
+          eq(partnerAdminSessions.token, token),
+          gt(partnerAdminSessions.expiresAt, now),
+        ),
+      )
+      .limit(1);
 
-    const row = rows[0]
-    if (!row) return null
+    const row = rows[0];
+    if (!row) return null;
 
-    if (!row.adminIsActive || !row.partnerActive) return null
-    const tenant = tenantFromHost((await headers()).get('host'))
-    if (tenant && tenant !== row.partnerSlug) return null
+    if (!row.adminIsActive || !row.partnerActive) return null;
+    const tenant = await resolveTenantHost((await headers()).get("host"));
+    if (
+      (tenant && tenant !== row.partnerSlug) ||
+      (!tenant && !isPlatformHost((await headers()).get("host")))
+    )
+      return null;
 
     return {
       id: row.adminId,
@@ -59,35 +76,34 @@ export async function getPartnerAdminUser(): Promise<PartnerAdminUser | null> {
       partnerName: row.partnerName,
       partnerSlug: row.partnerSlug,
       isActive: row.adminIsActive,
-    }
+    };
   } catch (err) {
-    console.error('[PartnerAdminAuth] Failed to load partner admin user:', err)
-    return null
+    console.error("[PartnerAdminAuth] Failed to load partner admin user:", err);
+    return null;
   }
 }
 
 export async function requirePartnerAdminUser(): Promise<
-  | { user: PartnerAdminUser; error: null }
-  | { user: null; error: Response }
+  { user: PartnerAdminUser; error: null } | { user: null; error: Response }
 > {
-  const user = await getPartnerAdminUser()
+  const user = await getPartnerAdminUser();
 
   if (!user) {
     return {
       user: null,
       error: Response.json(
-        { error: 'Unauthorized — please log in to the Partner Admin portal' },
-        { status: 401 }
+        { error: "Unauthorized — please log in to the Partner Admin portal" },
+        { status: 401 },
       ),
-    }
+    };
   }
 
   if (!user.isActive) {
     return {
       user: null,
-      error: Response.json({ error: 'Account deactivated' }, { status: 403 }),
-    }
+      error: Response.json({ error: "Account deactivated" }, { status: 403 }),
+    };
   }
 
-  return { user, error: null }
+  return { user, error: null };
 }

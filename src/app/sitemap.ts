@@ -1,3 +1,4 @@
+import { organizationOrigin } from "@/lib/org/domain-server";
 import type { MetadataRoute } from "next";
 import { db } from "@/lib/connect-db";
 import { courses, programs, partners, galleryFolders } from "@/db/schema";
@@ -7,7 +8,6 @@ import {
   localizedAlternates,
   publicPages,
   seoLocales,
-  partnerOrigin,
 } from "@/lib/seo/site";
 import { getAcademyNotices } from "@/lib/notices/server";
 export const revalidate = 600;
@@ -69,14 +69,16 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         row.updatedAt,
       ),
     );
-  if (sources[2].status === "fulfilled")
-    sources[2].value.forEach((row) => {
-      if (row.slug && /^[a-z0-9-]+$/i.test(row.slug))
+  if (sources[2].status === "fulfilled") {
+    for (const row of sources[2].value) {
+      if (row.slug && /^[a-z0-9-]+$/i.test(row.slug)) {
         entries.push({
-          url: `${partnerOrigin(row.slug)}/`,
+          url: `${await organizationOrigin(row.slug)}/`,
           lastModified: row.updatedAt,
         });
-    });
+      }
+    }
+  }
   if (sources[3].status === "fulfilled")
     sources[3].value.forEach((row) =>
       addLocalized(`/gallery/${encodeURIComponent(row.slug)}`, row.updatedAt),

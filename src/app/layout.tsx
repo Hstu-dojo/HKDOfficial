@@ -1,5 +1,5 @@
 import "./globals.css";
-import { tenantFromHost } from "@/lib/org/host";
+import { resolveTenantHost } from "@/lib/org/domain-server";
 import { editorialFonts } from "@/styles/fonts";
 import { headers } from "next/headers";
 import type { Metadata } from "next";
@@ -51,7 +51,7 @@ export default async function RootLayout({
   children: React.ReactNode;
 }) {
   const requestHeaders = await headers();
-  const tenant = tenantFromHost(requestHeaders.get("host"));
+  const tenant = await resolveTenantHost(requestHeaders.get("host"));
   const pathname = requestHeaders.get("x-seo-pathname") || "";
   const locale = localeFor(pathname.match(/^\/(en|bn|ne)(?:\/|$)/)?.[1]);
 
