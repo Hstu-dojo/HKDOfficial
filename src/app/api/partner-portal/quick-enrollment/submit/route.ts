@@ -21,6 +21,7 @@ import {
   putDocument,
   cropDocument,
   removeDocument,
+  validateFile,
 } from "@/lib/student-enrollment/storage";
 import { sendEnrollmentCredentials } from "@/lib/student-enrollment/email";
 import { organizationOrigin } from "@/lib/org/domain-server";
@@ -30,7 +31,13 @@ export const maxDuration = 60;
 async function submitDraft(request: Request) {
   const { user: actor, error } = await requirePartnerAdminUser();
   if (error) return error;
-  const parsed = submitSchema.safeParse(await request.json().catch(() => null));
+  const multipart = request.headers.get("content-type")?.includes("multipart/form-data");
+  const form = multipart ? await request.formData().catch(() => null) : null;
+  let payload: unknown = null;
+  if (multipart) {
+    try { payload = JSON.parse(String(form?.get("payload") || "null")); } catch {}
+  } else payload = await request.json().catch(() => null);
+  const parsed = submitSchema.safeParse(payload);
   if (!parsed.success)
     return NextResponse.json(
       {
@@ -42,6 +49,20 @@ async function submitDraft(request: Request) {
     );
   const input = parsed.data,
     f = input.fields;
+  const uploadedImages: Record<string, Buffer> = {};
+  try {
+    let totalBytes = 0;
+    for (const kind of ["photo", "signature"]) {
+      const upload = form?.get(kind);
+      if (upload instanceof File) {
+        totalBytes += upload.size;
+        if (totalBytes > 3 * 1024 * 1024) throw Error("Photo and signature uploads must total less than 3 MB");
+        uploadedImages[kind] = (await validateFile(upload, true)).buffer;
+      }
+    }
+  } catch {
+    return NextResponse.json({ error: "Use valid JPEG, PNG or WebP images totaling less than 3 MB for the photo and signature." }, { status: 400 });
+  }
   if (
     !process.env.SUPABASE_SERVICE_ROLE_KEY ||
     !process.env.NEXT_PUBLIC_SUPABASE_URL
@@ -199,12 +220,13 @@ async function submitDraft(request: Request) {
       ["signature", input.signatureBox],
     ] as const)
       if (box) {
+        const image = uploadedImages[kind] || cropSource;
         const id = randomUUID();
         finalDocs.push({
           id,
           kind,
           key: `${folder}/${kind}/${id}.jpg`,
-          body: await cropDocument(cropSource, box),
+          body: await cropDocument(image, box),
           filename: `${kind}.jpg`,
         });
       }

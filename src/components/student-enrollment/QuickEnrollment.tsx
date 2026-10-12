@@ -3,6 +3,8 @@ import { useEffect, useState, useRef } from "react";
 import { Dialog } from "@headlessui/react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import ReactCrop from "react-image-crop";
+import "react-image-crop/dist/ReactCrop.css";
 import {
   enrollmentFields,
   enrollmentSections,
@@ -81,12 +83,23 @@ function CropEditor({
   box,
   source,
   onChange,
+  onUpload,
 }: {
   label: string;
   box: number[] | null;
   source: string;
   onChange: (box: number[] | null) => void;
+  onUpload: (file: File | null, box: number[] | null) => void;
 }) {
+  const [upload, setUpload] = useState<File | null>(null);
+  const [uploadUrl, setUploadUrl] = useState("");
+  useEffect(() => {
+    if (!upload) { setUploadUrl(""); return; }
+    const url = URL.createObjectURL(upload);
+    setUploadUrl(url);
+    return () => URL.revokeObjectURL(url);
+  }, [upload]);
+  const cropSource = uploadUrl || source;
   return (
     <div className="space-y-3 rounded-xl border p-4">
       <div className="flex items-center justify-between gap-3">
@@ -102,34 +115,33 @@ function CropEditor({
       </div>
       {box && (
         <>
-          <CropPreview source={source} box={box} />
-          <div className="grid grid-cols-2 gap-2">
-            {["Top %", "Left %", "Bottom %", "Right %"].map((name, index) => (
-              <label key={name} className="text-xs text-muted-foreground">
-                {name}
-                <Input
-                  type="number"
-                  min="0"
-                  max="100"
-                  step="0.1"
-                  value={box[index] / 10}
-                  onChange={(event) =>
-                    onChange(
-                      box.map((value, i) =>
-                        i === index ? Number(event.target.value) * 10 : value,
-                      ),
-                    )
-                  }
-                />
-              </label>
-            ))}
-          </div>
+          <ReactCrop crop={{ unit: "%", x: box[1] / 10, y: box[0] / 10, width: (box[3] - box[1]) / 10, height: (box[2] - box[0]) / 10 }}
+            onChange={(_, crop) => {
+              const next = [crop.y * 10, crop.x * 10, (crop.y + crop.height) * 10, (crop.x + crop.width) * 10];
+              onChange(next);
+              if (upload) onUpload(upload, next);
+            }}>
+            <img src={cropSource} alt={`Adjust ${label.toLowerCase()} crop`} className="max-h-96 w-auto max-w-full object-contain" />
+          </ReactCrop>
+          <CropPreview source={cropSource} box={box} />
           <p className="text-xs text-muted-foreground">
-            Adjust the crop to include only the student's photo or written
-            signature.
+            Drag the selection or its edges to adjust. You can also draw a new selection.
           </p>
         </>
       )}
+      <label className="block text-xs text-muted-foreground">
+        Upload a separate {label.toLowerCase()} (JPEG, PNG or WebP, up to 3 MB)
+        <Input className="mt-2" type="file" accept="image/jpeg,image/png,image/webp" onChange={(event) => {
+          const file = event.target.files?.[0] || null;
+          if (file && file.size > 3 * 1024 * 1024) { event.target.setCustomValidity("Choose an image smaller than 3 MB"); event.target.reportValidity(); return; }
+          event.target.setCustomValidity("");
+          setUpload(file);
+          const next = file ? [0, 0, 1000, 1000] : null;
+          onChange(next);
+          onUpload(file, next);
+        }} />
+      </label>
+      {upload && <Button type="button" variant="outline" size="sm" onClick={() => { setUpload(null); onUpload(null, null); onChange(null); }}>Use scanned form instead</Button>}
     </div>
   );
 }
@@ -140,6 +152,7 @@ export default function QuickEnrollment({
   onClose: () => void;
   onSuccess: () => void;
 }) {
+  const [manualImages, setManualImages] = useState<Record<string, File | null>>({});
   const [courses, setCourses] = useState<Course[]>([]),
     [scan, setScan] = useState<Scan | null>(null),
     [file, setFile] = useState<File | null>(null),
@@ -204,6 +217,10 @@ export default function QuickEnrollment({
   }
   async function submit() {
     if (!scan) return;
+    if (Object.values(manualImages).reduce((total, file) => total + (file?.size || 0), 0) > 3 * 1024 * 1024) {
+      setError("The separate photo and signature must total less than 3 MB. Choose smaller images.");
+      return;
+    }
     const payload = {
       draftId: scan.draftId,
       courseId,
@@ -228,11 +245,15 @@ export default function QuickEnrollment({
     setBusy(true);
     setError("");
     try {
+      const body = new FormData();
+      body.append("payload", JSON.stringify(parsed.data));
+      for (const kind of ["photo", "signature"]) {
+        if (manualImages[kind]) body.append(kind, manualImages[kind]!);
+      }
       setResult(
         await jsonFetch("/api/partner-portal/quick-enrollment/submit", {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(parsed.data),
+          body,
         }),
       );
       onSuccess();
@@ -415,6 +436,7 @@ export default function QuickEnrollment({
                       <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-1">
                         <CropEditor
                           label="Student photo"
+                          onUpload={(file) => { setManualImages((previous) => ({ ...previous, photo: file })); setReviewed(false); }}
                           source={scan.sourceUrl}
                           box={scan.photoBox}
                           onChange={(box) => {
@@ -424,6 +446,7 @@ export default function QuickEnrollment({
                         />
                         <CropEditor
                           label="Applicant signature"
+                          onUpload={(file) => { setManualImages((previous) => ({ ...previous, signature: file })); setReviewed(false); }}
                           source={scan.sourceUrl}
                           box={scan.signatureBox}
                           onChange={(box) => {

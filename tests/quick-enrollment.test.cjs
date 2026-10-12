@@ -17,6 +17,17 @@ function submitAPI(options={}){
  return {api,state};
 }
 function request(data=payload()){return new Request('https://branch.example.invalid/api/partner-portal/quick-enrollment/submit',{method:'POST',body:JSON.stringify(data)});}
+test('multipart review submissions retain the enrollment workflow', async()=>{
+ const {api,state}=submitAPI(); const body=new FormData(); body.append('payload',JSON.stringify(payload()));
+ const response=await api.POST(new Request('https://branch.example.invalid/api/partner-portal/quick-enrollment/submit',{method:'POST',body}));
+ assert.equal(response.status,201); assert.equal(state.authCreated,1);
+});
+test('oversized manual images fail before draft claim or account creation', async()=>{
+ const {api,state}=submitAPI(); const body=new FormData(); body.append('payload',JSON.stringify({...payload(),photoBox:[0,0,1000,1000]}));
+ body.append('photo',new File([Buffer.alloc(3*1024*1024+1)],'large.jpg',{type:'image/jpeg'}));
+ const response=await api.POST(new Request('https://branch.example.invalid/api/partner-portal/quick-enrollment/submit',{method:'POST',body}));
+ assert.equal(response.status,400); assert.equal(state.authCreated,0); assert.equal(state.statuses.length,0);
+});
 test('anonymous submissions stop before provisioning',async()=>{const {api,state}=submitAPI({anonymous:true});assert.equal((await api.POST(request())).status,401);assert.equal(state.authCreated,0);});
 test('foreign drafts and concurrent duplicate submit are rejected before external account creation',async()=>{for(const options of [{foreign:true},{claimed:true}]){const {api,state}=submitAPI(options);assert.ok([404,409].includes((await api.POST(request())).status));assert.equal(state.authCreated,0);assert.ok(state.conditions[0].some(c=>c?.value==='branch'));assert.ok(state.conditions[0].some(c=>c?.value==='admin'));}});
 test('existing accounts are never overwritten or sent a false password',async()=>{const {api,state}=submitAPI({existing:true});assert.equal((await api.POST(request())).status,409);assert.equal(state.authCreated+state.email,0);});
