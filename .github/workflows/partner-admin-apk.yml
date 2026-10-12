@@ -57,11 +57,6 @@ jobs:
       - name: Install Android build tools
         run: sdkmanager 'platform-tools' 'platforms;android-36' 'build-tools;36.0.0' 'ndk;27.1.12297006' 'cmake;3.22.1'
 
-      - name: Cache Gradle dependencies
-        uses: gradle/actions/setup-gradle@07d1f8453baaff67fb503883367f8b13e6158a54 # v6
-        with:
-          cache-provider: basic
-          cache-read-only: ${{ github.event_name == 'pull_request' }}
 
       - name: Install mobile dependencies
         run: npm ci
